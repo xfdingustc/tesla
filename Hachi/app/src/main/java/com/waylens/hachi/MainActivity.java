@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
@@ -23,7 +23,6 @@ public class MainActivity extends Activity {
     }
 
     private void initViews() {
-        ButterKnife.bind(this);
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_home));
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_live));
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_highlights));
@@ -31,11 +30,7 @@ public class MainActivity extends Activity {
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_account));
     }
 
-    @Override
-    protected void onDestroy() {
-        ButterKnife.unbind(this);
-        super.onDestroy();
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
