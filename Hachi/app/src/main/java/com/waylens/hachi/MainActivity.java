@@ -30,7 +30,11 @@ public class MainActivity extends BaseActivity {
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_account));
     }
 
-
+    @Override
+    protected void setupToolbar() {
+        super.setupToolbar();
+        //mToolbar.setTitle(R.string.);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
