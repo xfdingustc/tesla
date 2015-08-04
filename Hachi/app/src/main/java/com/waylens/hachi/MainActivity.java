@@ -1,8 +1,10 @@
 package com.waylens.hachi;
 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,12 +18,29 @@ import com.transee.viditcam.app.CameraListActivity;
 import com.waylens.camera.CameraDiscovery;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
-
+    private static final String TAG = MainActivity.class.getSimpleName();
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
+
+    private class BottomTab {
+        private int mIconRes;
+        private int mTabTitleRes;
+
+        public BottomTab(int iconRes, int tabTitleRes) {
+            this.mIconRes = iconRes;
+            this.mTabTitleRes = tabTitleRes;
+        }
+    }
+
+    private BottomTab mTabList[] = {
+        new BottomTab(R.drawable.ic_home, R.string.home),
+        new BottomTab(R.drawable.ic_live, R.string.live),
+        new BottomTab(R.drawable.ic_highlights, R.string.hightlights),
+        new BottomTab(R.drawable.ic_notifications, R.string.notification),
+        new BottomTab(R.drawable.ic_account, R.string.account)
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +57,9 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
-
-    
-
     /**
      * This method is used to demonstrate the usage of CameraDiscovery.
-     *
+     * <p/>
      * TODO: removed it [Richard]
      */
     private void discoveryCamera() {
@@ -74,28 +89,34 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initViews() {
-        mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_home));
-        mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_live));
-        mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_highlights));
-        mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_notifications));
-        mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_account));
+        for (int i = 0; i < mTabList.length; i++) {
+            TabLayout.Tab tab = mMainTabs.newTab();
+            tab.setIcon(mTabList[i].mIconRes);
+            tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
+                PorterDuff.Mode.MULTIPLY);
+            mMainTabs.addTab(tab);
+        }
 
         mMainTabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+
                 if (tab.getPosition() == 2) {
                     startActivity(new Intent(MainActivity.this, CameraListActivity.class));
                 }
+                tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
+                    PorterDuff.Mode.MULTIPLY);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                //
+                tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
+                    PorterDuff.Mode.MULTIPLY);
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                //
+
             }
         });
     }
@@ -133,4 +154,5 @@ public class MainActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

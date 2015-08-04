@@ -26,7 +26,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MomentActivity"/>
 
         <!--Copied from Vidit app-->
         <service android:name="com.transee.vdb.DownloadService" />

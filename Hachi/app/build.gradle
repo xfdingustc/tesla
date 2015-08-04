@@ -28,5 +28,6 @@ dependencies {
         transitive=true
     }
     compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.orhanobut:logger:1.9'
 
 }
