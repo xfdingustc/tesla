@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <SurfaceView
+        android:id="@+id/surfaceView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6" >
+
+            <com.transee.common.ViewfinderView
+                android:id="@+id/viewfinderView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:borderColor="#40000000"
+                app:borderSizeX="16dp"
+                app:borderSizeY="32dp" />
+
+            <include
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                layout="@layout/group_explosure" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="#40000000"
+            android:gravity="center"
+            android:text="@string/info_focus_barcode"
+            android:textColor="@color/titleText"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</merge>

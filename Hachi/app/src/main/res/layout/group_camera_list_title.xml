@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/titleBar"
+        style="@style/simpleTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/app_icon_small"
+        android:drawableStart="@drawable/app_icon_small"
+        android:text="@string/app_name" >
+    </TextView>
+
+    <ImageButton
+        android:id="@+id/btnAppSetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/titleBar"
+        android:layout_alignEnd="@+id/titleBar"
+        android:layout_alignRight="@+id/titleBar"
+        android:layout_alignTop="@+id/titleBar"
+        android:background="@drawable/tab_button"
+        android:contentDescription="@string/empty_text"
+        android:paddingEnd="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingStart="8dp"
+        android:src="@drawable/btn_menu" />
+
+</RelativeLayout>

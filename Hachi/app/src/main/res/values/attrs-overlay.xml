@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="barType" format="enum">
+        <enum name="whp" value="0" />
+        <enum name="psi" value="1" />
+        <enum name="baro" value="2" />
+    </attr>
+    <declare-styleable name="BarView">
+        <attr name="barType" />
+        <attr name="labelSrc" format="reference|integer"/>
+    </declare-styleable>
+</resources>

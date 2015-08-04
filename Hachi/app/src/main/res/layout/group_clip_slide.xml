@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#20000000"
+    android:orientation="vertical"
+    android:visibility="invisible" >
+
+    <include
+        android:id="@+id/clipToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/toolbar_clip_edit" />
+
+    <com.transee.vdb.SlideView
+        android:id="@+id/slideView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbarSize="10dp"
+        android:scrollbars="horizontal" />
+
+</LinearLayout>

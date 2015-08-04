@@ -2,9 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.waylens.hachi" >
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
     <application
+        android:name="com.transee.viditcam.app.ThisApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,6 +27,55 @@
         </activity>
 
         <activity android:name=".MomentActivity"/>
+
+        <!--Copied from Vidit app-->
+        <service android:name="com.transee.vdb.DownloadService" />
+
+        <activity
+            android:name="com.transee.viditcam.app.CameraListActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.CameraControlActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape"
+            android:label="@string/title_activity_camera_preview"
+            android:theme="@style/AppTheme.NoBackground" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.CameraVideoActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_camera_video"
+            android:theme="@style/AppTheme.NoBackground" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.AddCameraActivity"
+            android:label="@string/title_activity_add_camera" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.CameraSetupActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_camera_setup" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.CameraOverlaySetupActivity"
+            android:label="@string/title_activity_camera_overlay_setup" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.CameraWifiSetupActivity"
+            android:label="@string/title_activity_camera_wifi_setup" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.CameraBtSetupActivity"
+            android:label="@string/title_activity_camera_bt_setup" >
+        </activity>
+        <activity
+            android:name="com.transee.viditcam.app.AppSetupActivity"
+            android:label="@string/title_activity_app_setup" >
+        </activity>
+        <!--END COPY Vidit App-->
+
     </application>
 
 </manifest>

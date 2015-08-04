@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/btnBrowseVideo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_button"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/btn_camera_browse_video"
+        android:textAppearance="@style/TextAppearanceMedium"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_button"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/btn_camera_change_password"
+        android:textAppearance="@style/TextAppearanceMedium" />
+
+    <Button
+        android:id="@+id/btnSetup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_button"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/btn_camera_setup"
+        android:textAppearance="@style/TextAppearanceMedium" />
+
+    <View
+        android:id="@+id/separator1"
+        style="@style/horzSeparator"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp" />
+
+    <Button
+        android:id="@+id/btnPowerOff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_button"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/btn_camera_power_off"
+        android:textAppearance="@style/TextAppearanceMedium" />
+
+    <Button
+        android:id="@+id/btnReboot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_button"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/btn_camera_reboot"
+        android:textAppearance="@style/TextAppearanceMedium" />
+
+    <View
+        android:id="@+id/separator2"
+        style="@style/horzSeparator"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp" />
+
+    <Button
+        android:id="@+id/btnWifiMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_button"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/btn_camera_switch_wifi"
+        android:textAppearance="@style/TextAppearanceMedium" />
+
+</LinearLayout>

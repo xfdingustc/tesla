@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="themeColor">#73bb0c</color>
+    <color name="appBackground">#ddd</color>
+    <color name="dlgBackground">#ddd</color>
+    <color name="separator">#ccc</color>
+    <color name="menuBackground">#ddd</color>
+    <color name="menuSelBackground">#20000000</color>
+    <color name="menuLine">#ccc</color>
+    <color name="editTextBackground">#ddd</color>
+    <color name="previewBackground">#000</color>
+    <color name="imageVideoBackground">#ddd</color>
+    <color name="mapButtonText">#fff</color>
+    <color name="mapBackground">#60000000</color>
+    <color name="progressbarBackground">#30000000</color>
+    <color name="editText">#333</color>
+    <color name="radioText">#333</color>
+    <color name="checkBoxText">#333</color>
+    <color name="title">#444</color>
+    <color name="overlay">#80000000</color>
+    <color name="titleText">#ddd</color>
+    <color name="dlgButtonText">#4651ce</color>
+    <color name="cameraWifiText">#666</color>
+    <color name="videoDateText">#333</color>
+    <color name="videoDayText">#333</color>
+    <color name="videoLengthText">#333</color>
+    <color name="btnText">#333</color>
+    <color name="infoText">#444</color>
+    <color name="focused">#8076c9e9</color>
+    <color name="focused1">#c076c9e9</color>
+    <color name="focused2">#0076c9e9</color>
+    <color name="selection">#8023a9dc</color>
+    <color name="textSelection">#8023a9dc</color>
+    <color name="listItemPressed">#8023a9dc</color>
+    <color name="hint_text">#666</color>
+    <color name="pref_title_text">#333</color>
+    <color name="pref_name_text">#333</color>
+    <color name="pref_value_text">#3f48cc</color>
+    <color name="pref_hint_text">#666</color>
+    <color name="pref_info_text">#666</color>
+    <color name="textColor1">#808080</color>
+    <color name="textColor2">#609216</color>
+
+</resources>

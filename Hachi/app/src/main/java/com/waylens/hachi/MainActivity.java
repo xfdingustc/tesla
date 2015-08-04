@@ -1,6 +1,7 @@
 package com.waylens.hachi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.transee.viditcam.app.CameraListActivity;
 import com.waylens.camera.CameraDiscovery;
 
 import butterknife.Bind;
@@ -32,7 +34,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        discoveryCamera();
+        //discoveryCamera();
     }
 
 
@@ -77,6 +79,25 @@ public class MainActivity extends BaseActivity {
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_highlights));
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_notifications));
         mMainTabs.addTab(mMainTabs.newTab().setIcon(R.drawable.ic_account));
+
+        mMainTabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 2) {
+                    startActivity(new Intent(MainActivity.this, CameraListActivity.class));
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                //
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                //
+            }
+        });
     }
 
     @Override

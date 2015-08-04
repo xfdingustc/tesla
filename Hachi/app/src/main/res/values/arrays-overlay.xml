@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gauge_numbers">
+        <item>@drawable/numbers_0_22px_opa100</item>
+        <item>@drawable/numbers_1_22px_opa100</item>
+        <item>@drawable/numbers_2_22px_opa100</item>
+        <item>@drawable/numbers_3_22px_opa100</item>
+        <item>@drawable/numbers_4_22px_opa100</item>
+        <item>@drawable/numbers_5_22px_opa100</item>
+        <item>@drawable/numbers_6_22px_opa100</item>
+        <item>@drawable/numbers_7_22px_opa100</item>
+        <item>@drawable/numbers_8_22px_opa100</item>
+        <item>@drawable/numbers_9_22px_opa100</item>
+        <item>@drawable/numbers_10_22px_opa100</item>
+    </string-array>
+    <string-array name="gauge_numbersDark">
+        <item>@drawable/numbers_0_22px_opa70</item>
+        <item>@drawable/numbers_1_22px_opa70</item>
+        <item>@drawable/numbers_2_22px_opa70</item>
+        <item>@drawable/numbers_3_22px_opa70</item>
+        <item>@drawable/numbers_4_22px_opa70</item>
+        <item>@drawable/numbers_5_22px_opa70</item>
+        <item>@drawable/numbers_6_22px_opa70</item>
+        <item>@drawable/numbers_7_22px_opa70</item>
+        <item>@drawable/numbers_8_22px_opa70</item>
+        <item>@drawable/numbers_9_22px_opa70</item>
+        <item>@drawable/numbers_10_22px_opa70</item>
+    </string-array>
+
+    <string-array name="gear_dashes">
+        <item>@drawable/gear_dash_6</item>
+        <item>@drawable/gear_dash_5</item>
+        <item>@drawable/gear_dash_4</item>
+        <item>@drawable/gear_dash_3</item>
+        <item>@drawable/gear_dash_2</item>
+        <item>@drawable/gear_dash_1</item>
+        <item>@drawable/gear_back_arrow</item>
+    </string-array>
+    <string-array name="gear_numbers">
+        <item>@drawable/numbers_6_22px_opa100</item>
+        <item>@drawable/numbers_5_22px_opa100</item>
+        <item>@drawable/numbers_4_22px_opa100</item>
+        <item>@drawable/numbers_3_22px_opa100</item>
+        <item>@drawable/numbers_2_22px_opa100</item>
+        <item>@drawable/numbers_1_22px_opa100</item>
+        <item>@drawable/gear_label_r</item>
+    </string-array>
+    <string-array name="bars_img">
+        <item>@drawable/bar_0</item>
+        <item>@drawable/bar_1</item>
+        <item>@drawable/bar_2</item>
+        <item>@drawable/bar_3</item>
+        <item>@drawable/bar_4</item>
+        <item>@drawable/bar_5</item>
+        <item>@drawable/bar_6</item>
+        <item>@drawable/bar_7</item>
+        <item>@drawable/bar_8</item>
+        <item>@drawable/bar_9</item>
+        <item>@drawable/bar_10</item>
+        <item>@drawable/bar_11</item>
+        <item>@drawable/bar_12</item>
+        <item>@drawable/bar_13</item>
+        <item>@drawable/bar_14</item>
+        <item>@drawable/bar_15</item>
+        <item>@drawable/bar_16</item>
+        <item>@drawable/bar_17</item>
+        <item>@drawable/bar_18</item>
+        <item>@drawable/bar_19</item>
+    </string-array>
+    <string-array name="gforce_bars">
+        <item>@drawable/gforce_bar_0</item>
+        <item>@drawable/gforce_bar_1</item>
+        <item>@drawable/gforce_bar_2</item>
+        <item>@drawable/gforce_bar_3</item>
+        <item>@drawable/gforce_bar_4</item>
+        <item>@drawable/gforce_bar_5</item>
+        <item>@drawable/gforce_bar_6</item>
+        <item>@drawable/gforce_bar_7</item>
+        <item>@drawable/gforce_bar_8</item>
+        <item>@drawable/gforce_bar_9</item>
+        <item>@drawable/gforce_bar_10</item>
+        <item>@drawable/gforce_bar_11</item>
+        <item>@drawable/gforce_bar_12</item>
+        <item>@drawable/gforce_bar_13</item>
+        <item>@drawable/gforce_bar_14</item>
+        <item>@drawable/gforce_bar_15</item>
+        <item>@drawable/gforce_bar_16</item>
+        <item>@drawable/gforce_bar_17</item>
+    </string-array>
+    <!-- must contain all 10 digits, dot, and minus
+      index 0 - 9 -> 0 - 9
+      index 10 -> dot
+      index 11 -> minus
+     -->
+    <string-array name="numbers_16px_opa100">
+        <item>@drawable/numbers_0_16px_opa100</item>
+        <item>@drawable/numbers_1_16px_opa100</item>
+        <item>@drawable/numbers_2_16px_opa100</item>
+        <item>@drawable/numbers_3_16px_opa100</item>
+        <item>@drawable/numbers_4_16px_opa100</item>
+        <item>@drawable/numbers_5_16px_opa100</item>
+        <item>@drawable/numbers_6_16px_opa100</item>
+        <item>@drawable/numbers_7_16px_opa100</item>
+        <item>@drawable/numbers_8_16px_opa100</item>
+        <item>@drawable/numbers_9_16px_opa100</item>
+        <item>@drawable/numbers_dot_16px_opa100</item>
+        <item>@drawable/minus_16px</item>
+    </string-array>
+    <string-array name="numbers_16px_opa70">
+        <item>@drawable/numbers_0_16px_opa70</item>
+        <item>@drawable/numbers_1_16px_opa70</item>
+        <item>@drawable/numbers_2_16px_opa70</item>
+        <item>@drawable/numbers_3_16px_opa70</item>
+        <item>@drawable/numbers_4_16px_opa70</item>
+        <item>@drawable/numbers_5_16px_opa70</item>
+        <item>@drawable/numbers_6_16px_opa70</item>
+        <item>@drawable/numbers_7_16px_opa70</item>
+        <item>@drawable/numbers_8_16px_opa70</item>
+        <item>@drawable/numbers_9_16px_opa70</item>
+        <item>@drawable/numbers_dot_16px_opa100</item>
+        <item>@drawable/minus_16px</item>
+    </string-array>
+    <string-array name="numbers_22px_opa100">
+        <item>@drawable/numbers_0_22px_opa100</item>
+        <item>@drawable/numbers_1_22px_opa100</item>
+        <item>@drawable/numbers_2_22px_opa100</item>
+        <item>@drawable/numbers_3_22px_opa100</item>
+        <item>@drawable/numbers_4_22px_opa100</item>
+        <item>@drawable/numbers_5_22px_opa100</item>
+        <item>@drawable/numbers_6_22px_opa100</item>
+        <item>@drawable/numbers_7_22px_opa100</item>
+        <item>@drawable/numbers_8_22px_opa100</item>
+        <item>@drawable/numbers_9_22px_opa100</item>
+        <item>@drawable/numbers_dot_22px_opa100</item>
+        <item>@drawable/minus_22px</item>
+    </string-array>
+</resources>

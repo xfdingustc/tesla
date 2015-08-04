@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:padding="6dp" >
+
+    <Button
+        android:id="@+id/dlgLeftButton"
+        style="@style/flatButtonSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingBottom="8dp"
+        android:paddingEnd="12dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:text="@string/btn_remove" />
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/dlgLeftButton"
+        android:layout_toStartOf="@+id/dlgLeftButton"
+        android:drawablePadding="8dp"
+        android:text="@string/lable_unamed_camera"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/btnText"
+        android:textSize="18sp" />
+
+</RelativeLayout>
