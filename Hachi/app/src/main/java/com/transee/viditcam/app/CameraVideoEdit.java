@@ -58,6 +58,7 @@ import com.transee.viditcam.app.comp.VdbMap;
 import com.transee.viditcam.app.comp.VdbMapAmap;
 import com.transee.viditcam.app.comp.VdbMapGoogle;
 import com.transee.viditcam.app.comp.VdbPlayback;
+import com.waylens.hachi.app.Hachi;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -142,7 +143,7 @@ abstract public class CameraVideoEdit {
 
 	private final CameraVideoEditPref mPref = new CameraVideoEditPref();
 
-	private ThisApp.DownloadCallback mDownloadCallback = new ThisApp.DownloadCallback() {
+	private Hachi.DownloadCallback mDownloadCallback = new Hachi.DownloadCallback() {
 		@Override
 		public void onDownloadInfo(DownloadInfo downloadInfo) {
 			CameraVideoEdit.this.onDownloadInfo(downloadInfo);
@@ -1256,7 +1257,7 @@ abstract public class CameraVideoEdit {
 		if (filename != null) {
 			try {
 				// generate filename that's no conflication
-				String dir = ThisApp.getPicturePath();
+				String dir = Hachi.getPicturePath();
 				for (int i = 0;; i++) {
 					String targetFile = composeFileName(dir, filename, i);
 					File file = new File(targetFile);
@@ -1273,7 +1274,7 @@ abstract public class CameraVideoEdit {
 					fos.close();
 				}
 				// add to media store
-				ThisApp.addToMediaStore(mActivity, filename);
+				Hachi.addToMediaStore(mActivity, filename);
 				mVdbImageVideo.onImageSaved();
 			} catch (Exception ex) {
 

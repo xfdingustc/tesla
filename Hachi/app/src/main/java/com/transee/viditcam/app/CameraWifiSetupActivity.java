@@ -16,6 +16,7 @@ import com.waylens.hachi.R;
 import com.transee.viditcam.actions.GetWifiAP;
 import com.transee.viditcam.actions.RemoveWifiAP;
 import com.transee.viditcam.actions.SelectWifiAp;
+import com.waylens.hachi.app.Hachi;
 
 import java.util.List;
 
@@ -176,7 +177,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
 			setResult(RESULT_OK, intent);
 		}
 		finish();
-		ThisApp.slideOutToRight(this, true);
+		Hachi.slideOutToRight(this, true);
 	}
 
 	private void onScanWifiDone(WifiAdmin wifiAdmin) {
@@ -206,7 +207,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
 
 	};
 
-	private final ThisApp.WifiCallback mWifiCallback = new ThisApp.WifiCallback() {
+	private final Hachi.WifiCallback mWifiCallback = new Hachi.WifiCallback() {
 
 		@Override
 		public void networkStateChanged(WifiAdmin wifiAdmin) {

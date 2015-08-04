@@ -16,11 +16,12 @@ import com.transee.ccam.Camera;
 import com.transee.ccam.CameraManager;
 import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 
 @SuppressLint("Registered")
 public class BaseActivity extends Activity {
 
-	protected ThisApp thisApp;
+	protected Hachi thisApp;
 	protected int mOrientation;
 	protected boolean mbStarted;
 	protected boolean mbRotating;
@@ -200,7 +201,7 @@ public class BaseActivity extends Activity {
 		if (ssid == null || hostString == null) {
 			return null;
 		}
-		CameraManager cameraManager = ((ThisApp)getApplication()).getCameraManager();
+		CameraManager cameraManager = ((Hachi)getApplication()).getCameraManager();
 		Camera camera = cameraManager.findConnectedCamera(ssid, hostString);
 		return camera;
 	}
@@ -216,7 +217,7 @@ public class BaseActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		thisApp = (ThisApp)getApplication();
+		thisApp = (Hachi)getApplication();
 		super.onCreate(savedInstanceState);
 		mOrientation = getOrientation();
 		requestContentView();

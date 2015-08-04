@@ -6,8 +6,8 @@ import android.os.Environment;
 import android.os.StatFs;
 
 import com.transee.common.DateTime;
-import com.transee.viditcam.app.ThisApp;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 
 import java.io.File;
 
@@ -53,7 +53,7 @@ public class RemuxHelper {
 	// API
 	public static String genDownloadFileName(int clipDate, long clipTimeMs) {
 		try {
-			String dir = ThisApp.getVideoDownloadPath();
+			String dir = Hachi.getVideoDownloadPath();
 			if (dir == null) {
 				return null;
 			}

@@ -15,6 +15,7 @@ import com.transee.ccam.BtState;
 import com.transee.ccam.Camera;
 import com.waylens.hachi.R;
 import com.transee.viditcam.actions.DialogBuilder;
+import com.waylens.hachi.app.Hachi;
 
 public class CameraBtSetupActivity extends BaseActivity {
 
@@ -395,7 +396,7 @@ public class CameraBtSetupActivity extends BaseActivity {
 
 	private void performFinish() {
 		finish();
-		ThisApp.slideOutToRight(this, true);
+		Hachi.slideOutToRight(this, true);
 	}
 
 	private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {

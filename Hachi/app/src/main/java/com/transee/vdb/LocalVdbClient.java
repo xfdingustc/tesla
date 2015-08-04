@@ -12,7 +12,8 @@ import android.provider.MediaStore;
 
 import com.transee.common.ByteStream;
 import com.transee.common.GPSRawData;
-import com.transee.viditcam.app.ThisApp;
+import com.waylens.hachi.app.Hachi;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -224,7 +225,7 @@ public class LocalVdbClient extends VdbClient {
 	protected void cmdGetClipSetInfo(int type) throws IOException {
 		SimpleClipSet clipSet = new SimpleClipSet(Clip.CAT_LOCAL, LocalClip.TYPE_FILE);
 
-		String path = ThisApp.getVideoDownloadPath();
+		String path = Hachi.getVideoDownloadPath();
 		File[] fileList = (new File(path)).listFiles();
 		if (fileList == null) {
 			mCallback.onClipSetInfoAsync(clipSet);

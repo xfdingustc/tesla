@@ -24,6 +24,7 @@ import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.transee.vdb.VdbClient.RawDataBlock;
 import com.transee.vdb.VdbClient.RawDataResult;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 
 public class CameraVideoActivity extends BaseActivity {
 
@@ -49,7 +50,7 @@ public class CameraVideoActivity extends BaseActivity {
 		if (isLocalActivity(bundle)) {
 			mVdb = new LocalVdb(this, new MyVdbCallback());
 		} else {
-			mVdb = new RemoteVdb(new MyVdbCallback(), ThisApp.getVideoDownloadPath(), isServerActivity(bundle));
+			mVdb = new RemoteVdb(new MyVdbCallback(), Hachi.getVideoDownloadPath(), isServerActivity(bundle));
 		}
 
 		mImageDecoder = new ImageDecoder();
@@ -176,7 +177,7 @@ public class CameraVideoActivity extends BaseActivity {
 	private void performFinish() {
 		if (!isFinishing()) {
 			finish();
-			ThisApp.slideOutToRight(this, false);
+			Hachi.slideOutToRight(this, false);
 		}
 	}
 

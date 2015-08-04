@@ -13,7 +13,8 @@ import android.widget.TextView;
 import com.transee.common.Utils;
 import com.transee.common.WifiAdmin;
 import com.waylens.hachi.R;
-import com.transee.viditcam.app.ThisApp;
+import com.waylens.hachi.app.Hachi;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,12 @@ abstract public class SelectWifiAp extends DialogBuilder {
 	// TODO - need to known if password needed
 	abstract protected void onSelectWifi(String ssid);
 
-	private final ThisApp mThisApp;
+	private final Hachi mThisApp;
 	private final LayoutInflater mLayoutInflater;
 	private final WifiListAdapter mWifiListAdapter;
 	private ListView mListView;
 
-	public SelectWifiAp(Activity activity, ThisApp thisApp) {
+	public SelectWifiAp(Activity activity, Hachi thisApp) {
 		super(activity);
 		mThisApp = thisApp;
 		mLayoutInflater = activity.getLayoutInflater();
@@ -66,7 +67,7 @@ abstract public class SelectWifiAp extends DialogBuilder {
 		mThisApp.detachWifiAdmin(mWifiCallback, false);
 	}
 
-	final ThisApp.WifiCallback mWifiCallback = new ThisApp.WifiCallback() {
+	final Hachi.WifiCallback mWifiCallback = new Hachi.WifiCallback() {
 		@Override
 		public void wifiScanResult(WifiAdmin wifiAdmin) {
 		}

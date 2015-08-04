@@ -22,6 +22,7 @@ import com.transee.viditcam.actions.SelectColorMode;
 import com.transee.viditcam.actions.SelectVideoQuality;
 import com.transee.viditcam.actions.SelectVideoResolution;
 import com.transee.viditcam.actions.SyncDateTime;
+import com.waylens.hachi.app.Hachi;
 
 public class CameraSetupActivity extends BaseActivity {
 
@@ -295,21 +296,21 @@ public class CameraSetupActivity extends BaseActivity {
 	private void onChangeWifiMode() {
 		if (mCamera != null) {
 			super.startCameraActivity(mCamera, CameraWifiSetupActivity.class);
-			ThisApp.slideInFromRight(this, true);
+			Hachi.slideInFromRight(this, true);
 		}
 	}
 
 	private void onClickVideoOverlay() {
 		if (mCamera != null) {
 			super.startCameraActivity(mCamera, CameraOverlaySetupActivity.class);
-			ThisApp.slideInFromRight(this, true);
+			Hachi.slideInFromRight(this, true);
 		}
 	}
 
 	private void onClickBluetooth() {
 		if (getBtStates().mBtSupport == BtState.BT_Support_Yes) {
 			super.startCameraActivity(mCamera, CameraBtSetupActivity.class);
-			ThisApp.slideInFromRight(this, true);
+			Hachi.slideInFromRight(this, true);
 		}
 	}
 
@@ -560,7 +561,7 @@ public class CameraSetupActivity extends BaseActivity {
 	@Override
 	public void onBackPressed() {
 		finish();
-		ThisApp.slideOutToRight(this, false);
+		Hachi.slideOutToRight(this, false);
 	}
 
 	private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {

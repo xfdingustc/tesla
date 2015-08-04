@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.waylens.hachi.R;
 import com.transee.viditcam.app.comp.MapProvider;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.views.PrefsUtil;
 
 public class AppSetupActivity extends BaseActivity {
@@ -205,7 +206,7 @@ public class AppSetupActivity extends BaseActivity {
 	@Override
 	public void onBackPressed() {
 		finish();
-		ThisApp.slideOutToRight(this, false);
+		Hachi.slideOutToRight(this, false);
 	}
 
 	public void onGPSRadioButtonClicked(View view) {

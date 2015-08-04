@@ -10,11 +10,12 @@ import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.common.Utils;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 
 public class CameraOverlaySetupActivity extends BaseActivity {
 
 	static final boolean DEBUG = false;
-	static final String TAG = "CameraOverlaySetupActivity";
+	static final String TAG = "CameraOverlaySetupAct";
 
 	private Camera mCamera;
 
@@ -141,7 +142,7 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 
 	private void performFinish() {
 		finish();
-		ThisApp.slideOutToRight(this, true);
+		Hachi.slideOutToRight(this, true);
 	}
 
 	private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {

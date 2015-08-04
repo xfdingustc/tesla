@@ -50,6 +50,7 @@ import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;
@@ -589,7 +590,7 @@ public class CameraControlActivity extends BaseActivity {
             public void onClick(View v) {
                 mCamera.getClient().cmd_CAM_WantIdle();
                 startCameraActivity(mCamera, CameraVideoActivity.class);
-                ThisApp.slideInFromRight(CameraControlActivity.this, false);
+                Hachi.slideInFromRight(CameraControlActivity.this, false);
             }
         });
 
@@ -616,7 +617,7 @@ public class CameraControlActivity extends BaseActivity {
             public void onClick(View v) {
                 if (mCamera != null) {
                     startCameraActivity(mCamera, CameraSetupActivity.class);
-                    ThisApp.slideInFromRight(CameraControlActivity.this, false);
+                    Hachi.slideInFromRight(CameraControlActivity.this, false);
                 }
             }
         });
@@ -1103,7 +1104,7 @@ public class CameraControlActivity extends BaseActivity {
 
     private void performFinish() {
         finish();
-        ThisApp.slideOutToRight(this, true);
+        Hachi.slideOutToRight(this, true);
     }
 
     private void onMjpegConnectionError(int error) {

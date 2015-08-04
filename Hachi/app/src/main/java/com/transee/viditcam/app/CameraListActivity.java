@@ -34,6 +34,7 @@ import com.transee.viditcam.actions.DialogBuilder;
 import com.transee.viditcam.actions.GetCameraPassword;
 import com.transee.viditcam.actions.GetServerAddress;
 import com.transee.viditcam.actions.SelectWifiMode;
+import com.waylens.hachi.app.Hachi;
 
 public class CameraListActivity extends BaseActivity {
 
@@ -318,7 +319,7 @@ public class CameraListActivity extends BaseActivity {
 	private void onClipAppSetupButton() {
 		Intent intent = new Intent(this, AppSetupActivity.class);
 		startActivity(intent);
-		ThisApp.slideInFromRight(this, false);
+		Hachi.slideInFromRight(this, false);
 	}
 
 	private void onClickWifiButton() {
@@ -327,7 +328,7 @@ public class CameraListActivity extends BaseActivity {
 
 	private void onClickDownloadedVideos() {
 		startLocalActivity(CameraVideoActivity.class);
-		ThisApp.slideInFromRight(this, false);
+		Hachi.slideInFromRight(this, false);
 	}
 
 	private String getSavedServerAddress() {
@@ -408,10 +409,10 @@ public class CameraListActivity extends BaseActivity {
 		if (camera != null) {
 			if (camera.isPcServer()) {
 				startCameraActivity(camera, CameraVideoActivity.class);
-				ThisApp.slideInFromRight(this, true);
+				Hachi.slideInFromRight(this, true);
 			} else {
 				startCameraActivity(camera, CameraControlActivity.class);
-				ThisApp.slideInFromRight(this, true);
+				Hachi.slideInFromRight(this, true);
 			}
 		} else {
 			CameraManager.WifiItem wifiItem = mCameraListAdapter.getWifiItem(position);
@@ -493,7 +494,7 @@ public class CameraListActivity extends BaseActivity {
 		if (camera != null) {
 			camera.getClient().cmd_CAM_WantIdle();
 			startCameraActivity(camera, CameraVideoActivity.class);
-			ThisApp.slideInFromRight(CameraListActivity.this, false);
+			Hachi.slideInFromRight(CameraListActivity.this, false);
 		}
 	}
 
@@ -547,7 +548,7 @@ public class CameraListActivity extends BaseActivity {
 				if (camera != null) {
 					CameraListActivity.this.startCameraActivity(camera, CameraWifiSetupActivity.class,
 							REQUEST_SETUP_WIFI_AP);
-					ThisApp.slideInFromRight(CameraListActivity.this, true);
+					Hachi.slideInFromRight(CameraListActivity.this, true);
 				}
 			}
 		};
@@ -591,7 +592,7 @@ public class CameraListActivity extends BaseActivity {
 					Camera camera = mCameraListAdapter.findConnectedCamera(action.mSSID, action.mHostString);
 					if (camera != null) {
 						startCameraActivity(camera, CameraSetupActivity.class);
-						ThisApp.slideInFromRight(CameraListActivity.this, false);
+						Hachi.slideInFromRight(CameraListActivity.this, false);
 					}
 				}
 			}
@@ -674,7 +675,7 @@ public class CameraListActivity extends BaseActivity {
 	}
 
 	private final CameraManager getCameraManager() {
-		return ((ThisApp)getApplication()).getCameraManager();
+		return ((Hachi)getApplication()).getCameraManager();
 	}
 
 	private void onServiceResolved(Camera.ServiceInfo serviceInfo) {
@@ -771,7 +772,7 @@ public class CameraListActivity extends BaseActivity {
 
 	}
 
-	final ThisApp.WifiCallback mWifiCallback = new ThisApp.WifiCallback() {
+	final Hachi.WifiCallback mWifiCallback = new Hachi.WifiCallback() {
 
 		@Override
 		public void networkStateChanged(WifiAdmin wifiAdmin) {
