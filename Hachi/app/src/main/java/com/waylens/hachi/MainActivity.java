@@ -35,6 +35,11 @@ public class MainActivity extends BaseActivity {
         discoveryCamera();
     }
 
+
+
+
+    
+
     /**
      * This method is used to demonstrate the usage of CameraDiscovery.
      *
