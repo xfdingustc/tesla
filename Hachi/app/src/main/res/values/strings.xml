@@ -208,4 +208,5 @@
     <string name="hightlights">highlights</string>
     <string name="notification">notification</string>
     <string name="account">account</string>
+    <string name="login">Login</string>
 </resources>

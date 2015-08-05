@@ -43,7 +43,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private BottomTab mTabList[] = {
-
         new BottomTab(R.drawable.ic_home, TAB_HOME_TAG),
         new BottomTab(R.drawable.ic_live, TAB_LIVE_TAG),
         new BottomTab(R.drawable.ic_highlights, TAB_HIGHLIGHTS_TAG),
@@ -113,7 +112,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void switchFragment(String tag) {
-        Fragment fragment = null;
+        Fragment fragment;
         if (tag.equals(TAB_HOME_TAG)) {
             fragment = new HomeFragment();
         } else if (tag.equals(TAB_LIVE_TAG)) {
@@ -123,8 +122,7 @@ public class MainActivity extends BaseActivity {
         } else {
             fragment = new AccountFragment();
         }
-        FragmentTransaction fragmentTransaction = getFragmentManager()
-            .beginTransaction();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_content, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

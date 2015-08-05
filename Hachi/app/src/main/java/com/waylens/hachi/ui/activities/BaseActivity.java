@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -13,6 +14,7 @@ import butterknife.ButterKnife;
  */
 public class BaseActivity extends AppCompatActivity {
 
+    @Nullable
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
