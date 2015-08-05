@@ -1,7 +1,9 @@
-package com.waylens.hachi;
+package com.waylens.hachi.ui.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import com.waylens.hachi.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

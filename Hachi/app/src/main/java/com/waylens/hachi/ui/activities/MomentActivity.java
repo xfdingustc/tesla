@@ -1,4 +1,4 @@
-package com.waylens.hachi;
+package com.waylens.hachi.ui.activities;
 
 /**
  * Created by Xiaofei on 2015/7/29.
