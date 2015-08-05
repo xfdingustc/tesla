@@ -2,6 +2,8 @@ package com.transee.common;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,8 +13,7 @@ import java.net.Socket;
 // this class uses 2 threads,
 // one for sending, and one for receiving
 abstract public class TcpConnection {
-
-    static final boolean DEBUG = false;
+    static final int CONNECT_TIMEOUT = 1000 * 30;
 
     abstract public void onConnectedAsync();
 
@@ -22,12 +23,12 @@ abstract public class TcpConnection {
 
     abstract public void msgLoop(Thread thread) throws IOException, InterruptedException;
 
-    private final String mName;
-    private InetSocketAddress mAddress; // can be set in constructor or start()
+    final String mName;
+    InetSocketAddress mAddress; // can be set in constructor or start()
 
-    private Socket mSocket;
-    private CmdThread mThread;
-    private boolean mbConnectError;
+    Socket mSocket;
+    CmdThread mThread;
+    boolean mbConnectError;
 
     private String TAG() {
         return Thread.currentThread().getName();
@@ -43,9 +44,7 @@ abstract public class TcpConnection {
         if (address != null) {
             mAddress = address;
         }
-        if (mSocket == null) {
-            mSocket = new Socket();
-        }
+
         if (mThread == null) {
             mThread = new CmdThread();
             mThread.start();
@@ -59,13 +58,11 @@ abstract public class TcpConnection {
             mThread = null;
         }
         if (mSocket != null) {
-            if (DEBUG) {
-                Log.d(TAG(), "close socket");
-            }
+            Logger.t(TAG()).d("close socket");
             try {
                 mSocket.close();
             } catch (Exception e) {
-
+                Logger.t(TAG()).e(e, "close socket");
             }
             mSocket = null;
         }
@@ -79,16 +76,6 @@ abstract public class TcpConnection {
     // API
     public InetSocketAddress getInetSocketAddress() {
         return mAddress;
-    }
-
-    // API
-    public OutputStream getOutputStream() throws IOException {
-        return mSocket.getOutputStream();
-    }
-
-    // API
-    public InputStream getInputStream() throws IOException {
-        return mSocket.getInputStream();
     }
 
     // API
@@ -116,25 +103,23 @@ abstract public class TcpConnection {
 
     synchronized private void connectError() {
         if (!mbConnectError) {
-            if (DEBUG) {
-                Log.d(TAG(), "connectError");
-            }
+            Logger.t(TAG()).d("connectError");
             mbConnectError = true;
             onConnectErrorAsync();
         }
     }
 
-    private void connectToServer() throws IOException, InterruptedException {
+    void connectToServer() throws IOException, InterruptedException {
+        if (mSocket == null) {
+            mSocket = new Socket();
+        }
         mSocket.setReceiveBufferSize(8192);
-        Log.e("test", "Connecting to: " + mAddress.getHostName() + ": " + mAddress.getPort());
-        mSocket.connect(mAddress);
-        Log.e("test", "Connected: " + mAddress.getHostName());
+        Logger.t(TAG()).d("Connecting to: " + mAddress.getHostName() + ": " + mAddress.getPort());
+        mSocket.connect(mAddress, CONNECT_TIMEOUT);
+        Logger.t(TAG()).d("Connected: " + mAddress.getHostName());
 
         TcpConnection.this.onConnectedAsync();
-
-        if (DEBUG) {
-            Log.d(TAG(), "connected to " + mAddress.toString());
-        }
+        Logger.t(TAG()).d("connected to " + mAddress.toString());
     }
 
     class CmdThread extends Thread {
@@ -145,22 +130,14 @@ abstract public class TcpConnection {
 
         @Override
         public void run() {
-
             MsgThread msgThread = null;
-
             try {
-
                 connectToServer();
-
                 msgThread = new MsgThread();
                 msgThread.start();
-
                 cmdLoop(this);
-
-            } catch (IOException e) {
-
-            } catch (InterruptedException e) {
-
+            } catch (Exception e) {
+                Logger.t(TAG()).e(e, "");
             }
 
             if (msgThread != null) {
@@ -168,13 +145,9 @@ abstract public class TcpConnection {
             }
 
             if (isInterrupted()) {
-                if (DEBUG) {
-                    Log.d(TAG(), "cmd thread interrupted");
-                }
+                Logger.t(TAG()).d("cmd thread interrupted");
             } else {
-                if (DEBUG) {
-                    Log.d(TAG(), "cmd thread error");
-                }
+                Logger.t(TAG()).d("cmd thread error");
                 TcpConnection.this.connectError();
             }
         }
@@ -191,17 +164,13 @@ abstract public class TcpConnection {
             try {
                 msgLoop(this);
             } catch (Exception e) {
-                Log.e(TAG(), "", e);
+                Logger.t(TAG()).e(e, "");
             }
 
             if (isInterrupted()) {
-                if (DEBUG) {
-                    Log.d(TAG(), "msg thread interrupted");
-                }
+                Logger.t(TAG()).d("msg thread interrupted");
             } else {
-                if (DEBUG) {
-                    Log.d(TAG(), "msg thread error");
-                }
+                Logger.t(TAG()).d("msg thread error");
                 TcpConnection.this.connectError();
             }
         }

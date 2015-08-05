@@ -84,7 +84,7 @@ public class CameraDiscovery {
             @Override
             public void onServiceLost(NsdServiceInfo serviceInfo) {
                 mIsStarted.set(false);
-                Log.e(TAG, "onServiceLost");
+                Log.e(TAG, "onServiceLost: " + serviceInfo.getServiceName() + ":" + serviceInfo.getHost());
             }
         };
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
@@ -94,7 +94,7 @@ public class CameraDiscovery {
         return new NsdManager.ResolveListener() {
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.d(TAG, "onResolveFailed: " + errorCode);
+                Log.d(TAG, "onResolveFailed: " + serviceInfo.getServiceName() + " : Error Code:" + errorCode);
             }
 
             @Override
@@ -107,7 +107,11 @@ public class CameraDiscovery {
 
     public void stopDiscoveryImpl() {
         if (mNsdManager != null && mIsStarted.get()) {
-            mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+            try {
+                mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "", e);
+            }
         }
     }
 
