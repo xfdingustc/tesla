@@ -5,12 +5,6 @@
     android:baselineAligned="false"
     android:orientation="vertical" >
 
-    <include
-        android:id="@+id/titlebar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/group_camera_list_title" />
-
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
@@ -23,8 +17,7 @@
             android:layout_height="match_parent"
             android:layout_weight="6" >
 
-            <FrameLayout
-                android:id="@+id/cameraListHolder"
+            <include layout="@layout/group_camera_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="16dp"
@@ -32,8 +25,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp" >
-            </FrameLayout>
+                android:layout_marginTop="16dp"
+                />
         </RelativeLayout>
 
         <LinearLayout

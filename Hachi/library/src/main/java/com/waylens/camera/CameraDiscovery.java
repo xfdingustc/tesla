@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p/>
  * 1) Call static method discoverCameras(Context, Callback) to start the discovery service.
  * 2) You app will be notified with callback when new camera is found. (If there are 2 cameras nearby,
- *    the callback will be called twice.
+ * the callback will be called twice.
  * 3) Stop the discovery service by calling stopDiscovery()
- *
+ * <p/>
  * Created by Richard on 7/30/15.
  */
 public class CameraDiscovery {
@@ -30,6 +30,7 @@ public class CameraDiscovery {
 
     /**
      * Discovery the available cameras
+     *
      * @param context
      * @param callback
      */
@@ -102,7 +103,6 @@ public class CameraDiscovery {
             }
         };
     }
-
 
 
     public void stopDiscoveryImpl() {

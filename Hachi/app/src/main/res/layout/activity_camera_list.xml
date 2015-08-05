@@ -3,12 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <include
-        android:id="@+id/titlebar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/group_camera_list_title" />
-
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
@@ -53,7 +47,6 @@
         style="@style/flatButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/titlebar"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -87,14 +80,12 @@
             android:src="@drawable/btn_wifi_on" />
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/cameraListHolder"
+    <include
+        layout="@layout/group_camera_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@+id/linearLayout1"
         android:layout_below="@+id/linearLayout2"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" >
-    </FrameLayout>
-
+        android:layout_marginRight="16dp"/>
 </RelativeLayout>
