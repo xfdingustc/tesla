@@ -54,14 +54,16 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init();
 
-        initViews();
+
     }
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void init() {
+        super.init();
+        initViews();
     }
 
     private void initViews() {

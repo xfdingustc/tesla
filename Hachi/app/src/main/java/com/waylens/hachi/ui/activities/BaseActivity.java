@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 
 import butterknife.Bind;
@@ -17,6 +19,12 @@ public class BaseActivity extends AppCompatActivity {
     @Nullable
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+
+    protected RequestQueue mRequestQueue;
+
+    protected void init() {
+        mRequestQueue = Volley.newRequestQueue(this);
+    }
 
 
     @Override

@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:fitsSystemWindows="true"
-              android:orientation="vertical">
-
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,7 +17,6 @@
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
             android:paddingTop="12dp">
-
 
 
             <android.support.design.widget.TextInputLayout
@@ -33,10 +30,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/username"
-                    android:inputType="textEmailAddress"/>
+                    android:inputType="textCapWords"/>
             </android.support.design.widget.TextInputLayout>
 
-            <!--  Password Label -->
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,7 +40,21 @@
                 android:layout_marginTop="8dp">
 
                 <EditText
-                    android:id="@+id/etPassword"
+                    android:id="@+id/et_email_reg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/et_password_reg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
@@ -52,45 +62,25 @@
             </android.support.design.widget.TextInputLayout>
 
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <Button
-                    android:id="@+id/btnLogin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:background="?attr/colorPrimary"
-                    android:text="@string/login"
-                    android:textColor="@color/white"/>
-
-                <Button
-                    android:id="@+id/btnForgetPassword"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:layout_toLeftOf="@id/btnLogin"
-                    android:background="?attr/colorPrimary"
-                    android:text="@string/forget_password"
-                    android:textColor="@color/white"/>
-
-            </RelativeLayout>
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="16dp"
+                android:background="?attr/colorPrimary"
+                android:text="@string/signup"
+                android:textColor="@color/white"
+                />
 
 
             <Button
-                android:id="@+id/btnHaveNoAccount"
+                android:id="@+id/btnHaveAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:background="@android:color/transparent"
-                android:text="@string/have_no_account"/>
+                android:text="@string/have_account"/>
 
         </LinearLayout>
-
-
     </ScrollView>
 </LinearLayout>

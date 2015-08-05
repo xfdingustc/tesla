@@ -16,6 +16,7 @@ public class BaseFragment extends Fragment {
 
     protected View mRootView;
 
+
     @Nullable
     protected View createFragmentView(LayoutInflater inflater, ViewGroup container, int layoutResId,
                                       Bundle savedInstanceState) {

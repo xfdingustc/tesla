@@ -30,6 +30,7 @@ dependencies {
     }
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.orhanobut:logger:1.9'
+    compile 'com.mcxiaoke.volley:library:1.0.18'
 
 
 }
