@@ -26,7 +26,7 @@
                 android:layout_marginTop="8dp">
 
                 <EditText
-                    android:id="@+id/etUsername"
+                    android:id="@+id/etUsernameSignup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/username"
@@ -40,7 +40,7 @@
                 android:layout_marginTop="8dp">
 
                 <EditText
-                    android:id="@+id/et_email_reg"
+                    android:id="@+id/etEmailSignup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
@@ -54,16 +54,15 @@
                 android:layout_marginTop="8dp">
 
                 <EditText
-                    android:id="@+id/et_password_reg"
+                    android:id="@+id/etPasswordSignup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
                     android:inputType="textPassword"/>
             </android.support.design.widget.TextInputLayout>
 
-
             <Button
-                android:id="@+id/btnSignUp"
+                android:id="@+id/btnSignup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"

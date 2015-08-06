@@ -216,4 +216,13 @@
     <string name="email">email</string>
     <string name="signup">signup</string>
     <string name="have_account">have account</string>
+    <string name="username_error">username error</string>
+    <string name="email_error">email error</string>
+    <string name="password_error">password error</string>
+    <string name="signup_successfully">signup successfully</string>
+    <string name="unknown_error">unknown error</string>
+    <string name="user_name_exist">username existed</string>
+    <string name="male">male</string>
+    <string name="female">female</string>
+
 </resources>

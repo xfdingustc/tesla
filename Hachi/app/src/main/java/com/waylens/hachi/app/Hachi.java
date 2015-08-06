@@ -15,6 +15,7 @@ import com.transee.common.WifiAdmin;
 import com.transee.vdb.DownloadAdmin;
 import com.transee.vdb.DownloadService;
 import com.waylens.hachi.R;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.views.PrefsUtil;
 
 import java.io.File;
@@ -44,7 +45,10 @@ public class Hachi extends Application {
         mCameraManager = new CameraManager(this);
 
         PrefsUtil.init(this);
-        initLogger();
+        //initLogger();
+
+        SessionManager.initialize(this);
+        SessionManager.getInstance().reloadLoginInfo();
     }
 
     private void initLogger() {
