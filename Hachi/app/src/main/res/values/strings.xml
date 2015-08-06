@@ -224,5 +224,7 @@
     <string name="user_name_exist">username existed</string>
     <string name="male">male</string>
     <string name="female">female</string>
+    <string name="login_successfully">login successfully</string>
+    <string name="user_name_or_password_error">username or password error</string>
 
 </resources>
