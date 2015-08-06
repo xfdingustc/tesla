@@ -1,13 +1,12 @@
 package com.waylens.hachi.session;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
-import com.waylens.hachi.app.PerferenceConstant;
+import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,28 +84,17 @@ public class SessionManager {
         setHasLogined(true);
         try {
             JSONObject userInfo = response.getJSONObject(JsonKey.USER);
-            String userName = userInfo.optString(JsonKey.USERNAME);
-            String userId = userInfo.getString(JsonKey.USER_ID);
-            String avatarUrl = userInfo.getString(JsonKey.AVATAR_URL);
+            mUserName = userInfo.optString(JsonKey.USERNAME);
+            mUserId = userInfo.getString(JsonKey.USER_ID);
+            mToken = response.getString(JsonKey.TOKEN);
+            mAvatarUrl = userInfo.getString(JsonKey.AVATAR_URL);
+
+            PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
+            PreferenceUtils.putString(PreferenceUtils.USER_ID, mUserId);
+            PreferenceUtils.putString(PreferenceUtils.TOKEN, mToken);
+            PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
 
 
-            String token = response.getString(JsonKey.TOKEN);
-
-            this.mUserName = userName;
-            this.mUserId = userId;
-            this.mToken = token;
-            this.mAvatarUrl = avatarUrl;
-
-            SharedPreferences share = mSharedAppContext.getSharedPreferences(PerferenceConstant.PERFERENCE,
-                Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = share.edit();
-            if (userName != null) {
-                editor.putString(PerferenceConstant.USER_NAME, userName);
-            }
-            editor.putString(PerferenceConstant.USER_ID, userId);
-            editor.putString(PerferenceConstant.TOKEN, token);
-            editor.putString(PerferenceConstant.AVATAR_URL, avatarUrl);
-            editor.commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -115,17 +103,17 @@ public class SessionManager {
 
 
     public void reloadLoginInfo() {
-        SharedPreferences share = mSharedAppContext.getSharedPreferences(PerferenceConstant
-            .PERFERENCE, Context.MODE_PRIVATE);
-        this.mUserName = share.getString(PerferenceConstant.USER_NAME, null);
-        this.mUserId = share.getString(PerferenceConstant.USER_ID, ANONYMOUS);
-        this.mToken = share.getString(PerferenceConstant.TOKEN, null);
+        this.mUserName = PreferenceUtils.getString(PreferenceUtils.USER_NAME, null);
+        this.mUserId = PreferenceUtils.getString(PreferenceUtils.USER_ID, ANONYMOUS);
+        this.mToken = PreferenceUtils.getString(PreferenceUtils.TOKEN, null);
+        this.mAvatarUrl = PreferenceUtils.getString(PreferenceUtils.AVATAR_URL, null);
+
         if (mUserName != null && mUserId != null && mToken != null) {
-            mHasLogined = true;
+            setHasLogined(true);
             Logger.t(TAG).d("Reload login info user name = " + mUserName + " user id = " +
                 mUserId + " token = " + mToken);
-        }
-        this.mAvatarUrl = share.getString(PerferenceConstant.AVATAR_URL, null);
+        } 
+
     }
 
 

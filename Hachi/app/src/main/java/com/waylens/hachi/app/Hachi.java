@@ -16,6 +16,7 @@ import com.transee.vdb.DownloadAdmin;
 import com.transee.vdb.DownloadService;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.views.PrefsUtil;
 
 import java.io.File;
@@ -47,8 +48,12 @@ public class Hachi extends Application {
         PrefsUtil.init(this);
         initLogger();
 
+        PreferenceUtils.initialize(this);
+
         SessionManager.initialize(this);
         SessionManager.getInstance().reloadLoginInfo();
+
+
     }
 
     private void initLogger() {
