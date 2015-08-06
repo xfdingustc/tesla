@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -145,6 +144,12 @@ public class LoginActivity extends BaseActivity {
             onLoginSuccessfully();
             //finish();
         }
+
+        private void onLoginSuccessfully() {
+            Snackbar.make(mBtnLogin, getString(R.string.login_successfully), Snackbar.LENGTH_LONG).show();
+            mLoginProgressDialog.dismiss();
+            finish();
+        }
     }
 
 
@@ -154,39 +159,35 @@ public class LoginActivity extends BaseActivity {
         public void onErrorResponse(VolleyError error) {
             onLoginFailed(error);
         }
-    }
 
-    private void onLoginSuccessfully() {
-        Snackbar.make(mBtnLogin, getString(R.string.login_successfully), Snackbar.LENGTH_LONG).show();
-        mLoginProgressDialog.dismiss();
-        finish();
-    }
+        private void onLoginFailed(VolleyError error) {
+            String errorMessageJson = new String(error.networkResponse.data);
 
-    private void onLoginFailed(VolleyError error) {
-        String errorMessageJson = new String(error.networkResponse.data);
-
-        String errorMessage = getString(R.string.unknown_error);
+            String errorMessage = getString(R.string.unknown_error);
 
 
-        try {
-            JSONObject errorJson = new JSONObject(errorMessageJson);
-            Logger.t(TAG).json(errorJson.toString());
-            int code = errorJson.getInt("code");
-            switch (code) {
-                case 20:
-                    errorMessage = getString(R.string.user_name_or_password_error);
-                    mEtUsername.setText("");
-                    mEtPassword.setText("");
-                    break;
-                default:
-                    errorMessage = errorJson.getString("msg");
-                    break;
+            try {
+                JSONObject errorJson = new JSONObject(errorMessageJson);
+                Logger.t(TAG).json(errorJson.toString());
+                int code = errorJson.getInt("code");
+                switch (code) {
+                    case 20:
+                        errorMessage = getString(R.string.user_name_or_password_error);
+                        mEtUsername.setText("");
+                        mEtPassword.setText("");
+                        break;
+                    default:
+                        errorMessage = errorJson.getString("msg");
+                        break;
+                }
+            } catch (JSONException e) {
+                Logger.t(TAG).e("", e);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        Snackbar.make(mBtnLogin, errorMessage, Snackbar.LENGTH_LONG).show();
-        mLoginProgressDialog.dismiss();
+            Snackbar.make(mBtnLogin, errorMessage, Snackbar.LENGTH_LONG).show();
+            mLoginProgressDialog.dismiss();
+        }
     }
+
+
 }
