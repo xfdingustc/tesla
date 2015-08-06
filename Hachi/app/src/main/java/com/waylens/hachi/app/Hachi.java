@@ -45,7 +45,7 @@ public class Hachi extends Application {
         mCameraManager = new CameraManager(this);
 
         PrefsUtil.init(this);
-        //initLogger();
+        initLogger();
 
         SessionManager.initialize(this);
         SessionManager.getInstance().reloadLoginInfo();
