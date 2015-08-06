@@ -10,7 +10,6 @@ import android.net.NetworkInfo;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.transee.ccam.Camera;
 import com.transee.ccam.CameraManager;
 import com.transee.common.ViewAnimation;
@@ -36,7 +36,6 @@ import com.waylens.hachi.app.Hachi;
 
 public class CameraListActivity extends BaseActivity {
 
-    static final boolean DEBUG = false;
     static final String TAG = "CameraListActivity";
 
     static public final String PREF_CAMERA_LIST = "cameraList";
@@ -160,7 +159,7 @@ public class CameraListActivity extends BaseActivity {
         WifiAdmin wifiAdmin = thisApp.getWifiAdmin();
         if (wifiAdmin != null) {
             updateWifiState(wifiAdmin);
-            updateNetwork(wifiAdmin);
+            updateNetwork();
         }
     }
 
@@ -181,9 +180,6 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void startDiscovery() {
-        if (CameraDiscovery.isStarted()) {
-            return;
-        }
         CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
             @Override
             public void onCameraFound(NsdServiceInfo cameraService) {
@@ -254,15 +250,13 @@ public class CameraListActivity extends BaseActivity {
         mTextWifi.setText(title);
     }
 
-    private void updateNetwork(WifiAdmin wifiAdmin) {
+    private void updateNetwork() {
         startDiscovery();
     }
 
     private void setWifiIcon(int resId) {
         if (mWifiAnimation != null) {
-            if (DEBUG) {
-                Log.d(TAG, "=== stop wifi animation ===");
-            }
+            Logger.t(TAG).d("=== stop wifi animation ===");
             mWifiAnimation.stop();
             mWifiAnimation = null;
         }
@@ -273,9 +267,7 @@ public class CameraListActivity extends BaseActivity {
 
     private void startWifiAnimation() {
         if (mWifiAnimation == null) {
-            if (DEBUG) {
-                Log.d(TAG, "--- start wifi animation ---");
-            }
+            Logger.t(TAG).d("--- start wifi animation ---");
             mWifiAnimation = (AnimationDrawable) getResources().getDrawable(R.drawable.wifi);
             mWifiAnimation.setBounds(0, 0, mWifiAnimation.getIntrinsicWidth(), mWifiAnimation.getIntrinsicHeight());
             mWifiIcon.setImageDrawable(mWifiAnimation);
@@ -328,9 +320,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void tryStartPreview() {
-        if (DEBUG) {
-            Log.d(TAG, "tryStartPreview");
-        }
+        Logger.t(TAG).d("tryStartPreview");
         if (!isFinishing()) {
             if (mCameraListAdapter.getConnectedCameras() > 0) {
                 onClickListItem(0, false);
@@ -339,9 +329,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void scheduleStartPreview() {
-        if (DEBUG) {
-            Log.d(TAG, "scheduleStartPreview, scheduled: " + mbStartPreviewScheduled);
-        }
+        Logger.t(TAG).d("scheduleStartPreview, scheduled: " + mbStartPreviewScheduled);
         if (mStartPreviewAction != null && !mbStartPreviewScheduled) {
             mbStartPreviewScheduled = true;
             mHandler.postDelayed(mStartPreviewAction, 1000);
@@ -350,9 +338,7 @@ public class CameraListActivity extends BaseActivity {
 
     private void prepareStartPreview() {
         if (mStartPreviewAction == null && mbAutoPreview) {
-            if (DEBUG) {
-                Log.d(TAG, "create startPreviewAction()");
-            }
+            Logger.t(TAG).d("create startPreviewAction()");
             mStartPreviewAction = new Runnable() {
                 @Override
                 public void run() {
@@ -367,9 +353,7 @@ public class CameraListActivity extends BaseActivity {
 
     private void cancelStartPreview() {
         if (mStartPreviewAction != null) {
-            if (DEBUG) {
-                Log.d(TAG, "cancelAutoAction");
-            }
+            Logger.t(TAG).d("cancelAutoAction");
             mHandler.removeCallbacksAndMessages(mStartPreviewAction);
             mStartPreviewAction = null;
             mbStartPreviewScheduled = false;
@@ -442,9 +426,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void onCameraScaned(String wifiName, String wifiPassword) {
-        if (DEBUG) {
-            Log.d(TAG, "camera added: " + wifiName + ", " + wifiPassword);
-        }
+        Logger.t(TAG).d("camera added: " + wifiName + ", " + wifiPassword);
         // onActivityResult() is before onStart(),
         // so save the info and do connect in onStart();
         mNewCameraSSID = wifiName;
@@ -454,9 +436,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void onWifiSetupDone(String ssid, String hostString) {
-        if (DEBUG) {
-            Log.d(TAG, "wifi setup done: " + ssid + ", " + hostString);
-        }
+        Logger.t(TAG).d("wifi setup done: " + ssid + ", " + hostString);
         // onActivityResult() is before onStart(),
         mSetupWifi_SSID = ssid;
         mSetupWifi_hostString = hostString;
@@ -651,8 +631,7 @@ public class CameraListActivity extends BaseActivity {
 
     private void onServiceResolved(Camera.ServiceInfo serviceInfo) {
         WifiAdmin wifiAdmin = thisApp.getWifiAdmin();
-        String ssid = wifiAdmin == null ? null : wifiAdmin.getCurrSSID();
-        serviceInfo.ssid = ssid;
+        serviceInfo.ssid = wifiAdmin == null ? null : wifiAdmin.getCurrSSID();
         mCameraListAdapter.connectCamera(serviceInfo);
     }
 
@@ -712,18 +691,14 @@ public class CameraListActivity extends BaseActivity {
 
         @Override
         public void networkStateChanged(WifiAdmin wifiAdmin) {
-            if (DEBUG) {
-                Log.d(TAG, "networkStateChanged");
-            }
+            Logger.t(TAG).d("networkStateChanged");
             updateWifiState(wifiAdmin);
-            updateNetwork(wifiAdmin);
+            updateNetwork();
         }
 
         @Override
         public void wifiScanResult(WifiAdmin wifiAdmin) {
-            if (DEBUG) {
-                Log.d(TAG, "wifiScanResult");
-            }
+            Logger.t(TAG).d("wifiScanResult");
             onScanWifiDone(wifiAdmin);
         }
 

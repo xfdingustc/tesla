@@ -5,6 +5,9 @@ import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
+import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -22,11 +25,11 @@ public class CameraDiscovery {
 
     private static final String SERVICE_TYPE = "_ccam._tcp";
 
-    private NsdManager mNsdManager;
-    private NsdManager.DiscoveryListener mDiscoveryListener;
+    NsdManager mNsdManager;
+    NsdManager.DiscoveryListener mDiscoveryListener;
+    AtomicBoolean mIsStarted = new AtomicBoolean(false);
 
     private static CameraDiscovery _INSTANCE = new CameraDiscovery();
-    private AtomicBoolean mIsStarted = new AtomicBoolean(false);
 
     /**
      * Discovery the available cameras
@@ -48,30 +51,35 @@ public class CameraDiscovery {
 
     private void discoverCamerasImpl(Context context, final Callback callback) {
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
+
+        if (mDiscoveryListener != null) {
+            stopDiscoveryImpl();
+        }
+
         mDiscoveryListener = new NsdManager.DiscoveryListener() {
 
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 mIsStarted.set(false);
                 callback.onError(errorCode);
-                Log.d(TAG, "onStartDiscoveryFailed: " + errorCode);
+                Logger.t(TAG).d("onStartDiscoveryFailed: " + errorCode);
             }
 
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.d(TAG, "onStopDiscoveryFailed: " + errorCode);
+                Logger.t(TAG).d("onStopDiscoveryFailed: " + errorCode);
             }
 
             @Override
             public void onDiscoveryStarted(String serviceType) {
                 mIsStarted.set(true);
-                Log.d(TAG, "onDiscoveryStarted: " + serviceType);
+                Logger.t(TAG).d("onDiscoveryStarted: " + serviceType);
             }
 
             @Override
             public void onDiscoveryStopped(String serviceType) {
                 mIsStarted.set(false);
-                Log.d(TAG, "onDiscoveryStopped: " + serviceType);
+                Logger.t(TAG).d("onDiscoveryStopped: " + serviceType);
             }
 
             @Override
@@ -94,7 +102,7 @@ public class CameraDiscovery {
         return new NsdManager.ResolveListener() {
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.d(TAG, "onResolveFailed: " + serviceInfo.getServiceName() + " : Error Code:" + errorCode);
+                Logger.t(TAG).d("onResolveFailed: " + serviceInfo.getServiceName() + " : Error Code:" + errorCode);
             }
 
             @Override
@@ -106,12 +114,11 @@ public class CameraDiscovery {
 
 
     public void stopDiscoveryImpl() {
-        if (mNsdManager != null && mIsStarted.get()) {
-            try {
-                mNsdManager.stopServiceDiscovery(mDiscoveryListener);
-            } catch (IllegalArgumentException e) {
-                Log.e(TAG, "", e);
-            }
+        try {
+            mIsStarted.set(false);
+            mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+        } catch (IllegalArgumentException e) {
+            Logger.t(TAG).d("", e);
         }
     }
 
