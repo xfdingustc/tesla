@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 
+import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.CameraManager;
 import com.transee.common.WifiAdmin;
@@ -54,6 +55,11 @@ public class Hachi extends Application {
         SessionManager.getInstance().reloadLoginInfo();
 
 
+        initFacebookSDK();
+    }
+
+    private void initFacebookSDK() {
+        FacebookSdk.sdkInitialize(this);
     }
 
     private void initLogger() {

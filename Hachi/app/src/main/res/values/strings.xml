@@ -226,5 +226,5 @@
     <string name="female">female</string>
     <string name="login_successfully">login successfully</string>
     <string name="user_name_or_password_error">username or password error</string>
-
+    <string name="facebook_app_id">400866993445789</string>
 </resources>

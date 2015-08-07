@@ -19,6 +19,11 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
+
 dependencies {
     compile project(':library')
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -32,6 +37,6 @@ dependencies {
     compile 'com.orhanobut:logger:1.9'
     compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.afollestad:material-dialogs:0.7.6.0'
-
+    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
 
 }

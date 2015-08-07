@@ -21,6 +21,15 @@
             android:paddingTop="12dp">
 
 
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp" />
+
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
