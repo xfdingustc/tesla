@@ -2,8 +2,8 @@ package com.transee.ccam;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
-import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.transee.common.Utils;
 
 import java.net.InetAddress;
@@ -12,7 +12,6 @@ import java.util.List;
 
 public class CameraManager {
 
-    static final boolean DEBUG = false;
     static final String TAG = "CameraManager";
     static final String PASSWORD_FILE = "wifipass";
 
@@ -65,18 +64,14 @@ public class CameraManager {
     // API
     public void addCallback(Callback callback) {
         mCallbackList.add(callback);
-        if (DEBUG) {
-            Log.d(TAG, "add callback: " + callback);
-        }
+        Logger.t(TAG).d("add callback: " + callback);
     }
 
     // API
     public void removeCallback(Callback callback) {
-        if (DEBUG) {
-            Log.d(TAG, "remove callback: " + callback);
-        }
+        Logger.t(TAG).d("remove callback: " + callback);
         if (!mCallbackList.remove(callback)) {
-            Log.w(TAG, "remove callback failed!");
+            Logger.t(TAG).d("remove callback failed!");
         }
     }
 
@@ -98,9 +93,7 @@ public class CameraManager {
                 }
 
                 if (wifiExistsInCameraLists(ssid)) {
-                    if (DEBUG) {
-                        Log.d(TAG, ssid + " already in camera list");
-                    }
+                    Logger.t(TAG).d(ssid + " already in camera list");
                     continue;
                 }
 
@@ -113,9 +106,7 @@ public class CameraManager {
                 String password = getPassword(ssid);
                 item = new WifiItem(ssid, password, TAG_ADDED);
                 mWifiList.add(item);
-                if (DEBUG) {
-                    Log.d(TAG, "add wifi cam " + item.mSSID);
-                }
+                Logger.t(TAG).d("add wifi cam " + item.mSSID);
             }
         }
 
@@ -136,9 +127,7 @@ public class CameraManager {
             index++;
         }
 
-        if (DEBUG) {
-            Log.d(TAG, "wifi list: removed " + nRemoved + ", added " + nAdded);
-        }
+        Logger.t(TAG).d("wifi list: removed " + nRemoved + ", added " + nAdded);
 
         if (nRemoved + nAdded > 0) {
             for (Callback callback : mCallbackList) {
@@ -209,9 +198,7 @@ public class CameraManager {
 
         WifiItem item = findWifi(serviceInfo.ssid);
         if (item != null) {
-            if (DEBUG) {
-                Log.d(TAG, "connecting wifi " + serviceInfo.ssid);
-            }
+            Logger.t(TAG).d("connecting wifi " + serviceInfo.ssid);
             removeWifi(serviceInfo.ssid);
         }
 
@@ -367,9 +354,7 @@ public class CameraManager {
             if (c == camera) {
                 mConnectingCameras.remove(index);
                 mConnectedCameras.add(camera);
-                if (DEBUG) {
-                    Log.d(TAG, "camera connected: " + camera.getInetSocketAddress());
-                }
+                Logger.t(TAG).d("camera connected: " + camera.getInetSocketAddress());
                 for (Callback callback : mCallbackList) {
                     callback.onCameraConnected(this, camera);
                 }
@@ -377,9 +362,7 @@ public class CameraManager {
             }
             index++;
         }
-        if (DEBUG) {
-            Log.d(TAG, "camera connected, but was not connecting, stop it");
-        }
+        Logger.t(TAG).d("camera connected, but was not connecting, stop it");
         camera.getClient().stop();
     }
 
@@ -389,15 +372,10 @@ public class CameraManager {
         camera.removeCallback(mCameraCallback);
         camera.getClient().stop();
 
-        for (int i = 0; i > mConnectedCameras.size(); i++) {
+        for (int i = 0; i < mConnectedCameras.size(); i++) {
             if (mConnectedCameras.get(i) == camera) {
                 mConnectedCameras.remove(i);
-                if (DEBUG) {
-                    Log.d(TAG, "camera disconnected " + camera.getInetSocketAddress());
-                }
-                for (Callback callback : mCallbackList) {
-                    callback.onCameraDisconnected(this, camera);
-                }
+                Logger.t(TAG).d("camera disconnected " + camera.getInetSocketAddress());
                 break;
             }
         }
@@ -409,11 +387,12 @@ public class CameraManager {
                 break;
             }
         }
-
-
-        if (DEBUG) {
-            Log.d(TAG, "camera disconnected, but was not connected");
+        for (Callback callback : mCallbackList) {
+            callback.onCameraDisconnected(this, camera);
         }
+
+
+        Logger.t(TAG).d("camera disconnected, but was not connected");
     }
 
     private void onCameraStateChanged(Camera camera) {

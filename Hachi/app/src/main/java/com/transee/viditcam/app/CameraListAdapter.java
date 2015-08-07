@@ -53,8 +53,6 @@ abstract public class CameraListAdapter extends BaseAdapter {
     public void stopAndClear() {
         if (mCameraManager != null) {
             mCameraManager.removeCallback(mCameraManagerCallback);
-            mCameraManager.clearAll();
-            mCameraManager = null;
         }
         if (mShowRecordTimer != null) {
             mShowRecordTimer.cancel();
