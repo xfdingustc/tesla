@@ -52,7 +52,7 @@
             android:theme="@style/AppTheme.NoBackground">
         </activity>
         <activity
-            android:name="com.transee.viditcam.app.CameraVideoActivity"
+            android:name=".ui.activities.CameraVideoActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_camera_video"
             android:theme="@style/AppTheme.NoBackground">

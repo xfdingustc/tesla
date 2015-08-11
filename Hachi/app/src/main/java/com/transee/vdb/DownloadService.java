@@ -10,7 +10,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.transee.viditcam.app.CameraVideoActivity;
+import com.waylens.hachi.ui.activities.CameraVideoActivity;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 

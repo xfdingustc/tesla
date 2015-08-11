@@ -51,6 +51,7 @@ import com.transee.vdb.VdbClient;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.ui.activities.CameraVideoActivity;
 import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;

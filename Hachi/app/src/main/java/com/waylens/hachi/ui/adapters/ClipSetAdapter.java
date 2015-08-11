@@ -14,9 +14,9 @@ import com.transee.vdb.ClipSet;
 import com.transee.vdb.DownloadingClip;
 import com.transee.vdb.ImageDecoder;
 import com.transee.vdb.Vdb;
-import com.transee.viditcam.app.BaseActivity;
 import com.transee.viditcam.app.MediaHelper;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BaseActivity;
 
 import java.util.Locale;
 

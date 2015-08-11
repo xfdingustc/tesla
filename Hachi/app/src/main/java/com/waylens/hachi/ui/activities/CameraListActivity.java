@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,7 +35,6 @@ import com.waylens.hachi.app.Hachi;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 
 public class CameraListActivity extends BaseActivity {
     private static final String TAG = CameraListActivity.class.getSimpleName();

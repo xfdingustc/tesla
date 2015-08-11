@@ -172,14 +172,7 @@ public class BaseActivity extends Activity {
 	*/
 
 	// API
-	protected boolean isLocalActivity(Bundle bundle) {
-		return bundle.getBoolean(IS_LOCAL, true);
-	}
 
-	// API
-	protected boolean isPcServer(Bundle bundle) {
-		return bundle.getBoolean(IS_PC_SERVER, false);
-	}
 
 	// API
 	protected boolean isServerActivity(Bundle bundle) {

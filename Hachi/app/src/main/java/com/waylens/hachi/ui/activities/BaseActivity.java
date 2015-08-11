@@ -1,16 +1,23 @@
 package com.waylens.hachi.ui.activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.PopupWindow;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.transee.ccam.Camera;
+import com.transee.ccam.CameraManager;
 import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -24,12 +31,20 @@ public class BaseActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
+    public Hachi thisApp;
+
     protected RequestQueue mRequestQueue;
 
     protected void init() {
         mRequestQueue = Volley.newRequestQueue(this);
+
     }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        thisApp = (Hachi)getApplication();
+    }
 
     @Override
     public void setContentView(int layoutResID) {
@@ -96,6 +111,94 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             return states.mCameraName;
         }
+    }
+
+    protected boolean isLocalActivity(Bundle bundle) {
+        return bundle.getBoolean(IS_LOCAL, true);
+    }
+
+    // API
+    protected boolean isPcServer(Bundle bundle) {
+        return bundle.getBoolean(IS_PC_SERVER, false);
+    }
+
+    protected boolean isServerActivity(Bundle bundle) {
+        return bundle.getBoolean(IS_PC_SERVER, false);
+    }
+
+
+    protected String getServerAddress(Bundle bundle) {
+        return bundle.getString(HOST_STRING);
+    }
+
+    protected Camera getCameraFromIntent(Bundle bundle) {
+        if (bundle == null) {
+            bundle = getIntent().getExtras();
+        }
+        String ssid = bundle.getString(SSID);
+        String hostString = bundle.getString(HOST_STRING);
+        if (ssid == null || hostString == null) {
+            return null;
+        }
+        CameraManager cameraManager = ((Hachi)getApplication()).getCameraManager();
+        Camera camera = cameraManager.findConnectedCamera(ssid, hostString);
+        return camera;
+    }
+
+
+    protected boolean mbRotating;
+    public final boolean isRotating() {
+        return mbRotating;
+    }
+
+    protected int mOrientation;
+    // API
+    public final boolean isLandscape() {
+        return mOrientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    // API
+    public final boolean isPortrait() {
+        return mOrientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    protected PopupWindow mPopupWindow;
+    public void setPopupWindow(PopupWindow popupWindow, boolean bHookDismiss) {
+        if (mPopupWindow != null) {
+            mPopupWindow.dismiss();
+        }
+        mPopupWindow = popupWindow;
+        if (bHookDismiss) {
+            mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    mPopupWindow = null;
+                }
+            });
+        }
+    }
+
+    public PopupWindow createPopupWindow(View layout) {
+        Drawable background = getResources().getDrawable(R.drawable.new_menu_bg);
+        Rect prect = new Rect();
+        background.getPadding(prect);
+
+        int width = layout.getMeasuredWidth() + prect.left + prect.right;
+        int height = layout.getMeasuredHeight() + prect.top + prect.bottom;
+
+        PopupWindow window = new PopupWindow(layout, width, height, true);
+
+        // window.setWindowLayoutMode(LayoutParams.WRAP_CONTENT,
+        // LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(background);
+        window.setOutsideTouchable(true);
+        // window.setFocusable(true);
+        window.setAnimationStyle(android.R.style.Animation_Dialog);
+        window.update();
+
+        setPopupWindow(window, true);
+
+        return window;
     }
 
 }

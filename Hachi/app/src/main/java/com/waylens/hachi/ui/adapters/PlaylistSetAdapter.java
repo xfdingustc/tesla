@@ -14,9 +14,9 @@ import com.transee.vdb.ImageDecoder;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.PlaylistSet;
 import com.transee.vdb.Vdb;
-import com.transee.viditcam.app.BaseActivity;
 import com.transee.viditcam.app.VdbFormatter;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BaseActivity;
 
 public abstract class PlaylistSetAdapter extends VideoListAdapter {
 
