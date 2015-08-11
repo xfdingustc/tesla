@@ -40,7 +40,7 @@
         <service android:name="com.transee.vdb.DownloadService"/>
 
         <activity
-            android:name="com.transee.viditcam.app.CameraListActivity"
+            android:name=".ui.activities.CameraListActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name">
         </activity>

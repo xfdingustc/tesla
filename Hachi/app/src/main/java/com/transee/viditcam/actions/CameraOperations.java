@@ -1,6 +1,7 @@
 package com.transee.viditcam.actions;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,15 +29,15 @@ abstract public class CameraOperations {
 
 	abstract protected void onClickWifiMode(CameraOperations action);
 
-	private final BaseActivity mActivity;
+	private final Activity mActivity;
 	private View mLayout;
-	private final PopupWindow mWindow;
+	private PopupWindow mWindow;
 
 	public String mSSID;
 	public String mHostString; // null: camera not connected
 
 	@SuppressLint("InflateParams")
-	public CameraOperations(BaseActivity activity, Camera camera, String titleString, String ssid, String hostString) {
+	public CameraOperations(Activity activity, Camera camera, String titleString, String ssid, String hostString) {
 		mActivity = activity;
 		mSSID = ssid;
 		mHostString = hostString;
@@ -116,7 +117,7 @@ abstract public class CameraOperations {
 		}
 
 		mLayout.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-		mWindow = activity.createPopupWindow(mLayout);
+		//mWindow = activity.createPopupWindow(mLayout);
 	}
 
 	public void show(View anchor) {

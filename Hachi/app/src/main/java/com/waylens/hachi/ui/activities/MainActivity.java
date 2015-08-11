@@ -10,7 +10,6 @@ import android.support.design.widget.TabLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.transee.viditcam.app.CameraListActivity;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.AccountFragment;
 import com.waylens.hachi.ui.fragments.HomeFragment;
@@ -53,10 +52,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         init();
-
-
     }
 
 
@@ -67,6 +63,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initViews() {
+        setContentView(R.layout.activity_main);
         for (int i = 0; i < mTabList.length; i++) {
             TabLayout.Tab tab = mMainTabs.newTab();
             tab.setIcon(mTabList[i].mIconRes);

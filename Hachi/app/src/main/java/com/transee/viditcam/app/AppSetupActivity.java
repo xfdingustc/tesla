@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.waylens.hachi.R;
 import com.transee.viditcam.app.comp.MapProvider;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.ui.activities.CameraListActivity;
 import com.waylens.hachi.views.PrefsUtil;
 
 public class AppSetupActivity extends BaseActivity {
