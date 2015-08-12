@@ -142,7 +142,6 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 
 	private void performFinish() {
 		finish();
-		Hachi.slideOutToRight(this, true);
 	}
 
 	private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {

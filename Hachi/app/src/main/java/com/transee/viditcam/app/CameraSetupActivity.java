@@ -558,7 +558,6 @@ public class CameraSetupActivity extends BaseActivity {
 	@Override
 	public void onBackPressed() {
 		finish();
-		Hachi.slideOutToRight(this, false);
 	}
 
 	private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {

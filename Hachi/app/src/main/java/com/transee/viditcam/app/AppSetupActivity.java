@@ -207,7 +207,7 @@ public class AppSetupActivity extends BaseActivity {
 	@Override
 	public void onBackPressed() {
 		finish();
-		Hachi.slideOutToRight(this, false);
+
 	}
 
 	public void onGPSRadioButtonClicked(View view) {

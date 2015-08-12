@@ -50,7 +50,6 @@ import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.ui.activities.CameraVideoActivity;
 import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
@@ -253,7 +252,7 @@ public class CameraControlActivity extends BaseActivity {
         VdbClient.Callback vdbClientCallback = new VdbClient.Callback() {
             @Override
             public void onConnectionErrorAsync() {
-                Log.e(TAG,"onConnectionErrorAsync");
+                Log.e(TAG, "onConnectionErrorAsync");
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -265,133 +264,133 @@ public class CameraControlActivity extends BaseActivity {
 
             @Override
             public void onVdbMounted() {
-                Log.e(TAG,"onVdbMounted");
+                Log.e(TAG, "onVdbMounted");
             }
 
             @Override
             public void onVdbUnmounted() {
-                Log.e(TAG,"onVdbUnmounted");
+                Log.e(TAG, "onVdbUnmounted");
             }
 
             @Override
             public void onClipSetInfoAsync(ClipSet clipSet) {
-                Log.e(TAG,"onClipSetInfoAsync");
+                Log.e(TAG, "onClipSetInfoAsync");
             }
 
             @Override
             public void onPlaylistSetInfoAsync(PlaylistSet playlistSet) {
-                Log.e(TAG,"onPlaylistSetInfoAsync");
+                Log.e(TAG, "onPlaylistSetInfoAsync");
             }
 
             @Override
             public void onImageDataAsync(ClipPos clipPos, byte[] data) {
-                Log.e(TAG,"onImageDataAsync");
+                Log.e(TAG, "onImageDataAsync");
             }
 
             @Override
             public void onBitmapDataAsync(ClipPos clipPos, Bitmap bitmap) {
-                Log.e(TAG,"onBitmapDataAsync");
+                Log.e(TAG, "onBitmapDataAsync");
             }
 
             @Override
             public void onPlaylistIndexPicDataAsync(ClipPos posterPoint, byte[] data) {
-                Log.e(TAG,"onPlaylistIndexPicDataAsync");
+                Log.e(TAG, "onPlaylistIndexPicDataAsync");
             }
 
             @Override
             public void onDownloadUrlFailedAsync() {
-                Log.e(TAG,"onDownloadUrlFailedAsync");
+                Log.e(TAG, "onDownloadUrlFailedAsync");
             }
 
             @Override
             public void onDownloadUrlReadyAsync(VdbClient.DownloadInfoEx downloadInfom, boolean bFirstLoop) {
-                Log.e(TAG,"onDownloadUrlReadyAsync");
+                Log.e(TAG, "onDownloadUrlReadyAsync");
             }
 
             @Override
             public void onPlaybackUrlReadyAsync(VdbClient.PlaybackUrl playbackUrl) {
-                Log.e(TAG,"onPlaybackUrlReadyAsync");
+                Log.e(TAG, "onPlaybackUrlReadyAsync");
             }
 
             @Override
             public void onGetPlaybackUrlErrorAsync() {
-                Log.e(TAG,"onGetPlaybackUrlErrorAsync");
+                Log.e(TAG, "onGetPlaybackUrlErrorAsync");
             }
 
             @Override
             public void onPlaylistPlaybackUrlReadyAsync(VdbClient.PlaylistPlaybackUrl playlistPlaybackUrl) {
-                Log.e(TAG,"onPlaylistPlaybackUrlReadyAsync");
+                Log.e(TAG, "onPlaylistPlaybackUrlReadyAsync");
             }
 
             @Override
             public void onGetPlaylistPlaybackUrlErrorAsync() {
-                Log.e(TAG,"onGetPlaylistPlaybackUrlErrorAsync");
+                Log.e(TAG, "onGetPlaylistPlaybackUrlErrorAsync");
             }
 
             @Override
             public void onMarkClipResultAsync(int error) {
-                Log.e(TAG,"onMarkClipResultAsync");
+                Log.e(TAG, "onMarkClipResultAsync");
             }
 
             @Override
             public void onDeleteClipResultAsync(int error) {
-                Log.e(TAG,"onDeleteClipResultAsync");
+                Log.e(TAG, "onDeleteClipResultAsync");
             }
 
             @Override
             public void onInsertClipResultAsync(int error) {
-                Log.e(TAG,"onInsertClipResultAsync");
+                Log.e(TAG, "onInsertClipResultAsync");
             }
 
             @Override
             public void onClipInfoAsync(int action, boolean isLive, Clip clip) {
-                Log.e(TAG,"onClipInfoAsync");
+                Log.e(TAG, "onClipInfoAsync");
             }
 
             @Override
             public void onMarkLiveClipInfo(int action, Clip clip, Vdb.MarkLiveInfo info) {
-                Log.e(TAG,"onMarkLiveClipInfo");
+                Log.e(TAG, "onMarkLiveClipInfo");
             }
 
             @Override
             public void onClipRemovedAsync(Clip.ID cid) {
-                Log.e(TAG,"onClipRemovedAsync");
+                Log.e(TAG, "onClipRemovedAsync");
             }
 
             @Override
             public void onPlaylistClearedAsync(int playlistId) {
-                Log.e(TAG,"onPlaylistClearedAsync");
+                Log.e(TAG, "onPlaylistClearedAsync");
             }
 
             @Override
             public void onDownloadFinished(int id, String outputFile) {
-                Log.e(TAG,"onDownloadFinished");
+                Log.e(TAG, "onDownloadFinished");
             }
 
             @Override
             public void onDownloadStarted(int id) {
-                Log.e(TAG,"onDownloadStarted");
+                Log.e(TAG, "onDownloadStarted");
             }
 
             @Override
             public void onDownloadError(int id) {
-                Log.e(TAG,"onDownloadError");
+                Log.e(TAG, "onDownloadError");
             }
 
             @Override
             public void onDownloadProgress(int id, int progress) {
-                Log.e(TAG,"onDownloadProgress");
+                Log.e(TAG, "onDownloadProgress");
             }
 
             @Override
             public void onRawDataResultAsync(VdbClient.RawDataResult rawDataResult) {
-                Log.e(TAG,"onRawDataResultAsync");
+                Log.e(TAG, "onRawDataResultAsync");
             }
 
             @Override
             public void onRawDataAsync(int dataType, byte[] data) {
                 if (dataType == VdbClient.RAW_DATA_GPS
-                        && gpsSource == PrefsUtil.GPS_CAMERA) {
+                    && gpsSource == PrefsUtil.GPS_CAMERA) {
                     try {
                         final GPSRawData gpsRawData = GPSRawData.translate(data);
                         Log.e("gpsdata", "lat, lon: " + gpsRawData.coord.lat_orig + ", " + gpsRawData.coord.lng_orig);
@@ -431,22 +430,22 @@ public class CameraControlActivity extends BaseActivity {
 
             @Override
             public void onRawDataBlockAsync(VdbClient.RawDataBlock block) {
-                Log.e(TAG,"onRawDataBlockAsync");
+                Log.e(TAG, "onRawDataBlockAsync");
             }
 
             @Override
             public void onDownloadRawDataBlockAsync(VdbClient.DownloadRawDataBlock block) {
-                Log.e(TAG,"onDownloadRawDataBlockAsync");
+                Log.e(TAG, "onDownloadRawDataBlockAsync");
             }
 
             @Override
             public void onBufferSpaceLowAsync(RemoteVdbClient.BufferSpaceLowInfo info) {
-                Log.e(TAG,"onBufferSpaceLowAsync");
+                Log.e(TAG, "onBufferSpaceLowAsync");
             }
 
             @Override
             public void onBufferFullAsync() {
-                Log.e(TAG,"onBufferFullAsync");
+                Log.e(TAG, "onBufferFullAsync");
             }
         };
         String path = Environment.getExternalStoragePublicDirectory("richard-vidit").getAbsolutePath();
@@ -518,7 +517,7 @@ public class CameraControlActivity extends BaseActivity {
 
         BtState btState = Camera.getBtStates(mCamera);
         return (btState.mBtState == BtState.BT_State_Enabled)
-                && (btState.mObdState.mState == BtState.BTDEV_State_On);
+            && (btState.mObdState.mState == BtState.BTDEV_State_On);
     }
 
     private String getHostString(Camera camera) {
@@ -740,8 +739,8 @@ public class CameraControlActivity extends BaseActivity {
             return;
         }
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://api.worldweatheronline.com")
-                .build();
+            .setEndpoint("http://api.worldweatheronline.com")
+            .build();
         WeatherService service = restAdapter.create(WeatherService.class);
         Callback<Response> callback = new Callback<Response>() {
             @Override
@@ -994,7 +993,7 @@ public class CameraControlActivity extends BaseActivity {
     private void updateModeState() {
         CameraState states = Camera.getCameraStates(mCamera);
         if (states.canDoStillCapture()
-                && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
+            && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
             mModeView.setVisibility(View.VISIBLE);
             mTextRecordState.setText("");
             if (states.mbIsStill) {
@@ -1103,7 +1102,7 @@ public class CameraControlActivity extends BaseActivity {
 
     private void performFinish() {
         finish();
-        Hachi.slideOutToRight(this, true);
+
     }
 
     private void onMjpegConnectionError(int error) {

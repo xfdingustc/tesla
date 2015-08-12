@@ -180,7 +180,6 @@ public class CameraVideoActivity extends BaseActivity {
     private void performFinish() {
         if (!isFinishing()) {
             finish();
-            Hachi.slideOutToRight(this, false);
         }
     }
 

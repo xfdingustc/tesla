@@ -177,7 +177,6 @@ public class CameraWifiSetupActivity extends BaseActivity {
 			setResult(RESULT_OK, intent);
 		}
 		finish();
-		Hachi.slideOutToRight(this, true);
 	}
 
 	private void onScanWifiDone(WifiAdmin wifiAdmin) {

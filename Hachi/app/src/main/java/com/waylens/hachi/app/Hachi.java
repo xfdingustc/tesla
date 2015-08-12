@@ -69,35 +69,9 @@ public class Hachi extends Application {
             .hideThreadInfo();
     }
 
-
-
-
-    static public class StorageInfo {
-        public String firstStorage;
-        public String secondStorage;
-    }
-
-
-
     // API
     public CameraManager getCameraManager() {
         return mCameraManager;
-    }
-
-    static public void slideInFromLeft(Activity activity, boolean bPush) {
-        if (!bPush) {
-            activity.overridePendingTransition(R.anim.in_from_left, R.anim.keep);
-        } else {
-            activity.overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
-        }
-    }
-
-    static public void slideOutToRight(Activity activity, boolean bPush) {
-        if (!bPush) {
-            activity.overridePendingTransition(R.anim.keep, R.anim.out_to_right);
-        } else {
-            activity.overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
-        }
     }
 
     static private final String getPath(String subdir) {
