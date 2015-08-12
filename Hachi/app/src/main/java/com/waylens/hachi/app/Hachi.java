@@ -1,6 +1,5 @@
 package com.waylens.hachi.app;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +11,9 @@ import android.util.Log;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.CameraManager;
-import com.transee.common.WifiAdmin;
+import com.waylens.hachi.hardware.WifiAdmin;
 import com.transee.vdb.DownloadAdmin;
 import com.transee.vdb.DownloadService;
-import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.views.PrefsUtil;

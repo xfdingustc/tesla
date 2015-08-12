@@ -22,7 +22,7 @@ import com.transee.ccam.Camera;
 import com.transee.ccam.CameraManager;
 import com.transee.common.ViewAnimation;
 import com.transee.common.ViewAnimation.Animation;
-import com.transee.common.WifiAdmin;
+import com.waylens.hachi.hardware.WifiAdmin;
 import com.transee.viditcam.actions.CameraOperations;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.transee.viditcam.actions.GetCameraPassword;

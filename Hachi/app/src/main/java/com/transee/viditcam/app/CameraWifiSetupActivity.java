@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.transee.ccam.Camera;
 import com.transee.ccam.CameraClient;
-import com.transee.common.WifiAdmin;
+import com.waylens.hachi.hardware.WifiAdmin;
 import com.waylens.hachi.R;
 import com.transee.viditcam.actions.GetWifiAP;
 import com.transee.viditcam.actions.RemoveWifiAP;

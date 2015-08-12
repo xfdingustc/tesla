@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.transee.common.Utils;
-import com.transee.common.WifiAdmin;
+import com.waylens.hachi.hardware.WifiAdmin;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 
