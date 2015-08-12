@@ -296,21 +296,18 @@ public class CameraSetupActivity extends BaseActivity {
 	private void onChangeWifiMode() {
 		if (mCamera != null) {
 			super.startCameraActivity(mCamera, CameraWifiSetupActivity.class);
-			Hachi.slideInFromRight(this, true);
 		}
 	}
 
 	private void onClickVideoOverlay() {
 		if (mCamera != null) {
 			super.startCameraActivity(mCamera, CameraOverlaySetupActivity.class);
-			Hachi.slideInFromRight(this, true);
 		}
 	}
 
 	private void onClickBluetooth() {
 		if (getBtStates().mBtSupport == BtState.BT_Support_Yes) {
 			super.startCameraActivity(mCamera, CameraBtSetupActivity.class);
-			Hachi.slideInFromRight(this, true);
 		}
 	}
 

@@ -97,13 +97,6 @@ abstract public class CameraVideoList {
         }
     }
 
-    // API
-    public void onCreateActivity(Bundle savedInstanceState) {
-    }
-
-    // API
-    public void onDestroyActivity() {
-    }
 
     public void show() {
         mLayout.setVisibility(View.VISIBLE);
@@ -208,13 +201,6 @@ abstract public class CameraVideoList {
         }
     }
 
-    // API
-    public void onPauseActivity() {
-    }
-
-    // API
-    public void onResumeActivity() {
-    }
 
     private final View findViewById(int id) {
         return mLayout.findViewById(id);

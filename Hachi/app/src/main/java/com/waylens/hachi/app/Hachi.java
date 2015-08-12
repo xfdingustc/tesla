@@ -92,22 +92,6 @@ public class Hachi extends Application {
         }
     }
 
-    static public void slideOutToLeft(Activity activity, boolean bPush) {
-        if (!bPush) {
-            activity.overridePendingTransition(R.anim.keep, R.anim.out_to_left);
-        } else {
-            activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-        }
-    }
-
-    static public void slideInFromRight(Activity activity, boolean bPush) {
-        if (!bPush) {
-            activity.overridePendingTransition(R.anim.in_from_right, R.anim.keep);
-        } else {
-            activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-        }
-    }
-
     static public void slideOutToRight(Activity activity, boolean bPush) {
         if (!bPush) {
             activity.overridePendingTransition(R.anim.keep, R.anim.out_to_right);

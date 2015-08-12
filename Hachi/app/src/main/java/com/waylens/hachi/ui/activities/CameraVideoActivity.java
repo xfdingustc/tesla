@@ -26,6 +26,8 @@ import com.transee.vdb.VdbClient.RawDataResult;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 
+import butterknife.Bind;
+
 public class CameraVideoActivity extends BaseActivity {
     private static final String TAG = CameraVideoActivity.class.getSimpleName();
 
@@ -35,6 +37,10 @@ public class CameraVideoActivity extends BaseActivity {
 
     private CameraVideoList mCameraVideoList;
     private CameraVideoEdit mCameraVideoEdit;
+
+
+    @Bind(R.id.titleBar)
+    TextView mTitleText;
 
 
     @Override
@@ -60,7 +66,6 @@ public class CameraVideoActivity extends BaseActivity {
         mCameraVideoList = new MyCameraVideoList(this, isPcServer(bundle), mVdb, mImageDecoder);
         mCameraVideoEdit = new MyCameraVideoEdit(this, mVdb, mImageDecoder);
 
-        mCameraVideoList.onCreateActivity(savedInstanceState);
         mCameraVideoEdit.onCreateActivity(savedInstanceState);
         initViews();
     }
@@ -68,9 +73,8 @@ public class CameraVideoActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_camera_video);
 
-        TextView titleText = (TextView) findViewById(R.id.titleBar);
         if (mVdb.isLocal()) {
-            titleText.setText(R.string.title_activity_downloaded_video);
+            mTitleText.setText(R.string.title_activity_downloaded_video);
         } else {
             String text = getResources().getString(R.string.title_activity_camera_video);
             if (mCamera != null) {
@@ -80,7 +84,7 @@ public class CameraVideoActivity extends BaseActivity {
                 }
                 text += " - " + name;
             }
-            titleText.setText(text);
+            mTitleText.setText(text);
         }
 
 
@@ -95,7 +99,6 @@ public class CameraVideoActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mCameraVideoList.onDestroyActivity();
         mCameraVideoEdit.onDestroyActivity();
 
         mImageDecoder.interrupt();
@@ -135,14 +138,12 @@ public class CameraVideoActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mCameraVideoList.onPauseActivity();
         mCameraVideoEdit.onPauseActivity();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mCameraVideoList.onResumeActivity();
         mCameraVideoEdit.onResumeActivity();
     }
 

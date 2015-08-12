@@ -591,7 +591,6 @@ public class CameraControlActivity extends BaseActivity {
             public void onClick(View v) {
                 mCamera.getClient().cmd_CAM_WantIdle();
                 startCameraActivity(mCamera, CameraVideoActivity.class);
-                Hachi.slideInFromRight(CameraControlActivity.this, false);
             }
         });
 
@@ -618,7 +617,6 @@ public class CameraControlActivity extends BaseActivity {
             public void onClick(View v) {
                 if (mCamera != null) {
                     startCameraActivity(mCamera, CameraSetupActivity.class);
-                    Hachi.slideInFromRight(CameraControlActivity.this, false);
                 }
             }
         });
