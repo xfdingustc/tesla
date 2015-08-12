@@ -105,15 +105,6 @@ abstract public class WifiAdmin {
 		}
 	}
 
-	// API
-	public WifiManager getWifiManager() {
-		return mWifiManager;
-	}
-
-	// API
-	public ConnectivityManager getConnectivityManager() {
-		return mConnectivityManager;
-	}
 
 	// API
 	public List<ScanResult> getScanResult() {

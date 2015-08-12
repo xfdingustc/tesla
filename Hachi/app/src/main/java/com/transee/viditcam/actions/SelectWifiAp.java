@@ -14,6 +14,7 @@ import com.transee.common.Utils;
 import com.waylens.hachi.hardware.WifiAdmin;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.hardware.WifiAdminManager;
 
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ abstract public class SelectWifiAp extends DialogBuilder {
 	protected void onDialogCreated(BaseDialog dialog, View layout) {
 		dialog.requestNoPadding();
 		mListView = (ListView)layout.findViewById(R.id.listView1);
-		WifiAdmin wifiAdmin = mThisApp.attachWifiAdmin(mWifiCallback);
+		WifiAdmin wifiAdmin = WifiAdminManager.getManager().attachWifiAdmin(mWifiCallback);
 		mWifiListAdapter.filterWifiList(wifiAdmin.getScanResult());
 		mListView.setAdapter(mWifiListAdapter);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -64,10 +65,10 @@ abstract public class SelectWifiAp extends DialogBuilder {
 
 	@Override
 	protected void onDismiss() {
-		mThisApp.detachWifiAdmin(mWifiCallback, false);
+		WifiAdminManager.getManager().detachWifiAdmin(mWifiCallback, false);
 	}
 
-	final Hachi.WifiCallback mWifiCallback = new Hachi.WifiCallback() {
+	final WifiAdminManager.WifiCallback mWifiCallback = new WifiAdminManager.WifiCallback() {
 		@Override
 		public void wifiScanResult(WifiAdmin wifiAdmin) {
 		}

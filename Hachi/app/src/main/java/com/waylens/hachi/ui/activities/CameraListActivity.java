@@ -32,6 +32,7 @@ import com.transee.viditcam.app.*;
 import com.waylens.camera.CameraDiscovery;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.hardware.WifiAdminManager;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -124,7 +125,7 @@ public class CameraListActivity extends BaseActivity {
         });
 
 
-        WifiAdmin wifiAdmin = thisApp.getWifiAdmin();
+        WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
         if (wifiAdmin != null) {
             updateWifiState(wifiAdmin);
             updateNetwork();
@@ -143,7 +144,7 @@ public class CameraListActivity extends BaseActivity {
         super.onStart();
         mbAutoPreview = getAutoPreview(this);
         mbStartPreviewScheduled = false;
-        WifiAdmin wifiAdmin = thisApp.attachWifiAdmin(mWifiCallback);
+        WifiAdmin wifiAdmin = WifiAdminManager.getManager().attachWifiAdmin(mWifiCallback);
         onScanWifiDone(wifiAdmin);
         tryConnectCamera();
         // try resume the action - switch wifi mode
@@ -161,7 +162,7 @@ public class CameraListActivity extends BaseActivity {
         super.onStop();
         setWifiIcon(0);
         stopDiscovery();
-        thisApp.detachWifiAdmin(mWifiCallback, true);
+        WifiAdminManager.getManager().detachWifiAdmin(mWifiCallback, true);
     }
 
 
@@ -410,7 +411,7 @@ public class CameraListActivity extends BaseActivity {
     private void tryConnectCamera() {
         if (mNewCameraSSID != null) {
             // TODO : if ssid does not exist, popup dialog
-            WifiAdmin wifiAdmin = thisApp.getWifiAdmin();
+            WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
             if (wifiAdmin != null) {
                 wifiAdmin.connectTo(mNewCameraSSID, mNewCameraPassword);
                 mNewCameraSSID = null;
@@ -626,7 +627,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void onServiceResolved(Camera.ServiceInfo serviceInfo) {
-        WifiAdmin wifiAdmin = thisApp.getWifiAdmin();
+        WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
         serviceInfo.ssid = wifiAdmin == null ? null : wifiAdmin.getCurrSSID();
         mCameraListAdapter.connectCamera(serviceInfo);
     }
@@ -683,7 +684,7 @@ public class CameraListActivity extends BaseActivity {
 
     }
 
-    final Hachi.WifiCallback mWifiCallback = new Hachi.WifiCallback() {
+    final WifiAdminManager.WifiCallback mWifiCallback = new WifiAdminManager.WifiCallback() {
 
         @Override
         public void networkStateChanged(WifiAdmin wifiAdmin) {
