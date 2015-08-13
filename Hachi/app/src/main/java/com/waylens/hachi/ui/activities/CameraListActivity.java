@@ -294,7 +294,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void onClickDownloadedVideos() {
-        startLocalActivity(CameraVideoActivity.class);
+        //startLocalActivity(CameraVideoActivity.class);
     }
 
     private String getSavedServerAddress() {
@@ -364,9 +364,12 @@ public class CameraListActivity extends BaseActivity {
         Camera camera = mCameraListAdapter.getCamera(position);
         if (camera != null) {
             if (camera.isPcServer()) {
-                startCameraActivity(camera, CameraVideoActivity.class);
+                //startCameraActivity(camera, CameraVideoActivity.class);
+                BrowseCameraActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera.getHostString());
             } else {
                 startCameraActivity(camera, CameraControlActivity.class);
+
+                Logger.t(TAG).d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
             }
         } else {
             CameraManager.WifiItem wifiItem = mCameraListAdapter.getWifiItem(position);
@@ -443,7 +446,9 @@ public class CameraListActivity extends BaseActivity {
     private void browseCameraVideo(Camera camera) {
         if (camera != null) {
             camera.getClient().cmd_CAM_WantIdle();
-            CameraVideoActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera.getHostString());
+            //CameraVideoActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera
+            //    .getHostString());
+            BrowseCameraActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera.getHostString());
         }
     }
 

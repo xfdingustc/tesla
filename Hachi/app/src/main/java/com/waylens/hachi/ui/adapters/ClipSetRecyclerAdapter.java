@@ -24,10 +24,15 @@ public class ClipSetRecyclerAdapter extends RecyclerView.Adapter<ClipViewHolder>
     private BitmapDrawable[] mBitmaps;
 
     public ClipSetRecyclerAdapter(ClipSet clipSet) {
+        setClipSet(clipSet);
+    }
+
+    public void setClipSet(ClipSet clipSet) {
         mClipSet = clipSet;
         if (clipSet != null) {
             mBitmaps = new BitmapDrawable[clipSet.getCount()];
         }
+        notifyDataSetChanged();
     }
 
     @Override

@@ -34,6 +34,7 @@
 
         <activity android:name=".ui.activities.LoginActivity"/>
         <activity android:name=".ui.activities.SignupActivity"/>
+        <activity android:name=".ui.activities.BrowseCameraActivity"/>
 
 
         <!--Copied from Vidit app-->
