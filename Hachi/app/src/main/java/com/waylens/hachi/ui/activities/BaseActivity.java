@@ -113,14 +113,8 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean isLocalActivity(Bundle bundle) {
-        return bundle.getBoolean(IS_LOCAL, true);
-    }
 
     // API
-    protected boolean isPcServer(Bundle bundle) {
-        return bundle.getBoolean(IS_PC_SERVER, false);
-    }
 
     protected boolean isServerActivity(Bundle bundle) {
         return bundle.getBoolean(IS_PC_SERVER, false);

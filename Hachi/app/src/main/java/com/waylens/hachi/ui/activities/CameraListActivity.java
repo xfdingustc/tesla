@@ -314,8 +314,6 @@ public class CameraListActivity extends BaseActivity {
             @Override
             public void onGetServerAddress(String address) {
                 saveServerAddress(address);
-                //startServerActivity(CameraVideoActivity.class, address);
-                //Hachi.slideInFromRight(CameraListActivity.this, false);
             }
         };
         action.show();
@@ -445,7 +443,7 @@ public class CameraListActivity extends BaseActivity {
     private void browseCameraVideo(Camera camera) {
         if (camera != null) {
             camera.getClient().cmd_CAM_WantIdle();
-            startCameraActivity(camera, CameraVideoActivity.class);
+            CameraVideoActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera.getHostString());
         }
     }
 

@@ -1,20 +1,31 @@
 package com.waylens.hachi.ui.activities;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.transee.ccam.Camera;
 import com.transee.common.GPSPath;
+import com.transee.common.VideoListView;
+import com.transee.common.android.ViewPager;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipPos;
 import com.transee.vdb.ClipSet;
 import com.transee.vdb.ImageDecoder;
-import com.transee.vdb.LocalVdb;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.PlaylistSet;
+import com.transee.vdb.RemoteClip;
 import com.transee.vdb.RemoteVdb;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient.DownloadInfoEx;
@@ -23,8 +34,14 @@ import com.transee.vdb.VdbClient.PlaybackUrl;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.transee.vdb.VdbClient.RawDataBlock;
 import com.transee.vdb.VdbClient.RawDataResult;
+import com.transee.viditcam.app.ViditImageButton;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.ui.adapters.ClipSetAdapter;
+import com.waylens.hachi.ui.adapters.PlaylistSetAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 
@@ -35,13 +52,55 @@ public class CameraVideoActivity extends BaseActivity {
     private Vdb mVdb;
     private ImageDecoder mImageDecoder;
 
-    private CameraVideoList mCameraVideoList;
     private CameraVideoEdit mCameraVideoEdit;
+
+    private static final String IS_PC_SERVER = "isPcServer";
+    private static final String SSID = "ssid";
+    private static final String HOST_STRING = "hostString";
+
+
+
+    private ClipSetAdapter mBufferedAdapter;
+    private ClipSetAdapter mMarkedAdapter;
+    private PlaylistSetAdapter mPlaylistAdapter;
+    private ClipSetAdapter mLocalAdapter;
+
+    private static final int VIDEO_BUFFERED = 0;
+    private static final int VIDEO_MARKED = 1;
+    private static final int VIDEO_PLAYLIST = 2;
+
+    private View mVideoListControl;
+    private ViewPager mPager;
+    private VideoListView mBufferedLV;
+    private VideoListView mMarkedLV;
+    private VideoListView mPlaylistLV;
+
+    private int mVideoTypeIndex = VIDEO_BUFFERED;
+
+
+    private ViditImageButton mBufferedButton;
+    private ViditImageButton mMarkedButton;
+    private ViditImageButton mPlaylistsButton;
+
+    private ViditImageButton mBufferedButton2;
+    private ViditImageButton mMarkedButton2;
+    private ViditImageButton mPlaylistsButton2;
 
 
     @Bind(R.id.titleBar)
     TextView mTitleText;
 
+
+    public static void launch(Activity activity, boolean isPcServer, String ssid, String
+            hostString) {
+        Intent intent = new Intent(activity, CameraVideoActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(IS_PC_SERVER, isPcServer);
+        bundle.putString(SSID, ssid);
+        bundle.putString(HOST_STRING, hostString);
+        intent.putExtras(bundle);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,25 +109,111 @@ public class CameraVideoActivity extends BaseActivity {
     }
 
 
+
+    private boolean mbPcServer;
+
     protected void init(Bundle savedInstanceState) {
 
         Bundle bundle = getIntent().getExtras();
 
-        if (isLocalActivity(bundle)) {
-            mVdb = new LocalVdb(this, new MyVdbCallback());
-        } else {
-            mVdb = new RemoteVdb(new MyVdbCallback(), Hachi.getVideoDownloadPath(), isServerActivity(bundle));
-        }
+        mVdb = new RemoteVdb(new MyVdbCallback(), Hachi.getVideoDownloadPath(), isServerActivity(bundle));
 
         mImageDecoder = new ImageDecoder();
         mImageDecoder.start();
 
-        mCameraVideoList = new MyCameraVideoList(this, isPcServer(bundle), mVdb, mImageDecoder);
+        mbPcServer = bundle.getBoolean(IS_PC_SERVER, false);
+
+        mBufferedAdapter = new MyNewClipSetAdapter(this, mVdb, RemoteClip.TYPE_BUFFERED);
+        mMarkedAdapter = new MyNewClipSetAdapter(this, mVdb, RemoteClip.TYPE_MARKED);
+        mPlaylistAdapter = new MyNewPlaylistSetAdapter(this, mVdb);
+        initVdbListsAndAdapters();
+
         mCameraVideoEdit = new MyCameraVideoEdit(this, mVdb, mImageDecoder);
 
         mCameraVideoEdit.onCreateActivity(savedInstanceState);
         initViews();
     }
+
+
+
+    @SuppressLint("InflateParams")
+    private void initVdbListsAndAdapters() {
+        LayoutInflater lf = getLayoutInflater();
+
+        mVideoListControl = lf.inflate(R.layout.group_video_list, null);
+        mVideoListControl.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT));
+        mPager = (ViewPager) mVideoListControl.findViewById(R.id.viewPager1);
+        mPager.setOffscreenPageLimit(2);
+
+        View view;
+        List<View> videoViews = new ArrayList<View>();
+        String loadingStr = getResources().getString(R.string.info_loading_clips);
+
+        // buffered clip set
+        view = lf.inflate(R.layout.layout_video_buffered, null);
+        videoViews.add(view);
+        mBufferedLV = (VideoListView) view.findViewById(R.id.bufferedListView);
+        mBufferedAdapter.setListView(mBufferedLV, true);
+        mBufferedLV.startLoading(loadingStr);
+
+        // marked clip set
+        view = lf.inflate(R.layout.layout_video_marked, null);
+        videoViews.add(view);
+        mMarkedLV = (VideoListView) view.findViewById(R.id.markedListView);
+        mMarkedAdapter.setListView(mMarkedLV, true);
+        mMarkedLV.startLoading(loadingStr);
+
+        // playlist set
+        if (!mbPcServer) {
+            view = lf.inflate(R.layout.layout_video_playlists, null);
+            videoViews.add(view);
+            mPlaylistLV = (VideoListView) view.findViewById(R.id.playlistsListView);
+            mPlaylistAdapter.setListView(mPlaylistLV, false);
+            mPlaylistLV.startLoading(loadingStr);
+        }
+
+        mPager.setAdapter(new MyPagerAdapter(videoViews));
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int arg0) {
+                int oldIndex = mVideoTypeIndex;
+                mVideoTypeIndex = arg0;
+                switchToVideoType(true, oldIndex);
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
+
+        mVideoTypeIndex = VIDEO_BUFFERED;
+    }
+
+    private void switchToVideoType(boolean bFromPager, int oldIndex) {
+        if (!bFromPager) {
+            mPager.setCurrentItem(mVideoTypeIndex);
+        }
+
+        switch (oldIndex) {
+            case 0:
+                mBufferedLV.clearPreview();
+                break;
+            case 1:
+                mMarkedLV.clearPreview();
+                break;
+            case 2:
+                if (mPlaylistLV != null) {
+                    mPlaylistLV.clearPreview();
+                }
+                break;
+        }
+    }
+
 
     private void initViews() {
         setContentView(R.layout.activity_camera_video);
@@ -88,11 +233,96 @@ public class CameraVideoActivity extends BaseActivity {
         }
 
 
-        mCameraVideoList.onInitUI();
+        onCameraVideoListInitUI();
         mCameraVideoEdit.onInitUI();
 
-        mCameraVideoList.onSetupUI();
+        onCameraVideoListSetupUI();
         mCameraVideoEdit.onSetupUI();
+    }
+
+    private View mLayout;
+
+    private final ViewGroup findVideoListHolder() {
+        return (ViewGroup) mLayout.findViewById(R.id.videoListHolder);
+    }
+
+
+    private View mToolbar1;
+    private View mToolbar2;
+
+    public void onCameraVideoListInitUI() {
+        mLayout = findViewById(R.id.cameraVideoList);
+        findVideoListHolder().addView(mVideoListControl);
+
+        Resources res = getResources();
+
+        mToolbar1 = findViewById(R.id.linearLayout1);
+        mToolbar2 = findViewById(R.id.linearLayout2);
+
+        if (!mVdb.isLocal()) {
+            View.OnClickListener onClick = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int oldIndex = mVideoTypeIndex;
+                    int id = v.getId();
+                    if (id == R.id.btnMarked) {
+                        mVideoTypeIndex = VIDEO_MARKED;
+                    } else if (id == R.id.btnPlaylists) {
+                        mVideoTypeIndex = VIDEO_PLAYLIST;
+                    } else {
+                        mVideoTypeIndex = VIDEO_BUFFERED;
+                    }
+                    switchToVideoType(false, oldIndex);
+                }
+            };
+
+            // toolbar on title bar
+            mBufferedButton = (ViditImageButton) mToolbar1.findViewById(R.id.btnBuffered);
+            mBufferedButton.setOnClickListener(onClick);
+
+            mMarkedButton = (ViditImageButton) mToolbar1.findViewById(R.id.btnMarked);
+            mMarkedButton.setOnClickListener(onClick);
+
+            mPlaylistsButton = (ViditImageButton) mToolbar1.findViewById(R.id.btnPlaylists);
+            if (mbPcServer) {
+                mPlaylistsButton.setVisibility(View.GONE);
+            } else {
+                mPlaylistsButton.setOnClickListener(onClick);
+            }
+
+            // toolbar at bottom
+            mBufferedButton2 = (ViditImageButton) mToolbar2.findViewById(R.id.btnBuffered);
+            mBufferedButton2.setOnClickListener(onClick);
+
+            mMarkedButton2 = (ViditImageButton) mToolbar2.findViewById(R.id.btnMarked);
+            mMarkedButton2.setOnClickListener(onClick);
+
+            mPlaylistsButton2 = (ViditImageButton) mToolbar2.findViewById(R.id.btnPlaylists);
+            if (mbPcServer) {
+                mPlaylistsButton2.setVisibility(View.GONE);
+            } else {
+                mPlaylistsButton2.setOnClickListener(onClick);
+            }
+
+            switchToVideoType(false, -1);
+        }
+    }
+
+
+    // API
+    public void onCameraVideoListSetupUI() {
+        if (mVdb.isLocal()) {
+            mToolbar1.setVisibility(View.GONE);
+            mToolbar2.setVisibility(View.GONE);
+        } else {
+            if (isPortrait()) {
+                mToolbar1.setVisibility(View.GONE);
+                mToolbar2.setVisibility(View.VISIBLE);
+            } else {
+                mToolbar1.setVisibility(View.VISIBLE);
+                mToolbar2.setVisibility(View.GONE);
+            }
+        }
     }
 
 
@@ -111,28 +341,47 @@ public class CameraVideoActivity extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
         String hostString = null;
 
-        if (!isLocalActivity(bundle)) {
-            if (isServerActivity(bundle)) {
-                hostString = getServerAddress(bundle);
-            } else {
-                mCamera = getCameraFromIntent(null);
-                if (mCamera == null) {
-                    performFinish();
-                    return;
-                }
-                hostString = mCamera.getHostString();
+
+        if (isServerActivity(bundle)) {
+            hostString = getServerAddress(bundle);
+        } else {
+            mCamera = getCameraFromIntent(null);
+            if (mCamera == null) {
+                performFinish();
+                return;
             }
+            hostString = mCamera.getHostString();
         }
 
-        mCameraVideoList.onStartActivity(hostString);
+
+        mVdb.start(hostString);
         mCameraVideoEdit.onStartActivity();
     }
+
 
     @Override
     protected void onStop() {
         super.onStop();
-        mCameraVideoList.onStopActivity();
+        onCameraVideoListStopActivity();
         mCameraVideoEdit.onStopActivity();
+    }
+
+
+    // API
+    public void onCameraVideoListStopActivity() {
+        mVdb.stop();
+        if (mLocalAdapter != null) {
+            mLocalAdapter.clear();
+        }
+        if (mBufferedAdapter != null) {
+            mBufferedAdapter.clear();
+        }
+        if (mMarkedAdapter != null) {
+            mMarkedAdapter.clear();
+        }
+        if (mPlaylistAdapter != null) {
+            mPlaylistAdapter.clear();
+        }
     }
 
     @Override
@@ -159,11 +408,6 @@ public class CameraVideoActivity extends BaseActivity {
         super.onLowMemory();
     }
 
-
-    protected void onReleaseUI() {
-        mCameraVideoList.onReleaseUI();
-        mCameraVideoEdit.onReleaseUI();
-    }
 
 
     @Override
@@ -192,12 +436,12 @@ public class CameraVideoActivity extends BaseActivity {
             switch (clipPos.getType()) {
                 case ClipPos.TYPE_POSTER:
                     // video list accepts posters
-                    mCameraVideoList.decodeImage(clipPos, data);
+                    cameraVideoListDecodeImage(clipPos, data);
                     break;
                 case ClipPos.TYPE_PREVIEW:
                     // clip preview
                     if (!isEditing()) {
-                        mCameraVideoList.decodeImage(clipPos, data);
+                        cameraVideoListDecodeImage(clipPos, data);
                     }
                     break;
                 default:
@@ -209,6 +453,29 @@ public class CameraVideoActivity extends BaseActivity {
             }
         }
     }
+
+
+    public void cameraVideoListDecodeImage(ClipPos clipPos, byte[] data) {
+        ClipSetAdapter adapter = getAdapter(clipPos.cid);
+        if (adapter != null) {
+            adapter.decodeImage(mImageDecoder, clipPos, data);
+        }
+    }
+
+
+    private ClipSetAdapter getAdapter(Clip.ID cid) {
+        if (cid.cat == Clip.CAT_LOCAL) {
+            return mLocalAdapter;
+        }
+        if (cid.cat == Clip.CAT_REMOTE) {
+            if (cid.type == RemoteClip.TYPE_BUFFERED)
+                return mBufferedAdapter;
+            if (cid.type == RemoteClip.TYPE_MARKED)
+                return mMarkedAdapter;
+        }
+        return null;
+    }
+
 
     private void onBitmapData(ClipPos clipPos, Bitmap bitmap) {
         if (mImageDecoder != null) {
@@ -226,40 +493,16 @@ public class CameraVideoActivity extends BaseActivity {
     private void onPlaylistIndexPicData(ClipPos clipPos, byte[] data) {
         if (mImageDecoder != null) {
             if (clipPos.getType() == ClipPos.TYPE_POSTER) {
-                mCameraVideoList.decodePlaylistIndexPic(clipPos, data);
+                cameraVideoListDecodePlaylistIndexPic(clipPos, data);
             }
         }
     }
 
-    // ===============================================================================
-    // CameraVideoList
-    // ===============================================================================
 
-    class MyCameraVideoList extends CameraVideoList {
-
-        MyCameraVideoList(BaseActivity activity, boolean bIsPcServer, Vdb vdb, ImageDecoder decoder) {
-            super(activity, bIsPcServer, vdb, decoder);
-        }
-
-        @Override
-        protected void onClickClipItem(Bitmap bitmap, Clip clip, int offset, int size) {
-            if (clip.isDownloading()) {
-                // TODO : display info & prompt for cancel
-            } else {
-                if (!isEditing()) {
-                    mCameraVideoEdit.editClip(bitmap, clip, offset, size);
-                }
-            }
-        }
-
-        @Override
-        protected void onClickPlaylistItem(Bitmap bitmap, Playlist playlist) {
-            if (!isEditing()) {
-                mCameraVideoEdit.editPlaylist(bitmap, playlist);
-            }
-        }
-
+    public void cameraVideoListDecodePlaylistIndexPic(ClipPos clipPos, byte[] data) {
+        mPlaylistAdapter.decodeImage(mImageDecoder, clipPos, data);
     }
+
 
     // ===============================================================================
     // CameraVideoEdit
@@ -273,40 +516,163 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void requestDeleteClip(Clip.ID cid) {
-            mCameraVideoList.requestDeleteClip(cid);
+            cameraVideoListRequestDeleteClip(cid);
         }
 
         @Override
         public void requestClearPlaylist(int plistId) {
-            mCameraVideoList.requestClearPlaylist(plistId);
+            cameraVideoListRequestClearPlaylist(plistId);
         }
 
         @Override
         public Rect getClipThumbnailRect(Clip.ID cid, View other) {
-            return mCameraVideoList.getClipThumbnailRect(cid, other);
+            return cameraVideoListGetClipThumbnailRect(cid, other);
         }
 
         @Override
         public Rect getPlaylistThumbnailRect(int plistId, View other) {
-            return mCameraVideoList.getPlaylistThumbnailRect(plistId, other);
+            return cameraVideoListGetPlaylistThumbnailRect(plistId, other);
         }
 
         @Override
         public void onBeginEdit() {
-            mCameraVideoList.hide();
+            cameraVideoListHide();
         }
 
         @Override
         public void onEndEdit() {
-            mCameraVideoList.show();
+            cameraVideoListShow();
         }
 
     }
+
+
+    public void cameraVideoListRequestDeleteClip(Clip.ID cid) {
+        ClipSetAdapter adapter = getAdapter(cid);
+        if (adapter != null) {
+            adapter.requestDeleteClip(cid);
+        }
+    }
+
+
+    public void cameraVideoListRequestClearPlaylist(int plistId) {
+        mPlaylistAdapter.requestClearPlaylist(plistId);
+    }
+
 
     private void updateSpaceInfo() {
         if (mCamera != null) {
             mCamera.getClient().cmd_Cam_get_getStorageInfor();
         }
+    }
+
+
+    public Rect cameraVideoListGetClipThumbnailRect(Clip.ID cid, View other) {
+        ClipSetAdapter adapter = getAdapter(cid);
+        if (adapter != null) {
+            return adapter.getThumbnailRect(cid, 0, other);
+        }
+        return null;
+    }
+
+
+    public Rect cameraVideoListGetPlaylistThumbnailRect(int plistId, View other) {
+        return mPlaylistAdapter.getThumbnailRect(null, plistId, other);
+    }
+
+
+    public void cameraVideoListShow() {
+        mLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void cameraVideoListHide() {
+        mLayout.setVisibility(View.INVISIBLE);
+    }
+
+
+    private void clipSetChanged(Clip.ID cid) {
+        ClipSetAdapter adapter = getAdapter(cid);
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        } else {
+            if (mPlaylistAdapter != null) {
+                mPlaylistAdapter.playlistChanged(cid.type);
+            }
+        }
+    }
+
+    // API
+    public void cvlonClipCreated(boolean isLive, Clip clip) {
+        clipSetChanged(clip.cid);
+    }
+
+    // API
+    public void cvlonClipRemoved(Clip.ID cid) {
+        clipSetChanged(cid);
+    }
+
+    // API
+    public void cvlonClipChanged(Clip clip, boolean bFinished) {
+        ClipSetAdapter adapter = getAdapter(clip.cid);
+        if (adapter != null) {
+            adapter.clipChanged(clip, bFinished);
+        }
+    }
+
+
+    public void cvlOnPlaylistSetInfo(PlaylistSet playlistSet) {
+        String emptyStr = getResources().getString(R.string.info_no_clips);
+        mPlaylistLV.finishLoading(emptyStr);
+        mPlaylistAdapter.notifyDataSetChanged();
+    }
+
+    private VideoListView mLocalLV;
+
+    public void cvlOnClipSetInfo(ClipSet clipSet) {
+        String emptyStr = getResources().getString(R.string.info_no_clips);
+        if (clipSet.clipCat == Clip.CAT_LOCAL) {
+            mLocalLV.finishLoading(emptyStr);
+            mLocalAdapter.notifyDataSetChanged();
+            return;
+        }
+        if (clipSet.clipCat == Clip.CAT_REMOTE) {
+            if (clipSet.clipType == RemoteClip.TYPE_BUFFERED) {
+                mBufferedLV.finishLoading(emptyStr);
+                mBufferedAdapter.notifyDataSetChanged();
+                return;
+            }
+            if (clipSet.clipType == RemoteClip.TYPE_MARKED) {
+                mMarkedLV.finishLoading(emptyStr);
+                mMarkedAdapter.notifyDataSetChanged();
+                return;
+            }
+        }
+    }
+
+    // API
+    public void cvlOnVdbUnmounted() {
+        if (mLocalAdapter != null) {
+            mLocalAdapter.onVdbUnmounted();
+        }
+        if (mBufferedAdapter != null) {
+            mBufferedAdapter.onVdbUnmounted();
+        }
+        if (mMarkedAdapter != null) {
+            mMarkedAdapter.onVdbUnmounted();
+        }
+        if (mPlaylistAdapter != null) {
+            mPlaylistAdapter.onVdbUnmounted();
+        }
+    }
+
+    // API
+    public void cvlonPlaylistCleared(int plistId) {
+        mPlaylistAdapter.playlistChanged(plistId);
+    }
+
+    // API
+    public void cvlonClipInserted(Clip clip) {
+        mPlaylistAdapter.clipInserted(clip);
     }
 
     // ===============================================================================
@@ -328,17 +694,17 @@ public class CameraVideoActivity extends BaseActivity {
         @Override
         public void onVdbUnmounted(Vdb vdb) {
             mCameraVideoEdit.endEdit(false);
-            mCameraVideoList.onVdbUnmounted();
+            cvlOnVdbUnmounted();
         }
 
         @Override
         public void onClipSetInfo(Vdb vdb, ClipSet clipSet) {
-            mCameraVideoList.onClipSetInfo(clipSet);
+            cvlOnClipSetInfo(clipSet);
         }
 
         @Override
         public void onPlaylistSetInfo(Vdb vdb, PlaylistSet playlistSet) {
-            mCameraVideoList.onPlaylistSetInfo(playlistSet);
+            cvlOnPlaylistSetInfo(playlistSet);
         }
 
         @Override
@@ -410,12 +776,12 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void onClipCreated(Vdb vdb, boolean isLive, Clip clip) {
-            mCameraVideoList.onClipCreated(isLive, clip);
+            cvlonClipCreated(isLive, clip);
         }
 
         @Override
         public void onClipChanged(Vdb vdb, boolean isLive, Clip clip) {
-            mCameraVideoList.onClipChanged(clip, false);
+            cvlonClipChanged(clip, false);
             if (isEditing()) {
                 mCameraVideoEdit.onClipChanged(isLive, clip, false);
             }
@@ -424,7 +790,7 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void onClipFinished(Vdb vdb, boolean isLive, Clip clip) {
-            mCameraVideoList.onClipChanged(clip, true);
+            cvlonClipChanged(clip, true);
             if (isEditing()) {
                 mCameraVideoEdit.onClipChanged(isLive, clip, true);
             }
@@ -433,7 +799,7 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void onClipInserted(Vdb vdb, boolean isLive, Clip clip) {
-            mCameraVideoList.onClipInserted(clip);
+            cvlonClipInserted(clip);
             if (isEditing()) {
                 mCameraVideoEdit.onClipInserted(isLive, clip);
             }
@@ -441,7 +807,6 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void onClipMoved(Vdb vdb, boolean isLive, Clip clip) {
-            mCameraVideoList.onClipMoved(isLive, clip);
             if (isEditing()) {
                 mCameraVideoEdit.onClipMoved(isLive, clip);
             }
@@ -449,7 +814,7 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void onClipRemoved(Vdb vdb, Clip.ID cid) {
-            mCameraVideoList.onClipRemoved(cid);
+            cvlonClipRemoved(cid);
             if (isEditing()) {
                 mCameraVideoEdit.onClipRemoved(cid);
             }
@@ -458,7 +823,7 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void onPlaylistCleared(Vdb vdb, int plistId) {
-            mCameraVideoList.onPlaylistCleared(plistId);
+            cvlonPlaylistCleared(plistId);
             if (isEditing()) {
                 mCameraVideoEdit.onPlaylistCleared(plistId);
             }
@@ -502,28 +867,143 @@ public class CameraVideoActivity extends BaseActivity {
 
         @Override
         public void onDownloadStarted(Vdb vdb, int id) {
-            mCameraVideoList.onDownloadStarted(id);
+            cvlonDownloadStarted(id);
         }
 
         @Override
         public void onDownloadFinished(Vdb vdb, Clip oldClip, Clip newClip) {
-            mCameraVideoList.onDownloadFinished(oldClip, newClip);
+            cvlonDownloadFinished(oldClip, newClip);
         }
 
         @Override
         public void onDownloadError(Vdb vdb, int id) {
-            mCameraVideoList.onDownloadError(id);
+            cvlonDownloadError(id);
         }
 
         @Override
         public void onDownloadProgress(Vdb vdb, int id, int progress) {
-            mCameraVideoList.onDownloadProgress(id, progress);
+            cvlonDownloadProgress(id, progress);
         }
 
         @Override
         public void onGPSSegment(Vdb vdb, GPSPath.Segment segment) {
             if (isEditing()) {
                 mCameraVideoEdit.onGPSSegment(segment);
+            }
+        }
+
+    }
+
+
+    // API
+    public void cvlonDownloadStarted(int id) {
+        if (mLocalAdapter != null) {
+            mLocalAdapter.onDownloadStarted(id);
+        }
+    }
+
+    // API
+    public void cvlonDownloadFinished(Clip oldClip, Clip newClip) {
+        if (mLocalAdapter != null) {
+            mLocalAdapter.onDownloadFinished(oldClip, newClip);
+        }
+    }
+
+    // API
+    public void cvlonDownloadError(int id) {
+        if (mLocalAdapter != null) {
+            mLocalAdapter.onDownloadError(id);
+        }
+    }
+
+    // API
+    public void cvlonDownloadProgress(int id, int progress) {
+        if (mLocalAdapter != null) {
+            mLocalAdapter.onDownloadProgress(id, progress);
+        }
+    }
+
+
+    private static class MyPagerAdapter extends PagerAdapter {
+        List<View> mListViews;
+
+        public MyPagerAdapter(List<View> listViews) {
+            mListViews = listViews;
+        }
+
+        @Override
+        public void startUpdate(View arg0) {
+
+        }
+
+        @Override
+        public void finishUpdate(View view) {
+
+        }
+
+        @Override
+        public int getCount() {
+            return mListViews.size();
+        }
+
+        @Override
+        public Object instantiateItem(View view, int index) {
+            ((ViewPager) view).addView(mListViews.get(index), 0);
+            return mListViews.get(index);
+        }
+
+        @Override
+        public void destroyItem(View view, int index, Object object) {
+            ((ViewPager) view).removeView(mListViews.get(index));
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public void restoreState(Parcelable arg0, ClassLoader arg1) {
+
+        }
+
+        @Override
+        public Parcelable saveState() {
+            return null;
+        }
+    }
+
+
+    class MyNewClipSetAdapter extends ClipSetAdapter {
+
+        public MyNewClipSetAdapter(BaseActivity activity, Vdb vdb, int subType) {
+            super(activity, vdb, subType);
+        }
+
+        @Override
+        protected void onClickClipItem(int index, int offset, int size, Clip clip, Bitmap bitmap) {
+            if (clip.isDownloading()) {
+                // TODO : display info & prompt for cancel
+            } else {
+                if (!isEditing()) {
+                    mCameraVideoEdit.editClip(bitmap, clip, offset, size);
+                }
+            }
+        }
+
+    }
+
+
+    class MyNewPlaylistSetAdapter extends PlaylistSetAdapter {
+
+        public MyNewPlaylistSetAdapter(BaseActivity activity, Vdb vdb) {
+            super(activity, vdb);
+        }
+
+        @Override
+        protected void onClipPlaylistItem(int index, Playlist playlist, Bitmap bitmap) {
+            if (!isEditing()) {
+                mCameraVideoEdit.editPlaylist(bitmap, playlist);
             }
         }
 

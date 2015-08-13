@@ -52,6 +52,7 @@ public class WifiAdminManager {
 
         void onConnectDone(WifiAdmin wifiAdmin);
     }
+
     private void networkStateChanged(WifiAdmin wifiAdmin) {
         if (DEBUG) {
             Log.d(TAG, "networkStateChanged");
