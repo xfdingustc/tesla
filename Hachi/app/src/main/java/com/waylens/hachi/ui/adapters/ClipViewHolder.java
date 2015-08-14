@@ -27,7 +27,7 @@ public class ClipViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.video_control)
     View videoControl;
     @Bind(R.id.video_cover)
-    View viewCover;
+    View videoCover;
     @Bind(R.id.video_loading)
     ProgressBar progressBar;
 

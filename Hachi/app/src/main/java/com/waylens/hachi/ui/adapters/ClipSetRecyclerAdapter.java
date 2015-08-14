@@ -131,7 +131,7 @@ public class ClipSetRecyclerAdapter extends RecyclerView.Adapter<ClipViewHolder>
             @Override
             public void onPrepared(MediaPlayer mp) {
                 holder.progressBar.setVisibility(View.GONE);
-                holder.viewCover.setVisibility(View.GONE);
+                holder.videoCover.setVisibility(View.GONE);
                 mp.setDisplay(holder.videoPlayView.getHolder());
                 mp.start();
                 holder.videoPlayView.setBackgroundColor(Color.TRANSPARENT);
