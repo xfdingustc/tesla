@@ -25,6 +25,7 @@ import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
 import com.waylens.hachi.ui.adapters.ClipSetRecyclerAdapter;
 
 import butterknife.Bind;
@@ -41,7 +42,7 @@ public class BrowseCameraActivity extends BaseActivity {
 
     private Vdb mVdb;
     private Camera mCamera;
-    private ClipSetRecyclerAdapter mClipSetAdapter;
+    private CameraClipSetAdapter mClipSetAdapter;
 
     private ClipSet mClipSet;
     private ImageDecoder mImageDecoder;
@@ -124,7 +125,7 @@ public class BrowseCameraActivity extends BaseActivity {
         mRvCameraVideoList.setLayoutManager(new LinearLayoutManager(this));
         mClipSet = mVdb.getClipSet(RemoteClip.TYPE_BUFFERED);
 
-        mClipSetAdapter = new ClipSetRecyclerAdapter(mClipSet);
+        mClipSetAdapter = new CameraClipSetAdapter(mClipSet);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
 
     }
