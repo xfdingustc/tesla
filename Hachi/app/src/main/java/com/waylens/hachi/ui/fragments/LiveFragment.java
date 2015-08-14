@@ -93,11 +93,6 @@ public class LiveFragment extends BaseFragment {
 
     }
 
-    void onImageDecode(Bitmap bitmap, int pos) {
-        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-        ((ClipSetRecyclerAdapter) mVideoListView.getAdapter()).setClipCover(bitmapDrawable, pos);
-    }
-
     class MyVdbCallback implements Vdb.Callback {
 
         @Override
@@ -129,11 +124,12 @@ public class LiveFragment extends BaseFragment {
                         long clipTimeMs = clip.getStartTime();
                         ClipPos clipPos = new ClipPos(clip, clipTimeMs, ClipPos.TYPE_POSTER, false);
                         mVdb.getClient().requestClipImage(clip, clipPos, 0, 0);
+                        mVdb.getClient().requestClipPlaybackUrl(VdbClient.URL_TYPE_HLS, clip, VdbClient.STREAM_SUB_1, false, clipTimeMs, clip.clipLengthMs);
                     }
                     break;
             }
 
-            Logger.t(TAG).e("Count: " + clipSet.getCount());
+            //Logger.t(TAG).e("Count: " + clipSet.getCount());
         }
 
         @Override
@@ -163,7 +159,23 @@ public class LiveFragment extends BaseFragment {
         }
 
         @Override
-        public void onPlaybackUrlReady(Vdb vdb, VdbClient.PlaybackUrl playbackUrl) {
+        public void onPlaybackUrlReady(Vdb vdb, final VdbClient.PlaybackUrl playbackUrl) {
+            if (mVideoListView == null) {
+                return;
+            }
+            final int pos = mClipSet.findClipIndex(playbackUrl.cid);
+            if (pos == -1) {
+                return;
+            }
+            LiveFragment.this.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mVideoListView == null) {
+                        return;
+                    }
+                    ((ClipSetRecyclerAdapter) mVideoListView.getAdapter()).setPlaybackURL(playbackUrl.url, pos);
+                }
+            });
 
         }
 
@@ -287,16 +299,24 @@ public class LiveFragment extends BaseFragment {
 
         @Override
         public void onDecodeDoneAsync(final Bitmap bitmap, Object tag) {
+            if (mVideoListView == null) {
+                return;
+            }
+
             final ClipPos clipPos = (ClipPos) tag;
             final int pos = mClipSet.findClipIndex(clipPos.cid);
-            Logger.t(TAG).e("count: " + mClipSet.getCount() + "; pos: " + pos);
+            //Logger.t(TAG).e("count: " + mClipSet.getCount() + "; pos: " + pos);
             if (pos == -1) {
                 return;
             }
             LiveFragment.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    onImageDecode(bitmap, pos);
+                    if (mVideoListView == null) {
+                        return;
+                    }
+                    BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+                    ((ClipSetRecyclerAdapter) mVideoListView.getAdapter()).setClipCover(bitmapDrawable, pos);
                 }
             });
         }

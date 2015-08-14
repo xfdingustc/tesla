@@ -1,7 +1,9 @@
 package com.waylens.hachi.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
@@ -14,14 +16,20 @@ import butterknife.ButterKnife;
  * Created by Richard on 8/10/15.
  */
 public class ClipViewHolder extends RecyclerView.ViewHolder {
-    @Bind(R.id.video_cover)
-    View videoCover;
     @Bind(R.id.video_desc)
     TextView videoDesc;
     @Bind(R.id.video_time)
     TextView videoTime;
     @Bind(R.id.video_duration)
     TextView videoDuration;
+    @Bind(R.id.video_play_view)
+    SurfaceView videoPlayView;
+    @Bind(R.id.video_control)
+    View videoControl;
+    @Bind(R.id.video_cover)
+    View viewCover;
+    @Bind(R.id.video_loading)
+    ProgressBar progressBar;
 
     public ClipViewHolder(View itemView) {
         super(itemView);
