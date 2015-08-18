@@ -16,6 +16,8 @@ public class PreferenceUtils {
     public static final String IS_FIRST_INSTALL = "is_first_install";
     public static final String VERSION_NAME = "version_name";
     public static final String VERSION_CODE = "version_code";
+    public static final String LOGIN_TYPE = "login_type";
+    public static final String IS_LINKED = "is_linked";
 
     private static Context mSharedAppContext = null;
     private static SharedPreferences mShare = null;
@@ -36,4 +38,19 @@ public class PreferenceUtils {
 
     }
 
+    public static void putInt(String key, int value) {
+        mEditor.putInt(key, value).apply();
+    }
+
+    public static void putBoolean(String key, boolean value) {
+        mEditor.putBoolean(key, value).apply();
+    }
+
+    public static boolean getBoolean(String key, boolean defValue) {
+        return mShare.getBoolean(key, defValue);
+    }
+
+    public static int getInt(String key, int defValue) {
+        return mShare.getInt(key, defValue);
+    }
 }

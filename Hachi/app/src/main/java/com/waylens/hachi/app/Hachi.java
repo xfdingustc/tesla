@@ -16,6 +16,7 @@ import com.transee.vdb.DownloadAdmin;
 import com.transee.vdb.DownloadService;
 import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.views.PrefsUtil;
 
@@ -53,6 +54,7 @@ public class Hachi extends Application {
 
         WifiAdminManager.initialize(this);
         initFacebookSDK();
+        ImageUtils.initImageLoader(this);
     }
 
     private void initFacebookSDK() {

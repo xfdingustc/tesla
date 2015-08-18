@@ -60,6 +60,10 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public Toolbar getToolbar() {
+        return mToolbar;
+    }
+
 
     @Override
     protected void onDestroy() {

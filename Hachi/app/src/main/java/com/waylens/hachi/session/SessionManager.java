@@ -18,6 +18,9 @@ public class SessionManager {
     private static final String TAG = SessionManager.class.getSimpleName();
     public static final String ANONYMOUS = "anonymous";
 
+    public static final int LOGIN_TYPE_USERNAME_PASSWORD = 1;
+    public static final int LOGIN_TYPE_SNS = 2;
+
     private static SessionManager mSharedManager = null;
     private RequestQueue mRequestQueue;
 
@@ -26,6 +29,9 @@ public class SessionManager {
     private boolean mHasLogined;
     private String mToken;
     private String mAvatarUrl;
+
+    private int mLoginType;
+    private boolean mIsLinked;
 
 
     private static Context mSharedAppContext = null;
@@ -46,6 +52,7 @@ public class SessionManager {
     public static SessionManager getInstance() {
         if (mSharedManager == null) {
             mSharedManager = new SessionManager();
+            mSharedManager.reloadLoginInfo();
         }
         return mSharedManager;
     }
@@ -59,12 +66,12 @@ public class SessionManager {
         return mUserName;
     }
 
-    public boolean isHasLogined() {
+    public boolean isLoggedIn() {
         return mHasLogined;
     }
 
-    public void setHasLogined(boolean mHasLogined) {
-        this.mHasLogined = mHasLogined;
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        mHasLogined = isLoggedIn;
     }
 
     public String getToken() {
@@ -81,24 +88,38 @@ public class SessionManager {
     }
 
     public void saveLoginInfo(JSONObject response) {
-        setHasLogined(true);
+        saveLoginInfo(response, false);
+    }
+
+    public void saveLoginInfo(JSONObject response, boolean isLoginWithSNS) {
         try {
             JSONObject userInfo = response.getJSONObject(JsonKey.USER);
             mUserName = userInfo.optString(JsonKey.USERNAME);
             mUserId = userInfo.getString(JsonKey.USER_ID);
-            mToken = response.getString(JsonKey.TOKEN);
             mAvatarUrl = userInfo.getString(JsonKey.AVATAR_URL);
+
+            mToken = response.getString(JsonKey.TOKEN);
+            mIsLinked = response.optBoolean(JsonKey.IS_LINKED);
+
+            if (isLoginWithSNS) {
+                mLoginType = LOGIN_TYPE_SNS;
+            } else {
+                mLoginType = LOGIN_TYPE_USERNAME_PASSWORD;
+            }
+
+            setLoginInternal();
 
             PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
             PreferenceUtils.putString(PreferenceUtils.USER_ID, mUserId);
             PreferenceUtils.putString(PreferenceUtils.TOKEN, mToken);
             PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
 
+            PreferenceUtils.putInt(PreferenceUtils.LOGIN_TYPE, mLoginType);
+            PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, mIsLinked);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
 
@@ -107,15 +128,34 @@ public class SessionManager {
         this.mUserId = PreferenceUtils.getString(PreferenceUtils.USER_ID, ANONYMOUS);
         this.mToken = PreferenceUtils.getString(PreferenceUtils.TOKEN, null);
         this.mAvatarUrl = PreferenceUtils.getString(PreferenceUtils.AVATAR_URL, null);
+        mIsLinked = PreferenceUtils.getBoolean(PreferenceUtils.IS_LINKED, false);
+        mLoginType = PreferenceUtils.getInt(PreferenceUtils.LOGIN_TYPE, LOGIN_TYPE_USERNAME_PASSWORD);
 
-        if (mUserName != null && mUserId != null && mToken != null) {
-            setHasLogined(true);
-            Logger.t(TAG).d("Reload login info user name = " + mUserName + " user id = " +
-                mUserId + " token = " + mToken);
-        } 
-
+        setLoginInternal();
     }
 
+    private void setLoginInternal() {
+        if (mUserName != null
+                && mUserId != null
+                && mToken != null
+                && !needLinkAccount()) {
+            setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
+        }
+    }
+
+    public boolean needLinkAccount() {
+        return (mLoginType == LOGIN_TYPE_SNS) && !mIsLinked;
+    }
+
+    public void updateLinkStatus(String userName, boolean isLinked) {
+        mUserName = userName;
+        mIsLinked = isLinked;
+        PreferenceUtils.putString(PreferenceUtils.USER_NAME, userName);
+        PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, isLinked);
+        setLoginInternal();
+    }
 
     public void saveUserProfile(JSONObject response) {
 
