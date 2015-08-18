@@ -24,9 +24,15 @@ import com.transee.vdb.RemoteVdb;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
+import com.waylens.hachi.VdbImageLoader.core.VdbImageLoader;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.snipe.ClipSetRequest;
+import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbRequest;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
-import com.waylens.hachi.ui.adapters.ClipSetRecyclerAdapter;
 
 import butterknife.Bind;
 
@@ -43,6 +49,9 @@ public class BrowseCameraActivity extends BaseActivity {
     private Vdb mVdb;
     private Camera mCamera;
     private CameraClipSetAdapter mClipSetAdapter;
+    private String mHost;
+
+    private VdbRequestQueue mVdbRequestQueue;
 
     private ClipSet mClipSet;
     private ImageDecoder mImageDecoder;
@@ -90,6 +99,10 @@ public class BrowseCameraActivity extends BaseActivity {
 
 
         mVdb.start(hostString);
+        mHost = hostString;
+        mVdbRequestQueue = Snipe.newRequestQueue(this, hostString);
+
+        initCameraVideoListView();
     }
 
     @Override
@@ -99,13 +112,15 @@ public class BrowseCameraActivity extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
 
         mVdb = new RemoteVdb(new BrowseCameraVdbCallback(), Hachi.getVideoDownloadPath(), isServerActivity(bundle));
+
+
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_browse_camera);
 
-        initCameraVideoListView();
+
     }
 
     private void initCamera() {
@@ -123,9 +138,23 @@ public class BrowseCameraActivity extends BaseActivity {
 
     private void initCameraVideoListView() {
         mRvCameraVideoList.setLayoutManager(new LinearLayoutManager(this));
+
+        ClipSetRequest request = new ClipSetRequest(ClipSetRequest.Method.GET, new VdbResponse.Listener<ClipSet>() {
+            @Override
+            public void onResponse(ClipSet response) {
+
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
+
         mClipSet = mVdb.getClipSet(RemoteClip.TYPE_BUFFERED);
 
-        mClipSetAdapter = new CameraClipSetAdapter(mClipSet);
+        mClipSetAdapter = new CameraClipSetAdapter(this, mClipSet);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
 
     }
@@ -158,6 +187,7 @@ public class BrowseCameraActivity extends BaseActivity {
                         long clipTimeMs = clip.getStartTime();
                         ClipPos clipPos = new ClipPos(clip, clipTimeMs, ClipPos.TYPE_POSTER, false);
                         mVdb.getClient().requestClipImage(clip, clipPos, 0, 0);
+
                     }
                     mClipSetAdapter.setClipSet(clipSet);
                     return;
@@ -179,7 +209,7 @@ public class BrowseCameraActivity extends BaseActivity {
 
         @Override
         public void onImageData(Vdb vdb, ClipPos clipPos, byte[] data) {
-            mImageDecoder.decode(data, 1032,  600, 5, clipPos, mDecoderCallback);
+            mImageDecoder.decode(data, 1032, 600, 5, clipPos, mDecoderCallback);
         }
 
         @Override

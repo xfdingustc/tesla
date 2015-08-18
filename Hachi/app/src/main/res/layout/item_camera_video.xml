@@ -67,12 +67,13 @@
                 android:background="@drawable/round_rectangle_background"
                 android:text="01:08"/>
 
-            <TextView
-                android:id="@+id/video_control"
+            <ImageButton
+                android:id="@+id/btnVideoEdit"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_gravity="center"
-                android:background="@drawable/ic_play_circle"/>
+                android:src="@drawable/ic_play_circle"
+                android:background="@android:color/transparent"/>
         </FrameLayout>
 
 

@@ -1,11 +1,13 @@
 package com.waylens.hachi.ui.adapters;
 
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -13,20 +15,27 @@ import com.orhanobut.logger.Logger;
 import com.transee.common.ViewHolder;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipSet;
+import com.transee.vdb.Vdb;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BrowseCameraActivity;
+import com.waylens.hachi.ui.activities.CameraVideoEditActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
     private static final String TAG = "ClipSetRecyclerAdapter";
+    private Context mContext;
 
     private ClipSet mClipSet;
     private BitmapDrawable[] mBitmaps;
 
-    public CameraClipSetAdapter(ClipSet clipSet) {
+
+
+    public CameraClipSetAdapter(Context context, ClipSet clipSet) {
+        this.mContext = context;
         setClipSet(clipSet);
     }
 
@@ -55,6 +64,10 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (mBitmaps[position] != null) {
             holder.videoCover.setBackground(mBitmaps[position]);
         }
+
+        // set onClickListener
+        holder.mBtnVideoEdit.setOnClickListener(this);
+        holder.mBtnVideoEdit.setTag(holder);
     }
 
     @Override
@@ -75,6 +88,18 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnVideoEdit:
+                CameraClipViewHolder holder = (CameraClipViewHolder)v.getTag();
+                int position = holder.getAdapterPosition();
+                CameraVideoEditActivity.launch(mContext);
+
+                break;
+        }
+    }
+
 
     public class CameraClipViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.video_desc)
@@ -88,6 +113,9 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Bind(R.id.video_cover)
         View videoCover;
+
+        @Bind(R.id.btnVideoEdit)
+        ImageButton mBtnVideoEdit;
 
 
         public CameraClipViewHolder(View itemView) {
