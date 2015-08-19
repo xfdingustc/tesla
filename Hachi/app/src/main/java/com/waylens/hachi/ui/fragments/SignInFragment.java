@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,20 +26,26 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.utils.ServerMessage;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import butterknife.Bind;
+import butterknife.OnClick;
+import butterknife.OnTextChanged;
 
 /**
  * Created by Richard on 8/17/15.
  */
 public class SignInFragment extends BaseFragment {
+    private static final String TAG = "SignInFragment";
     @Bind(R.id.sign_up_tabs)
     TabLayout mTabLayout;
 
@@ -52,10 +59,16 @@ public class SignInFragment extends BaseFragment {
     LoginButton mFBLoginButton;
 
     @Bind(R.id.sign_in_username)
-    TextView mUsername;
+    TextView mTvUsername;
 
     @Bind(R.id.sign_in_password)
-    TextView mPassword;
+    TextView mTvPassword;
+
+    @Bind(R.id.btn_login)
+    View mBtnLogin;
+
+    @Bind(R.id.sign_in_animator)
+    ViewAnimator mSignInAnimator;
 
     CallbackManager mCallbackManager;
 
@@ -95,6 +108,11 @@ public class SignInFragment extends BaseFragment {
 
     void initViews() {
         hideToolbar();
+        mBtnLogin.setVisibility(View.GONE);
+        String userName = SessionManager.getInstance().getUserName();
+        if (!TextUtils.isEmpty(userName)) {
+            mTvUsername.setText(userName);
+        }
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -127,6 +145,66 @@ public class SignInFragment extends BaseFragment {
         mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends");
         mFBLoginButton.registerCallback(mCallbackManager, new FBCallback());
         mFBLoginButton.requestFocus();
+    }
+
+    @OnTextChanged({R.id.sign_in_password, R.id.sign_in_username})
+    public void inputPassword(CharSequence s, int start, int before, int count) {
+        if (mTvPassword.getText().length() == 0 || mTvUsername.getText().length() == 0) {
+            mSignInAnimator.setDisplayedChild(0);
+        } else {
+            mSignInAnimator.setDisplayedChild(1);
+        }
+    }
+
+    @OnClick(R.id.btn_login)
+    public void signIn() {
+        mSignInAnimator.setDisplayedChild(2);
+
+        JSONObject params = new JSONObject();
+        try {
+            params.put(JsonKey.USERNAME, mTvUsername.getText().toString());
+            params.put(JsonKey.PASSWORD, mTvPassword.getText().toString());
+        } catch (JSONException e) {
+            Logger.t(TAG).e(e, "");
+        }
+        mRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.LOGIN_URL, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        onLoginSuccessful(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        onLoginFailed(error);
+                    }
+                }));
+    }
+
+    void onLoginSuccessful(JSONObject response) {
+        SessionManager.getInstance().saveLoginInfo(response);
+        getActivity().finish();
+    }
+
+    void onLoginFailed(VolleyError error) {
+        if (error.networkResponse == null || error.networkResponse.data == null) {
+            showMessage(R.string.unknown_error);
+        } else {
+            String errorMessageJson = new String(error.networkResponse.data);
+            try {
+                JSONObject errorJson = new JSONObject(errorMessageJson);
+                Logger.t(TAG).json(errorJson.toString());
+                int errorCode = errorJson.getInt("code");
+                showMessage(ServerMessage.getErrorMessage(errorCode));
+                if (errorCode == ServerMessage.USER_NAME_PASSWORD_NOT_MATCHED) {
+                    mTvPassword.requestFocus();
+                }
+            } catch (JSONException e) {
+                Logger.t(TAG).e("", e);
+            }
+        }
+        mSignInAnimator.setDisplayedChild(1);
     }
 
     void signUpWithFacebook(final AccessToken accessToken) {

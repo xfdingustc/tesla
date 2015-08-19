@@ -234,4 +234,6 @@
     <string name="next">Next</string>
     <string name="forgot">Forgot?</string>
     <string name="or">OR</string>
+    <string name="logout">Log out</string>
+    <string name="confirm_logout">Log out?</string>
 </resources>

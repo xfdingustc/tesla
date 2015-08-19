@@ -35,7 +35,6 @@ public class PreferenceUtils {
 
     public static void putString(String key, String value) {
         mEditor.putString(key, value).apply();
-
     }
 
     public static void putInt(String key, int value) {
@@ -52,5 +51,9 @@ public class PreferenceUtils {
 
     public static int getInt(String key, int defValue) {
         return mShare.getInt(key, defValue);
+    }
+
+    public static void remove(String key) {
+        mEditor.remove(key).apply();
     }
 }

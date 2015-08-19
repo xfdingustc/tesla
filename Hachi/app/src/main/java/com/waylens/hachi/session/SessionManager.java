@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -233,4 +235,26 @@ public class SessionManager {
         }
         */
     }
+
+    public void logout() {
+        mHasLogined = false;
+
+        mUserId = null;
+        mAvatarUrl = null;
+        mToken = null;
+        mIsLinked = false;
+        mLoginType = LOGIN_TYPE_USERNAME_PASSWORD;
+
+        PreferenceUtils.remove(PreferenceUtils.USER_ID);
+        PreferenceUtils.remove(PreferenceUtils.TOKEN);
+        PreferenceUtils.remove(PreferenceUtils.AVATAR_URL);
+        PreferenceUtils.remove(PreferenceUtils.LOGIN_TYPE);
+        PreferenceUtils.remove(PreferenceUtils.IS_LINKED);
+
+        if (AccessToken.getCurrentAccessToken() != null) {
+            LoginManager.getInstance().logOut();
+        }
+    }
+
+
 }

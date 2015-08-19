@@ -115,7 +115,7 @@ public class LinkAccountFragment extends BaseFragment {
                                 JSONObject jsonObject = new JSONObject(message);
                                 int errorCode = jsonObject.optInt("code");
                                 showMessage(ServerMessage.getErrorMessage(errorCode));
-                                if (errorCode == ServerMessage.USER_NAME_BEEN_USED) {
+                                if (errorCode == ServerMessage.USER_NAME_HAS_BEEN_USED) {
                                     mUserName.requestFocus();
                                 }
                             }

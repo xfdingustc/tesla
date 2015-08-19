@@ -21,6 +21,7 @@
             app:border_width="2dp"/>
 
         <TextView
+            android:id="@+id/login_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/btnAvatar"
