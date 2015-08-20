@@ -11,7 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.transee.ccam.BtState;
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.ccam.WifiState;
@@ -22,7 +22,6 @@ import com.transee.viditcam.actions.SelectColorMode;
 import com.transee.viditcam.actions.SelectVideoQuality;
 import com.transee.viditcam.actions.SelectVideoResolution;
 import com.transee.viditcam.actions.SyncDateTime;
-import com.waylens.hachi.app.Hachi;
 
 public class CameraSetupActivity extends BaseActivity {
 
@@ -30,7 +29,7 @@ public class CameraSetupActivity extends BaseActivity {
 	static final String TAG = "CameraSetupActivity";
 
 	@Nullable
-	private Camera mCamera;
+	private VdtCamera mVdtCamera;
 
 	private TextView mTextCameraName;
 
@@ -53,15 +52,15 @@ public class CameraSetupActivity extends BaseActivity {
 	private TextView mTextFirmwareVersion;
 
 	private CameraState getCameraStates() {
-		return Camera.getCameraStates(mCamera);
+		return VdtCamera.getCameraStates(mVdtCamera);
 	}
 
 	private BtState getBtStates() {
-		return Camera.getBtStates(mCamera);
+		return VdtCamera.getBtStates(mVdtCamera);
 	}
 
 	private CameraClient getCameraClient() {
-		return (CameraClient)mCamera.getClient();
+		return (CameraClient) mVdtCamera.getClient();
 	}
 
 	@Override
@@ -73,7 +72,7 @@ public class CameraSetupActivity extends BaseActivity {
 		layout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					onChangeCameraName();
 				}
 			}
@@ -92,7 +91,7 @@ public class CameraSetupActivity extends BaseActivity {
 		layout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					changeVideoResolution();
 				}
 			}
@@ -103,7 +102,7 @@ public class CameraSetupActivity extends BaseActivity {
 		layout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					changeVideoQuality();
 				}
 			}
@@ -114,7 +113,7 @@ public class CameraSetupActivity extends BaseActivity {
 		layout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					changeColorMode();
 				}
 			}
@@ -189,7 +188,7 @@ public class CameraSetupActivity extends BaseActivity {
 		GetCameraName action = new GetCameraName(this, getCameraStates().mCameraName) {
 			@Override
 			public void onCameraNameChanged(String value) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					getCameraClient().cmd_Cam_set_Name(value);
 					getCameraClient().cmd_Cam_get_Name(); // TODO
 					// TODO - update UI now?
@@ -203,10 +202,10 @@ public class CameraSetupActivity extends BaseActivity {
 		SelectVideoResolution action = new SelectVideoResolution(this, getCameraStates()) {
 			@Override
 			protected void onSelectVideoResolution(int resolutionIndex) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					getCameraClient().cmd_Rec_Set_Resolution(resolutionIndex);
 					getCameraClient().cmd_Rec_get_Resolution(); // TODO
-					Camera.getCameraStates(mCamera).mVideoResolutionIndex = resolutionIndex;
+					VdtCamera.getCameraStates(mVdtCamera).mVideoResolutionIndex = resolutionIndex;
 					updateVideoResolution(null);
 				}
 			}
@@ -218,10 +217,10 @@ public class CameraSetupActivity extends BaseActivity {
 		SelectVideoQuality action = new SelectVideoQuality(this, getCameraStates()) {
 			@Override
 			protected void onSelectVideoQuality(int qualityIndex) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					getCameraClient().cmd_Rec_Set_Quality(qualityIndex);
 					getCameraClient().cmd_Rec_get_Quality(); // TODO
-					Camera.getCameraStates(mCamera).mVideoQualityIndex = qualityIndex;
+					VdtCamera.getCameraStates(mVdtCamera).mVideoQualityIndex = qualityIndex;
 					updateVideoQuality(null);
 				}
 			}
@@ -233,10 +232,10 @@ public class CameraSetupActivity extends BaseActivity {
 		SelectColorMode action = new SelectColorMode(this, getCameraStates()) {
 			@Override
 			protected void onSelectColorMode(int index) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					getCameraClient().cmd_Rec_Set_ColorMode(index);
 					getCameraClient().cmd_Rec_get_ColorMode(); // TODO
-					Camera.getCameraStates(mCamera).mColorModeIndex = index;
+					VdtCamera.getCameraStates(mVdtCamera).mColorModeIndex = index;
 					updateColorMode(null);
 				}
 			}
@@ -245,7 +244,7 @@ public class CameraSetupActivity extends BaseActivity {
 	}
 
 	private void toggleRecordMode(int flag) {
-		if (mCamera != null) {
+		if (mVdtCamera != null) {
 			CameraState states = getCameraStates();
 			int flags = Utils.toggleBit(states.mRecordModeIndex, flag);
 			getCameraClient().cmd_Rec_Set_RecMode(flags);
@@ -285,7 +284,7 @@ public class CameraSetupActivity extends BaseActivity {
 		SyncDateTime action = new SyncDateTime(this) {
 			@Override
 			public void onSyncDateTime(long timeMillis, int timezone) {
-				if (mCamera != null) {
+				if (mVdtCamera != null) {
 					getCameraClient().cmd_Network_Synctime(timeMillis / 1000, timezone / (3600 * 1000));
 				}
 			}
@@ -294,20 +293,20 @@ public class CameraSetupActivity extends BaseActivity {
 	}
 
 	private void onChangeWifiMode() {
-		if (mCamera != null) {
-			super.startCameraActivity(mCamera, CameraWifiSetupActivity.class);
+		if (mVdtCamera != null) {
+			super.startCameraActivity(mVdtCamera, CameraWifiSetupActivity.class);
 		}
 	}
 
 	private void onClickVideoOverlay() {
-		if (mCamera != null) {
-			super.startCameraActivity(mCamera, CameraOverlaySetupActivity.class);
+		if (mVdtCamera != null) {
+			super.startCameraActivity(mVdtCamera, CameraOverlaySetupActivity.class);
 		}
 	}
 
 	private void onClickBluetooth() {
 		if (getBtStates().mBtSupport == BtState.BT_Support_Yes) {
-			super.startCameraActivity(mCamera, CameraBtSetupActivity.class);
+			super.startCameraActivity(mVdtCamera, CameraBtSetupActivity.class);
 		}
 	}
 
@@ -461,7 +460,7 @@ public class CameraSetupActivity extends BaseActivity {
 	}
 
 	private void updateWifiStates() {
-		WifiState states = Camera.getWifiStates(mCamera);
+		WifiState states = VdtCamera.getWifiStates(mVdtCamera);
 		switch (states.mWifiMode) {
 		default:
 		case WifiState.WIFI_Mode_Unknown:
@@ -523,12 +522,12 @@ public class CameraSetupActivity extends BaseActivity {
 
 	@Override
 	protected void onStartActivity() {
-		mCamera = getCameraFromIntent(null);
-		if (mCamera == null) {
+		mVdtCamera = getCameraFromIntent(null);
+		if (mVdtCamera == null) {
 			noCamera();
 			return;
 		}
-		mCamera.addCallback(mCameraCallback);
+		mVdtCamera.addCallback(mCameraCallback);
 		getCameraClient().userCmd_GetSetup();
 		updateCameraState();
 		updateBtStates();
@@ -541,9 +540,9 @@ public class CameraSetupActivity extends BaseActivity {
 	}
 
 	private void removeCamera() {
-		if (mCamera != null) {
-			mCamera.removeCallback(mCameraCallback);
-			mCamera = null;
+		if (mVdtCamera != null) {
+			mVdtCamera.removeCallback(mCameraCallback);
+			mVdtCamera = null;
 		}
 	}
 
@@ -560,32 +559,32 @@ public class CameraSetupActivity extends BaseActivity {
 		finish();
 	}
 
-	private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {
+	private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
 
 		@Override
-		public void onStateChanged(Camera camera) {
-			if (camera == mCamera) {
+		public void onStateChanged(VdtCamera vdtCamera) {
+			if (vdtCamera == mVdtCamera) {
 				updateCameraState();
 			}
 		}
 
 		@Override
-		public void onBtStateChanged(Camera camera) {
-			if (camera == mCamera) {
+		public void onBtStateChanged(VdtCamera vdtCamera) {
+			if (vdtCamera == mVdtCamera) {
 				updateBtStates();
 			}
 		}
 
 		@Override
-		public void onWifiStateChanged(Camera camera) {
-			if (camera == mCamera) {
+		public void onWifiStateChanged(VdtCamera vdtCamera) {
+			if (vdtCamera == mVdtCamera) {
 				updateWifiStates();
 			}
 		}
 
 		@Override
-		public void onDisconnected(Camera camera) {
-			if (camera == mCamera) {
+		public void onDisconnected(VdtCamera vdtCamera) {
+			if (vdtCamera == mVdtCamera) {
 				removeCamera();
 				noCamera();
 			}

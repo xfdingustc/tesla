@@ -12,8 +12,8 @@ import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
 
-import com.transee.ccam.Camera;
-import com.transee.ccam.CameraManager;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
@@ -122,13 +122,13 @@ public class BaseActivity extends Activity {
 	static final private String HOST_STRING = "hostString";
 
 	// API
-	protected void startCameraActivity(Camera camera, Class<?> cls, int requestCode) {
+	protected void startCameraActivity(VdtCamera vdtCamera, Class<?> cls, int requestCode) {
 		Intent intent = new Intent(this, cls);
 		Bundle bundle = new Bundle();
 		bundle.putBoolean(IS_LOCAL, false);
-		bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
-		bundle.putString(SSID, camera.getSSID());
-		bundle.putString(HOST_STRING, camera.getHostString());
+		bundle.putBoolean(IS_PC_SERVER, vdtCamera.isPcServer());
+		bundle.putString(SSID, vdtCamera.getSSID());
+		bundle.putString(HOST_STRING, vdtCamera.getHostString());
 		if (requestCode < 0) {
 			intent.putExtras(bundle);
 			startActivity(intent);
@@ -140,8 +140,8 @@ public class BaseActivity extends Activity {
 	}
 
 	// API
-	protected void startCameraActivity(Camera camera, Class<?> cls) {
-		startCameraActivity(camera, cls, -1);
+	protected void startCameraActivity(VdtCamera vdtCamera, Class<?> cls) {
+		startCameraActivity(vdtCamera, cls, -1);
 	}
 
 	// API
@@ -185,7 +185,7 @@ public class BaseActivity extends Activity {
 	}
 
 	// API
-	protected Camera getCameraFromIntent(Bundle bundle) {
+	protected VdtCamera getCameraFromIntent(Bundle bundle) {
 		if (bundle == null) {
 			bundle = getIntent().getExtras();
 		}
@@ -194,9 +194,9 @@ public class BaseActivity extends Activity {
 		if (ssid == null || hostString == null) {
 			return null;
 		}
-		CameraManager cameraManager = CameraManager.getManager();
-		Camera camera = cameraManager.findConnectedCamera(ssid, hostString);
-		return camera;
+		VdtCameraManager vdtCameraManager = VdtCameraManager.getManager();
+		VdtCamera vdtCamera = vdtCameraManager.findConnectedCamera(ssid, hostString);
+		return vdtCamera;
 	}
 
 	// API

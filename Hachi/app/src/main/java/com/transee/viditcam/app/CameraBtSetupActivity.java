@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.transee.ccam.BtState;
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.waylens.hachi.R;
 
@@ -35,7 +35,7 @@ public class CameraBtSetupActivity extends BaseActivity {
         }
     }
 
-    private Camera mCamera;
+    private VdtCamera mVdtCamera;
 
     private CheckBox mCBEnableBt;
     private ProgressBar mProgressBar1;
@@ -60,7 +60,7 @@ public class CameraBtSetupActivity extends BaseActivity {
     private int mColorDisabled;
 
     private BtState getBtStates() {
-        return Camera.getBtStates(mCamera);
+        return VdtCamera.getBtStates(mVdtCamera);
     }
 
     @Override
@@ -133,13 +133,13 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     @Override
     protected void onStartActivity() {
-        mCamera = getCameraFromIntent(null);
-        if (mCamera == null) {
+        mVdtCamera = getCameraFromIntent(null);
+        if (mVdtCamera == null) {
             noCamera();
             return;
         }
 
-        mCamera.addCallback(mCameraCallback);
+        mVdtCamera.addCallback(mCameraCallback);
         updateBtState();
     }
 
@@ -149,11 +149,11 @@ public class CameraBtSetupActivity extends BaseActivity {
     }
 
     private void onClickEnableBt() {
-        if (mCamera != null) {
+        if (mVdtCamera != null) {
             BtState states = getBtStates();
             if (states.canEnableBt()) {
                 boolean bEnable = states.mBtState == BtState.BT_State_Disabled;
-                mCamera.getClient().cmd_CAM_BT_Enable(bEnable);
+                mVdtCamera.getClient().cmd_CAM_BT_Enable(bEnable);
                 // force refresh
                 states.enableBt(bEnable);
                 updateBtEnabled();
@@ -176,7 +176,7 @@ public class CameraBtSetupActivity extends BaseActivity {
             return;
         }
 
-        if (mCamera != null) {
+        if (mVdtCamera != null) {
             DialogBuilder builder = new DialogBuilder(this) {
                 @Override
                 protected void onClickPositiveButton() {
@@ -192,7 +192,7 @@ public class CameraBtSetupActivity extends BaseActivity {
     }
 
     private void onClickScanBtDevice() {
-        if (mCamera != null) {
+        if (mVdtCamera != null) {
             BtState states = getBtStates();
             if (states.canOperate()) {
                 if (states.mBtState == BtState.BT_State_Disabled) {
@@ -203,7 +203,7 @@ public class CameraBtSetupActivity extends BaseActivity {
                     return;
                 }
                 clearAllDevices();
-                mCamera.getClient().cmd_CAM_BT_doScan();
+                mVdtCamera.getClient().cmd_CAM_BT_doScan();
                 states.scanBt();
                 updateBtScanning();
             }
@@ -262,7 +262,7 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     private void updateBtState() {
         updateBtEnabled();
-        BtState states = Camera.getBtStates(mCamera);
+        BtState states = VdtCamera.getBtStates(mVdtCamera);
         updateDeviceState(states.mHidState, mHidDevice);
         if (ENABLE_OBD) {
             updateDeviceState(states.mObdState, mObdDevice);
@@ -271,25 +271,25 @@ public class CameraBtSetupActivity extends BaseActivity {
     }
 
     private void fetchScanResult() {
-        if (mCamera != null) {
-            mCamera.getClient().cmd_CAM_BT_getHostNum();
+        if (mVdtCamera != null) {
+            mVdtCamera.getClient().cmd_CAM_BT_getHostNum();
         }
     }
 
     final private void unbindBtDevice(int type, String mac) {
-        if (mCamera != null) {
-            mCamera.getClient().cmd_CAM_BT_doUnBind(type, mac);
+        if (mVdtCamera != null) {
+            mVdtCamera.getClient().cmd_CAM_BT_doUnBind(type, mac);
         }
     }
 
     final private void bindBtDevice(BtItem item) {
-        if (mCamera != null) {
-            mCamera.getClient().cmd_CAM_BT_doBind(item.type, item.mac);
+        if (mVdtCamera != null) {
+            mVdtCamera.getClient().cmd_CAM_BT_doBind(item.type, item.mac);
         }
     }
 
     private void onClickBtDevItem(View view) {
-        if (mCamera == null)
+        if (mVdtCamera == null)
             return;
 
         final BtItem item = (BtItem) view.getTag();
@@ -375,9 +375,9 @@ public class CameraBtSetupActivity extends BaseActivity {
     }
 
     private void removeCamera() {
-        if (mCamera != null) {
-            mCamera.removeCallback(mCameraCallback);
-            mCamera = null;
+        if (mVdtCamera != null) {
+            mVdtCamera.removeCallback(mCameraCallback);
+            mVdtCamera = null;
         }
     }
 
@@ -397,32 +397,32 @@ public class CameraBtSetupActivity extends BaseActivity {
         finish();
     }
 
-    private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {
+    private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
 
         @Override
-        public void onBtStateChanged(Camera camera) {
-            if (camera == mCamera) {
+        public void onBtStateChanged(VdtCamera vdtCamera) {
+            if (vdtCamera == mVdtCamera) {
                 updateBtState();
             }
         }
 
         @Override
-        public void onScanBtDone(Camera camera) {
-            if (camera == mCamera) {
+        public void onScanBtDone(VdtCamera vdtCamera) {
+            if (vdtCamera == mVdtCamera) {
                 fetchScanResult();
             }
         }
 
         @Override
-        public void onBtDevInfo(Camera camera, int type, String mac, String name) {
-            if (camera == mCamera) {
+        public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
+            if (vdtCamera == mVdtCamera) {
                 CameraBtSetupActivity.this.onBtDevInfo(type, mac, name);
             }
         }
 
         @Override
-        public void onDisconnected(Camera camera) {
-            if (camera == mCamera) {
+        public void onDisconnected(VdtCamera vdtCamera) {
+            if (vdtCamera == mVdtCamera) {
                 removeCamera();
                 noCamera();
             }

@@ -7,9 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.orhanobut.logger.Logger;
-import com.transee.ccam.Camera;
-import com.transee.ccam.CameraManager;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.R;
 
 import butterknife.Bind;
@@ -22,7 +20,7 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final String TAG = CameraListRvAdapter.class.getSimpleName();
 
     private final Context mContext;
-    private CameraManager mCameraManager = CameraManager.getManager();
+    private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
 
     public CameraListRvAdapter(Context context) {
         this.mContext = context;
@@ -44,7 +42,7 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return mCameraManager.getTotalItems();
+        return mVdtCameraManager.getTotalItems();
     }
 
 

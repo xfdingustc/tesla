@@ -5,15 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.CameraManager;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.VdbImageLoader.core.VdbImageLoader;
 import com.waylens.hachi.VdbImageLoader.core.VdbImageLoaderConfiguration;
-import com.waylens.hachi.hardware.WifiAdmin;
 import com.transee.vdb.DownloadAdmin;
 import com.transee.vdb.DownloadService;
 import com.waylens.hachi.hardware.WifiAdminManager;
@@ -60,7 +58,7 @@ public class Hachi extends Application {
     }
 
     private void initCameraManager() {
-        CameraManager.initialize(this);
+        VdtCameraManager.initialize(this);
 
     }
 

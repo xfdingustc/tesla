@@ -10,9 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
-import com.orhanobut.logger.Logger;
-import com.transee.ccam.Camera;
-import com.transee.ccam.CameraManager;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.common.GPSPath;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipPos;
@@ -43,7 +42,7 @@ public class LiveFragment extends BaseFragment {
     @Bind(R.id.video_list_view)
     RecyclerView mVideoListView;
 
-    Camera mCamera;
+    VdtCamera mVdtCamera;
     Vdb mVdb;
     ImageDecoder mImageDecoder;
     ClipSet mClipSet;
@@ -81,13 +80,13 @@ public class LiveFragment extends BaseFragment {
     }
 
     private void initCamera() {
-        CameraManager cameraManager = CameraManager.getManager();
-        if (cameraManager.getConnectedCameras().size() > 0) {
-            mCamera = cameraManager.getConnectedCameras().get(0);
+        VdtCameraManager vdtCameraManager = VdtCameraManager.getManager();
+        if (vdtCameraManager.getConnectedCameras().size() > 0) {
+            mVdtCamera = vdtCameraManager.getConnectedCameras().get(0);
             mVdb = new RemoteVdb(new MyVdbCallback(), Hachi.getVideoDownloadPath(), false);
             mImageDecoder = new ImageDecoder();
             mImageDecoder.start();
-            mVdb.start(mCamera.getHostString());
+            mVdb.start(mVdtCamera.getHostString());
             mDecoderCallback = new MyDecodeCallback();
         }
 

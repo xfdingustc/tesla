@@ -10,8 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.Camera;
-import com.transee.ccam.CameraManager;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.common.GPSPath;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipPos;
@@ -24,12 +24,10 @@ import com.transee.vdb.RemoteVdb;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
-import com.waylens.hachi.VdbImageLoader.core.VdbImageLoader;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.snipe.ClipSetRequest;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
@@ -47,7 +45,7 @@ public class BrowseCameraActivity extends BaseActivity {
     private static final String HOST_STRING = "hostString";
 
     private Vdb mVdb;
-    private Camera mCamera;
+    private VdtCamera mVdtCamera;
     private CameraClipSetAdapter mClipSetAdapter;
     private String mHost;
 
@@ -89,12 +87,12 @@ public class BrowseCameraActivity extends BaseActivity {
         if (isServerActivity(bundle)) {
             hostString = getServerAddress(bundle);
         } else {
-            mCamera = getCameraFromIntent(null);
-            if (mCamera == null) {
+            mVdtCamera = getCameraFromIntent(null);
+            if (mVdtCamera == null) {
                 finish();
                 return;
             }
-            hostString = mCamera.getHostString();
+            hostString = mVdtCamera.getHostString();
         }
 
 
@@ -124,9 +122,9 @@ public class BrowseCameraActivity extends BaseActivity {
     }
 
     private void initCamera() {
-        CameraManager cameraManager = CameraManager.getManager();
-        if (cameraManager.getConnectedCameras().size() > 0) {
-            mCamera = cameraManager.getConnectedCameras().get(0);
+        VdtCameraManager vdtCameraManager = VdtCameraManager.getManager();
+        if (vdtCameraManager.getConnectedCameras().size() > 0) {
+            mVdtCamera = vdtCameraManager.getConnectedCameras().get(0);
 
             mImageDecoder = new ImageDecoder();
             mImageDecoder.start();

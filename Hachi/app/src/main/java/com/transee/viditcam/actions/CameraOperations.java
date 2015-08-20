@@ -9,10 +9,9 @@ import android.view.View.MeasureSpec;
 import android.widget.Button;
 import android.widget.PopupWindow;
 
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.ccam.WifiState;
 import com.transee.common.Utils;
-import com.transee.viditcam.app.BaseActivity;
 import com.waylens.hachi.R;
 
 abstract public class CameraOperations {
@@ -37,7 +36,7 @@ abstract public class CameraOperations {
 	public String mHostString; // null: camera not connected
 
 	@SuppressLint("InflateParams")
-	public CameraOperations(Activity activity, Camera camera, String titleString, String ssid, String hostString) {
+	public CameraOperations(Activity activity, VdtCamera vdtCamera, String titleString, String ssid, String hostString) {
 		mActivity = activity;
 		mSSID = ssid;
 		mHostString = hostString;
@@ -111,7 +110,7 @@ abstract public class CameraOperations {
 			}
 		});
 
-		if (camera == null || Camera.getWifiStates(camera).mWifiMode == WifiState.WIFI_Mode_Unknown) {
+		if (vdtCamera == null || VdtCamera.getWifiStates(vdtCamera).mWifiMode == WifiState.WIFI_Mode_Unknown) {
 			button.setVisibility(View.GONE);
 			mLayout.findViewById(R.id.separator2).setVisibility(View.GONE);
 		}

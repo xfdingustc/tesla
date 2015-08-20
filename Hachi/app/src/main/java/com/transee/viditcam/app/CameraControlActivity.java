@@ -31,7 +31,7 @@ import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.transee.ccam.AbsCameraClient;
 import com.transee.ccam.BtState;
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.common.BeepManager;
@@ -90,7 +90,7 @@ public class CameraControlActivity extends BaseActivity {
 
     private boolean mbToolbarVisible;
 
-    private Camera mCamera;
+    private VdtCamera mVdtCamera;
     private FrameLayout mMjpegViewHolder;
     private MjpegBitmap mMjpegView;
     private Timer mUpdateTimer;
@@ -162,7 +162,7 @@ public class CameraControlActivity extends BaseActivity {
         mUpdateTimer = new Timer() {
             @Override
             public void onTimer(Timer timer) {
-                if (mCamera != null) {
+                if (mVdtCamera != null) {
                     updateRecordTime();
                 }
             }
@@ -209,20 +209,20 @@ public class CameraControlActivity extends BaseActivity {
 
     @Override
     protected void onStartActivity() {
-        mCamera = getCameraFromIntent(null);
-        if (mCamera != null) {
-            InetSocketAddress serverAddr = mCamera.getPreviewAddress();
+        mVdtCamera = getCameraFromIntent(null);
+        if (mVdtCamera != null) {
+            InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
-                mCamera = null;
+                mVdtCamera = null;
             } else {
-                mCamera.addCallback(mCameraCallback);
+                mVdtCamera.addCallback(mCameraCallback);
                 mMjpegView.startStream(serverAddr, new MyMjpegViewCallback(), true);
             }
             // mCamera.getClient().cmdGetResolution();
             // mCamera.getClient().cmdGetQuality();
             // mCamera.getClient().cmdGetColorMode();
 
-            AbsCameraClient client = mCamera.getClient();
+            AbsCameraClient client = mVdtCamera.getClient();
             client.cmd_CAM_WantPreview();
             client.cmd_Rec_get_RecMode();
             client.ack_Cam_get_time();
@@ -236,7 +236,7 @@ public class CameraControlActivity extends BaseActivity {
                 }
             }, 1000);
         }
-        if (mCamera == null) {
+        if (mVdtCamera == null) {
             noCamera();
         }
     }
@@ -451,7 +451,7 @@ public class CameraControlActivity extends BaseActivity {
         String path = Environment.getExternalStoragePublicDirectory("richard-vidit").getAbsolutePath();
         if (mRemoteVdbClient == null) {
             mRemoteVdbClient = new RemoteVdbClient(vdbClientCallback, path);
-            String hostString = getHostString(mCamera);
+            String hostString = getHostString(mVdtCamera);
             if (hostString != null) {
                 mRemoteVdbClient.start(hostString);
                 //VdbClient.F_RAW_DATA_GPS + VdbClient.F_RAW_DATA_ACC
@@ -511,23 +511,23 @@ public class CameraControlActivity extends BaseActivity {
 
 
     private boolean showGauge() {
-        if (mCamera == null) {
+        if (mVdtCamera == null) {
             return false;
         }
 
-        BtState btState = Camera.getBtStates(mCamera);
+        BtState btState = VdtCamera.getBtStates(mVdtCamera);
         return (btState.mBtState == BtState.BT_State_Enabled)
             && (btState.mObdState.mState == BtState.BTDEV_State_On);
     }
 
-    private String getHostString(Camera camera) {
+    private String getHostString(VdtCamera vdtCamera) {
         String hostString = null;
         Bundle bundle = getIntent().getExtras();
         if (isServerActivity(bundle)) {
             hostString = getServerAddress(bundle);
         } else {
-            if (camera != null) {
-                hostString = camera.getHostString();
+            if (vdtCamera != null) {
+                hostString = vdtCamera.getHostString();
             }
         }
         return hostString;
@@ -588,8 +588,8 @@ public class CameraControlActivity extends BaseActivity {
         mVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCamera.getClient().cmd_CAM_WantIdle();
-                startCameraActivity(mCamera, CameraVideoActivity.class);
+                mVdtCamera.getClient().cmd_CAM_WantIdle();
+                startCameraActivity(mVdtCamera, CameraVideoActivity.class);
             }
         });
 
@@ -614,8 +614,8 @@ public class CameraControlActivity extends BaseActivity {
         mSetupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCamera != null) {
-                    startCameraActivity(mCamera, CameraSetupActivity.class);
+                if (mVdtCamera != null) {
+                    startCameraActivity(mVdtCamera, CameraSetupActivity.class);
                 }
             }
         });
@@ -812,9 +812,9 @@ public class CameraControlActivity extends BaseActivity {
     }
 
     private void removeCamera() {
-        if (mCamera != null) {
-            mCamera.removeCallback(mCameraCallback);
-            mCamera = null;
+        if (mVdtCamera != null) {
+            mVdtCamera.removeCallback(mCameraCallback);
+            mVdtCamera = null;
         }
     }
 
@@ -845,25 +845,25 @@ public class CameraControlActivity extends BaseActivity {
     }
 
     private void onClickRecordButton() {
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Recording) {
-            mCamera.getClient().ack_Cam_stop_rec();
+            mVdtCamera.getClient().ack_Cam_stop_rec();
         } else if (states.mRecordState == CameraState.State_Record_Stopped) {
             if (!states.mbIsStill) {
-                mCamera.getClient().cmd_Cam_start_rec();
+                mVdtCamera.getClient().cmd_Cam_start_rec();
             } else {
                 switch (mStillCaptureState) {
                     case STILLCAP_STATE_IDLE:
                         break;
                     case STILLCAP_STATE_WAITING:
                         mStillCaptureState = STILLCAP_STATE_IDLE;
-                        mCamera.getClient().cmd_Rec_StartStillCapture(true);
+                        mVdtCamera.getClient().cmd_Rec_StartStillCapture(true);
                         //mMjpegView.startMask(5);
                         //BeepManager.play(thisApp, R.raw.beep2, false);
                         mStillCaptureTimer.cancel();
                         break;
                     case STILLCAP_STATE_BURSTING:
-                        mCamera.getClient().cmd_Rec_StopStillCapture();
+                        mVdtCamera.getClient().cmd_Rec_StopStillCapture();
                         mStillCaptureState = STILLCAP_STATE_IDLE;
                         break;
                 }
@@ -873,7 +873,7 @@ public class CameraControlActivity extends BaseActivity {
 
     // set a timer to do still capture
     private void onRecordButtonPressed() {
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         if (!states.canDoStillCapture())
             return;
 
@@ -891,20 +891,20 @@ public class CameraControlActivity extends BaseActivity {
     private void onStillCaptureTimer() {
         // timeout, begin bursting
         if (mStillCaptureState == STILLCAP_STATE_WAITING) {
-            if (mCamera != null) {
-                mCamera.getClient().cmd_Rec_StartStillCapture(false);
+            if (mVdtCamera != null) {
+                mVdtCamera.getClient().cmd_Rec_StartStillCapture(false);
             }
             mStillCaptureState = STILLCAP_STATE_BURSTING;
         }
     }
 
     private void updateRecordTime() {
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Recording) {
             if (mUpdateTimer.tag == TIMER_IDLE) {
                 states.mRecordDuration = -2; // TODO
                 states.mbRecordDurationUpdated = false;
-                mCamera.getClient().ack_Cam_get_time();
+                mVdtCamera.getClient().ack_Cam_get_time();
                 mUpdateTimer.tag = TIMER_SCHEDULING;
             } else if (mUpdateTimer.tag == TIMER_SCHEDULING) {
                 if (states.mbRecordDurationUpdated) {
@@ -948,7 +948,7 @@ public class CameraControlActivity extends BaseActivity {
 
     private void updateRecordButton() {
         int visibility = isLandscape() && !mbToolbarVisible ? View.GONE : View.VISIBLE;
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         boolean bEnable = true;
         switch (states.mRecordState) {
             default:
@@ -991,7 +991,7 @@ public class CameraControlActivity extends BaseActivity {
     }
 
     private void updateModeState() {
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         if (states.canDoStillCapture()
             && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
             mModeView.setVisibility(View.VISIBLE);
@@ -1011,7 +1011,7 @@ public class CameraControlActivity extends BaseActivity {
     }
 
     private void updateRecordState() {
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
 
         switch (states.mRecordState) {
             case CameraState.State_Record_Stopped:
@@ -1141,56 +1141,56 @@ public class CameraControlActivity extends BaseActivity {
     }
 
     private void onClickVideoMode() {
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Stopped) {
-            mCamera.getClient().cmd_Rec_SetStillMode(false);
+            mVdtCamera.getClient().cmd_Rec_SetStillMode(false);
             updateModeState();
         }
     }
 
     private void onClickPictureMode() {
-        CameraState states = Camera.getCameraStates(mCamera);
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Stopped) {
-            mCamera.getClient().cmd_Rec_SetStillMode(true);
+            mVdtCamera.getClient().cmd_Rec_SetStillMode(true);
             updateModeState();
         }
     }
 
-    private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {
+    private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
 
         @Override
-        public void onStateChanged(Camera camera) {
-            if (camera == mCamera) {
+        public void onStateChanged(VdtCamera vdtCamera) {
+            if (vdtCamera == mVdtCamera) {
                 updateRecordState();
             }
         }
 
         @Override
-        public void onStartRecordError(Camera camera, int error) {
-            if (camera == mCamera) {
+        public void onStartRecordError(VdtCamera vdtCamera, int error) {
+            if (vdtCamera == mVdtCamera) {
                 CameraControlActivity.this.onStartRecordError(error);
             }
         }
 
         @Override
-        public void onDisconnected(Camera camera) {
-            if (camera == mCamera) {
+        public void onDisconnected(VdtCamera vdtCamera) {
+            if (vdtCamera == mVdtCamera) {
                 removeCamera();
                 noCamera();
             }
         }
 
         @Override
-        public void onStillCaptureStarted(Camera camera, boolean bOneShot) {
-            if (camera == mCamera && bOneShot) {
+        public void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot) {
+            if (vdtCamera == mVdtCamera && bOneShot) {
                 mMjpegView.startMask(5);
                 BeepManager.play(thisApp, R.raw.beep2, false);
             }
         }
 
         @Override
-        public void onStillPictureInfo(Camera camera, boolean bCapturing, int numPictures, int burstTicks) {
-            if (camera == mCamera) {
+        public void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks) {
+            if (vdtCamera == mVdtCamera) {
                 if (bCapturing) {
                     startBurst(numPictures, burstTicks);
                 } else {
@@ -1200,7 +1200,7 @@ public class CameraControlActivity extends BaseActivity {
         }
 
         @Override
-        public void onStillCaptureDone(Camera camera) {
+        public void onStillCaptureDone(VdtCamera vdtCamera) {
             // TODO
         }
 

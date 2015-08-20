@@ -10,9 +10,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.Camera;
-import com.transee.ccam.CameraManager;
-import com.transee.ccam.CameraManager.WifiItem;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
+import com.waylens.hachi.hardware.VdtCameraManager.WifiItem;
 import com.transee.ccam.CameraState;
 import com.transee.ccam.WifiState;
 import com.transee.common.OverlayImageView;
@@ -23,9 +23,9 @@ import java.util.List;
 
 abstract public class CameraListAdapter extends BaseAdapter {
 
-    abstract public void onCameraConnected(Camera camera);
+    abstract public void onCameraConnected(VdtCamera vdtCamera);
 
-    abstract public void onCameraDisconnected(Camera camera);
+    abstract public void onCameraDisconnected(VdtCamera vdtCamera);
 
     abstract public void onClickDropDown(View view, int position);
 
@@ -35,24 +35,24 @@ abstract public class CameraListAdapter extends BaseAdapter {
 
     private Context mContext;
     private ListView mListView;
-    private CameraManager mCameraManager;
-    private CameraManager.Callback mCameraManagerCallback;
+    private VdtCameraManager mVdtCameraManager;
+    private VdtCameraManager.Callback mCameraManagerCallback;
     private LayoutInflater mLayoutInflater;
     private Timer mShowRecordTimer;
 
-    public CameraListAdapter(Context context, CameraManager cameraManager, ListView listView) {
+    public CameraListAdapter(Context context, VdtCameraManager vdtCameraManager, ListView listView) {
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         mListView = listView;
-        mCameraManager = cameraManager;
+        mVdtCameraManager = vdtCameraManager;
         mCameraManagerCallback = new CameraManagerCallback();
-        mCameraManager.addCallback(mCameraManagerCallback);
+        mVdtCameraManager.addCallback(mCameraManagerCallback);
     }
 
     // API
     public void stopAndClear() {
-        if (mCameraManager != null) {
-            mCameraManager.removeCallback(mCameraManagerCallback);
+        if (mVdtCameraManager != null) {
+            mVdtCameraManager.removeCallback(mCameraManagerCallback);
         }
         if (mShowRecordTimer != null) {
             mShowRecordTimer.cancel();
@@ -61,31 +61,31 @@ abstract public class CameraListAdapter extends BaseAdapter {
     }
 
     // API
-    public void connectCamera(Camera.ServiceInfo serviceInfo) {
-        if (mCameraManager != null) {
-            mCameraManager.connectCamera(serviceInfo);
+    public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
+        if (mVdtCameraManager != null) {
+            mVdtCameraManager.connectCamera(serviceInfo);
         }
     }
 
     // API
     public void filterScanResult(List<ScanResult> list) {
-        if (mCameraManager != null) {
-            mCameraManager.filterScanResult(list);
+        if (mVdtCameraManager != null) {
+            mVdtCameraManager.filterScanResult(list);
         }
     }
 
     // API
     public int getConnectedCameras() {
-        return mCameraManager == null ? 0 : mCameraManager.getConnectedCameras().size();
+        return mVdtCameraManager == null ? 0 : mVdtCameraManager.getConnectedCameras().size();
     }
 
     // API
-    public Camera getCamera(int position) {
-        if (mCameraManager == null)
+    public VdtCamera getCamera(int position) {
+        if (mVdtCameraManager == null)
             return null;
 
-        List<Camera> list1 = mCameraManager.getConnectedCameras();
-        List<Camera> list2 = mCameraManager.getConnectingCameras();
+        List<VdtCamera> list1 = mVdtCameraManager.getConnectedCameras();
+        List<VdtCamera> list2 = mVdtCameraManager.getConnectingCameras();
 
         int index = position;
         if (index < 0)
@@ -102,21 +102,21 @@ abstract public class CameraListAdapter extends BaseAdapter {
     }
 
     // API
-    public Camera findConnectedCamera(String ssid, String hostString) {
-        if (mCameraManager == null)
+    public VdtCamera findConnectedCamera(String ssid, String hostString) {
+        if (mVdtCameraManager == null)
             return null;
-        return mCameraManager.findCameraById(ssid, hostString);
+        return mVdtCameraManager.findCameraById(ssid, hostString);
     }
 
     // API
-    public Camera isCameraConnected(Camera camera) {
-        return findConnectedCamera(camera.getSSID(), camera.getHostString());
+    public VdtCamera isCameraConnected(VdtCamera vdtCamera) {
+        return findConnectedCamera(vdtCamera.getSSID(), vdtCamera.getHostString());
     }
 
     // API
-    public boolean removeConnectedCamera(Camera camera) {
-        if (mCameraManager != null) {
-            if (mCameraManager.removeConnectedCamera(camera)) {
+    public boolean removeConnectedCamera(VdtCamera vdtCamera) {
+        if (mVdtCameraManager != null) {
+            if (mVdtCameraManager.removeConnectedCamera(vdtCamera)) {
                 notifyDataSetChanged();
                 return true;
             }
@@ -125,13 +125,13 @@ abstract public class CameraListAdapter extends BaseAdapter {
     }
 
     // API
-    public CameraManager.WifiItem getWifiItem(int position) {
-        if (mCameraManager == null)
+    public VdtCameraManager.WifiItem getWifiItem(int position) {
+        if (mVdtCameraManager == null)
             return null;
 
-        List<Camera> list1 = mCameraManager.getConnectedCameras();
-        List<Camera> list2 = mCameraManager.getConnectingCameras();
-        List<WifiItem> list3 = mCameraManager.getWifiList();
+        List<VdtCamera> list1 = mVdtCameraManager.getConnectedCameras();
+        List<VdtCamera> list2 = mVdtCameraManager.getConnectingCameras();
+        List<WifiItem> list3 = mVdtCameraManager.getWifiList();
 
         int numCameras = list1.size() + list2.size();
         int index = position;
@@ -148,12 +148,12 @@ abstract public class CameraListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mCameraManager == null ? 0 : mCameraManager.getTotalItems();
+        return mVdtCameraManager == null ? 0 : mVdtCameraManager.getTotalItems();
     }
 
     @Override
     public Object getItem(int position) {
-        return mCameraManager == null ? null : mCameraManager.getItem(position);
+        return mVdtCameraManager == null ? null : mVdtCameraManager.getItem(position);
     }
 
     @Override
@@ -203,26 +203,26 @@ abstract public class CameraListAdapter extends BaseAdapter {
     private void initView(View view, ViewHolder holder, int position) {
         boolean bPcServer = false;
         holder.position = position;
-        if (mCameraManager == null) {
+        if (mVdtCameraManager == null) {
             initEmptyView(holder, position);
         } else {
-            List<Camera> list1 = mCameraManager.getConnectedCameras();
-            List<Camera> list2 = mCameraManager.getConnectingCameras();
-            List<WifiItem> list3 = mCameraManager.getWifiList();
+            List<VdtCamera> list1 = mVdtCameraManager.getConnectedCameras();
+            List<VdtCamera> list2 = mVdtCameraManager.getConnectingCameras();
+            List<WifiItem> list3 = mVdtCameraManager.getWifiList();
             int index = position;
             if (index < 0) {
                 initEmptyView(holder, position);
             } else if (index < list1.size()) {
                 // connected camera
-                Camera camera = list1.get(index);
-                if (camera.isPcServer()) {
+                VdtCamera vdtCamera = list1.get(index);
+                if (vdtCamera.isPcServer()) {
                     holder.imageView1.setImageResource(R.drawable.viditpcc);
-                    holder.textView1.setText(camera.getServerName());
-                    holder.textView2.setText(camera.getSSID());
+                    holder.textView1.setText(vdtCamera.getServerName());
+                    holder.textView2.setText(vdtCamera.getSSID());
                     bPcServer = true;
                 } else {
                     holder.imageView1.setImageResource(R.drawable.camera_active);
-                    if (Camera.getCameraStates(camera).mRecordState == CameraState.State_Record_Recording) {
+                    if (VdtCamera.getCameraStates(vdtCamera).mRecordState == CameraState.State_Record_Recording) {
                         holder.imageView1.enableOverlay(true);
                         holder.imageView1.setOverlayAlpha(255);
                         setUpdateTimer();
@@ -233,14 +233,14 @@ abstract public class CameraListAdapter extends BaseAdapter {
                     holder.imageView2.setVisibility(View.VISIBLE);
                     holder.imageView4.setVisibility(View.VISIBLE);
 
-                    String name = Camera.getCameraStates(camera).mCameraName;
+                    String name = VdtCamera.getCameraStates(vdtCamera).mCameraName;
                     if (name.length() == 0) {
                         name = mContext.getResources().getString(R.string.lable_camera_noname);
                     }
                     holder.textView1.setText(name);
-                    holder.textView2.setText(camera.getSSID());
+                    holder.textView2.setText(vdtCamera.getSSID());
                     String mode = null;
-                    switch (Camera.getWifiStates(camera).mWifiMode) {
+                    switch (VdtCamera.getWifiStates(vdtCamera).mWifiMode) {
                         case WifiState.WIFI_Mode_AP:
                             mode = "AP";
                             // holder.textView2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.wifi_ap,
@@ -265,17 +265,17 @@ abstract public class CameraListAdapter extends BaseAdapter {
                 index -= list1.size();
                 if (index < list2.size()) {
                     // connecting camera
-                    Camera camera = list2.get(index);
+                    VdtCamera vdtCamera = list2.get(index);
                     holder.imageView1.setImageResource(R.drawable.camera_inactive);
                     holder.imageView1.disableOverlay();
                     holder.imageView2.setVisibility(View.VISIBLE);
                     holder.imageView4.setVisibility(View.GONE);
                     holder.textView1.setText(R.string.lable_camera_connecting);
-                    holder.textView2.setText(camera.getSSID());
+                    holder.textView2.setText(vdtCamera.getSSID());
                 } else {
                     index -= list2.size();
                     if (index < list3.size()) {
-                        CameraManager.WifiItem item = list3.get(index);
+                        VdtCameraManager.WifiItem item = list3.get(index);
                         holder.imageView1.setImageResource(R.drawable.camera_inactive);
                         holder.imageView1.disableOverlay();
                         holder.imageView2.setVisibility(View.VISIBLE);
@@ -349,8 +349,8 @@ abstract public class CameraListAdapter extends BaseAdapter {
         }
     }
 
-    private void onCameraStateChanged(Camera camera) {
-        int index = mCameraManager.findCameraIndex(camera);
+    private void onCameraStateChanged(VdtCamera vdtCamera) {
+        int index = mVdtCameraManager.findCameraIndex(vdtCamera);
         if (index >= 0) {
             View view = getViewOfIndex(index);
             if (view != null) {
@@ -368,45 +368,45 @@ abstract public class CameraListAdapter extends BaseAdapter {
         TextView textView2;
     }
 
-    class CameraManagerCallback implements CameraManager.Callback {
+    class CameraManagerCallback implements VdtCameraManager.Callback {
 
         @Override
-        public void onCameraConnecting(CameraManager manager, Camera camera) {
+        public void onCameraConnecting(VdtCameraManager manager, VdtCamera vdtCamera) {
             Logger.t(TAG).d("connecting camera");
-            if (manager == mCameraManager) {
+            if (manager == mVdtCameraManager) {
                 notifyDataSetChanged();
             }
         }
 
         @Override
-        public void onCameraConnected(CameraManager manager, Camera camera) {
+        public void onCameraConnected(VdtCameraManager manager, VdtCamera vdtCamera) {
             Logger.t(TAG).d("camera connected");
-            if (manager == mCameraManager) {
+            if (manager == mVdtCameraManager) {
                 notifyDataSetChanged(); // TODO : optimize
-                CameraListAdapter.this.onCameraConnected(camera);
+                CameraListAdapter.this.onCameraConnected(vdtCamera);
             }
         }
 
         @Override
-        public void onCameraDisconnected(CameraManager manager, Camera camera) {
+        public void onCameraDisconnected(VdtCameraManager manager, VdtCamera vdtCamera) {
             Logger.t(TAG).d("camera disconnected");
-            if (manager == mCameraManager) {
+            if (manager == mVdtCameraManager) {
                 notifyDataSetChanged();
             }
         }
 
         @Override
-        public void onCameraStateChanged(CameraManager manager, Camera camera) {
+        public void onCameraStateChanged(VdtCameraManager manager, VdtCamera vdtCamera) {
             Logger.t(TAG).d("onCameraStateChanged");
-            if (manager == mCameraManager) {
-                CameraListAdapter.this.onCameraStateChanged(camera);
+            if (manager == mVdtCameraManager) {
+                CameraListAdapter.this.onCameraStateChanged(vdtCamera);
             }
         }
 
         @Override
-        public void onWifiListChanged(CameraManager manager) {
+        public void onWifiListChanged(VdtCameraManager manager) {
             Logger.t(TAG).d("wifi list changed");
-            if (manager == mCameraManager) {
+            if (manager == mVdtCameraManager) {
                 notifyDataSetChanged();
             }
         }

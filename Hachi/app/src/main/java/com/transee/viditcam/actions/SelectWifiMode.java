@@ -4,22 +4,22 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.RadioButton;
 
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.ccam.WifiState;
 import com.waylens.hachi.R;
 
 abstract public class SelectWifiMode extends DialogBuilder {
 
-	abstract protected void onChangeWifiMode(Camera camera, int newMode);
+	abstract protected void onChangeWifiMode(VdtCamera vdtCamera, int newMode);
 
-	abstract protected void onSetupWifiAP(Camera camera);
+	abstract protected void onSetupWifiAP(VdtCamera vdtCamera);
 
-	private final Camera mCamera;
+	private final VdtCamera mVdtCamera;
 	private int mWifiMode = WifiState.WIFI_Mode_Unknown;
 
-	public SelectWifiMode(Activity activity, Camera camera) {
+	public SelectWifiMode(Activity activity, VdtCamera vdtCamera) {
 		super(activity);
-		mCamera = camera;
+		mVdtCamera = vdtCamera;
 		setTitle(R.string.title_switch_wifi_mode);
 		setContent(R.layout.dialog_switch_wifi_mode);
 		setButtons(DLG_OK_CANCEL);
@@ -37,7 +37,7 @@ abstract public class SelectWifiMode extends DialogBuilder {
 		RadioButton radio = (RadioButton)layout.findViewById(id);
 		radio.setTag(mode);
 		radio.setOnClickListener(mOnClickWifiMode);
-		if (Camera.getWifiStates(mCamera).mWifiMode == mode) {
+		if (VdtCamera.getWifiStates(mVdtCamera).mWifiMode == mode) {
 			radio.setChecked(true);
 		}
 		return radio;
@@ -49,15 +49,15 @@ abstract public class SelectWifiMode extends DialogBuilder {
 		setupRadioButton(layout, R.id.radio0, WifiState.WIFI_Mode_AP);
 		// Client mode
 		RadioButton radio = setupRadioButton(layout, R.id.radio1, WifiState.WIFI_Mode_Client);
-		if (Camera.getWifiStates(mCamera).mNumWifiAP == 0) {
+		if (VdtCamera.getWifiStates(mVdtCamera).mNumWifiAP == 0) {
 			radio.setEnabled(false);
 		}
 	}
 
 	@Override
 	protected void onClickPositiveButton() {
-		if (mWifiMode != WifiState.WIFI_Mode_Unknown && mWifiMode != Camera.getWifiStates(mCamera).mWifiMode) {
-			onChangeWifiMode(mCamera, mWifiMode);
+		if (mWifiMode != WifiState.WIFI_Mode_Unknown && mWifiMode != VdtCamera.getWifiStates(mVdtCamera).mWifiMode) {
+			onChangeWifiMode(mVdtCamera, mWifiMode);
 		}
 	}
 
@@ -67,7 +67,7 @@ abstract public class SelectWifiMode extends DialogBuilder {
 
 	@Override
 	protected void onClickNeutralButton() {
-		onSetupWifiAP(mCamera);
+		onSetupWifiAP(mVdtCamera);
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.common.GPSPath;
 import com.transee.common.VideoListView;
 import com.transee.common.android.ViewPager;
@@ -48,7 +48,7 @@ import butterknife.Bind;
 public class CameraVideoActivity extends BaseActivity {
     private static final String TAG = CameraVideoActivity.class.getSimpleName();
 
-    private Camera mCamera;
+    private VdtCamera mVdtCamera;
     private Vdb mVdb;
     private ImageDecoder mImageDecoder;
 
@@ -222,8 +222,8 @@ public class CameraVideoActivity extends BaseActivity {
             mTitleText.setText(R.string.title_activity_downloaded_video);
         } else {
             String text = getResources().getString(R.string.title_activity_camera_video);
-            if (mCamera != null) {
-                String name = Camera.getCameraStates(mCamera).mCameraName;
+            if (mVdtCamera != null) {
+                String name = VdtCamera.getCameraStates(mVdtCamera).mCameraName;
                 if (name.length() == 0) {
                     name = getResources().getString(R.string.lable_camera_noname);
                 }
@@ -345,12 +345,12 @@ public class CameraVideoActivity extends BaseActivity {
         if (isServerActivity(bundle)) {
             hostString = getServerAddress(bundle);
         } else {
-            mCamera = getCameraFromIntent(null);
-            if (mCamera == null) {
+            mVdtCamera = getCameraFromIntent(null);
+            if (mVdtCamera == null) {
                 performFinish();
                 return;
             }
-            hostString = mCamera.getHostString();
+            hostString = mVdtCamera.getHostString();
         }
 
 
@@ -561,8 +561,8 @@ public class CameraVideoActivity extends BaseActivity {
 
 
     private void updateSpaceInfo() {
-        if (mCamera != null) {
-            mCamera.getClient().cmd_Cam_get_getStorageInfor();
+        if (mVdtCamera != null) {
+            mVdtCamera.getClient().cmd_Cam_get_getStorageInfor();
         }
     }
 

@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.ccam.CameraClient;
 import com.transee.viditcam.actions.GetWifiAP;
 import com.transee.viditcam.actions.RemoveWifiAP;
@@ -26,13 +26,13 @@ public class CameraWifiSetupActivity extends BaseActivity {
     static final String TAG = "CameraWifiSetupActivity";
 
     private boolean mbRequested;
-    private Camera mCamera;
+    private VdtCamera mVdtCamera;
     private ListView mListView;
     private WifiListAdapter mListAdapter;
     private Button mAddNetworkButton;
 
     private CameraClient getCameraClient() {
-        return (CameraClient) mCamera.getClient();
+        return (CameraClient) mVdtCamera.getClient();
     }
 
     @Override
@@ -73,14 +73,14 @@ public class CameraWifiSetupActivity extends BaseActivity {
 
     @Override
     protected void onStartActivity() {
-        mCamera = getCameraFromIntent(null);
-        if (mCamera == null) {
+        mVdtCamera = getCameraFromIntent(null);
+        if (mVdtCamera == null) {
             noCamera();
             return;
         }
         mbRequested = isActivityRequested();
 
-        mCamera.addCallback(mCameraCallback);
+        mVdtCamera.addCallback(mCameraCallback);
         getCameraClient().cmd_Network_GetHostNum();
 
         mListAdapter.clear();
@@ -108,16 +108,16 @@ public class CameraWifiSetupActivity extends BaseActivity {
     }
 
     private void removeWifiAP(String ssid) {
-        if (mCamera != null) {
+        if (mVdtCamera != null) {
             mListAdapter.removeSSID(ssid);
             getCameraClient().cmd_Network_RmvHost(ssid);
         }
     }
 
     private void removeCamera() {
-        if (mCamera != null) {
-            mCamera.removeCallback(mCameraCallback);
-            mCamera = null;
+        if (mVdtCamera != null) {
+            mVdtCamera.removeCallback(mCameraCallback);
+            mVdtCamera = null;
         }
     }
 
@@ -137,7 +137,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
 
             @Override
             public void onGetWifiAP(String ssid, String password) {
-                if (mCamera != null) {
+                if (mVdtCamera != null) {
                     addWifiAP(ssid, password);
                 }
             }
@@ -170,8 +170,8 @@ public class CameraWifiSetupActivity extends BaseActivity {
     private void performFinish() {
         if (mbRequested) {
             Bundle b = new Bundle();
-            b.putString("ssid", mCamera.getSSID());
-            b.putString("hostString", mCamera.getHostString());
+            b.putString("ssid", mVdtCamera.getSSID());
+            b.putString("hostString", mVdtCamera.getHostString());
             Intent intent = new Intent();
             intent.putExtras(b);
             setResult(RESULT_OK, intent);
@@ -187,19 +187,19 @@ public class CameraWifiSetupActivity extends BaseActivity {
         mListAdapter.addSSID(ssid);
     }
 
-    private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {
+    private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
 
         @Override
-        public void onDisconnected(Camera camera) {
-            if (camera == mCamera) {
+        public void onDisconnected(VdtCamera vdtCamera) {
+            if (vdtCamera == mVdtCamera) {
                 removeCamera();
                 noCamera();
             }
         }
 
         @Override
-        public void onHostSSIDFetched(Camera camera, String ssid) {
-            if (camera == mCamera) {
+        public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
+            if (vdtCamera == mVdtCamera) {
                 CameraWifiSetupActivity.this.onHostSSIDFetched(ssid);
             }
         }

@@ -5,19 +5,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 
-import com.transee.ccam.Camera;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.common.Utils;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Hachi;
 
 public class CameraOverlaySetupActivity extends BaseActivity {
 
 	static final boolean DEBUG = false;
 	static final String TAG = "CameraOverlaySetupAct";
 
-	private Camera mCamera;
+	private VdtCamera mVdtCamera;
 
 	private CheckBox mCBShowName;
 	private CheckBox mCBShowTime;
@@ -25,11 +24,11 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 	private CheckBox mCBShowSpeed;
 
 	private CameraState getCameraStates() {
-		return Camera.getCameraStates(mCamera);
+		return VdtCamera.getCameraStates(mVdtCamera);
 	}
 
 	private CameraClient getCameraClient() {
-		return (CameraClient)mCamera.getClient();
+		return (CameraClient) mVdtCamera.getClient();
 	}
 
 	@Override
@@ -77,7 +76,7 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 	}
 
 	private void toggleOverlayFlag(int flag) {
-		if (mCamera != null) {
+		if (mVdtCamera != null) {
 			CameraState states = getCameraStates();
 			int flags = Utils.toggleBit(states.mOverlayFlags, flag);
 			getCameraClient().cmd_Rec_setOverlay(flags);
@@ -102,13 +101,13 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 
 	@Override
 	protected void onStartActivity() {
-		mCamera = getCameraFromIntent(null);
-		if (mCamera == null) {
+		mVdtCamera = getCameraFromIntent(null);
+		if (mVdtCamera == null) {
 			noCamera();
 			return;
 		}
 
-		mCamera.addCallback(mCameraCallback);
+		mVdtCamera.addCallback(mCameraCallback);
 		updateCameraState();
 	}
 
@@ -122,9 +121,9 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 	}
 
 	private void removeCamera() {
-		if (mCamera != null) {
-			mCamera.removeCallback(mCameraCallback);
-			mCamera = null;
+		if (mVdtCamera != null) {
+			mVdtCamera.removeCallback(mCameraCallback);
+			mVdtCamera = null;
 		}
 	}
 
@@ -144,18 +143,18 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 		finish();
 	}
 
-	private final Camera.Callback mCameraCallback = new Camera.CallbackImpl() {
+	private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
 
 		@Override
-		public void onStateChanged(Camera camera) {
-			if (camera == mCamera) {
+		public void onStateChanged(VdtCamera vdtCamera) {
+			if (vdtCamera == mVdtCamera) {
 				updateCameraState();
 			}
 		}
 
 		@Override
-		public void onDisconnected(Camera camera) {
-			if (camera == mCamera) {
+		public void onDisconnected(VdtCamera vdtCamera) {
+			if (vdtCamera == mVdtCamera) {
 				removeCamera();
 				noCamera();
 			}

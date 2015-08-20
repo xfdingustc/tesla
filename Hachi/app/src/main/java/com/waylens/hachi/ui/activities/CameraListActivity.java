@@ -18,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.Camera;
-import com.transee.ccam.CameraManager;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.common.ViewAnimation;
 import com.transee.viditcam.actions.GetCameraPassword;
 import com.transee.viditcam.actions.GetServerAddress;
@@ -64,7 +64,7 @@ public class CameraListActivity extends BaseActivity {
 
     private CameraListRvAdapter mCameraListAdapter;
 
-    private CameraManager mCameraManager = CameraManager.getManager();
+    private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
 
     @Bind(R.id.rvCameraList)
     RecyclerView mRvCameraList;
@@ -172,7 +172,7 @@ public class CameraListActivity extends BaseActivity {
 
     private void onScanWifiDone(WifiAdmin wifiAdmin) {
         //mCameraListAdapter.filterScanResult(wifiAdmin.getScanResult());
-        mCameraManager.filterScanResult(wifiAdmin.getScanResult());
+        mVdtCameraManager.filterScanResult(wifiAdmin.getScanResult());
         mCameraListAdapter.notifyDataSetChanged();
     }
 
@@ -182,7 +182,7 @@ public class CameraListActivity extends BaseActivity {
             public void onCameraFound(NsdServiceInfo cameraService) {
                 String serviceName = cameraService.getServiceName();
                 boolean bIsPcServer = serviceName.equals("Vidit Studio");
-                final Camera.ServiceInfo serviceInfo = new Camera.ServiceInfo(
+                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
                     cameraService.getHost(),
                     cameraService.getPort(),
                     "", serviceName, bIsPcServer);
@@ -379,7 +379,7 @@ public class CameraListActivity extends BaseActivity {
             @Override
             public void onGetPasswordOK(GetCameraPassword action, String ssid, String password) {
                 // save password
-                CameraManager.getManager().setPassword(ssid, password);
+                VdtCameraManager.getManager().setPassword(ssid, password);
                 if (!action.mbChangePassword) {
                     CameraListActivity.this.startConnectCamera(ssid, password);
                 }
@@ -420,7 +420,7 @@ public class CameraListActivity extends BaseActivity {
         mNewCameraSSID = wifiName;
         mNewCameraPassword = wifiPassword;
         // save password
-        CameraManager.getManager().setPassword(mNewCameraSSID, mNewCameraPassword);
+        VdtCameraManager.getManager().setPassword(mNewCameraSSID, mNewCameraPassword);
     }
 
     private void onWifiSetupDone(String ssid, String hostString) {
@@ -430,12 +430,12 @@ public class CameraListActivity extends BaseActivity {
         mSetupWifi_hostString = hostString;
     }
 
-    private void browseCameraVideo(Camera camera) {
-        if (camera != null) {
-            camera.getClient().cmd_CAM_WantIdle();
+    private void browseCameraVideo(VdtCamera vdtCamera) {
+        if (vdtCamera != null) {
+            vdtCamera.getClient().cmd_CAM_WantIdle();
             //CameraVideoActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera
             //    .getHostString());
-            BrowseCameraActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera.getHostString());
+            BrowseCameraActivity.launch(this, vdtCamera.isPcServer(), vdtCamera.getSSID(), vdtCamera.getHostString());
         }
     }
 
@@ -475,10 +475,10 @@ public class CameraListActivity extends BaseActivity {
         builder.show();
     } */
 
-    private void onClickWifiMode(Camera camera) {
-        SelectWifiMode action = new SelectWifiMode(this, camera) {
+    private void onClickWifiMode(VdtCamera vdtCamera) {
+        SelectWifiMode action = new SelectWifiMode(this, vdtCamera) {
             @Override
-            protected void onChangeWifiMode(Camera camera, int newMode) {
+            protected void onChangeWifiMode(VdtCamera camera, int newMode) {
                 /*
                 camera = mCameraListAdapter.isCameraConnected(camera);
                 if (camera != null) {
@@ -490,7 +490,7 @@ public class CameraListActivity extends BaseActivity {
             }
 
             @Override
-            protected void onSetupWifiAP(Camera camera) {
+            protected void onSetupWifiAP(VdtCamera camera) {
                 /*
                 camera = mCameraListAdapter.isCameraConnected(camera);
                 if (camera != null) {
@@ -622,7 +622,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
 
-    private void onServiceResolved(Camera.ServiceInfo serviceInfo) {
+    private void onServiceResolved(VdtCamera.ServiceInfo serviceInfo) {
         WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
         serviceInfo.ssid = wifiAdmin == null ? null : wifiAdmin.getCurrSSID();
         //mCameraListAdapter.connectCamera(serviceInfo);
