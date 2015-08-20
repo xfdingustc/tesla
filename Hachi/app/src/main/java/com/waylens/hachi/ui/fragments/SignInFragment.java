@@ -1,14 +1,20 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -36,6 +42,10 @@ import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -70,9 +80,17 @@ public class SignInFragment extends BaseFragment {
     @Bind(R.id.sign_in_animator)
     ViewAnimator mSignInAnimator;
 
+    @Bind(R.id.sign_up_animator)
+    ViewAnimator mSignUpAnimator;
+
+    @Bind(R.id.sign_up_email)
+    AutoCompleteTextView mTvSignUpEmail;
+
     CallbackManager mCallbackManager;
 
     RequestQueue mRequestQueue;
+
+    ArrayAdapter<String> mAccountAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -145,6 +163,23 @@ public class SignInFragment extends BaseFragment {
         mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends");
         mFBLoginButton.registerCallback(mCallbackManager, new FBCallback());
         mFBLoginButton.requestFocus();
+        initAccountsView();
+    }
+
+    void initAccountsView() {
+        AccountManager accountManager = AccountManager.get(getActivity());
+        Account[] accounts = accountManager.getAccounts();
+        ArrayList<String> selectedAccounts = new ArrayList<>();
+        for (Account account : accounts) {
+            if (account.name.contains("@")) {
+                selectedAccounts.add(account.name);
+            }
+        }
+        mAccountAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, selectedAccounts);
+        mTvSignUpEmail.setAdapter(mAccountAdapter);
+        if (mAccountAdapter.getCount() > 0) {
+            mTvSignUpEmail.setText(mAccountAdapter.getItem(0));
+        }
     }
 
     @OnTextChanged({R.id.sign_in_password, R.id.sign_in_username})
@@ -154,6 +189,53 @@ public class SignInFragment extends BaseFragment {
         } else {
             mSignInAnimator.setDisplayedChild(1);
         }
+    }
+
+    @OnClick(R.id.sign_up_next)
+    public void signUp() {
+        verifyEmail();
+        mSignUpAnimator.setDisplayedChild(1);
+    }
+
+    private void verifyEmail() {
+        String url = Constants.API_CHECK_EMAIL;
+        try {
+            url = url + URLEncoder.encode(mTvSignUpEmail.getText().toString(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            Logger.t(TAG).e(e, "");
+        }
+
+        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onValidEmail(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onInvalidEmail(error);
+            }
+        }));
+    }
+
+    void onInvalidEmail(VolleyError error) {
+        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.get(1));
+        mSignUpAnimator.setDisplayedChild(0);
+    }
+
+    void onValidEmail(JSONObject response) {
+        if (response.optBoolean("result")) {
+            SignUpFragment fragment = new SignUpFragment();
+            Bundle args = new Bundle();
+            args.putString(SignUpFragment.ARG_KEY_EMAIL, mTvSignUpEmail.getText().toString());
+            fragment.setArguments(args);
+            ((LoginActivity)getActivity()).pushFragment(fragment);
+        } else {
+            showMessage(R.string.email_has_been_used);
+            mSignUpAnimator.setDisplayedChild(0);
+        }
+
     }
 
     @OnClick(R.id.btn_login)
@@ -167,7 +249,9 @@ public class SignInFragment extends BaseFragment {
         } catch (JSONException e) {
             Logger.t(TAG).e(e, "");
         }
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.LOGIN_URL, params,
+
+        mRequestQueue.start();
+        mRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_LOGIN, params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -188,27 +272,16 @@ public class SignInFragment extends BaseFragment {
     }
 
     void onLoginFailed(VolleyError error) {
-        if (error.networkResponse == null || error.networkResponse.data == null) {
-            showMessage(R.string.unknown_error);
-        } else {
-            String errorMessageJson = new String(error.networkResponse.data);
-            try {
-                JSONObject errorJson = new JSONObject(errorMessageJson);
-                Logger.t(TAG).json(errorJson.toString());
-                int errorCode = errorJson.getInt("code");
-                showMessage(ServerMessage.getErrorMessage(errorCode));
-                if (errorCode == ServerMessage.USER_NAME_PASSWORD_NOT_MATCHED) {
-                    mTvPassword.requestFocus();
-                }
-            } catch (JSONException e) {
-                Logger.t(TAG).e("", e);
-            }
+        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.get(1));
+        if (errorInfo.get(0) == ServerMessage.USER_NAME_PASSWORD_NOT_MATCHED) {
+            mTvPassword.requestFocus();
         }
         mSignInAnimator.setDisplayedChild(1);
     }
 
     void signUpWithFacebook(final AccessToken accessToken) {
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.AUTH_FACEBOOK + accessToken.getToken(),
+        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -224,19 +297,8 @@ public class SignInFragment extends BaseFragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                try {
-                    Log.e("test", "Response: " + error);
-                    if (error.networkResponse == null || error.networkResponse.data == null) {
-                        showMessage(R.string.unknown_error);
-                    } else {
-                        String message = new String(error.networkResponse.data);
-                        JSONObject jsonObject = new JSONObject(message);
-                        int errorCode = jsonObject.optInt("code");
-                        showMessage(ServerMessage.getErrorMessage(errorCode));
-                    }
-                } catch (Exception e) {
-                    Log.e("test", "", e);
-                }
+                SparseIntArray errorInfo = ServerMessage.parseServerError(error);
+                showMessage(errorInfo.get(1));
                 hideDialog();
             }
         }));

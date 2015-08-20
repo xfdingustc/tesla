@@ -213,7 +213,7 @@
     <string name="password">Password</string>
     <string name="forget_password">forget password</string>
     <string name="have_no_account">have no account</string>
-    <string name="email">Enter your email</string>
+    <string name="email">Email</string>
     <string name="signup">signup</string>
     <string name="have_account">have account</string>
     <string name="username_error">username error</string>
@@ -236,4 +236,6 @@
     <string name="or">OR</string>
     <string name="logout">Log out</string>
     <string name="confirm_logout">Log out?</string>
+    <string name="email_has_been_used">The email address has been used.</string>
+    <string name="photo">PHOTO</string>
 </resources>

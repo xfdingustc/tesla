@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.fragments;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,7 @@ public class LinkAccountFragment extends BaseFragment {
             Logger.t(TAG).e(e, "");
         }
 
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.LINK_ACCOUNT, body,
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_LINK_ACCOUNT, body,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
@@ -107,20 +108,10 @@ public class LinkAccountFragment extends BaseFragment {
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        try {
-                            if (error.networkResponse == null || error.networkResponse.data == null) {
-                                showMessage(R.string.unknown_error);
-                            } else {
-                                String message = new String(error.networkResponse.data);
-                                JSONObject jsonObject = new JSONObject(message);
-                                int errorCode = jsonObject.optInt("code");
-                                showMessage(ServerMessage.getErrorMessage(errorCode));
-                                if (errorCode == ServerMessage.USER_NAME_HAS_BEEN_USED) {
-                                    mUserName.requestFocus();
-                                }
-                            }
-                        } catch (Exception e) {
-                            Log.e("test", "", e);
+                        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
+                        showMessage(errorInfo.get(1));
+                        if (errorInfo.get(0) == ServerMessage.USER_NAME_HAS_BEEN_USED) {
+                            mUserName.requestFocus();
                         }
                         mViewAnimator.setDisplayedChild(0);
                     }

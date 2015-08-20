@@ -32,6 +32,7 @@
         android:visibility="gone">
 
         <AutoCompleteTextView
+            android:id="@+id/sign_up_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -40,15 +41,26 @@
             android:hint="@string/email"
             android:inputType="textEmailAddress"/>
 
-        <TextView
-            android:id="@+id/sign_up_next"
+        <ViewAnimator
+            android:id="@+id/sign_up_animator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@android:drawable/list_selector_background"
-            android:text="@string/next"/>
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/sign_up_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/list_selector_background"
+                android:text="@string/next"/>
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </ViewAnimator>
+
     </LinearLayout>
 
     <LinearLayout
@@ -111,6 +123,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/ic_arrow_forward"/>
+
                 <ProgressBar
                     android:layout_width="48dp"
                     android:layout_height="48dp"/>

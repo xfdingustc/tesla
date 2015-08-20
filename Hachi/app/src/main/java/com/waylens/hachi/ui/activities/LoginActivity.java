@@ -24,7 +24,8 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getFragmentManager().beginTransaction()
-                .add(R.id.fragment_content, new SignInFragment()).commit();
+                .add(R.id.fragment_content, new SignInFragment())
+                .commit();
     }
 
     @Override
@@ -54,4 +55,12 @@ public class LoginActivity extends BaseActivity {
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

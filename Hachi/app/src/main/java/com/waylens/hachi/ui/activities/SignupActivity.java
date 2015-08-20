@@ -61,7 +61,7 @@ public class SignupActivity extends BaseActivity {
             return;
         }
 
-        String url = Constants.HOST_URL + Constants.SIGN_UP;
+        String url = Constants.HOST_URL + Constants.API_SIGN_UP;
 
         Map<String, String> register_params = new HashMap<>();
         register_params.put(JsonKey.USERNAME, mEtUsername.getText().toString());
