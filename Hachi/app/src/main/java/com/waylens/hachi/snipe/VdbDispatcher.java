@@ -13,15 +13,15 @@ import java.util.concurrent.BlockingQueue;
 public class VdbDispatcher extends Thread {
     private final static String TAG = VdbDispatcher.class.getSimpleName();
     private final BlockingQueue<VdbRequest<?>> mQueue;
-    private final VideoDatabase mVideoDatabase;
+    private final VdbSocket mVdbSocket;
     private final ResponseDelivery mDelivery;
 
     private volatile boolean mQuit = false;
 
-    public VdbDispatcher(BlockingQueue<VdbRequest<?>> queue, VideoDatabase videoDatabase,
+    public VdbDispatcher(BlockingQueue<VdbRequest<?>> queue, VdbSocket vdbSocket,
                          ResponseDelivery delivery) {
         this.mQueue = queue;
-        this.mVideoDatabase = videoDatabase;
+        this.mVdbSocket = vdbSocket;
         this.mDelivery = delivery;
     }
 
@@ -59,7 +59,7 @@ public class VdbDispatcher extends Thread {
                 }
 
                 // Perform the network request
-                RawResponse rawResponse = mVideoDatabase.performRequest(vdbRequest);
+                RawResponse rawResponse = mVdbSocket.performRequest(vdbRequest);
                 vdbRequest.addMarker("vdb-complete");
 
                 if (rawResponse.notModified && vdbRequest.hasHadResponseDelivered()) {

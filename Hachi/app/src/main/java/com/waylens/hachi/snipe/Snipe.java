@@ -7,8 +7,8 @@ import android.content.Context;
  */
 public class Snipe {
     public static VdbRequestQueue newRequestQueue(Context context, String host) {
-        VideoDatabase videoDatabase = new BasicVideoDatabase();
-        VdbRequestQueue queue = new VdbRequestQueue(videoDatabase, host);
+        VdbSocket vdbSocket = new BasicVdbSocket();
+        VdbRequestQueue queue = new VdbRequestQueue(vdbSocket, host);
         queue.start();
 
         return queue;

@@ -9,30 +9,28 @@ import android.net.NetworkInfo;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.Camera;
 import com.transee.ccam.CameraManager;
 import com.transee.common.ViewAnimation;
-import com.transee.common.ViewAnimation.Animation;
-import com.waylens.hachi.hardware.WifiAdmin;
-import com.transee.viditcam.actions.CameraOperations;
-import com.transee.viditcam.actions.DialogBuilder;
 import com.transee.viditcam.actions.GetCameraPassword;
 import com.transee.viditcam.actions.GetServerAddress;
 import com.transee.viditcam.actions.SelectWifiMode;
-import com.transee.viditcam.app.*;
+import com.transee.viditcam.app.AddCameraActivity;
 import com.waylens.camera.CameraDiscovery;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.hardware.WifiAdmin;
 import com.waylens.hachi.hardware.WifiAdminManager;
+import com.waylens.hachi.ui.adapters.CameraListRvAdapter;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -48,7 +46,6 @@ public class CameraListActivity extends BaseActivity {
     private static final int REQUEST_SCAN_CAMERA = 0;
     private static final int REQUEST_SETUP_WIFI_AP = 1;
 
-    private CameraListAdapter mCameraListAdapter;
 
     private View mViewSearching;
     private ViewAnimation mSearchingAnim;
@@ -65,24 +62,18 @@ public class CameraListActivity extends BaseActivity {
     private String mSetupWifi_SSID;
     private String mSetupWifi_hostString;
 
-    private Hachi thisApp;
+    private CameraListRvAdapter mCameraListAdapter;
 
-    @Bind(R.id.listView1)
-    ListView mListView;
+    private CameraManager mCameraManager = CameraManager.getManager();
 
-    @Bind(R.id.emptyCameraList)
-    View mEmptyView;
+    @Bind(R.id.rvCameraList)
+    RecyclerView mRvCameraList;
 
     @Bind(R.id.btnWifi)
     TextView mTextWifi;
 
     @Bind(R.id.imageWifi)
     ImageView mWifiIcon;
-
-    @OnClick(R.id.btnDownloadedVideos)
-    public void onBtnDownloadedVideoClicked() {
-        onClickDownloadedVideos();
-    }
 
     @OnClick(R.id.btnTestServer)
     public void onBtnTestServerClicked() {
@@ -103,26 +94,25 @@ public class CameraListActivity extends BaseActivity {
     @Override
     protected void init() {
         mHandler = new Handler();
-        thisApp = (Hachi)getApplication();
+        thisApp = (Hachi) getApplication();
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_camera_list);
 
+        mRvCameraList.setLayoutManager(new LinearLayoutManager(this));
 
-        mViewSearching = mEmptyView;
-        mListView.setEmptyView(mEmptyView);
+        mCameraListAdapter = new CameraListRvAdapter(this);
+        mRvCameraList.setAdapter(mCameraListAdapter);
 
-        mCameraListAdapter = new MyCameraListAdapter(mListView);
-        mListView.setAdapter(mCameraListAdapter);
-
+        /*
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 onClickListItem(position, true);
             }
-        });
+        }); */
 
 
         WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
@@ -136,7 +126,7 @@ public class CameraListActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mCameraListAdapter.stopAndClear();
+        //mCameraListAdapter.stopAndClear();
     }
 
     @Override
@@ -148,6 +138,7 @@ public class CameraListActivity extends BaseActivity {
         onScanWifiDone(wifiAdmin);
         tryConnectCamera();
         // try resume the action - switch wifi mode
+        /*
         if (mSetupWifi_SSID != null) {
             Camera camera = mCameraListAdapter.findConnectedCamera(mSetupWifi_SSID, mSetupWifi_hostString);
             mSetupWifi_SSID = null;
@@ -155,6 +146,7 @@ public class CameraListActivity extends BaseActivity {
                 onClickWifiMode(camera);
             }
         }
+        */
     }
 
     @Override
@@ -164,7 +156,6 @@ public class CameraListActivity extends BaseActivity {
         stopDiscovery();
         WifiAdminManager.getManager().detachWifiAdmin(mWifiCallback, true);
     }
-
 
 
     static public boolean getAutoPreview(Context context) {
@@ -180,7 +171,9 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void onScanWifiDone(WifiAdmin wifiAdmin) {
-        mCameraListAdapter.filterScanResult(wifiAdmin.getScanResult());
+        //mCameraListAdapter.filterScanResult(wifiAdmin.getScanResult());
+        mCameraManager.filterScanResult(wifiAdmin.getScanResult());
+        mCameraListAdapter.notifyDataSetChanged();
     }
 
     private void startDiscovery() {
@@ -190,9 +183,9 @@ public class CameraListActivity extends BaseActivity {
                 String serviceName = cameraService.getServiceName();
                 boolean bIsPcServer = serviceName.equals("Vidit Studio");
                 final Camera.ServiceInfo serviceInfo = new Camera.ServiceInfo(
-                        cameraService.getHost(),
-                        cameraService.getPort(),
-                        "", serviceName, bIsPcServer);
+                    cameraService.getHost(),
+                    cameraService.getPort(),
+                    "", serviceName, bIsPcServer);
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -284,18 +277,11 @@ public class CameraListActivity extends BaseActivity {
         startActivityForResult(intent, REQUEST_SCAN_CAMERA);
     }
 
-    private void onClipAppSetupButton() {
-        Intent intent = new Intent(this, AppSetupActivity.class);
-        startActivity(intent);
-    }
 
     private void onClickWifiButton() {
         startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
     }
 
-    private void onClickDownloadedVideos() {
-        //startLocalActivity(CameraVideoActivity.class);
-    }
 
     private String getSavedServerAddress() {
         SharedPreferences pref = getSharedPreferences(PREF_CAMERA_LIST, Context.MODE_PRIVATE);
@@ -322,9 +308,11 @@ public class CameraListActivity extends BaseActivity {
     private void tryStartPreview() {
         Logger.t(TAG).d("tryStartPreview");
         if (!isFinishing()) {
+            /*
             if (mCameraListAdapter.getConnectedCameras() > 0) {
                 onClickListItem(0, false);
             }
+            */
         }
     }
 
@@ -360,16 +348,14 @@ public class CameraListActivity extends BaseActivity {
         }
     }
 
+    /*
     private void onClickListItem(int position, boolean bAskPassword) {
         Camera camera = mCameraListAdapter.getCamera(position);
         if (camera != null) {
             if (camera.isPcServer()) {
-                //startCameraActivity(camera, CameraVideoActivity.class);
                 BrowseCameraActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera.getHostString());
             } else {
                 startCameraActivity(camera, CameraControlActivity.class);
-
-                Logger.t(TAG).d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
             }
         } else {
             CameraManager.WifiItem wifiItem = mCameraListAdapter.getWifiItem(position);
@@ -386,13 +372,14 @@ public class CameraListActivity extends BaseActivity {
             }
         }
     }
+    */
 
     private void askPassword(String ssid, String password, boolean bChangePassword) {
         GetCameraPassword action = new GetCameraPassword(this, ssid, password, bChangePassword) {
             @Override
             public void onGetPasswordOK(GetCameraPassword action, String ssid, String password) {
                 // save password
-                getCameraManager().setPassword(ssid, password);
+                CameraManager.getManager().setPassword(ssid, password);
                 if (!action.mbChangePassword) {
                     CameraListActivity.this.startConnectCamera(ssid, password);
                 }
@@ -433,7 +420,7 @@ public class CameraListActivity extends BaseActivity {
         mNewCameraSSID = wifiName;
         mNewCameraPassword = wifiPassword;
         // save password
-        getCameraManager().setPassword(mNewCameraSSID, mNewCameraPassword);
+        CameraManager.getManager().setPassword(mNewCameraSSID, mNewCameraPassword);
     }
 
     private void onWifiSetupDone(String ssid, String hostString) {
@@ -453,12 +440,17 @@ public class CameraListActivity extends BaseActivity {
     }
 
     private void onClickFolder(View view, int position) {
+        /*
         Camera camera = mCameraListAdapter.getCamera(position);
         if (camera != null) {
             camera = mCameraListAdapter.findConnectedCamera(camera.getSSID(), camera.getHostString());
             browseCameraVideo(camera);
         }
+        */
     }
+
+
+    /*
 
     private void onClickPowerOff_Reboot(Camera camera, final boolean bReboot) {
         final String ssid = camera.getSSID();
@@ -481,37 +473,41 @@ public class CameraListActivity extends BaseActivity {
         builder.setMsg(bReboot ? R.string.msg_confirm_reboot : R.string.msg_confirm_poweroff);
         builder.setButtons(DialogBuilder.DLG_OK_CANCEL);
         builder.show();
-    }
+    } */
 
     private void onClickWifiMode(Camera camera) {
         SelectWifiMode action = new SelectWifiMode(this, camera) {
             @Override
             protected void onChangeWifiMode(Camera camera, int newMode) {
+                /*
                 camera = mCameraListAdapter.isCameraConnected(camera);
                 if (camera != null) {
                     camera.getClient().cmd_Network_ConnectHost(newMode, null);
                     if (mCameraListAdapter.removeConnectedCamera(camera)) {
                         camera.getClient().userCmd_ExitThread();
                     }
-                }
+                }*/
             }
 
             @Override
             protected void onSetupWifiAP(Camera camera) {
+                /*
                 camera = mCameraListAdapter.isCameraConnected(camera);
                 if (camera != null) {
                     CameraListActivity.this.startCameraActivity(camera, CameraWifiSetupActivity.class,
-                            REQUEST_SETUP_WIFI_AP);
-                }
+                        REQUEST_SETUP_WIFI_AP);
+                } */
             }
         };
         action.show();
     }
 
+    /*
     private void onClickDropDown(View view, int position) {
         String title;
         String ssid;
         String hostString;
+
         Camera camera = mCameraListAdapter.getCamera(position);
 
         if (camera != null) {
@@ -588,7 +584,7 @@ public class CameraListActivity extends BaseActivity {
         };
 
         action.show(view);
-    }
+    } */
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -625,16 +621,14 @@ public class CameraListActivity extends BaseActivity {
         return super.dispatchKeyEvent(ev);
     }
 
-    private final CameraManager getCameraManager() {
-        return ((Hachi) getApplication()).getCameraManager();
-    }
 
     private void onServiceResolved(Camera.ServiceInfo serviceInfo) {
         WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
         serviceInfo.ssid = wifiAdmin == null ? null : wifiAdmin.getCurrSSID();
-        mCameraListAdapter.connectCamera(serviceInfo);
+        //mCameraListAdapter.connectCamera(serviceInfo);
     }
 
+    /*
     private void onRescan() {
         if (mCameraListAdapter.getCount() == 0) {
             if (mSearchingAnim != null) {
@@ -652,8 +646,10 @@ public class CameraListActivity extends BaseActivity {
             mSearchingAnim.addAnimation(mViewSearching, anim);
             mSearchingAnim.startAnimation(500, 10, false);
         }
-    }
+    } */
 
+
+    /*
     class MyCameraListAdapter extends CameraListAdapter {
 
         public MyCameraListAdapter(ListView listView) {
@@ -685,7 +681,7 @@ public class CameraListActivity extends BaseActivity {
             CameraListActivity.this.onClickFolder(view, position);
         }
 
-    }
+    } */
 
     final WifiAdminManager.WifiCallback mWifiCallback = new WifiAdminManager.WifiCallback() {
 

@@ -194,7 +194,7 @@ public class BaseActivity extends Activity {
 		if (ssid == null || hostString == null) {
 			return null;
 		}
-		CameraManager cameraManager = ((Hachi)getApplication()).getCameraManager();
+		CameraManager cameraManager = CameraManager.getManager();
 		Camera camera = cameraManager.findConnectedCamera(ssid, hostString);
 		return camera;
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -20,7 +20,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingStart="8dp"
-        android:paddingTop="4dp" >
+        android:paddingTop="4dp">
 
         <Button
             android:id="@+id/btnTestServer"
@@ -30,7 +30,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
             android:text="@string/btn_test_server"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btnDownloadedVideos"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
-            android:text="@string/btn_downloaded_videos" />
+            android:text="@string/btn_downloaded_videos"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -56,7 +56,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingStart="16dp"
-        android:paddingTop="12dp" >
+        android:paddingTop="12dp">
 
         <TextView
             android:id="@+id/btnWifi"
@@ -65,7 +65,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
-            android:text="@string/unkown_text" />
+            android:text="@string/unkown_text"/>
 
         <ImageView
             android:id="@+id/imageWifi"
@@ -77,15 +77,25 @@
             android:layout_toLeftOf="@+id/btnWifi"
             android:layout_toStartOf="@+id/btnWifi"
             android:contentDescription="@string/empty_text"
-            android:src="@drawable/btn_wifi_on" />
+            android:src="@drawable/btn_wifi_on"/>
     </RelativeLayout>
 
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvCameraList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linearLayout1"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+
+    </android.support.v7.widget.RecyclerView>
+    <!--
     <include
         layout="@layout/group_camera_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/linearLayout1"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"/>
+
+/> -->
 </RelativeLayout>

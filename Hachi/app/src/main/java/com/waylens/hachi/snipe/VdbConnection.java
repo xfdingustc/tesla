@@ -3,6 +3,7 @@ package com.waylens.hachi.snipe;
 import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -17,20 +18,48 @@ public class VdbConnection {
     private InetSocketAddress mSocketAddress;
 
     public VdbConnection(String address) {
+        mSocket = new Socket();
         mSocketAddress = new InetSocketAddress(address, VDB_CMD_PORT);
     }
 
-    public void connect() throws IOException, InterruptedException{
-        if (mSocket == null) {
-            mSocket = new Socket();
-        }
+    public void connect() throws IOException, InterruptedException {
         mSocket.setReceiveBufferSize(8192);
         Logger.t(TAG).d("Connecting to: " + mSocketAddress.getHostName() + ": " + mSocketAddress.getPort());
         mSocket.connect(mSocketAddress, CONNECT_TIMEOUT);
         Logger.t(TAG).d("Connected: " + mSocketAddress.getHostName());
     }
 
-    public void sendByteArray(byte[] data) throws IOException {
+    public boolean isConnected() {
+        return mSocket.isConnected();
+    }
+
+
+    public void sendCommnd(VdbCommand command) throws IOException {
+        Logger.t(TAG).d("SSSSSSSSSSSSSSSSSSSSSend commdn");
+        sendByteArray(command.getCmdBuffer());
+    }
+
+    public byte[] receivedAck() throws IOException {
+        byte[] buffer = new byte[160];
+        readFully(buffer, 0, buffer.length);
+        Logger.t(TAG).d("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+        return buffer;
+    }
+
+
+    public void readFully(byte[] buffer, int pos, int size) throws IOException {
+        InputStream input = mSocket.getInputStream();
+        while (size > 0) {
+            int ret = input.read(buffer, pos, size);
+            if (ret < 0) {
+                throw new IOException();
+            }
+            pos += ret;
+            size -= ret;
+        }
+    }
+
+    private void sendByteArray(byte[] data) throws IOException {
         mSocket.getOutputStream().write(data);
     }
 

@@ -11,20 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CameraManager {
-
     static final String TAG = "CameraManager";
     static final String PASSWORD_FILE = "wifipass";
 
     public interface Callback {
-        public void onCameraConnecting(CameraManager manager, Camera camera);
+        void onCameraConnecting(CameraManager manager, Camera camera);
 
-        public void onCameraConnected(CameraManager manager, Camera camera);
+        void onCameraConnected(CameraManager manager, Camera camera);
 
-        public void onCameraDisconnected(CameraManager manager, Camera camera);
+        void onCameraDisconnected(CameraManager manager, Camera camera);
 
-        public void onCameraStateChanged(CameraManager manager, Camera camera);
+        void onCameraStateChanged(CameraManager manager, Camera camera);
 
-        public void onWifiListChanged(CameraManager manager);
+        void onWifiListChanged(CameraManager manager);
     }
 
     static final int TAG_SHOULD_REMOVE = 0;
@@ -43,7 +42,7 @@ public class CameraManager {
         }
     }
 
-    private final Context mContext;
+    private static Context mContext;
     private PasswordList mPasswordList;
     private boolean mPasswordLoaded;
 
@@ -52,14 +51,28 @@ public class CameraManager {
     private ArrayList<Callback> mCallbackList = new ArrayList<Callback>();
 
     // cameras: connected + connecting + wifi-ap
-    private final ArrayList<Camera> mConnectedCameras = new ArrayList<Camera>();
-    private final ArrayList<Camera> mConnectingCameras = new ArrayList<Camera>();
-    private final ArrayList<WifiItem> mWifiList = new ArrayList<WifiItem>();
+    private final ArrayList<Camera> mConnectedCameras = new ArrayList<>();
+    private final ArrayList<Camera> mConnectingCameras = new ArrayList<>();
+    private final ArrayList<WifiItem> mWifiList = new ArrayList<>();
 
-    public CameraManager(Context context) {
-        mContext = context;
+    private CameraManager() {
         mPasswordList = new PasswordList();
     }
+
+    private static CameraManager mSharedManager = null;
+
+    public static CameraManager getManager() {
+        if (mSharedManager == null) {
+            mSharedManager = new CameraManager();
+        }
+
+        return mSharedManager;
+    }
+
+    public static void initialize(Context context) {
+        mContext = context;
+    }
+
 
     // API
     public void addCallback(Callback callback) {

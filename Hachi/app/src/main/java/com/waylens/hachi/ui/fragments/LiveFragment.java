@@ -81,7 +81,7 @@ public class LiveFragment extends BaseFragment {
     }
 
     private void initCamera() {
-        CameraManager cameraManager = ((Hachi) getActivity().getApplication()).getCameraManager();
+        CameraManager cameraManager = CameraManager.getManager();
         if (cameraManager.getConnectedCameras().size() > 0) {
             mCamera = cameraManager.getConnectedCameras().get(0);
             mVdb = new RemoteVdb(new MyVdbCallback(), Hachi.getVideoDownloadPath(), false);

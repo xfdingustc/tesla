@@ -3,6 +3,8 @@ package com.waylens.hachi.snipe;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.orhanobut.logger.Logger;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ public class VdbRequestQueue {
     private final String mHost;
 
     private VdbConnection mVdbConnection;
+    private Object mConnectFence = new Object();
 
     public interface RequestFinishedListener<T> {
         void onRequestFinished(VdbRequest<T> vdbRequest);
@@ -34,25 +37,25 @@ public class VdbRequestQueue {
         PriorityBlockingQueue<VdbRequest<?>>();
 
 
-    private final VideoDatabase mVideoDatabase;
+    private final VdbSocket mVdbSocket;
     private final ResponseDelivery mDelivery;
 
     private VdbDispatcher[] mVdbDispatchers;
 
     private List<RequestFinishedListener> mFinishedListeners = new ArrayList<>();
 
-    public VdbRequestQueue(VideoDatabase videoDatabase, String host) {
-        this(videoDatabase, DEFAULT_NETWORK_THREAD_POOL_SIZE, host);
+    public VdbRequestQueue(VdbSocket vdbSocket, String host) {
+        this(vdbSocket, DEFAULT_NETWORK_THREAD_POOL_SIZE, host);
     }
 
-    public VdbRequestQueue(VideoDatabase videoDatabase, int threadPoolSize, String host) {
-        this(videoDatabase, threadPoolSize,
+    public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, String host) {
+        this(vdbSocket, threadPoolSize,
             new ExecutorDelivery(new Handler(Looper.getMainLooper())), host);
     }
 
-    public VdbRequestQueue(VideoDatabase videoDatabase, int threadPoolSize, ResponseDelivery
+    public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, ResponseDelivery
         delivery, String host) {
-        this.mVideoDatabase = videoDatabase;
+        this.mVdbSocket = vdbSocket;
         this.mVdbDispatchers = new VdbDispatcher[threadPoolSize];
         this.mDelivery = delivery;
         this.mHost = host;
@@ -65,7 +68,7 @@ public class VdbRequestQueue {
         stop();
 
         for (int i = 0; i < mVdbDispatchers.length; i++) {
-            VdbDispatcher vdbDispatcher = new VdbDispatcher(mVideoDatabaseQueue, mVideoDatabase, mDelivery);
+            VdbDispatcher vdbDispatcher = new VdbDispatcher(mVideoDatabaseQueue, mVdbSocket, mDelivery);
             mVdbDispatchers[i] = vdbDispatcher;
             vdbDispatcher.start();
         }
@@ -89,6 +92,10 @@ public class VdbRequestQueue {
 
     private void stop() {
 
+    }
+
+    public VdbConnection getConnection() {
+        return mVdbConnection;
     }
 
     public int getSequenceNumber() {

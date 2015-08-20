@@ -34,9 +34,6 @@ public class Hachi extends Application {
     public static final String VIDEO_DOWNLOAD_PATH = "/Transee/video/Vidit/";
     public static final String PICTURE_DOWNLOAD_PATH = "/Transee/picture/Vidit/";
 
-
-
-    private CameraManager mCameraManager;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -44,7 +41,6 @@ public class Hachi extends Application {
     }
 
     private void init() {
-        mCameraManager = new CameraManager(this);
 
         PrefsUtil.init(this);
         initLogger();
@@ -56,9 +52,16 @@ public class Hachi extends Application {
 
         initVdbImageLoader();
 
+        initCameraManager();
+
         WifiAdminManager.initialize(this);
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
+    }
+
+    private void initCameraManager() {
+        CameraManager.initialize(this);
+
     }
 
     private void initVdbImageLoader() {
@@ -78,11 +81,6 @@ public class Hachi extends Application {
             .init(TAG)
             .setMethodCount(1)
             .hideThreadInfo();
-    }
-
-    // API
-    public CameraManager getCameraManager() {
-        return mCameraManager;
     }
 
     static private final String getPath(String subdir) {

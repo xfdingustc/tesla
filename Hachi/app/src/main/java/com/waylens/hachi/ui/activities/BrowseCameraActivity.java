@@ -124,7 +124,7 @@ public class BrowseCameraActivity extends BaseActivity {
     }
 
     private void initCamera() {
-        CameraManager cameraManager = ((Hachi) getApplication()).getCameraManager();
+        CameraManager cameraManager = CameraManager.getManager();
         if (cameraManager.getConnectedCameras().size() > 0) {
             mCamera = cameraManager.getConnectedCameras().get(0);
 
@@ -139,7 +139,7 @@ public class BrowseCameraActivity extends BaseActivity {
     private void initCameraVideoListView() {
         mRvCameraVideoList.setLayoutManager(new LinearLayoutManager(this));
 
-        ClipSetRequest request = new ClipSetRequest(ClipSetRequest.Method.GET, new VdbResponse.Listener<ClipSet>() {
+        ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
 
