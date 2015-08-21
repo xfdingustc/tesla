@@ -56,5 +56,5 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.5.0'
     compile 'com.xfdingustc.fixaspectratiolayout:layout:0.2@aar'
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
-
+    compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
 }

@@ -47,7 +47,7 @@ public class Moment {
         moment.description = jsonMoment.optString("description");
 
         moment.captureTime = jsonMoment.optString("captureTime");
-        moment.uploadTime = jsonMoment.optInt("id");
+        moment.uploadTime = jsonMoment.optLong("uploadTime");
         moment.fragmentCount = jsonMoment.optInt("fragmentCount");
         moment.duration = jsonMoment.optLong("duration");
         moment.likesCount = jsonMoment.optInt("likesCount");

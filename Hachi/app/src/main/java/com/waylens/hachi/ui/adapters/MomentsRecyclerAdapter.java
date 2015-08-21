@@ -10,8 +10,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ImageUtils;
 
+import org.ocpsoft.prettytime.Duration;
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.util.ArrayList;
-import java.util.zip.Inflater;
+import java.util.Date;
 
 /**
  * Created by Richard on 8/21/15.
@@ -20,8 +23,11 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
 
     ArrayList<Moment> mMoments;
 
+    PrettyTime mPrettyTime;
+
     public MomentsRecyclerAdapter(ArrayList<Moment> moments) {
         mMoments = moments;
+        mPrettyTime = new PrettyTime();
     }
 
     public void setMoments(ArrayList<Moment> moments) {
@@ -38,10 +44,9 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     @Override
     public void onBindViewHolder(MomentViewHolder holder, int position) {
         Moment moment = mMoments.get(position);
-
         ImageLoader.getInstance().displayImage(moment.owner.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
         holder.userName.setText(moment.owner.userName);
-        holder.videoTime.setText("1 day");
+        holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         ImageLoader.getInstance().displayImage(moment.thumbnail, holder.videoCover, ImageUtils.getVideoOptions());
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
         holder.likeCount.setText("" + moment.likesCount);
