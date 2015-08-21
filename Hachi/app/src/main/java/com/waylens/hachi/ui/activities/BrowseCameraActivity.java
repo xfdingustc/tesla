@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -56,15 +57,14 @@ public class BrowseCameraActivity extends BaseActivity {
 
     ImageDecoder.Callback mDecoderCallback;
 
-    public static void launch(Activity activity, boolean isPcServer, String ssid, String
-        hostString) {
-        Intent intent = new Intent(activity, BrowseCameraActivity.class);
+    public static void launch(Context context, VdtCamera camera) {
+        Intent intent = new Intent(context, BrowseCameraActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putBoolean(IS_PC_SERVER, isPcServer);
-        bundle.putString(SSID, ssid);
-        bundle.putString(HOST_STRING, hostString);
+        bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
+        bundle.putString(SSID, camera.getSSID());
+        bundle.putString(HOST_STRING, camera.getHostString());
         intent.putExtras(bundle);
-        activity.startActivity(intent);
+        context.startActivity(intent);
     }
 
     @Bind(R.id.rvCameraVideoList)

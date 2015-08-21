@@ -18,9 +18,10 @@ import java.util.ArrayList;
 // use SSID + hostString to identify a camera
 
 public class VdtCamera {
+    private static final String TAG = VdtCamera.class.getSimpleName();
+    private static final boolean DEBUG = false;
 
-    static final boolean DEBUG = false;
-    static final String TAG = "Camera";
+    private boolean mIsConnected  = false;
 
     static public class ServiceInfo {
         public String ssid;
@@ -29,6 +30,7 @@ public class VdtCamera {
         public final String serverName;
         public final String serviceName;
         public final boolean bPcServer;
+
 
         public ServiceInfo(InetAddress inetAddr, int port, String serverName, String serviceName, boolean bPcServer) {
             this.ssid = "";
@@ -144,6 +146,15 @@ public class VdtCamera {
     // API
     public boolean isPcServer() {
         return mServiceInfo.bPcServer;
+    }
+
+
+    public void markConnected(boolean connected) {
+        mIsConnected = connected;
+    }
+
+    public boolean isConnected() {
+        return mIsConnected;
     }
 
     // API

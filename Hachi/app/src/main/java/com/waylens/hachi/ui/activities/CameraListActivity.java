@@ -186,6 +186,7 @@ public class CameraListActivity extends BaseActivity {
                     cameraService.getHost(),
                     cameraService.getPort(),
                     "", serviceName, bIsPcServer);
+                Logger.t(TAG).d("on camera found!!!!!");
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -435,7 +436,7 @@ public class CameraListActivity extends BaseActivity {
             vdtCamera.getClient().cmd_CAM_WantIdle();
             //CameraVideoActivity.launch(this, camera.isPcServer(), camera.getSSID(), camera
             //    .getHostString());
-            BrowseCameraActivity.launch(this, vdtCamera.isPcServer(), vdtCamera.getSSID(), vdtCamera.getHostString());
+            BrowseCameraActivity.launch(this, vdtCamera);
         }
     }
 
@@ -625,7 +626,13 @@ public class CameraListActivity extends BaseActivity {
     private void onServiceResolved(VdtCamera.ServiceInfo serviceInfo) {
         WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
         serviceInfo.ssid = wifiAdmin == null ? null : wifiAdmin.getCurrSSID();
-        //mCameraListAdapter.connectCamera(serviceInfo);
+        connectCamera(serviceInfo);
+    }
+
+    public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
+        if (mVdtCameraManager != null) {
+            mVdtCameraManager.connectCamera(serviceInfo);
+        }
     }
 
     /*

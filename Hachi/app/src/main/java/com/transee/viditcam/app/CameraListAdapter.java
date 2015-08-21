@@ -10,14 +10,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.VdtCamera;
-import com.waylens.hachi.hardware.VdtCameraManager;
-import com.waylens.hachi.hardware.VdtCameraManager.WifiItem;
 import com.transee.ccam.CameraState;
 import com.transee.ccam.WifiState;
 import com.transee.common.OverlayImageView;
 import com.transee.common.Timer;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
+import com.waylens.hachi.hardware.VdtCameraManager.WifiItem;
 
 import java.util.List;
 
@@ -371,44 +371,39 @@ abstract public class CameraListAdapter extends BaseAdapter {
     class CameraManagerCallback implements VdtCameraManager.Callback {
 
         @Override
-        public void onCameraConnecting(VdtCameraManager manager, VdtCamera vdtCamera) {
+        public void onCameraConnecting(VdtCamera vdtCamera) {
             Logger.t(TAG).d("connecting camera");
-            if (manager == mVdtCameraManager) {
-                notifyDataSetChanged();
-            }
+
+            notifyDataSetChanged();
         }
 
         @Override
-        public void onCameraConnected(VdtCameraManager manager, VdtCamera vdtCamera) {
+        public void onCameraConnected(VdtCamera vdtCamera) {
             Logger.t(TAG).d("camera connected");
-            if (manager == mVdtCameraManager) {
-                notifyDataSetChanged(); // TODO : optimize
-                CameraListAdapter.this.onCameraConnected(vdtCamera);
-            }
+            notifyDataSetChanged(); // TODO : optimize
+            CameraListAdapter.this.onCameraConnected(vdtCamera);
         }
 
         @Override
-        public void onCameraDisconnected(VdtCameraManager manager, VdtCamera vdtCamera) {
+        public void onCameraDisconnected(VdtCamera vdtCamera) {
             Logger.t(TAG).d("camera disconnected");
-            if (manager == mVdtCameraManager) {
-                notifyDataSetChanged();
-            }
+
+            notifyDataSetChanged();
+
         }
 
         @Override
-        public void onCameraStateChanged(VdtCameraManager manager, VdtCamera vdtCamera) {
+        public void onCameraStateChanged(VdtCamera vdtCamera) {
             Logger.t(TAG).d("onCameraStateChanged");
-            if (manager == mVdtCameraManager) {
-                CameraListAdapter.this.onCameraStateChanged(vdtCamera);
-            }
+
+            CameraListAdapter.this.onCameraStateChanged(vdtCamera);
         }
 
         @Override
-        public void onWifiListChanged(VdtCameraManager manager) {
+        public void onWifiListChanged() {
             Logger.t(TAG).d("wifi list changed");
-            if (manager == mVdtCameraManager) {
-                notifyDataSetChanged();
-            }
+
+            notifyDataSetChanged();
         }
 
     }

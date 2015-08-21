@@ -16,15 +16,15 @@ public class VdtCameraManager {
     static final String PASSWORD_FILE = "wifipass";
 
     public interface Callback {
-        void onCameraConnecting(VdtCameraManager manager, VdtCamera vdtCamera);
+        void onCameraConnecting(VdtCamera vdtCamera);
 
-        void onCameraConnected(VdtCameraManager manager, VdtCamera vdtCamera);
+        void onCameraConnected(VdtCamera vdtCamera);
 
-        void onCameraDisconnected(VdtCameraManager manager, VdtCamera vdtCamera);
+        void onCameraDisconnected(VdtCamera vdtCamera);
 
-        void onCameraStateChanged(VdtCameraManager manager, VdtCamera vdtCamera);
+        void onCameraStateChanged(VdtCamera vdtCamera);
 
-        void onWifiListChanged(VdtCameraManager manager);
+        void onWifiListChanged();
     }
 
     static final int TAG_SHOULD_REMOVE = 0;
@@ -70,6 +70,24 @@ public class VdtCameraManager {
         return mSharedManager;
     }
 
+    public VdtCamera getCamera(int position) {
+
+        int index = position;
+        if (index < 0)
+            return null;
+
+        if (index < mConnectedVdtCameras.size()) {
+            return mConnectedVdtCameras.get(index);
+        }
+
+        index -= mConnectedVdtCameras.size();
+        if (index < mConnectingVdtCameras.size()) {
+            return mConnectingVdtCameras.get(index);
+        }
+
+        return null;
+    }
+
     public static void initialize(Context context) {
         mContext = context;
     }
@@ -107,7 +125,7 @@ public class VdtCameraManager {
                 }
 
                 if (wifiExistsInCameraLists(ssid)) {
-                    Logger.t(TAG).d(ssid + " already in camera list");
+                    //Logger.t(TAG).d(ssid + " already in camera list");
                     continue;
                 }
 
@@ -141,11 +159,11 @@ public class VdtCameraManager {
             index++;
         }
 
-        Logger.t(TAG).d("wifi list: removed " + nRemoved + ", added " + nAdded);
+        //Logger.t(TAG).d("wifi list: removed " + nRemoved + ", added " + nAdded);
 
         if (nRemoved + nAdded > 0) {
             for (Callback callback : mCallbackList) {
-                callback.onWifiListChanged(this);
+                callback.onWifiListChanged();
             }
         }
     }
@@ -228,9 +246,9 @@ public class VdtCameraManager {
 
         for (Callback callback : mCallbackList) {
             if (serviceInfo.bPcServer) {
-                callback.onCameraConnected(this, vdtCamera);
+                callback.onCameraConnected(vdtCamera);
             } else {
-                callback.onCameraConnecting(this, vdtCamera);
+                callback.onCameraConnecting(vdtCamera);
             }
         }
     }
@@ -369,8 +387,9 @@ public class VdtCameraManager {
                 mConnectingVdtCameras.remove(index);
                 mConnectedVdtCameras.add(vdtCamera);
                 Logger.t(TAG).d("camera connected: " + vdtCamera.getInetSocketAddress());
+                vdtCamera.markConnected(true);
                 for (Callback callback : mCallbackList) {
-                    callback.onCameraConnected(this, vdtCamera);
+                    callback.onCameraConnected(vdtCamera);
                 }
                 return;
             }
@@ -402,7 +421,7 @@ public class VdtCameraManager {
             }
         }
         for (Callback callback : mCallbackList) {
-            callback.onCameraDisconnected(this, vdtCamera);
+            callback.onCameraDisconnected(vdtCamera);
         }
 
 
@@ -412,7 +431,7 @@ public class VdtCameraManager {
     private void onCameraStateChanged(VdtCamera vdtCamera) {
         // TODO: check if the camera exists in our lists
         for (Callback callback : mCallbackList) {
-            callback.onCameraStateChanged(this, vdtCamera);
+            callback.onCameraStateChanged(vdtCamera);
         }
     }
 
