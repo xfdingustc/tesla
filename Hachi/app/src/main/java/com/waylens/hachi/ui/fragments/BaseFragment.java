@@ -22,7 +22,7 @@ public class BaseFragment extends Fragment {
 
     protected View mRootView;
 
-    MaterialDialog mLoginProgressDialog;
+    MaterialDialog mProgressDialog;
 
     @NonNull
     protected View createFragmentView(LayoutInflater inflater, ViewGroup container, int layoutResId,
@@ -68,21 +68,21 @@ public class BaseFragment extends Fragment {
     }
 
     public void showDialog() {
-        if (mLoginProgressDialog != null && mLoginProgressDialog.isShowing()) {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
             return;
         }
-        mLoginProgressDialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.login)
+        mProgressDialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.loading)
                 .progress(true, 0)
                 .progressIndeterminateStyle(false)
                 .build();
 
-        mLoginProgressDialog.show();
+        mProgressDialog.show();
     }
 
     public void hideDialog() {
-        if (mLoginProgressDialog != null) {
-            mLoginProgressDialog.dismiss();
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
         }
     }
 

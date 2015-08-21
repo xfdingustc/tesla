@@ -59,5 +59,8 @@
         <item>170</item>
     </string-array>
 
-
+    <string-array name="avatarSource">
+        <item>Take Photo</item>
+        <item>Choose from Gallery</item>
+    </string-array>
 </resources>

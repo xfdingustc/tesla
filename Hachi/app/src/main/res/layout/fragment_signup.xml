@@ -19,6 +19,7 @@
             app:border_color="@color/material_grey_200"
             app:border_width="2dp"/>
         <View
+            android:id="@+id/sign_up_avatar_plus"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"

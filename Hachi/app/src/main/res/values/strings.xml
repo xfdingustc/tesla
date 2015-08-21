@@ -238,4 +238,6 @@
     <string name="confirm_logout">Log out?</string>
     <string name="email_has_been_used">The email address has been used.</string>
     <string name="photo">PHOTO</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="no_sdcard">No SDCard.</string>
 </resources>

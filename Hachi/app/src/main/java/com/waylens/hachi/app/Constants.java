@@ -17,4 +17,6 @@ public class Constants {
     public static final String API_CHECK_EMAIL = HOST_URL + "api/users/check_id?key=email&id=";
 
     public static final String API_CHECK_USER_NAME = HOST_URL + "api/users/check_id?key=username&id=";
+
+    public static final String API_START_UPLOAD_AVATAR = HOST_URL + "api/users/start_upload_avatar";
 }

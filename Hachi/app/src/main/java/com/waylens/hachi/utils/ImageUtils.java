@@ -32,14 +32,14 @@ public class ImageUtils {
                 .discCacheFileNameGenerator(new Md5FileNameGenerator())
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
                 .discCacheFileCount(300)
-                .discCache(new UnlimitedDiscCache(new File(getImageStoragePath(context))))
+                .discCache(new UnlimitedDiscCache(getImageStorageDir(context, "cache-img")))
                 .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
                 .imageDownloader(new BaseImageDownloader(context, 5 * 1000, 30 * 1000))
                 .build();
         ImageLoader.getInstance().init(config);
     }
 
-    public static DisplayImageOptions getAvatarOptions(){
+    public static DisplayImageOptions getAvatarOptions() {
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.sailor)
                 .showImageForEmptyUri(R.drawable.sailor)
@@ -50,18 +50,21 @@ public class ImageUtils {
         return options;
     }
 
-    public static String getImageStoragePath(Context context){
-        String dir = "/th";
-        String path = getDefaultStoragePath(context) + dir;
-        return path;
+    public static String getImageStoragePath(Context context, String type) {
+        return getImageStorageDir(context, type).getPath();
     }
 
-    public static String getDefaultStoragePath(Context context){
-        if(Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED) && Environment.getExternalStorageDirectory().canWrite()){
-            return Environment.getExternalStorageDirectory().getPath();
-        }else{
-            return context.getFilesDir().getPath();
+    public static File getImageStorageDir(Context context, String type) {
+        if (isExternalStorageReady()) {
+            return context.getExternalFilesDir(type);
+        } else {
+            return new File(context.getFilesDir(), type);
         }
+    }
+
+    public static boolean isExternalStorageReady() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                && Environment.getExternalStorageDirectory().canWrite();
     }
 
 }

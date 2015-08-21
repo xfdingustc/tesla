@@ -21,6 +21,13 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
 
     public AuthorizedJsonRequest(int method,
                                  String url,
+                                 Response.Listener<JSONObject> listener,
+                                 Response.ErrorListener errorListener) {
+        super(method, url, listener, errorListener);
+    }
+
+    public AuthorizedJsonRequest(int method,
+                                 String url,
                                  JSONObject jsonRequest,
                                  Response.Listener<JSONObject> listener,
                                  Response.ErrorListener errorListener) {
