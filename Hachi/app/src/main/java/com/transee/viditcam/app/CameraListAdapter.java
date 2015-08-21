@@ -153,7 +153,7 @@ abstract public class CameraListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return mVdtCameraManager == null ? null : mVdtCameraManager.getItem(position);
+        return mVdtCameraManager == null ? null : mVdtCameraManager.getCamera(position);
     }
 
     @Override
@@ -382,6 +382,12 @@ abstract public class CameraListAdapter extends BaseAdapter {
             Logger.t(TAG).d("camera connected");
             notifyDataSetChanged(); // TODO : optimize
             CameraListAdapter.this.onCameraConnected(vdtCamera);
+        }
+
+        @Override
+        public void onCameraVdbConnected(VdtCamera vdtCamera) {
+            Logger.t(TAG).d("camera vdb connected");
+            notifyDataSetChanged();
         }
 
         @Override

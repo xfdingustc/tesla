@@ -57,6 +57,8 @@ public class BrowseCameraActivity extends BaseActivity {
 
     ImageDecoder.Callback mDecoderCallback;
 
+    private static VdtCamera mSharedCamera;
+
     public static void launch(Context context, VdtCamera camera) {
         Intent intent = new Intent(context, BrowseCameraActivity.class);
         Bundle bundle = new Bundle();
@@ -64,6 +66,7 @@ public class BrowseCameraActivity extends BaseActivity {
         bundle.putString(SSID, camera.getSSID());
         bundle.putString(HOST_STRING, camera.getHostString());
         intent.putExtras(bundle);
+        mSharedCamera = camera;
         context.startActivity(intent);
     }
 
@@ -98,7 +101,7 @@ public class BrowseCameraActivity extends BaseActivity {
 
         mVdb.start(hostString);
         mHost = hostString;
-        mVdbRequestQueue = Snipe.newRequestQueue(this, hostString);
+        mVdbRequestQueue = Snipe.newRequestQueue(this, mSharedCamera.getVdbConnection());
 
         initCameraVideoListView();
     }

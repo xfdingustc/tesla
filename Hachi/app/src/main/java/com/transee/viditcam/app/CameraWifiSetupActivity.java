@@ -80,7 +80,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
         }
         mbRequested = isActivityRequested();
 
-        mVdtCamera.addCallback(mCameraCallback);
+        //mVdtCamera.addCallback(mCameraCallback);
         getCameraClient().cmd_Network_GetHostNum();
 
         mListAdapter.clear();
@@ -116,7 +116,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
 
     private void removeCamera() {
         if (mVdtCamera != null) {
-            mVdtCamera.removeCallback(mCameraCallback);
+            //mVdtCamera.removeCallback(mCameraCallback);
             mVdtCamera = null;
         }
     }
@@ -187,7 +187,14 @@ public class CameraWifiSetupActivity extends BaseActivity {
         mListAdapter.addSSID(ssid);
     }
 
-    private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
+    /*
+
+    private final VdtCamera.Callback mCameraCallback = new VdtCamera.Callback() {
+
+        @Override
+        public void onConnected(VdtCamera vdtCamera) {
+
+        }
 
         @Override
         public void onDisconnected(VdtCamera vdtCamera) {
@@ -198,13 +205,63 @@ public class CameraWifiSetupActivity extends BaseActivity {
         }
 
         @Override
+        public void onStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onBtStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onGpsStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onWifiStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onStartRecordError(VdtCamera vdtCamera, int error) {
+
+        }
+
+        @Override
         public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
             if (vdtCamera == mVdtCamera) {
                 CameraWifiSetupActivity.this.onHostSSIDFetched(ssid);
             }
         }
 
-    };
+        @Override
+        public void onScanBtDone(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
+
+        }
+
+        @Override
+        public void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot) {
+
+        }
+
+        @Override
+        public void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks) {
+
+        }
+
+        @Override
+        public void onStillCaptureDone(VdtCamera vdtCamera) {
+
+        }
+
+    }; */
 
     private final WifiAdminManager.WifiCallback mWifiCallback = new WifiAdminManager.WifiCallback() {
 

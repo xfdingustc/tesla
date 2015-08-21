@@ -230,7 +230,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             if (serverAddr == null) {
                 mVdtCamera = null;
             } else {
-                mVdtCamera.addCallback(mCameraCallback);
+                //mVdtCamera.addCallback(mCameraCallback);
                 mMjpegView.startStream(serverAddr, new MyMjpegViewCallback(), true);
             }
             // mCamera.getClient().cmdGetResolution();
@@ -828,7 +828,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void removeCamera() {
         if (mVdtCamera != null) {
-            mVdtCamera.removeCallback(mCameraCallback);
+            //mVdtCamera.removeCallback(mCameraCallback);
             mVdtCamera = null;
         }
     }
@@ -1171,7 +1171,9 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
     }
 
-    private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
+
+    /*
+    private final VdtCamera.Callback mCameraCallback = new VdtCamera.Callback() {
 
         @Override
         public void onStateChanged(VdtCamera vdtCamera) {
@@ -1181,10 +1183,45 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
 
         @Override
+        public void onBtStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onGpsStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onWifiStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
         public void onStartRecordError(VdtCamera vdtCamera, int error) {
             if (vdtCamera == mVdtCamera) {
                 CameraControlActivity.this.onStartRecordError(error);
             }
+        }
+
+        @Override
+        public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
+
+        }
+
+        @Override
+        public void onScanBtDone(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
+
+        }
+
+        @Override
+        public void onConnected(VdtCamera vdtCamera) {
+
         }
 
         @Override
@@ -1219,7 +1256,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             // TODO
         }
 
-    };
+    }; */
 
     class MyMjpegViewCallback implements MjpegBitmap.Callback {
 

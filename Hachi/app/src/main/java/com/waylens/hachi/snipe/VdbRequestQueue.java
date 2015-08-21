@@ -18,10 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VdbRequestQueue {
     private static final String TAG = VdbRequestQueue.class.getSimpleName();
-    private final String mHost;
 
     private VdbConnection mVdbConnection;
-    private Object mConnectFence = new Object();
 
     public interface RequestFinishedListener<T> {
         void onRequestFinished(VdbRequest<T> vdbRequest);
@@ -44,23 +42,21 @@ public class VdbRequestQueue {
 
     private List<RequestFinishedListener> mFinishedListeners = new ArrayList<>();
 
-    public VdbRequestQueue(VdbSocket vdbSocket, String host) {
-        this(vdbSocket, DEFAULT_NETWORK_THREAD_POOL_SIZE, host);
+    public VdbRequestQueue(VdbSocket vdbSocket, VdbConnection connection) {
+        this(vdbSocket, DEFAULT_NETWORK_THREAD_POOL_SIZE, connection);
     }
 
-    public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, String host) {
+    public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, VdbConnection connection) {
         this(vdbSocket, threadPoolSize,
-            new ExecutorDelivery(new Handler(Looper.getMainLooper())), host);
+            new ExecutorDelivery(new Handler(Looper.getMainLooper())), connection);
     }
 
     public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, ResponseDelivery
-        delivery, String host) {
+        delivery, VdbConnection connection) {
         this.mVdbSocket = vdbSocket;
         this.mVdbDispatchers = new VdbDispatcher[threadPoolSize];
         this.mDelivery = delivery;
-        this.mHost = host;
-
-        mVdbConnection = new VdbConnection(mHost);
+        this.mVdbConnection = connection;
     }
 
 
@@ -72,22 +68,6 @@ public class VdbRequestQueue {
             mVdbDispatchers[i] = vdbDispatcher;
             vdbDispatcher.start();
         }
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mVdbConnection.connect();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-
     }
 
     private void stop() {

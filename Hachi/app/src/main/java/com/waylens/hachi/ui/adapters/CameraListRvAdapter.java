@@ -43,6 +43,13 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
             @Override
+            public void onCameraVdbConnected(VdtCamera vdtCamera) {
+                Logger.t(TAG).d("camera vdb connected");
+
+                notifyDataSetChanged();
+            }
+
+            @Override
             public void onCameraDisconnected(VdtCamera vdtCamera) {
 
             }
@@ -71,7 +78,8 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         CameraListItemViewHolder viewHolder = (CameraListItemViewHolder) holder;
         VdtCamera camera = mVdtCameraManager.getCamera(position);
         if (camera != null) {
-            Logger.t(TAG).d("Server name: " + camera.getServerName() + " SSID: " + camera.getSSID());
+            //Logger.t(TAG).d("Server name: " + camera.getServerName() + " SSID: " + camera
+             //   .getSSID());
             if (camera.isConnected() == false) {
                 viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_inactive);
                 viewHolder.mBtnClips.setEnabled(false);

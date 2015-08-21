@@ -18,8 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.VdtCamera;
-import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.common.ViewAnimation;
 import com.transee.viditcam.actions.GetCameraPassword;
 import com.transee.viditcam.actions.GetServerAddress;
@@ -28,6 +26,8 @@ import com.transee.viditcam.app.AddCameraActivity;
 import com.waylens.camera.CameraDiscovery;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdmin;
 import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.ui.adapters.CameraListRvAdapter;
@@ -630,9 +630,7 @@ public class CameraListActivity extends BaseActivity {
     }
 
     public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
-        if (mVdtCameraManager != null) {
-            mVdtCameraManager.connectCamera(serviceInfo);
-        }
+        mVdtCameraManager.connectCamera(serviceInfo);
     }
 
     /*

@@ -107,7 +107,7 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 			return;
 		}
 
-		mVdtCamera.addCallback(mCameraCallback);
+		//mVdtCamera.addCallback(mCameraCallback);
 		updateCameraState();
 	}
 
@@ -122,7 +122,7 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 
 	private void removeCamera() {
 		if (mVdtCamera != null) {
-			mVdtCamera.removeCallback(mCameraCallback);
+			//mVdtCamera.removeCallback(mCameraCallback);
 			mVdtCamera = null;
 		}
 	}
@@ -143,7 +143,9 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 		finish();
 	}
 
-	private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
+
+	/*
+	private final VdtCamera.Callback mCameraCallback = new VdtCamera.Callback() {
 
 		@Override
 		public void onStateChanged(VdtCamera vdtCamera) {
@@ -153,11 +155,66 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 		}
 
 		@Override
+		public void onBtStateChanged(VdtCamera vdtCamera) {
+
+		}
+
+		@Override
+		public void onGpsStateChanged(VdtCamera vdtCamera) {
+
+		}
+
+		@Override
+		public void onWifiStateChanged(VdtCamera vdtCamera) {
+
+		}
+
+		@Override
+		public void onStartRecordError(VdtCamera vdtCamera, int error) {
+
+		}
+
+		@Override
+		public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
+
+		}
+
+		@Override
+		public void onScanBtDone(VdtCamera vdtCamera) {
+
+		}
+
+		@Override
+		public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
+
+		}
+
+		@Override
+		public void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot) {
+
+		}
+
+		@Override
+		public void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks) {
+
+		}
+
+		@Override
+		public void onStillCaptureDone(VdtCamera vdtCamera) {
+
+		}
+
+		@Override
+		public void onConnected(VdtCamera vdtCamera) {
+
+		}
+
+		@Override
 		public void onDisconnected(VdtCamera vdtCamera) {
 			if (vdtCamera == mVdtCamera) {
 				removeCamera();
 				noCamera();
 			}
 		}
-	};
+	}; */
 }

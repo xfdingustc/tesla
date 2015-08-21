@@ -20,6 +20,8 @@ public class VdtCameraManager {
 
         void onCameraConnected(VdtCamera vdtCamera);
 
+        void onCameraVdbConnected(VdtCamera vdtCamera);
+
         void onCameraDisconnected(VdtCamera vdtCamera);
 
         void onCameraStateChanged(VdtCamera vdtCamera);
@@ -101,7 +103,6 @@ public class VdtCameraManager {
 
     // API
     public void removeCallback(Callback callback) {
-        Logger.t(TAG).d("remove callback: " + callback);
         if (!mCallbackList.remove(callback)) {
             Logger.t(TAG).d("remove callback failed!");
         }
@@ -169,10 +170,12 @@ public class VdtCameraManager {
     }
 
     private boolean isPossibleCamera(String ssid) {
-        if (ssid.length() != 8)
+        if (ssid.length() != 8) {
             return false;
-        if (ssid.charAt(0) != 'C' || ssid.charAt(1) != '9' || ssid.charAt(2) != 'J')
+        }
+        if (ssid.charAt(0) != 'C' || ssid.charAt(1) != '9' || ssid.charAt(2) != 'J') {
             return false;
+        }
         return true;
     }
 
@@ -235,7 +238,49 @@ public class VdtCameraManager {
         }
 
         VdtCamera vdtCamera = new VdtCamera(serviceInfo);
-        vdtCamera.addCallback(mCameraCallback);
+        //vdtCamera.addCallback(mCameraCallback);
+        vdtCamera.setOnConnectionChangeListener(new VdtCamera.OnConnectionChangeListener() {
+            @Override
+            public void onConnected(VdtCamera vdtCamera) {
+                onCameraConnected(vdtCamera);
+            }
+
+            @Override
+            public void onVdbConnected(VdtCamera vdtCamera) {
+                onCameraVdbConnected(vdtCamera);
+            }
+
+            @Override
+            public void onDisconnected(VdtCamera vdtCamera) {
+                onCameraDisconnected(vdtCamera);
+            }
+        });
+
+        vdtCamera.setOnStateChangeListener(new VdtCamera.OnStateChangeListener() {
+            @Override
+            public void onStateChanged(VdtCamera vdtCamera) {
+                for (Callback callback : mCallbackList) {
+                    callback.onCameraStateChanged(vdtCamera);
+                }
+            }
+
+            @Override
+            public void onBtStateChanged(VdtCamera vdtCamera) {
+
+            }
+
+            @Override
+            public void onGpsStateChanged(VdtCamera vdtCamera) {
+
+            }
+
+            @Override
+            public void onWifiStateChanged(VdtCamera vdtCamera) {
+
+            }
+        });
+
+
 
         if (serviceInfo.bPcServer) {
             mConnectedVdtCameras.add(vdtCamera);
@@ -327,25 +372,6 @@ public class VdtCameraManager {
         return -1;
     }
 
-    // API
-    public Object getItem(int index) {
-
-        if (index < 0)
-            return null;
-
-        if (index < mConnectedVdtCameras.size())
-            return mConnectedVdtCameras.get(index);
-        index -= mConnectedVdtCameras.size();
-
-        if (index < mConnectingVdtCameras.size())
-            return mConnectingVdtCameras.get(index);
-        index -= mConnectingVdtCameras.size();
-
-        if (index < mWifiList.size())
-            return mWifiList.get(index);
-
-        return null;
-    }
 
     // API
     public void clearAll() {
@@ -387,7 +413,6 @@ public class VdtCameraManager {
                 mConnectingVdtCameras.remove(index);
                 mConnectedVdtCameras.add(vdtCamera);
                 Logger.t(TAG).d("camera connected: " + vdtCamera.getInetSocketAddress());
-                vdtCamera.markConnected(true);
                 for (Callback callback : mCallbackList) {
                     callback.onCameraConnected(vdtCamera);
                 }
@@ -399,10 +424,16 @@ public class VdtCameraManager {
         vdtCamera.getClient().stop();
     }
 
+    private void onCameraVdbConnected(VdtCamera vdtCamera) {
+        for (Callback callback : mCallbackList) {
+            callback.onCameraVdbConnected(vdtCamera);
+        }
+    }
+
     private void onCameraDisconnected(VdtCamera vdtCamera) {
         // disconnect msg may be sent from msg thread,
         // need to stop it fully
-        vdtCamera.removeCallback(mCameraCallback);
+        //vdtCamera.removeCallback(mCameraCallback);
         vdtCamera.getClient().stop();
 
         for (int i = 0; i < mConnectedVdtCameras.size(); i++) {
@@ -428,29 +459,5 @@ public class VdtCameraManager {
         Logger.t(TAG).d("camera disconnected, but was not connected");
     }
 
-    private void onCameraStateChanged(VdtCamera vdtCamera) {
-        // TODO: check if the camera exists in our lists
-        for (Callback callback : mCallbackList) {
-            callback.onCameraStateChanged(vdtCamera);
-        }
-    }
 
-    private final VdtCamera.Callback mCameraCallback = new VdtCamera.CallbackImpl() {
-
-        @Override
-        public void onConnected(VdtCamera vdtCamera) {
-            onCameraConnected(vdtCamera);
-        }
-
-        @Override
-        public void onDisconnected(VdtCamera vdtCamera) {
-            onCameraDisconnected(vdtCamera);
-        }
-
-        @Override
-        public void onStateChanged(VdtCamera vdtCamera) {
-            onCameraStateChanged(vdtCamera);
-        }
-
-    };
 }

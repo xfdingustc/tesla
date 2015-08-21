@@ -10,10 +10,13 @@ import com.transee.ccam.CameraState;
 import com.transee.ccam.GpsState;
 import com.transee.ccam.NullCameraClient;
 import com.transee.ccam.WifiState;
+import com.waylens.hachi.snipe.VdbConnection;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.List;
 
 // use SSID + hostString to identify a camera
 
@@ -21,7 +24,20 @@ public class VdtCamera {
     private static final String TAG = VdtCamera.class.getSimpleName();
     private static final boolean DEBUG = false;
 
-    private boolean mIsConnected  = false;
+    private boolean mIsConnected = false;
+    private boolean mIsVdbConnected = false;
+
+    private List<Callback> mCallbacks = new ArrayList<Callback>();
+    private final Handler mHandler;
+    private final ServiceInfo mServiceInfo;
+    private final AbsCameraClient mClient;
+
+    private InetSocketAddress mPreviewAddress;
+
+    private CameraState mStates = new CameraState();
+    private BtState mBtStates = new BtState();
+    private GpsState mGpsStates = new GpsState();
+    private WifiState mWifiStates = new WifiState();
 
     static public class ServiceInfo {
         public String ssid;
@@ -42,11 +58,15 @@ public class VdtCamera {
         }
     }
 
-    public interface Callback {
+    public interface OnConnectionChangeListener {
         void onConnected(VdtCamera vdtCamera);
 
-        void onDisconnected(VdtCamera vdtCamera);
+        void onVdbConnected(VdtCamera vdtCamera);
 
+        void onDisconnected(VdtCamera vdtCamera);
+    }
+
+    public interface OnStateChangeListener {
         void onStateChanged(VdtCamera vdtCamera);
 
         void onBtStateChanged(VdtCamera vdtCamera);
@@ -54,6 +74,28 @@ public class VdtCamera {
         void onGpsStateChanged(VdtCamera vdtCamera);
 
         void onWifiStateChanged(VdtCamera vdtCamera);
+    }
+
+
+    private OnConnectionChangeListener mOnConnectionChangeListener = null;
+    private OnStateChangeListener mOnStateChangeListener = null;
+
+
+    public void setOnConnectionChangeListener(OnConnectionChangeListener listener) {
+        mOnConnectionChangeListener = listener;
+    }
+
+    public void setOnStateChangeListener(OnStateChangeListener listener) {
+        mOnStateChangeListener = listener;
+    }
+
+    private VdbConnection mVdbConnection;
+
+    public VdbConnection getVdbConnection() {
+        return mVdbConnection;
+    }
+
+    public interface Callback {
 
         void onStartRecordError(VdtCamera vdtCamera, int error);
 
@@ -70,71 +112,6 @@ public class VdtCamera {
         void onStillCaptureDone(VdtCamera vdtCamera);
     }
 
-    static public class CallbackImpl implements Callback {
-        @Override
-        public void onConnected(VdtCamera vdtCamera) {
-        }
-
-        @Override
-        public void onDisconnected(VdtCamera vdtCamera) {
-        }
-
-        @Override
-        public void onStateChanged(VdtCamera vdtCamera) {
-        }
-
-        @Override
-        public void onBtStateChanged(VdtCamera vdtCamera) {
-        }
-
-        @Override
-        public void onGpsStateChanged(VdtCamera vdtCamera) {
-        }
-
-        @Override
-        public void onWifiStateChanged(VdtCamera vdtCamera) {
-        }
-
-        @Override
-        public void onStartRecordError(VdtCamera vdtCamera, int error) {
-        }
-
-        @Override
-        public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
-        }
-
-        @Override
-        public void onScanBtDone(VdtCamera vdtCamera) {
-        }
-
-        @Override
-        public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
-        }
-
-        @Override
-        public void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot) {
-        }
-
-        @Override
-        public void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks) {
-        }
-
-        @Override
-        public void onStillCaptureDone(VdtCamera vdtCamera) {
-        }
-    }
-
-    private ArrayList<Callback> mCallbacks = new ArrayList<Callback>();
-    private final Handler mHandler;
-    private final ServiceInfo mServiceInfo;
-    private final AbsCameraClient mClient;
-
-    private InetSocketAddress mPreviewAddress;
-
-    private CameraState mStates = new CameraState();
-    private BtState mBtStates = new BtState();
-    private GpsState mGpsStates = new GpsState();
-    private WifiState mWifiStates = new WifiState();
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
@@ -149,45 +126,37 @@ public class VdtCamera {
     }
 
 
-    public void markConnected(boolean connected) {
-        mIsConnected = connected;
-    }
-
     public boolean isConnected() {
-        return mIsConnected;
+        return mIsConnected && mIsVdbConnected;
     }
 
-    // API
+
     public String getServerName() {
         return mServiceInfo.serverName;
     }
 
-    // API
     public InetAddress getAddress() {
         return mServiceInfo.inetAddr;
     }
 
-    // API
     public void addCallback(Callback callback) {
         mCallbacks.add(callback);
     }
 
-    // API
+
     public void removeCallback(Callback callback) {
         mCallbacks.remove(callback);
     }
 
-    // API
     public String getSSID() {
         return mServiceInfo.ssid;
     }
 
-    // API
     public String getHostString() {
         return mServiceInfo.inetAddr.getHostAddress();
     }
 
-    // API
+
     public boolean idMatch(String ssid, String hostString) {
         if (ssid == null || hostString == null)
             return false;
@@ -231,10 +200,42 @@ public class VdtCamera {
         InetSocketAddress addr = mClient.getInetSocketAddress();
         if (addr != null) {
             mPreviewAddress = new InetSocketAddress(addr.getAddress(), 8081);
-            for (Callback callback : mCallbacks) {
-                callback.onConnected(this);
+            if (mOnConnectionChangeListener != null) {
+                mOnConnectionChangeListener.onConnected(this);
             }
         }
+        mVdbConnection = new VdbConnection(getHostString());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mVdbConnection.connect();
+                    mIsVdbConnected = true;
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
+                        }
+                    });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        mIsConnected = true;
+    }
+
+    private void onCameraDisconnected() {
+        // callback may unregister itself; so use a copy
+        ArrayList<Callback> c = createCallbackCopy();
+        if (mOnConnectionChangeListener != null) {
+            mOnConnectionChangeListener.onDisconnected(this);
+        }
+        mIsConnected = false;
     }
 
     private ArrayList<Callback> createCallbackCopy() {
@@ -245,13 +246,6 @@ public class VdtCamera {
         return c;
     }
 
-    private void onCameraDisconnected() {
-        // callback may unregister itself; so use a copy
-        ArrayList<Callback> c = createCallbackCopy();
-        for (Callback callback : c) {
-            callback.onDisconnected(this);
-        }
-    }
 
     // called on camera thread
     private void initCameraState() {
@@ -273,32 +267,32 @@ public class VdtCamera {
     // so synchronize our state with it (on main thread)
     private void syncCameraState() {
         if (mClient.syncState(mStates)) {
-            for (Callback callback : mCallbacks) {
-                callback.onStateChanged(this);
+            if (mOnStateChangeListener != null) {
+                mOnStateChangeListener.onStateChanged(this);
             }
         }
     }
 
     private void syncBtState() {
         if (mClient.syncBtState(mBtStates)) {
-            for (Callback callback : mCallbacks) {
-                callback.onBtStateChanged(this);
+            if (mOnStateChangeListener != null) {
+                mOnStateChangeListener.onBtStateChanged(this);
             }
         }
     }
 
     private void syncGpsState() {
         if (mClient.syncGpsState(mGpsStates)) {
-            for (Callback callback : mCallbacks) {
-                callback.onGpsStateChanged(this);
+            if (mOnStateChangeListener != null) {
+                mOnStateChangeListener.onGpsStateChanged(this);
             }
         }
     }
 
     private void syncWifiState() {
         if (mClient.syncWifiState(mWifiStates)) {
-            for (Callback callback : mCallbacks) {
-                callback.onWifiStateChanged(this);
+            if (mOnStateChangeListener != null) {
+                mOnStateChangeListener.onWifiStateChanged(this);
             }
         }
     }
