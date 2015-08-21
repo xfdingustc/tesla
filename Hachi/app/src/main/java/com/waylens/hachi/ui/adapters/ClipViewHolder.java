@@ -1,8 +1,11 @@
 package com.waylens.hachi.ui.adapters;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,7 +30,7 @@ public class ClipViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.video_control)
     View videoControl;
     @Bind(R.id.video_cover)
-    View videoCover;
+    ImageView videoCover;
     @Bind(R.id.video_loading)
     ProgressBar progressBar;
 

@@ -9,11 +9,11 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.VdtCameraManager;
-import com.waylens.hachi.VdbImageLoader.core.VdbImageLoader;
-import com.waylens.hachi.VdbImageLoader.core.VdbImageLoaderConfiguration;
 import com.transee.vdb.DownloadAdmin;
 import com.transee.vdb.DownloadService;
+import com.waylens.hachi.VdbImageLoader.core.VdbImageLoader;
+import com.waylens.hachi.VdbImageLoader.core.VdbImageLoaderConfiguration;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.ImageUtils;

@@ -40,14 +40,23 @@ public class ImageUtils {
     }
 
     public static DisplayImageOptions getAvatarOptions() {
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
+        return new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.sailor)
                 .showImageForEmptyUri(R.drawable.sailor)
                 .showImageOnFail(R.drawable.sailor)
                 .cacheInMemory(true)
                 .cacheOnDisc(true)
                 .build();
-        return options;
+    }
+
+    public static DisplayImageOptions getVideoOptions() {
+        return new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.sailor)
+                .showImageForEmptyUri(R.drawable.sailor)
+                .showImageOnFail(R.drawable.sailor)
+                .cacheInMemory(true)
+                .cacheOnDisc(true)
+                .build();
     }
 
     public static String getImageStoragePath(Context context, String type) {
