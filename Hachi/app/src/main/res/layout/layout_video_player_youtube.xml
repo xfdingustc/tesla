@@ -12,27 +12,6 @@
         android:scaleType="centerCrop"
         android:contentDescription="@null"/>
 
-    <SurfaceView
-        android:id="@+id/video_play_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-    <Button
-        android:id="@+id/video_control"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_gravity="center"
-        android:background="@drawable/ic_not_ready"/>
-
-    <ProgressBar
-        android:id="@+id/video_loading"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
-
     <TextView
         android:id="@+id/video_duration"
         android:layout_width="wrap_content"

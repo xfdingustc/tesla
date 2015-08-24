@@ -51,9 +51,9 @@ public class ImageUtils {
 
     public static DisplayImageOptions getVideoOptions() {
         return new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.sailor)
-                .showImageForEmptyUri(R.drawable.sailor)
-                .showImageOnFail(R.drawable.sailor)
+                .showImageOnLoading(R.drawable.default_video_cover)
+                .showImageForEmptyUri(R.drawable.default_video_cover)
+                .showImageOnFail(R.drawable.default_video_cover)
                 .cacheInMemory(true)
                 .cacheOnDisc(true)
                 .build();

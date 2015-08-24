@@ -4,6 +4,8 @@ package com.waylens.hachi.app;
  * Created by Xiaofei on 2015/8/5.
  */
 public class Constants {
+    public static final String DEVELOPER_KEY = "AIzaSyBuPLSINMBz163ecxJQRySpcev4jfI_BJg";
+
     public static final String HOST_URL = "http://ws.waylens.com:9000/";
     public static final String API_SIGN_UP = HOST_URL + "api/users/signup";
 

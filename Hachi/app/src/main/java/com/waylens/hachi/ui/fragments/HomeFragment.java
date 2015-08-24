@@ -54,7 +54,7 @@ public class HomeFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRequestQueue = Volley.newRequestQueue(getActivity());
-        mAdapter = new MomentsRecyclerAdapter(null);
+        mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
 
@@ -71,6 +71,17 @@ public class HomeFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         loadFeed();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return true;
+            }
+        });
     }
 
     void loadFeed() {

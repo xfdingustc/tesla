@@ -7,6 +7,9 @@ import org.json.JSONObject;
  */
 public class Moment {
 
+    public static final int TYPE_WAYLENS = 0;
+    public static final int TYPE_YOUTUBE = 1;
+
     public int id;
     public String provider;
     public String title;
@@ -19,8 +22,11 @@ public class Moment {
     public int likesCount;
     public int commentsCount;
     public boolean isLiked;
+    public String videoID;
 
     public Owner owner;
+
+    public int type;
 
     private static final String PROVIDER_WAYLENS = "waylens";
     private static final String PROVIDER_YOUTUBE = "youtube";
@@ -36,10 +42,14 @@ public class Moment {
         moment.id = jsonMoment.optInt("id");
         String provider = jsonMoment.optString("provider");
         moment.provider = provider;
+
         if (PROVIDER_YOUTUBE.equals(provider)) {
-            moment.thumbnail = String.format(YOUTUBE_THUMBNAIL, jsonMoment.optString("videoID"));
+            moment.videoID = jsonMoment.optString("videoID");
+            moment.thumbnail = String.format(YOUTUBE_THUMBNAIL, moment.videoID);
+            moment.type = TYPE_YOUTUBE;
         } else {
             moment.thumbnail = jsonMoment.optString("thumbnail");
+            moment.type = TYPE_WAYLENS;
         }
 
 
