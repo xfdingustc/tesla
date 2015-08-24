@@ -99,7 +99,7 @@ public class BrowseCameraActivity extends BaseActivity {
         }
 
 
-        mVdb.start(hostString);
+        //mVdb.start(hostString);
         mHost = hostString;
         mVdbRequestQueue = Snipe.newRequestQueue(this, mSharedCamera.getVdbConnection());
 
@@ -112,7 +112,8 @@ public class BrowseCameraActivity extends BaseActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        mVdb = new RemoteVdb(new BrowseCameraVdbCallback(), Hachi.getVideoDownloadPath(), isServerActivity(bundle));
+        //mVdb = new RemoteVdb(new BrowseCameraVdbCallback(), Hachi.getVideoDownloadPath(),
+        //    isServerActivity(bundle));
 
 
         initViews();
@@ -142,7 +143,7 @@ public class BrowseCameraActivity extends BaseActivity {
 
         ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, new VdbResponse.Listener<ClipSet>() {
             @Override
-            public void onResponse(ClipSet response) {
+            public void onResponse(ClipSet clipSet) {
 
             }
         }, new VdbResponse.ErrorListener() {
@@ -153,7 +154,7 @@ public class BrowseCameraActivity extends BaseActivity {
         });
         mVdbRequestQueue.add(request);
 
-        mClipSet = mVdb.getClipSet(RemoteClip.TYPE_BUFFERED);
+        //mClipSet = mVdb.getClipSet(RemoteClip.TYPE_BUFFERED);
 
         mClipSetAdapter = new CameraClipSetAdapter(this, mClipSet);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);

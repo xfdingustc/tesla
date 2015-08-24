@@ -99,7 +99,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     abstract protected VdbCommand getVdbCommand();
 
-    abstract protected VdbResponse<T> parseVdbResponse(RawResponse response);
+    abstract protected VdbResponse<T> parseVdbResponse(VdbAcknowledge response);
 
     @Override
     public int compareTo(VdbRequest<T> another) {

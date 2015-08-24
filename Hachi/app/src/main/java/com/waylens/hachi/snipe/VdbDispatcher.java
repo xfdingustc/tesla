@@ -50,7 +50,6 @@ public class VdbDispatcher extends Thread {
             }
 
             try {
-                Logger.t(TAG).d("GGGGGGGGGGGGGGGet one request");
                 vdbRequest.addMarker("vdb-queue-take");
 
                 if (vdbRequest.isCanceled()) {
@@ -59,15 +58,15 @@ public class VdbDispatcher extends Thread {
                 }
 
                 // Perform the network request
-                RawResponse rawResponse = mVdbSocket.performRequest(vdbRequest);
+                VdbAcknowledge vdbAcknowledge = mVdbSocket.performRequest(vdbRequest);
                 vdbRequest.addMarker("vdb-complete");
 
-                if (rawResponse.notModified && vdbRequest.hasHadResponseDelivered()) {
+                if (vdbAcknowledge.notModified && vdbRequest.hasHadResponseDelivered()) {
                     vdbRequest.finish("not-modified");
                     continue;
                 }
 
-                VdbResponse<?> vdbResponse = vdbRequest.parseVdbResponse(rawResponse);
+                VdbResponse<?> vdbResponse = vdbRequest.parseVdbResponse(vdbAcknowledge);
                 vdbRequest.addMarker("vdb-parse-complete");
 
                 vdbRequest.markDelivered();
