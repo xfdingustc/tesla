@@ -7,6 +7,7 @@ public class VdbCommand {
     private static final int VDB_CMD_SIZE = 160;
     private byte[] mCmdBuffer = new byte[VDB_CMD_SIZE];
     private int mSendIndex = 0;
+    private int mCommndCode;
 
     private VdbCommand() {
 
@@ -23,6 +24,10 @@ public class VdbCommand {
 
     public byte[] getCmdBuffer() {
         return mCmdBuffer;
+    }
+
+    public int getCommandCode() {
+        return mCommndCode;
     }
 
     private final void writei32(int value) {
@@ -45,6 +50,7 @@ public class VdbCommand {
 
         private Builder writeCmdCode(int code, int tag) {
             mVdbCommand.writeCmdCode(code, tag);
+            mVdbCommand.mCommndCode = code;
             return this;
         }
 

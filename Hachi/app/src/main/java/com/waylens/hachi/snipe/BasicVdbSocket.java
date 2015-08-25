@@ -15,14 +15,10 @@ public class BasicVdbSocket implements VdbSocket {
         Logger.t(TAG).d("perform request !!!!");
         try {
 
-            byte[] array = waitForAck(vdbRequest);
-            Logger.t(TAG).d("rRRRRRRRRReceived bytes: " + array.length);
-
             sendCmd(vdbRequest);
-            byte[] array1 = waitForAck(vdbRequest);
-            Logger.t(TAG).d("rRRRRRRRRReceived bytes: " + array1.length);
 
-            return new VdbAcknowledge(0, false, array1, vdbRequest.getVdbConnection());
+            return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getCommandCode(),
+                vdbRequest.getVdbConnection());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,16 +29,10 @@ public class BasicVdbSocket implements VdbSocket {
 
     private void sendCmd(VdbRequest<?> vdbRequest) throws IOException {
         VdbConnection connection = vdbRequest.getVdbConnection();
-        VdbCommand vdbCommand = vdbRequest.getVdbCommand();
+        VdbCommand vdbCommand = vdbRequest.createVdbCommand();
 
         connection.sendCommnd(vdbCommand);
         //mConnection.sendByteArray(mCmdBuffer);
-    }
-
-    private byte[] waitForAck(VdbRequest<?> vdbRequest) throws IOException{
-        VdbConnection connection = vdbRequest.getVdbConnection();
-
-        return connection.receivedAck();
     }
 
     //private

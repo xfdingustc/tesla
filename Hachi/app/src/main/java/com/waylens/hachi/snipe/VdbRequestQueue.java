@@ -27,7 +27,7 @@ public class VdbRequestQueue {
 
     private AtomicInteger mSequenceGenerator = new AtomicInteger();
 
-    private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 3;
+    private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 1;
 
     private final Set<VdbRequest<?>> mCurrentVdbRequests = new HashSet<VdbRequest<?>>();
 

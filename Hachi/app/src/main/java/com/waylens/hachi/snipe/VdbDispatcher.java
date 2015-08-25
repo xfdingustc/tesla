@@ -74,8 +74,14 @@ public class VdbDispatcher extends Thread {
 
             } catch (SnipeError snipeError) {
                 snipeError.printStackTrace();
+                parseAndDeliverVdbError(vdbRequest, snipeError);
             }
 
         }
+    }
+
+    private void parseAndDeliverVdbError(VdbRequest<?> vdbRequest, SnipeError snipeError) {
+        snipeError = vdbRequest.parseVdbError(snipeError);
+        mDelivery.postError(vdbRequest, snipeError);
     }
 }

@@ -30,11 +30,41 @@ public class ExecutorDelivery implements ResponseDelivery {
 
     @Override
     public void postResponse(VdbRequest<?> vdbRequest, VdbResponse<?> vdbResponse, Runnable runnable) {
+        vdbRequest.markDelivered();
+        vdbRequest.addMarker("post-response");
+        mResponsePoster.execute(new ResponseDeliveryRunnable(vdbRequest, vdbResponse, runnable));
 
     }
 
     @Override
     public void postError(VdbRequest<?> vdbRequest, SnipeError error) {
 
+    }
+
+    private class ResponseDeliveryRunnable implements Runnable {
+
+        private final VdbRequest mRequest;
+        private final VdbResponse mResponse;
+        private final Runnable mRunnable;
+
+        public ResponseDeliveryRunnable(VdbRequest vdbRequest, VdbResponse vdbResponse, Runnable
+            runnable) {
+            mRequest = vdbRequest;
+            mResponse = vdbResponse;
+            mRunnable = runnable;
+        }
+
+        @Override
+        public void run() {
+            if (mRequest.isCanceled()) {
+                mRequest.finish("canceled-at-delivery");
+                return;
+            }
+
+
+            if (mResponse.isSuccess()) {
+                mRequest.deliverResponse(mResponse.result);
+            }
+        }
     }
 }

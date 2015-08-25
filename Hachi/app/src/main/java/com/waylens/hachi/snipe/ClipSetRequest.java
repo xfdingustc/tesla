@@ -23,17 +23,18 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
     }
 
     @Override
-    protected VdbCommand getVdbCommand() {
+    protected VdbCommand createVdbCommand() {
         switch (mMethod) {
             case METHOD_GET:
-                return VdbCommand.Factory.createCmdGetClipSetInfo(0);
+                mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(0);
+                break;
             case METHOD_SET:
-                return null;
+                break;
             default:
-                return null;
+                break;
         }
 
-
+        return mVdbCommand;
     }
 
     @Override
@@ -45,6 +46,11 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                 break;
         }
         return null;
+    }
+
+    @Override
+    protected void deliverResponse(ClipSet response) {
+        mListener.onResponse(response);
     }
 
     private VdbResponse<ClipSet> parseGetClipSetResponse(VdbAcknowledge response) {
@@ -81,7 +87,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             clipSet.addClip(clip);
             Logger.t(TAG).d("Add one clip : " + clip.toString());
         }
-        return null;
+        return VdbResponse.success((ClipSet)clipSet);
     }
 
     private final void readStreamInfo(RemoteClip clip, int index, VdbAcknowledge response) {

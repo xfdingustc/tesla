@@ -144,7 +144,9 @@ public class BrowseCameraActivity extends BaseActivity {
         ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet clipSet) {
-
+                Logger.t(TAG).d("Clip Set response, size = " + clipSet.getCount());
+                mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, clipSet);
+                mRvCameraVideoList.setAdapter(mClipSetAdapter);
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -156,8 +158,7 @@ public class BrowseCameraActivity extends BaseActivity {
 
         //mClipSet = mVdb.getClipSet(RemoteClip.TYPE_BUFFERED);
 
-        mClipSetAdapter = new CameraClipSetAdapter(this, mClipSet);
-        mRvCameraVideoList.setAdapter(mClipSetAdapter);
+
 
     }
 
@@ -195,7 +196,9 @@ public class BrowseCameraActivity extends BaseActivity {
                     return;
                 }
 
-            }
+            }.
+
+            
 
         }
 

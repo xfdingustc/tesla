@@ -44,7 +44,7 @@ public class VdbConnection {
     }
 
     public byte[] receivedAck() throws IOException {
-        byte[] buffer = new byte[160];
+        byte[] buffer = new byte[8192];
         readFully(buffer, 0, buffer.length);
         return buffer;
     }
@@ -52,14 +52,21 @@ public class VdbConnection {
 
     public void readFully(byte[] buffer, int pos, int size) throws IOException {
         InputStream input = mSocket.getInputStream();
-        while (size > 0) {
-            int ret = input.read(buffer, pos, size);
-            if (ret < 0) {
-                throw new IOException();
+
+        int one_ack_length = 160;
+        while (true) {
+            int read_cnt = input.read(buffer, pos, one_ack_length);
+            if (read_cnt < one_ack_length) {
+                break;
             }
-            pos += ret;
-            size -= ret;
+            if (read_cnt < 0) {
+                throw  new IOException();
+            }
+            pos += read_cnt;
+            size -= read_cnt;
+            Logger.t(TAG).d("Read input stream size: " + pos);
         }
+
     }
 
     private void sendByteArray(byte[] data) throws IOException {

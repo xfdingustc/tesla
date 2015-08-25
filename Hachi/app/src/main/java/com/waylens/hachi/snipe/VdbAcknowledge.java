@@ -11,7 +11,8 @@ public class VdbAcknowledge {
     private static final String TAG = VdbAcknowledge.class.getSimpleName();
     public final int statusCode;
     public final boolean notModified;
-    public byte[] mReceiveBuffer = new byte[VDB_ACK_SIZE];
+    private final int mCommandCode;
+    public byte[] mReceiveBuffer;
     public byte[] mMsgBuffer;
     private final VdbConnection mVdbConnection;
     private int mMsgIndex;
@@ -27,15 +28,15 @@ public class VdbAcknowledge {
     protected int mMsgFlags;
     protected int mCmdTag;
 
-    public VdbAcknowledge(int statusCode, boolean notModified, byte[] array, VdbConnection
+    public VdbAcknowledge(int statusCode, boolean notModified, int commandCode, VdbConnection
                           vdbConnection) {
         this.statusCode = statusCode;
         this.notModified = notModified;
         this.mVdbConnection = vdbConnection;
-        this.mReceiveBuffer = array;
+        this.mCommandCode = commandCode;
 
         try {
-            //mVdbConnection.readFully(mReceiveBuffer, 0, VDB_ACK_SIZE);
+            mReceiveBuffer = mVdbConnection.receivedAck();
             parseAcknowledge();
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,28 +45,29 @@ public class VdbAcknowledge {
 
     private void parseAcknowledge() throws IOException {
         mMsgIndex = 0;
-        if (readi32() != MSG_MAGIC) {
-            //
+
+        int syncHeaderPos = 0;
+        while (true) {
+            int syncHeader = readi32();
+            if (syncHeader != MSG_MAGIC) {
+                continue;
+            } else {
+                syncHeaderPos = mMsgIndex;
+                Logger.t(TAG).d("did not found the Msg Magic");
+                mMsgSeqid = readi32(); // ++ each time, set by server
+                mUser1 = readi32(); // cmd->user1
+                mUser2 = readi32(); // cmd->user2
+                mMsgCode = readi16(); // cmd->cmd_code
+                mMsgFlags = readi16(); // cmd->cmd_flags
+                mCmdTag = readi32(); // cmd->cmd_tag
+                Logger.t(TAG).d("Msg code: " + mMsgCode);
+                mCmdRetCode = readi32();
+                int extra_bytes = readi32();
+                if (mMsgCode == mCommandCode) {
+                    break;
+                }
+            }
         }
-        mMsgSeqid = readi32(); // ++ each time, set by server
-        mUser1 = readi32(); // cmd->user1
-        mUser2 = readi32(); // cmd->user2
-        mMsgCode = readi16(); // cmd->cmd_code
-        mMsgFlags = readi16(); // cmd->cmd_flags
-        mCmdTag = readi32(); // cmd->cmd_tag
-
-        mCmdRetCode = readi32();
-        // Todo:
-
-        int extra_bytes = readi32();
-        if (extra_bytes > 0) {
-            mMsgBuffer = new byte[VDB_ACK_SIZE + extra_bytes];
-            System.arraycopy(mReceiveBuffer, 0, mMsgBuffer, 0, VDB_ACK_SIZE);
-            mVdbConnection.readFully(mMsgBuffer, VDB_ACK_SIZE, extra_bytes);
-            mReceiveBuffer = mMsgBuffer;
-        }
-
-        mMsgIndex = 32;
     }
 
     public int getRetCode() {

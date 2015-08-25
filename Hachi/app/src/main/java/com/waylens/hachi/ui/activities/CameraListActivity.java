@@ -186,7 +186,7 @@ public class CameraListActivity extends BaseActivity {
                     cameraService.getHost(),
                     cameraService.getPort(),
                     "", serviceName, bIsPcServer);
-                Logger.t(TAG).d("on camera found!!!!!");
+
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -699,7 +699,7 @@ public class CameraListActivity extends BaseActivity {
 
         @Override
         public void wifiScanResult(WifiAdmin wifiAdmin) {
-            Logger.t(TAG).d("wifiScanResult");
+            //Logger.t(TAG).d("wifiScanResult");
             onScanWifiDone(wifiAdmin);
         }
 

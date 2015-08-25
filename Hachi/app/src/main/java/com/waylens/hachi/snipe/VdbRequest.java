@@ -34,7 +34,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     private static final int REQUEST_TYPE_INSERTCLIP = 16;
     private static final int REQUEST_TYPE_MOVECLIP = 17;
     private static final int REQUEST_TYPE_GETPLAYLISTPLAYBACKURL = 18;
-
+    protected VdbCommand mVdbCommand;
 
 
     public VdbRequest(int method, VdbResponse.ErrorListener listener) {
@@ -97,9 +97,20 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     }
 
 
-    abstract protected VdbCommand getVdbCommand();
+    abstract protected VdbCommand createVdbCommand();
+
+    public VdbCommand getVdbCommand() {
+        return mVdbCommand;
+    }
 
     abstract protected VdbResponse<T> parseVdbResponse(VdbAcknowledge response);
+
+    protected SnipeError parseVdbError(SnipeError snipeError) {
+        return snipeError;
+    }
+
+
+    abstract protected void deliverResponse(T response);
 
     @Override
     public int compareTo(VdbRequest<T> another) {
