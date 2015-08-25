@@ -109,12 +109,24 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
                     mFragmentManager.beginTransaction().remove(videoFragment).commit();
                     videoFragment = YouTubeFragment.newInstance();
                     videoFragment.setVideoId(moment.videoID);
+                    vh.videoFragment = videoFragment;
                     mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoFragment).commit();
                 }
             });
 
         }
 
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(MomentViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (holder instanceof YouTubeMomentVH) {
+            YouTubeMomentVH vh = (YouTubeMomentVH) holder;
+            if (vh.videoFragment != null) {
+                mFragmentManager.beginTransaction().remove(videoFragment).commit();
+            }
+        }
     }
 
     @Override
