@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,12 +20,10 @@ import com.transee.vdb.ImageDecoder;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.PlaylistSet;
 import com.transee.vdb.RemoteClip;
-import com.transee.vdb.RemoteVdb;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.snipe.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -109,20 +106,11 @@ public class BrowseCameraActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-
-        Bundle bundle = getIntent().getExtras();
-
-        //mVdb = new RemoteVdb(new BrowseCameraVdbCallback(), Hachi.getVideoDownloadPath(),
-        //    isServerActivity(bundle));
-
-
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_browse_camera);
-
-
     }
 
     private void initCamera() {
@@ -141,11 +129,15 @@ public class BrowseCameraActivity extends BaseActivity {
     private void initCameraVideoListView() {
         mRvCameraVideoList.setLayoutManager(new LinearLayoutManager(this));
 
-        ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, new VdbResponse.Listener<ClipSet>() {
+        Bundle parameter = new Bundle();
+        parameter.putInt(ClipSetRequest.PARAMETER_TYPE, RemoteClip.TYPE_BUFFERED);
+
+        ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
+            new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet clipSet) {
                 Logger.t(TAG).d("Clip Set response, size = " + clipSet.getCount());
-                mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, clipSet);
+                mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, clipSet, mVdbRequestQueue);
                 mRvCameraVideoList.setAdapter(mClipSetAdapter);
             }
         }, new VdbResponse.ErrorListener() {

@@ -1,10 +1,16 @@
-package com.waylens.hachi.snipe;
+package com.waylens.hachi.snipe.toolbox;
+
+import android.os.Bundle;
 
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipSet;
 import com.transee.vdb.RemoteClip;
 import com.transee.vdb.SimpleClipSet;
+import com.waylens.hachi.snipe.VdbAcknowledge;
+import com.waylens.hachi.snipe.VdbCommand;
+import com.waylens.hachi.snipe.VdbRequest;
+import com.waylens.hachi.snipe.VdbResponse;
 
 /**
  * Created by Xiaofei on 2015/8/18.
@@ -15,18 +21,24 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
 
     public static final int METHOD_GET = 0;
     public static final int METHOD_SET = 1;
+    public static final String PARAMETER_TYPE = "type";
 
-    public ClipSetRequest(int method, VdbResponse.Listener<ClipSet> listener, VdbResponse
+    private final Bundle mParameters;
+
+    public ClipSetRequest(int method, Bundle parameters, VdbResponse.Listener<ClipSet> listener,
+                          VdbResponse
         .ErrorListener errorListener) {
         super(method, errorListener);
-        mListener = listener;
+        this.mListener = listener;
+        this.mParameters = parameters;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
         switch (mMethod) {
             case METHOD_GET:
-                mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(0);
+                int type = mParameters.getInt(PARAMETER_TYPE);
+                mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(type);
                 break;
             case METHOD_SET:
                 break;

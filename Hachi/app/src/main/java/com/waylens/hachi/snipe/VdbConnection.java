@@ -52,6 +52,7 @@ public class VdbConnection {
 
     public void readFully(byte[] buffer, int pos, int size) throws IOException {
         InputStream input = mSocket.getInputStream();
+        Logger.t(TAG).d("RRRRRRRRRRRRead fully");
 
         int one_ack_length = 160;
         while (true) {

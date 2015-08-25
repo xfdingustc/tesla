@@ -53,17 +53,18 @@ public class VdbAcknowledge {
                 continue;
             } else {
                 syncHeaderPos = mMsgIndex;
-                Logger.t(TAG).d("did not found the Msg Magic");
+                Logger.t(TAG).d("Found the Msg Magic");
                 mMsgSeqid = readi32(); // ++ each time, set by server
                 mUser1 = readi32(); // cmd->user1
                 mUser2 = readi32(); // cmd->user2
                 mMsgCode = readi16(); // cmd->cmd_code
                 mMsgFlags = readi16(); // cmd->cmd_flags
                 mCmdTag = readi32(); // cmd->cmd_tag
-                Logger.t(TAG).d("Msg code: " + mMsgCode);
+                Logger.t(TAG).d("Msg code: " + mMsgCode + " Command code: " + mCommandCode);
                 mCmdRetCode = readi32();
                 int extra_bytes = readi32();
                 if (mMsgCode == mCommandCode) {
+                    Logger.t(TAG).d("BBBBBBBBBBBBBBBBBBBBBBB");
                     break;
                 }
             }

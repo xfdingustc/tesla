@@ -11,8 +11,6 @@ import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.DownloadAdmin;
 import com.transee.vdb.DownloadService;
-import com.waylens.hachi.VdbImageLoader.core.VdbImageLoader;
-import com.waylens.hachi.VdbImageLoader.core.VdbImageLoaderConfiguration;
 import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
@@ -48,8 +46,6 @@ public class Hachi extends Application {
         SessionManager.initialize(this);
         SessionManager.getInstance().reloadLoginInfo();
 
-        initVdbImageLoader();
-
         initCameraManager();
 
         WifiAdminManager.initialize(this);
@@ -60,14 +56,6 @@ public class Hachi extends Application {
     private void initCameraManager() {
         VdtCameraManager.initialize(this);
 
-    }
-
-    private void initVdbImageLoader() {
-        VdbImageLoaderConfiguration config = new VdbImageLoaderConfiguration
-            .Builder(getApplicationContext())
-            .build();
-
-        VdbImageLoader.getInstance().init(config);
     }
 
     private void initFacebookSDK() {
@@ -119,7 +107,6 @@ public class Hachi extends Application {
         intent.setData(Uri.fromFile(new File(filename)));
         context.sendBroadcast(intent);
     }
-
 
 
     private DownloadAdmin mDownloadAdmin;

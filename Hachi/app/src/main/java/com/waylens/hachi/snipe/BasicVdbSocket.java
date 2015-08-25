@@ -12,11 +12,11 @@ public class BasicVdbSocket implements VdbSocket {
 
     @Override
     public VdbAcknowledge performRequest(VdbRequest<?> vdbRequest) throws SnipeError {
-        Logger.t(TAG).d("perform request !!!!");
+
         try {
-
             sendCmd(vdbRequest);
-
+            Logger.t(TAG).d("perform request, Command code: " + vdbRequest.getVdbCommand()
+                .getCommandCode());
             return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getCommandCode(),
                 vdbRequest.getVdbConnection());
 

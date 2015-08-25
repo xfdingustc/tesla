@@ -50,6 +50,7 @@ public class VdbDispatcher extends Thread {
             }
 
             try {
+                Logger.t(TAG).d("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
                 vdbRequest.addMarker("vdb-queue-take");
 
                 if (vdbRequest.isCanceled()) {
