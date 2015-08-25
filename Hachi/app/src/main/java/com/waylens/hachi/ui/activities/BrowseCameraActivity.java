@@ -196,7 +196,7 @@ public class BrowseCameraActivity extends BaseActivity {
                     return;
                 }
 
-            }.
+            }
 
             
 
