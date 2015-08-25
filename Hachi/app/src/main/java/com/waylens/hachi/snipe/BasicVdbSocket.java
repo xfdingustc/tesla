@@ -11,17 +11,24 @@ public class BasicVdbSocket implements VdbSocket {
     private final static String TAG = BasicVdbSocket.class.getSimpleName();
 
     @Override
-    public RawResponse performRequest(VdbRequest<?> vdbRequest) throws SnipeError {
+    public VdbAcknowledge performRequest(VdbRequest<?> vdbRequest) throws SnipeError {
         Logger.t(TAG).d("perform request !!!!");
         try {
-            sendCmd(vdbRequest);
+
             byte[] array = waitForAck(vdbRequest);
-            Logger.t(TAG).d("received bytes: " + array.length);
+            Logger.t(TAG).d("rRRRRRRRRReceived bytes: " + array.length);
+
+            sendCmd(vdbRequest);
+            byte[] array1 = waitForAck(vdbRequest);
+            Logger.t(TAG).d("rRRRRRRRRReceived bytes: " + array1.length);
+
+            return new VdbAcknowledge(0, false, array1, vdbRequest.getVdbConnection());
+
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
-        return new RawResponse(0, false);
     }
 
     private void sendCmd(VdbRequest<?> vdbRequest) throws IOException {
@@ -34,7 +41,7 @@ public class BasicVdbSocket implements VdbSocket {
 
     private byte[] waitForAck(VdbRequest<?> vdbRequest) throws IOException{
         VdbConnection connection = vdbRequest.getVdbConnection();
-        Logger.t(TAG).d("WWWWWWWWWWWWWWWWWWWWWWW");
+
         return connection.receivedAck();
     }
 

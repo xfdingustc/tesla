@@ -27,6 +27,11 @@ public class VdbConnection {
         Logger.t(TAG).d("Connecting to: " + mSocketAddress.getHostName() + ": " + mSocketAddress.getPort());
         mSocket.connect(mSocketAddress, CONNECT_TIMEOUT);
         Logger.t(TAG).d("Connected: " + mSocketAddress.getHostName());
+
+        // clear input stream
+        // TODO: we need figure out why we received null package here
+        //byte[] tmp = new byte[160];
+        //readFully(tmp, 0, 160);
     }
 
     public boolean isConnected() {
@@ -35,14 +40,12 @@ public class VdbConnection {
 
 
     public void sendCommnd(VdbCommand command) throws IOException {
-        Logger.t(TAG).d("SSSSSSSSSSSSSSSSSSSSSend commdn");
         sendByteArray(command.getCmdBuffer());
     }
 
     public byte[] receivedAck() throws IOException {
         byte[] buffer = new byte[160];
         readFully(buffer, 0, buffer.length);
-        Logger.t(TAG).d("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
         return buffer;
     }
 
