@@ -10,7 +10,7 @@ public class Moment {
     public static final int TYPE_WAYLENS = 0;
     public static final int TYPE_YOUTUBE = 1;
 
-    public int id;
+    public long id;
     public String provider;
     public String title;
     public String description;
@@ -39,7 +39,7 @@ public class Moment {
 
         JSONObject jsonMoment = jsonObject.optJSONObject("moment");
         Moment moment = new Moment();
-        moment.id = jsonMoment.optInt("id");
+        moment.id = jsonMoment.optLong("id");
         String provider = jsonMoment.optString("provider");
         moment.provider = provider;
 

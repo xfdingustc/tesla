@@ -3,7 +3,10 @@ package com.waylens.hachi.ui.adapters;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.YouTubeFragment;
+
+import butterknife.Bind;
 
 /**
  * Created by Richard on 8/24/15.

@@ -54,7 +54,7 @@ public class HomeFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRequestQueue = Volley.newRequestQueue(getActivity());
-        mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager());
+        mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
 

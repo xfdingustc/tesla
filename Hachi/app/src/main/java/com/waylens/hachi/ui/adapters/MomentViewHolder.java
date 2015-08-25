@@ -48,6 +48,9 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.video_cover)
     ImageView videoCover;
 
+    @Bind(R.id.video_control)
+    View videoControl;
+
     public MomentViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);

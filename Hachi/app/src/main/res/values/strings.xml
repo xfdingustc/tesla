@@ -240,4 +240,9 @@
     <string name="photo">PHOTO</string>
     <string name="loading">Loading&#8230;</string>
     <string name="no_sdcard">No SDCard.</string>
+    <string name="zero_likes">Be the first to like</string>
+    <plurals name="number_of_likes">
+        <item quantity="one">%d like</item>
+        <item quantity="other">%d likes</item>
+    </plurals>
 </resources>
