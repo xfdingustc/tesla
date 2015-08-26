@@ -3,9 +3,6 @@ package com.waylens.hachi.snipe;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.orhanobut.logger.Logger;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VdbRequestQueue {
     private static final String TAG = VdbRequestQueue.class.getSimpleName();
+
 
     private VdbConnection mVdbConnection;
 
@@ -38,6 +36,7 @@ public class VdbRequestQueue {
     private final VdbSocket mVdbSocket;
     private final ResponseDelivery mDelivery;
 
+
     private VdbDispatcher[] mVdbDispatchers;
 
     private List<RequestFinishedListener> mFinishedListeners = new ArrayList<>();
@@ -55,8 +54,10 @@ public class VdbRequestQueue {
         delivery, VdbConnection connection) {
         this.mVdbSocket = vdbSocket;
         this.mVdbDispatchers = new VdbDispatcher[threadPoolSize];
+
         this.mDelivery = delivery;
         this.mVdbConnection = connection;
+
     }
 
 
@@ -71,7 +72,15 @@ public class VdbRequestQueue {
     }
 
     private void stop() {
-
+        /*
+        for (int i = 0; i < mVdbDispatchers.length; i++) {
+            if (mVdbDispatchers[i] != null) {
+                mVdbDispatchers[i].quit();
+            }
+        }
+        if (mVdbReceiver != null) {
+            mVdbReceiver.quit();
+        } */
     }
 
     public VdbConnection getConnection() {
@@ -93,6 +102,7 @@ public class VdbRequestQueue {
 
 
         mVideoDatabaseQueue.add(vdbRequest);
+
 
         return vdbRequest;
     }

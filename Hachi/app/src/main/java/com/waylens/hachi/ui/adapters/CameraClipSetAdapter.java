@@ -26,27 +26,24 @@ import butterknife.ButterKnife;
 
 public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
-    private static final String TAG = "ClipSetRecyclerAdapter";
+    private static final String TAG = CameraClipSetAdapter.class.getSimpleName();
     private final VdbRequestQueue mRequestQueue;
     private final VdbImageLoader mVdbImageLoader;
     private Context mContext;
 
-    private ClipSet mClipSet;
-    private BitmapDrawable[] mBitmaps;
+    private ClipSet mClipSet = null;
 
 
-    public CameraClipSetAdapter(Context context, ClipSet clipSet, VdbRequestQueue queue) {
+
+    public CameraClipSetAdapter(Context context, VdbRequestQueue queue) {
         this.mContext = context;
         this.mRequestQueue = queue;
         this.mVdbImageLoader = new VdbImageLoader(mRequestQueue);
-        setClipSet(clipSet);
     }
 
     public void setClipSet(ClipSet clipSet) {
+        Logger.t(TAG).d("set clip set!!!!!!");
         mClipSet = clipSet;
-        if (clipSet != null) {
-            mBitmaps = new BitmapDrawable[clipSet.getCount()];
-        }
         notifyDataSetChanged();
     }
 
@@ -65,13 +62,13 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.videoTime.setText(clip.getDateTimeString());
         holder.videoDuration.setText(clip.getDurationString());
 
+
         /*
         VdbImageListener listener = VdbImageLoader.getImageListener(holder.videoCover, 0, 0);
         long clipTimeMs = clip.getStartTime();
         ClipPos clipPos = new ClipPos(clip, clipTimeMs, ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.get(clip, clipPos, listener);
         */
-
         //holder.videoCover.setBackground(mBitmaps[position]);
 
         // set onClickListener
@@ -82,20 +79,13 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemCount() {
         if (mClipSet != null) {
+            Logger.t(TAG).d("getItemCount");
             return mClipSet.getCount();
         } else {
             return 0;
         }
     }
 
-    public void setClipCover(BitmapDrawable bitmapDrawable, int position) {
-        if (position < 0 || position > mBitmaps.length) {
-            Logger.t(TAG).e("Illegal argument: " + position);
-            return;
-        }
-        mBitmaps[position] = bitmapDrawable;
-        notifyDataSetChanged();
-    }
 
     @Override
     public void onClick(View v) {

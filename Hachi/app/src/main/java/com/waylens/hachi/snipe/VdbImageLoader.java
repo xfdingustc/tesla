@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.orhanobut.logger.Logger;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipPos;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
@@ -13,6 +14,7 @@ import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
  * Created by Xiaofei on 2015/8/25.
  */
 public class VdbImageLoader {
+    private static final String TAG = VdbImageLoader.class.getSimpleName();
     private final VdbRequestQueue mRequestQueue;
 
     public VdbImageLoader(VdbRequestQueue queue) {
@@ -78,6 +80,7 @@ public class VdbImageLoader {
         return new VdbImageRequest(clip, clipPos, new VdbResponse.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
+                Logger.t(TAG).d("Bitmap decoder success");
                 onGetImageSuccess(response);
             }
         }, maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, new VdbResponse.ErrorListener() {

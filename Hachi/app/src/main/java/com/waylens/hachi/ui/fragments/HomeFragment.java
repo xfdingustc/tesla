@@ -1,11 +1,9 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonArray;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonArrayRequest;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.adapters.Moment;
@@ -86,18 +82,18 @@ public class HomeFragment extends BaseFragment {
 
     void loadFeed() {
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_MOMENTS,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onLoadFeedSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onLoadFeedFailed(error);
-                    }
-                }));
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    onLoadFeedSuccessful(response);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onLoadFeedFailed(error);
+                }
+            }));
     }
 
     void onLoadFeedSuccessful(JSONObject response) {

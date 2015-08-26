@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10px"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="11sp"
                 />
             <TextView
@@ -124,7 +124,7 @@
                 android:layout_gravity="center_vertical"
                 android:drawableLeft="@drawable/map_weather_wind_icon"
                 android:textSize="11sp"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 />
 
         </LinearLayout>
@@ -205,6 +205,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
         android:textSize="11sp"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:text="Simulated data being used"/>
 </FrameLayout>

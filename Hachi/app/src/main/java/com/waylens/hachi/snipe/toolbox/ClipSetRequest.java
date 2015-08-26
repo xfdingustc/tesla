@@ -2,6 +2,7 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
+
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipSet;
@@ -11,6 +12,7 @@ import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.events.GetClipSetInfoEvent;
 
 /**
  * Created by Xiaofei on 2015/8/18.
@@ -27,7 +29,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
 
     public ClipSetRequest(int method, Bundle parameters, VdbResponse.Listener<ClipSet> listener,
                           VdbResponse
-        .ErrorListener errorListener) {
+                              .ErrorListener errorListener) {
         super(method, errorListener);
         this.mListener = listener;
         this.mParameters = parameters;
@@ -99,7 +101,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             clipSet.addClip(clip);
             Logger.t(TAG).d("Add one clip : " + clip.toString());
         }
-        return VdbResponse.success((ClipSet)clipSet);
+        return VdbResponse.success((ClipSet) clipSet);
     }
 
     private final void readStreamInfo(RemoteClip clip, int index, VdbAcknowledge response) {

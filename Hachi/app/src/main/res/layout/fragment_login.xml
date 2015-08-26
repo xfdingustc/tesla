@@ -145,7 +145,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/white"
+            android:background="@android:color/white"
             android:paddingLeft="4.0dip"
             android:paddingRight="4.0dip"
             android:text="@string/or"/>

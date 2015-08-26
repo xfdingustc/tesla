@@ -10,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.VdtCamera;
-import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.common.GPSPath;
 import com.transee.vdb.Clip;
 import com.transee.vdb.ClipPos;
@@ -23,11 +21,13 @@ import com.transee.vdb.RemoteClip;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
 
 import butterknife.Bind;
@@ -44,7 +44,7 @@ public class BrowseCameraActivity extends BaseActivity {
 
     private Vdb mVdb;
     private VdtCamera mVdtCamera;
-    private CameraClipSetAdapter mClipSetAdapter;
+    private CameraClipSetAdapter mClipSetAdapter = null;
     private String mHost;
 
     private VdbRequestQueue mVdbRequestQueue;
@@ -79,6 +79,13 @@ public class BrowseCameraActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        initViews();
         initCamera();
         Bundle bundle = getIntent().getExtras();
         String hostString = null;
@@ -103,14 +110,15 @@ public class BrowseCameraActivity extends BaseActivity {
         initCameraVideoListView();
     }
 
-    @Override
-    protected void init() {
-        super.init();
-        initViews();
-    }
-
     private void initViews() {
         setContentView(R.layout.activity_browse_camera);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     private void initCamera() {
@@ -128,19 +136,20 @@ public class BrowseCameraActivity extends BaseActivity {
 
     private void initCameraVideoListView() {
         mRvCameraVideoList.setLayoutManager(new LinearLayoutManager(this));
+        mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, mVdbRequestQueue);
+        mRvCameraVideoList.setAdapter(mClipSetAdapter);
 
         Bundle parameter = new Bundle();
         parameter.putInt(ClipSetRequest.PARAMETER_TYPE, RemoteClip.TYPE_BUFFERED);
 
         ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
             new VdbResponse.Listener<ClipSet>() {
-            @Override
-            public void onResponse(ClipSet clipSet) {
-                Logger.t(TAG).d("Clip Set response, size = " + clipSet.getCount());
-                mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, clipSet, mVdbRequestQueue);
-                mRvCameraVideoList.setAdapter(mClipSetAdapter);
-            }
-        }, new VdbResponse.ErrorListener() {
+                @Override
+                public void onResponse(ClipSet clipSet) {
+                    mClipSetAdapter.setClipSet(clipSet);
+                }
+
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
@@ -149,7 +158,6 @@ public class BrowseCameraActivity extends BaseActivity {
         mVdbRequestQueue.add(request);
 
         //mClipSet = mVdb.getClipSet(RemoteClip.TYPE_BUFFERED);
-
 
 
     }
@@ -190,7 +198,6 @@ public class BrowseCameraActivity extends BaseActivity {
 
             }
 
-            
 
         }
 
@@ -361,6 +368,6 @@ public class BrowseCameraActivity extends BaseActivity {
 
     void onImageDecode(Bitmap bitmap, int pos) {
         BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-        mClipSetAdapter.setClipCover(bitmapDrawable, pos);
+        //mClipSetAdapter.setClipCover(bitmapDrawable, pos);
     }
 }
