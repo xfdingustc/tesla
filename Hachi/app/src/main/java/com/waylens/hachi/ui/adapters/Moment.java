@@ -24,7 +24,7 @@ public class Moment {
     public boolean isLiked;
     public String videoID;
 
-    public Owner owner;
+    public BasicUserInfo owner;
 
     public int type;
 
@@ -64,28 +64,9 @@ public class Moment {
         moment.commentsCount = jsonMoment.optInt("commentsCount");
         moment.isLiked = jsonMoment.optBoolean("isLiked");
 
-        moment.owner = Owner.fromJson(jsonObject.optJSONObject("owner"));
+        moment.owner = BasicUserInfo.fromJson(jsonObject.optJSONObject("owner"));
 
         return moment;
     }
 
-    public static class Owner {
-        public String userID;
-
-        public String userName;
-
-        public String avatarUrl;
-
-        public static Owner fromJson(JSONObject jsonOwner) {
-            if (jsonOwner == null) {
-                return null;
-            }
-            Owner owner = new Owner();
-            owner.userID = jsonOwner.optString("userID");
-            owner.userName = jsonOwner.optString("userName");
-            owner.avatarUrl = jsonOwner.optString("avatarUrl");
-            return owner;
-        }
-
-    }
 }

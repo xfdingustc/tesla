@@ -24,9 +24,13 @@ public class Constants {
 
     public static final String API_MOMENTS = HOST_URL + "api/moments?order=uploadtime_desc";
 
-    public static final String API_MOMENT_PLAY = HOST_URL + "api/moments/play/%s";
+    public static final String API_MOMENT_PLAY = HOST_URL + "api/moments/play/";
 
     public static final String PARAM_SORT_UPLOAD_TIME = "uploadtime_desc";
 
     public static final String PARAM_SORT_LIKE_COUNT = "likescount_desc";
+
+    public static final String API_MOMENT_LIKE = HOST_URL + "api/likes";
+
+    public static final String  API_COMMENTS = HOST_URL + "api/comments?m=%s&cursor=%s&count=%s";
 }
