@@ -12,7 +12,6 @@ import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.events.GetClipSetInfoEvent;
 
 /**
  * Created by Xiaofei on 2015/8/18.
@@ -76,7 +75,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
         SimpleClipSet clipSet = new SimpleClipSet(Clip.CAT_REMOTE, response.readi32());
 
         int totalClips = response.readi32();
-        Logger.t(TAG).d("Total Clips: " + totalClips);
+
         response.readi32(); // TODO - totalLengthMs
 
         Clip.ID liveClipId = new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED, response.readi32(), null);
@@ -99,7 +98,6 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                 }
             }
             clipSet.addClip(clip);
-            Logger.t(TAG).d("Add one clip : " + clip.toString());
         }
         return VdbResponse.success((ClipSet) clipSet);
     }

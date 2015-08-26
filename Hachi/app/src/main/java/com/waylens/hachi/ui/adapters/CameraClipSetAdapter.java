@@ -63,12 +63,11 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.videoDuration.setText(clip.getDurationString());
 
 
-        /*
+
         VdbImageListener listener = VdbImageLoader.getImageListener(holder.videoCover, 0, 0);
-        long clipTimeMs = clip.getStartTime();
-        ClipPos clipPos = new ClipPos(clip, clipTimeMs, ClipPos.TYPE_POSTER, false);
-        mVdbImageLoader.get(clip, clipPos, listener);
-        */
+        ClipPos clipPos = new ClipPos(clip, clip.getStartTime(), ClipPos.TYPE_POSTER, false);
+        mVdbImageLoader.get(clipPos, listener);
+
         //holder.videoCover.setBackground(mBitmaps[position]);
 
         // set onClickListener
@@ -79,7 +78,6 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemCount() {
         if (mClipSet != null) {
-            Logger.t(TAG).d("getItemCount");
             return mClipSet.getCount();
         } else {
             return 0;

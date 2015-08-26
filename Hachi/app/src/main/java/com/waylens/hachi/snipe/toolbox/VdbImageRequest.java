@@ -14,7 +14,6 @@ import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.events.GetIndexPictureEvent;
 
 /**
  * Created by Xiaofei on 2015/8/25.
@@ -27,14 +26,12 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     private final int mMaxWidth;
     private final int mMaxHeight;
     private final ScaleType mScaleType;
-    private final Clip mClip;
     private final ClipPos mClipPos;
 
-    public VdbImageRequest(Clip clip, ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, int
+    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, int
         maxWidth, int maxHeight, ScaleType scaleType, Config decodeConfig, VdbResponse
                                .ErrorListener errorListener) {
         super(0, errorListener);
-        this.mClip = clip;
         this.mClipPos = clipPos;
         this.mListener = listener;
         this.mDecoderConfig = decodeConfig;
@@ -45,7 +42,7 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
 
     @Override
     protected VdbCommand createVdbCommand() {
-        mVdbCommand = VdbCommand.Factory.createCmdGetIndexPicture(mClip, mClipPos);
+        mVdbCommand = VdbCommand.Factory.createCmdGetIndexPicture(mClipPos);
         return mVdbCommand;
     }
 
@@ -75,7 +72,9 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
 
         String vdbId = null;
 
-        vdbId = response.readStringAligned();
+        if (false) {
+            vdbId = response.readStringAligned();
+        }
 
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, vdbId);
         ClipPos clipPos = new ClipPos(vdbId, cid, clipDate, timeMs, type, bIsLast);
@@ -100,6 +99,6 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
 
     @Override
     protected void deliverResponse(Bitmap response) {
-
+        mListener.onResponse(response);
     }
 }

@@ -151,9 +151,9 @@ public class VdbCommand {
                 .build();
         }
 
-        public static VdbCommand createCmdGetIndexPicture(Clip clip, ClipPos clipPos) {
+        public static VdbCommand createCmdGetIndexPicture(ClipPos clipPos) {
             int cmd = CMD_GetIndexPicture;
-            if (clipPos.getType() == ClipPos.TYPE_POSTER) {
+            if (false && clipPos.getType() == ClipPos.TYPE_POSTER) {
                 cmd |= (1 << 16);
             }
             return new Builder()
@@ -162,7 +162,6 @@ public class VdbCommand {
                 .writeInt32(clipPos.cid.subType)
                 .writeInt32(clipPos.getType() | (clipPos.isLast() ? ClipPos.F_IS_LAST : 0))
                 .writeInt64(clipPos.getClipTimeMs())
-                .writeVdbId(clip.getVdbId())
                 .build();
         }
     }
