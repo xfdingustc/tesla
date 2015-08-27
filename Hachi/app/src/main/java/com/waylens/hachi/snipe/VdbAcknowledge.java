@@ -41,7 +41,6 @@ public class VdbAcknowledge {
                 mReceiveBuffer = mVdbConnection.receivedAck();
                 parseAcknowledge();
                 if (mCmdCode == mMsgCode) {
-                    Logger.t(TAG).d("FFFFFFFFFFFFFFFFFFFFFFFFFFF response");
                     break;
                 }
             }

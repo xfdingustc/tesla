@@ -18,6 +18,7 @@ import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
+import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.R;
@@ -49,6 +50,9 @@ public class ClipEditActivity extends BaseActivity {
 
     @Bind(R.id.btnPlay)
     ImageButton mBtnPlay;
+
+    @Bind(R.id.btnDownload)
+    ImageButton mBtnDownload;
 
 
     private static VdtCamera mSharedCamera;
@@ -100,6 +104,26 @@ public class ClipEditActivity extends BaseActivity {
             }
         });
 
+        mVdbRequestQueue.add(request);
+    }
+
+    @OnClick(R.id.btnDownload)
+    public void onBtnDownloadClicked() {
+        downloadClip();
+    }
+
+    private void downloadClip() {
+        DownloadUrlRequest request = new DownloadUrlRequest(mClip, new VdbResponse.Listener<VdbClient.DownloadInfoEx>() {
+            @Override
+            public void onResponse(VdbClient.DownloadInfoEx response) {
+                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
         mVdbRequestQueue.add(request);
     }
 

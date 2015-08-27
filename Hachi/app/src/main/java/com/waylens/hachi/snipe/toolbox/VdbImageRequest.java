@@ -67,7 +67,6 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
 
         int pictureSize = response.readi32();
         byte[] data = new byte[pictureSize];
-        Logger.t(TAG).d("Picture size = " + pictureSize);
         response.readByteArray(data, pictureSize);
 
         String vdbId = null;

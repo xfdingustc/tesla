@@ -15,9 +15,6 @@ public class BasicVdbSocket implements VdbSocket {
 
         try {
             sendCmd(vdbRequest);
-            Logger.t(TAG).d("perform request, Command code: " + vdbRequest.getVdbCommand()
-                .getCommandCode());
-
             return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getCommandCode(),
                 vdbRequest.getVdbConnection());
 

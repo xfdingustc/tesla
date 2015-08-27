@@ -95,6 +95,12 @@ public class VdbCommand {
             return this;
         }
 
+        private Builder writeCmdCode(int code, int tag, int user1, int user2) {
+            mVdbCommand.writeCmdCode(code, tag, user1, user2);
+            mVdbCommand.mCommndCode = code;
+            return this;
+        }
+
         private Builder writeClipId(Clip.ID cid) {
             mVdbCommand.writei32(cid.type);
             mVdbCommand.writei32(cid.subType);
@@ -151,6 +157,10 @@ public class VdbCommand {
 
         private static final int URL_MUTE_AUDIO = (1 << 31);
 
+        public static final int DOWNLOAD_FOR_FILE = 1 << 0;
+        public static final int DOWNLOAD_FOR_IMAGE = 1 << 1;
+        public static final int DOWNLOAD_FIRST_LOOP = 1 << 2;
+
         public static VdbCommand createCmdGetClipSetInfo(int type) {
             return new Builder()
                 .writeCmdCode(CMD_GetClipSetInfo, 0)
@@ -180,6 +190,22 @@ public class VdbCommand {
                 .writeInt32(stream)
                 .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
                 .writeInt64(clipTimeMs)
+                .build();
+        }
+
+        public static VdbCommand createCmdGetClipDownloadUrl(Clip clip, long startMs, long endMs,
+                                                             int downloadOption, boolean bFirstLoop) {
+            int cmdTag = DOWNLOAD_FOR_FILE;
+            if (bFirstLoop) {
+                cmdTag |= DOWNLOAD_FIRST_LOOP;
+            }
+            int duration = (int)(endMs - startMs);
+            return new Builder()
+                .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
+                .writeClipId(clip.cid)
+                .writeInt64(startMs)
+                .writeInt32(duration)
+                .writeInt32(downloadOption)
                 .build();
         }
     }

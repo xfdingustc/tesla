@@ -106,7 +106,6 @@ public class VdbImageLoader {
         return new VdbImageRequest(clipPos, new VdbResponse.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
-                Logger.t(TAG).d("Bitmap decoder success");
                 onGetImageSuccess(cacheKey, response);
             }
         }, maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, new VdbResponse.ErrorListener() {
