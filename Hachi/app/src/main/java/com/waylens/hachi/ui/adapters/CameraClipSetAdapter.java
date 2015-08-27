@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipPos;
-import com.transee.vdb.ClipSet;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.snipe.VdbImageLoader.VdbImageListener;
 import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.ui.activities.CameraVideoEditActivity;
+import com.waylens.hachi.ui.activities.ClipEditActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,14 +28,16 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final String TAG = CameraClipSetAdapter.class.getSimpleName();
     private final VdbRequestQueue mRequestQueue;
     private final VdbImageLoader mVdbImageLoader;
+    private final VdtCamera mVdtCamera;
     private Context mContext;
 
     private ClipSet mClipSet = null;
 
 
 
-    public CameraClipSetAdapter(Context context, VdbRequestQueue queue) {
+    public CameraClipSetAdapter(Context context, VdtCamera vdtCamera, VdbRequestQueue queue) {
         this.mContext = context;
+        this.mVdtCamera = vdtCamera;
         this.mRequestQueue = queue;
         this.mVdbImageLoader = new VdbImageLoader(mRequestQueue);
     }
@@ -64,11 +65,10 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
 
 
 
-        VdbImageListener listener = VdbImageLoader.getImageListener(holder.videoCover, 0, 0);
         ClipPos clipPos = new ClipPos(clip, clip.getStartTime(), ClipPos.TYPE_POSTER, false);
-        mVdbImageLoader.get(clipPos, listener);
+        mVdbImageLoader.displayVdbImage(clipPos, holder.videoCover);
 
-        //holder.videoCover.setBackground(mBitmaps[position]);
+
 
         // set onClickListener
         holder.mBtnVideoEdit.setOnClickListener(this);
@@ -91,7 +91,8 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
             case R.id.btnVideoEdit:
                 CameraClipViewHolder holder = (CameraClipViewHolder) v.getTag();
                 int position = holder.getAdapterPosition();
-                CameraVideoEditActivity.launch(mContext);
+                Clip clip = mClipSet.getClip(position);
+                ClipEditActivity.launch(mContext, mVdtCamera, clip);
 
                 break;
         }

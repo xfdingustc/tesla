@@ -3,7 +3,7 @@ package com.transee.viditcam.app;
 import android.content.Context;
 
 import com.transee.ccam.CameraState;
-import com.transee.vdb.Clip.StreamInfo;
+import com.waylens.hachi.vdb.Clip.StreamInfo;
 import com.transee.vdb.StdMedia;
 import com.waylens.hachi.R;
 

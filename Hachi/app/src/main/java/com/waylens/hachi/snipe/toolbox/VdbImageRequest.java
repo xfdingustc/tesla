@@ -8,8 +8,8 @@ import android.widget.ImageView.ScaleType;
 
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipPos;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;

@@ -40,7 +40,7 @@
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".ui.activities.SignupActivity"/>
         <activity android:name=".ui.activities.BrowseCameraActivity"/>
-        <activity android:name=".ui.activities.CameraVideoEditActivity"/>
+        <activity android:name=".ui.activities.ClipEditActivity"/>
 
 
         <!--Copied from Vidit app-->

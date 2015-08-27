@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.transee.common.Timer;
 import com.transee.common.VideoView;
-import com.transee.vdb.Clip;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.R;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.transee.viditcam.app.MediaHelper;

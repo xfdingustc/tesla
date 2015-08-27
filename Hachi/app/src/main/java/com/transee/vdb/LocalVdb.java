@@ -2,6 +2,14 @@ package com.transee.vdb;
 
 import android.content.Context;
 
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.CompositeClipSet;
+import com.waylens.hachi.vdb.DownloadingClip;
+import com.waylens.hachi.vdb.FileClip;
+import com.waylens.hachi.vdb.LocalClip;
+import com.waylens.hachi.vdb.SimpleClipSet;
+
 import java.io.File;
 
 public class LocalVdb extends Vdb {

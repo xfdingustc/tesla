@@ -15,6 +15,9 @@ import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.transee.vdb.VdbClient.RawDataBlock;
 import com.transee.vdb.VdbClient.RawDataBlockHeader;
 import com.transee.vdb.VdbClient.RawDataResult;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
 
 abstract public class Vdb {
 

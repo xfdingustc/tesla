@@ -1,10 +1,7 @@
 package com.waylens.hachi.snipe;
 
-import android.util.Log;
-
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipPos;
 
 /**
  * Created by Xiaofei on 2015/8/19.

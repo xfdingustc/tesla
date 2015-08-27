@@ -12,8 +12,8 @@ import android.graphics.Rect;
 import com.transee.common.DateTime;
 import com.transee.common.HashCache;
 import com.transee.common.Utils;
-import com.transee.vdb.Clip;
-import com.transee.vdb.RemoteClip;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.RemoteClip;
 import com.transee.vdb.SlideView;
 import com.transee.vdb.VdbClient.RawDataBlock;
 

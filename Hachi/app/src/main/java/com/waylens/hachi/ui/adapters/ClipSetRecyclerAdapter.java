@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipSet;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.R;
 
 import java.io.IOException;

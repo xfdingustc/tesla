@@ -6,6 +6,9 @@ import android.util.Log;
 
 import com.transee.vdb.RemoteVdbClient.BufferSpaceLowInfo;
 import com.transee.vdb.Vdb.MarkLiveInfo;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
 
 import java.io.IOException;
 import java.util.ArrayList;

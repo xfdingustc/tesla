@@ -4,10 +4,13 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
-import com.orhanobut.logger.Logger;
 import com.transee.common.GPSRawData;
 import com.transee.common.TcpConnection;
 import com.transee.vdb.Vdb.MarkLiveInfo;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.vdb.SimpleClipSet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

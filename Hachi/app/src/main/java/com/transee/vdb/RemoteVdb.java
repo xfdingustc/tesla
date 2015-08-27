@@ -1,5 +1,9 @@
 package com.transee.vdb;
 
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.vdb.SimpleClipSet;
+
 public class RemoteVdb extends Vdb {
 
 	private final SimpleClipSet mBufferedCS;

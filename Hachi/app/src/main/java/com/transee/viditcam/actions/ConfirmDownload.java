@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.transee.common.DateTime;
 import com.transee.common.Utils;
-import com.transee.vdb.Clip;
+import com.waylens.hachi.vdb.Clip;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.VdbClient.DownloadInfoEx;
 import com.transee.vdb.VdbClient.DownloadStreamInfo;

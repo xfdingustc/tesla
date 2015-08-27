@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.transee.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSet;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.PlaylistSet;
-import com.transee.vdb.RemoteClip;
+import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.R;
 import com.transee.viditcam.app.VdbEditor;
 import com.transee.viditcam.app.VdbFormatter;

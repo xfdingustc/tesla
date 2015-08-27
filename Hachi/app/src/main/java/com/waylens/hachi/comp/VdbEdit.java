@@ -2,7 +2,7 @@ package com.waylens.hachi.comp;
 
 import android.view.View;
 
-import com.transee.vdb.Clip;
+import com.waylens.hachi.vdb.Clip;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.RemuxHelper;
 import com.transee.vdb.RemuxerParams;

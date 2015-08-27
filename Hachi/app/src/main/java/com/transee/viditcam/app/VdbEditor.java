@@ -2,10 +2,10 @@ package com.transee.viditcam.app;
 
 import android.net.Uri;
 
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipPos;
-import com.transee.vdb.ClipSet;
-import com.transee.vdb.FileClip;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.FileClip;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.Vdb;

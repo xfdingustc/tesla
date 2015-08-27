@@ -4,10 +4,10 @@ import android.os.Bundle;
 
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipSet;
-import com.transee.vdb.RemoteClip;
-import com.transee.vdb.SimpleClipSet;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.vdb.SimpleClipSet;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;

@@ -6,10 +6,8 @@ import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 
 import java.util.HashMap;
@@ -60,6 +58,11 @@ public class VdbImageLoader {
 
     public interface VdbImageListener extends VdbResponse.ErrorListener {
         void onResponse(VdbImageContainer response, boolean isImmediate);
+    }
+
+    public void displayVdbImage(ClipPos clipPos, ImageView imageView) {
+        VdbImageListener listener = VdbImageLoader.getImageListener(imageView, 0, 0);
+        get(clipPos, listener);
     }
 
 

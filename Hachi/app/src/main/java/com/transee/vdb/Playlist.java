@@ -1,6 +1,9 @@
 package com.transee.vdb;
 
 import com.transee.common.DateTime;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.SimpleClipSet;
 
 public class Playlist {
 

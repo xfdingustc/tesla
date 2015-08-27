@@ -5,6 +5,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,5 +23,14 @@
 
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvClipFragments"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@android:color/holo_blue_bright">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

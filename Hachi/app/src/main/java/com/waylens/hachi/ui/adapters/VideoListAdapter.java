@@ -4,8 +4,8 @@ import android.graphics.Rect;
 import android.view.View;
 
 import com.transee.common.VideoListView;
-import com.transee.vdb.Clip;
-import com.transee.vdb.ClipPos;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 import com.transee.vdb.ImageDecoder;
 
 public abstract class VideoListAdapter {
