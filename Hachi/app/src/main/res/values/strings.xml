@@ -226,7 +226,7 @@
     <string name="female">female</string>
     <string name="login_successfully">login successfully</string>
     <string name="user_name_or_password_error">username or password error</string>
-    <string name="facebook_app_id">771534372933789</string>
+    <string name="facebook_app_id">400866993445789</string>
     <string name="login_cancelled">Log in is cancelled.</string>
     <string name="login_error_facebook">Error occurs while connecting to Facebook</string>
     <string name="sign_up_message">Sign up to see videos from your friends</string>
@@ -252,4 +252,7 @@
         <item quantity="one">%d comment</item>
         <item quantity="other">%d comments</item>
     </plurals>
+
+    <string name="comment_moment">%s comments on your moment.</string>
+    <string name="refer_user">%s just replies to you.</string>
 </resources>

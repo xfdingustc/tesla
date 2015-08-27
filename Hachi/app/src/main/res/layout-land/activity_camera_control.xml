@@ -88,12 +88,6 @@
             android:layout_width="293px"
             android:layout_height="293px"
             android:background="@drawable/map_inner_map_background_box">
-            <com.mapbox.mapboxsdk.views.MapView
-                android:id="@+id/mapbox_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                mapbox:mapid="liangyx.mp66kbb8"
-                mapbox:accessToken="sk.eyJ1IjoibGlhbmd5eCIsImEiOiI3MTYzMTMwMDExMzFhMDExZGM0MTczZjM0MjdjYjJiZiJ9.wxWn3zWSkTY5DI8KVJ0UOw"/>
         </RelativeLayout>
         <LinearLayout
             android:layout_width="293px"

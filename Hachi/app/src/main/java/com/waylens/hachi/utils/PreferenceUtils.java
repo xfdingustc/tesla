@@ -19,6 +19,8 @@ public class PreferenceUtils {
     public static final String LOGIN_TYPE = "login_type";
     public static final String IS_LINKED = "is_linked";
 
+    public static final String SEND_GCM_TOKEN_SERVER = "send.gcm.token.to.server";
+
     private static Context mSharedAppContext = null;
     private static SharedPreferences mShare = null;
     private static SharedPreferences.Editor mEditor = null;

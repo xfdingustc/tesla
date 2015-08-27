@@ -24,16 +24,9 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.overlay.Icon;
-import com.mapbox.mapboxsdk.overlay.Marker;
-import com.mapbox.mapboxsdk.overlay.PathOverlay;
-import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.transee.ccam.AbsCameraClient;
 import com.transee.ccam.BtState;
-import com.transee.viditcam.app.*;
-import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.common.DateTime;
@@ -42,34 +35,29 @@ import com.transee.common.MjpegBitmap;
 import com.transee.common.OBDData;
 import com.transee.common.Timer;
 import com.transee.common.Utils;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.ClipSet;
 import com.transee.vdb.PlaylistSet;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
 import com.transee.viditcam.actions.DialogBuilder;
+import com.transee.viditcam.app.CameraSetupActivity;
+import com.transee.viditcam.app.ViditImageButton;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;
 import com.waylens.hachi.views.GearView;
 import com.waylens.hachi.views.PrefsUtil;
-import com.waylens.network.WeatherService;
-
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.Random;
-
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity {
 
@@ -120,7 +108,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     BarView mBaro;
     GForceView mGForceView;
     View mOverlayView;
-    MapView mapView;
+
+    //MapView mapView;
 
     View mapHolder;
     ImageView weatherIcon;
@@ -141,8 +130,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
     };
 
-    private PathOverlay pathOverlay;
-    private Marker marker;
+    //private PathOverlay pathOverlay;
+    //private Marker marker;
 
     LocationManager locationManager;
     LocationListener locationListener;
@@ -475,17 +464,18 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateMap(GPSRawData gpsRawData) {
-        if (mapView == null || pathOverlay == null || marker == null) {
+        /*if (mapView == null || pathOverlay == null || marker == null) {
             return;
         }
         LatLng latLng = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
         pathOverlay.addPoint(latLng);
         marker.setPoint(latLng);
         mapView.setCenter(latLng);
-
+    */
     }
 
     private void updateMap(Location location) {
+        /*
         if (mapView == null || pathOverlay == null || marker == null) {
             return;
         }
@@ -493,7 +483,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         pathOverlay.addPoint(latLng);
         marker.setPoint(latLng);
         mapView.setCenter(latLng);
-
+        */
     }
 
     private void getLocation() {
@@ -519,7 +509,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             public void onProviderDisabled(String provider) {
             }
         };
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
 
     }
 
@@ -560,7 +550,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
         taskHandler.removeCallbacks(simulateDataTask);
         if (locationManager != null && locationListener != null) {
-            locationManager.removeUpdates(locationListener);
+            //locationManager.removeUpdates(locationListener);
         }
     }
 
@@ -704,6 +694,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         mBaro = (BarView) findViewById(R.id.view_baro);
         mGForceView = (GForceView) findViewById(R.id.gforce_view);
         mOverlayView = findViewById(R.id.overlay_view);
+        /*
         mapView = (MapView) findViewById(R.id.mapbox_view);
         mapView.setZoom(16);
         pathOverlay = new PathOverlay(Color.rgb(252, 219, 12), 3);
@@ -714,7 +705,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         Drawable icon = getResources().getDrawable(R.drawable.map_car_inner_red_triangle);
         marker.setIcon(new Icon(icon));
         mapView.addMarker(marker);
-
+        */
         mapHolder = findViewById(R.id.map_holder);
         weatherIcon = (ImageView) findViewById(R.id.weather_icon);
         weatherTemp = (TextView) findViewById(R.id.weather_temp);
@@ -744,6 +735,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void getWeatherData(double lat, double lng) {
+        /*
         long updateTime = PrefsUtil.getUpdateWeatherTime();
         long now = System.currentTimeMillis();
         Log.e("test", "now:" + now);
@@ -791,6 +783,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         //String q = "31.190979000000002,121.60145658333334";
         String q = lat + "," + lng;
         service.getWeather("e081e88edf6ffe4bcd0d12f34b26e", "json", "1", "12", q, callback);
+        */
     }
 
     public static byte[] streamToBytes(InputStream stream) throws IOException {

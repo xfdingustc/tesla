@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.waylens.hachi.R;
+import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.ui.fragments.AccountFragment;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
@@ -27,6 +31,8 @@ public class MainActivity extends BaseActivity {
     private static final String TAB_NOTIFICATIONS_TAG = "notification";
     private static final String TAB_ACCOUNT_TAG = "account";
 
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
 
@@ -42,11 +48,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private BottomTab mTabList[] = {
-        new BottomTab(R.drawable.ic_home, TAB_HOME_TAG),
-        new BottomTab(R.drawable.ic_live, TAB_LIVE_TAG),
-        new BottomTab(R.drawable.ic_highlights, TAB_HIGHLIGHTS_TAG),
-        new BottomTab(R.drawable.ic_notifications, TAB_NOTIFICATIONS_TAG),
-        new BottomTab(R.drawable.ic_account, TAB_ACCOUNT_TAG)
+            new BottomTab(R.drawable.ic_home, TAB_HOME_TAG),
+            new BottomTab(R.drawable.ic_live, TAB_LIVE_TAG),
+            new BottomTab(R.drawable.ic_highlights, TAB_HIGHLIGHTS_TAG),
+            new BottomTab(R.drawable.ic_notifications, TAB_NOTIFICATIONS_TAG),
+            new BottomTab(R.drawable.ic_account, TAB_ACCOUNT_TAG)
     };
 
     @Override
@@ -60,6 +66,10 @@ public class MainActivity extends BaseActivity {
     protected void init() {
         super.init();
         initViews();
+        if (checkGooglePlayServices()) {
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
     }
 
     private void initViews() {
@@ -68,7 +78,7 @@ public class MainActivity extends BaseActivity {
             TabLayout.Tab tab = mMainTabs.newTab();
             tab.setIcon(mTabList[i].mIconRes);
             tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
-                PorterDuff.Mode.MULTIPLY);
+                    PorterDuff.Mode.MULTIPLY);
             mMainTabs.addTab(tab);
         }
 
@@ -76,7 +86,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
-                    PorterDuff.Mode.MULTIPLY);
+                        PorterDuff.Mode.MULTIPLY);
                 if (tab.getPosition() == 2) {
                     startActivity(new Intent(MainActivity.this, CameraListActivity.class));
                 } else {
@@ -85,13 +95,13 @@ public class MainActivity extends BaseActivity {
                 }
 
                 tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
-                    PorterDuff.Mode.MULTIPLY);
+                        PorterDuff.Mode.MULTIPLY);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
-                    PorterDuff.Mode.MULTIPLY);
+                        PorterDuff.Mode.MULTIPLY);
             }
 
             @Override
@@ -103,7 +113,7 @@ public class MainActivity extends BaseActivity {
         setDefaultFirstFragment(TAB_HOME_TAG);
         TabLayout.Tab tab = mMainTabs.getTabAt(0);
         tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
-            PorterDuff.Mode.MULTIPLY);
+                PorterDuff.Mode.MULTIPLY);
     }
 
     private void setDefaultFirstFragment(String tag) {
@@ -153,6 +163,18 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean checkGooglePlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override
