@@ -2,10 +2,15 @@ package com.waylens.hachi.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.SurfaceView;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.orhanobut.logger.Logger;
@@ -22,6 +27,8 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.adapters.ClipFragmentRvAdapter;
 
+import java.io.IOException;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 
@@ -37,6 +44,12 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.rvClipFragments)
     RecyclerView mRvClipFragments;
 
+    @Bind(R.id.svClipPlayback)
+    SurfaceView mSvClipPlayback;
+
+    @Bind(R.id.btnPlay)
+    ImageButton mBtnPlay;
+
 
     private static VdtCamera mSharedCamera;
     private static Clip mSharedClip;
@@ -46,6 +59,8 @@ public class ClipEditActivity extends BaseActivity {
 
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
+
+    private MediaPlayer mClipPlayer;
 
 
     private ClipFragmentRvAdapter mClipFragmentAdapter;
@@ -76,6 +91,7 @@ public class ClipEditActivity extends BaseActivity {
             @Override
             public void onResponse(VdbClient.PlaybackUrl response) {
                 Logger.t(TAG).d("On Response!!!!!!! " + response.url);
+                playClip(response);
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -85,6 +101,33 @@ public class ClipEditActivity extends BaseActivity {
         });
 
         mVdbRequestQueue.add(request);
+    }
+
+    private void playClip(VdbClient.PlaybackUrl response) {
+        if (mClipPlayer != null) {
+            mClipPlayer.release();
+        }
+        mClipPlayer = new MediaPlayer();
+        mClipPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mClipPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                Logger.t(TAG).d("PPPPPPPPPPPPPPPPPPPPPPPPrepared");
+                mIvPreviewPicture.setVisibility(View.GONE);
+                mBtnPlay.setVisibility(View.GONE);
+                mp.setDisplay(mSvClipPlayback.getHolder());
+                mp.start();
+            }
+        });
+
+
+        try {
+            mClipPlayer.setDataSource(response.url);
+            mClipPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

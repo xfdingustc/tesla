@@ -13,6 +13,11 @@
         app:farfl_xratio="16dp"
         app:farfl_yratio="9dp">
 
+        <SurfaceView
+            android:id="@+id/svClipPlayback"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
         <ImageView
             android:id="@+id/ivPreviewPicture"
             android:layout_width="match_parent"
@@ -27,6 +32,9 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_play_circle"
             android:background="@android:color/transparent"/>
+
+
+
 
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
