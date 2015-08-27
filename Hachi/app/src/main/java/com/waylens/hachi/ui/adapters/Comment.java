@@ -6,11 +6,17 @@ import org.json.JSONObject;
  * Created by Richard on 8/26/15.
  */
 public class Comment {
+    public static final int UNASSIGNED_ID = -1;
+
     public long commentID;
     public String content;
     public long createTime;
     public BasicUserInfo author;
     public BasicUserInfo replyTo;
+
+    public Comment() {
+        commentID = UNASSIGNED_ID;
+    }
 
     public static Comment fromJson(JSONObject jsonObject) {
         Comment comment = new Comment();

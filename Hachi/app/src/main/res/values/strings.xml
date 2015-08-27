@@ -243,8 +243,13 @@
     <string name="zero_likes">Be the first to like</string>
     <string name="failed">Failed</string>
     <string name="comments">Comments</string>
+    <string name="add_a_comment">Add a comment</string>
     <plurals name="number_of_likes">
         <item quantity="one">%d like</item>
         <item quantity="other">%d likes</item>
+    </plurals>
+    <plurals name="number_of_comments">
+        <item quantity="one">%d comment</item>
+        <item quantity="other">%d comments</item>
     </plurals>
 </resources>

@@ -1,13 +1,19 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
@@ -18,11 +24,15 @@ import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.adapters.BasicUserInfo;
 import com.waylens.hachi.ui.adapters.Comment;
 import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
+import com.waylens.hachi.ui.adapters.Moment;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,7 +46,6 @@ import butterknife.OnClick;
 public class CommentsFragment extends BaseFragment {
 
     public static final String ARG_MOMENT_ID = "arg.moment.id";
-    private static final long INVALID_MOMENT_ID = -1;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -44,12 +53,15 @@ public class CommentsFragment extends BaseFragment {
     @Bind(R.id.comment_list)
     RecyclerView mCommentListView;
 
+    @Bind(R.id.comment_new)
+    EditText mNewCommentView;
+
     RequestQueue mRequestQueue;
 
     LinearLayoutManager mLinearLayoutManager;
 
     CommentsRecyclerAdapter mAdapter;
-    private long mMomentID = INVALID_MOMENT_ID;
+    private long mMomentID = Moment.INVALID_MOMENT_ID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +72,7 @@ public class CommentsFragment extends BaseFragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            mMomentID = args.getLong(ARG_MOMENT_ID, INVALID_MOMENT_ID);
+            mMomentID = args.getLong(ARG_MOMENT_ID, Moment.INVALID_MOMENT_ID);
         }
     }
 
@@ -70,6 +82,7 @@ public class CommentsFragment extends BaseFragment {
         View view = createFragmentView(inflater, container, R.layout.fragment_comments, savedInstanceState);
         mCommentListView.setAdapter(mAdapter);
         mCommentListView.setLayoutManager(mLinearLayoutManager);
+        mNewCommentView.requestFocus();
         return view;
     }
 
@@ -81,10 +94,10 @@ public class CommentsFragment extends BaseFragment {
     }
 
     private void loadComments() {
-        if (mMomentID == INVALID_MOMENT_ID) {
+        if (mMomentID == Moment.INVALID_MOMENT_ID) {
             return;
         }
-        String url = String.format(Constants.API_COMMENTS, mMomentID, 0, 10);
+        String url = Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING, mMomentID, 0, 10);
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -112,7 +125,7 @@ public class CommentsFragment extends BaseFragment {
             return;
         }
         ArrayList<Comment> commentList = new ArrayList<>();
-        for (int i = 0; i < jsonComments.length(); i++) {
+        for (int i = jsonComments.length() - 1; i >= 0; i--) {
             commentList.add(Comment.fromJson(jsonComments.optJSONObject(i)));
         }
         mAdapter.setComments(commentList);
@@ -120,8 +133,67 @@ public class CommentsFragment extends BaseFragment {
     }
 
     @OnClick(R.id.btn_back)
-    public void test() {
+    public void back() {
+        /*Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+        if (fragment != null) {
+            Log.e("test", "Fragment:" + fragment.getClass().getName());
+            HomeFragment fg = (HomeFragment)fragment;
+            fg.mAdapter.mMoments.get(0).likesCount = 1000;
+            fg.mAdapter.notifyItemChanged(0);
+        } else {
+            Log.e("test", "Fragment is null");
+        }*/
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
         getFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    @OnClick(R.id.btn_send)
+    public void sendComment() {
+        if (TextUtils.isEmpty(mNewCommentView.getText())) {
+            return;
+        }
+        Comment comment = new Comment();
+        comment.content = mNewCommentView.getText().toString();
+        comment.createTime = System.currentTimeMillis();
+        BasicUserInfo basicUserInfo = new BasicUserInfo();
+        basicUserInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();
+        basicUserInfo.userName = SessionManager.getInstance().getUserName();
+        basicUserInfo.userID = SessionManager.getInstance().getUserId();
+        comment.author = basicUserInfo;
+        int position = mAdapter.addComment(comment);
+        mCommentListView.scrollToPosition(position);
+        mNewCommentView.setText("");
+        publishComment(comment, position);
+    }
+
+    private void publishComment(final Comment comment, final int position) {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("momentID", mMomentID);
+            params.put("content", comment.content);
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_COMMENTS, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        long commentID = response.optLong("commentID");
+                        mAdapter.updateCommentID(position, commentID);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
+                        showMessage(errorInfo.get(1));
+                    }
+                }));
     }
 
 }

@@ -26,7 +26,7 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
     TextView commentTimeView;
 
     @Bind(R.id.status_container)
-    ViewAnimator commentStatusView;
+    ViewAnimator commentViewAnimator;
 
 
     public CommentViewHolder(View itemView) {

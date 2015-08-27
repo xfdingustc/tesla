@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -51,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolder> {
 
-    ArrayList<Moment> mMoments;
+    public ArrayList<Moment> mMoments;
 
     PrettyTime mPrettyTime;
 
@@ -153,6 +155,14 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         });
 
         configureVideoPlay(holder, position, moment);
+
+        updateCommentCount(holder, moment);
+        if (moment.comments != null) {
+            holder.commentView.setText(moment.comments);
+            holder.commentContainer.setVisibility(View.VISIBLE);
+        } else {
+            holder.commentContainer.setVisibility(View.GONE);
+        }
     }
 
     void updateLikeState(MomentViewHolder vh, Moment moment) {
@@ -171,6 +181,18 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
             vh.likeCount.setText(mResources.getQuantityString(R.plurals.number_of_likes,
                     moment.likesCount,
                     moment.likesCount));
+        }
+    }
+
+    void updateCommentCount(MomentViewHolder vh, Moment moment) {
+        if (moment.commentsCount == 0) {
+            vh.commentIcon.setVisibility(View.GONE);
+            vh.commentCountView.setVisibility(View.GONE);
+        } else {
+            vh.commentIcon.setVisibility(View.VISIBLE);
+            vh.commentCountView.setVisibility(View.VISIBLE);
+            vh.commentCountView.setText(mResources.getQuantityString(
+                    R.plurals.number_of_comments, moment.commentsCount, moment.commentsCount));
         }
     }
 
@@ -403,5 +425,11 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
             return mMoments.size();
         }
 
+    }
+
+    public void updateMoment(Spannable spannedComments, int position) {
+        Moment moment = mMoments.get(position);
+        moment.comments = spannedComments;
+        notifyItemChanged(position);
     }
 }

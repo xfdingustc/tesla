@@ -32,5 +32,7 @@ public class Constants {
 
     public static final String API_MOMENT_LIKE = HOST_URL + "api/likes";
 
-    public static final String  API_COMMENTS = HOST_URL + "api/comments?m=%s&cursor=%s&count=%s";
+    public static final String  API_COMMENTS = HOST_URL + "api/comments";
+
+    public static final String API_COMMENTS_QUERY_STRING = "?m=%s&cursor=%s&count=%s";
 }

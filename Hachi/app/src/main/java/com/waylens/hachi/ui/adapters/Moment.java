@@ -1,11 +1,15 @@
 package com.waylens.hachi.ui.adapters;
 
+import android.text.Spannable;
+
 import org.json.JSONObject;
 
 /**
  * Created by Richard on 8/21/15.
  */
 public class Moment {
+
+    public static final long INVALID_MOMENT_ID = -1;
 
     public static final int TYPE_WAYLENS = 0;
     public static final int TYPE_YOUTUBE = 1;
@@ -23,6 +27,8 @@ public class Moment {
     public int commentsCount;
     public boolean isLiked;
     public String videoID;
+
+    public Spannable comments;
 
     public BasicUserInfo owner;
 

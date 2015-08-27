@@ -33,11 +33,11 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.like_count)
     TextView likeCount;
 
-    @Bind(R.id.comment_animator)
-    ViewAnimator commentAnimator;
+    @Bind(R.id.comment_icon)
+    View commentIcon;
 
-    @Bind(R.id.comment_list)
-    LinearLayout commentContainer;
+    @Bind(R.id.comment_count)
+    TextView commentCountView;
 
     @Bind(R.id.video_time)
     TextView videoTime;
@@ -56,6 +56,12 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.btn_comment)
     ImageView btnComment;
+
+    @Bind(R.id.comment_container)
+    View commentContainer;
+
+    @Bind(R.id.moment_comment)
+    TextView commentView;
 
     public MomentViewHolder(View itemView) {
         super(itemView);
