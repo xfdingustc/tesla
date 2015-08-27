@@ -1,6 +1,7 @@
 package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 
 /**
@@ -39,13 +40,13 @@ public class VdbCommand {
     }
 
     private final void writei32(int value) {
-        mCmdBuffer[mSendIndex] = (byte)(value);
+        mCmdBuffer[mSendIndex] = (byte) (value);
         mSendIndex++;
-        mCmdBuffer[mSendIndex] = (byte)(value >> 8);
+        mCmdBuffer[mSendIndex] = (byte) (value >> 8);
         mSendIndex++;
-        mCmdBuffer[mSendIndex] = (byte)(value >> 16);
+        mCmdBuffer[mSendIndex] = (byte) (value >> 16);
         mSendIndex++;
-        mCmdBuffer[mSendIndex] = (byte)(value >> 24);
+        mCmdBuffer[mSendIndex] = (byte) (value >> 24);
         mSendIndex++;
     }
 
@@ -83,6 +84,7 @@ public class VdbCommand {
 
     private static class Builder {
         private VdbCommand mVdbCommand;
+
         private Builder() {
             mVdbCommand = new VdbCommand();
         }
@@ -90,6 +92,12 @@ public class VdbCommand {
         private Builder writeCmdCode(int code, int tag) {
             mVdbCommand.writeCmdCode(code, tag);
             mVdbCommand.mCommndCode = code;
+            return this;
+        }
+
+        private Builder writeClipId(Clip.ID cid) {
+            mVdbCommand.writei32(cid.type);
+            mVdbCommand.writei32(cid.subType);
             return this;
         }
 
@@ -141,6 +149,8 @@ public class VdbCommand {
         protected static final int CMD_GetClipExtent = 32;
         protected static final int CMD_SetClipExtent = 33;
 
+        private static final int URL_MUTE_AUDIO = (1 << 31);
+
         public static VdbCommand createCmdGetClipSetInfo(int type) {
             return new Builder()
                 .writeCmdCode(CMD_GetClipSetInfo, 0)
@@ -159,6 +169,17 @@ public class VdbCommand {
                 .writeInt32(clipPos.cid.subType)
                 .writeInt32(clipPos.getType() | (clipPos.isLast() ? ClipPos.F_IS_LAST : 0))
                 .writeInt64(clipPos.getClipTimeMs())
+                .build();
+        }
+
+        public static VdbCommand createCmdGetClipPlaybackUrl(Clip clip, int stream, int urlType,
+                                                             boolean muteAudio, long clipTimeMs) {
+            return new Builder()
+                .writeCmdCode(CMD_GetPlaybackUrl, 0)
+                .writeClipId(clip.cid)
+                .writeInt32(stream)
+                .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
+                .writeInt64(clipTimeMs)
                 .build();
         }
     }

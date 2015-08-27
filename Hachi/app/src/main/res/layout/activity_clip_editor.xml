@@ -9,17 +9,24 @@
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@android:color/black"
         app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp"
-        android:background="@android:color/black">
+        app:farfl_yratio="9dp">
 
         <ImageView
             android:id="@+id/ivPreviewPicture"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
         </ImageView>
+
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_circle"
+            android:background="@android:color/transparent"/>
 
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>

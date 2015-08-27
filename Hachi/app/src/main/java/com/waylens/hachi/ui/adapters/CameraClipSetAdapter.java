@@ -43,7 +43,6 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void setClipSet(ClipSet clipSet) {
-        Logger.t(TAG).d("set clip set!!!!!!");
         mClipSet = clipSet;
         notifyDataSetChanged();
     }

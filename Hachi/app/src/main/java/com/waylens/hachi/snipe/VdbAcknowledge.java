@@ -124,6 +124,18 @@ public class VdbAcknowledge {
         mMsgIndex += size;
     }
 
+    public String readString() {
+        int size = readi32();
+        String result;
+        try {
+            result = new String(mReceiveBuffer, mMsgIndex, size - 1, "US-ASCII");
+        } catch (UnsupportedEncodingException ex) {
+            result = "";
+        }
+        mMsgIndex += size;
+        return result;
+    }
+
     public String readStringAligned() {
         int size = readi32();
         if (size <= 0)

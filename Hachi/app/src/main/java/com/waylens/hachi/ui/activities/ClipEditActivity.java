@@ -8,6 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
+import com.orhanobut.logger.Logger;
+import com.transee.vdb.VdbClient;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.R;
@@ -18,11 +23,13 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.adapters.ClipFragmentRvAdapter;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2015/8/14.
  */
 public class ClipEditActivity extends BaseActivity {
+    private static final String TAG = ClipEditActivity.class.getSimpleName();
 
     @Bind(R.id.ivPreviewPicture)
     ImageView mIvPreviewPicture;
@@ -54,6 +61,30 @@ public class ClipEditActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+    }
+
+
+    @OnClick(R.id.btnPlay)
+    public void onBtnPlayClicked() {
+        Bundle parameters = new Bundle();
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
+        parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime());
+
+        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<VdbClient.PlaybackUrl>() {
+            @Override
+            public void onResponse(VdbClient.PlaybackUrl response) {
+                Logger.t(TAG).d("On Response!!!!!!! " + response.url);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+
+        mVdbRequestQueue.add(request);
     }
 
     @Override

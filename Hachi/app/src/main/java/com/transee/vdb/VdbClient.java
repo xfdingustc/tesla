@@ -66,7 +66,7 @@ abstract public class VdbClient {
 
 	// public static final int URL_TYPE = URL_TYPE_TS;
 
-	public class PlaybackUrl {
+	public static class PlaybackUrl {
 		public final Clip.ID cid;
 		public int stream;
 		public int urlType;
