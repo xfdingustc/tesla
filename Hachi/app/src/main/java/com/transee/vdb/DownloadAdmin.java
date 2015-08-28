@@ -7,109 +7,127 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.waylens.hachi.ui.services.DownloadService;
+
 public class DownloadAdmin {
+    private static final String TAG = DownloadAdmin.class.getSimpleName();
 
-	public void downloadInfoChanged(DownloadAdmin admin) {
-	}
+    private static Context mContext;
 
-	public void downloadInfoReady(DownloadAdmin admin) {
-	}
+    public static void initialize(Context context) {
+        mContext = context;
+    }
 
-	public void downloadInfoNotify(DownloadAdmin admin, int reason, int state, DownloadService.Item item, int progress) {
-	}
 
-	static final String TAG = "DownloadAdmin";
+    private DownloadAdmin() {
+        bindDownloadService();
+    }
 
-	private final Context mContext;
-	private DownloadService mDownloadService;
-	private boolean mDownloadServiceBound;
-	private final DownloadService.DownloadInfo mDownloadInfo = new DownloadService.DownloadInfo();
-	private Handler mHandler = new Handler();
+    private static DownloadAdmin mSharedAdmin = null;
 
-	public DownloadAdmin(Context context) {
-		mContext = context;
-		bindDownloadService();
-	}
+    public static DownloadAdmin getAdmin() {
+        if (mSharedAdmin == null) {
+            mSharedAdmin = new DownloadAdmin();
+        }
 
-	public void release() {
-		unbindDownloadService();
-		mHandler.removeCallbacks(null);
-	}
+        return mSharedAdmin;
+    }
 
-	public DownloadService.DownloadInfo getDownloadInfo() {
-		return mDownloadInfo;
-	}
+    public void downloadInfoChanged(DownloadAdmin admin) {
+    }
 
-	private void bindDownloadService() {
-		if (!mDownloadServiceBound) {
-			Intent intent = new Intent(mContext, DownloadService.class);
-			mContext.bindService(intent, mConnection, 0);
-			mDownloadServiceBound = true;
-		}
-	}
+    public void downloadInfoReady(DownloadAdmin admin) {
+    }
 
-	private void unbindDownloadService() {
-		if (mDownloadServiceBound) {
-			mContext.unbindService(mConnection);
-			mDownloadServiceBound = false;
-		}
-	}
+    public void downloadInfoNotify(DownloadAdmin admin, int reason, int state, DownloadService.Item item, int progress) {
+    }
 
-	private void onServiceStateChanged(int reason, int state, DownloadService.Item item, int progress) {
-		mDownloadInfo.state = state;
-		switch (reason) {
-		case DownloadService.REASON_ITEM_PROGRESS:
-			mDownloadInfo.percent = progress;
-			downloadInfoChanged(this);
-			break;
-		case DownloadService.REASON_DOWNLOAD_ERROR:
-		case DownloadService.REASON_ITEM_ADDED:
-		case DownloadService.REASON_DOWNLOAD_STARTED:
-		case DownloadService.REASON_DOWNLOAD_FINISHED:
-			if (mDownloadService != null) {
-				mDownloadService.getDownloadInfo(mDownloadInfo);
-				downloadInfoChanged(this);
-			}
-			break;
-		default:
-			break;
-		}
-		downloadInfoNotify(this, reason, state, item, progress);
-	}
 
-	private ServiceConnection mConnection = new ServiceConnection() {
+    private DownloadService mDownloadService;
+    private boolean mDownloadServiceBound;
+    private final DownloadService.DownloadInfo mDownloadInfo = new DownloadService.DownloadInfo();
+    private Handler mHandler = new Handler();
 
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			DownloadService.LocalBinder binder = (DownloadService.LocalBinder)service;
-			mDownloadService = binder.getService();
-			mDownloadService.addCallback(mServiceCallback);
-			mDownloadService.getDownloadInfo(mDownloadInfo);
-			downloadInfoChanged(DownloadAdmin.this);
-			downloadInfoReady(DownloadAdmin.this);
-		}
 
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			mDownloadService.removeCallback(mServiceCallback);
-			mDownloadService = null;
-		}
+    public void release() {
+        unbindDownloadService();
+        mHandler.removeCallbacks(null);
+    }
 
-	};
+    public DownloadService.DownloadInfo getDownloadInfo() {
+        return mDownloadInfo;
+    }
 
-	private DownloadService.Callback mServiceCallback = new DownloadService.Callback() {
-		@Override
-		public void onStateChangedAsync(final DownloadService service, final int reason, final int state,
-				final DownloadService.Item item, final int progress) {
-			mHandler.post(new Runnable() {
-				@Override
-				public void run() {
-					if (mHandler != null && service == mDownloadService) {
-						onServiceStateChanged(reason, state, item, progress);
-					}
-				}
-			});
-		}
-	};
+    private void bindDownloadService() {
+        if (!mDownloadServiceBound) {
+            Intent intent = new Intent(mContext, DownloadService.class);
+            mContext.bindService(intent, mConnection, 0);
+            mDownloadServiceBound = true;
+        }
+    }
+
+    private void unbindDownloadService() {
+        if (mDownloadServiceBound) {
+            mContext.unbindService(mConnection);
+            mDownloadServiceBound = false;
+        }
+    }
+
+    private void onServiceStateChanged(int reason, int state, DownloadService.Item item, int progress) {
+        mDownloadInfo.state = state;
+        switch (reason) {
+            case DownloadService.REASON_ITEM_PROGRESS:
+                mDownloadInfo.percent = progress;
+                downloadInfoChanged(this);
+                break;
+            case DownloadService.REASON_DOWNLOAD_ERROR:
+            case DownloadService.REASON_ITEM_ADDED:
+            case DownloadService.REASON_DOWNLOAD_STARTED:
+            case DownloadService.REASON_DOWNLOAD_FINISHED:
+                if (mDownloadService != null) {
+                    mDownloadService.getDownloadInfo(mDownloadInfo);
+                    downloadInfoChanged(this);
+                }
+                break;
+            default:
+                break;
+        }
+        downloadInfoNotify(this, reason, state, item, progress);
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            DownloadService.LocalBinder binder = (DownloadService.LocalBinder) service;
+            mDownloadService = binder.getService();
+            mDownloadService.addCallback(mServiceCallback);
+            mDownloadService.getDownloadInfo(mDownloadInfo);
+            downloadInfoChanged(DownloadAdmin.this);
+            downloadInfoReady(DownloadAdmin.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mDownloadService.removeCallback(mServiceCallback);
+            mDownloadService = null;
+        }
+
+    };
+
+    private DownloadService.Callback mServiceCallback = new DownloadService.Callback() {
+        @Override
+        public void onStateChangedAsync(final DownloadService service, final int reason, final int state,
+                                        final DownloadService.Item item, final int progress) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mHandler != null && service == mDownloadService) {
+                        onServiceStateChanged(reason, state, item, progress);
+                    }
+                }
+            });
+        }
+    };
 
 }

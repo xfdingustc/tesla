@@ -15,18 +15,20 @@ import android.widget.ImageView;
 
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.VdbClient;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
-import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
+import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.ui.adapters.ClipFragmentRvAdapter;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.PlaybackUrl;
 
 import java.io.IOException;
 
@@ -91,9 +93,9 @@ public class ClipEditActivity extends BaseActivity {
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime());
 
-        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<VdbClient.PlaybackUrl>() {
+        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override
-            public void onResponse(VdbClient.PlaybackUrl response) {
+            public void onResponse(PlaybackUrl response) {
                 Logger.t(TAG).d("On Response!!!!!!! " + response.url);
                 playClip(response);
             }
@@ -113,9 +115,9 @@ public class ClipEditActivity extends BaseActivity {
     }
 
     private void downloadClip() {
-        DownloadUrlRequest request = new DownloadUrlRequest(mClip, new VdbResponse.Listener<VdbClient.DownloadInfoEx>() {
+        DownloadUrlRequest request = new DownloadUrlRequest(mClip, new VdbResponse.Listener<DownloadInfoEx>() {
             @Override
-            public void onResponse(VdbClient.DownloadInfoEx response) {
+            public void onResponse(DownloadInfoEx response) {
                 Logger.t(TAG).d("on response:!!!!: " + response.main.url);
             }
         }, new VdbResponse.ErrorListener() {
@@ -127,7 +129,7 @@ public class ClipEditActivity extends BaseActivity {
         mVdbRequestQueue.add(request);
     }
 
-    private void playClip(VdbClient.PlaybackUrl response) {
+    private void playClip(PlaybackUrl response) {
         if (mClipPlayer != null) {
             mClipPlayer.release();
         }
@@ -136,7 +138,6 @@ public class ClipEditActivity extends BaseActivity {
         mClipPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                Logger.t(TAG).d("PPPPPPPPPPPPPPPPPPPPPPPPrepared");
                 mIvPreviewPicture.setVisibility(View.GONE);
                 mBtnPlay.setVisibility(View.GONE);
                 mp.setDisplay(mSvClipPlayback.getHolder());
@@ -159,7 +160,7 @@ public class ClipEditActivity extends BaseActivity {
         super.init();
         mVdtCamera = mSharedCamera;
         mClip = mSharedClip;
-        mVdbRequestQueue = Snipe.newRequestQueue(this,mVdtCamera.getVdbConnection());
+        mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera.getVdbConnection());
         mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
         initViews();
     }
@@ -183,4 +184,7 @@ public class ClipEditActivity extends BaseActivity {
 
 
     }
+
+
+
 }

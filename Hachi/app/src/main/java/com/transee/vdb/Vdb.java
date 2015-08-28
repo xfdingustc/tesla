@@ -8,9 +8,7 @@ import com.transee.common.ByteStream;
 import com.transee.common.GPSPath;
 import com.transee.common.GPSRawData;
 import com.transee.vdb.RemoteVdbClient.BufferSpaceLowInfo;
-import com.transee.vdb.VdbClient.DownloadInfoEx;
 import com.transee.vdb.VdbClient.DownloadRawDataBlock;
-import com.transee.vdb.VdbClient.PlaybackUrl;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.transee.vdb.VdbClient.RawDataBlock;
 import com.transee.vdb.VdbClient.RawDataBlockHeader;
@@ -18,6 +16,8 @@ import com.transee.vdb.VdbClient.RawDataResult;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.PlaybackUrl;
 
 abstract public class Vdb {
 

@@ -5,12 +5,13 @@ import android.net.Uri;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.DownloadInfoEx;
 import com.waylens.hachi.vdb.FileClip;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
-import com.transee.vdb.VdbClient.DownloadInfoEx;
+
 
 public class VdbEditor {
 

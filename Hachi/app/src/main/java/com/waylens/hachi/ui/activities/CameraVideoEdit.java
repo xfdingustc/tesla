@@ -34,16 +34,14 @@ import com.transee.common.ViewAnimation.TranslateAnimation;
 import com.transee.common.ViewHolder;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.transee.vdb.DownloadService;
-import com.transee.vdb.DownloadService.DownloadInfo;
+import com.waylens.hachi.ui.services.DownloadService;
+import com.waylens.hachi.ui.services.DownloadService.DownloadInfo;
 import com.transee.vdb.ImageDecoder;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.SlideView;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
-import com.transee.vdb.VdbClient.DownloadInfoEx;
 import com.transee.vdb.VdbClient.DownloadRawDataBlock;
-import com.transee.vdb.VdbClient.PlaybackUrl;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.transee.vdb.VdbClient.RawDataBlock;
 import com.transee.vdb.VdbClient.RawDataItem;
@@ -62,6 +60,8 @@ import com.waylens.hachi.comp.VdbMapGoogle;
 import com.waylens.hachi.comp.VdbPlayback;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.PlaybackUrl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -228,12 +228,12 @@ abstract public class CameraVideoEdit {
 
     // API
     public final void onStartActivity() {
-        mActivity.thisApp.attachDownloadAdmin(mDownloadCallback);
+        //mActivity.thisApp.attachDownloadAdmin(mDownloadCallback);
     }
 
     // API
     public final void onStopActivity() {
-        mActivity.thisApp.detachDownloadAdmin(mDownloadCallback);
+        //mActivity.thisApp.detachDownloadAdmin(mDownloadCallback);
         mVdbImageVideo.onStopActivity();
         if (mEditor.mbVideoOnly) {
             mVdbPlayback.pausePlayback();

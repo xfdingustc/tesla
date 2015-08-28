@@ -1,7 +1,6 @@
 package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.VdbClient;
@@ -10,14 +9,14 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.PlaybackUrl;
 
 /**
  * Created by Xiaofei on 2015/8/27.
  */
-public class ClipPlaybackUrlRequest extends VdbRequest<VdbClient.PlaybackUrl> {
+public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
     private static final String TAG = ClipPlaybackUrlRequest.class.getSimpleName();
-    private final VdbResponse.Listener<VdbClient.PlaybackUrl> mListener;
+    private final VdbResponse.Listener<PlaybackUrl> mListener;
     private final Bundle mParameters;
     private final Clip mClip;
 
@@ -27,13 +26,13 @@ public class ClipPlaybackUrlRequest extends VdbRequest<VdbClient.PlaybackUrl> {
     public static final String PARAMETER_CLIP_TIME_MS = "clip_time_ms";
 
 
-    public ClipPlaybackUrlRequest(Clip clip, Bundle parameters, VdbResponse.Listener<VdbClient.PlaybackUrl>
+    public ClipPlaybackUrlRequest(Clip clip, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
         listener, VdbResponse.ErrorListener errorListener) {
         this(0, clip, parameters, listener, errorListener);
     }
 
-    public ClipPlaybackUrlRequest(int method, Clip clip, Bundle parameters, VdbResponse.Listener<VdbClient.PlaybackUrl>
-            listener, VdbResponse.ErrorListener errorListener) {
+    public ClipPlaybackUrlRequest(int method, Clip clip, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
+        listener, VdbResponse.ErrorListener errorListener) {
         super(method, errorListener);
         this.mClip = clip;
         this.mParameters = parameters;
@@ -46,13 +45,13 @@ public class ClipPlaybackUrlRequest extends VdbRequest<VdbClient.PlaybackUrl> {
         int urlType = mParameters.getInt(PARAMETER_URL_TYPE);
         boolean muteAudio = mParameters.getBoolean(PARAMETER_MUTE_AUDIO);
         long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
-        mVdbCommand= VdbCommand.Factory.createCmdGetClipPlaybackUrl(mClip, stream, urlType,
+        mVdbCommand = VdbCommand.Factory.createCmdGetClipPlaybackUrl(mClip, stream, urlType,
             muteAudio, clipTimeMs);
         return mVdbCommand;
     }
 
     @Override
-    protected VdbResponse<VdbClient.PlaybackUrl> parseVdbResponse(VdbAcknowledge response) {
+    protected VdbResponse<PlaybackUrl> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
             Logger.t(TAG).e("ackGetPlaybackUrl: failed");
             return null;
@@ -70,7 +69,7 @@ public class ClipPlaybackUrlRequest extends VdbRequest<VdbClient.PlaybackUrl> {
         String vdbId = null;
 
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, vdbId);
-        VdbClient.PlaybackUrl playbackUrl = new VdbClient.PlaybackUrl(cid);
+        PlaybackUrl playbackUrl = new PlaybackUrl(cid);
 
         playbackUrl.stream = stream;
         playbackUrl.urlType = urlType;
@@ -84,7 +83,7 @@ public class ClipPlaybackUrlRequest extends VdbRequest<VdbClient.PlaybackUrl> {
     }
 
     @Override
-    protected void deliverResponse(VdbClient.PlaybackUrl response) {
+    protected void deliverResponse(PlaybackUrl response) {
         mListener.onResponse(response);
     }
 }

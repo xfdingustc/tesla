@@ -9,6 +9,8 @@ import com.transee.common.TcpConnection;
 import com.transee.vdb.Vdb.MarkLiveInfo;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.vdb.SimpleClipSet;
 

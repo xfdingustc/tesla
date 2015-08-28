@@ -46,7 +46,7 @@
 
 
         <!--Copied from Vidit app-->
-        <service android:name="com.transee.vdb.DownloadService"/>
+        <service android:name=".ui.services.DownloadService"/>
 
         <activity
             android:name=".ui.activities.CameraListActivity"

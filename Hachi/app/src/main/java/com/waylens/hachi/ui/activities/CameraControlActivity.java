@@ -47,6 +47,8 @@ import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;
@@ -306,12 +308,12 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
 
             @Override
-            public void onDownloadUrlReadyAsync(VdbClient.DownloadInfoEx downloadInfom, boolean bFirstLoop) {
+            public void onDownloadUrlReadyAsync(DownloadInfoEx downloadInfom, boolean bFirstLoop) {
                 Log.e(TAG, "onDownloadUrlReadyAsync");
             }
 
             @Override
-            public void onPlaybackUrlReadyAsync(VdbClient.PlaybackUrl playbackUrl) {
+            public void onPlaybackUrlReadyAsync(PlaybackUrl playbackUrl) {
                 Log.e(TAG, "onPlaybackUrlReadyAsync");
             }
 

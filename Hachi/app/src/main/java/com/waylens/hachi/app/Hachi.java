@@ -9,8 +9,7 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.DownloadAdmin;
-import com.transee.vdb.DownloadService;
+import com.waylens.hachi.ui.services.DownloadService;
 import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
@@ -109,13 +108,14 @@ public class Hachi extends Application {
     }
 
 
-    private DownloadAdmin mDownloadAdmin;
+
     private ArrayList<DownloadCallback> mDownloadCallbackList = new ArrayList<DownloadCallback>();
 
     public interface DownloadCallback {
         public void onDownloadInfo(DownloadService.DownloadInfo downloadInfo);
     }
 
+    /*
     private void onDownloadInfoChanged() {
         DownloadService.DownloadInfo downloadInfo = mDownloadAdmin.getDownloadInfo();
         for (int i = 0; i < mDownloadCallbackList.size(); i++) {
@@ -147,5 +147,5 @@ public class Hachi extends Application {
                 mDownloadAdmin = null;
             }
         }
-    }
+    }*/
 }

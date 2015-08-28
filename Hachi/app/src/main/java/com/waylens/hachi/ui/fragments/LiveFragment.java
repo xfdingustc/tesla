@@ -19,6 +19,8 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.transee.vdb.ImageDecoder;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.PlaylistSet;
+import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.transee.vdb.RemoteVdb;
 import com.transee.vdb.Vdb;
@@ -158,7 +160,7 @@ public class LiveFragment extends BaseFragment {
         }
 
         @Override
-        public void onPlaybackUrlReady(Vdb vdb, final VdbClient.PlaybackUrl playbackUrl) {
+        public void onPlaybackUrlReady(Vdb vdb, final PlaybackUrl playbackUrl) {
             if (mVideoListView == null) {
                 return;
             }
@@ -269,7 +271,7 @@ public class LiveFragment extends BaseFragment {
         }
 
         @Override
-        public void onDownloadUrlReady(Vdb vdb, VdbClient.DownloadInfoEx downloadInfo, boolean bFirstLoop) {
+        public void onDownloadUrlReady(Vdb vdb, DownloadInfoEx downloadInfo, boolean bFirstLoop) {
 
         }
 

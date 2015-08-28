@@ -6,9 +6,8 @@ import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
-import com.orhanobut.logger.Logger;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
+import com.waylens.hachi.vdb.ClipPos;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -81,12 +80,8 @@ public class VdbImageLoader {
         throwIfNotOnMainThread();
 
         final String cacheKey = getCacheKey(clipPos, maxWidth, maxHeight, scaleType);
-        Logger.t(TAG).d("cache key = " + cacheKey);
 
         // TODO: we need implement cache here:
-
-
-
         VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, listener);
 
         listener.onResponse(imageContainer, true);
@@ -132,14 +127,13 @@ public class VdbImageLoader {
     }
 
 
-
     public class VdbImageContainer {
         private Bitmap mBitmap;
         private final VdbImageListener mListener;
         private final ClipPos mClipPos;
 
         public VdbImageContainer(Bitmap bitmap, ClipPos clipPos, VdbImageListener
-                                 listener) {
+            listener) {
             this.mBitmap = bitmap;
             this.mClipPos = clipPos;
             this.mListener = listener;
@@ -218,8 +212,12 @@ public class VdbImageLoader {
 
     private static String getCacheKey(ClipPos clipPos, int maxWidth, int maxHeight,
                                       ScaleType scaleType) {
-        return "#CID" + clipPos.cid.type + "#" + clipPos.cid.subType + "#" + clipPos
-            .getClipTimeMs() + "#W" + maxWidth
-            + "#H" + maxHeight + "#S" + scaleType.ordinal();
+        return "#CID" + clipPos.cid
+            + "#" + clipPos.cid.type
+            + "#" + clipPos.cid.subType
+            + "#" + clipPos.getClipTimeMs()
+            + "#W" + maxWidth
+            + "#H" + maxHeight
+            + "#S" + scaleType.ordinal();
     }
 }

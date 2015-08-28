@@ -8,6 +8,7 @@ import android.os.StatFs;
 import com.transee.common.DateTime;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.ui.services.DownloadService;
 
 import java.io.File;
 

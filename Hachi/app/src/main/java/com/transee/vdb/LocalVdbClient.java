@@ -13,11 +13,13 @@ import android.provider.MediaStore;
 import com.transee.common.ByteStream;
 import com.transee.common.GPSRawData;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.ui.services.DownloadService;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.DownloadingClip;
 import com.waylens.hachi.vdb.FileClip;
 import com.waylens.hachi.vdb.LocalClip;
+import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.SimpleClipSet;
 
 

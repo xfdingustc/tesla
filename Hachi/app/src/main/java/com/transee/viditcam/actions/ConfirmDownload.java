@@ -10,10 +10,9 @@ import com.transee.common.DateTime;
 import com.transee.common.Utils;
 import com.waylens.hachi.vdb.Clip;
 import com.transee.vdb.RemoteVdbClient;
-import com.transee.vdb.VdbClient.DownloadInfoEx;
-import com.transee.vdb.VdbClient.DownloadStreamInfo;
 import com.transee.viditcam.app.VdbEditor;
 import com.waylens.hachi.R;
+import com.waylens.hachi.vdb.DownloadInfoEx;
 
 import java.util.Locale;
 
@@ -64,7 +63,7 @@ abstract public class ConfirmDownload extends DialogBuilder {
 		return null;
 	}
 
-	private void setItemInfo(String fmt, DownloadStreamInfo stream, int index, RadioButton radio) {
+	private void setItemInfo(String fmt, DownloadInfoEx.DownloadStreamInfo stream, int index, RadioButton radio) {
 		if (stream.lengthMs > 0 && stream.url != null) {
 			String videoInfo = getStreamInfoText(index);
 			String spaceInfo = Utils.formatSpace((int) (stream.size / 1000));
@@ -94,7 +93,7 @@ abstract public class ConfirmDownload extends DialogBuilder {
 	};
 
 	private void setDurationInfo() {
-		DownloadStreamInfo stream = mSelStream == 0 ? mDownloadInfo.main : mDownloadInfo.sub;
+		DownloadInfoEx.DownloadStreamInfo stream = mSelStream == 0 ? mDownloadInfo.main : mDownloadInfo.sub;
 		String text = mContext.getResources().getString(R.string.lable_video_duration);
 		String length = DateTime.secondsToString(stream.lengthMs / 1000);
 		mDurationText.setText(text + length);
