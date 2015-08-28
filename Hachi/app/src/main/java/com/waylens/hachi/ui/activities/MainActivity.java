@@ -17,10 +17,10 @@ import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.MimeTypeMap;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.ui.fragments.AccountFragment;
@@ -99,13 +99,15 @@ public class MainActivity extends BaseActivity {
             startService(intent);
         }
 
-        downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
+        downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 
         FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
             @Override
-            public void onSuccess(AppVersion appVersion, boolean b) {
-                Log.e("FIR", "onSuccess: " + appVersion.getUpdateUrl() + " , Code: " + appVersion.getVersionCode());
-                downloadUpdateAPK(appVersion.getUpdateUrl(), appVersion.getVersionName());
+            public void onSuccess(AppVersion appVersion, boolean result) {
+                Log.e("FIR", "onSuccess: thisCode: " + BuildConfig.VERSION_CODE + "; result: " + result);
+                if (appVersion.getVersionCode() > BuildConfig.VERSION_CODE) {
+                    downloadUpdateAPK(appVersion.getUpdateUrl(), appVersion.getVersionName());
+                }
             }
 
             @Override

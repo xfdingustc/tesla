@@ -156,6 +156,13 @@ public class HomeFragment extends BaseFragment {
             ssb.append(comment.author.userName);
             ssb.setSpan(new StyleSpan(Typeface.BOLD), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             ssb.setSpan(new UserNameSpan(), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (comment.replyTo != null) {
+                ssb.append(" ");
+                start = ssb.length();
+                ssb.append("@").append(comment.replyTo.userName);
+                ssb.setSpan(new StyleSpan(Typeface.BOLD), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.setSpan(new UserNameSpan(), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
             ssb.append(" ").append(comment.content);
             if (i > 0) {
                 ssb.append("\n");
