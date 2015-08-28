@@ -9,8 +9,8 @@ android {
         applicationId "com.waylens.hachi"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3
-        versionName "0.03"
+        versionCode 4
+        versionName "0.04"
     }
 
     signingConfigs {
@@ -56,4 +56,5 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'com.google.android.gms:play-services-gcm:7.8.0'
     compile 'com.google.android.gms:play-services-maps:7.8.0'
+    compile 'im.fir:sdk:latest.integration'
 }

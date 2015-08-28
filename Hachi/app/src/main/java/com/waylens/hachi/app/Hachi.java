@@ -20,6 +20,8 @@ import com.waylens.hachi.views.PrefsUtil;
 import java.io.File;
 import java.util.ArrayList;
 
+import im.fir.sdk.FIR;
+
 /**
  * Created by Xiaofei on 2015/8/4.
  */
@@ -50,6 +52,8 @@ public class Hachi extends Application {
         WifiAdminManager.initialize(this);
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
+
+        FIR.init(this);
     }
 
     private void initCameraManager() {

@@ -1,15 +1,23 @@
 package com.waylens.hachi.ui.activities;
 
 
+import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.MimeTypeMap;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -19,8 +27,14 @@ import com.waylens.hachi.ui.fragments.AccountFragment;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.NotificationFragment;
+import com.waylens.hachi.utils.PreferenceUtils;
+
+import java.io.File;
 
 import butterknife.Bind;
+import im.fir.sdk.FIR;
+import im.fir.sdk.callback.VersionCheckCallback;
+import im.fir.sdk.version.AppVersion;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -36,6 +50,9 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
 
+    private DownloadManager downloadManager;
+
+    String apkFile;
 
     private class BottomTab {
         private int mIconRes;
@@ -61,6 +78,17 @@ public class MainActivity extends BaseActivity {
         init();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+    }
 
     @Override
     protected void init() {
@@ -70,6 +98,36 @@ public class MainActivity extends BaseActivity {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+
+        downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
+
+        FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
+            @Override
+            public void onSuccess(AppVersion appVersion, boolean b) {
+                Log.e("FIR", "onSuccess: " + appVersion.getUpdateUrl() + " , Code: " + appVersion.getVersionCode());
+                downloadUpdateAPK(appVersion.getUpdateUrl(), appVersion.getVersionName());
+            }
+
+            @Override
+            public void onFail(String s, int i) {
+                Log.e("FIR", "onFail: " + s);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("FIR", "onError");
+            }
+
+            @Override
+            public void onStart() {
+                Log.e("FIR", "onStart");
+            }
+
+            @Override
+            public void onFinish() {
+                Log.e("FIR", "onFinish");
+            }
+        });
     }
 
     private void initViews() {
@@ -185,5 +243,65 @@ public class MainActivity extends BaseActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    void downloadUpdateAPK(String url, String versionName) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
+        request.setAllowedOverRoaming(false);
+        request.setMimeType("application/vnd.android.package-archive");
+        request.setVisibleInDownloadsUi(true);
+        apkFile = "waylens-v" + versionName + ".apk";
+        request.setDestinationInExternalPublicDir("/download/", apkFile);
+        request.setTitle(getString(R.string.app_name) + " v" + versionName);
+        long id = downloadManager.enqueue(request);
+
+        PreferenceUtils.putLong("download_id", id);
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            queryDownloadStatus();
+        }
+    };
+
+    void queryDownloadStatus() {
+        DownloadManager.Query query = new DownloadManager.Query();
+        long downloadId = PreferenceUtils.getLong("download_id", 0);
+        query.setFilterById(downloadId);
+        Cursor c = downloadManager.query(query);
+        if (c.moveToFirst()) {
+            int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+            switch (status) {
+                case DownloadManager.STATUS_PAUSED:
+                    Log.v(TAG, "STATUS_PAUSED");
+                case DownloadManager.STATUS_PENDING:
+                    Log.v(TAG, "STATUS_PENDING");
+                case DownloadManager.STATUS_RUNNING:
+                    Log.v(TAG, "STATUS_RUNNING");
+                    break;
+                case DownloadManager.STATUS_SUCCESSFUL:
+                    Log.v(TAG, "File is downloaded.");
+                    File file = new File(Environment.getExternalStoragePublicDirectory("download"), apkFile);
+                    if (file.exists()) {
+                        installAPK(file);
+                    }
+                    PreferenceUtils.remove("download_id");
+                    break;
+                case DownloadManager.STATUS_FAILED:
+                    Log.v(TAG, "STATUS_FAILED");
+                    downloadManager.remove(downloadId);
+                    PreferenceUtils.remove("download_id");
+                    break;
+            }
+        }
+    }
+
+    void installAPK(File file) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

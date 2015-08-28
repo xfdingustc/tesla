@@ -81,6 +81,10 @@ public class RegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
+        if (PreferenceUtils.getBoolean(PreferenceUtils.SEND_GCM_TOKEN_SERVER, false)) {
+            return;
+        }
+
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JSONObject params = new JSONObject();
         try {

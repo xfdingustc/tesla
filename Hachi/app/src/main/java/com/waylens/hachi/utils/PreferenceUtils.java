@@ -58,4 +58,12 @@ public class PreferenceUtils {
     public static void remove(String key) {
         mEditor.remove(key).apply();
     }
+
+    public static void putLong(String key, long id) {
+        mEditor.putLong(key, id).apply();
+    }
+
+    public static long getLong(String key, long defaultValue) {
+        return mShare.getLong(key, defaultValue);
+    }
 }
