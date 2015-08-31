@@ -255,4 +255,5 @@
 
     <string name="comment_moment">%s comments on your moment.</string>
     <string name="refer_user">%s just replies to you.</string>
+    <string name="reply_to">\@%s</string>
 </resources>

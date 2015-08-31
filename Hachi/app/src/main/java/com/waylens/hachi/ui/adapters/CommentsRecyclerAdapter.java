@@ -23,6 +23,8 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentViewHol
 
     PrettyTime mPrettyTime;
 
+    OnCommentClickListener mOnCommentClickListener;
+
     public CommentsRecyclerAdapter(ArrayList<Comment> comments) {
         mComments = comments;
         mPrettyTime = new PrettyTime();
@@ -49,6 +51,10 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentViewHol
         notifyItemChanged(position);
     }
 
+    public void setOnCommentClickListener(OnCommentClickListener listener) {
+        mOnCommentClickListener = listener;
+    }
+
     @Override
     public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
@@ -57,9 +63,9 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentViewHol
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
-        Comment comment = mComments.get(position);
+        final Comment comment = mComments.get(position);
         ImageLoader.getInstance().displayImage(comment.author.avatarUrl, holder.avatarView, ImageUtils.getAvatarOptions());
-        holder.commentContentViews.setText(comment.content);
+        holder.commentContentViews.setText(comment.toSpannable());
         holder.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
         if (comment.commentID == Comment.UNASSIGNED_ID) {
             holder.commentViewAnimator.setVisibility(View.VISIBLE);
@@ -67,6 +73,15 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentViewHol
         } else {
             holder.commentViewAnimator.setVisibility(View.GONE);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mOnCommentClickListener != null) {
+                    mOnCommentClickListener.onCommentClicked(comment);
+                }
+            }
+        });
     }
 
     @Override
@@ -76,5 +91,9 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<CommentViewHol
         } else {
             return mComments.size();
         }
+    }
+
+    public interface OnCommentClickListener {
+        void onCommentClicked(Comment comment);
     }
 }

@@ -23,6 +23,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.AccountFragment;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
@@ -174,6 +175,10 @@ public class MainActivity extends BaseActivity {
         TabLayout.Tab tab = mMainTabs.getTabAt(0);
         tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
                 PorterDuff.Mode.MULTIPLY);
+
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            mMainTabs.getTabAt(4).select();
+        }
     }
 
     private void setDefaultFirstFragment(String tag) {

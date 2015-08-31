@@ -43,9 +43,10 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 8/26/15.
  */
-public class CommentsFragment extends BaseFragment {
+public class CommentsFragment extends BaseFragment implements CommentsRecyclerAdapter.OnCommentClickListener {
 
     public static final String ARG_MOMENT_ID = "arg.moment.id";
+    public static final String ARG_MOMENT_POSITION = "arg.moment.mPosition";
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -63,17 +64,25 @@ public class CommentsFragment extends BaseFragment {
     CommentsRecyclerAdapter mAdapter;
     private long mMomentID = Moment.INVALID_MOMENT_ID;
 
+    private int mPosition = 0;
+
+    BasicUserInfo mReplyTo;
+
+    boolean hasUpdates;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mAdapter = new CommentsRecyclerAdapter(null);
-
+        mAdapter.setOnCommentClickListener(this);
         Bundle args = getArguments();
         if (args != null) {
             mMomentID = args.getLong(ARG_MOMENT_ID, Moment.INVALID_MOMENT_ID);
+            mPosition = args.getInt(ARG_MOMENT_POSITION, 0);
         }
+        hasUpdates = false;
     }
 
     @Nullable
@@ -134,15 +143,12 @@ public class CommentsFragment extends BaseFragment {
 
     @OnClick(R.id.btn_back)
     public void back() {
-        /*Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
-        if (fragment != null) {
-            Log.e("test", "Fragment:" + fragment.getClass().getName());
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+        if (hasUpdates && fragment != null && fragment instanceof HomeFragment) {
             HomeFragment fg = (HomeFragment)fragment;
-            fg.mAdapter.mMoments.get(0).likesCount = 1000;
-            fg.mAdapter.notifyItemChanged(0);
-        } else {
-            Log.e("test", "Fragment is null");
-        }*/
+            fg.loadComment(mMomentID, mPosition);
+        }
+
         View view = getActivity().getCurrentFocus();
         if (view != null) {
             InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -164,6 +170,11 @@ public class CommentsFragment extends BaseFragment {
         basicUserInfo.userName = SessionManager.getInstance().getUserName();
         basicUserInfo.userID = SessionManager.getInstance().getUserId();
         comment.author = basicUserInfo;
+        if (mReplyTo != null) {
+            comment.replyTo = mReplyTo;
+            mReplyTo = null;
+            mNewCommentView.setHint(R.string.add_a_comment);
+        }
         int position = mAdapter.addComment(comment);
         mCommentListView.scrollToPosition(position);
         mNewCommentView.setText("");
@@ -175,6 +186,9 @@ public class CommentsFragment extends BaseFragment {
         try {
             params.put("momentID", mMomentID);
             params.put("content", comment.content);
+            if (comment.replyTo != null) {
+                params.put("replyTo", comment.replyTo.userID);
+            }
         } catch (JSONException e) {
             Log.e("test", "", e);
         }
@@ -185,6 +199,7 @@ public class CommentsFragment extends BaseFragment {
                     public void onResponse(JSONObject response) {
                         long commentID = response.optLong("commentID");
                         mAdapter.updateCommentID(position, commentID);
+                        hasUpdates = true;
                     }
                 },
                 new Response.ErrorListener() {
@@ -196,4 +211,9 @@ public class CommentsFragment extends BaseFragment {
                 }));
     }
 
+    @Override
+    public void onCommentClicked(Comment comment) {
+        mReplyTo = comment.author;
+        mNewCommentView.setHint(getString(R.string.reply_to,comment.author.userName));
+    }
 }

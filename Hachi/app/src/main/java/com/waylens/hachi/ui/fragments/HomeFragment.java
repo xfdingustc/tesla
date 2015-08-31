@@ -152,32 +152,11 @@ public class HomeFragment extends BaseFragment {
 
         for (int i = jsonComments.length() - 1; i >= 0; i--) {
             Comment comment = Comment.fromJson(jsonComments.optJSONObject(i));
-            int start = ssb.length();
-            ssb.append(comment.author.userName);
-            ssb.setSpan(new StyleSpan(Typeface.BOLD), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ssb.setSpan(new UserNameSpan(), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            if (comment.replyTo != null) {
-                ssb.append(" ");
-                start = ssb.length();
-                ssb.append("@").append(comment.replyTo.userName);
-                ssb.setSpan(new StyleSpan(Typeface.BOLD), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ssb.setSpan(new UserNameSpan(), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            ssb.append(" ").append(comment.content);
+            ssb.append(comment.toSpannable());
             if (i > 0) {
                 ssb.append("\n");
             }
         }
-
         mAdapter.updateMoment(ssb, position);
-
-    }
-
-    class UserNameSpan extends ClickableSpan {
-
-        @Override
-        public void onClick(View widget) {
-            //
-        }
     }
 }
