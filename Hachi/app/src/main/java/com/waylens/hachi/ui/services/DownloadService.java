@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
 import com.transee.vdb.Mp4Info;
 import com.transee.vdb.RemuxHelper;
@@ -24,9 +25,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class DownloadService extends Service {
+    private static final String TAG = DownloadService.class.getSimpleName();
 
-    static final boolean DEBUG = false;
-    static final String TAG = "DownloadService";
 
     // current downloading state
     public static final int DOWNLOAD_STATE_IDLE = 0;
@@ -109,9 +109,8 @@ public class DownloadService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        if (DEBUG) {
-            Log.d(TAG, "onCreate");
-        }
+
+        Logger.t(TAG).d("onCreate");
 
         mWorkQueue = new WorkQueue();
         mWorkThread = new Thread("DownloadThread") {
@@ -131,26 +130,21 @@ public class DownloadService extends Service {
 
     @Override
     public void onStart(Intent intent, int startId) {
-        if (DEBUG) {
-            Log.d(TAG, "onStart");
-        }
+        Logger.t(TAG).d("onStart");
 
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
             Item item = new Item();
             item.params = new RemuxerParams(bundle);
-            if (DEBUG) {
-                Log.d(TAG, "add item to work q: " + item.params.getInputFile());
-            }
+
+            Logger.t(TAG).d("add item to work q: " + item.params.getInputFile());
             mWorkQueue.addItem(item);
         }
     }
 
     @Override
     public void onDestroy() {
-        if (DEBUG) {
-            Log.d(TAG, "onDestroy");
-        }
+        Logger.t(TAG).d("onDestroy");
 
         if (mWorkThread != null) {
             mWorkThread.interrupt();
@@ -163,9 +157,7 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DEBUG) {
-            Log.d(TAG, "onStartCommand, 0x" + Integer.toHexString(flags) + "," + startId);
-        }
+        Logger.t(TAG).d("onStartCommand, 0x" + Integer.toHexString(flags) + "," + startId);
         onStart(intent, startId);
         return START_NOT_STICKY;
     }
@@ -277,9 +269,7 @@ public class DownloadService extends Service {
 
     private void startDownloadItem(Notification notif) {
 
-        if (DEBUG) {
-            Log.d(TAG, "start download item " + notif.item.params.getInputFile());
-        }
+        Logger.t(TAG).d("start download item " + notif.item.params.getInputFile());
 
         HttpRemuxer remuxer = new HttpRemuxer(0) {
             @Override
@@ -292,19 +282,19 @@ public class DownloadService extends Service {
         int remain = mWorkQueue.initDownload(remuxer, item);
         broadcastInfo(REASON_DOWNLOAD_STARTED, DOWNLOAD_STATE_RUNNING, item, 0, remain);
 
-        if (DEBUG) {
-            Log.d(TAG, "run remuxer");
-        }
+
+        Logger.t(TAG).d("run remuxer");
 
         RemuxerParams params = item.params;
         int clipDate = params.getClipDate();
         long clipTimeMs = params.getClipTimeMs();
         String outputFile = RemuxHelper.genDownloadFileName(clipDate, clipTimeMs);
         if (outputFile == null) {
-            // TODO
+            Logger.t(TAG).e("Output File is null");
         } else {
             item.outputFile = outputFile;
             remuxer.run(params, outputFile);
+            Logger.t(TAG).d("remux is running output file is: " + outputFile);
         }
     }
 

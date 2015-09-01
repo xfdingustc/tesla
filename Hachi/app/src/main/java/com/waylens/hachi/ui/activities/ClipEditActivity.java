@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.orhanobut.logger.Logger;
+import com.transee.vdb.RemuxHelper;
+import com.transee.vdb.RemuxerParams;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
@@ -70,6 +72,7 @@ public class ClipEditActivity extends BaseActivity {
 
 
     private ClipFragmentRvAdapter mClipFragmentAdapter;
+    private DownloadState mDownloadState;
 
     public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {
         Intent intent = new Intent(context, ClipEditActivity.class);
@@ -119,6 +122,7 @@ public class ClipEditActivity extends BaseActivity {
             @Override
             public void onResponse(DownloadInfoEx response) {
                 Logger.t(TAG).d("on response:!!!!: " + response.main.url);
+                startDownload(response, 0, mClip.streams[0]);
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -185,6 +189,58 @@ public class ClipEditActivity extends BaseActivity {
 
     }
 
+    private static class DownloadState {
+        DownloadInfoEx downloadInfo;
+        int stream;
+        Clip.StreamInfo si;
+        VdbClient.DownloadRawDataBlock mAccData;
+        VdbClient.DownloadRawDataBlock mGpsData;
+        VdbClient.DownloadRawDataBlock mObdData;
+    }
 
+    private void startDownload(DownloadInfoEx downloadInfo, int stream, Clip.StreamInfo si) {
+        mDownloadState = new DownloadState();
+        mDownloadState.downloadInfo = downloadInfo;
+        mDownloadState.stream = stream;
+        mDownloadState.si = si;
+
+        downloadVideo(mDownloadState);
+
+    }
+
+
+    private void downloadVideo(DownloadState ds) {
+        DownloadInfoEx.DownloadStreamInfo dsi = ds.stream == 0 ? ds.downloadInfo.main : ds.downloadInfo.sub;
+
+        RemuxerParams params = new RemuxerParams();
+        // clip params
+        params.setClipDate(dsi.clipDate); // TODO
+        params.setClipTimeMs(dsi.clipTimeMs); // TODO
+        params.setClipLength(dsi.lengthMs);
+        // stream info
+        params.setStreamVersion(ds.si.version);
+        params.setVideoCoding(ds.si.video_coding);
+        params.setVideoFrameRate(ds.si.video_framerate);
+        params.setVideoWidth(ds.si.video_width);
+        params.setVideoHeight(ds.si.video_height);
+        params.setAudioCoding(ds.si.audio_coding);
+        params.setAudioNumChannels(ds.si.audio_num_channels);
+        params.setAudioSamplingFreq(ds.si.audio_sampling_freq);
+        // download params
+        params.setInputFile(dsi.url + ",0,-1;");
+        params.setInputMime("ts");
+        params.setOutputFormat("mp4");
+        params.setPosterData(ds.downloadInfo.posterData);
+        params.setGpsData(ds.mGpsData != null ? ds.mGpsData.ack_data : null);
+        params.setAccData(ds.mAccData != null ? ds.mAccData.ack_data : null);
+        params.setObdData(ds.mObdData != null ? ds.mObdData.ack_data : null);
+        params.setDurationMs(dsi.lengthMs);
+        //params.setDisableAudio(mEditor.bMuteAudio);
+        //params.setAudioFileName(mEditor.audioFileName);
+        params.setAudioFormat("mp3");
+        // add to queue
+        RemuxHelper.remux(this, params);
+
+    }
 
 }
