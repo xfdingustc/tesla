@@ -42,6 +42,15 @@ public class DownloadService extends Service {
     public static final int REASON_DOWNLOAD_STARTED = 4; // downloading item started
     public static final int REASON_DOWNLOAD_FINISHED = 5; // downloading item finished
 
+    private static final int NOTIF_NONE = 0;
+    private static final int NOTIF_DOWNLOAD_ITEM = 1;
+    private static final int NOTIF_ERROR_DOWNLOAD = 2;
+    private static final int NOTIF_FINISH_DOWNLOAD = 3;
+    private static final int NOTIF_BROADCAST = 4;
+
+    private NotificationManager mNotifManager;
+    private NotificationCompat.Builder mNotifBuilder;
+
     public interface Callback {
         void onStateChangedAsync(DownloadService service, int reason, int state, Item item, int progress);
     }
@@ -57,7 +66,7 @@ public class DownloadService extends Service {
     private Thread mWorkThread;
 
     private LocalBinder mBinder = new LocalBinder();
-    private ArrayList<Callback> mCallbackList = new ArrayList<Callback>();
+    private List<Callback> mCallbackList = new ArrayList<>();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -164,8 +173,7 @@ public class DownloadService extends Service {
 
     // ---------------------------------------------------------------------------------
 
-    private NotificationManager mNotifManager;
-    private NotificationCompat.Builder mNotifBuilder;
+
 
     private void broadcastInfo(int reason, int state, Item item, int progress, int remain) {
         synchronized (this) {
@@ -221,11 +229,6 @@ public class DownloadService extends Service {
 
     // ---------------------------------------------------------------------------------
 
-    static final int NOTIF_NONE = 0;
-    static final int NOTIF_DOWNLOAD_ITEM = 1;
-    static final int NOTIF_ERROR_DOWNLOAD = 2;
-    static final int NOTIF_FINISH_DOWNLOAD = 3;
-    static final int NOTIF_BROADCAST = 4;
 
     static class Notification {
         int code;

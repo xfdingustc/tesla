@@ -99,6 +99,8 @@
 
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
+        <activity android:name=".ui.activities.ClipPlaybackActivity"
+                  android:screenOrientation="landscape"/>
 
         <activity
             android:name="com.facebook.FacebookActivity"

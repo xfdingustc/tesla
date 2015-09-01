@@ -49,9 +49,6 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.rvClipFragments)
     RecyclerView mRvClipFragments;
 
-    @Bind(R.id.svClipPlayback)
-    SurfaceView mSvClipPlayback;
-
     @Bind(R.id.btnPlay)
     ImageButton mBtnPlay;
 
@@ -68,7 +65,7 @@ public class ClipEditActivity extends BaseActivity {
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
 
-    private MediaPlayer mClipPlayer;
+
 
 
     private ClipFragmentRvAdapter mClipFragmentAdapter;
@@ -90,26 +87,7 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
-        Bundle parameters = new Bundle();
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
-        parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime());
-
-        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
-            @Override
-            public void onResponse(PlaybackUrl response) {
-                Logger.t(TAG).d("On Response!!!!!!! " + response.url);
-                playClip(response);
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-
-            }
-        });
-
-        mVdbRequestQueue.add(request);
+        ClipPlaybackActivity.launch(this, mVdtCamera, mClip);
     }
 
     @OnClick(R.id.btnDownload)
@@ -133,31 +111,7 @@ public class ClipEditActivity extends BaseActivity {
         mVdbRequestQueue.add(request);
     }
 
-    private void playClip(PlaybackUrl response) {
-        if (mClipPlayer != null) {
-            mClipPlayer.release();
-        }
-        mClipPlayer = new MediaPlayer();
-        mClipPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mClipPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mIvPreviewPicture.setVisibility(View.GONE);
-                mBtnPlay.setVisibility(View.GONE);
-                mp.setDisplay(mSvClipPlayback.getHolder());
-                mp.start();
-            }
-        });
 
-
-        try {
-            mClipPlayer.setDataSource(response.url);
-            mClipPlayer.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     protected void init() {

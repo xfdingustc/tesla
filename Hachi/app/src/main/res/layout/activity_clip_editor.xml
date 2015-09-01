@@ -13,11 +13,6 @@
         app:farfl_xratio="16dp"
         app:farfl_yratio="9dp">
 
-        <SurfaceView
-            android:id="@+id/svClipPlayback"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
         <ImageView
             android:id="@+id/ivPreviewPicture"
             android:layout_width="match_parent"
@@ -40,8 +35,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvClipFragments"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="@android:color/holo_blue_bright">
+        android:layout_height="72dp">
 
     </android.support.v7.widget.RecyclerView>
 
