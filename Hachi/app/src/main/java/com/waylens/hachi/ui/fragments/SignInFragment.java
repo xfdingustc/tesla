@@ -3,13 +3,13 @@ package com.waylens.hachi.ui.fragments;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.SparseIntArray;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,6 +85,9 @@ public class SignInFragment extends BaseFragment {
 
     @Bind(R.id.sign_up_email)
     AutoCompleteTextView mTvSignUpEmail;
+
+    @Bind(R.id.text_input_email)
+    TextInputLayout mTextInputEmail;
 
     CallbackManager mCallbackManager;
 
@@ -193,8 +196,25 @@ public class SignInFragment extends BaseFragment {
 
     @OnClick(R.id.sign_up_next)
     public void signUp() {
+        String email = mTvSignUpEmail.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            mTextInputEmail.setError(getString(R.string.the_field_is_required));
+            return;
+        }
+
+        boolean isValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        if (!isValid) {
+            mTextInputEmail.setError(getString(R.string.email_invalid));
+            return;
+        }
+        mTextInputEmail.setError(null);
         verifyEmail();
         mSignUpAnimator.setDisplayedChild(1);
+    }
+
+    @OnTextChanged(R.id.sign_up_email)
+    public void inputEmail(CharSequence text) {
+        mTextInputEmail.setError(null);
     }
 
     private void verifyEmail() {
@@ -219,8 +239,8 @@ public class SignInFragment extends BaseFragment {
     }
 
     void onInvalidEmail(VolleyError error) {
-        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.get(1));
+        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.msgResID);
         mSignUpAnimator.setDisplayedChild(0);
     }
 
@@ -230,11 +250,11 @@ public class SignInFragment extends BaseFragment {
             Bundle args = new Bundle();
             args.putString(SignUpFragment.ARG_KEY_EMAIL, mTvSignUpEmail.getText().toString());
             fragment.setArguments(args);
-            ((LoginActivity)getActivity()).pushFragment(fragment);
+            getFragmentManager().beginTransaction().add(R.id.fragment_content, fragment).commit();
         } else {
             showMessage(R.string.email_has_been_used);
-            mSignUpAnimator.setDisplayedChild(0);
         }
+        mSignUpAnimator.setDisplayedChild(0);
 
     }
 
@@ -272,9 +292,9 @@ public class SignInFragment extends BaseFragment {
     }
 
     void onLoginFailed(VolleyError error) {
-        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.get(1));
-        if (errorInfo.get(0) == ServerMessage.USER_NAME_PASSWORD_NOT_MATCHED) {
+        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.msgResID);
+        if (errorInfo.errorCode == ServerMessage.USER_NAME_PASSWORD_NOT_MATCHED) {
             mTvPassword.requestFocus();
         }
         mSignInAnimator.setDisplayedChild(1);
@@ -297,8 +317,8 @@ public class SignInFragment extends BaseFragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-                showMessage(errorInfo.get(1));
+                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                showMessage(errorInfo.msgResID);
                 hideDialog();
             }
         }));

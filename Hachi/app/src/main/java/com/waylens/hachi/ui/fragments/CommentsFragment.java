@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +46,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
 
     public static final String ARG_MOMENT_ID = "arg.moment.id";
     public static final String ARG_MOMENT_POSITION = "arg.moment.mPosition";
+    public static final String ARG_HAS_UPDATES = "arg.has.updates";
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -124,8 +124,8 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     }
 
     void onLoadCommentsFailed(VolleyError error) {
-        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.get(1));
+        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.msgResID);
     }
 
     void onLoadCommentsSuccessful(JSONObject response) {
@@ -145,7 +145,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     public void back() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (hasUpdates && fragment != null && fragment instanceof HomeFragment) {
-            HomeFragment fg = (HomeFragment)fragment;
+            HomeFragment fg = (HomeFragment) fragment;
             fg.loadComment(mMomentID, mPosition);
         }
 
@@ -199,14 +199,18 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
                     public void onResponse(JSONObject response) {
                         long commentID = response.optLong("commentID");
                         mAdapter.updateCommentID(position, commentID);
-                        hasUpdates = true;
+                        if (!hasUpdates) {
+                            hasUpdates = true;
+                            Bundle args = getArguments();
+                            args.putBoolean(ARG_HAS_UPDATES, true);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-                        showMessage(errorInfo.get(1));
+                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                        showMessage(errorInfo.msgResID);
                     }
                 }));
     }
@@ -214,6 +218,6 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     @Override
     public void onCommentClicked(Comment comment) {
         mReplyTo = comment.author;
-        mNewCommentView.setHint(getString(R.string.reply_to,comment.author.userName));
+        mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
     }
 }

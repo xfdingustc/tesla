@@ -87,6 +87,9 @@ public class BaseFragment extends Fragment {
     }
 
     void showMessage(int resId) {
+        if (mRootView == null || mRootView.getContext() == null) {
+            return;
+        }
         Snackbar.make(mRootView, resId, Snackbar.LENGTH_SHORT).show();
     }
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="server_msg_unknown_error">Unknown error</string>
+    <string name="server_msg_invalid_json_format">Server Error, Invalid data format</string>
+    <string name="server_msg_user_pass_error">User and password don\'t match.</string>
+    <string name="server_msg_authentication_failed">Authentication failed.</string>
+    <string name="server_msg_not_authorized">Not authorized.</string>
+    <string name="server_msg_account_already_bound">The account has already bounded with another SNS.</string>
+    <string name="server_msg_user_name_has_been_used">The user name has been used.</string>
+    <string name="server_msg_email_has_been_used">The email address has been used.</string>
+
+</resources>

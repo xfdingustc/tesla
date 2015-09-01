@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.fragments;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,9 +107,9 @@ public class LinkAccountFragment extends BaseFragment {
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-                        showMessage(errorInfo.get(1));
-                        if (errorInfo.get(0) == ServerMessage.USER_NAME_HAS_BEEN_USED) {
+                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                        showMessage(errorInfo.msgResID);
+                        if (errorInfo.errorCode == ServerMessage.USER_NAME_HAS_BEEN_USED) {
                             mUserName.requestFocus();
                         }
                         mViewAnimator.setDisplayedChild(0);

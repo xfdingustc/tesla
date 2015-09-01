@@ -1,15 +1,11 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ClickableSpan;
-import android.text.style.StyleSpan;
-import android.util.SparseIntArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +19,15 @@ import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.Comment;
 import com.waylens.hachi.ui.adapters.Moment;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -38,7 +37,8 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnCommentMomentListener,
+        MomentsRecyclerAdapter.OnLikeMomentListener {
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -57,6 +57,8 @@ public class HomeFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
+        mAdapter.setOnCommentMomentListener(this);
+        mAdapter.setOnLikeMomentListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
 
@@ -119,11 +121,11 @@ public class HomeFragment extends BaseFragment {
     }
 
     void onLoadFeedFailed(VolleyError error) {
-        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.get(1));
+        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.msgResID);
     }
 
-    void loadComment(final long momentID, final int position) {
+    public void loadComment(final long momentID, final int position) {
         if (momentID == Moment.INVALID_MOMENT_ID) {
             return;
         }
@@ -136,8 +138,8 @@ public class HomeFragment extends BaseFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-                showMessage(errorInfo.get(1));
+                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                showMessage(errorInfo.msgResID);
             }
         }));
     }
@@ -158,5 +160,56 @@ public class HomeFragment extends BaseFragment {
             }
         }
         mAdapter.updateMoment(ssb, position);
+    }
+
+    @Override
+    public void onCommentMoment(Moment moment, int position) {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            LoginActivity.launch(getActivity());
+            return;
+        }
+        CommentsFragment fragment = new CommentsFragment();
+        Bundle args = new Bundle();
+        args.putLong(CommentsFragment.ARG_MOMENT_ID, moment.id);
+        args.putInt(CommentsFragment.ARG_MOMENT_POSITION, position);
+        fragment.setArguments(args);
+        getFragmentManager().beginTransaction().add(R.id.root_container, fragment).commit();
+    }
+
+    @Override
+    public void onLikeMoment(Moment moment, boolean isCancel) {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            LoginActivity.launch(getActivity());
+            return;
+        }
+        likeVideo(moment, isCancel);
+    }
+
+    void likeVideo(final Moment moment, final boolean isCancel) {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("momentID", moment.id);
+            params.put("cancel", isCancel);
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENT_LIKE,
+                params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        moment.isLiked = !isCancel;
+                        moment.likesCount = response.optInt("count");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                        showMessage(errorInfo.msgResID);
+                        Log.e("test", "Error: " + error);
+                    }
+                }));
     }
 }

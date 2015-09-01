@@ -257,4 +257,8 @@ public class SessionManager {
     }
 
 
+    public void refreshToken(String waylensToken) {
+        mToken = waylensToken;
+        PreferenceUtils.putString(PreferenceUtils.TOKEN, mToken);
+    }
 }

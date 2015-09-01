@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -34,6 +35,7 @@ import com.google.android.gms.iid.InstanceID;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.json.JSONException;
@@ -68,7 +70,7 @@ public class RegistrationIntentService extends IntentService {
             subscribeTopics(token);
         } catch (Exception e) {
             Log.d(TAG, "Failed to complete token refresh", e);
-            PreferenceUtils.putBoolean(PreferenceUtils.SEND_GCM_TOKEN_SERVER, false);
+            PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, null);
         }
     }
 
@@ -80,8 +82,9 @@ public class RegistrationIntentService extends IntentService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
-        if (PreferenceUtils.getBoolean(PreferenceUtils.SEND_GCM_TOKEN_SERVER, false)) {
+    private void sendRegistrationToServer(final String token) {
+        String savedToken = PreferenceUtils.getString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, null);
+        if (token == null || token.equals(savedToken)) {
             return;
         }
 
@@ -97,8 +100,11 @@ public class RegistrationIntentService extends IntentService {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if (response.optBoolean("result")) {
-                            PreferenceUtils.putBoolean(PreferenceUtils.SEND_GCM_TOKEN_SERVER, true);
+                        Log.e("test", "response: " + response);
+                        String waylensToken = response.optString("token");
+                        if (!TextUtils.isEmpty(waylensToken)) {
+                            PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, token);
+                            SessionManager.getInstance().refreshToken(waylensToken);
                             Log.e(TAG, "GCM registration is successful.");
                         } else {
                             notifyRegistrationFailure();
@@ -114,7 +120,7 @@ public class RegistrationIntentService extends IntentService {
     }
 
     void notifyRegistrationFailure() {
-        PreferenceUtils.putBoolean(PreferenceUtils.SEND_GCM_TOKEN_SERVER, false);
+        PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, null);
         Log.e(TAG, "GCM registration failed.");
     }
 

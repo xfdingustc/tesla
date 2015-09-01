@@ -25,10 +25,12 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.AccountFragment;
+import com.waylens.hachi.ui.fragments.CommentsFragment;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.NotificationFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.PushUtils;
 
 import java.io.File;
 
@@ -45,8 +47,6 @@ public class MainActivity extends BaseActivity {
     private static final String TAB_HIGHLIGHTS_TAG = "highlights";
     private static final String TAB_NOTIFICATIONS_TAG = "notification";
     private static final String TAB_ACCOUNT_TAG = "account";
-
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
@@ -95,11 +95,6 @@ public class MainActivity extends BaseActivity {
     protected void init() {
         super.init();
         initViews();
-        if (checkGooglePlayServices()) {
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
-
         downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 
         FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
@@ -131,6 +126,11 @@ public class MainActivity extends BaseActivity {
                 Log.e("FIR", "onFinish");
             }
         });
+
+        if (SessionManager.getInstance().isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
     }
 
     private void initViews() {
@@ -230,23 +230,22 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean checkGooglePlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public void onBackPressed() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment != null) {
+            Bundle args = fragment.getArguments();
+            final int position = args.getInt(CommentsFragment.ARG_MOMENT_POSITION);
+            final long momentID = args.getLong(CommentsFragment.ARG_MOMENT_ID);
+            boolean hasUpdates = args.getBoolean(CommentsFragment.ARG_HAS_UPDATES);
+
+            Fragment homeFragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+            if (hasUpdates && homeFragment != null && homeFragment instanceof HomeFragment) {
+                HomeFragment fg = (HomeFragment) homeFragment;
+                fg.loadComment(momentID, position);
+            }
             getFragmentManager().beginTransaction().remove(fragment).commit();
+
         } else {
             super.onBackPressed();
         }

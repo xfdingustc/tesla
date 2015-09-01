@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.adapters;
 
 import android.text.Spannable;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -33,6 +34,8 @@ public class Moment {
     public BasicUserInfo owner;
 
     public int type;
+
+    public JSONArray videoFragments;
 
     private static final String PROVIDER_WAYLENS = "waylens";
     private static final String PROVIDER_YOUTUBE = "youtube";

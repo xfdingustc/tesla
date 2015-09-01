@@ -1,19 +1,15 @@
 package com.waylens.hachi.ui.adapters;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -30,15 +26,12 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.fragments.CommentsFragment;
 import com.waylens.hachi.ui.fragments.YouTubeFragment;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -71,6 +64,10 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
 
     Resources mResources;
 
+    OnCommentMomentListener mOnCommentMomentListener;
+    OnLikeMomentListener mOnLikeMomentListener;
+
+
     public MomentsRecyclerAdapter(ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
         mMoments = moments;
         mPrettyTime = new PrettyTime();
@@ -87,6 +84,14 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     public void setMoments(ArrayList<Moment> moments) {
         mMoments = moments;
         notifyDataSetChanged();
+    }
+
+    public void setOnCommentMomentListener(OnCommentMomentListener listener) {
+        mOnCommentMomentListener = listener;
+    }
+
+    public void setOnLikeMomentListener(OnLikeMomentListener listener) {
+        mOnLikeMomentListener = listener;
     }
 
     @Override
@@ -136,21 +141,26 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         holder.btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                likeVideo(holder, moment);
-                //like the video at once after posting request to server.
+                if (mOnLikeMomentListener != null) {
+                    mOnLikeMomentListener.onLikeMoment(moment, moment.isLiked);
+                }
                 moment.isLiked = !moment.isLiked;
                 updateLikeState(holder, moment);
+                if (moment.isLiked) {
+                    moment.likesCount++;
+                } else {
+                    moment.likesCount--;
+                }
+                updateLikeCount(holder, moment);
             }
         });
 
         holder.btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommentsFragment fragment = new CommentsFragment();
-                Bundle args = new Bundle();
-                args.putLong(CommentsFragment.ARG_MOMENT_ID, moment.id);
-                fragment.setArguments(args);
-                mFragmentManager.beginTransaction().add(R.id.root_container, fragment).commit();
+                if (mOnCommentMomentListener != null) {
+                    mOnCommentMomentListener.onCommentMoment(moment, position);
+                }
             }
         });
 
@@ -166,7 +176,6 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     }
 
     void updateLikeState(MomentViewHolder vh, Moment moment) {
-
         if (moment.isLiked) {
             vh.btnLike.setImageResource(R.drawable.feed_button_like_active);
         } else {
@@ -194,35 +203,6 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
             vh.commentCountView.setText(mResources.getQuantityString(
                     R.plurals.number_of_comments, moment.commentsCount, moment.commentsCount));
         }
-    }
-
-    void likeVideo(final MomentViewHolder vh, final Moment moment) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put("momentID", moment.id);
-            params.put("cancel", moment.isLiked);
-        } catch (JSONException e) {
-            Log.e("test", "", e);
-        }
-
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENT_LIKE,
-                params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        moment.likesCount = response.optInt("count");
-                        Log.e("test", "LikeCount:" + moment.likesCount);
-                        updateLikeCount(vh, moment);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
-                        //showMessage(errorInfo.get(1));
-                        Log.e("test", "Error: " + error);
-                    }
-                }));
     }
 
     void configureVideoPlay(MomentViewHolder holder, final int position, final Moment moment) {
@@ -279,7 +259,11 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.setDisplay(holder);
                 mMediaPlayers.put(position, mediaPlayer);
-                loadVideoInfo(vh, moment, position);
+                if (moment.videoFragments == null) {
+                    loadVideoInfo(vh, moment, position);
+                } else {
+                    playVideoFragments(vh, moment.videoFragments, position);
+                }
             }
 
             @Override
@@ -306,7 +290,7 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         vh.progressBar.setVisibility(View.VISIBLE);
     }
 
-    void loadVideoInfo(final WaylensMomentVH vh, Moment moment, final int position) {
+    void loadVideoInfo(final WaylensMomentVH vh, final Moment moment, final int position) {
         String url = Constants.API_MOMENT_PLAY + moment.id;
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
@@ -316,13 +300,14 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
                         if (videoFragments == null) {
                             return;
                         }
+                        moment.videoFragments = videoFragments;
                         playVideoFragments(vh, videoFragments, position);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        SparseIntArray errorInfo = ServerMessage.parseServerError(error);
+                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                         //showMessage(errorInfo.get(1));
                         Log.e("test", "Error: " + error);
                     }
@@ -391,13 +376,14 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
                 vh.videoContainer.removeView(vh.videoPlayView);
                 vh.videoPlayView = null;
             }
-            mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
-                @Override
-                public boolean apply(Request<?> request) {
-                    return !Constants.API_MOMENT_LIKE.equals(request.getOriginUrl());
-                }
-            });
         }
+        mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return request.getOriginUrl().startsWith(Constants.API_MOMENT_PLAY);
+            }
+        });
+
     }
 
     @Override
@@ -431,5 +417,13 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         Moment moment = mMoments.get(position);
         moment.comments = spannedComments;
         notifyItemChanged(position);
+    }
+
+    public interface OnLikeMomentListener {
+        void onLikeMoment(Moment moment, boolean isCancel);
+    }
+
+    public interface OnCommentMomentListener {
+        void onCommentMoment(Moment moment, int position);
     }
 }

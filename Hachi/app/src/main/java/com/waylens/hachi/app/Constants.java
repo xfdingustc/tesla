@@ -36,7 +36,9 @@ public class Constants {
 
     public static final String API_COMMENTS_QUERY_STRING = "?m=%s&cursor=%s&count=%s";
 
-    public static final String API_DEVICE_ACTIVATION = HOST_URL + "api/users/login";
+    public static final String API_DEVICE_ACTIVATION = HOST_URL + "api/devices/login";
+
+    public static final String API_DEVICE_DEACTIVATION = HOST_URL + "api/devices/logout";
 
     public static final String DEVICE_TYPE = "ANDROID";
 }

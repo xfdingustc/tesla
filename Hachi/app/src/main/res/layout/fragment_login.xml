@@ -30,35 +30,40 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:visibility="gone">
-
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <AutoCompleteTextView
             android:id="@+id/sign_up_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
             android:gravity="center"
             android:hint="@string/email"
             android:inputType="textEmailAddress"/>
+        </android.support.design.widget.TextInputLayout>
 
         <ViewAnimator
             android:id="@+id/sign_up_animator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:id="@+id/sign_up_next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:background="@android:drawable/list_selector_background"
+                style="@style/TextAppearance.AppCompat.Subhead"
                 android:text="@string/next"/>
 
             <ProgressBar
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
         </ViewAnimator>
 
     </LinearLayout>

@@ -11,6 +11,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.LinkAccountFragment;
 import com.waylens.hachi.ui.fragments.SignInFragment;
+import com.waylens.hachi.ui.fragments.SignUpFragment;
 
 /**
  * Created by Xiaofei on 2015/8/5.
@@ -57,10 +58,12 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+        if (fragment != null && fragment instanceof SignUpFragment) {
+            getFragmentManager().beginTransaction().remove(fragment).commit();
         } else {
             super.onBackPressed();
         }
+
     }
 }

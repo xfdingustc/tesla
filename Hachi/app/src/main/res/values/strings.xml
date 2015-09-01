@@ -220,7 +220,6 @@
     <string name="email_error">email error</string>
     <string name="password_error">password error</string>
     <string name="signup_successfully">signup successfully</string>
-    <string name="unknown_error">Unknown error</string>
     <string name="user_name_exist">username existed</string>
     <string name="male">male</string>
     <string name="female">female</string>
@@ -256,4 +255,11 @@
     <string name="comment_moment">%s comments on your moment.</string>
     <string name="refer_user">%s just replies to you.</string>
     <string name="reply_to">\@%s</string>
+    <string name="the_field_is_required">This field is required.</string>
+    <string name="password_min_error">Passwords must be at least %s characters.</string>
+    <string name="user_name">Username</string>
+    <string name="user_name_invalid">Usernames can only use letters, numbers, underscores and periods.</string>
+    <string name="email_invalid">Please enter a valid email address</string>
+    <string name="please_correct_errors">Please correct all invalid inputs.</string>
+
 </resources>

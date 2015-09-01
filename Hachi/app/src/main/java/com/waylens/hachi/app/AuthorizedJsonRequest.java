@@ -19,11 +19,22 @@ import java.util.Map;
 public class AuthorizedJsonRequest extends JsonObjectRequest {
     private HashMap<String, String> mHashMap = new HashMap<>();
 
+    private String mToken;
+
+    public AuthorizedJsonRequest(int method,
+                                 String url,
+                                 Response.Listener<JSONObject> listener,
+                                 Response.ErrorListener errorListener, String token) {
+        super(method, url, listener, errorListener);
+        mToken = token;
+    }
+
     public AuthorizedJsonRequest(int method,
                                  String url,
                                  Response.Listener<JSONObject> listener,
                                  Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
+        mToken = null;
     }
 
     public AuthorizedJsonRequest(int method,
@@ -32,13 +43,17 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
                                  Response.Listener<JSONObject> listener,
                                  Response.ErrorListener errorListener) {
         super(method, url, jsonRequest, listener, errorListener);
+        mToken = null;
     }
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        String token = SessionManager.getInstance().getToken();
-        if (!TextUtils.isEmpty(token)) {
-            mHashMap.put("X-Auth-Token", token);
+        if (TextUtils.isEmpty(mToken)) {
+            mToken = SessionManager.getInstance().getToken();
+        }
+
+        if (!TextUtils.isEmpty(mToken)) {
+            mHashMap.put("X-Auth-Token", mToken);
         }
         return mHashMap;
     }

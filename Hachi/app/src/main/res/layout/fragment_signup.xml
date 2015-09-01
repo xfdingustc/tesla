@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,6 +19,7 @@
             android:src="@drawable/add_photo_border"
             app:border_color="@color/material_grey_200"
             app:border_width="2dp"/>
+
         <View
             android:id="@+id/sign_up_avatar_plus"
             android:layout_width="24dp"
@@ -32,8 +34,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="32dp"
             android:text="@string/photo"
-            android:textSize="18sp"
-            android:textColor="@color/material_grey_300"/>
+            android:textColor="@color/material_grey_300"
+            android:textSize="18sp"/>
 
     </FrameLayout>
 
@@ -47,67 +49,95 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
-        <android.support.design.widget.TextInputLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="16dp">
 
-            <EditText
-                android:id="@+id/sign_up_email"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_email"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/email"
-                android:textColor="@color/material_blue_300"
-                android:inputType="textEmailAddress"/>
-        </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputLayout
+                <EditText
+                    android:id="@+id/sign_up_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <ProgressBar
+                android:id="@+id/email_progress"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+            android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/sign_up_user_name"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_user_name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/username"
-                android:inputType="textEmailAddress"/>
-        </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/sign_up_user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/username"
+                    android:inputType="textEmailAddress"
+                    android:maxLength="32"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <ProgressBar
+                android:id="@+id/user_name_progress"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
+        </FrameLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_password"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/sign_up_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/password"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:maxLength="255"/>
         </android.support.design.widget.TextInputLayout>
 
         <ViewAnimator
             android:id="@+id/sign_up_animator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp">
 
             <TextView
                 android:id="@+id/sign_up_next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@android:drawable/list_selector_background"
+                android:gravity="center"
                 android:text="@string/next"/>
 
             <ProgressBar
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
         </ViewAnimator>
 
     </LinearLayout>

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
@@ -162,7 +161,7 @@ public class SignupActivity extends BaseActivity {
     private void onSignupFailed(VolleyError error) {
         String errorMessageJson = new String(error.networkResponse.data);
 
-        String errorMessage = getString(R.string.unknown_error);
+        String errorMessage = getString(R.string.server_msg_unknown_error);
 
         try {
             JSONObject errorJson = new JSONObject(errorMessageJson);
