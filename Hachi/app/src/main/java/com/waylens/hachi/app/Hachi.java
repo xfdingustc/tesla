@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.skin.Skin;
+import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.ui.services.DownloadService;
 import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdminManager;
@@ -54,6 +56,9 @@ public class Hachi extends Application {
         ImageUtils.initImageLoader(this);
 
         FIR.init(this);
+
+        SkinManager.initialize(this);
+        SkinManager.getManager().load();
     }
 
     private void initCameraManager() {

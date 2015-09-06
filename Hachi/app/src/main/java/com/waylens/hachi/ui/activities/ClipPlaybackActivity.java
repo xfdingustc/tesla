@@ -6,10 +6,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Xml;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.VdbClient;
@@ -17,13 +19,19 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
+import java.io.InputStream;
 
 import butterknife.Bind;
 
@@ -34,6 +42,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     private static final String TAG = ClipPlaybackActivity.class.getSimpleName();
 
     private VdbRequestQueue mVdbRequestQueue;
+    private VdbImageLoader mVdbImageLoader;
     private MediaPlayer mClipPlayer;
 
     private VdtCamera mVdtCamera;
@@ -45,6 +54,9 @@ public class ClipPlaybackActivity extends BaseActivity {
 
     @Bind(R.id.svClipPlayback)
     SurfaceView mSvClipPlayback;
+
+    @Bind(R.id.ivBackgroundPicture)
+    ImageView mIvBackground;
 
 
     public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {
@@ -65,8 +77,10 @@ public class ClipPlaybackActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        preparePlayback();
+        //preparePlayback();
+
     }
+
 
 
 
@@ -76,13 +90,15 @@ public class ClipPlaybackActivity extends BaseActivity {
         mVdtCamera = mSharedCamera;
         mClip = mSharedClip;
         mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera.getVdbConnection());
+        mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
         initViews();
     }
 
     private void initViews() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_clip_playback);
-
+        ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
+        mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
     }
 
     private void preparePlayback() {
@@ -122,6 +138,23 @@ public class ClipPlaybackActivity extends BaseActivity {
                 mp.start();
             }
         });
+
+        mClipPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                Logger.t(TAG).d("Buffer update, percent: " + percent);
+            }
+        });
+
+        mClipPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                Logger.t(TAG).d("what: " + what + " extra: " + extra);
+                return false;
+            }
+        });
+
+
 
 
         try {

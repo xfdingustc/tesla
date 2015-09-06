@@ -65,9 +65,6 @@ public class ClipEditActivity extends BaseActivity {
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
 
-
-
-
     private ClipFragmentRvAdapter mClipFragmentAdapter;
     private DownloadState mDownloadState;
 

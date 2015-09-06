@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Dashboard>
+    <Panel type="gforce">
+        <Element type="gforce_bar">
+            <Resource-array>
+                <item>gforce_bar_0</item>
+                <item>gforce_bar_1</item>
+                <item>gforce_bar_2</item>
+                <item>gforce_bar_3</item>
+                <item>gforce_bar_4</item>
+                <item>gforce_bar_5</item>
+                <item>gforce_bar_6</item>
+                <item>gforce_bar_7</item>
+                <item>gforce_bar_8</item>
+                <item>gforce_bar_9</item>
+                <item>gforce_bar_10</item>
+                <item>gforce_bar_11</item>
+                <item>gforce_bar_12</item>
+                <item>gforce_bar_13</item>
+                <item>gforce_bar_14</item>
+                <item>gforce_bar_15</item>
+                <item>gforce_bar_16</item>
+                <item>gforce_bar_17</item>
+            </Resource-array>
+        </Element>
+
+    </Panel>
+
+</Dashboard>
