@@ -42,11 +42,14 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 8/26/15.
  */
-public class CommentsFragment extends BaseFragment implements CommentsRecyclerAdapter.OnCommentClickListener {
+public class CommentsFragment extends BaseFragment implements CommentsRecyclerAdapter.OnCommentClickListener,
+        CommentsRecyclerAdapter.OnLoadMoreListener {
 
     public static final String ARG_MOMENT_ID = "arg.moment.id";
     public static final String ARG_MOMENT_POSITION = "arg.moment.mPosition";
     public static final String ARG_HAS_UPDATES = "arg.has.updates";
+
+    private static final int DEFAULT_COUNT = 10;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -70,6 +73,8 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
 
     boolean hasUpdates;
 
+    int mCurrentCursor;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +82,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mAdapter = new CommentsRecyclerAdapter(null);
         mAdapter.setOnCommentClickListener(this);
+        mAdapter.setOnLoadMoreListener(this);
         Bundle args = getArguments();
         if (args != null) {
             mMomentID = args.getLong(ARG_MOMENT_ID, Moment.INVALID_MOMENT_ID);
@@ -98,20 +104,24 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     @Override
     public void onStart() {
         super.onStart();
-
-        loadComments();
+        refreshComments();
     }
 
-    private void loadComments() {
+    void refreshComments() {
+        mCurrentCursor = 0;
+        loadComments(mCurrentCursor, true);
+    }
+
+    private void loadComments(int cursor, final boolean isRefresh) {
         if (mMomentID == Moment.INVALID_MOMENT_ID) {
             return;
         }
-        String url = Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING, mMomentID, 0, 10);
+        String url = Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING, mMomentID, cursor, DEFAULT_COUNT);
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        onLoadCommentsSuccessful(response);
+                        onLoadCommentsSuccessful(response, isRefresh);
                     }
                 },
                 new Response.ErrorListener() {
@@ -128,7 +138,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         showMessage(errorInfo.msgResID);
     }
 
-    void onLoadCommentsSuccessful(JSONObject response) {
+    void onLoadCommentsSuccessful(JSONObject response, boolean isRefresh) {
         JSONArray jsonComments = response.optJSONArray("comments");
         if (jsonComments == null) {
             return;
@@ -137,8 +147,21 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         for (int i = jsonComments.length() - 1; i >= 0; i--) {
             commentList.add(Comment.fromJson(jsonComments.optJSONObject(i)));
         }
-        mAdapter.setComments(commentList);
-        mViewAnimator.setDisplayedChild(1);
+
+        boolean hasMore = response.optBoolean("hasMore");
+        mAdapter.setIsLoadMore(false);
+
+        if (isRefresh) {
+            mAdapter.setComments(commentList, hasMore);
+        } else {
+            mAdapter.addComments(commentList, hasMore);
+        }
+
+        mCurrentCursor += commentList.size();
+
+        if (mViewAnimator.getDisplayedChild() == 0) {
+            mViewAnimator.setDisplayedChild(1);
+        }
     }
 
     @OnClick(R.id.btn_back)
@@ -219,5 +242,10 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     public void onCommentClicked(Comment comment) {
         mReplyTo = comment.author;
         mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+    }
+
+    @Override
+    public void loadMore() {
+        loadComments(mCurrentCursor, false);
     }
 }

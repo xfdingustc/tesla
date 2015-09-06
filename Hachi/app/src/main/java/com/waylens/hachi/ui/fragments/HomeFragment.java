@@ -2,8 +2,8 @@ package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +24,7 @@ import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.Comment;
 import com.waylens.hachi.ui.adapters.Moment;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
+import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONArray;
@@ -38,19 +39,26 @@ import butterknife.Bind;
  * Created by Xiaofei on 2015/8/4.
  */
 public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnCommentMomentListener,
-        MomentsRecyclerAdapter.OnLikeMomentListener {
+        MomentsRecyclerAdapter.OnLikeMomentListener, SwipeRefreshLayout.OnRefreshListener {
+
+    static final int DEFAULT_COUNT = 10;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
     @Bind(R.id.video_list_view)
-    RecyclerView mVideoListView;
+    RecyclerViewExt mVideoListView;
+
+    @Bind(R.id.refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
 
     MomentsRecyclerAdapter mAdapter;
 
     RequestQueue mRequestQueue;
 
     LinearLayoutManager mLinearLayoutManager;
+
+    int mCurrentCursor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,16 +73,24 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_live, savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_home, savedInstanceState);
         mVideoListView.setAdapter(mAdapter);
         mVideoListView.setLayoutManager(mLinearLayoutManager);
+        mRefreshLayout.setOnRefreshListener(this);
+        mVideoListView.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+            @Override
+            public void loadMore() {
+                loadFeed(mCurrentCursor, false);
+            }
+        });
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        loadFeed();
+        mCurrentCursor = 0;
+        loadFeed(mCurrentCursor, true);
     }
 
     @Override
@@ -88,12 +104,13 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
         });
     }
 
-    void loadFeed() {
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_MOMENTS,
+    void loadFeed(int cursor, final boolean isRefresh) {
+        String url = Constants.API_MOMENTS + String.format(Constants.API_QS_MOMENTS, Constants.PARAM_SORT_UPLOAD_TIME, cursor, DEFAULT_COUNT);
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        onLoadFeedSuccessful(response);
+                        onLoadFeedSuccessful(response, isRefresh);
                     }
                 },
                 new Response.ErrorListener() {
@@ -104,7 +121,8 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
                 }));
     }
 
-    void onLoadFeedSuccessful(JSONObject response) {
+    void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
+        mRefreshLayout.setRefreshing(false);
         JSONArray jsonMoments = response.optJSONArray("moments");
         if (jsonMoments == null) {
             return;
@@ -113,14 +131,30 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
         for (int i = 0; i < jsonMoments.length(); i++) {
             momentList.add(Moment.fromJson(jsonMoments.optJSONObject(i)));
         }
-        mAdapter.setMoments(momentList);
-        mViewAnimator.setDisplayedChild(1);
+        if (isRefresh) {
+            mAdapter.setMoments(momentList);
+        } else {
+            mAdapter.addMoments(momentList);
+        }
+
+        mVideoListView.setIsLoadingMore(false);
+        mCurrentCursor += momentList.size();
+        if (!response.optBoolean("hasMore")) {
+            mVideoListView.setEnableLoadMore(false);
+        }
+
+        if (mViewAnimator.getDisplayedChild() == 0) {
+            mViewAnimator.setDisplayedChild(1);
+        }
+
         for (int i = 0; i < momentList.size(); i++) {
             loadComment(momentList.get(i).id, i);
         }
     }
 
     void onLoadFeedFailed(VolleyError error) {
+        mRefreshLayout.setRefreshing(false);
+        mVideoListView.setIsLoadingMore(false);
         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
         showMessage(errorInfo.msgResID);
     }
@@ -211,5 +245,12 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
                         Log.e("test", "Error: " + error);
                     }
                 }));
+    }
+
+    @Override
+    public void onRefresh() {
+        mCurrentCursor = 0;
+        mVideoListView.setEnableLoadMore(true);
+        loadFeed(mCurrentCursor, true);
     }
 }

@@ -22,7 +22,9 @@ public class Constants {
 
     public static final String API_START_UPLOAD_AVATAR = HOST_URL + "api/users/start_upload_avatar";
 
-    public static final String API_MOMENTS = HOST_URL + "api/moments?order=uploadtime_desc";
+    public static final String API_MOMENTS = HOST_URL + "api/moments";
+
+    public static final String API_QS_MOMENTS = "?order=%s&cursor=%d&count=%d";
 
     public static final String API_MOMENT_PLAY = HOST_URL + "api/moments/play/";
 

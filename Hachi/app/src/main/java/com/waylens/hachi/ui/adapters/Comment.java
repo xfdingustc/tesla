@@ -14,6 +14,10 @@ import org.json.JSONObject;
  * Created by Richard on 8/26/15.
  */
 public class Comment {
+    public static final int TYPE_NORMAL = 0;
+
+    public static final int TYPE_LOAD_MORE_INDICATOR = 1;
+
     public static final int UNASSIGNED_ID = -1;
 
     public long commentID;
@@ -21,6 +25,8 @@ public class Comment {
     public long createTime;
     public BasicUserInfo author;
     public BasicUserInfo replyTo;
+
+    public int type;
 
     public Comment() {
         commentID = UNASSIGNED_ID;
@@ -51,6 +57,12 @@ public class Comment {
         }
         ssb.append(" ").append(content);
         return ssb;
+    }
+
+    public static Comment createLoadMoreIndicator() {
+        Comment comment = new Comment();
+        comment.type = TYPE_LOAD_MORE_INDICATOR;
+        return comment;
     }
 
     static class UserNameSpan extends ClickableSpan {
