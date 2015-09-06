@@ -233,7 +233,10 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
-        if (fragment != null) {
+        if (fragment == null) {
+            super.onBackPressed();
+        }
+        if (fragment instanceof CommentsFragment) {
             Bundle args = fragment.getArguments();
             final int position = args.getInt(CommentsFragment.ARG_MOMENT_POSITION);
             final long momentID = args.getLong(CommentsFragment.ARG_MOMENT_ID);
@@ -245,10 +248,9 @@ public class MainActivity extends BaseActivity {
                 fg.loadComment(momentID, position);
             }
             getFragmentManager().beginTransaction().remove(fragment).commit();
-
-        } else {
-            super.onBackPressed();
         }
+
+        super.onBackPressed();
     }
 
     void downloadUpdateAPK(String url, String versionName) {

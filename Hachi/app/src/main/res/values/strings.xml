@@ -242,6 +242,7 @@
     <string name="zero_likes">Be the first to like</string>
     <string name="failed">Failed</string>
     <string name="comments">Comments</string>
+    <string name="likes">Likes</string>
     <string name="add_a_comment">Add a comment</string>
     <plurals name="number_of_likes">
         <item quantity="one">%d like</item>
@@ -261,5 +262,6 @@
     <string name="user_name_invalid">Usernames can only use letters, numbers, underscores and periods.</string>
     <string name="email_invalid">Please enter a valid email address</string>
     <string name="please_correct_errors">Please correct all invalid inputs.</string>
+    <string name="new_comments_notification">New comments on moment</string>
 
 </resources>

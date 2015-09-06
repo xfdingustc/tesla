@@ -37,9 +37,9 @@ public class Moment {
 
     public JSONArray videoFragments;
 
-    private static final String PROVIDER_WAYLENS = "waylens";
-    private static final String PROVIDER_YOUTUBE = "youtube";
-    private static final String YOUTUBE_THUMBNAIL = "https://i1.ytimg.com/vi/%s/hqdefault.jpg";
+    public static final String PROVIDER_WAYLENS = "waylens";
+    public static final String PROVIDER_YOUTUBE = "youtube";
+    public static final String YOUTUBE_THUMBNAIL = "https://i1.ytimg.com/vi/%s/hqdefault.jpg";
 
     public static Moment fromJson(JSONObject jsonObject) {
         if (jsonObject == null || !jsonObject.has("moment")) {

@@ -42,5 +42,11 @@ public class Constants {
 
     public static final String API_DEVICE_DEACTIVATION = HOST_URL + "api/devices/logout";
 
+    public static final String API_NOTIFICATIONS_COMMENTS = HOST_URL + "api/notifications/comments";
+
+    public static final String API_NOTIFICATIONS_LIKES = HOST_URL + "api/notifications/likes";
+
+    public static final String API_QS_COMMON = "?cursor=%s&count=%s";
+
     public static final String DEVICE_TYPE = "ANDROID";
 }
