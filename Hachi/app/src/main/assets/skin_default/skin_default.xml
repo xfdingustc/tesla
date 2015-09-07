@@ -2,7 +2,7 @@
 <Dashboard>
     <Panel type="gforce">
         <Element type="gforce_bar">
-            <Resource-array>
+            <Resource-array sub_dir="gforce_bar" suffix="png">
                 <item>gforce_bar_0</item>
                 <item>gforce_bar_1</item>
                 <item>gforce_bar_2</item>

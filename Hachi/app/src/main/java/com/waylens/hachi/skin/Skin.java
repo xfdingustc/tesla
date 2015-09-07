@@ -1,12 +1,13 @@
 package com.waylens.hachi.skin;
 
 import android.content.Context;
-import android.util.Xml;
+import android.graphics.BitmapFactory;
 
 import com.orhanobut.logger.Logger;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,9 +18,10 @@ import java.io.InputStream;
 public class Skin {
     private static final String TAG = Skin.class.getSimpleName();
 
-    private static final String TAG_PANEL = "Panel";
+    private static final String TAG_DASHBOARD = "Dashboard";
+    private static final String TAG_PANELS = "Panels";
+    private static final String TAG_TYPE = "Type";
 
-    private static final String VALUE_TYPE = "type";
 
     private final String mName;
 
@@ -29,35 +31,40 @@ public class Skin {
 
     public void load(Context context, String asset) {
         try {
-            InputStream in  = context.getAssets().open(asset);
-            XmlPullParser parser = Xml.newPullParser();
+            InputStream in = context.getAssets().open(asset);
+            byte[] buffer = new byte[in.available()];
+            in.read(buffer);
 
-            parser.setInput(in, "UTF-8");
+            String jsonString = new String(buffer);
 
-            int eventType = parser.getEventType();
+            JSONObject skin = new JSONObject(jsonString);
+            JSONObject dashboard = skin.getJSONObject(TAG_DASHBOARD);
 
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                switch (eventType) {
-                    case XmlPullParser.START_TAG:
-                        Logger.t(TAG).d(parser.getName());
-                        if (parser.getName().equals(TAG_PANEL)) {
-                            parsePanel(parser);
-                        }
-                        break;
-                    case XmlPullParser.END_TAG:
-                        break;
-                }
-                eventType = parser.next();
-            }
+            parsePanel(dashboard.getJSONArray(TAG_PANELS));
+
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (XmlPullParserException e) {
+        } catch (JSONException e) {
+            Logger.t(TAG).e(e.toString());
+        }
+
+
+    }
+
+    private void parsePanel(JSONArray panelArray) {
+        try {
+            for (int i = 0; i < panelArray.length(); i++) {
+                JSONObject object = panelArray.getJSONObject(i);
+                String type = object.getString(TAG_TYPE);
+                Logger.t(TAG).d(type);
+                Panel panel = Panel.PanelFactory.createPanel(type);
+                panel.parse(object);
+
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void parsePanel(XmlPullParser parser) {
-
-    }
 }
