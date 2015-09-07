@@ -13,13 +13,12 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -29,6 +28,7 @@ import com.waylens.hachi.ui.fragments.CommentsFragment;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.NotificationFragment;
+import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -39,7 +39,7 @@ import im.fir.sdk.FIR;
 import im.fir.sdk.callback.VersionCheckCallback;
 import im.fir.sdk.version.AppVersion;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final String TAB_HOME_TAG = "home";
@@ -50,6 +50,9 @@ public class MainActivity extends BaseActivity {
 
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
+
+    @Bind(R.id.app_bar_layout)
+    AppBarLayout mAppBarLayout;
 
     private DownloadManager downloadManager;
 
@@ -83,12 +86,15 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        mAppBarLayout.addOnOffsetChangedListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mAppBarLayout.removeOnOffsetChangedListener(this);
         unregisterReceiver(receiver);
+
     }
 
     @Override
@@ -133,6 +139,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void initViews() {
         setContentView(R.layout.activity_main);
         for (int i = 0; i < mTabList.length; i++) {
@@ -178,6 +185,13 @@ public class MainActivity extends BaseActivity {
 
         if (!SessionManager.getInstance().isLoggedIn()) {
             mMainTabs.getTabAt(4).select();
+        }
+    }
+
+    void enableRefresh(boolean enabled) {
+        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+        if (currentFragment instanceof Refreshable) {
+            ((Refreshable) currentFragment).enableRefresh(enabled);
         }
     }
 
@@ -311,5 +325,10 @@ public class MainActivity extends BaseActivity {
         intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+        enableRefresh(i == 0);
     }
 }

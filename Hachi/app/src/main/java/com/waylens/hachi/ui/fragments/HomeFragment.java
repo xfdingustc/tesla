@@ -39,7 +39,7 @@ import butterknife.Bind;
  * Created by Xiaofei on 2015/8/4.
  */
 public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnCommentMomentListener,
-        MomentsRecyclerAdapter.OnLikeMomentListener, SwipeRefreshLayout.OnRefreshListener {
+        MomentsRecyclerAdapter.OnLikeMomentListener, SwipeRefreshLayout.OnRefreshListener, Refreshable {
 
     static final int DEFAULT_COUNT = 10;
 
@@ -252,5 +252,12 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
         mCurrentCursor = 0;
         mVideoListView.setEnableLoadMore(true);
         loadFeed(mCurrentCursor, true);
+    }
+
+    @Override
+    public void enableRefresh(boolean enabled) {
+        if (mRefreshLayout != null) {
+            mRefreshLayout.setEnabled(enabled);
+        }
     }
 }

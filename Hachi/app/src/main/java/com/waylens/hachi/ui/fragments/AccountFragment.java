@@ -1,12 +1,16 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
@@ -21,12 +25,18 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
+import com.waylens.hachi.ui.adapters.Moment;
+import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
+import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 import com.waylens.hachi.utils.ServerMessage;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -35,7 +45,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class AccountFragment extends BaseFragment {
+public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Refreshable {
+    static final int DEFAULT_COUNT = 10;
 
     @Bind(R.id.btnAvatar)
     CircleImageView mBtnAvatar;
@@ -43,12 +54,66 @@ public class AccountFragment extends BaseFragment {
     @Bind((R.id.login_status))
     TextView mLoginStatus;
 
+    @Bind(R.id.profile_grid)
+    View mProfileGridView;
+
+    @Bind(R.id.profile_list)
+    View mProfileListView;
+
+    @Bind(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
+    @Bind(R.id.video_list_view)
+    RecyclerViewExt mVideoListView;
+
+    @Bind(R.id.refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
+
+    MomentsRecyclerAdapter mAdapter;
+
+    RequestQueue mRequestQueue;
+
+    LinearLayoutManager mLinearLayoutManager;
+
+    int mCurrentCursor;
+
     MaterialDialog mLogoutDialog;
+
+    int mHighlightColor;
+    int mGreyColor;
+
+    int mProfileStyle = 0; // 0 - list, 1 - grid
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mHighlightColor = getResources().getColor(R.color.style_color_primary);
+        mGreyColor = getResources().getColor(R.color.material_grey_500);
+
+        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return createFragmentView(inflater, container, R.layout.fragment_account, savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_account, savedInstanceState);
+        mProfileListView.getBackground().setColorFilter(mHighlightColor, PorterDuff.Mode.MULTIPLY);
+        mProfileGridView.getBackground().setColorFilter(mGreyColor, PorterDuff.Mode.MULTIPLY);
+        mProfileStyle = 0;
+        mVideoListView.setAdapter(mAdapter);
+        mVideoListView.setLayoutManager(mLinearLayoutManager);
+        mRefreshLayout.setOnRefreshListener(this);
+        mVideoListView.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+            @Override
+            public void loadMore() {
+                loadFeed(mCurrentCursor, false);
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -60,6 +125,7 @@ public class AccountFragment extends BaseFragment {
                 ImageUtils.getAvatarOptions());
         if (SessionManager.getInstance().isLoggedIn()) {
             mLoginStatus.setText(R.string.logout);
+            onRefresh();
         } else {
             mLoginStatus.setText(R.string.login);
         }
@@ -83,6 +149,14 @@ public class AccountFragment extends BaseFragment {
         } else {
             LoginActivity.launch(getActivity());
         }
+    }
+
+    @OnClick({R.id.profile_grid, R.id.profile_list})
+    public void changeProfileLayout(View view) {
+        long viewID = view.getId();
+        mProfileGridView.getBackground().setColorFilter(viewID == R.id.profile_grid ? mHighlightColor : mGreyColor, PorterDuff.Mode.MULTIPLY);
+        mProfileListView.getBackground().setColorFilter(viewID == R.id.profile_list ? mHighlightColor : mGreyColor, PorterDuff.Mode.MULTIPLY);
+
     }
 
     void showLogoutDialog() {
@@ -124,5 +198,70 @@ public class AccountFragment extends BaseFragment {
                         showMessage(errorMsg.msgResID);
                     }
                 }));
+    }
+
+    void loadFeed(int cursor, final boolean isRefresh) {
+        String url = Constants.API_MOMENTS_ME + String.format(Constants.API_QS_MOMENTS, Constants.PARAM_SORT_UPLOAD_TIME, cursor, DEFAULT_COUNT);
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        onLoadFeedSuccessful(response, isRefresh);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        onLoadFeedFailed(error);
+                    }
+                }));
+    }
+
+    void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
+        mRefreshLayout.setRefreshing(false);
+        JSONArray jsonMoments = response.optJSONArray("moments");
+        if (jsonMoments == null) {
+            return;
+        }
+        ArrayList<Moment> momentList = new ArrayList<>();
+        for (int i = 0; i < jsonMoments.length(); i++) {
+            momentList.add(Moment.fromMyMoment(jsonMoments.optJSONObject(i)));
+        }
+        if (isRefresh) {
+            mAdapter.setMoments(momentList);
+        } else {
+            mAdapter.addMoments(momentList);
+        }
+
+        mVideoListView.setIsLoadingMore(false);
+        mCurrentCursor += momentList.size();
+        if (!response.optBoolean("hasMore")) {
+            mVideoListView.setEnableLoadMore(false);
+        }
+
+        if (mViewAnimator.getDisplayedChild() == 0) {
+            mViewAnimator.setDisplayedChild(1);
+        }
+    }
+
+    void onLoadFeedFailed(VolleyError error) {
+        mRefreshLayout.setRefreshing(false);
+        mVideoListView.setIsLoadingMore(false);
+        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.msgResID);
+    }
+
+    @Override
+    public void onRefresh() {
+        mCurrentCursor = 0;
+        mVideoListView.setEnableLoadMore(true);
+        loadFeed(mCurrentCursor, true);
+    }
+
+    @Override
+    public void enableRefresh(boolean enabled) {
+        if (mRefreshLayout != null) {
+            mRefreshLayout.setEnabled(enabled);
+        }
     }
 }

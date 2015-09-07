@@ -1,25 +1,28 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout
     android:id="@+id/root_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <include layout="@layout/toolbar"/>
+
+    <FrameLayout
+        android:id="@+id/fragment_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_marginBottom="@dimen/abc_action_bar_default_height_material"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </FrameLayout>
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar"/>
-
-        <FrameLayout
-            android:id="@+id/fragment_content"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-        </FrameLayout>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:background="@color/material_grey_300">
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -29,9 +32,6 @@
             android:id="@+id/main_tabs"
             android:layout_width="match_parent"
             android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:layout_gravity="bottom"
-            app:tabIndicatorHeight="0dp">
-
-        </android.support.design.widget.TabLayout>
+            app:tabIndicatorHeight="0dp"/>
     </LinearLayout>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

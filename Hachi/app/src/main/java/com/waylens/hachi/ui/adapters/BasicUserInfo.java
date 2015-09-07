@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.adapters;
 
+import com.waylens.hachi.session.SessionManager;
+
 import org.json.JSONObject;
 
 /**
@@ -23,4 +25,11 @@ public class BasicUserInfo {
         return userInfo;
     }
 
+    public static BasicUserInfo fromCurrentUser() {
+        BasicUserInfo userInfo = new BasicUserInfo();
+        userInfo.userID = SessionManager.getInstance().getUserId();
+        userInfo.userName = SessionManager.getInstance().getUserName();
+        userInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();
+        return userInfo;
+    }
 }

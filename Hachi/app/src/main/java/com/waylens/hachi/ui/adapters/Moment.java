@@ -78,4 +78,39 @@ public class Moment {
         return moment;
     }
 
+    public static Moment fromMyMoment(JSONObject jsonMoment) {
+        if (jsonMoment == null) {
+            return null;
+        }
+
+        Moment moment = new Moment();
+        moment.id = jsonMoment.optLong("id");
+        String provider = jsonMoment.optString("provider");
+        moment.provider = provider;
+
+        if (PROVIDER_YOUTUBE.equals(provider)) {
+            moment.videoID = jsonMoment.optString("videoID");
+            moment.thumbnail = String.format(YOUTUBE_THUMBNAIL, moment.videoID);
+            moment.type = TYPE_YOUTUBE;
+        } else {
+            moment.thumbnail = jsonMoment.optString("thumbnail");
+            moment.type = TYPE_WAYLENS;
+        }
+
+
+        moment.title = jsonMoment.optString("title");
+        moment.description = jsonMoment.optString("description");
+
+        moment.captureTime = jsonMoment.optString("captureTime");
+        moment.uploadTime = jsonMoment.optLong("uploadTime");
+        moment.fragmentCount = jsonMoment.optInt("fragmentCount");
+        moment.duration = jsonMoment.optLong("duration");
+        moment.likesCount = jsonMoment.optInt("likesCount");
+        moment.commentsCount = jsonMoment.optInt("commentsCount");
+        moment.isLiked = jsonMoment.optBoolean("isLiked");
+        moment.owner = BasicUserInfo.fromCurrentUser();
+
+        return moment;
+    }
+
 }
