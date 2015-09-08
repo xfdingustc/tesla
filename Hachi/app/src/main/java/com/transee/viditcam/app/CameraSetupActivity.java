@@ -1,5 +1,7 @@
 package com.transee.viditcam.app;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,6 +29,10 @@ public class CameraSetupActivity extends BaseActivity {
 
     static final boolean DEBUG = false;
     static final String TAG = "CameraSetupActivity";
+
+    private static final String IS_PC_SERVER = "isPcServer";
+    private static final String SSID = "ssid";
+    private static final String HOST_STRING = "hostString";
 
     @Nullable
     private VdtCamera mVdtCamera;
@@ -557,6 +563,16 @@ public class CameraSetupActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    public static void launch(Context context, VdtCamera camera) {
+        Intent intent = new Intent(context, CameraSetupActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
+        bundle.putString(SSID, camera.getSSID());
+        bundle.putString(HOST_STRING, camera.getHostString());
+        intent.putExtras(bundle);
+        context.startActivity(intent);
     }
 
 	/*

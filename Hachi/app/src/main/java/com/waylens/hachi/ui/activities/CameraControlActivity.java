@@ -185,6 +185,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void startOverlay() {
         int mode = PrefsUtil.getDataMode();
+        mode = PrefsUtil.MODE_REAL;
         if (mode == PrefsUtil.MODE_SIMULATION) {
             modeMsg.setVisibility(View.VISIBLE);
             taskHandler.removeCallbacks(simulateDataTask);

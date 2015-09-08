@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
+import com.transee.ccam.CameraState;
+import com.transee.viditcam.app.CameraSetupActivity;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
@@ -86,15 +89,24 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolder.mBtnPreview.setEnabled(false);
                 viewHolder.mBtnClips.clearColorFilter();
                 viewHolder.mBtnPreview.clearColorFilter();
+                viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
             } else {
                 viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_active);
                 viewHolder.mBtnClips.setEnabled(true);
                 viewHolder.mBtnPreview.setEnabled(true);
                 viewHolder.mBtnClips.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
                 viewHolder.mBtnPreview.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
+                viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
             }
-            viewHolder.mTvServerName.setText(camera.getServerName());
-            viewHolder.mTvSsid.setText(camera.getSSID());
+            CameraState state = VdtCamera.getCameraStates(camera);
+            if (TextUtils.isEmpty(state.mCameraName)) {
+                viewHolder.mTvSsid.setText(camera.getSSID());
+            } else {
+                viewHolder.mTvSsid.setText(state.mCameraName);
+            }
+
+            //viewHolder.mTvServerName.setText(camera.getServerName());
+
         }
 
         viewHolder.mBtnPreview.setOnClickListener(this);
@@ -103,6 +115,8 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         viewHolder.mBtnClips.setOnClickListener(this);
         viewHolder.mBtnClips.setTag(viewHolder);
 
+        viewHolder.mBtnSettings.setOnClickListener(this);
+        viewHolder.mBtnSettings.setTag(viewHolder);
     }
 
     @Override
@@ -119,16 +133,22 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case R.id.btnClips:
                 Logger.t(TAG).d("BtnClips clicked");
                 viewHolder = (CameraListItemViewHolder)v.getTag();
-                position = viewHolder.getPosition();
+                position = viewHolder.getAdapterPosition();
                 camera = mVdtCameraManager.getCamera(position);
                 BrowseCameraActivity.launch(mContext, camera);
                 break;
             case R.id.btnPreview:
                 Logger.t(TAG).d("BtnPreview clicked");
                 viewHolder = (CameraListItemViewHolder)v.getTag();
-                position = viewHolder.getPosition();
+                position = viewHolder.getAdapterPosition();
                 camera = mVdtCameraManager.getCamera(position);
                 CameraControlActivity.launch(mContext, camera);
+                break;
+            case R.id.btn_settings:
+                viewHolder = (CameraListItemViewHolder)v.getTag();
+                position = viewHolder.getAdapterPosition();
+                camera = mVdtCameraManager.getCamera(position);
+                CameraSetupActivity.launch(mContext, camera);
                 break;
         }
     }
@@ -150,6 +170,9 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @Bind(R.id.btnPreview)
         ImageButton mBtnPreview;
+
+        @Bind(R.id.btn_settings)
+        ImageButton mBtnSettings;
 
         public CameraListItemViewHolder(View itemView) {
             super(itemView);
