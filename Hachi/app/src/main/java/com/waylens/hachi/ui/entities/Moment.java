@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.entities;
 
 import android.text.Spannable;
 

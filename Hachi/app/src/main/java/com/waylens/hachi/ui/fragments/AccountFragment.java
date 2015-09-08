@@ -25,8 +25,9 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
-import com.waylens.hachi.ui.adapters.Moment;
+import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
+import com.waylens.hachi.ui.entities.APIFilter;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -140,6 +141,12 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
             Intent intent = new Intent(getActivity(), RegistrationIntentService.class);
             getActivity().startService(intent);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        mRequestQueue.cancelAll(new APIFilter(Constants.API_MOMENTS_ME));
+        super.onDestroyView();
     }
 
     @OnClick(R.id.btnAvatar)

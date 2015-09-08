@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,10 +88,12 @@ public class BaseFragment extends Fragment {
     }
 
     void showMessage(int resId) {
-        if (mRootView == null || mRootView.getContext() == null) {
-            return;
+        //Should not call this method if UI has been already destroyed.
+        try {
+            Snackbar.make(mRootView, resId, Snackbar.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("test", "", e);
         }
-        Snackbar.make(mRootView, resId, Snackbar.LENGTH_SHORT).show();
     }
 
     void showMessage(String message) {

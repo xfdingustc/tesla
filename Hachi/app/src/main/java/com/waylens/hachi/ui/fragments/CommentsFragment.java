@@ -24,10 +24,10 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.adapters.BasicUserInfo;
-import com.waylens.hachi.ui.adapters.Comment;
+import com.waylens.hachi.ui.entities.BasicUserInfo;
+import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
-import com.waylens.hachi.ui.adapters.Moment;
+import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONArray;

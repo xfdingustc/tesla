@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +18,10 @@ import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.ui.adapters.Moment;
-import com.waylens.hachi.ui.adapters.Notification;
+import com.waylens.hachi.ui.entities.APIFilter;
+import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.ui.adapters.NotificationCommentsAdapter;
+import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 9/6/15.
  */
-public class NotificationCommentsFragment extends BaseFragment {
+public class NotificationCommentsFragment extends BaseFragment implements RecyclerViewExt.OnLoadMoreListener {
 
     private static final int DEFAULT_COUNT = 10;
 
@@ -45,7 +46,7 @@ public class NotificationCommentsFragment extends BaseFragment {
     SwipeRefreshLayout mRefreshLayout;
 
     @Bind(R.id.comment_list)
-    RecyclerView mNotificationListView;
+    RecyclerViewExt mNotificationListView;
 
     RequestQueue mRequestQueue;
 
@@ -55,12 +56,15 @@ public class NotificationCommentsFragment extends BaseFragment {
 
     LinearLayoutManager mLayoutManager;
 
+    ArrayList<Long> mUnreadEventIDs;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mAdapter = new NotificationCommentsAdapter(null);
         mLayoutManager = new LinearLayoutManager(getActivity());
+        mUnreadEventIDs = new ArrayList<>();
     }
 
     @Nullable
@@ -69,6 +73,7 @@ public class NotificationCommentsFragment extends BaseFragment {
         View view = createFragmentView(inflater, container, R.layout.fragment_notification_comments, savedInstanceState);
         mNotificationListView.setAdapter(mAdapter);
         mNotificationListView.setLayoutManager(mLayoutManager);
+        mNotificationListView.setOnLoadMoreListener(this);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -82,6 +87,12 @@ public class NotificationCommentsFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         loadNotifications(0, true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        mRequestQueue.cancelAll(new APIFilter(Constants.API_NOTIFICATIONS_COMMENTS));
+        super.onDestroyView();
     }
 
     @OnClick(R.id.btn_back)
@@ -112,6 +123,7 @@ public class NotificationCommentsFragment extends BaseFragment {
         if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
+        mNotificationListView.setIsLoadingMore(false);
     }
 
     void onLoadCommentsSuccessful(JSONObject response, boolean isRefresh) {
@@ -123,15 +135,57 @@ public class NotificationCommentsFragment extends BaseFragment {
         if (jsonNotifications == null) {
             return;
         }
-        ArrayList<Notification> notifications = new ArrayList<>();
+        ArrayList<CommentEvent> commentEvents = new ArrayList<>();
         for (int i = 0; i < jsonNotifications.length(); i++) {
-            notifications.add(Notification.fromJson(jsonNotifications.optJSONObject(i)));
+            CommentEvent commentEvent = CommentEvent.fromJson(jsonNotifications.optJSONObject(i));
+            commentEvents.add(commentEvent);
+            mUnreadEventIDs.add(commentEvent.eventID);
         }
 
-        mAdapter.setNotifications(notifications);
+        mAdapter.addNotifications(commentEvents, isRefresh);
+
         if (mViewAnimator != null) {
             mViewAnimator.setDisplayedChild(1);
         }
 
+        mCurrentCursor = response.optInt("nextCursor");
+        mNotificationListView.setEnableLoadMore(mCurrentCursor > 0);
+        mNotificationListView.setIsLoadingMore(false);
+        markRead();
+    }
+
+    @Override
+    public void loadMore() {
+        loadNotifications(mCurrentCursor, false);
+    }
+
+    void markRead() {
+        JSONArray ids = new JSONArray(mUnreadEventIDs);
+        JSONObject params = new JSONObject();
+        try {
+            JSONArray eventTypes = new JSONArray();
+            eventTypes.put(Constants.EventType.COMMENT_MOMENT.name());
+            eventTypes.put(Constants.EventType.REFER_USER.name());
+            params.put("eventTypes", eventTypes);
+            params.put("eventIDs", ids);
+        } catch (Exception e) {
+            Log.e("test", "", e);
+        }
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_COMMENTS_MARK_READ, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (response.optBoolean("result")) {
+                            mUnreadEventIDs.clear();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
+                        Log.e("test", "MSG: " + getString(errorMsg.msgResID));
+                    }
+                }));
     }
 }

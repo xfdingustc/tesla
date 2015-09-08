@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.entities;
 
 import com.waylens.hachi.session.SessionManager;
 

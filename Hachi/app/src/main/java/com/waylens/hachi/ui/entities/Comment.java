@@ -1,7 +1,6 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.entities;
 
 import android.graphics.Typeface;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
@@ -65,7 +64,7 @@ public class Comment {
         return comment;
     }
 
-    static class UserNameSpan extends ClickableSpan {
+    public static class UserNameSpan extends ClickableSpan {
 
         @Override
         public void onClick(View widget) {

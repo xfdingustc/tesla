@@ -65,7 +65,9 @@ public class NotificationFragment extends BaseFragment {
     }
 
     private void refreshNotifications() {
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_NOTIFICATIONS_COMMENTS,
+        String qs = String.format(Constants.API_QS_COMMON, 0, 0);
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET,
+                Constants.API_NOTIFICATIONS_COMMENTS + qs,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -79,7 +81,8 @@ public class NotificationFragment extends BaseFragment {
                     }
                 }));
 
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_NOTIFICATIONS_LIKES,
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET,
+                Constants.API_NOTIFICATIONS_LIKES + qs,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -99,7 +102,7 @@ public class NotificationFragment extends BaseFragment {
             return;
         }
         int likesCount = response.optInt("unreadCount");
-        likesUnreadView.setVisibility( likesCount > 0 ? View.VISIBLE : View.GONE);
+        likesUnreadView.setVisibility(likesCount > 0 ? View.VISIBLE : View.GONE);
     }
 
     void onLoadNotificationFailed(VolleyError error) {

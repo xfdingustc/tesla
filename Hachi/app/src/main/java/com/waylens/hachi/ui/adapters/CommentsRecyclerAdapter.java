@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.utils.ImageUtils;
 
 import org.ocpsoft.prettytime.PrettyTime;

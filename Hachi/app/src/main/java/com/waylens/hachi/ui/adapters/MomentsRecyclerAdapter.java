@@ -26,6 +26,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.YouTubeFragment;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;

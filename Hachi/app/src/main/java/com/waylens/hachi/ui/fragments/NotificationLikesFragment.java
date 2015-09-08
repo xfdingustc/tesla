@@ -1,7 +1,191 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ViewAnimator;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.adapters.NotificationLikesAdapter;
+import com.waylens.hachi.ui.entities.APIFilter;
+import com.waylens.hachi.ui.entities.LikeEvent;
+import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.ServerMessage;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+
 /**
+ * Like events
  * Created by Richard on 9/6/15.
  */
-public class NotificationLikesFragment extends BaseFragment {
+public class NotificationLikesFragment extends BaseFragment implements RecyclerViewExt.OnLoadMoreListener {
+
+    private static final int DEFAULT_COUNT = 10;
+
+    @Bind(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
+    @Bind(R.id.refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
+
+    @Bind(R.id.likes_list)
+    RecyclerViewExt mNotificationListView;
+
+    RequestQueue mRequestQueue;
+
+    int mCurrentCursor;
+
+    NotificationLikesAdapter mAdapter;
+
+    LinearLayoutManager mLayoutManager;
+
+    ArrayList<Long> mUnreadEventIDs;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mAdapter = new NotificationLikesAdapter(null, getResources());
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mUnreadEventIDs = new ArrayList<>();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = createFragmentView(inflater, container, R.layout.fragment_notification_likes, savedInstanceState);
+        mNotificationListView.setAdapter(mAdapter);
+        mNotificationListView.setLayoutManager(mLayoutManager);
+        mNotificationListView.setOnLoadMoreListener(this);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadNotifications(0, true);
+            }
+        });
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadNotifications(0, true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        mRequestQueue.cancelAll(new APIFilter(Constants.API_NOTIFICATIONS_LIKES));
+        super.onDestroyView();
+    }
+
+    @OnClick(R.id.btn_back)
+    public void back() {
+        getFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    void loadNotifications(int cursor, final boolean isRefresh) {
+        String url = Constants.API_NOTIFICATIONS_LIKES + String.format(Constants.API_QS_COMMON, cursor, DEFAULT_COUNT);
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        onLoadLikesSuccessful(response, isRefresh);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        onLoadNotificationFailed(error);
+                    }
+                }));
+    }
+
+    void onLoadNotificationFailed(VolleyError error) {
+        ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
+        showMessage(errorMsg.msgResID);
+        if (mRefreshLayout != null) {
+            mRefreshLayout.setRefreshing(false);
+        }
+        mNotificationListView.setIsLoadingMore(false);
+    }
+
+    void onLoadLikesSuccessful(JSONObject response, boolean isRefresh) {
+        if (mRefreshLayout != null) {
+            mRefreshLayout.setRefreshing(false);
+        }
+
+        JSONArray jsonNotifications = response.optJSONArray("notifications");
+        if (jsonNotifications == null) {
+            return;
+        }
+        ArrayList<LikeEvent> likeEvents = new ArrayList<>();
+        for (int i = 0; i < jsonNotifications.length(); i++) {
+            LikeEvent likeEvent = LikeEvent.fromJson(jsonNotifications.optJSONObject(i));
+            likeEvents.add(likeEvent);
+            mUnreadEventIDs.add(likeEvent.eventID);
+        }
+
+        mAdapter.addNotifications(likeEvents, isRefresh);
+
+        if (mViewAnimator != null) {
+            mViewAnimator.setDisplayedChild(1);
+        }
+
+        mCurrentCursor = response.optInt("nextCursor");
+        mNotificationListView.setEnableLoadMore(mCurrentCursor > 0);
+        mNotificationListView.setIsLoadingMore(false);
+        markRead();
+    }
+
+    @Override
+    public void loadMore() {
+        loadNotifications(mCurrentCursor, false);
+    }
+
+    void markRead() {
+        JSONArray ids = new JSONArray(mUnreadEventIDs);
+        JSONObject params = new JSONObject();
+        try {
+            JSONArray eventTypes = new JSONArray();
+            eventTypes.put(Constants.EventType.LIKE_MOMENT.name());
+            params.put("eventTypes", eventTypes);
+            params.put("eventIDs", ids);
+        } catch (Exception e) {
+            Log.e("test", "", e);
+        }
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_COMMENTS_MARK_READ, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (response.optBoolean("result")) {
+                            mUnreadEventIDs.clear();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
+                        Log.e("test", "MSG: " + getString(errorMsg.msgResID));
+                    }
+                }));
+    }
 }

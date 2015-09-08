@@ -263,5 +263,6 @@
     <string name="email_invalid">Please enter a valid email address</string>
     <string name="please_correct_errors">Please correct all invalid inputs.</string>
     <string name="new_comments_notification">New comments on moment</string>
+    <string name="like_your_post">%s like your post</string>
 
 </resources>
