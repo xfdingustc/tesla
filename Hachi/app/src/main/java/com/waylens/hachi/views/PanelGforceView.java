@@ -26,7 +26,7 @@ public class PanelGforceView extends PanelView {
     }
 
     private void init() {
-        PanelView.LayoutParams layoutParams = new PanelView.LayoutParams(0, 0, mPanel.getAlignment());
+        ContainerView.LayoutParams layoutParams = new ContainerView.LayoutParams(0, 0, mPanel.getAlignment());
         setLayoutParams(layoutParams);
         addElements();
     }

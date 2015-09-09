@@ -17,6 +17,7 @@ public class Element implements ContainerLayouts {
 
     private static final String TAG_WIDTH = "Width";
     private static final String TAG_HEIGHT = "Height";
+    private static final String TAG_MARGIN_TOP = "MarginTop";
     private static final String TAG_ALIGNMENT = "Alignment";
 
     public static final int ELEMENT_TYPE_FRAME_SEQUENCE = 0;
@@ -26,6 +27,8 @@ public class Element implements ContainerLayouts {
 
     private int mWidth;
     private int mHeight;
+    private int mMarginTop = 0;
+    private int mMarginBottom = 0;
     private int mAlignment;
 
     public int getWidth() {
@@ -38,6 +41,13 @@ public class Element implements ContainerLayouts {
     public int getAlignment() {
         return mAlignment;
     }
+    public int getMarginTop() {
+        return mMarginTop;
+    }
+
+    public int getMarginBottom() {
+        return mMarginBottom;
+    }
 
     public void parse(JSONObject object) {
         try {
@@ -45,10 +55,13 @@ public class Element implements ContainerLayouts {
             mHeight = object.getInt(TAG_HEIGHT);
             String alignment = object.optString(TAG_ALIGNMENT);
             mAlignment = getAlignment(alignment);
+            mMarginTop = object.optInt(TAG_MARGIN_TOP);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+
 
     private int getAlignment(String alignment) {
         int ret = 0;
@@ -56,6 +69,10 @@ public class Element implements ContainerLayouts {
             ret = BOTTOM_LEFT;
         } else if (alignment.equals("Center")) {
             ret = CENTER;
+        } else if (alignment.equals("Top_Left")) {
+            ret = TOP_LEFT;
+        } else if (alignment.equals("Top_Center")) {
+            ret = TOP_CENTER;
         }
         return ret;
     }

@@ -18,7 +18,9 @@ public class ElementView extends View {
     }
 
     private void init() {
-        PanelView.LayoutParams layoutParams = new PanelView.LayoutParams(0, 0, mElement.getAlignment());
+        PanelView.LayoutParams layoutParams = new PanelView.LayoutParams(mElement.getMarginTop(),
+            mElement.getMarginBottom(), mElement
+            .getAlignment());
         setLayoutParams(layoutParams);
     }
 

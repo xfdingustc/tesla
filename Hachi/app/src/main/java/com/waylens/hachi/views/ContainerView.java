@@ -47,7 +47,18 @@ public class ContainerView extends ViewGroup {
                     params.mRight = params.mLeft + child.getMeasuredWidth();
                     params.mBottom = params.mTop + child.getMeasuredHeight();
                     break;
-
+                case LayoutParams.TOP_LEFT:
+                    params.mLeft = 0;
+                    params.mTop = 0;
+                    params.mRight = params.mLeft + child.getMeasuredWidth();
+                    params.mBottom = params.mTop + child.getMeasuredHeight();
+                    break;
+                case LayoutParams.TOP_CENTER:
+                    params.mLeft = (width - child.getMeasuredWidth()) / 2;
+                    params.mTop = params.mTopMargin;
+                    params.mRight = params.mLeft + child.getMeasuredWidth();
+                    params.mBottom = params.mTop + child.getMeasuredHeight();
+                    break;
             }
         }
 
@@ -71,10 +82,13 @@ public class ContainerView extends ViewGroup {
 
         public int mAlignment;
         private int mLeft, mTop, mRight, mBottom;
+        private int mTopMargin, mBottomMargin;
 
-        public LayoutParams(final int width, final int height, final int alignment) {
-            super(width, height);
+        public LayoutParams(final int topMargin, final int bottomMargin, final int alignment) {
+            super(0, 9);
             this.mAlignment = alignment;
+            this.mTopMargin = topMargin;
+            this.mBottomMargin = bottomMargin;
         }
 
         public LayoutParams(Context c, AttributeSet attrs) {

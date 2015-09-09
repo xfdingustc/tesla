@@ -3,8 +3,8 @@
     "Panels": [
       {
         "Type": "gforce",
-        "Width": "424",
-        "Height": "424",
+        "Width": "376",
+        "Height": "376",
         "Alignment": "Bottom_Left",
         "Elements": [
           {
@@ -23,7 +23,6 @@
             "Alignment": "Center",
             "Resource": "skin_default/gforce/gforce-inner_background_circle.png"
           },
-
           {
             "Name": "gforce-central_dot",
             "Type": "StaticImage",
@@ -32,36 +31,93 @@
             "Alignment": "Center",
             "Resource": "skin_default/gforce/gforce-central_dot.png"
           },
-
           {
             "Name": "gforce_bar",
             "Type": "FrameSequence",
             "Resources": [
-              {"frame": "gforce_bar_0"},
-              {"frame": "gforce_bar_1"},
-              {"frame": "gforce_bar_2"},
-              {"frame": "gforce_bar_3"},
-              {"frame": "gforce_bar_4"},
-              {"frame": "gforce_bar_5"},
-              {"frame": "gforce_bar_6"},
-              {"frame": "gforce_bar_7"},
-              {"frame": "gforce_bar_8"},
-              {"frame": "gforce_bar_9"},
-              {"frame": "gforce_bar_10"},
-              {"frame": "gforce_bar_11"},
-              {"frame": "gforce_bar_12"},
-              {"frame": "gforce_bar_13"},
-              {"frame": "gforce_bar_14"},
-              {"frame": "gforce_bar_15"},
-              {"frame": "gforce_bar_16"},
-              {"frame": "gforce_bar_17"}
+              {
+                "frame": "gforce_bar_0"
+              },
+              {
+                "frame": "gforce_bar_1"
+              },
+              {
+                "frame": "gforce_bar_2"
+              },
+              {
+                "frame": "gforce_bar_3"
+              },
+              {
+                "frame": "gforce_bar_4"
+              },
+              {
+                "frame": "gforce_bar_5"
+              },
+              {
+                "frame": "gforce_bar_6"
+              },
+              {
+                "frame": "gforce_bar_7"
+              },
+              {
+                "frame": "gforce_bar_8"
+              },
+              {
+                "frame": "gforce_bar_9"
+              },
+              {
+                "frame": "gforce_bar_10"
+              },
+              {
+                "frame": "gforce_bar_11"
+              },
+              {
+                "frame": "gforce_bar_12"
+              },
+              {
+                "frame": "gforce_bar_13"
+              },
+              {
+                "frame": "gforce_bar_14"
+              },
+              {
+                "frame": "gforce_bar_15"
+              },
+              {
+                "frame": "gforce_bar_16"
+              },
+              {
+                "frame": "gforce_bar_17"
+              }
             ]
           }
-
+        ]
+      },
+      {
+        "Type": "map",
+        "Width": "374",
+        "Height": "496",
+        "Alignment": "Top_Left",
+        "Elements": [
+          {
+            "Name": "map-outer_background_box",
+            "Type": "StaticImage",
+            "Width": "326",
+            "Height": "448",
+            "Alignment": "Center",
+            "Resource": "skin_default/map/map-outer_background_box.png"
+          },
+          {
+            "Name": "map-inner_map_background_box",
+            "Type": "StaticImage",
+            "Width": "294",
+            "Height": "294",
+            "MarginTop": "48",
+            "Alignment": "Top_Center",
+            "Resource": "skin_default/map/map-inner_map_background_box.png"
+          }
         ]
       }
     ]
-
-
   }
 }
