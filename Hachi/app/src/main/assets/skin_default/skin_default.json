@@ -3,8 +3,8 @@
     "Panels": [
       {
         "Type": "gforce",
-        "Width": "800",
-        "Height": "800",
+        "Width": "424",
+        "Height": "424",
         "Alignment": "Bottom_Left",
         "Elements": [
           {
@@ -14,6 +14,23 @@
             "Height": "328",
             "Alignment": "Center",
             "Resource": "skin_default/gforce/gforce-outer_background_circle.png"
+          },
+          {
+            "Name": "inner_background_circle",
+            "Type": "StaticImage",
+            "Width": "282",
+            "Height": "282",
+            "Alignment": "Center",
+            "Resource": "skin_default/gforce/gforce-inner_background_circle.png"
+          },
+
+          {
+            "Name": "gforce-central_dot",
+            "Type": "StaticImage",
+            "Width": "16",
+            "Height": "16",
+            "Alignment": "Center",
+            "Resource": "skin_default/gforce/gforce-central_dot.png"
           },
 
           {

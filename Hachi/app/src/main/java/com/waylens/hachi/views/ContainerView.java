@@ -25,19 +25,29 @@ public class ContainerView extends ViewGroup {
         measureChildren(widthMeasureSpec, heightMeasureSpec);
 
 
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+
         int count = getChildCount();
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-            PanelView.LayoutParams params = (PanelView.LayoutParams) child.getLayoutParams();
+            LayoutParams params = (LayoutParams) child.getLayoutParams();
             int alignment = params.mAlignment;
             switch (alignment) {
-                case PanelView.LayoutParams.BOTTOM_LEFT:
+                case LayoutParams.BOTTOM_LEFT:
                     params.mLeft = 0;
                     params.mRight = child.getMeasuredWidth();
-                    params.mBottom = getMeasuredHeight();
-                    params.mTop = getMeasuredHeight() - child.getMeasuredHeight();
+                    params.mBottom = height;
+                    params.mTop = height - child.getMeasuredHeight();
                     break;
+                case LayoutParams.CENTER:
+                    params.mLeft = (width - child.getMeasuredWidth()) / 2;
+                    params.mTop = (height - child.getMeasuredHeight()) / 2;
+                    params.mRight = params.mLeft + child.getMeasuredWidth();
+                    params.mBottom = params.mTop + child.getMeasuredHeight();
+                    break;
+
             }
         }
 
