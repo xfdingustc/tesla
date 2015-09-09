@@ -67,10 +67,7 @@ public class SkinManager {
                     case XmlPullParser.START_DOCUMENT:
                         break;
                     case XmlPullParser.START_TAG:
-                        Logger.t(TAG).d("start tag = " + parser.getName());
                         if (parser.getName().equals(SKIN_TAG)) {
-                            Logger.t(TAG).d("Add one skin: " + parser.getAttributeValue(null,
-                                "name") + " asset: " + parser.getAttributeValue(null, "asset"));
                             Skin skin = new Skin(parser.getAttributeValue(null, VALUE_NAME));
                             skin.load(mSharedContext, parser.getAttributeValue(null, VALUE_ASSET));
                             mSkinList.add(skin);

@@ -11,8 +11,10 @@
           {
             "Name": "outer_background_circle",
             "Type": "StaticImage",
+            "Width": "328",
+            "Height": "328",
             "AlignParentCenter": "true",
-            "Resource": "gforce-outer_background_circle"
+            "Resource": "gforce/gforce-outer_background_circle.png"
           },
 
           {

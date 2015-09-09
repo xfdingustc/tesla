@@ -79,10 +79,5 @@ public class Skin {
         }
     }
 
-    public void inflate(Canvas canvas) {
-       // for (Panel panel : mPanels) {
-            //panel.inflate(parent);
-        //}
-    }
 
 }

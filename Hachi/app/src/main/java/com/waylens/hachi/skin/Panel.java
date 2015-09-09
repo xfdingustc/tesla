@@ -23,6 +23,7 @@ public class Panel {
     private static final String TAG_HEIGHT = "Height";
 
     protected int mType;
+    protected List<Element> mElementList = new ArrayList<>();
 
     private int mWidth;
     private int mHeight;
@@ -35,7 +36,10 @@ public class Panel {
         return mHeight;
     }
 
-    protected List<Element> mElementList = new ArrayList<>();
+    public List<Element> getElementList() {
+        return mElementList;
+    }
+
 
 
 

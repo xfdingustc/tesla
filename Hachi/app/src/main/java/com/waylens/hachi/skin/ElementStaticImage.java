@@ -1,28 +1,46 @@
 package com.waylens.hachi.skin;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by Xiaofei on 2015/9/8.
  */
 public class ElementStaticImage extends Element {
-    private static final String TAG_RESOURCE = "resource";
+    private static final String TAG_RESOURCE = "Resource";
+
+    private Bitmap mBitmap = null;
 
     @Override
     public void parse(JSONObject object) {
+        super.parse(object);
         try {
-            String resource = object.getString(TAG_RESOURCE);
+            mResourceUrl = object.getString(TAG_RESOURCE);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public Bitmap getResource() {
-        return null;
+    public Bitmap getResource(Context context) {
+        if (mBitmap == null) {
+            try {
+                InputStream in = context.getAssets().open(mResourceUrl);
+                mBitmap = BitmapFactory.decodeStream(in);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mBitmap;
     }
 
 
