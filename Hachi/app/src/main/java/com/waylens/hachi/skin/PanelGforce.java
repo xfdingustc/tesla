@@ -1,11 +1,5 @@
 package com.waylens.hachi.skin;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.os.Build;
-import android.util.AttributeSet;
-import android.view.ViewGroup;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

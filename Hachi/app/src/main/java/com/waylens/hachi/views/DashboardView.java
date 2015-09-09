@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by Xiaofei on 2015/9/6.
  */
-public class DashboardView extends ViewGroup {
+public class DashboardView extends ContainerView {
     private final static String TAG = DashboardView.class.getSimpleName();
     private Bitmap mBackground;
 
@@ -30,30 +30,18 @@ public class DashboardView extends ViewGroup {
 
 
     public DashboardView(Context context) {
-        this(context, null, 0);
+        this(context, null);
     }
 
     public DashboardView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public DashboardView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public DashboardView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+        super(context, attrs);
         init();
     }
 
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        measureChildren(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         setMeasuredDimension(width, height);
@@ -61,16 +49,7 @@ public class DashboardView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int count = getChildCount();
-
-
-        for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
-            final int childHeight = child.getMeasuredHeight();
-            final int childWidth = child.getMeasuredWidth();
-            Logger.t(TAG).d("childWidth:" + childWidth + " childHeight: " + childHeight);
-            child.layout(l, t, l + childWidth, t + childHeight);
-        }
+        super.onLayout(changed, l, t, r, b);
     }
 
     private void init() {

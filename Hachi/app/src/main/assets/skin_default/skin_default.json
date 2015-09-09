@@ -3,18 +3,17 @@
     "Panels": [
       {
         "Type": "gforce",
-        "Width": "328",
-        "Height": "328",
-        "AlignParentLeft": "true",
-        "AlignParentBottom": "true",
+        "Width": "800",
+        "Height": "800",
+        "Alignment": "Bottom_Left",
         "Elements": [
           {
             "Name": "outer_background_circle",
             "Type": "StaticImage",
             "Width": "328",
             "Height": "328",
-            "AlignParentCenter": "true",
-            "Resource": "gforce/gforce-outer_background_circle.png"
+            "Alignment": "Center",
+            "Resource": "skin_default/gforce/gforce-outer_background_circle.png"
           },
 
           {

@@ -10,19 +10,16 @@ import com.waylens.hachi.skin.ElementStaticImage;
 /**
  * Created by Xiaofei on 2015/9/9.
  */
-public class StaticImageView extends ImageView {
+public class StaticImageView extends ElementView {
     private final ElementStaticImage mStaticImage;
 
     public StaticImageView(Context context, ElementStaticImage image) {
-        super(context);
+        super(context, image);
         this.mStaticImage = image;
     }
 
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(mStaticImage.getWidth(), mStaticImage.getHeight());
-    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
