@@ -6,11 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.views.DashboardView;
+
+import butterknife.Bind;
 
 /**
  * Created by Xiaofei on 2015/9/6.
  */
 public class DashboardActivity extends BaseActivity {
+
+    @Bind(R.id.dashboard)
+    DashboardView mDashboardView;
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, DashboardActivity.class);

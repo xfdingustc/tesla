@@ -1,5 +1,7 @@
 package com.waylens.hachi.skin;
 
+import android.graphics.Bitmap;
+
 import com.orhanobut.logger.Logger;
 
 import org.json.JSONArray;
@@ -31,5 +33,10 @@ public class ElementFrameSequence extends Element {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Bitmap getResource() {
+        return null;
     }
 }

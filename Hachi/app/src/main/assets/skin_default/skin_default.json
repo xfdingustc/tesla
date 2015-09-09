@@ -3,7 +3,18 @@
     "Panels": [
       {
         "Type": "gforce",
+        "Width": "328",
+        "Height": "328",
+        "AlignParentLeft": "true",
+        "AlignParentBottom": "true",
         "Elements": [
+          {
+            "Name": "outer_background_circle",
+            "Type": "StaticImage",
+            "AlignParentCenter": "true",
+            "Resource": "gforce-outer_background_circle"
+          },
+
           {
             "Name": "gforce_bar",
             "Type": "FrameSequence",

@@ -2,6 +2,8 @@ package com.waylens.hachi.skin;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.view.ViewGroup;
 
 import com.orhanobut.logger.Logger;
 
@@ -11,6 +13,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Xiaofei on 2015/9/2.
@@ -24,6 +28,8 @@ public class Skin {
 
 
     private final String mName;
+
+    private List<Panel> mPanels = new ArrayList<>();
 
     public Skin(String name) {
         this.mName = name;
@@ -52,6 +58,12 @@ public class Skin {
 
     }
 
+    public List<Panel> getPanels() {
+        return mPanels;
+    }
+
+
+
     private void parsePanel(JSONArray panelArray) {
         try {
             for (int i = 0; i < panelArray.length(); i++) {
@@ -60,11 +72,17 @@ public class Skin {
                 Logger.t(TAG).d(type);
                 Panel panel = Panel.PanelFactory.createPanel(type);
                 panel.parse(object);
-
+                mPanels.add(panel);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void inflate(Canvas canvas) {
+       // for (Panel panel : mPanels) {
+            //panel.inflate(parent);
+        //}
     }
 
 }

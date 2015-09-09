@@ -47,7 +47,9 @@
         <activity android:name=".ui.activities.SignupActivity"/>
         <activity android:name=".ui.activities.BrowseCameraActivity"/>
         <activity android:name=".ui.activities.ClipEditActivity"/>
-        <activity android:name=".ui.activities.DashboardActivity"/>
+        <activity
+            android:name=".ui.activities.DashboardActivity"
+            android:screenOrientation="landscape"/>
 
 
         <!--Copied from Vidit app-->

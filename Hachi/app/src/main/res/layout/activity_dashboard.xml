@@ -4,4 +4,10 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+    <com.waylens.hachi.views.DashboardView
+        android:id="@+id/dashboard"
+        android:background="@android:color/holo_blue_bright"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </LinearLayout>

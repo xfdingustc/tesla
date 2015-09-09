@@ -1,5 +1,11 @@
 package com.waylens.hachi.skin;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.util.AttributeSet;
+import android.view.ViewGroup;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,13 +16,12 @@ import org.json.JSONObject;
 public class PanelGforce extends Panel {
     private static final String TAG_TYPE = "Type";
     private static final String TAG_ELEMENTS = "Elements";
-    public PanelGforce() {
-        mType = PANEL_TYPE_GFORCE;
-    }
+
 
 
     @Override
     public void parse(JSONObject object) {
+        super.parse(object);
         try {
             JSONArray elements = object.getJSONArray(TAG_ELEMENTS);
             for (int i = 0; i < elements.length(); i++) {
@@ -31,4 +36,5 @@ public class PanelGforce extends Panel {
             e.printStackTrace();
         }
     }
+
 }
