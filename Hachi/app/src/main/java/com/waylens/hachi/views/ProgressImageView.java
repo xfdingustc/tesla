@@ -6,6 +6,7 @@ import android.graphics.Rect;
 
 import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.ElementStaticImage;
+import com.waylens.hachi.utils.EventBus;
 
 /**
  * Created by Xiaofei on 2015/9/10.
@@ -30,4 +31,11 @@ public class ProgressImageView extends ElementView {
         canvas.drawBitmap(mElement.getResource(getContext()), srcRect, srcRect, null);
     }
 
+    private static int progress = 0;
+
+    @Override
+    public void onEvent() {
+        progress++;
+        setProgress(progress);
+    }
 }

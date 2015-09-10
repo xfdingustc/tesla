@@ -24,6 +24,7 @@ public class Element implements ContainerLayouts {
     private static final String TAG_MARGIN_RIGHT = "MarginRight";
     private static final String TAG_ALIGNMENT = "Alignment";
     private static final String TAG_ROTATION = "Rotation";
+    private static final String TAG_SUBSCRIBE = "Subscribe";
 
     public static final int ELEMENT_TYPE_FRAME_SEQUENCE = 0;
     public static final int ELEMENT_TYPE_STATIC_IMAGE = 1;
@@ -40,6 +41,7 @@ public class Element implements ContainerLayouts {
     private int mMarginRight = 0;
     private int mAlignment;
     private int mRotation = 0;
+    private String mSubscribe = null;
 
     public int getType() {
         return mType;
@@ -75,6 +77,10 @@ public class Element implements ContainerLayouts {
         return mRotation;
     }
 
+    public String getSubscribe() {
+        return mSubscribe;
+    }
+
 
     public void parse(JSONObject object) {
         try {
@@ -87,6 +93,7 @@ public class Element implements ContainerLayouts {
             mMarginLeft = object.optInt(TAG_MARGIN_LEFT);
             mMarginRight = object.optInt(TAG_MARGIN_RIGHT);
             mRotation = object.optInt(TAG_ROTATION);
+            mSubscribe = object.optString(TAG_SUBSCRIBE);
         } catch (JSONException e) {
             e.printStackTrace();
         }

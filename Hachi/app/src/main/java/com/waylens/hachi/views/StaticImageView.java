@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.ElementStaticImage;
+import com.waylens.hachi.utils.EventBus;
 
 /**
  * Created by Xiaofei on 2015/9/9.

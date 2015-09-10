@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.waylens.hachi.skin.Panel;
 import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
+import com.waylens.hachi.utils.EventBus;
 
 import java.util.List;
 
@@ -23,9 +25,10 @@ import java.util.List;
  */
 public class DashboardView extends ContainerView {
     private final static String TAG = DashboardView.class.getSimpleName();
-    private Bitmap mBackground;
 
     private Skin mSkin = SkinManager.getManager().getSkin();
+
+    private EventBus mEventBus = new EventBus();
 
 
 
@@ -52,6 +55,10 @@ public class DashboardView extends ContainerView {
         super.onLayout(changed, l, t, r, b);
     }
 
+    public void setOBDData() {
+        mEventBus.postEvent("GforceLeft");
+    }
+
     private void init() {
         addPanels();
     }
@@ -61,7 +68,8 @@ public class DashboardView extends ContainerView {
         for (Panel panel : panelList) {
             if (panel instanceof PanelGforce) {
                 PanelGforce gforcePanel = (PanelGforce)panel;
-                PanelGforceView panelGforceView = new PanelGforceView(getContext(), gforcePanel);
+                PanelGforceView panelGforceView = new PanelGforceView(getContext(), gforcePanel,
+                    mEventBus);
                 addView(panelGforceView);
             }
         }

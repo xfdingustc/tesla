@@ -116,6 +116,7 @@
             "Height": "62",
             "Alignment": "Center_Right",
             "MarginRight": "96",
+            "Subscribe": "GforceLeft",
             "Resource": "skin_default/gforce/gforce-bar_17.png"
           }
         ]

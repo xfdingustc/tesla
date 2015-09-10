@@ -2,10 +2,9 @@ package com.waylens.hachi.views;
 
 import android.content.Context;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.skin.Element;
-import com.waylens.hachi.skin.ElementStaticImage;
 import com.waylens.hachi.skin.PanelGforce;
+import com.waylens.hachi.utils.EventBus;
 
 import java.util.List;
 
@@ -15,10 +14,12 @@ import java.util.List;
 public class PanelGforceView extends PanelView {
     private static final String TAG = PanelGforceView.class.getSimpleName();
     private final PanelGforce mPanel;
+    private final EventBus mEventBus;
 
-    public PanelGforceView(Context context, PanelGforce panel) {
+    public PanelGforceView(Context context, PanelGforce panel, EventBus eventBus) {
         super(context, panel);
         this.mPanel = panel;
+        this.mEventBus = eventBus;
         init();
     }
 
@@ -27,48 +28,30 @@ public class PanelGforceView extends PanelView {
             .getMarginTop(), mPanel.getMarginBottom(), mPanel.getMarginLeft(), mPanel.getMarginRight(),
             mPanel.getAlignment());
         setLayoutParams(layoutParams);
-        addElements();
+        addElementViews();
     }
 
-    private void addElements() {
+    private void addElementViews() {
         List<Element> elementList = mPanel.getElementList();
         for (Element element : elementList) {
+            ElementView elementView = null;
             switch (element.getType()) {
                 case Element.ELEMENT_TYPE_STATIC_IMAGE:
-                    StaticImageView imageView = new StaticImageView(getContext(), element);
-                    addView(imageView);
+                    elementView = new StaticImageView(getContext(), element);
                     break;
                 case Element.ELEMENT_TYPE_PROGRESS_IMAGE:
-                    ProgressImageView progressImageView = new ProgressImageView(getContext(), element);
-                    addView(progressImageView);
+                    elementView = new ProgressImageView(getContext(), element);
                     break;
+            }
+            if (elementView != null) {
+                mEventBus.register(elementView);
+                addView(elementView);
             }
         }
     }
 
-
-
-    /*
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        measureChildren(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(mPanel.getWidth(), mPanel.getHeight());
-        //super.onMeasure();
-    }
-    */
-
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        /*
-        int count = getChildCount();
-        Logger.t(TAG).d("l: " + l + " t: " + t + " r: " + r + " b: " + b);
-        for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
-            final int childHeight = child.getMeasuredHeight();
-            final int childWidth = child.getMeasuredWidth();
-            child.layout(0, 0,  childWidth, childHeight);
-        }*/
         super.onLayout(changed, l, t, r, b);
     }
 
