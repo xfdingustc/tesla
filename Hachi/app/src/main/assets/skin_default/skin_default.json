@@ -24,6 +24,84 @@
             "Resource": "skin_default/gforce/gforce-inner_background_circle.png"
           },
           {
+            "Name": "gforce_bar_bg_right",
+            "Type": "StaticImage",
+            "Width": "76",
+            "Height": "62",
+            "Alignment": "Center_Right",
+            "MarginRight": "96",
+            "Resource": "skin_default/gforce/gforce-bar_0.png"
+          },
+          {
+            "Name": "gforce_bar_bg",
+            "Type": "StaticImage",
+            "Width": "76",
+            "Height": "62",
+            "Alignment": "Center_Left",
+            "MarginLeft": "96",
+            "Rotation": "180",
+            "Resource": "skin_default/gforce/gforce-bar_0.png"
+          },
+          {
+            "Name": "gforce_bar_bg",
+            "Type": "StaticImage",
+            "Width": "76",
+            "Height": "62",
+            "Alignment": "Top_Center",
+            "MarginTop": "96",
+            "Rotation": "270",
+            "Resource": "skin_default/gforce/gforce-bar_0.png"
+          },
+          {
+            "Name": "gforce_bar_bg",
+            "Type": "StaticImage",
+            "Width": "76",
+            "Height": "62",
+            "Alignment": "Bottom_Center",
+            "MarginBottom": "96",
+            "Rotation": "90",
+            "Resource": "skin_default/gforce/gforce-bar_0.png"
+          },
+          {
+            "Name": "gforce_label_left",
+            "Type": "StaticImage",
+            "Width": "53",
+            "Height": "13",
+            "Alignment": "Center_Right",
+            "MarginTop": "-12",
+            "MarginRight": "48",
+            "Resource": "skin_default/gforce/gforce-label_left_opa50.png"
+          },
+          {
+            "Name": "gforce_label_right",
+            "Type": "StaticImage",
+            "Width": "65",
+            "Height": "13",
+            "Alignment": "Center_Left",
+            "MarginTop": "-12",
+            "MarginLeft": "48",
+            "Resource": "skin_default/gforce/gforce-label_right_opa50.png"
+          },
+          {
+            "Name": "gforce_label_break",
+            "Type": "StaticImage",
+            "Width": "79",
+            "Height": "13",
+            "Alignment": "Top_Center",
+            "MarginTop": "48",
+            "Resource": "skin_default/gforce/gforce-label_brake_opa50.png"
+          },
+          {
+            "Name": "gforce_label_accel",
+            "Type": "StaticImage",
+            "Width": "79",
+            "Height": "13",
+            "Alignment": "Bottom_Center",
+            "MarginBottom": "48",
+            "Resource": "skin_default/gforce/gforce-label_accel_opa50.png"
+          },
+
+          {
             "Name": "gforce-central_dot",
             "Type": "StaticImage",
             "Width": "16",
@@ -32,64 +110,13 @@
             "Resource": "skin_default/gforce/gforce-central_dot.png"
           },
           {
-            "Name": "gforce_bar",
-            "Type": "FrameSequence",
-            "Resources": [
-              {
-                "frame": "gforce_bar_0"
-              },
-              {
-                "frame": "gforce_bar_1"
-              },
-              {
-                "frame": "gforce_bar_2"
-              },
-              {
-                "frame": "gforce_bar_3"
-              },
-              {
-                "frame": "gforce_bar_4"
-              },
-              {
-                "frame": "gforce_bar_5"
-              },
-              {
-                "frame": "gforce_bar_6"
-              },
-              {
-                "frame": "gforce_bar_7"
-              },
-              {
-                "frame": "gforce_bar_8"
-              },
-              {
-                "frame": "gforce_bar_9"
-              },
-              {
-                "frame": "gforce_bar_10"
-              },
-              {
-                "frame": "gforce_bar_11"
-              },
-              {
-                "frame": "gforce_bar_12"
-              },
-              {
-                "frame": "gforce_bar_13"
-              },
-              {
-                "frame": "gforce_bar_14"
-              },
-              {
-                "frame": "gforce_bar_15"
-              },
-              {
-                "frame": "gforce_bar_16"
-              },
-              {
-                "frame": "gforce_bar_17"
-              }
-            ]
+            "Name": "gforce_left",
+            "Type": "ProgressImage",
+            "Width": "76",
+            "Height": "62",
+            "Alignment": "Center_Right",
+            "MarginRight": "96",
+            "Resource": "skin_default/gforce/gforce-bar_17.png"
           }
         ]
       },
@@ -112,9 +139,28 @@
             "Type": "StaticImage",
             "Width": "294",
             "Height": "294",
-            "MarginTop": "48",
+            "MarginTop": "32",
             "Alignment": "Top_Center",
             "Resource": "skin_default/map/map-inner_map_background_box.png"
+          },
+          {
+            "Name": "map-weather_background_box",
+            "Type": "StaticImage",
+            "Width": "294",
+            "Height": "120",
+            "MarginBottom": "32",
+            "Alignment": "Bottom_Center",
+            "Resource": "skin_default/map/map-weather_background_box.png"
+          },
+          {
+            "Name": "map-compass_icon",
+            "Type": "StaticImage",
+            "Width": "36",
+            "Height": "36",
+            "MarginTop": "48",
+            "MarginRight": "48",
+            "Alignment": "Top_Right",
+            "Resource": "skin_default/map/map-compass_icon.png"
           }
         ]
       }

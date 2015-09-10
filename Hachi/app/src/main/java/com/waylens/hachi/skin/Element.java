@@ -14,22 +14,36 @@ import org.json.JSONObject;
 public class Element implements ContainerLayouts {
     public static final String ELEMENT_TYPE_FRAME_SEQUENCE_STR = "FrameSequence";
     public static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
+    public static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
 
     private static final String TAG_WIDTH = "Width";
     private static final String TAG_HEIGHT = "Height";
     private static final String TAG_MARGIN_TOP = "MarginTop";
+    private static final String TAG_MARGIN_BOTTOM = "MarginBottom";
+    private static final String TAG_MARGIN_LEFT = "MarginLeft";
+    private static final String TAG_MARGIN_RIGHT = "MarginRight";
     private static final String TAG_ALIGNMENT = "Alignment";
+    private static final String TAG_ROTATION = "Rotation";
 
     public static final int ELEMENT_TYPE_FRAME_SEQUENCE = 0;
     public static final int ELEMENT_TYPE_STATIC_IMAGE = 1;
+    public static final int ELEMENT_TYPE_PROGRESS_IMAGE = 2;
 
     protected String mResourceUrl;
 
+    protected int mType;
     private int mWidth;
     private int mHeight;
     private int mMarginTop = 0;
     private int mMarginBottom = 0;
+    private int mMarginLeft = 0;
+    private int mMarginRight = 0;
     private int mAlignment;
+    private int mRotation = 0;
+
+    public int getType() {
+        return mType;
+    }
 
     public int getWidth() {
         return mWidth;
@@ -49,6 +63,19 @@ public class Element implements ContainerLayouts {
         return mMarginBottom;
     }
 
+    public int getMarginLeft() {
+        return mMarginLeft;
+    }
+
+    public int getMarginRight() {
+        return mMarginRight;
+    }
+
+    public int getRotation() {
+        return mRotation;
+    }
+
+
     public void parse(JSONObject object) {
         try {
             mWidth = object.getInt(TAG_WIDTH);
@@ -56,10 +83,15 @@ public class Element implements ContainerLayouts {
             String alignment = object.optString(TAG_ALIGNMENT);
             mAlignment = getAlignment(alignment);
             mMarginTop = object.optInt(TAG_MARGIN_TOP);
+            mMarginBottom = object.optInt(TAG_MARGIN_BOTTOM);
+            mMarginLeft = object.optInt(TAG_MARGIN_LEFT);
+            mMarginRight = object.optInt(TAG_MARGIN_RIGHT);
+            mRotation = object.optInt(TAG_ROTATION);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
 
 
 
@@ -73,6 +105,14 @@ public class Element implements ContainerLayouts {
             ret = TOP_LEFT;
         } else if (alignment.equals("Top_Center")) {
             ret = TOP_CENTER;
+        } else if (alignment.equals("Bottom_Center")) {
+            ret = BOTTOM_CENTER;
+        } else if (alignment.equals("Top_Right")) {
+            ret = TOP_RIGHT;
+        } else if (alignment.equals("Center_Right")) {
+            ret = CENTER_RIGHT;
+        } else if (alignment.equals("Center_Left")) {
+            ret = CENTER_LEFT;
         }
         return ret;
     }
@@ -88,6 +128,8 @@ public class Element implements ContainerLayouts {
                 elementType = ELEMENT_TYPE_FRAME_SEQUENCE;
             } else if (type.equals(ELEMENT_TYPE_STATIC_IMAGE_STR)) {
                 elementType = ELEMENT_TYPE_STATIC_IMAGE;
+            } else if (type.equals(ELEMENT_TYPE_PROGRESS_IMAGE_STR)) {
+                elementType = ELEMENT_TYPE_PROGRESS_IMAGE;
             }
 
             return createElement(elementType);
@@ -99,6 +141,8 @@ public class Element implements ContainerLayouts {
                     return new ElementFrameSequence();
                 case ELEMENT_TYPE_STATIC_IMAGE:
                     return new ElementStaticImage();
+                case ELEMENT_TYPE_PROGRESS_IMAGE:
+                    return new ElementProgressImage();
             }
 
             return null;

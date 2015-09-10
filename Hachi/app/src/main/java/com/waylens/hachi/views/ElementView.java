@@ -9,7 +9,7 @@ import com.waylens.hachi.skin.Element;
  * Created by Xiaofei on 2015/9/9.
  */
 public class ElementView extends View {
-    private final Element mElement;
+    protected final Element mElement;
 
     public ElementView(Context context, Element element) {
         super(context);
@@ -19,9 +19,10 @@ public class ElementView extends View {
 
     private void init() {
         PanelView.LayoutParams layoutParams = new PanelView.LayoutParams(mElement.getMarginTop(),
-            mElement.getMarginBottom(), mElement
-            .getAlignment());
+            mElement.getMarginBottom(), mElement.getMarginLeft(), mElement.getMarginRight(),
+            mElement.getAlignment());
         setLayoutParams(layoutParams);
+        setRotation(mElement.getRotation());
     }
 
     @Override

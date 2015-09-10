@@ -5,18 +5,19 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.widget.ImageView;
 
+import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.ElementStaticImage;
 
 /**
  * Created by Xiaofei on 2015/9/9.
  */
 public class StaticImageView extends ElementView {
-    private final ElementStaticImage mStaticImage;
 
-    public StaticImageView(Context context, ElementStaticImage image) {
+
+    public StaticImageView(Context context, Element image) {
         super(context, image);
-        this.mStaticImage = image;
     }
+
 
 
 
@@ -24,7 +25,7 @@ public class StaticImageView extends ElementView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawBitmap(mStaticImage.getResource(getContext()), null, new Rect(0, 0,
-            mStaticImage.getWidth(), mStaticImage.getHeight()), null);
+        Rect dstRect = new Rect(0, 0, mElement.getWidth(), mElement.getHeight());
+        canvas.drawBitmap(mElement.getResource(getContext()), null, dstRect, null);
     }
 }

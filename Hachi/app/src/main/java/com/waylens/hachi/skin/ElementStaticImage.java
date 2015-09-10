@@ -18,6 +18,10 @@ public class ElementStaticImage extends Element {
 
     private Bitmap mBitmap = null;
 
+    public ElementStaticImage() {
+        mType = ELEMENT_TYPE_STATIC_IMAGE;
+    }
+
     @Override
     public void parse(JSONObject object) {
         super.parse(object);

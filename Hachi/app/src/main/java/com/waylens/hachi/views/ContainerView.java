@@ -12,6 +12,7 @@ import com.orhanobut.logger.Logger;
  */
 public class ContainerView extends ViewGroup {
     private static final String TAG = ContainerView.class.getSimpleName();
+
     public ContainerView(Context context) {
         super(context);
     }
@@ -59,6 +60,30 @@ public class ContainerView extends ViewGroup {
                     params.mRight = params.mLeft + child.getMeasuredWidth();
                     params.mBottom = params.mTop + child.getMeasuredHeight();
                     break;
+                case LayoutParams.BOTTOM_CENTER:
+                    params.mLeft = (width - child.getMeasuredWidth()) / 2;
+                    params.mRight = params.mLeft + child.getMeasuredWidth();
+                    params.mBottom = height - params.mBottomMargin;
+                    params.mTop = params.mBottom - child.getMeasuredHeight();
+                    break;
+                case LayoutParams.TOP_RIGHT:
+                    params.mRight = width - params.mRightMargin;
+                    params.mLeft = params.mRight - child.getMeasuredWidth();
+                    params.mTop = params.mTopMargin;
+                    params.mBottom = params.mTop + child.getMeasuredHeight();
+                    break;
+                case LayoutParams.CENTER_RIGHT:
+                    params.mRight = width - params.mRightMargin;
+                    params.mLeft = params.mRight - child.getMeasuredWidth();
+                    params.mTop = (height - child.getMeasuredHeight()) / 2 + params.mTopMargin;
+                    params.mBottom = params.mTop + child.getMeasuredHeight();
+                    break;
+                case LayoutParams.CENTER_LEFT:
+                    params.mLeft = params.mLeftMargin;
+                    params.mRight = params.mLeft + child.getMeasuredWidth();
+                    params.mTop = (height - child.getMeasuredHeight()) / 2 + params.mTopMargin;
+                    params.mBottom = params.mTop + child.getMeasuredHeight();
+                    break;
             }
         }
 
@@ -82,13 +107,16 @@ public class ContainerView extends ViewGroup {
 
         public int mAlignment;
         private int mLeft, mTop, mRight, mBottom;
-        private int mTopMargin, mBottomMargin;
+        private int mTopMargin, mBottomMargin, mLeftMargin, mRightMargin;
 
-        public LayoutParams(final int topMargin, final int bottomMargin, final int alignment) {
+        public LayoutParams(final int topMargin, final int bottomMargin, final int leftMargin,
+                            final int rightMargin, final int alignment) {
             super(0, 9);
             this.mAlignment = alignment;
             this.mTopMargin = topMargin;
             this.mBottomMargin = bottomMargin;
+            this.mLeftMargin = leftMargin;
+            this.mRightMargin = rightMargin;
         }
 
         public LayoutParams(Context c, AttributeSet attrs) {

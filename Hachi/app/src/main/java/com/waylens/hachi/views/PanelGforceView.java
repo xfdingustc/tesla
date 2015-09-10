@@ -1,9 +1,6 @@
 package com.waylens.hachi.views;
 
 import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.skin.Element;
@@ -26,7 +23,9 @@ public class PanelGforceView extends PanelView {
     }
 
     private void init() {
-        ContainerView.LayoutParams layoutParams = new ContainerView.LayoutParams(0, 0, mPanel.getAlignment());
+        ContainerView.LayoutParams layoutParams = new ContainerView.LayoutParams(mPanel
+            .getMarginTop(), mPanel.getMarginBottom(), mPanel.getMarginLeft(), mPanel.getMarginRight(),
+            mPanel.getAlignment());
         setLayoutParams(layoutParams);
         addElements();
     }
@@ -34,17 +33,20 @@ public class PanelGforceView extends PanelView {
     private void addElements() {
         List<Element> elementList = mPanel.getElementList();
         for (Element element : elementList) {
-            if (element instanceof ElementStaticImage) {
-                addStaticImageElement((ElementStaticImage)element);
+            switch (element.getType()) {
+                case Element.ELEMENT_TYPE_STATIC_IMAGE:
+                    StaticImageView imageView = new StaticImageView(getContext(), element);
+                    addView(imageView);
+                    break;
+                case Element.ELEMENT_TYPE_PROGRESS_IMAGE:
+                    ProgressImageView progressImageView = new ProgressImageView(getContext(), element);
+                    addView(progressImageView);
+                    break;
             }
         }
     }
 
-    private void addStaticImageElement(ElementStaticImage element) {
-        StaticImageView imageView = new StaticImageView(getContext().getApplicationContext(), element);
-        //imageView.setBackgroundColor(getResources().getColor(R.color.material_red_600));
-        addView(imageView);
-    }
+
 
     /*
     @Override
