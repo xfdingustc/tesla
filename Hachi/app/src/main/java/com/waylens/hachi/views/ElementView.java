@@ -1,6 +1,7 @@
 package com.waylens.hachi.views;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 
 import com.waylens.hachi.skin.Element;
@@ -35,7 +36,7 @@ public class ElementView extends View {
         setMeasuredDimension(mElement.getWidth(), mElement.getHeight());
     }
 
-    public void onEvent() {
+    public void onEvent(Bundle data) {
 
     }
 }

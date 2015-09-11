@@ -26,6 +26,7 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.views.DashboardView;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -57,6 +58,9 @@ public class ClipPlaybackActivity extends BaseActivity {
 
     @Bind(R.id.ivBackgroundPicture)
     ImageView mIvBackground;
+
+    @Bind(R.id.dashboard)
+    DashboardView mDashboardView;
 
 
     public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {

@@ -26,7 +26,7 @@ public class EventBus {
     public void postEvent(String event) {
         ElementView element = mSubscriber.get(event);
         if (element != null) {
-            element.onEvent();
+            element.onEvent(null);
         }
     }
 }
