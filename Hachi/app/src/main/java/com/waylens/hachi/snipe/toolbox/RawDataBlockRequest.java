@@ -2,7 +2,6 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
-import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
@@ -23,10 +22,10 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
     public static final String PARAMETER_LENGTH_MS = "length_ms";
     public static final String PARAMETER_DATA_TYPE = "data_type";
 
-    public RawDataBlockRequest(int method, Clip clip, Bundle parameters,
+    public RawDataBlockRequest(Clip clip, Bundle parameters,
                                VdbResponse.Listener<RawDataBlock> listener,
                                VdbResponse.ErrorListener errorListener) {
-        super(method, errorListener);
+        super(0, errorListener);
         this.mListener = listener;
         this.mParameters = parameters;
         this.mClip = clip;
@@ -49,8 +48,6 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
             return null;
         }
 
-        //int index = mMsgIndex;
-
         int clipType = response.readi32();
         int clipId = response.readi32();
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
@@ -61,37 +58,22 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
         header.mNumItems = response.readi32();
         header.mDataSize = response.readi32();
 
-        /*
-        if (mCmdTag != 0) {
 
-            // downloaded raw data for remuxing into mp4 file
+        RawDataBlock block = new RawDataBlock(header);
 
-            VdbClient.DownloadRawDataBlock block = new VdbClient.DownloadRawDataBlock(header);
+        int numItems = block.header.mNumItems;
+        block.timeOffsetMs = new int[numItems];
+        block.dataSize = new int[numItems];
 
-            int size = mMsgIndex - index;
-            mMsgIndex = index;
-            block.ack_data = readByteArray(size + header.mNumItems * 8 + header.mDataSize);
+        for (int i = 0; i < numItems; i++) {
+            block.timeOffsetMs[i] = response.readi32();
+            block.dataSize[i] = response.readi32();
+        }
 
-            mCallback.onDownloadRawDataBlockAsync(block);
-
-        } else {
-
-            RawDataBlock block = new RawDataBlock(header);
-
-            int numItems = block.header.mNumItems;
-            block.timeOffsetMs = new int[numItems];
-            block.dataSize = new int[numItems];
-
-            for (int i = 0; i < numItems; i++) {
-                block.timeOffsetMs[i] = response.readi32();
-                block.dataSize[i] = response.readi32();
-            }
-
-            block.data = response.readByteArray(block.header.mDataSize);
+        block.data = response.readByteArray(block.header.mDataSize);
 
 
-        } */
-        return null;
+        return VdbResponse.success(block);
     }
 
     @Override

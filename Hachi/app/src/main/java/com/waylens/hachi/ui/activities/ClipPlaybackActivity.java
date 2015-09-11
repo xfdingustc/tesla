@@ -25,6 +25,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.DownloadRawDataBlockRequest;
+import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
@@ -125,13 +126,14 @@ public class ClipPlaybackActivity extends BaseActivity {
 
     private void startPlayback() {
         Bundle parameter = new Bundle();
-        parameter.putLong(DownloadRawDataBlockRequest.PARAMETER_CLIP_TIME_MS, 0);
-        parameter.putInt(DownloadRawDataBlockRequest.PARAMETER_LENGTH_MS, mClip.clipLengthMs);
-        parameter.putInt(DownloadRawDataBlockRequest.PARAMETER_DATA_TYPE, VdbClient.RAW_DATA_ODB);
-        DownloadRawDataBlockRequest request = new DownloadRawDataBlockRequest(mClip, parameter,
-            new VdbResponse.Listener<RawDataBlock.DownloadRawDataBlock>() {
+        parameter.putBoolean(RawDataBlockRequest.PARAMETER_FOR_DOWNLOAD, false);
+        parameter.putLong(RawDataBlockRequest.PARAMETER_CLIP_TIME_MS, 0);
+        parameter.putInt(RawDataBlockRequest.PARAMETER_LENGTH_MS, mClip.clipLengthMs);
+        parameter.putInt(RawDataBlockRequest.PARAMETER_DATA_TYPE, VdbClient.RAW_DATA_ODB);
+        RawDataBlockRequest request = new RawDataBlockRequest(mClip, parameter,
+            new VdbResponse.Listener<RawDataBlock>() {
                 @Override
-                public void onResponse(RawDataBlock.DownloadRawDataBlock response) {
+                public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("GGGGGGGGGGet response: " + response.header.mDataType);
                 }
             }, new VdbResponse.ErrorListener() {
