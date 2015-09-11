@@ -62,7 +62,7 @@ public class ExecutorDelivery implements ResponseDelivery {
             }
 
 
-            if (mResponse.isSuccess()) {
+            if (mResponse != null && mResponse.isSuccess()) {
                 mRequest.deliverResponse(mResponse.result);
             }
         }

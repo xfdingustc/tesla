@@ -81,7 +81,6 @@ public class VdbAcknowledge {
         return mMsgCode;
     }
 
-
     public int readi32() {
         int result = (int) mReceiveBuffer[mMsgIndex] & 0xFF;
         mMsgIndex++;
@@ -116,6 +115,14 @@ public class VdbAcknowledge {
 
     public void skip(int n) {
         mMsgIndex += n;
+    }
+
+
+    public final byte[] readByteArray(int size) {
+        byte[] result = new byte[size];
+        System.arraycopy(mReceiveBuffer, mMsgIndex, result, 0, size);
+        mMsgIndex += size;
+        return result;
     }
 
     public void readByteArray(byte[] output, int size) {

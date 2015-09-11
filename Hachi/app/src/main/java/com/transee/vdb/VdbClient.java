@@ -11,6 +11,8 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.DownloadInfoEx;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawData;
+import com.waylens.hachi.vdb.RawDataBlock;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,58 +69,6 @@ abstract public class VdbClient {
     public static final int eMarkClip_OK = 0;
 
     // public static final int URL_TYPE = URL_TYPE_TS;
-
-    public static class RawDataItem {
-        public int dataType;
-        public long clipTimeMs;
-        public Object object; // GPSRawData for RAW_DATA_GPS
-    }
-
-    public static class RawDataResult {
-        public final Clip.ID cid;
-        public int clipDate;
-        public ArrayList<RawDataItem> items;
-
-        public RawDataResult(Clip.ID cid) {
-            this.cid = cid;
-        }
-    }
-
-    public static class RawDataBlockHeader {
-        public final Clip.ID cid;
-        public int mClipDate;
-        public int mDataType;
-        public long mRequestedTimeMs;
-        public int mNumItems;
-        public int mDataSize;
-
-        public RawDataBlockHeader(Clip.ID cid) {
-            this.cid = cid;
-        }
-    }
-
-    public static class RawDataBlock {
-        public final RawDataBlockHeader header;
-        public int[] timeOffsetMs;
-        public int[] dataSize;
-        public byte[] data;
-
-        public RawDataBlock(RawDataBlockHeader header) {
-            this.header = header;
-        }
-    }
-
-    public static class DownloadRawDataBlock {
-        public final RawDataBlockHeader header;
-        public byte[] ack_data;
-
-        public DownloadRawDataBlock(RawDataBlockHeader header) {
-            this.header = header;
-        }
-    }
-
-
-
 
 
     public class PlaylistPlaybackUrl {
@@ -185,13 +135,13 @@ abstract public class VdbClient {
 
         void onDownloadProgress(int id, int progress);
 
-        void onRawDataResultAsync(RawDataResult rawDataResult);
+        void onRawDataResultAsync(RawData rawDataResult);
 
         void onRawDataAsync(int dataType, byte[] data); // live info
 
         void onRawDataBlockAsync(RawDataBlock block);
 
-        void onDownloadRawDataBlockAsync(DownloadRawDataBlock block);
+        void onDownloadRawDataBlockAsync(RawDataBlock.DownloadRawDataBlock block);
 
         void onBufferSpaceLowAsync(BufferSpaceLowInfo info);
 

@@ -7,7 +7,6 @@ import com.transee.vdb.RemuxHelper;
 import com.transee.vdb.RemuxerParams;
 import com.transee.vdb.SlideView;
 import com.transee.vdb.VdbClient;
-import com.transee.vdb.VdbClient.DownloadRawDataBlock;
 import com.transee.viditcam.actions.ConfirmDeleteClip;
 import com.transee.viditcam.actions.ConfirmDownload;
 import com.transee.viditcam.actions.DialogBuilder;
@@ -20,6 +19,7 @@ import com.waylens.hachi.actions.SelectAudio;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.RawDataBlock;
 
 abstract public class VdbEdit {
 
@@ -190,15 +190,15 @@ abstract public class VdbEdit {
         DownloadInfoEx downloadInfo;
         int stream;
         Clip.StreamInfo si;
-        DownloadRawDataBlock mAccData;
-        DownloadRawDataBlock mGpsData;
-        DownloadRawDataBlock mObdData;
+        RawDataBlock.DownloadRawDataBlock mAccData;
+        RawDataBlock.DownloadRawDataBlock mGpsData;
+        RawDataBlock.DownloadRawDataBlock mObdData;
     }
 
     private DownloadState mDownloadState;
 
     // API
-    public void onDownloadedRawData(DownloadRawDataBlock block) {
+    public void onDownloadedRawData(RawDataBlock.DownloadRawDataBlock block) {
         if (mDownloadState == null)
             return;
         if (block.header.mNumItems <= 0)

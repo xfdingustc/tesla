@@ -49,6 +49,8 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.DownloadInfoEx;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawData;
+import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;
@@ -389,7 +391,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
 
             @Override
-            public void onRawDataResultAsync(VdbClient.RawDataResult rawDataResult) {
+            public void onRawDataResultAsync(RawData rawDataResult) {
                 Log.e(TAG, "onRawDataResultAsync");
             }
 
@@ -435,12 +437,12 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
 
             @Override
-            public void onRawDataBlockAsync(VdbClient.RawDataBlock block) {
+            public void onRawDataBlockAsync(RawDataBlock block) {
                 Log.e(TAG, "onRawDataBlockAsync");
             }
 
             @Override
-            public void onDownloadRawDataBlockAsync(VdbClient.DownloadRawDataBlock block) {
+            public void onDownloadRawDataBlockAsync(RawDataBlock.DownloadRawDataBlock block) {
                 Log.e(TAG, "onDownloadRawDataBlockAsync");
             }
 

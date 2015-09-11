@@ -15,30 +15,29 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.waylens.hachi.hardware.VdtCamera;
 import com.transee.common.GPSPath;
 import com.transee.common.VideoListView;
 import com.transee.common.android.ViewPager;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.ClipSet;
 import com.transee.vdb.ImageDecoder;
 import com.transee.vdb.Playlist;
 import com.transee.vdb.PlaylistSet;
-import com.waylens.hachi.vdb.DownloadInfoEx;
-import com.waylens.hachi.vdb.PlaybackUrl;
-import com.waylens.hachi.vdb.RemoteClip;
 import com.transee.vdb.RemoteVdb;
 import com.transee.vdb.Vdb;
-import com.transee.vdb.VdbClient.DownloadRawDataBlock;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
-import com.transee.vdb.VdbClient.RawDataBlock;
-import com.transee.vdb.VdbClient.RawDataResult;
 import com.transee.viditcam.app.ViditImageButton;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.ui.adapters.ClipSetAdapter;
 import com.waylens.hachi.ui.adapters.PlaylistSetAdapter;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawData;
+import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RemoteClip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,6 @@ public class CameraVideoActivity extends BaseActivity {
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
-
 
 
     private ClipSetAdapter mBufferedAdapter;
@@ -92,7 +90,7 @@ public class CameraVideoActivity extends BaseActivity {
 
 
     public static void launch(Activity activity, boolean isPcServer, String ssid, String
-            hostString) {
+        hostString) {
         Intent intent = new Intent(activity, CameraVideoActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean(IS_PC_SERVER, isPcServer);
@@ -107,7 +105,6 @@ public class CameraVideoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         init(savedInstanceState);
     }
-
 
 
     private boolean mbPcServer;
@@ -133,7 +130,6 @@ public class CameraVideoActivity extends BaseActivity {
         mCameraVideoEdit.onCreateActivity(savedInstanceState);
         initViews();
     }
-
 
 
     @SuppressLint("InflateParams")
@@ -407,7 +403,6 @@ public class CameraVideoActivity extends BaseActivity {
         mCameraVideoEdit.onLowMemory();
         super.onLowMemory();
     }
-
 
 
     @Override
@@ -831,7 +826,7 @@ public class CameraVideoActivity extends BaseActivity {
         }
 
         @Override
-        public void onRawDataResult(Vdb vdb, RawDataResult rawDataResult) {
+        public void onRawDataResult(Vdb vdb, RawData rawDataResult) {
             if (isEditing()) {
                 mCameraVideoEdit.onRawDataResult(rawDataResult);
             }
@@ -845,7 +840,7 @@ public class CameraVideoActivity extends BaseActivity {
         }
 
         @Override
-        public void onDownloadRawDataBlock(Vdb vdb, DownloadRawDataBlock block) {
+        public void onDownloadRawDataBlock(Vdb vdb, RawDataBlock.DownloadRawDataBlock block) {
             if (isEditing()) {
                 mCameraVideoEdit.onDownloadRawDataBlock(block);
             }

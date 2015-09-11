@@ -31,6 +31,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.DownloadInfoEx;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawDataBlock;
 
 import java.io.IOException;
 
@@ -143,9 +144,9 @@ public class ClipEditActivity extends BaseActivity {
         DownloadInfoEx downloadInfo;
         int stream;
         Clip.StreamInfo si;
-        VdbClient.DownloadRawDataBlock mAccData;
-        VdbClient.DownloadRawDataBlock mGpsData;
-        VdbClient.DownloadRawDataBlock mObdData;
+        RawDataBlock.DownloadRawDataBlock mAccData;
+        RawDataBlock.DownloadRawDataBlock mGpsData;
+        RawDataBlock.DownloadRawDataBlock mObdData;
     }
 
     private void startDownload(DownloadInfoEx downloadInfo, int stream, Clip.StreamInfo si) {

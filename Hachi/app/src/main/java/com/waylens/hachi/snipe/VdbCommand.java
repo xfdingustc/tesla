@@ -199,13 +199,35 @@ public class VdbCommand {
             if (bFirstLoop) {
                 cmdTag |= DOWNLOAD_FIRST_LOOP;
             }
-            int duration = (int)(endMs - startMs);
+            int duration = (int) (endMs - startMs);
             return new Builder()
                 .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
                 .writeClipId(clip.cid)
                 .writeInt64(startMs)
                 .writeInt32(duration)
                 .writeInt32(downloadOption)
+                .build();
+        }
+
+        public static VdbCommand createCmdGetRawData(Clip clip, long clipTimeMs, int type) {
+            return new Builder()
+                .writeCmdCode(CMD_GetRawData, 0)
+                .writeClipId(clip.cid)
+                .writeInt64(clipTimeMs)
+                .writeInt32(type)
+                .build();
+        }
+
+
+        public static VdbCommand createCmdGetRawDataBlock(Clip clip, boolean forDownload,
+                                                          long clipTimeMs, int lengthMs,
+                                                          int dataType) {
+            return new Builder()
+                .writeCmdCode(CMD_GetRawDataBlock, forDownload ? 1 : 0)
+                .writeClipId(clip.cid)
+                .writeInt64(clipTimeMs)
+                .writeInt32(lengthMs)
+                .writeInt32(dataType)
                 .build();
         }
     }

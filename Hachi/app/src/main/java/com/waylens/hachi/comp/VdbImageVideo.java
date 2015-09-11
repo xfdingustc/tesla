@@ -30,12 +30,12 @@ import com.transee.vdb.PlaylistSet;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.SlideView;
 import com.transee.vdb.SlideView.LayoutInfo;
-import com.transee.vdb.VdbClient.RawDataBlock;
 import com.transee.viditcam.app.comp.SlideHelper;
 import com.waylens.hachi.R;
 
 import com.transee.viditcam.app.VdbEditor;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.vdb.RawDataBlock;
 
 abstract public class VdbImageVideo {
 

@@ -11,6 +11,8 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.DownloadInfoEx;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawData;
+import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.vdb.SimpleClipSet;
 
@@ -330,7 +332,7 @@ public class RemoteVdbClient extends VdbClient {
         int clipType = readi32();
         int clipId = readi32();
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
-        RawDataResult result = new RawDataResult(cid);
+        RawData result = new RawData(cid);
 
         result.clipDate = readi32();
         while (true) {
@@ -342,7 +344,7 @@ public class RemoteVdbClient extends VdbClient {
             int size = readi32();
 
             if (size > 0) {
-                RawDataItem item = new RawDataItem();
+                RawData.RawDataItem item = new RawData.RawDataItem();
                 item.dataType = dataType;
                 item.clipTimeMs = clipTimeMs;
 
@@ -352,7 +354,7 @@ public class RemoteVdbClient extends VdbClient {
                 }
 
                 if (result.items == null) {
-                    result.items = new ArrayList<RawDataItem>();
+                    result.items = new ArrayList<RawData.RawDataItem>();
                 }
 
                 result.items.add(item);
@@ -408,7 +410,7 @@ public class RemoteVdbClient extends VdbClient {
         int clipType = readi32();
         int clipId = readi32();
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
-        RawDataBlockHeader header = new RawDataBlockHeader(cid);
+        RawDataBlock.RawDataBlockHeader header = new RawDataBlock.RawDataBlockHeader(cid);
         header.mClipDate = readi32();
         header.mDataType = readi32();
         header.mRequestedTimeMs = readi64();
@@ -419,7 +421,7 @@ public class RemoteVdbClient extends VdbClient {
 
             // downloaded raw data for remuxing into mp4 file
 
-            DownloadRawDataBlock block = new DownloadRawDataBlock(header);
+            RawDataBlock.DownloadRawDataBlock block = new RawDataBlock.DownloadRawDataBlock(header);
 
             int size = mMsgIndex - index;
             mMsgIndex = index;

@@ -21,7 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/ic_play_circle"/>
+        android:src="@drawable/ic_play_circle"
+        android:background="@android:color/transparent"/>
 
 
 

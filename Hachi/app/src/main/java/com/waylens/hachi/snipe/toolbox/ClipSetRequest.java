@@ -2,16 +2,15 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
-
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.vdb.SimpleClipSet;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.vdb.SimpleClipSet;
 
 /**
  * Created by Xiaofei on 2015/8/18.
@@ -27,8 +26,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
     private final Bundle mParameters;
 
     public ClipSetRequest(int method, Bundle parameters, VdbResponse.Listener<ClipSet> listener,
-                          VdbResponse
-                              .ErrorListener errorListener) {
+                          VdbResponse.ErrorListener errorListener) {
         super(method, errorListener);
         this.mListener = listener;
         this.mParameters = parameters;

@@ -37,11 +37,7 @@ import com.transee.vdb.Playlist;
 import com.transee.vdb.SlideView;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
-import com.transee.vdb.VdbClient.DownloadRawDataBlock;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
-import com.transee.vdb.VdbClient.RawDataBlock;
-import com.transee.vdb.VdbClient.RawDataItem;
-import com.transee.vdb.VdbClient.RawDataResult;
 import com.transee.viditcam.actions.SelectMapProvider;
 import com.transee.viditcam.app.CameraVideoEditPref;
 import com.transee.viditcam.app.VdbEditor;
@@ -62,6 +58,8 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.DownloadInfoEx;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawData;
+import com.waylens.hachi.vdb.RawDataBlock;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -956,10 +954,10 @@ abstract public class CameraVideoEdit {
     }
 
     // API
-    public void onRawDataResult(RawDataResult rawDataResult) {
+    public void onRawDataResult(RawData rawDataResult) {
         if (mMapVisible) { // TODO
             for (int i = 0; i < rawDataResult.items.size(); i++) {
-                RawDataItem item = rawDataResult.items.get(i);
+                RawData.RawDataItem item = rawDataResult.items.get(i);
                 if (item.dataType == VdbClient.RAW_DATA_GPS) {
                     GPSRawData rawData = (GPSRawData) item.object;
                     mVdbMap.setGPSRawData(rawData);
@@ -975,7 +973,7 @@ abstract public class CameraVideoEdit {
     }
 
     // API
-    public final void onDownloadRawDataBlock(DownloadRawDataBlock block) {
+    public final void onDownloadRawDataBlock(RawDataBlock.DownloadRawDataBlock block) {
         mVdbEdit.onDownloadedRawData(block);
     }
 

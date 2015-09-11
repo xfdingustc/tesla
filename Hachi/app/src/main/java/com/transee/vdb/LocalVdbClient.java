@@ -20,6 +20,8 @@ import com.waylens.hachi.vdb.DownloadingClip;
 import com.waylens.hachi.vdb.FileClip;
 import com.waylens.hachi.vdb.LocalClip;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawData;
+import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.SimpleClipSet;
 
 
@@ -397,7 +399,7 @@ public class LocalVdbClient extends VdbClient {
 		if (mCurrClipId != null) {
 			byte[] ack = mCurrRawData.read((int)param.mClipTimeMs, param.mTypes);
 			if (ack != null) {
-				RawDataResult result = new RawDataResult(param.cid);
+				RawData result = new RawData(param.cid);
 
 				int offset = 0;
 				offset += 4; // clip_type
@@ -418,7 +420,7 @@ public class LocalVdbClient extends VdbClient {
 					offset += 4;
 
 					if (size > 0) {
-						RawDataItem item = new RawDataItem();
+						RawData.RawDataItem item = new RawData.RawDataItem();
 						item.dataType = dataType;
 						item.clipTimeMs = clipTimeMs;
 
@@ -431,7 +433,7 @@ public class LocalVdbClient extends VdbClient {
 						}
 
 						if (result.items == null) {
-							result.items = new ArrayList<RawDataItem>();
+							result.items = new ArrayList<RawData.RawDataItem>();
 						}
 
 						result.items.add(item);
@@ -455,7 +457,7 @@ public class LocalVdbClient extends VdbClient {
 		if (mCurrClipId != null) {
 			byte[] ack = mCurrRawData.readBlock((int)param.mClipTimeMs, param.mLengthMs, param.mDataType);
 			if (ack != null) {
-				RawDataBlockHeader header = new RawDataBlockHeader(param.cid);
+				RawDataBlock.RawDataBlockHeader header = new RawDataBlock.RawDataBlockHeader(param.cid);
 
 				int offset = 0;
 				offset += 4; // clip_type

@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.orhanobut.logger.Logger;
@@ -23,9 +24,11 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
+import com.waylens.hachi.snipe.toolbox.DownloadRawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.views.DashboardView;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -35,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2015/9/1.
@@ -61,6 +65,17 @@ public class ClipPlaybackActivity extends BaseActivity {
 
     @Bind(R.id.dashboard)
     DashboardView mDashboardView;
+
+    @Bind(R.id.btnPlay)
+    ImageButton mBtnPlay;
+
+    @OnClick(R.id.btnPlay)
+    public void onBtnPlayClicked() {
+        mBtnPlay.setVisibility(View.GONE);
+        startPlayback();
+    }
+
+
 
 
     public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {
@@ -103,6 +118,29 @@ public class ClipPlaybackActivity extends BaseActivity {
         setContentView(R.layout.activity_clip_playback);
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
+
+
+
+    }
+
+    private void startPlayback() {
+        Bundle parameter = new Bundle();
+        parameter.putLong(DownloadRawDataBlockRequest.PARAMETER_CLIP_TIME_MS, 0);
+        parameter.putInt(DownloadRawDataBlockRequest.PARAMETER_LENGTH_MS, mClip.clipLengthMs);
+        parameter.putInt(DownloadRawDataBlockRequest.PARAMETER_DATA_TYPE, VdbClient.RAW_DATA_ODB);
+        DownloadRawDataBlockRequest request = new DownloadRawDataBlockRequest(mClip, parameter,
+            new VdbResponse.Listener<RawDataBlock.DownloadRawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock.DownloadRawDataBlock response) {
+                    Logger.t(TAG).d("GGGGGGGGGGet response: " + response.header.mDataType);
+                }
+            }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
     }
 
     private void preparePlayback() {
