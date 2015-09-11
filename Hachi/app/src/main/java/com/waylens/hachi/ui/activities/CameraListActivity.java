@@ -103,7 +103,7 @@ public class CameraListActivity extends BaseActivity {
 
         mRvCameraList.setLayoutManager(new LinearLayoutManager(this));
 
-        mCameraListAdapter = new CameraListRvAdapter(this);
+        mCameraListAdapter = new CameraListRvAdapter(this, mVdtCameraManager, null);
         mRvCameraList.setAdapter(mCameraListAdapter);
 
         /*

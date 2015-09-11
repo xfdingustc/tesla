@@ -33,8 +33,6 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private ClipSet mClipSet = null;
 
-
-
     public CameraClipSetAdapter(Context context, VdtCamera vdtCamera, VdbRequestQueue queue) {
         this.mContext = context;
         this.mVdtCamera = vdtCamera;
@@ -61,15 +59,8 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.videoDesc.setText("Mocked description");
         holder.videoTime.setText(clip.getDateTimeString());
         holder.videoDuration.setText(clip.getDurationString());
-
-
-
         ClipPos clipPos = new ClipPos(clip, clip.getStartTime(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, holder.videoCover);
-
-
-
-        // set onClickListener
         holder.mBtnVideoEdit.setOnClickListener(this);
         holder.mBtnVideoEdit.setTag(holder);
     }
@@ -92,7 +83,6 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<RecyclerView.View
                 int position = holder.getAdapterPosition();
                 Clip clip = mClipSet.getClip(position);
                 ClipEditActivity.launch(mContext, mVdtCamera, clip);
-
                 break;
         }
     }

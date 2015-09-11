@@ -28,45 +28,14 @@ import butterknife.ButterKnife;
 public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
     private static final String TAG = CameraListRvAdapter.class.getSimpleName();
 
-    private final Context mContext;
-    private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
+    private VdtCameraManager mVdtCameraManager;
+    private Context mContext;
+    private OnCameraActionListener mOnCameraActionListener;
 
-    public CameraListRvAdapter(Context context) {
-        this.mContext = context;
-        mVdtCameraManager.addCallback(new VdtCameraManager.Callback() {
-            @Override
-            public void onCameraConnecting(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onCameraConnected(VdtCamera vdtCamera) {
-                Logger.t(TAG).d("on Camera Connected");
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCameraVdbConnected(VdtCamera vdtCamera) {
-                Logger.t(TAG).d("camera vdb connected");
-
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCameraDisconnected(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onCameraStateChanged(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onWifiListChanged() {
-
-            }
-        });
+    public CameraListRvAdapter(Context context, VdtCameraManager cameraManager, OnCameraActionListener listener) {
+        mVdtCameraManager = cameraManager;
+        mContext = context;
+        mOnCameraActionListener = listener;
     }
 
     @Override
@@ -76,36 +45,37 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return new CameraListItemViewHolder(view);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         CameraListItemViewHolder viewHolder = (CameraListItemViewHolder) holder;
         VdtCamera camera = mVdtCameraManager.getCamera(position);
         if (camera != null) {
             //Logger.t(TAG).d("Server name: " + camera.getServerName() + " SSID: " + camera
-             //   .getSSID());
-            if (camera.isConnected() == false) {
-                viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_inactive);
-                viewHolder.mBtnClips.setEnabled(false);
-                viewHolder.mBtnPreview.setEnabled(false);
-                viewHolder.mBtnClips.clearColorFilter();
-                viewHolder.mBtnPreview.clearColorFilter();
-                viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
-            } else {
+            //   .getSSID());
+            if (camera.isConnected()) {
                 viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_active);
                 viewHolder.mBtnClips.setEnabled(true);
                 viewHolder.mBtnPreview.setEnabled(true);
                 viewHolder.mBtnClips.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
                 viewHolder.mBtnPreview.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
                 viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
+            } else {
+                viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_inactive);
+                viewHolder.mBtnClips.setEnabled(false);
+                viewHolder.mBtnPreview.setEnabled(false);
+                viewHolder.mBtnClips.clearColorFilter();
+                viewHolder.mBtnPreview.clearColorFilter();
+                viewHolder.mBtnClips.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
+                viewHolder.mBtnPreview.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
+                viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
             }
             CameraState state = VdtCamera.getCameraStates(camera);
             if (TextUtils.isEmpty(state.mCameraName)) {
-                viewHolder.mTvSsid.setText(camera.getSSID());
+                viewHolder.mCameraName.setText(camera.getSSID());
             } else {
-                viewHolder.mTvSsid.setText(state.mCameraName);
+                viewHolder.mCameraName.setText(state.mCameraName);
             }
-
-            //viewHolder.mTvServerName.setText(camera.getServerName());
 
         }
 
@@ -126,29 +96,22 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onClick(View v) {
-        CameraListItemViewHolder viewHolder;
-        int position;
-        VdtCamera camera;
+
+        CameraListItemViewHolder viewHolder = (CameraListItemViewHolder) v.getTag();
+        int position = viewHolder.getAdapterPosition();
+        VdtCamera camera = mVdtCameraManager.getCamera(position);
+        if (mOnCameraActionListener == null || camera == null) {
+            return;
+        }
         switch (v.getId()) {
             case R.id.btnClips:
-                Logger.t(TAG).d("BtnClips clicked");
-                viewHolder = (CameraListItemViewHolder)v.getTag();
-                position = viewHolder.getAdapterPosition();
-                camera = mVdtCameraManager.getCamera(position);
-                BrowseCameraActivity.launch(mContext, camera);
+                mOnCameraActionListener.onBrowseVideo(camera);
                 break;
             case R.id.btnPreview:
-                Logger.t(TAG).d("BtnPreview clicked");
-                viewHolder = (CameraListItemViewHolder)v.getTag();
-                position = viewHolder.getAdapterPosition();
-                camera = mVdtCameraManager.getCamera(position);
-                CameraControlActivity.launch(mContext, camera);
+                mOnCameraActionListener.onPreview(camera);
                 break;
             case R.id.btn_settings:
-                viewHolder = (CameraListItemViewHolder)v.getTag();
-                position = viewHolder.getAdapterPosition();
-                camera = mVdtCameraManager.getCamera(position);
-                CameraSetupActivity.launch(mContext, camera);
+                mOnCameraActionListener.onSetup(camera);
                 break;
         }
     }
@@ -159,11 +122,8 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Bind(R.id.ivCameraIcon)
         ImageView mIvCameraIcon;
 
-        @Bind(R.id.tvServerName)
-        TextView mTvServerName;
-
-        @Bind(R.id.tvSsid)
-        TextView mTvSsid;
+        @Bind(R.id.tv_camera_name)
+        TextView mCameraName;
 
         @Bind(R.id.btnClips)
         ImageButton mBtnClips;
@@ -178,5 +138,13 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public interface OnCameraActionListener {
+        void onSetup(VdtCamera camera);
+
+        void onBrowseVideo(VdtCamera camera);
+
+        void onPreview(VdtCamera camera);
     }
 }

@@ -24,6 +24,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.AccountFragment;
+import com.waylens.hachi.ui.fragments.CameraListFragment;
 import com.waylens.hachi.ui.fragments.CommentsFragment;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
@@ -39,14 +40,14 @@ import im.fir.sdk.FIR;
 import im.fir.sdk.callback.VersionCheckCallback;
 import im.fir.sdk.version.AppVersion;
 
-public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
+public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener, TabSwitchable {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String TAB_HOME_TAG = "home";
-    private static final String TAB_LIVE_TAG = "live";
-    private static final String TAB_HIGHLIGHTS_TAG = "highlights";
-    private static final String TAB_NOTIFICATIONS_TAG = "notification";
-    private static final String TAB_ACCOUNT_TAG = "account";
+    private static final int TAB_HOME_TAG = 0;
+    private static final int TAB_LIVE_TAG = 1;
+    private static final int TAB_HIGHLIGHTS_TAG = 2;
+    private static final int TAB_NOTIFICATIONS_TAG = 3;
+    private static final int TAB_ACCOUNT_TAG = 4;
 
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
@@ -58,16 +59,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
     String apkFile;
 
-    private class BottomTab {
-        private int mIconRes;
-        private String mTabTag;
-
-        public BottomTab(int iconRes, String tabTag) {
-            this.mIconRes = iconRes;
-            this.mTabTag = tabTag;
-        }
-    }
-
     private BottomTab mTabList[] = {
             new BottomTab(R.drawable.ic_home, TAB_HOME_TAG),
             new BottomTab(R.drawable.ic_live, TAB_LIVE_TAG),
@@ -75,6 +66,8 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
             new BottomTab(R.drawable.ic_notifications, TAB_NOTIFICATIONS_TAG),
             new BottomTab(R.drawable.ic_account, TAB_ACCOUNT_TAG)
     };
+
+    private Bundle fragmentArgs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,15 +148,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
             public void onTabSelected(TabLayout.Tab tab) {
                 tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
                         PorterDuff.Mode.MULTIPLY);
-                if (tab.getPosition() == 2) {
-                    startActivity(new Intent(MainActivity.this, CameraListActivity.class));
-                } else {
-                    String tag = mTabList[tab.getPosition()].mTabTag;
-                    switchFragment(tag);
-                }
-
-                tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
-                        PorterDuff.Mode.MULTIPLY);
+                switchFragment(mTabList[tab.getPosition()].mTabTag);
             }
 
             @Override
@@ -178,7 +163,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
             }
         });
 
-        setDefaultFirstFragment(TAB_HOME_TAG);
+        switchFragment(TAB_HOME_TAG);
         TabLayout.Tab tab = mMainTabs.getTabAt(0);
         tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
                 PorterDuff.Mode.MULTIPLY);
@@ -195,21 +180,32 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
         }
     }
 
-    private void setDefaultFirstFragment(String tag) {
-        switchFragment(tag);
-    }
+    private void switchFragment(int tag) {
 
-    private void switchFragment(String tag) {
         Fragment fragment;
-        if (tag.equals(TAB_HOME_TAG)) {
-            fragment = new HomeFragment();
-        } else if (tag.equals(TAB_LIVE_TAG)) {
-            fragment = new LiveFragment();
-        } else if (tag.equals(TAB_NOTIFICATIONS_TAG)) {
-            fragment = new NotificationFragment();
-        } else {
-            fragment = new AccountFragment();
+        switch (tag) {
+            case TAB_HOME_TAG:
+                fragment = new HomeFragment();
+                break;
+            case TAB_LIVE_TAG:
+                fragment = new LiveFragment();
+                if (fragmentArgs != null) {
+                    fragment.setArguments(fragmentArgs);
+                }
+                break;
+            case TAB_HIGHLIGHTS_TAG:
+                fragment = new CameraListFragment();
+                break;
+            case TAB_NOTIFICATIONS_TAG:
+                fragment = new NotificationFragment();
+                break;
+            case TAB_ACCOUNT_TAG:
+                fragment = new AccountFragment();
+                break;
+            default:
+                fragment = new HomeFragment();
         }
+
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_content, fragment);
         fragmentTransaction.addToBackStack(null);
@@ -238,6 +234,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            DashboardActivity.launch(this);
             return true;
         }
 
@@ -330,5 +327,25 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
         enableRefresh(i == 0);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public void switchTab(int position, Bundle args) {
+        if (position < 0 || position > mMainTabs.getTabCount()) {
+            return;
+        }
+        fragmentArgs = args;
+        mMainTabs.getTabAt(position).select();
+    }
+
+    static class BottomTab {
+        private int mIconRes;
+        private int mTabTag;
+
+        public BottomTab(int iconRes, int tabTag) {
+            this.mIconRes = iconRes;
+            this.mTabTag = tabTag;
+        }
     }
 }

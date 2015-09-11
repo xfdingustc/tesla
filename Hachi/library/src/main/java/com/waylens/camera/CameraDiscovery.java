@@ -117,7 +117,9 @@ public class CameraDiscovery {
     public void stopDiscoveryImpl() {
         try {
             mIsStarted.set(false);
-            mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+            if (mNsdManager != null) {
+                mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+            }
         } catch (IllegalArgumentException e) {
             Logger.t(TAG).d("", e);
         }

@@ -264,5 +264,8 @@
     <string name="please_correct_errors">Please correct all invalid inputs.</string>
     <string name="new_comments_notification">New comments on moment</string>
     <string name="like_your_post">%s like your post</string>
+    <string name="no_connected_camera">No connected camera!</string>
+    <string name="camera_video_all">All</string>
+    <string name="camera_video_bookmark">Bookmark</string>
 
 </resources>

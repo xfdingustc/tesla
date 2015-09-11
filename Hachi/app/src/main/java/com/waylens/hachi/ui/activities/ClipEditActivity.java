@@ -109,7 +109,6 @@ public class ClipEditActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void init() {
         super.init();
