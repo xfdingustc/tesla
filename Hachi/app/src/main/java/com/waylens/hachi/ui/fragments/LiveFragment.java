@@ -56,13 +56,6 @@ public class LiveFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mVdtCamera = getCamera();
-        if (mVdtCamera != null) {
-            mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera.getVdbConnection());
-        } else {
-            mViewAnimator.setDisplayedChild(2);
-        }
-
     }
 
     @Override
@@ -81,6 +74,13 @@ public class LiveFragment extends BaseFragment {
     }
 
     void initViews() {
+        mVdtCamera = getCamera();
+        if (mVdtCamera != null) {
+            mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera.getVdbConnection());
+        } else {
+            mViewAnimator.setDisplayedChild(2);
+        }
+
         mClipSetAdapter = new CameraClipSetAdapter(getActivity(), mVdtCamera,
                 mVdbRequestQueue);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
@@ -115,8 +115,10 @@ public class LiveFragment extends BaseFragment {
         super.onStop();
     }
 
-    private void init() {
-
+    @Override
+    public void onDestroyView() {
+        mClipSetAdapter.cleanup();
+        super.onDestroyView();
     }
 
     private void retrieveVideoList(int type) {
