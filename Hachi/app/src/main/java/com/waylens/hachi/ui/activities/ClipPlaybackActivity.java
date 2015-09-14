@@ -6,15 +6,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Xml;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.orhanobut.logger.Logger;
+import com.transee.common.OBDData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
@@ -24,19 +23,16 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
-import com.waylens.hachi.snipe.toolbox.DownloadRawDataBlockRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.snipe.toolbox.RawDataRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.views.DashboardView;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
-import java.io.InputStream;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -77,8 +73,6 @@ public class ClipPlaybackActivity extends BaseActivity {
     }
 
 
-
-
     public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {
         Intent intent = new Intent(context, ClipPlaybackActivity.class);
         mSharedCamera = vdtCamera;
@@ -102,8 +96,6 @@ public class ClipPlaybackActivity extends BaseActivity {
     }
 
 
-
-
     @Override
     protected void init() {
         super.init();
@@ -121,7 +113,6 @@ public class ClipPlaybackActivity extends BaseActivity {
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
 
 
-
     }
 
     private void startPlayback() {
@@ -130,18 +121,24 @@ public class ClipPlaybackActivity extends BaseActivity {
         parameter.putLong(RawDataBlockRequest.PARAMETER_CLIP_TIME_MS, 0);
         parameter.putInt(RawDataBlockRequest.PARAMETER_LENGTH_MS, mClip.clipLengthMs);
         parameter.putInt(RawDataBlockRequest.PARAMETER_DATA_TYPE, VdbClient.RAW_DATA_ODB);
-        RawDataBlockRequest request = new RawDataBlockRequest(mClip, parameter,
-            new VdbResponse.Listener<RawDataBlock>() {
-                @Override
-                public void onResponse(RawDataBlock response) {
-                    Logger.t(TAG).d("GGGGGGGGGGet response: " + response.header.mDataType);
+
+        RawDataBlockRequest request = new RawDataBlockRequest(mClip, parameter, new VdbResponse.Listener<RawDataBlock>() {
+            @Override
+            public void onResponse(RawDataBlock response) {
+                for (int i = 0; i < response.header.mNumItems; i++) {
+                    RawData.RawDataItem item = response.getRawDataItem(i);
+                    OBDData obdData = (OBDData)item.object;
+                    Logger.t(TAG).d(obdData.toString());
                 }
-            }, new VdbResponse.ErrorListener() {
+            }
+        }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
             }
         });
+
+
         mVdbRequestQueue.add(request);
     }
 
@@ -197,8 +194,6 @@ public class ClipPlaybackActivity extends BaseActivity {
                 return false;
             }
         });
-
-
 
 
         try {

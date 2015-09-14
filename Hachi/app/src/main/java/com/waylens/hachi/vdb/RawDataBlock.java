@@ -1,5 +1,8 @@
 package com.waylens.hachi.vdb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Xiaofei on 2015/9/11.
  */
@@ -32,7 +35,17 @@ public class RawDataBlock {
     public int[] dataSize;
     public byte[] data;
 
+    private List<RawData.RawDataItem> mRawDataItems = new ArrayList<>();
+
     public RawDataBlock(RawDataBlockHeader header) {
         this.header = header;
+    }
+
+    public RawData.RawDataItem getRawDataItem(int index) {
+        return mRawDataItems.get(index);
+    }
+
+    public void addRawDataItem(RawData.RawDataItem item) {
+        mRawDataItems.add(item);
     }
 }

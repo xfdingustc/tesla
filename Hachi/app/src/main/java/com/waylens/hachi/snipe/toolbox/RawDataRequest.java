@@ -2,46 +2,91 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
+import com.transee.common.GPSRawData;
+import com.transee.common.OBDData;
+import com.transee.common.Utils;
+import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.RawData;
+
+import java.util.ArrayList;
 
 /**
  * Created by Xiaofei on 2015/9/11.
  */
 public class RawDataRequest extends VdbRequest<RawData> {
-    private final VdbResponse<RawData> mListener;
+    private final VdbResponse.Listener<RawData> mListener;
     private final Bundle mParameters;
-    public static final int METHOD_GET = 0;
-    public static final int METHOD_SET = 1;
+    private final Clip mClip;
 
-    public RawDataRequest(int method, Bundle parameters, VdbResponse<RawData> listener,
+    public static final String PARAMETER_CLIP_TIME_MS = "clip_time_ms";
+    public static final String PARAMETER_TYPE = "type";
+
+    public RawDataRequest(Clip clip, Bundle parameters, VdbResponse.Listener<RawData> listener,
                           VdbResponse.ErrorListener errorListener) {
-        super(method, errorListener);
+        super(0, errorListener);
+        this.mClip = clip;
         this.mListener = listener;
         this.mParameters = parameters;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
-        switch (mMethod) {
-            case METHOD_GET:
-                //mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(type);
-                mVdbCommand = null;
-        }
-
+        long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
+        int type = mParameters.getInt(PARAMETER_TYPE);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawData(mClip, clipTimeMs, type);
         return mVdbCommand;
     }
 
     @Override
     protected VdbResponse<RawData> parseVdbResponse(VdbAcknowledge response) {
-        return null;
+        if (response.getRetCode() != 0) {
+            return null;
+        }
+
+        int clipType = response.readi32();
+        int clipId = response.readi32();
+        Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
+        RawData result = new RawData(cid);
+
+        result.clipDate = response.readi32();
+        while (true) {
+            int dataType = response.readi32();
+            if (dataType == 0)
+                break;
+
+            long clipTimeMs = response.readi64();
+            int size = response.readi32();
+
+            if (size > 0) {
+                RawData.RawDataItem item = new RawData.RawDataItem();
+                item.dataType = dataType;
+                item.clipTimeMs = clipTimeMs;
+
+                byte[] data = response.readByteArray(size);
+                if (dataType == VdbClient.RAW_DATA_GPS) {
+                    item.object = GPSRawData.translate(data);
+                } else if (dataType == VdbClient.RAW_DATA_ACC) {
+
+                } else if (dataType == VdbClient.RAW_DATA_ODB) {
+                    item.object = OBDData.parseOBD(data);
+                }
+
+
+                result.items.add(item);
+            }
+        }
+
+        return VdbResponse.success(result);
+
     }
 
     @Override
     protected void deliverResponse(RawData response) {
-
+        mListener.onResponse(response);
     }
 }

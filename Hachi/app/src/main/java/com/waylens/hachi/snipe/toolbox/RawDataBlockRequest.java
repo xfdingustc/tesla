@@ -2,17 +2,21 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
+import com.transee.common.OBDData;
+import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
 
 /**
  * Created by Xiaofei on 2015/9/11.
  */
 public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
+    private static final String TAG = RawDataBlockRequest.class.getSimpleName();
     private final VdbResponse.Listener<RawDataBlock> mListener;
     private final Bundle mParameters;
     private final Clip mClip;
@@ -70,7 +74,18 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
             block.dataSize[i] = response.readi32();
         }
 
-        block.data = response.readByteArray(block.header.mDataSize);
+
+        for (int i = 0; i < numItems; i++) {
+            RawData.RawDataItem item = new RawData.RawDataItem();
+            item.dataType = header.mDataType;
+            item.clipTimeMs = block.timeOffsetMs[i] + header.mRequestedTimeMs;
+            byte[] data = response.readByteArray(block.dataSize[i]);
+            if (header.mDataType == VdbClient.RAW_DATA_ODB) {
+                item.object = OBDData.parseOBD(data);
+            }
+
+            block.addRawDataItem(item);
+        }
 
 
         return VdbResponse.success(block);

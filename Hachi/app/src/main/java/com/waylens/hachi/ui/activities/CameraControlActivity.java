@@ -420,7 +420,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                 }
 
                 if (dataType == VdbClient.RAW_DATA_ODB) {
-                    final OBDData obdData = Utils.parseOBD(data);
+                    final OBDData obdData = OBDData.parseOBD(data);
                     if (obdData == null) {
                         return;
                     }
