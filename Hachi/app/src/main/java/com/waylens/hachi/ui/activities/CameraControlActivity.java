@@ -1,14 +1,17 @@
 package com.waylens.hachi.ui.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -24,6 +27,17 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.overlay.Icon;
+import com.mapbox.mapboxsdk.overlay.Marker;
+import com.mapbox.mapboxsdk.overlay.PathOverlay;
+import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.transee.ccam.AbsCameraClient;
 import com.transee.ccam.BtState;
@@ -43,6 +57,7 @@ import com.transee.viditcam.actions.DialogBuilder;
 import com.transee.viditcam.app.CameraSetupActivity;
 import com.transee.viditcam.app.ViditImageButton;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -56,6 +71,8 @@ import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;
 import com.waylens.hachi.views.GearView;
 import com.waylens.hachi.views.PrefsUtil;
+
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -100,11 +117,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     private TextView mTextRecordState;
     private RemoteVdbClient mRemoteVdbClient;
 
-    //private GaugeView mGaugeSpeed;
-    //private GaugeView mGaugeRpm;
-    //private GaugeView mGaugeTemperature;
-    //private View mGaugeViewHolder;
-
     GaugeView mGaugeView;
     GearView mGearView;
     BarView mWhp;
@@ -113,7 +125,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     GForceView mGForceView;
     View mOverlayView;
 
-    //MapView mapView;
+    MapView mapView;
 
     View mapHolder;
     ImageView weatherIcon;
@@ -134,12 +146,14 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
     };
 
-    //private PathOverlay pathOverlay;
-    //private Marker marker;
+    private PathOverlay pathOverlay;
+    private Marker marker;
 
     LocationManager locationManager;
     LocationListener locationListener;
     int gpsSource;
+
+    private RequestQueue mRequestQueue;
 
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
@@ -183,6 +197,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         };
         PrefsUtil.initImageLoader(this);
         mHandler = new Handler();
+        mRequestQueue = Volley.newRequestQueue(this);
     }
 
     private void startOverlay() {
@@ -398,7 +413,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             @Override
             public void onRawDataAsync(int dataType, byte[] data) {
                 if (dataType == VdbClient.RAW_DATA_GPS
-                    && gpsSource == PrefsUtil.GPS_CAMERA) {
+                        && gpsSource == PrefsUtil.GPS_CAMERA) {
                     try {
                         final GPSRawData gpsRawData = GPSRawData.translate(data);
                         Log.e("gpsdata", "lat, lon: " + gpsRawData.coord.lat_orig + ", " + gpsRawData.coord.lng_orig);
@@ -469,18 +484,17 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateMap(GPSRawData gpsRawData) {
-        /*if (mapView == null || pathOverlay == null || marker == null) {
+        if (mapView == null || pathOverlay == null || marker == null) {
             return;
         }
         LatLng latLng = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
         pathOverlay.addPoint(latLng);
         marker.setPoint(latLng);
         mapView.setCenter(latLng);
-    */
+
     }
 
     private void updateMap(Location location) {
-        /*
         if (mapView == null || pathOverlay == null || marker == null) {
             return;
         }
@@ -488,7 +502,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         pathOverlay.addPoint(latLng);
         marker.setPoint(latLng);
         mapView.setCenter(latLng);
-        */
+
     }
 
     private void getLocation() {
@@ -514,7 +528,20 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             public void onProviderDisabled(String provider) {
             }
         };
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
 
     }
 
@@ -526,7 +553,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
         BtState btState = VdtCamera.getBtStates(mVdtCamera);
         return (btState.mBtState == BtState.BT_State_Enabled)
-            && (btState.mObdState.mState == BtState.BTDEV_State_On);
+                && (btState.mObdState.mState == BtState.BTDEV_State_On);
     }
 
     private String getHostString(VdtCamera vdtCamera) {
@@ -555,7 +582,19 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
         taskHandler.removeCallbacks(simulateDataTask);
         if (locationManager != null && locationListener != null) {
-            //locationManager.removeUpdates(locationListener);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+            locationManager.removeUpdates(locationListener);
         }
     }
 
@@ -688,10 +727,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
         mRecordButton.setLayoutParams(lp);
 
-        //mGaugeSpeed = (GaugeView) findViewById(R.id.gauge_speed);
-        //mGaugeRpm = (GaugeView) findViewById(R.id.gauge_rpm);
-        //mGaugeTemperature = (GaugeView) findViewById(R.id.gauge_temperature);
-        //mGaugeViewHolder = findViewById(R.id.gauge_view_holder);
+
         mGaugeView = (GaugeView) findViewById(R.id.gauge_view);
         mGearView = (GearView) findViewById(R.id.gear_view);
         mWhp = (BarView) findViewById(R.id.view_whp);
@@ -699,7 +735,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         mBaro = (BarView) findViewById(R.id.view_baro);
         mGForceView = (GForceView) findViewById(R.id.gforce_view);
         mOverlayView = findViewById(R.id.overlay_view);
-        /*
+
         mapView = (MapView) findViewById(R.id.mapbox_view);
         mapView.setZoom(16);
         pathOverlay = new PathOverlay(Color.rgb(252, 219, 12), 3);
@@ -710,7 +746,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         Drawable icon = getResources().getDrawable(R.drawable.map_car_inner_red_triangle);
         marker.setIcon(new Icon(icon));
         mapView.addMarker(marker);
-        */
+
         mapHolder = findViewById(R.id.map_holder);
         weatherIcon = (ImageView) findViewById(R.id.weather_icon);
         weatherTemp = (TextView) findViewById(R.id.weather_temp);
@@ -724,7 +760,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
         gpsSource = PrefsUtil.getGPSource();
         initWeatherData();
-        //getWeatherData(null);
     }
 
     private void initWeatherData() {
@@ -740,7 +775,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void getWeatherData(double lat, double lng) {
-        /*
         long updateTime = PrefsUtil.getUpdateWeatherTime();
         long now = System.currentTimeMillis();
         Log.e("test", "now:" + now);
@@ -749,46 +783,44 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             Log.e("test", "Don't need to update weather data");
             return;
         }
-        RestAdapter restAdapter = new RestAdapter.Builder()
-            .setEndpoint("http://api.worldweatheronline.com")
-            .build();
-        WeatherService service = restAdapter.create(WeatherService.class);
-        Callback<Response> callback = new Callback<Response>() {
-            @Override
-            public void success(Response rawResponse, Response response) {
-                try {
-                    byte[] bytes = streamToBytes(rawResponse.getBody().in());
-                    String result = new String(bytes);
-                    JSONObject jsonObject = new JSONObject(result);
-                    JSONObject current = jsonObject.getJSONObject("data").getJSONArray("current_condition").getJSONObject(0);
-                    if (mapHolder == null) {
-                        return;
+
+        String url = String.format(Constants.API_WEATHER, lat + "," + lng);
+        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject current = response.getJSONObject("data").getJSONArray("current_condition").getJSONObject(0);
+                            if (mapHolder == null) {
+                                return;
+                            }
+
+                            String tempF = current.optString("temp_F") + "\u00B0";
+                            String windSpeedKmph = current.optString("windspeedKmph") + "Kmph";
+                            String iconUrl = current.getJSONArray("weatherIconUrl").getJSONObject(0).getString("value");
+                            PrefsUtil.setWeatherTempF(tempF);
+                            PrefsUtil.setWeatherWindSpeed(windSpeedKmph);
+                            PrefsUtil.setWeatherIcon(iconUrl);
+                            PrefsUtil.setUpdateWeatherTime(System.currentTimeMillis());
+                            weatherTemp.setText(tempF);
+                            weatherWind.setText(windSpeedKmph);
+                            ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
+                        } catch (Exception e) {
+                            Log.e("test", "", e);
+                        }
                     }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("test", "Error: " + error);
+                    }
+                }));
 
-                    String tempF = current.optString("temp_F") + "\u00B0";
-                    String windspeedKmph = current.optString("windspeedKmph") + "Kmph";
-                    String iconUrl = current.getJSONArray("weatherIconUrl").getJSONObject(0).getString("value");
-                    PrefsUtil.setWeatherTempF(tempF);
-                    PrefsUtil.setWeatherWindSpeed(windspeedKmph);
-                    PrefsUtil.setWeatherIcon(iconUrl);
-                    PrefsUtil.setUpdateWeatherTime(System.currentTimeMillis());
-                    weatherTemp.setText(tempF);
-                    weatherWind.setText(windspeedKmph);
-                    ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
-                } catch (Exception e) {
-                    Log.e("test", "Error", e);
-                }
-            }
+        mRequestQueue.start();
 
-            @Override
-            public void failure(RetrofitError error) {
-                Log.e("test", "Error: " + error);
-            }
-        };
         //String q = "31.190979000000002,121.60145658333334";
-        String q = lat + "," + lng;
-        service.getWeather("e081e88edf6ffe4bcd0d12f34b26e", "json", "1", "12", q, callback);
-        */
+        //service.getWeather("e081e88edf6ffe4bcd0d12f34b26e", "json", "1", "12", q, callback);
     }
 
     public static byte[] streamToBytes(InputStream stream) throws IOException {
@@ -1005,7 +1037,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     private void updateModeState() {
         CameraState states = VdtCamera.getCameraStates(mVdtCamera);
         if (states.canDoStillCapture()
-            && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
+                && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
             mModeView.setVisibility(View.VISIBLE);
             mTextRecordState.setText("");
             if (states.mbIsStill) {
