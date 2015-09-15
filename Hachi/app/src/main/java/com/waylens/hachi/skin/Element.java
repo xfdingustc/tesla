@@ -120,6 +120,8 @@ public class Element implements ContainerLayouts {
             ret = CENTER_RIGHT;
         } else if (alignment.equals("Center_Left")) {
             ret = CENTER_LEFT;
+        } else if (alignment.equals("Bottom_Right")) {
+            ret = BOTTOM_RIGHT;
         }
         return ret;
     }

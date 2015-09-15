@@ -100,7 +100,6 @@
             "MarginBottom": "48",
             "Resource": "skin_default/gforce/gforce-label_accel_opa50.png"
           },
-
           {
             "Name": "gforce-central_dot",
             "Type": "StaticImage",
@@ -117,6 +116,17 @@
             "Alignment": "Center_Right",
             "MarginRight": "96",
             "Subscribe": "GforceLeft",
+            "Resource": "skin_default/gforce/gforce-bar_17.png"
+          },
+          {
+            "Name": "gforce_right",
+            "Type": "ProgressImage",
+            "Width": "76",
+            "Height": "62",
+            "Alignment": "Center_Left",
+            "MarginLeft": "96",
+            "Rotation": "180",
+            "Subscribe": "GforceRight",
             "Resource": "skin_default/gforce/gforce-bar_17.png"
           }
         ]
@@ -162,6 +172,174 @@
             "MarginRight": "48",
             "Alignment": "Top_Right",
             "Resource": "skin_default/map/map-compass_icon.png"
+          }
+        ]
+      },
+      {
+        "Type": "gear",
+        "Width": "206",
+        "Height": "372",
+        "Alignment": "Bottom_Right",
+        "Elements": [
+          {
+            "Name": "gear-background_panel",
+            "Type": "StaticImage",
+            "Width": "158",
+            "Height": "324",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "24",
+            "MarginBottom": "24",
+            "Resource": "skin_default/gear/gear-background_panel.png"
+          },
+          {
+            "Name": "gear-gear_label",
+            "Type": "StaticImage",
+            "Width": "80",
+            "Height": "25",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "48",
+            "MarginBottom": "32",
+            "Resource": "skin_default/gear/gear-gear_label.png"
+          },
+          {
+            "Name": "gear-label_R",
+            "Type": "StaticImage",
+            "Width": "20",
+            "Height": "16",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "40",
+            "MarginBottom": "76",
+            "Resource": "skin_default/gear/gear-label_R.png"
+          },
+          {
+            "Name": "gear-back_arrow",
+            "Type": "StaticImage",
+            "Width": "11",
+            "Height": "17",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "72",
+            "MarginBottom": "76",
+            "Resource": "skin_default/gear/gear-back_arrow.png"
+          },
+          {
+            "Name": "gear-dash_1",
+            "Type": "StaticImage",
+            "Width": "10",
+            "Height": "4",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "72",
+            "MarginBottom": "120",
+            "Resource": "skin_default/gear/gear-dash_1.png"
+          },
+          {
+            "Name": "gear-number_1",
+            "Type": "StaticImage",
+            "Width": "7",
+            "Height": "16",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "45",
+            "MarginBottom": "116",
+            "Resource": "skin_default/numbers/numbers-1-22px-opa70.png"
+          },
+          {
+            "Name": "gear-dash_2",
+            "Type": "StaticImage",
+            "Width": "19",
+            "Height": "4",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "72",
+            "MarginBottom": "160",
+            "Resource": "skin_default/gear/gear-dash_2.png"
+          },
+          {
+            "Name": "gear-number_2",
+            "Type": "StaticImage",
+            "Width": "17",
+            "Height": "16",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "40",
+            "MarginBottom": "156",
+            "Resource": "skin_default/numbers/numbers-2-22px-opa70.png"
+          },
+          {
+            "Name": "gear-dash_3",
+            "Type": "StaticImage",
+            "Width": "28",
+            "Height": "5",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "72",
+            "MarginBottom": "200",
+            "Resource": "skin_default/gear/gear-dash_3.png"
+          },
+          {
+            "Name": "gear-number_3",
+            "Type": "StaticImage",
+            "Width": "17",
+            "Height": "16",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "40",
+            "MarginBottom": "196",
+            "Resource": "skin_default/numbers/numbers-3-22px-opa70.png"
+          },
+          {
+            "Name": "gear-dash_4",
+            "Type": "StaticImage",
+            "Width": "37",
+            "Height": "5",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "72",
+            "MarginBottom": "240",
+            "Resource": "skin_default/gear/gear-dash_4.png"
+          },
+          {
+            "Name": "gear-number_4",
+            "Type": "StaticImage",
+            "Width": "18",
+            "Height": "16",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "40",
+            "MarginBottom": "236",
+            "Resource": "skin_default/numbers/numbers-4-22px-opa70.png"
+          },
+          {
+            "Name": "gear-dash_5",
+            "Type": "StaticImage",
+            "Width": "51",
+            "Height": "5",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "72",
+            "MarginBottom": "280",
+            "Resource": "skin_default/gear/gear-dash_5.png"
+          },
+          {
+            "Name": "gear-number_5",
+            "Type": "StaticImage",
+            "Width": "18",
+            "Height": "16",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "40",
+            "MarginBottom": "276",
+            "Resource": "skin_default/numbers/numbers-5-22px-opa70.png"
+          },
+          {
+            "Name": "gear-dash_6",
+            "Type": "StaticImage",
+            "Width": "70",
+            "Height": "5",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "72",
+            "MarginBottom": "320",
+            "Resource": "skin_default/gear/gear-dash_6.png"
+          },
+          {
+            "Name": "gear-number_6",
+            "Type": "StaticImage",
+            "Width": "18",
+            "Height": "16",
+            "Alignment": "Bottom_Right",
+            "MarginRight": "40",
+            "MarginBottom": "316",
+            "Resource": "skin_default/numbers/numbers-6-22px-opa70.png"
           }
         ]
       }

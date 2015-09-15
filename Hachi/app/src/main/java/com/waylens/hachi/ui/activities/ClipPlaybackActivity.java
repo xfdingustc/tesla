@@ -159,6 +159,8 @@ public class ClipPlaybackActivity extends BaseActivity {
                             public void run() {
                                 mDashboardView.setRawData(DashboardView.GFORCE_LEFT, accData.accX
                                     * 5);
+                                mDashboardView.setRawData(DashboardView.GFORCE_RIGHT, accData
+                                    .accY * 5);
                             }
                         });
 

@@ -27,6 +27,7 @@ public class DashboardView extends ContainerView {
     private final static String TAG = DashboardView.class.getSimpleName();
 
     public static final String GFORCE_LEFT = "GforceLeft";
+    public static final String GFORCE_RIGHT = "GforceRight";
 
     private Skin mSkin = SkinManager.getManager().getSkin();
 

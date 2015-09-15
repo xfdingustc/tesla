@@ -84,6 +84,12 @@ public class ContainerView extends ViewGroup {
                     params.mTop = (height - child.getMeasuredHeight()) / 2 + params.mTopMargin;
                     params.mBottom = params.mTop + child.getMeasuredHeight();
                     break;
+                case LayoutParams.BOTTOM_RIGHT:
+                    params.mRight = width - params.mRightMargin;
+                    params.mLeft = params.mRight - child.getMeasuredWidth();
+                    params.mBottom = height - params.mBottomMargin;
+                    params.mTop = params.mBottom - child.getMeasuredHeight();
+                    break;
             }
         }
 
