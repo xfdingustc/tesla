@@ -44,7 +44,7 @@ public class ContainerView extends ViewGroup {
                     break;
                 case LayoutParams.CENTER:
                     params.mLeft = (width - child.getMeasuredWidth()) / 2;
-                    params.mTop = (height - child.getMeasuredHeight()) / 2;
+                    params.mTop = (height - child.getMeasuredHeight()) / 2 - params.mBottomMargin;
                     params.mRight = params.mLeft + child.getMeasuredWidth();
                     params.mBottom = params.mTop + child.getMeasuredHeight();
                     break;

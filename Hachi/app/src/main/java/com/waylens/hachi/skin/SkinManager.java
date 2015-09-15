@@ -48,7 +48,6 @@ public class SkinManager {
     public void load() {
         try {
             InputStream in = mSharedContext.getAssets().open("skins.xml");
-            Logger.t(TAG).d("path: " + mSharedContext.getAssets().toString());
             parseSkins(in);
         } catch (IOException e) {
             e.printStackTrace();

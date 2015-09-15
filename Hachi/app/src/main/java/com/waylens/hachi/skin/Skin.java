@@ -69,7 +69,6 @@ public class Skin {
             for (int i = 0; i < panelArray.length(); i++) {
                 JSONObject object = panelArray.getJSONObject(i);
                 String type = object.getString(TAG_TYPE);
-                Logger.t(TAG).d(type);
                 Panel panel = Panel.PanelFactory.createPanel(type);
                 panel.parse(object);
                 mPanels.add(panel);

@@ -342,6 +342,86 @@
             "Resource": "skin_default/numbers/numbers-6-22px-opa70.png"
           }
         ]
+      },
+      {
+        "Type": "speed",
+        "Width": "328",
+        "Height": "328",
+        "Alignment": "Bottom_Right",
+        "MarginRight": "128",
+        "MarginBottom": "24",
+        "Elements": [
+          {
+            "Name": "speed-outer_circle_background",
+            "Type": "StaticImage",
+            "Width": "328",
+            "Height": "328",
+            "Alignment": "Center",
+            "Resource": "skin_default/speed/speed-outer_circle_background.png"
+          },
+          {
+            "Name": "speed-inner_circle_background",
+            "Type": "StaticImage",
+            "Width": "282",
+            "Height": "282",
+            "Alignment": "Center",
+            "Resource": "skin_default/speed/speed-inner_circle_background.png"
+          },
+          {
+            "Name": "speed-circle_panel_base_frame",
+            "Type": "StaticImage",
+            "Width": "281",
+            "Height": "251",
+            "Alignment": "Center",
+            "MarginBottom": "15",
+            "Resource": "skin_default/speed/speed-circle_panel_base_frame.png"
+          },
+          {
+            "Name": "speed-label_MPH",
+            "Type": "StaticImage",
+            "Width": "50",
+            "Height": "13",
+            "Alignment": "Bottom_Center",
+            "MarginBottom": "60",
+            "Resource": "skin_default/speed/speed-label_MPH.png"
+          },
+          {
+            "Name": "speed-label_RPM1000",
+            "Type": "StaticImage",
+            "Width": "96",
+            "Height": "11",
+            "Alignment": "Top_Center",
+            "MarginTop": "100",
+            "Resource": "skin_default/speed/speed-label_RPM1000.png"
+          },
+          {
+            "Name": "speed-inner_needles_none_highlighted",
+            "Type": "StaticImage",
+            "Width": "220",
+            "Height": "190",
+            "Alignment": "Center",
+            "MarginBottom": "15",
+            "Resource": "skin_default/speed/speed-inner_needles_none_highlighted.png"
+          }
+        ]
+      },
+      {
+        "Type": "throttle",
+        "Width": "206",
+        "Height": "324",
+        "Alignment": "Bottom_Right",
+        "MarginRight": "400",
+        "MarginBottom": "24",
+        "Elements": [
+          {
+            "Name": "throttle-background_panel",
+            "Type": "StaticImage",
+            "Width": "180",
+            "Height": "258",
+            "Alignment": "Top_Left",
+            "Resource": "skin_default/throttle/throttle-background_panel.png"
+          }
+        ]
       }
     ]
   }
