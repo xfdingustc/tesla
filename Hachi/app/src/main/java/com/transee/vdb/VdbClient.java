@@ -40,14 +40,8 @@ abstract public class VdbClient {
     public static final int STREAM_MAIN = 0;
     public static final int STREAM_SUB_1 = 1;
 
-    public static final int RAW_DATA_NULL = 0;
-    public static final int RAW_DATA_GPS = 1;
-    public static final int RAW_DATA_ACC = 2;
-    public static final int RAW_DATA_ODB = 3;
 
-    public static final int F_RAW_DATA_GPS = (1 << RAW_DATA_GPS);
-    public static final int F_RAW_DATA_ACC = (1 << RAW_DATA_ACC);
-    public static final int F_RAW_DATA_ODB = (1 << RAW_DATA_ODB);
+
 
     public static final int DOWNLOAD_OPT_MAIN_STREAM = (1 << 0);
     public static final int DOWNLOAD_OPT_SUB_STREAM_1 = (1 << 1);

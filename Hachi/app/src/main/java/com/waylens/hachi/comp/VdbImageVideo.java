@@ -669,7 +669,7 @@ abstract public class VdbImageVideo {
 
 	// API
 	public void onRawDataBlock(RawDataBlock block) {
-		if (block.header.mDataType == RemoteVdbClient.RAW_DATA_ACC) {
+		if (block.header.mDataType == RawDataBlock.RAW_DATA_ACC) {
 			if (mEditor.isEditingClip(block.header.cid)) {
 				int index = (int)(block.header.mRequestedTimeMs - mEditor.mClip.getStartTime()) / mFrameLengthMs;
 				HashCache.Item<Object, Bitmap, Object> item = mSlideBitmapCache.getItem(indexToKey(index));
@@ -733,7 +733,7 @@ abstract public class VdbImageVideo {
 				int max = (mEditor.mClip.clipLengthMs + mFrameLengthMs - 1) / mFrameLengthMs;
 				if (index < max) {
 					int posMs = index * mFrameLengthMs;
-					int rawFlags = mbShowAcc ? RemoteVdbClient.F_RAW_DATA_ACC : 0;
+					int rawFlags = mbShowAcc ? RawDataBlock.F_RAW_DATA_ACC : 0;
 					mEditor.requestClipSlideImage(posMs, rawFlags, mFrameLengthMs, mSlideView.getImageWidth(),
 							mSlideView.getImageHeight());
 				}

@@ -26,6 +26,8 @@ import java.util.List;
 public class DashboardView extends ContainerView {
     private final static String TAG = DashboardView.class.getSimpleName();
 
+    public static final String GFORCE_LEFT = "GforceLeft";
+
     private Skin mSkin = SkinManager.getManager().getSkin();
 
     private EventBus mEventBus = new EventBus();
@@ -55,8 +57,9 @@ public class DashboardView extends ContainerView {
         super.onLayout(changed, l, t, r, b);
     }
 
-    public void setOBDData() {
-        mEventBus.postEvent("GforceLeft");
+
+    public void setRawData(String key, int value) {
+        mEventBus.postEvent(key, value);
     }
 
     private void init() {

@@ -204,13 +204,13 @@ abstract public class VdbEdit {
         if (block.header.mNumItems <= 0)
             return;
         switch (block.header.mDataType) {
-            case VdbClient.RAW_DATA_GPS:
+            case RawDataBlock.RAW_DATA_GPS:
                 mDownloadState.mGpsData = block;
                 break;
-            case VdbClient.RAW_DATA_ACC:
+            case RawDataBlock.RAW_DATA_ACC:
                 mDownloadState.mAccData = block;
                 break;
-            case VdbClient.RAW_DATA_ODB:
+            case RawDataBlock.RAW_DATA_ODB:
                 mDownloadState.mObdData = block;
                 break;
         }

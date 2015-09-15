@@ -37,7 +37,8 @@ public class ProgressImageView extends ElementView {
     }
 
     @Override
-    public void onEvent(Bundle data) {
-        setProgress(100);
+    public void onEvent(Object data) {
+        Integer progress = (Integer)data;
+        setProgress(progress);
     }
 }

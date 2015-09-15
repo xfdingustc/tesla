@@ -3,8 +3,7 @@ package com.waylens.hachi.snipe.toolbox;
 import android.os.Bundle;
 
 import com.transee.common.GPSRawData;
-import com.transee.common.OBDData;
-import com.transee.common.Utils;
+import com.waylens.hachi.vdb.OBDData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -12,8 +11,8 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.RawData;
-
-import java.util.ArrayList;
+import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 
 /**
  * Created by Xiaofei on 2015/9/11.
@@ -63,17 +62,17 @@ public class RawDataRequest extends VdbRequest<RawData> {
             int size = response.readi32();
 
             if (size > 0) {
-                RawData.RawDataItem item = new RawData.RawDataItem();
+                RawDataItem item = new RawDataItem();
                 item.dataType = dataType;
                 item.clipTimeMs = clipTimeMs;
 
                 byte[] data = response.readByteArray(size);
-                if (dataType == VdbClient.RAW_DATA_GPS) {
+                if (dataType == RawDataBlock.RAW_DATA_GPS) {
                     item.object = GPSRawData.translate(data);
-                } else if (dataType == VdbClient.RAW_DATA_ACC) {
+                } else if (dataType == RawDataBlock.RAW_DATA_ACC) {
 
-                } else if (dataType == VdbClient.RAW_DATA_ODB) {
-                    item.object = OBDData.parseOBD(data);
+                } else if (dataType == RawDataBlock.RAW_DATA_ODB) {
+                    item.object = OBDData.parse(data);
                 }
 
 

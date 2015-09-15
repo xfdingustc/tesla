@@ -2,15 +2,16 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
-import com.transee.common.OBDData;
+import com.waylens.hachi.vdb.AccData;
+import com.waylens.hachi.vdb.OBDData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 
 /**
  * Created by Xiaofei on 2015/9/11.
@@ -18,31 +19,27 @@ import com.waylens.hachi.vdb.RawDataBlock;
 public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
     private static final String TAG = RawDataBlockRequest.class.getSimpleName();
     private final VdbResponse.Listener<RawDataBlock> mListener;
-    private final Bundle mParameters;
+
     private final Clip mClip;
+    private final Long mClipTimeMs;
+    private final int mLengthMs;
+    private final int mDataType;
 
-    public static final String PARAMETER_FOR_DOWNLOAD = "for_download";
-    public static final String PARAMETER_CLIP_TIME_MS = "clip_time_ms";
-    public static final String PARAMETER_LENGTH_MS = "length_ms";
-    public static final String PARAMETER_DATA_TYPE = "data_type";
-
-    public RawDataBlockRequest(Clip clip, Bundle parameters,
+    public RawDataBlockRequest(Clip clip, Long clipTimeMs, int lengthMs, int dataType,
                                VdbResponse.Listener<RawDataBlock> listener,
                                VdbResponse.ErrorListener errorListener) {
         super(0, errorListener);
         this.mListener = listener;
-        this.mParameters = parameters;
         this.mClip = clip;
+        this.mClipTimeMs = clipTimeMs;
+        this.mLengthMs = lengthMs;
+        this.mDataType = dataType;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
-        boolean forDownload = mParameters.getBoolean(PARAMETER_FOR_DOWNLOAD);
-        long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
-        int lengthMs = mParameters.getInt(PARAMETER_LENGTH_MS);
-        int dataType = mParameters.getInt(PARAMETER_DATA_TYPE);
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClip, forDownload, clipTimeMs,
-            lengthMs, dataType);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClip, false, mClipTimeMs, mLengthMs,
+            mDataType);
         return mVdbCommand;
     }
 
@@ -76,12 +73,16 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
 
         for (int i = 0; i < numItems; i++) {
-            RawData.RawDataItem item = new RawData.RawDataItem();
+            RawDataItem item = new RawDataItem();
             item.dataType = header.mDataType;
             item.clipTimeMs = block.timeOffsetMs[i] + header.mRequestedTimeMs;
             byte[] data = response.readByteArray(block.dataSize[i]);
-            if (header.mDataType == VdbClient.RAW_DATA_ODB) {
-                item.object = OBDData.parseOBD(data);
+            if (header.mDataType == RawDataBlock.RAW_DATA_ODB) {
+                item.object = OBDData.parse(data);
+            } else if (header.mDataType == RawDataBlock.RAW_DATA_ACC) {
+                item.object = AccData.parse(data);
+            } else {
+
             }
 
             block.addRawDataItem(item);

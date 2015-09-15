@@ -46,7 +46,7 @@ import com.transee.ccam.CameraState;
 import com.transee.common.DateTime;
 import com.transee.common.GPSRawData;
 import com.transee.common.MjpegBitmap;
-import com.transee.common.OBDData;
+import com.waylens.hachi.vdb.OBDData;
 import com.transee.common.Timer;
 import com.transee.common.Utils;
 import com.transee.vdb.PlaylistSet;
@@ -412,8 +412,9 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
             @Override
             public void onRawDataAsync(int dataType, byte[] data) {
-                if (dataType == VdbClient.RAW_DATA_GPS
-                        && gpsSource == PrefsUtil.GPS_CAMERA) {
+                if (dataType == RawDataBlock.RAW_DATA_GPS
+                    && gpsSource == PrefsUtil.GPS_CAMERA) {
+
                     try {
                         final GPSRawData gpsRawData = GPSRawData.translate(data);
                         Log.e("gpsdata", "lat, lon: " + gpsRawData.coord.lat_orig + ", " + gpsRawData.coord.lng_orig);
@@ -434,8 +435,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                     return;
                 }
 
-                if (dataType == VdbClient.RAW_DATA_ODB) {
-                    final OBDData obdData = OBDData.parseOBD(data);
+                if (dataType == RawDataBlock.RAW_DATA_ODB) {
+                    final OBDData obdData = OBDData.parse(data);
                     if (obdData == null) {
                         return;
                     }
@@ -478,7 +479,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             if (hostString != null) {
                 mRemoteVdbClient.start(hostString);
                 //VdbClient.F_RAW_DATA_GPS + VdbClient.F_RAW_DATA_ACC
-                mRemoteVdbClient.requestSetDrawDataOption(VdbClient.F_RAW_DATA_ODB + VdbClient.F_RAW_DATA_GPS);
+                mRemoteVdbClient.requestSetDrawDataOption(RawDataBlock.F_RAW_DATA_ODB + RawDataBlock.F_RAW_DATA_GPS);
             }
         }
     }

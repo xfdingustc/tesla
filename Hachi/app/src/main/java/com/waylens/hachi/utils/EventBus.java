@@ -23,10 +23,10 @@ public class EventBus {
 
     }
 
-    public void postEvent(String event) {
+    public void postEvent(String event, Object value) {
         ElementView element = mSubscriber.get(event);
         if (element != null) {
-            element.onEvent(null);
+            element.onEvent(value);
         }
     }
 }

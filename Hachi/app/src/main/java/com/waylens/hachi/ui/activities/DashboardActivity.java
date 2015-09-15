@@ -20,14 +20,6 @@ public class DashboardActivity extends BaseActivity {
     @Bind(R.id.dashboard)
     DashboardView mDashboardView;
 
-    Handler taskHandler = new Handler();
-    private Runnable simulateDataTask = new Runnable() {
-        @Override
-        public void run() {
-            simulateData();
-            taskHandler.postDelayed(simulateDataTask, 1000);
-        }
-    };
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, DashboardActivity.class);
@@ -43,7 +35,6 @@ public class DashboardActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        taskHandler.post(simulateDataTask);
     }
 
     @Override
@@ -57,8 +48,4 @@ public class DashboardActivity extends BaseActivity {
         setContentView(R.layout.activity_dashboard);
     }
 
-    private void simulateData() {
-        mDashboardView.setOBDData();
-
-    }
 }

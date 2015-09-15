@@ -22,6 +22,7 @@ import com.waylens.hachi.vdb.LocalClip;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.SimpleClipSet;
 
 
@@ -420,7 +421,7 @@ public class LocalVdbClient extends VdbClient {
 					offset += 4;
 
 					if (size > 0) {
-						RawData.RawDataItem item = new RawData.RawDataItem();
+						RawDataItem item = new RawDataItem();
 						item.dataType = dataType;
 						item.clipTimeMs = clipTimeMs;
 
@@ -428,12 +429,12 @@ public class LocalVdbClient extends VdbClient {
 						System.arraycopy(ack, offset, item_data, 0, size);
 						offset += size;
 
-						if (dataType == RAW_DATA_GPS) {
+						if (dataType == RawDataBlock.RAW_DATA_GPS) {
 							item.object = GPSRawData.translate(item_data);
 						}
 
 						if (result.items == null) {
-							result.items = new ArrayList<RawData.RawDataItem>();
+							result.items = new ArrayList<>();
 						}
 
 						result.items.add(item);

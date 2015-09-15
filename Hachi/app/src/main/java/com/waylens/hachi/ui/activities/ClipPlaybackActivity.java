@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.common.OBDData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
@@ -24,12 +23,12 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.snipe.toolbox.RawDataRequest;
+import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
-import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.DashboardView;
 
 import java.io.IOException;
@@ -53,6 +52,10 @@ public class ClipPlaybackActivity extends BaseActivity {
     private static VdtCamera mSharedCamera;
     private static Clip mSharedClip;
 
+    private RawDataBlock mAccDataBlock;
+    private RawDataBlock mObdDataBlock;
+    private RawDataBlock mGpsDataBlock;
+
 
     @Bind(R.id.svClipPlayback)
     SurfaceView mSvClipPlayback;
@@ -69,7 +72,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
         mBtnPlay.setVisibility(View.GONE);
-        startPlayback();
+        loadRawData();
     }
 
 
@@ -115,31 +118,61 @@ public class ClipPlaybackActivity extends BaseActivity {
 
     }
 
-    private void startPlayback() {
-        Bundle parameter = new Bundle();
-        parameter.putBoolean(RawDataBlockRequest.PARAMETER_FOR_DOWNLOAD, false);
-        parameter.putLong(RawDataBlockRequest.PARAMETER_CLIP_TIME_MS, 0);
-        parameter.putInt(RawDataBlockRequest.PARAMETER_LENGTH_MS, mClip.clipLengthMs);
-        parameter.putInt(RawDataBlockRequest.PARAMETER_DATA_TYPE, VdbClient.RAW_DATA_ODB);
+    private void loadRawData() {
+        long clipTimeMs = 0;
+        int lengthMs = mClip.clipLengthMs;
 
-        RawDataBlockRequest request = new RawDataBlockRequest(mClip, parameter, new VdbResponse.Listener<RawDataBlock>() {
-            @Override
-            public void onResponse(RawDataBlock response) {
-                for (int i = 0; i < response.header.mNumItems; i++) {
-                    RawData.RawDataItem item = response.getRawDataItem(i);
-                    OBDData obdData = (OBDData)item.object;
-                    Logger.t(TAG).d(obdData.toString());
+        RawDataBlockRequest accRequest = new RawDataBlockRequest(mClip, clipTimeMs, lengthMs,
+            RawDataBlock.RAW_DATA_ACC,
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    mAccDataBlock = response;
+                    startPlayback();
                 }
-            }
-        }, new VdbResponse.ErrorListener() {
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
             }
         });
+        mVdbRequestQueue.add(accRequest);
+    }
 
+    private void startPlayback() {
+        startOverlayRenderThread();
+    }
 
-        mVdbRequestQueue.add(request);
+    private void startOverlayRenderThread() {
+        final long startPlayTime = System.currentTimeMillis();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for (int i = 0; i < mAccDataBlock.header.mNumItems;) {
+                    RawDataItem accItem = mAccDataBlock.getRawDataItem(i);
+                    long currentPlayTime = System.currentTimeMillis() - startPlayTime;
+                    if (accItem.clipTimeMs < currentPlayTime) {
+                        final AccData accData = (AccData)accItem.object;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDashboardView.setRawData(DashboardView.GFORCE_LEFT, accData.accX
+                                    * 5);
+                            }
+                        });
+
+                        i++;
+                    } else {
+                        try {
+                            Thread.sleep((accItem.clipTimeMs - currentPlayTime) / 2);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     private void preparePlayback() {

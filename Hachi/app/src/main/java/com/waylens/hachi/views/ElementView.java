@@ -36,7 +36,7 @@ public class ElementView extends View {
         setMeasuredDimension(mElement.getWidth(), mElement.getHeight());
     }
 
-    public void onEvent(Bundle data) {
+    public void onEvent(Object data) {
 
     }
 }

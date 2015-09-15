@@ -11,6 +11,7 @@ import com.transee.vdb.Playlist;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.Vdb;
 import com.transee.vdb.VdbClient;
+import com.waylens.hachi.vdb.RawDataBlock;
 
 
 public class VdbEditor {
@@ -311,11 +312,11 @@ public class VdbEditor {
 	}
 
 	public final void requestClipGPSData(long clipTimeMs) {
-		mVdb.getClient().requestRawData(mClip, clipTimeMs, VdbClient.F_RAW_DATA_GPS);
+		mVdb.getClient().requestRawData(mClip, clipTimeMs, RawDataBlock.F_RAW_DATA_GPS);
 	}
 
 	public final void requestPlaylistGPSData(Clip clip, long clipTimeMs) {
-		mVdb.getClient().requestRawData(clip, clip.getStartTime() + clipTimeMs, VdbClient.F_RAW_DATA_GPS);
+		mVdb.getClient().requestRawData(clip, clip.getStartTime() + clipTimeMs, RawDataBlock.F_RAW_DATA_GPS);
 	}
 
 	public final void requestMarkClip(long startTimeMs, long endTimeMs) {
@@ -356,9 +357,9 @@ public class VdbEditor {
 		ClipPos clipPoint = new ClipPos(mClip, clipTimeMs, ClipPos.TYPE_SLIDE, bIsLast);
 		mVdb.getClient().requestClipImage(mClip, clipPoint, width, height);
 		// acc raw data
-		if ((rawDataBlocks & RemoteVdbClient.F_RAW_DATA_ACC) != 0) {
+		if ((rawDataBlocks & RawDataBlock.F_RAW_DATA_ACC) != 0) {
 			mVdb.getClient().requestRawDataBlock(mClip.getVdbId(), mClip.cid, clipTimeMs, lengthMs,
-					RemoteVdbClient.RAW_DATA_ACC, false);
+				RawDataBlock.RAW_DATA_ACC, false);
 		}
 	}
 
@@ -380,9 +381,9 @@ public class VdbEditor {
 			Clip clip = mClip;
 			if (!bFirstLoop) {
 				String vdbId = clip.getVdbId();
-				client.requestRawDataBlock(vdbId, clip.cid, startMs, length, VdbClient.RAW_DATA_GPS, true);
-				client.requestRawDataBlock(vdbId, clip.cid, startMs, length, VdbClient.RAW_DATA_ACC, true);
-				client.requestRawDataBlock(vdbId, clip.cid, startMs, length, VdbClient.RAW_DATA_ODB, true);
+				client.requestRawDataBlock(vdbId, clip.cid, startMs, length, RawDataBlock.RAW_DATA_GPS, true);
+				client.requestRawDataBlock(vdbId, clip.cid, startMs, length, RawDataBlock.RAW_DATA_ACC, true);
+				client.requestRawDataBlock(vdbId, clip.cid, startMs, length, RawDataBlock.RAW_DATA_ODB, true);
 			}
 			client.requestClipDownloadUrl(clip, startMs, lengthMs, bFirstLoop);
 		}
@@ -394,9 +395,9 @@ public class VdbEditor {
 			if (!bFirstLoop) {
 				Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, mPlaylist.plistId, 0, null);
 				VdbClient client = mVdb.getClient();
-				client.requestRawDataBlock(null, cid, 0, length_ms, VdbClient.RAW_DATA_GPS, true);
-				client.requestRawDataBlock(null, cid, 0, length_ms, VdbClient.RAW_DATA_ACC, true);
-				client.requestRawDataBlock(null, cid, 0, length_ms, VdbClient.RAW_DATA_ODB, true);
+				client.requestRawDataBlock(null, cid, 0, length_ms, RawDataBlock.RAW_DATA_GPS, true);
+				client.requestRawDataBlock(null, cid, 0, length_ms, RawDataBlock.RAW_DATA_ACC, true);
+				client.requestRawDataBlock(null, cid, 0, length_ms, RawDataBlock.RAW_DATA_ODB, true);
 			}
 			mVdb.getClient().requestPlaylistDownloadUrl(null, mPlaylist.plistId, 0, length_ms, bMuteAudio, bFirstLoop);
 		}
@@ -407,7 +408,7 @@ public class VdbEditor {
 		int remain = clip.clipLengthMs;
 		while (remain > 0) {
 			int len = remain < GPS_SEG_LEN ? remain : GPS_SEG_LEN;
-			mVdb.getClient().requestRawDataBlock(clip.getVdbId(), clip.cid, clipTime, len, VdbClient.RAW_DATA_GPS,
+			mVdb.getClient().requestRawDataBlock(clip.getVdbId(), clip.cid, clipTime, len, RawDataBlock.RAW_DATA_GPS,
 					false);
 			clipTime += len;
 			remain -= len;

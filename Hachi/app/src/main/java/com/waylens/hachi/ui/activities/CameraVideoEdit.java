@@ -60,6 +60,7 @@ import com.waylens.hachi.vdb.DownloadInfoEx;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -957,8 +958,8 @@ abstract public class CameraVideoEdit {
     public void onRawDataResult(RawData rawDataResult) {
         if (mMapVisible) { // TODO
             for (int i = 0; i < rawDataResult.items.size(); i++) {
-                RawData.RawDataItem item = rawDataResult.items.get(i);
-                if (item.dataType == VdbClient.RAW_DATA_GPS) {
+                RawDataItem item = rawDataResult.items.get(i);
+                if (item.dataType == RawDataBlock.RAW_DATA_GPS) {
                     GPSRawData rawData = (GPSRawData) item.object;
                     mVdbMap.setGPSRawData(rawData);
                     break;

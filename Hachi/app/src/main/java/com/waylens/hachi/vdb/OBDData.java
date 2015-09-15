@@ -1,6 +1,8 @@
-package com.transee.common;
+package com.waylens.hachi.vdb;
 
 import android.util.Log;
+
+import com.transee.common.Utils;
 
 /**
  * Created by liangyx on 7/6/15.
@@ -34,7 +36,7 @@ public class OBDData {
 
 
 
-    public static OBDData parseOBD(byte[] data) {
+    public static OBDData parse(byte[] data) {
         if (data == null || data.length < 40) {
             Log.e("OBDData", "Invalid OBD data.");
             return null;

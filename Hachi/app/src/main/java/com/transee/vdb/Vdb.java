@@ -576,7 +576,7 @@ abstract public class Vdb {
 
         @Override
         public void onRawDataBlockAsync(final RawDataBlock block) {
-            if (block.header.mDataType == VdbClient.RAW_DATA_GPS) {
+            if (block.header.mDataType == RawDataBlock.RAW_DATA_GPS) {
                 handleGPSDataBlock(block);
             } else {
                 mHandler.post(new Runnable() {
