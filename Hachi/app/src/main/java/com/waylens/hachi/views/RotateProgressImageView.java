@@ -32,7 +32,7 @@ public class RotateProgressImageView extends ProgressImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Rect srcRect = new Rect(0, 0, mElement.getWidth(), mElement.getHeight());
-        canvas.drawBitmap(mElement.getResource(getContext()), srcRect, srcRect, null);
+        canvas.drawBitmap(mElement.getResource(), srcRect, srcRect, null);
     }
 
     @Override

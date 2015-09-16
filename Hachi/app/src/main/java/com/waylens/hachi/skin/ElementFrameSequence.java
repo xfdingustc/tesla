@@ -37,7 +37,7 @@ public class ElementFrameSequence extends Element {
     }
 
     @Override
-    public Bitmap getResource(Context context) {
+    public Bitmap getResource() {
         return null;
     }
 }

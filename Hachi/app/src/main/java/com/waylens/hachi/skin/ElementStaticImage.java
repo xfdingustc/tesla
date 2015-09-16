@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.views.ContainerView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,9 +36,10 @@ public class ElementStaticImage extends Element {
     }
 
     @Override
-    public Bitmap getResource(Context context) {
+    public Bitmap getResource() {
         if (mBitmap == null) {
             try {
+                Context context = Hachi.getContext();
                 InputStream in = context.getAssets().open(mResourceUrl);
                 mBitmap = BitmapFactory.decodeStream(in);
 

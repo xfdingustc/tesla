@@ -10,24 +10,18 @@
           {
             "Name": "outer_background_circle",
             "Type": "StaticImage",
-            "Width": "328",
-            "Height": "328",
             "Alignment": "Center",
             "Resource": "skin_default/gforce/gforce-outer_background_circle.png"
           },
           {
             "Name": "inner_background_circle",
             "Type": "StaticImage",
-            "Width": "282",
-            "Height": "282",
             "Alignment": "Center",
             "Resource": "skin_default/gforce/gforce-inner_background_circle.png"
           },
           {
             "Name": "gforce_bar_bg_right",
             "Type": "StaticImage",
-            "Width": "76",
-            "Height": "62",
             "Alignment": "Center_Right",
             "MarginRight": "96",
             "Resource": "skin_default/gforce/gforce-bar_0.png"
@@ -35,8 +29,6 @@
           {
             "Name": "gforce_bar_bg",
             "Type": "StaticImage",
-            "Width": "76",
-            "Height": "62",
             "Alignment": "Center_Left",
             "MarginLeft": "96",
             "Rotation": "180",
@@ -45,8 +37,6 @@
           {
             "Name": "gforce_bar_bg",
             "Type": "StaticImage",
-            "Width": "76",
-            "Height": "62",
             "Alignment": "Top_Center",
             "MarginTop": "96",
             "Rotation": "270",
@@ -55,8 +45,6 @@
           {
             "Name": "gforce_bar_bg",
             "Type": "StaticImage",
-            "Width": "76",
-            "Height": "62",
             "Alignment": "Bottom_Center",
             "MarginBottom": "96",
             "Rotation": "90",
@@ -65,8 +53,6 @@
           {
             "Name": "gforce_label_left",
             "Type": "StaticImage",
-            "Width": "53",
-            "Height": "13",
             "Alignment": "Center_Right",
             "MarginTop": "-12",
             "MarginRight": "48",
@@ -75,8 +61,6 @@
           {
             "Name": "gforce_label_right",
             "Type": "StaticImage",
-            "Width": "65",
-            "Height": "13",
             "Alignment": "Center_Left",
             "MarginTop": "-12",
             "MarginLeft": "48",
@@ -85,8 +69,6 @@
           {
             "Name": "gforce_label_break",
             "Type": "StaticImage",
-            "Width": "79",
-            "Height": "13",
             "Alignment": "Top_Center",
             "MarginTop": "48",
             "Resource": "skin_default/gforce/gforce-label_brake_opa50.png"
@@ -94,8 +76,6 @@
           {
             "Name": "gforce_label_accel",
             "Type": "StaticImage",
-            "Width": "79",
-            "Height": "13",
             "Alignment": "Bottom_Center",
             "MarginBottom": "48",
             "Resource": "skin_default/gforce/gforce-label_accel_opa50.png"
@@ -103,16 +83,12 @@
           {
             "Name": "gforce-central_dot",
             "Type": "StaticImage",
-            "Width": "16",
-            "Height": "16",
             "Alignment": "Center",
             "Resource": "skin_default/gforce/gforce-central_dot.png"
           },
           {
             "Name": "gforce_left",
             "Type": "ProgressImage",
-            "Width": "76",
-            "Height": "62",
             "Alignment": "Center_Right",
             "MarginRight": "96",
             "Subscribe": "GforceLeft",
@@ -121,8 +97,6 @@
           {
             "Name": "gforce_right",
             "Type": "ProgressImage",
-            "Width": "76",
-            "Height": "62",
             "Alignment": "Center_Left",
             "MarginLeft": "96",
             "Rotation": "180",
@@ -140,16 +114,12 @@
           {
             "Name": "map-outer_background_box",
             "Type": "StaticImage",
-            "Width": "326",
-            "Height": "448",
             "Alignment": "Center",
             "Resource": "skin_default/map/map-outer_background_box.png"
           },
           {
             "Name": "map-inner_map_background_box",
             "Type": "StaticImage",
-            "Width": "294",
-            "Height": "294",
             "MarginTop": "32",
             "Alignment": "Top_Center",
             "Resource": "skin_default/map/map-inner_map_background_box.png"
@@ -157,8 +127,6 @@
           {
             "Name": "map-weather_background_box",
             "Type": "StaticImage",
-            "Width": "294",
-            "Height": "120",
             "MarginBottom": "32",
             "Alignment": "Bottom_Center",
             "Resource": "skin_default/map/map-weather_background_box.png"
@@ -166,8 +134,6 @@
           {
             "Name": "map-compass_icon",
             "Type": "StaticImage",
-            "Width": "36",
-            "Height": "36",
             "MarginTop": "48",
             "MarginRight": "48",
             "Alignment": "Top_Right",
@@ -184,8 +150,6 @@
           {
             "Name": "gear-background_panel",
             "Type": "StaticImage",
-            "Width": "158",
-            "Height": "324",
             "Alignment": "Bottom_Right",
             "MarginRight": "24",
             "MarginBottom": "24",
@@ -194,8 +158,6 @@
           {
             "Name": "gear-gear_label",
             "Type": "StaticImage",
-            "Width": "80",
-            "Height": "25",
             "Alignment": "Bottom_Right",
             "MarginRight": "48",
             "MarginBottom": "32",
@@ -204,8 +166,6 @@
           {
             "Name": "gear-label_R",
             "Type": "StaticImage",
-            "Width": "20",
-            "Height": "16",
             "Alignment": "Bottom_Right",
             "MarginRight": "40",
             "MarginBottom": "76",
@@ -214,8 +174,6 @@
           {
             "Name": "gear-back_arrow",
             "Type": "StaticImage",
-            "Width": "11",
-            "Height": "17",
             "Alignment": "Bottom_Right",
             "MarginRight": "72",
             "MarginBottom": "76",
@@ -224,8 +182,6 @@
           {
             "Name": "gear-dash_1",
             "Type": "StaticImage",
-            "Width": "10",
-            "Height": "4",
             "Alignment": "Bottom_Right",
             "MarginRight": "72",
             "MarginBottom": "120",
@@ -234,8 +190,6 @@
           {
             "Name": "gear-number_1",
             "Type": "StaticImage",
-            "Width": "7",
-            "Height": "16",
             "Alignment": "Bottom_Right",
             "MarginRight": "45",
             "MarginBottom": "116",
@@ -244,8 +198,6 @@
           {
             "Name": "gear-dash_2",
             "Type": "StaticImage",
-            "Width": "19",
-            "Height": "4",
             "Alignment": "Bottom_Right",
             "MarginRight": "72",
             "MarginBottom": "160",
@@ -254,8 +206,6 @@
           {
             "Name": "gear-number_2",
             "Type": "StaticImage",
-            "Width": "17",
-            "Height": "16",
             "Alignment": "Bottom_Right",
             "MarginRight": "40",
             "MarginBottom": "156",
@@ -264,8 +214,6 @@
           {
             "Name": "gear-dash_3",
             "Type": "StaticImage",
-            "Width": "28",
-            "Height": "5",
             "Alignment": "Bottom_Right",
             "MarginRight": "72",
             "MarginBottom": "200",
@@ -274,8 +222,6 @@
           {
             "Name": "gear-number_3",
             "Type": "StaticImage",
-            "Width": "17",
-            "Height": "16",
             "Alignment": "Bottom_Right",
             "MarginRight": "40",
             "MarginBottom": "196",
@@ -284,8 +230,6 @@
           {
             "Name": "gear-dash_4",
             "Type": "StaticImage",
-            "Width": "37",
-            "Height": "5",
             "Alignment": "Bottom_Right",
             "MarginRight": "72",
             "MarginBottom": "240",
@@ -294,8 +238,6 @@
           {
             "Name": "gear-number_4",
             "Type": "StaticImage",
-            "Width": "18",
-            "Height": "16",
             "Alignment": "Bottom_Right",
             "MarginRight": "40",
             "MarginBottom": "236",
@@ -304,8 +246,6 @@
           {
             "Name": "gear-dash_5",
             "Type": "StaticImage",
-            "Width": "51",
-            "Height": "5",
             "Alignment": "Bottom_Right",
             "MarginRight": "72",
             "MarginBottom": "280",
@@ -314,8 +254,6 @@
           {
             "Name": "gear-number_5",
             "Type": "StaticImage",
-            "Width": "18",
-            "Height": "16",
             "Alignment": "Bottom_Right",
             "MarginRight": "40",
             "MarginBottom": "276",
@@ -324,8 +262,6 @@
           {
             "Name": "gear-dash_6",
             "Type": "StaticImage",
-            "Width": "70",
-            "Height": "5",
             "Alignment": "Bottom_Right",
             "MarginRight": "72",
             "MarginBottom": "320",
@@ -334,8 +270,6 @@
           {
             "Name": "gear-number_6",
             "Type": "StaticImage",
-            "Width": "18",
-            "Height": "16",
             "Alignment": "Bottom_Right",
             "MarginRight": "40",
             "MarginBottom": "316",
@@ -354,24 +288,18 @@
           {
             "Name": "speed-outer_circle_background",
             "Type": "StaticImage",
-            "Width": "328",
-            "Height": "328",
             "Alignment": "Center",
             "Resource": "skin_default/speed/speed-outer_circle_background.png"
           },
           {
             "Name": "speed-inner_circle_background",
             "Type": "StaticImage",
-            "Width": "282",
-            "Height": "282",
             "Alignment": "Center",
             "Resource": "skin_default/speed/speed-inner_circle_background.png"
           },
           {
             "Name": "speed-speed_needle",
             "Type": "RotateProgressImage",
-            "Width": "16",
-            "Height": "152",
             "Alignment": "Center",
             "MarginBottom": "-76",
             "XCoord": "0.5",
@@ -385,8 +313,6 @@
           {
             "Name": "speed-circle_panel_base_frame",
             "Type": "StaticImage",
-            "Width": "281",
-            "Height": "251",
             "Alignment": "Center",
             "MarginBottom": "15",
             "Resource": "skin_default/speed/speed-circle_panel_base_frame.png"
@@ -394,8 +320,6 @@
           {
             "Name": "speed-label_MPH",
             "Type": "StaticImage",
-            "Width": "50",
-            "Height": "13",
             "Alignment": "Bottom_Center",
             "MarginBottom": "60",
             "Resource": "skin_default/speed/speed-label_MPH.png"
@@ -403,8 +327,6 @@
           {
             "Name": "speed-label_RPM1000",
             "Type": "StaticImage",
-            "Width": "96",
-            "Height": "11",
             "Alignment": "Top_Center",
             "MarginTop": "100",
             "Resource": "skin_default/speed/speed-label_RPM1000.png"
@@ -412,8 +334,6 @@
           {
             "Name": "speed-inner_needles_none_highlighted",
             "Type": "StaticImage",
-            "Width": "220",
-            "Height": "190",
             "Alignment": "Center",
             "MarginBottom": "15",
             "Resource": "skin_default/speed/speed-inner_needles_none_highlighted.png"
@@ -431,16 +351,12 @@
           {
             "Name": "throttle-background_panel",
             "Type": "StaticImage",
-            "Width": "180",
-            "Height": "258",
             "Alignment": "Top_Left",
             "Resource": "skin_default/throttle/throttle-background_panel.png"
           },
           {
             "Name": "throttle-meter_base",
             "Type": "StaticImage",
-            "Width": "44",
-            "Height": "187",
             "Alignment": "Top_Left",
             "MarginTop": "12",
             "MarginLeft": "12",
@@ -449,8 +365,6 @@
           {
             "Name": "throttle-speed-0",
             "Type": "StaticImage",
-            "Width": "82",
-            "Height": "188",
             "Alignment": "Top_Left",
             "MarginTop": "12",
             "MarginLeft": "60",

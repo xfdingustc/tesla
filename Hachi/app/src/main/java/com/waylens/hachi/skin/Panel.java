@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Xiaofei on 2015/9/7.
  */
-public class Panel extends Element  {
+public abstract class Panel extends Element  {
     public static final String PANEL_TYPE_GFORCE_STR = "gforce";
     protected static final int PANEL_TYPE_GFORCE = 0;
 

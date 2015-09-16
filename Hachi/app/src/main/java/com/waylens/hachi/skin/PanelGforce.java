@@ -1,5 +1,7 @@
 package com.waylens.hachi.skin;
 
+import android.graphics.Bitmap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +31,11 @@ public class PanelGforce extends Panel {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Bitmap getResource() {
+        return null;
     }
 
 }

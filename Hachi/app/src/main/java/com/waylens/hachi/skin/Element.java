@@ -5,13 +5,12 @@ import android.graphics.Bitmap;
 
 import com.waylens.hachi.views.ContainerLayouts;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by Xiaofei on 2015/9/7.
  */
-public class Element implements ContainerLayouts {
+public abstract class Element implements ContainerLayouts {
     public static final String ELEMENT_TYPE_FRAME_SEQUENCE_STR = "FrameSequence";
     public static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
     public static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
@@ -54,15 +53,25 @@ public class Element implements ContainerLayouts {
     }
 
     public int getWidth() {
-        return mWidth;
+        if (mWidth != 0) {
+            return mWidth;
+        } else {
+            return getResource().getWidth();
+        }
     }
 
     public int getHeight() {
-        return mHeight;
+        if (mHeight != 0) {
+            return mHeight;
+        } else {
+            return getResource().getHeight();
+        }
     }
+
     public int getAlignment() {
         return mAlignment;
     }
+
     public int getMarginTop() {
         return mMarginTop;
     }
@@ -97,25 +106,20 @@ public class Element implements ContainerLayouts {
 
 
     public void parse(JSONObject object) {
-        try {
-            mWidth = object.getInt(TAG_WIDTH);
-            mHeight = object.getInt(TAG_HEIGHT);
-            String alignment = object.optString(TAG_ALIGNMENT);
-            mAlignment = getAlignment(alignment);
-            mMarginTop = object.optInt(TAG_MARGIN_TOP);
-            mMarginBottom = object.optInt(TAG_MARGIN_BOTTOM);
-            mMarginLeft = object.optInt(TAG_MARGIN_LEFT);
-            mMarginRight = object.optInt(TAG_MARGIN_RIGHT);
-            mRotation = object.optInt(TAG_ROTATION);
-            mXCoord = (float)object.optDouble(TAG_XCOORD);
-            mYCoord = (float)object.optDouble(TAG_YCOORD);
-            mSubscribe = object.optString(TAG_SUBSCRIBE);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        mWidth = object.optInt(TAG_WIDTH);
+        mHeight = object.optInt(TAG_HEIGHT);
+        String alignment = object.optString(TAG_ALIGNMENT);
+        mAlignment = getAlignment(alignment);
+        mMarginTop = object.optInt(TAG_MARGIN_TOP);
+        mMarginBottom = object.optInt(TAG_MARGIN_BOTTOM);
+        mMarginLeft = object.optInt(TAG_MARGIN_LEFT);
+        mMarginRight = object.optInt(TAG_MARGIN_RIGHT);
+        mRotation = object.optInt(TAG_ROTATION);
+        mXCoord = (float) object.optDouble(TAG_XCOORD);
+        mYCoord = (float) object.optDouble(TAG_YCOORD);
+        mSubscribe = object.optString(TAG_SUBSCRIBE);
+
     }
-
-
 
 
     private int getAlignment(String alignment) {
@@ -142,9 +146,7 @@ public class Element implements ContainerLayouts {
         return ret;
     }
 
-    public Bitmap getResource(Context context) {
-        return null;
-    }
+    public abstract Bitmap getResource();
 
     public static class ElementFractory {
         public static Element createElement(String type) {

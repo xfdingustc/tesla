@@ -27,6 +27,6 @@ public class StaticImageView extends ElementView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Rect dstRect = new Rect(0, 0, mElement.getWidth(), mElement.getHeight());
-        canvas.drawBitmap(mElement.getResource(getContext()), null, dstRect, null);
+        canvas.drawBitmap(mElement.getResource(), null, dstRect, null);
     }
 }

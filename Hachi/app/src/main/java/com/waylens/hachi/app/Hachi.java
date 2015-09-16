@@ -33,6 +33,8 @@ public class Hachi extends Application {
     public static final String VIDEO_DOWNLOAD_PATH = "/Transee/video/Vidit/";
     public static final String PICTURE_DOWNLOAD_PATH = "/Transee/picture/Vidit/";
 
+    private static Context mSharedContext = null;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -40,6 +42,7 @@ public class Hachi extends Application {
     }
 
     private void init() {
+        mSharedContext = getApplicationContext();
 
         PrefsUtil.init(this);
         initLogger();
@@ -64,6 +67,10 @@ public class Hachi extends Application {
     private void initCameraManager() {
         VdtCameraManager.initialize(this);
 
+    }
+
+    public static Context getContext() {
+        return mSharedContext;
     }
 
     private void initFacebookSDK() {

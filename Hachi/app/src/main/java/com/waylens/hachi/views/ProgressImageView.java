@@ -40,7 +40,7 @@ public class ProgressImageView extends ElementView {
         super.onDraw(canvas);
         Rect srcRect = new Rect(0, 0, (int) (mElement.getWidth() * mProgress / mProgressMax),
             mElement.getHeight());
-        canvas.drawBitmap(mElement.getResource(getContext()), srcRect, srcRect, null);
+        canvas.drawBitmap(mElement.getResource(), srcRect, srcRect, null);
     }
 
     @Override
