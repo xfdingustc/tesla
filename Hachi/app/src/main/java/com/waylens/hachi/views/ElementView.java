@@ -28,6 +28,13 @@ public class ElementView extends View {
             mElement.getMarginBottom(), mElement.getMarginLeft(), mElement.getMarginRight(),
             mElement.getAlignment());
         setLayoutParams(layoutParams);
+
+        if (Math.abs(mElement.getXCoord()) >= 0.01) {
+            setPivotX(mElement.getXCoord());
+        }
+        if (Math.abs(mElement.getYCoord()) >= 0.01) {
+            setPivotY(mElement.getYCoord());
+        }
         setRotation(mElement.getRotation());
     }
 

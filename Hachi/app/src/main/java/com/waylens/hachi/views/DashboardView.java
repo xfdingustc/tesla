@@ -28,6 +28,7 @@ public class DashboardView extends ContainerView {
 
     public static final String GFORCE_LEFT = "GforceLeft";
     public static final String GFORCE_RIGHT = "GforceRight";
+    public static final String RPM = "RPM";
 
     private Skin mSkin = SkinManager.getManager().getSkin();
 
@@ -60,6 +61,10 @@ public class DashboardView extends ContainerView {
 
 
     public void setRawData(String key, int value) {
+        mEventBus.postEvent(key, value);
+    }
+
+    public void setRawData(String key, float value) {
         mEventBus.postEvent(key, value);
     }
 

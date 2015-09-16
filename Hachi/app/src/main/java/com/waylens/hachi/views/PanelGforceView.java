@@ -42,6 +42,9 @@ public class PanelGforceView extends PanelView {
                 case Element.ELEMENT_TYPE_PROGRESS_IMAGE:
                     elementView = new ProgressImageView(getContext(), element);
                     break;
+                case Element.ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE:
+                    elementView = new RotateProgressImageView(getContext(), element);
+                    break;
             }
             if (elementView != null) {
                 mEventBus.register(elementView);

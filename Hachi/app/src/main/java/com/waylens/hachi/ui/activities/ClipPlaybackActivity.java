@@ -26,6 +26,7 @@ import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
@@ -128,7 +129,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     mAccDataBlock = response;
-                    startPlayback();
+
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -137,30 +138,45 @@ public class ClipPlaybackActivity extends BaseActivity {
             }
         });
         mVdbRequestQueue.add(accRequest);
+
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip, clipTimeMs, lengthMs,
+            RawDataBlock.RAW_DATA_ODB,
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    mObdDataBlock = response;
+                    startPlayback();
+                }
+            }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(obdRequest);
     }
 
     private void startPlayback() {
-        startOverlayRenderThread();
+        startAccRenderThread();
+        startObdRenderThread();
     }
 
-    private void startOverlayRenderThread() {
+    private void startAccRenderThread() {
         final long startPlayTime = System.currentTimeMillis();
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                for (int i = 0; i < mAccDataBlock.header.mNumItems;) {
+                for (int i = 0; i < mAccDataBlock.header.mNumItems; ) {
                     RawDataItem accItem = mAccDataBlock.getRawDataItem(i);
                     long currentPlayTime = System.currentTimeMillis() - startPlayTime;
                     if (accItem.clipTimeMs < currentPlayTime) {
-                        final AccData accData = (AccData)accItem.object;
+                        final AccData accData = (AccData) accItem.object;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mDashboardView.setRawData(DashboardView.GFORCE_LEFT, accData.accX
-                                    * 5);
-                                mDashboardView.setRawData(DashboardView.GFORCE_RIGHT, accData
-                                    .accY * 5);
+                                mDashboardView.setRawData(DashboardView.GFORCE_LEFT, (float) accData.accX * 5);
+                                mDashboardView.setRawData(DashboardView.GFORCE_RIGHT, (float) accData.accY * 5);
                             }
                         });
 
@@ -168,6 +184,38 @@ public class ClipPlaybackActivity extends BaseActivity {
                     } else {
                         try {
                             Thread.sleep((accItem.clipTimeMs - currentPlayTime) / 2);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+
+    private void startObdRenderThread() {
+        final long startPlayTime = System.currentTimeMillis();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for (int i = 0; i < mObdDataBlock.header.mNumItems; ) {
+                    RawDataItem obdItem = mObdDataBlock.getRawDataItem(i);
+                    long currentPlayTime = System.currentTimeMillis() - startPlayTime;
+                    if (obdItem.clipTimeMs < currentPlayTime) {
+                        final OBDData obdData = (OBDData) obdItem.object;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDashboardView.setRawData(DashboardView.RPM, (float) obdData.rpm / 1000);
+                            }
+                        });
+
+                        i++;
+                    } else {
+                        try {
+                            Thread.sleep((obdItem.clipTimeMs - currentPlayTime) / 2);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

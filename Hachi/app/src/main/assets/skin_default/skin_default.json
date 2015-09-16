@@ -344,7 +344,7 @@
         ]
       },
       {
-        "Type": "speed",
+        "Type": "Gauge",
         "Width": "328",
         "Height": "328",
         "Alignment": "Bottom_Right",
@@ -366,6 +366,21 @@
             "Height": "282",
             "Alignment": "Center",
             "Resource": "skin_default/speed/speed-inner_circle_background.png"
+          },
+          {
+            "Name": "speed-speed_needle",
+            "Type": "RotateProgressImage",
+            "Width": "16",
+            "Height": "152",
+            "Alignment": "Center",
+            "MarginBottom": "-76",
+            "XCoord": "0.5",
+            "YCoord": "0.5",
+            "StartAngle": "45",
+            "EndAngle": "315",
+            "Max": "10",
+            "Subscribe": "RPM",
+            "Resource": "skin_default/speed/speed-speed_needle.png"
           },
           {
             "Name": "speed-circle_panel_base_frame",
@@ -420,6 +435,26 @@
             "Height": "258",
             "Alignment": "Top_Left",
             "Resource": "skin_default/throttle/throttle-background_panel.png"
+          },
+          {
+            "Name": "throttle-meter_base",
+            "Type": "StaticImage",
+            "Width": "44",
+            "Height": "187",
+            "Alignment": "Top_Left",
+            "MarginTop": "12",
+            "MarginLeft": "12",
+            "Resource": "skin_default/throttle/throttle-meter_base.png"
+          },
+          {
+            "Name": "throttle-speed-0",
+            "Type": "StaticImage",
+            "Width": "82",
+            "Height": "188",
+            "Alignment": "Top_Left",
+            "MarginTop": "12",
+            "MarginLeft": "60",
+            "Resource": "skin_default/throttle/throttle-speed-0.png"
           }
         ]
       }

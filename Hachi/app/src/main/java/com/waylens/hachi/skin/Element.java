@@ -15,6 +15,7 @@ public class Element implements ContainerLayouts {
     public static final String ELEMENT_TYPE_FRAME_SEQUENCE_STR = "FrameSequence";
     public static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
     public static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
+    public static final String ELEMENT_TYPE_ROTATE_PROGRESS_IMAGE_STR = "RotateProgressImage";
 
     private static final String TAG_WIDTH = "Width";
     private static final String TAG_HEIGHT = "Height";
@@ -25,10 +26,13 @@ public class Element implements ContainerLayouts {
     private static final String TAG_ALIGNMENT = "Alignment";
     private static final String TAG_ROTATION = "Rotation";
     private static final String TAG_SUBSCRIBE = "Subscribe";
+    private static final String TAG_XCOORD = "XCoord";
+    private static final String TAG_YCOORD = "YCoord";
 
     public static final int ELEMENT_TYPE_FRAME_SEQUENCE = 0;
     public static final int ELEMENT_TYPE_STATIC_IMAGE = 1;
     public static final int ELEMENT_TYPE_PROGRESS_IMAGE = 2;
+    public static final int ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE = 3;
 
     protected String mResourceUrl;
 
@@ -41,6 +45,8 @@ public class Element implements ContainerLayouts {
     private int mMarginRight = 0;
     private int mAlignment;
     private int mRotation = 0;
+    private float mXCoord = 0;
+    private float mYCoord = 0;
     private String mSubscribe = null;
 
     public int getType() {
@@ -77,6 +83,14 @@ public class Element implements ContainerLayouts {
         return mRotation;
     }
 
+    public float getXCoord() {
+        return mXCoord;
+    }
+
+    public float getYCoord() {
+        return mYCoord;
+    }
+
     public String getSubscribe() {
         return mSubscribe;
     }
@@ -93,6 +107,8 @@ public class Element implements ContainerLayouts {
             mMarginLeft = object.optInt(TAG_MARGIN_LEFT);
             mMarginRight = object.optInt(TAG_MARGIN_RIGHT);
             mRotation = object.optInt(TAG_ROTATION);
+            mXCoord = (float)object.optDouble(TAG_XCOORD);
+            mYCoord = (float)object.optDouble(TAG_YCOORD);
             mSubscribe = object.optString(TAG_SUBSCRIBE);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -139,6 +155,8 @@ public class Element implements ContainerLayouts {
                 elementType = ELEMENT_TYPE_STATIC_IMAGE;
             } else if (type.equals(ELEMENT_TYPE_PROGRESS_IMAGE_STR)) {
                 elementType = ELEMENT_TYPE_PROGRESS_IMAGE;
+            } else if (type.equals(ELEMENT_TYPE_ROTATE_PROGRESS_IMAGE_STR)) {
+                elementType = ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE;
             }
 
             return createElement(elementType);
@@ -152,6 +170,8 @@ public class Element implements ContainerLayouts {
                     return new ElementStaticImage();
                 case ELEMENT_TYPE_PROGRESS_IMAGE:
                     return new ElementProgressImage();
+                case ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE:
+                    return new ElementRotateProgressImage();
             }
 
             return null;
