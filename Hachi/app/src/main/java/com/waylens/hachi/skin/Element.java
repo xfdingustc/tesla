@@ -15,6 +15,13 @@ public abstract class Element implements ContainerLayouts {
     public static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
     public static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
     public static final String ELEMENT_TYPE_ROTATE_PROGRESS_IMAGE_STR = "RotateProgressImage";
+    public static final String ELEMENT_TYPE_NUMBER_VIEW_STR = "NumberView";
+
+    public static final int ELEMENT_TYPE_FRAME_SEQUENCE = 0;
+    public static final int ELEMENT_TYPE_STATIC_IMAGE = 1;
+    public static final int ELEMENT_TYPE_PROGRESS_IMAGE = 2;
+    public static final int ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE = 3;
+    public static final int ELEMENT_TYPE_NUMBER_VIEW = 4;
 
     private static final String TAG_WIDTH = "Width";
     private static final String TAG_HEIGHT = "Height";
@@ -28,13 +35,6 @@ public abstract class Element implements ContainerLayouts {
     private static final String TAG_XCOORD = "XCoord";
     private static final String TAG_YCOORD = "YCoord";
 
-    public static final int ELEMENT_TYPE_FRAME_SEQUENCE = 0;
-    public static final int ELEMENT_TYPE_STATIC_IMAGE = 1;
-    public static final int ELEMENT_TYPE_PROGRESS_IMAGE = 2;
-    public static final int ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE = 3;
-
-    protected String mResourceUrl;
-
     protected int mType;
     private int mWidth;
     private int mHeight;
@@ -46,7 +46,9 @@ public abstract class Element implements ContainerLayouts {
     private int mRotation = 0;
     private float mXCoord = 0;
     private float mYCoord = 0;
+
     private String mSubscribe = null;
+    protected String mResourceUrl;
 
     public int getType() {
         return mType;
@@ -159,6 +161,8 @@ public abstract class Element implements ContainerLayouts {
                 elementType = ELEMENT_TYPE_PROGRESS_IMAGE;
             } else if (type.equals(ELEMENT_TYPE_ROTATE_PROGRESS_IMAGE_STR)) {
                 elementType = ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE;
+            } else if (type.equals(ELEMENT_TYPE_NUMBER_VIEW_STR)) {
+                elementType = ELEMENT_TYPE_NUMBER_VIEW;
             }
 
             return createElement(elementType);
@@ -174,6 +178,8 @@ public abstract class Element implements ContainerLayouts {
                     return new ElementProgressImage();
                 case ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE:
                     return new ElementRotateProgressImage();
+                case ELEMENT_TYPE_NUMBER_VIEW:
+                    return new ElementNumber();
             }
 
             return null;

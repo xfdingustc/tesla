@@ -209,6 +209,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 mDashboardView.setRawData(DashboardView.RPM, (float) obdData.rpm / 1000);
+                                mDashboardView.setRawData(DashboardView.MPH, obdData.speed);
                             }
                         });
 

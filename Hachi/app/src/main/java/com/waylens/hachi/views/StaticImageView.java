@@ -13,15 +13,9 @@ import com.waylens.hachi.utils.EventBus;
  * Created by Xiaofei on 2015/9/9.
  */
 public class StaticImageView extends ElementView {
-
-
     public StaticImageView(Context context, Element image) {
         super(context, image);
     }
-
-
-
-
 
     @Override
     protected void onDraw(Canvas canvas) {

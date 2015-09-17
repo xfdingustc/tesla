@@ -29,6 +29,7 @@ public class DashboardView extends ContainerView {
     public static final String GFORCE_LEFT = "GforceLeft";
     public static final String GFORCE_RIGHT = "GforceRight";
     public static final String RPM = "RPM";
+    public static final String MPH = "MPH";
 
     private Skin mSkin = SkinManager.getManager().getSkin();
 

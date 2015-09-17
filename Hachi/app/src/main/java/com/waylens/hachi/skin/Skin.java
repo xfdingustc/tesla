@@ -1,9 +1,6 @@
 package com.waylens.hachi.skin;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.view.ViewGroup;
 
 import com.orhanobut.logger.Logger;
 
@@ -14,6 +11,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -23,6 +21,8 @@ public class Skin {
     private static final String TAG = Skin.class.getSimpleName();
 
     private static final String TAG_DASHBOARD = "Dashboard";
+    private static final String TAG_FONTS = "Fonts";
+    private static final String TAG_FONT_NAME = "FontName";
     private static final String TAG_PANELS = "Panels";
     private static final String TAG_TYPE = "Type";
 
@@ -30,6 +30,7 @@ public class Skin {
     private final String mName;
 
     private List<Panel> mPanels = new ArrayList<>();
+    private Hashtable<String, Font> mFonts = new Hashtable<>();
 
     public Skin(String name) {
         this.mName = name;
@@ -47,6 +48,7 @@ public class Skin {
             JSONObject dashboard = skin.getJSONObject(TAG_DASHBOARD);
 
             parsePanel(dashboard.getJSONArray(TAG_PANELS));
+            parseFonts(dashboard.getJSONArray(TAG_FONTS));
 
 
         } catch (IOException e) {
@@ -62,6 +64,9 @@ public class Skin {
         return mPanels;
     }
 
+    public Font getFont(String fontName) {
+        return mFonts.get(fontName);
+    }
 
 
     private void parsePanel(JSONArray panelArray) {
@@ -72,6 +77,20 @@ public class Skin {
                 Panel panel = Panel.PanelFactory.createPanel(type);
                 panel.parse(object);
                 mPanels.add(panel);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseFonts(JSONArray fontsArray) {
+        try {
+            for (int i = 0; i < fontsArray.length(); i++) {
+                JSONObject fontObj = fontsArray.getJSONObject(i);
+                String name = fontObj.getString(TAG_FONT_NAME);
+                Font font = new Font();
+                font.parse(fontObj);
+                mFonts.put(name, font);
             }
         } catch (JSONException e) {
             e.printStackTrace();
