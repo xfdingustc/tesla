@@ -333,11 +333,13 @@ public class VdtCameraManager {
     public VdtCamera findCameraById(String ssid, String hostString) {
         VdtCamera vdtCamera;
         vdtCamera = findCameraInList(ssid, hostString, mConnectedVdtCameras);
-        if (vdtCamera != null)
+        if (vdtCamera != null) {
             return vdtCamera;
+        }
         vdtCamera = findCameraInList(ssid, hostString, mConnectingVdtCameras);
-        if (vdtCamera != null)
+        if (vdtCamera != null) {
             return vdtCamera;
+        }
         return null;
     }
 

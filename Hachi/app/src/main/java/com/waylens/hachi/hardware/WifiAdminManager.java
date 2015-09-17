@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ import java.util.List;
  */
 public class WifiAdminManager {
     private static final String TAG = WifiAdminManager.class.getSimpleName();
-    private static final boolean DEBUG = false;
+
     public static final int WIFI_SCAN_INTERVAL = 3000;
     private WifiAdmin mWifiAdmin;
 
@@ -53,89 +55,70 @@ public class WifiAdminManager {
         void onConnectDone(WifiAdmin wifiAdmin);
     }
 
-    private void networkStateChanged(WifiAdmin wifiAdmin) {
-        if (DEBUG) {
-            Log.d(TAG, "networkStateChanged");
-        }
+    private void onNetworkStateChanged(WifiAdmin wifiAdmin) {
+
+        Logger.t(TAG).d("networkStateChanged");
         for (WifiCallback callback : mWifiCallbackList) {
             callback.networkStateChanged(wifiAdmin);
         }
     }
 
-    private void wifiScanResult(WifiAdmin wifiAdmin) {
-        if (DEBUG) {
-            Log.d(TAG, "wifiScanResult");
-        }
+    private void onWifiScanResult(WifiAdmin wifiAdmin) {
+
+        Logger.t(TAG).d("wifiScanResult");
+
         for (WifiCallback callback : mWifiCallbackList) {
             callback.wifiScanResult(wifiAdmin);
         }
     }
 
     private void onConnectError(WifiAdmin wifiAdmin) {
-        if (DEBUG) {
-            Log.d(TAG, "onConnectError");
-        }
+
+        Logger.t(TAG).d("onConnectError");
         for (WifiCallback callback : mWifiCallbackList) {
             callback.onConnectError(wifiAdmin);
         }
     }
 
     private void onConnectDone(WifiAdmin wifiAdmin) {
-        if (DEBUG) {
-            Log.d(TAG, "onConnectDone");
-        }
+
+        Logger.t(TAG).d("onConnectDone");
         for (WifiCallback callback : mWifiCallbackList) {
             callback.onConnectDone(wifiAdmin);
         }
     }
 
-    class MyWifiAdmin extends WifiAdmin {
-
-        public MyWifiAdmin(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void networkStateChanged(WifiAdmin wifiAdmin) {
-            if (wifiAdmin == mWifiAdmin) {
-                WifiAdminManager.this.networkStateChanged(wifiAdmin);
-            }
-        }
-
-        @Override
-        public void wifiScanResult(WifiAdmin wifiAdmin) {
-            if (wifiAdmin == mWifiAdmin) {
-                WifiAdminManager.this.wifiScanResult(wifiAdmin);
-            }
-        }
-
-        @Override
-        public void onConnectError(WifiAdmin wifiAdmin) {
-            if (wifiAdmin == mWifiAdmin) {
-                WifiAdminManager.this.onConnectError(wifiAdmin);
-            }
-        }
-
-        @Override
-        public void onConnectDone(WifiAdmin wifiAdmin) {
-            if (wifiAdmin == mWifiAdmin) {
-                WifiAdminManager.this.onConnectDone(wifiAdmin);
-            }
-        }
-
-    }
 
     public WifiAdmin attachWifiAdmin(WifiCallback callback) {
-        if (DEBUG) {
-            Log.d(TAG, "attachWifiAdmin " + callback);
-        }
+
+        Logger.t(TAG).d("attachWifiAdmin " + callback);
         mWifiCallbackList.add(callback);
         if (mWifiAdmin == null) {
-            if (DEBUG) {
-                Log.d(TAG, "start WifiAdmin");
-            }
-            mWifiAdmin = new MyWifiAdmin(mContext);
+
+            Logger.t(TAG).d("start WifiAdmin");
+            mWifiAdmin = new WifiAdmin(mContext);
             mWifiAdmin.init();
+            mWifiAdmin.setListener(new WifiAdmin.WifiAdminListener() {
+                @Override
+                public void networkStateChanged(WifiAdmin wifiAdmin) {
+                    onNetworkStateChanged(wifiAdmin);
+                }
+
+                @Override
+                public void wifiScanResult(WifiAdmin wifiAdmin) {
+                    onWifiScanResult(wifiAdmin);
+                }
+
+                @Override
+                public void ConnectError(WifiAdmin wifiAdmin) {
+                    onConnectError(wifiAdmin);
+                }
+
+                @Override
+                public void ConnectDone(WifiAdmin wifiAdmin) {
+                    onConnectDone(wifiAdmin);
+                }
+            });
             mScanWifiAction = new Runnable() {
                 @Override
                 public void run() {
@@ -156,16 +139,13 @@ public class WifiAdminManager {
         }
     }
 
-    // API
     public void detachWifiAdmin(WifiCallback callback, boolean bCancelConnect) {
         mWifiCallbackList.remove(callback);
         if (bCancelConnect) {
             mWifiAdmin.cancelConnect();
         }
         if (mWifiCallbackList.size() == 0) {
-            if (DEBUG) {
-                Log.d(TAG, "stop WifiAdmin");
-            }
+            Logger.t(TAG).d("stop WifiAdmin");
             if (mScanWifiAction != null) {
                 mHandler.removeCallbacks(mScanWifiAction);
                 mScanWifiAction = null;
@@ -173,12 +153,11 @@ public class WifiAdminManager {
             mWifiAdmin.release();
             mWifiAdmin = null;
         }
-        if (DEBUG) {
-            Log.d(TAG, "detachWifiAdmin " + callback);
-        }
+
+        Logger.t(TAG).d("detachWifiAdmin " + callback);
     }
 
-    // API
+
     public WifiAdmin getWifiAdmin() {
         return mWifiAdmin;
     }

@@ -12,6 +12,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.transee.common.Utils;
 
 import java.util.List;
@@ -34,325 +35,321 @@ import java.util.List;
 //	connect to specified AP
 //	maintain wifi list
 
-abstract public class WifiAdmin {
+public class WifiAdmin {
+    private static final String TAG = "WifiAdmin";
 
-	static final boolean DEBUG = false;
-	static final String TAG = "WifiAdmin";
+    static final int STATE_IDLE = 0;
+    static final int STATE_CONNECTING = 1;
 
-	static final int STATE_IDLE = 0;
-	static final int STATE_CONNECTING = 1;
+    private final Context mContext;
+    private final WifiManager mWifiManager;
+    private final ConnectivityManager mConnectivityManager;
+    private MyBroadcastReceiver mReceiver;
+    private String mCurrSSID = "";
 
-	private final Context mContext;
-	private final WifiManager mWifiManager;
-	private final ConnectivityManager mConnectivityManager;
-	private MyBroadcastReceiver mReceiver;
-	private String mCurrSSID = "";
+    // wifi state
+    private NetworkInfo mNetworkInfo;
 
-	// wifi state
-	private NetworkInfo mNetworkInfo;
+    // wifi-list
+    private List<ScanResult> mScanResult;
 
-	// wifi-list
-	private List<ScanResult> mScanResult;
+    // connection
+    private String mTargetSSID;
+    private String mTargetPassword;
+    private int mState = STATE_IDLE;
+    private WifiConfiguration mWifiConfig; // connecting if != null
+    private WifiAdminListener mListener = null;
 
-	// connection
-	private String mTargetSSID;
-	private String mTargetPassword;
-	private int mState = STATE_IDLE;
-	private WifiConfiguration mWifiConfig; // connecting if != null
+    public interface WifiAdminListener {
+        void networkStateChanged(WifiAdmin wifiAdmin);
 
-	abstract public void networkStateChanged(WifiAdmin wifiAdmin);
+        void wifiScanResult(WifiAdmin wifiAdmin);
 
-	abstract public void wifiScanResult(WifiAdmin wifiAdmin);
+        void ConnectError(WifiAdmin wifiAdmin);
 
-	abstract public void onConnectError(WifiAdmin wifiAdmin);
+        void ConnectDone(WifiAdmin wifiAdmin);
+    }
 
-	abstract public void onConnectDone(WifiAdmin wifiAdmin);
 
-	public WifiAdmin(Context context) {
-		mContext = context;
-		mWifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-		mConnectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	}
+    public void setListener(WifiAdminListener listener) {
+        this.mListener = listener;
+    }
 
-	// API
-	public void init() {
-		mNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		mScanResult = mWifiManager.getScanResults();
-		updateWifiSSID(); // init wifi SSID
 
-		if (DEBUG) {
-			Log.d(TAG, "startTrackWifiState");
-		}
 
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-		// filter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
-		filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
-		mReceiver = new MyBroadcastReceiver();
-		mContext.registerReceiver(mReceiver, filter);
-	}
+    public WifiAdmin(Context context) {
+        mContext = context;
+        mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    }
 
-	// API
-	public void release() {
-		if (mReceiver != null) {
-			if (DEBUG) {
-				Log.d(TAG, "stopTrackWifiState");
-			}
-			mContext.unregisterReceiver(mReceiver);
-			mReceiver = null;
-		}
-	}
-	public WifiManager getWifiManager() {
-		return mWifiManager;
-	}
+    // API
+    public void init() {
+        mNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        mScanResult = mWifiManager.getScanResults();
+        updateWifiSSID(); // init wifi SSID
 
-	// API
-	public List<ScanResult> getScanResult() {
-		return mScanResult;
-	}
 
-	// API
-	public NetworkInfo getNetworkInfo() {
-		return mNetworkInfo;
-	}
+        Logger.t(TAG).d("startTrackWifiState");
 
-	// API
-	public String getCurrSSID() {
-		return mCurrSSID;
-	}
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        // filter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
-	// API
-	public String getTargetSSID() {
-		return mTargetSSID;
-	}
+        mReceiver = new MyBroadcastReceiver();
+        mContext.registerReceiver(mReceiver, filter);
+    }
 
-	// API
-	public void scan() {
-		if (DEBUG) {
-			Log.d(TAG, "call scan()");
-		}
-		mWifiManager.startScan();
-	}
+    // API
+    public void release() {
+        if (mReceiver != null) {
+            Logger.t(TAG).d("stopTrackWifiState");
+            mContext.unregisterReceiver(mReceiver);
+            mReceiver = null;
+        }
+    }
 
-	// API
-	public void connectTo(String ssid, String password) {
-		cancelConnect();
+    public WifiManager getWifiManager() {
+        return mWifiManager;
+    }
 
-		mTargetSSID = ssid;
-		mTargetPassword = password;
 
-		mWifiConfig = new WifiConfiguration();
-		mWifiConfig.allowedAuthAlgorithms.clear();
-		mWifiConfig.allowedGroupCiphers.clear();
-		mWifiConfig.allowedKeyManagement.clear();
-		mWifiConfig.allowedPairwiseCiphers.clear();
-		mWifiConfig.allowedProtocols.clear();
+    public List<ScanResult> getScanResult() {
+        return mScanResult;
+    }
 
-		mWifiConfig.SSID = "\"" + mTargetSSID + "\"";
-		mWifiConfig.preSharedKey = "\"" + mTargetPassword + "\"";
-		mWifiConfig.hiddenSSID = true;
-		mWifiConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-		mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-		mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-		mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-		mWifiConfig.status = WifiConfiguration.Status.ENABLED;
+    public NetworkInfo getNetworkInfo() {
+        return mNetworkInfo;
+    }
 
-		if (DEBUG) {
-			Log.d(TAG, "=== connecTo(" + ssid + ") ===");
-		}
+    public String getCurrSSID() {
+        return mCurrSSID;
+    }
 
-		mState = STATE_CONNECTING;
-		startTargetWifi();
-	}
+    public String getTargetSSID() {
+        return mTargetSSID;
+    }
 
-	// API
-	public void cancelConnect() {
-		mState = STATE_IDLE;
-		mWifiConfig = null;
-	}
+    // API
+    public void scan() {
 
-	// API
-	public boolean isConnecting() {
-		return mState == STATE_CONNECTING;
-	}
+        Logger.t(TAG).d("call scan()");
 
-	// check to call addNetwork()/enableNetwork()
-	private void startTargetWifi() {
-		if (!mNetworkInfo.isAvailable()) {
-			if (DEBUG) {
-				Log.d(TAG, "call setWifiEnabled");
-			}
-			if (!mWifiManager.setWifiEnabled(true)) {
-				Log.w(TAG, "setWifiEnabled failed");
-			}
-		} else {
-			NetworkInfo.State state = mNetworkInfo.getState();
-			switch (state) {
-			case CONNECTING:
-			case CONNECTED:
-				if (!mCurrSSID.equals(mTargetSSID)) {
-					if (DEBUG) {
-						Log.d(TAG, "connecting/connected to " + mCurrSSID + ", not target " + mTargetSSID);
-						Log.d(TAG, "call disconnect()");
-					}
-					mWifiManager.disconnect();
-				} else {
-					if (DEBUG) {
-						Log.d(TAG, "connecting/connected to target " + mTargetSSID);
-					}
-					mWifiConfig = null; // no further action
-					if (state == NetworkInfo.State.CONNECTED) {
-						mState = STATE_IDLE;
-						onConnectDone(this);
-					}
-				}
-				break;
-			case DISCONNECTED:
-				if (mWifiConfig != null) {
-					int netId = addTargetNetwork(mWifiConfig);
-					if (DEBUG) {
-						Log.d(TAG, "Wifi is enabled and disconnected");
-						Log.d(TAG, "addNetwork, netID: " + netId);
-						Log.d(TAG, "enableNetwork " + mWifiConfig.SSID);
-					}
-					if (netId >= 0 && mWifiManager.enableNetwork(netId, true)) {
-						if (DEBUG) {
-							Log.d(TAG, "enableNetwork OK");
-						}
-						mWifiConfig = null; // no further action
-					} else {
-						// TODO
-					}
-				} else {
-					if (DEBUG) {
-						Log.d(TAG, "disconnected state, currSSID: " + mCurrSSID);
-					}
-					if (mCurrSSID.equals(mTargetSSID)) {
-						mState = STATE_IDLE;
-						onConnectError(this);
-					}
-				}
-				break;
-			default:
-				break;
-			}
-		}
-	}
+        mWifiManager.startScan();
+    }
 
-	private int addTargetNetwork(WifiConfiguration wifiConfig) {
-		List<WifiConfiguration> configs = mWifiManager.getConfiguredNetworks();
-		if (configs != null) {
-			for (WifiConfiguration config : configs) {
-				String ssid = Utils.normalizeNetworkName(config.SSID);
-				if (ssid.equals(mTargetSSID)) {
-					if (DEBUG) {
-						Log.d(TAG, "updateNetwork: " + mTargetSSID);
-					}
-					wifiConfig.networkId = config.networkId;
-					return mWifiManager.updateNetwork(wifiConfig);
-				}
-			}
-		}
-		return mWifiManager.addNetwork(wifiConfig);
-	}
+    // API
+    public void connectTo(String ssid, String password) {
+        cancelConnect();
 
-	private void updateWifiSSID() {
-		WifiInfo info = mWifiManager.getConnectionInfo();
-		if (info == null || info.getNetworkId() < 0) {
-			mCurrSSID = "";
-		} else {
-			mCurrSSID = info.getSSID();
-			mCurrSSID = Utils.normalizeNetworkName(mCurrSSID);
-			if (mCurrSSID == null)
-				mCurrSSID = "";
-			if (DEBUG) {
-				Log.d(TAG, "SSID: " + mCurrSSID);
-			}
-		}
-	}
+        mTargetSSID = ssid;
+        mTargetPassword = password;
 
-	private void networkStateChanged(NetworkInfo networkInfo) {
-		mNetworkInfo = networkInfo;
-		if (mState == STATE_CONNECTING) {
-			startTargetWifi();
-		}
-		networkStateChanged(this);
-	}
+        mWifiConfig = new WifiConfiguration();
+        mWifiConfig.allowedAuthAlgorithms.clear();
+        mWifiConfig.allowedGroupCiphers.clear();
+        mWifiConfig.allowedKeyManagement.clear();
+        mWifiConfig.allowedPairwiseCiphers.clear();
+        mWifiConfig.allowedProtocols.clear();
 
-	private void onWifiScanResult(Intent intent) {
-		mScanResult = mWifiManager.getScanResults();
-		wifiScanResult(this);
-	}
+        mWifiConfig.SSID = "\"" + mTargetSSID + "\"";
+        mWifiConfig.preSharedKey = "\"" + mTargetPassword + "\"";
+        mWifiConfig.hiddenSSID = true;
+        mWifiConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        mWifiConfig.status = WifiConfiguration.Status.ENABLED;
 
-	private static String getWifiStateName(int state) {
-		switch (state) {
-		default:
-		case WifiManager.WIFI_STATE_UNKNOWN:
-			return "unknown";
-		case WifiManager.WIFI_STATE_DISABLED:
-			return "disabled";
-		case WifiManager.WIFI_STATE_DISABLING:
-			return "disabling";
-		case WifiManager.WIFI_STATE_ENABLED:
-			return "enabled";
-		case WifiManager.WIFI_STATE_ENABLING:
-			return "enabling";
-		}
-	}
 
-	class MyBroadcastReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (DEBUG) {
-				Log.d(TAG, "=== receive " + action);
-			}
+        Logger.t(TAG).d("=== connecTo(" + ssid + ") ===");
 
-			if (action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-				int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
-				int prevState = intent.getIntExtra(WifiManager.EXTRA_PREVIOUS_WIFI_STATE,
-						WifiManager.WIFI_STATE_UNKNOWN);
-				if (DEBUG) {
-					Log.d(TAG, "WIFI_STATE_CHANGED_ACTION: " + getWifiStateName(state) + ", prev: "
-							+ getWifiStateName(prevState));
-				}
-				// TODO
-				return;
-			}
+        mState = STATE_CONNECTING;
+        startTargetWifi();
+    }
 
-			if (action.equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)) {
-				android.net.wifi.SupplicantState state = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
-				int supplicantError = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 0);
-				if (DEBUG) {
-					Log.d(TAG, "SUPPLICANT_STATE_CHANGED_ACTION: newState=" + state + ", supplicantError="
-							+ supplicantError);
-				}
-				return;
-			}
 
-			if (action.equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
-				if (DEBUG) {
-					Log.d(TAG, "SCAN_RESULTS_AVAILABLE_ACTION");
-				}
-				onWifiScanResult(intent);
-				return;
-			}
+    public void cancelConnect() {
+        mState = STATE_IDLE;
+        mWifiConfig = null;
+    }
 
-			if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-				NetworkInfo networkInfo = (NetworkInfo)intent.getExtras().get(WifiManager.EXTRA_NETWORK_INFO);
-				if (DEBUG) {
-					Log.d(TAG, "NETWORK_STATE_CHANGED_ACTION: " + networkInfo.toString());
-				}
-				if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-					updateWifiSSID();
-					networkStateChanged(networkInfo);
-				}
-				return;
-			}
-		}
-	}
+    public boolean isConnecting() {
+        return mState == STATE_CONNECTING;
+    }
+
+    // check to call addNetwork()/enableNetwork()
+    private void startTargetWifi() {
+        if (!mNetworkInfo.isAvailable()) {
+
+            Logger.t(TAG).d("call setWifiEnabled");
+            if (!mWifiManager.setWifiEnabled(true)) {
+                Logger.t(TAG).w("setWifiEnabled failed");
+            }
+        } else {
+            NetworkInfo.State state = mNetworkInfo.getState();
+            switch (state) {
+                case CONNECTING:
+                case CONNECTED:
+                    if (!mCurrSSID.equals(mTargetSSID)) {
+
+                        Logger.t(TAG).d("connecting/connected to " + mCurrSSID + ", not target " + mTargetSSID);
+                        Logger.t(TAG).d("call disconnect()");
+                        mWifiManager.disconnect();
+                    } else {
+                        Logger.t(TAG).d("connecting/connected to target " + mTargetSSID);
+                        mWifiConfig = null; // no further action
+                        if (state == NetworkInfo.State.CONNECTED) {
+                            mState = STATE_IDLE;
+                            if (mListener != null) {
+                                mListener.ConnectDone(this);
+                            }
+                        }
+                    }
+                    break;
+                case DISCONNECTED:
+                    if (mWifiConfig != null) {
+                        int netId = addTargetNetwork(mWifiConfig);
+                        Logger.t(TAG).d("Wifi is enabled and disconnected");
+                        Logger.t(TAG).d("addNetwork, netID: " + netId);
+                        Logger.t(TAG).d("enableNetwork " + mWifiConfig.SSID);
+                        if (netId >= 0 && mWifiManager.enableNetwork(netId, true)) {
+
+                            Logger.t(TAG).d("enableNetwork OK");
+                            mWifiConfig = null; // no further action
+                        } else {
+                            // TODO
+                        }
+                    } else {
+
+                        Logger.t(TAG).d("disconnected state, currSSID: " + mCurrSSID);
+                        if (mCurrSSID.equals(mTargetSSID)) {
+                            mState = STATE_IDLE;
+                            if (mListener != null) {
+                                mListener.ConnectError(this);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private int addTargetNetwork(WifiConfiguration wifiConfig) {
+        List<WifiConfiguration> configs = mWifiManager.getConfiguredNetworks();
+        if (configs != null) {
+            for (WifiConfiguration config : configs) {
+                String ssid = Utils.normalizeNetworkName(config.SSID);
+                if (ssid.equals(mTargetSSID)) {
+
+                    Logger.t(TAG).d("updateNetwork: " + mTargetSSID);
+                    wifiConfig.networkId = config.networkId;
+                    return mWifiManager.updateNetwork(wifiConfig);
+                }
+            }
+        }
+        return mWifiManager.addNetwork(wifiConfig);
+    }
+
+    private void updateWifiSSID() {
+        WifiInfo info = mWifiManager.getConnectionInfo();
+        if (info == null || info.getNetworkId() < 0) {
+            mCurrSSID = "";
+        } else {
+            mCurrSSID = info.getSSID();
+            mCurrSSID = Utils.normalizeNetworkName(mCurrSSID);
+            if (mCurrSSID == null)
+                mCurrSSID = "";
+
+            Logger.t(TAG).d("SSID: " + mCurrSSID);
+        }
+    }
+
+    private void networkStateChanged(NetworkInfo networkInfo) {
+        mNetworkInfo = networkInfo;
+        if (mState == STATE_CONNECTING) {
+            startTargetWifi();
+        }
+        if (mListener != null) {
+            mListener.networkStateChanged(this);
+        }
+    }
+
+    private void onWifiScanResult(Intent intent) {
+        mScanResult = mWifiManager.getScanResults();
+        if (mListener != null) {
+            mListener.wifiScanResult(this);
+        }
+    }
+
+    private static String getWifiStateName(int state) {
+        switch (state) {
+            default:
+            case WifiManager.WIFI_STATE_UNKNOWN:
+                return "unknown";
+            case WifiManager.WIFI_STATE_DISABLED:
+                return "disabled";
+            case WifiManager.WIFI_STATE_DISABLING:
+                return "disabling";
+            case WifiManager.WIFI_STATE_ENABLED:
+                return "enabled";
+            case WifiManager.WIFI_STATE_ENABLING:
+                return "enabling";
+        }
+    }
+
+    class MyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            Logger.t(TAG).d("=== receive " + action);
+
+            if (action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+                int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
+                int prevState = intent.getIntExtra(WifiManager.EXTRA_PREVIOUS_WIFI_STATE,
+                    WifiManager.WIFI_STATE_UNKNOWN);
+
+                Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION: " + getWifiStateName(state) + ", prev: "
+                    + getWifiStateName(prevState));
+
+                // TODO
+                return;
+            }
+
+            if (action.equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)) {
+                android.net.wifi.SupplicantState state = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
+                int supplicantError = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 0);
+
+                Logger.t(TAG).d("SUPPLICANT_STATE_CHANGED_ACTION: newState=" + state + ", supplicantError="
+                    + supplicantError);
+                return;
+            }
+
+            if (action.equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
+
+                Logger.t(TAG).d("SCAN_RESULTS_AVAILABLE_ACTION");
+                onWifiScanResult(intent);
+                return;
+            }
+
+            if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+                NetworkInfo networkInfo = (NetworkInfo) intent.getExtras().get(WifiManager.EXTRA_NETWORK_INFO);
+
+                Logger.t(TAG).d("NETWORK_STATE_CHANGED_ACTION: " + networkInfo.toString());
+                if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                    updateWifiSSID();
+                    networkStateChanged(networkInfo);
+                }
+                return;
+            }
+        }
+    }
 }
