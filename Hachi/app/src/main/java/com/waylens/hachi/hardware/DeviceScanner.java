@@ -24,7 +24,7 @@ import javax.jmdns.ServiceTypeListener;
 /**
  * Created by Xiaofei on 2015/9/17.
  */
-public abstract class DeviceScanner extends Thread {
+public class DeviceScanner extends Thread {
     private static final String TAG = DeviceScanner.class.getSimpleName();
 
     private static final String SERVICE_TYPE = "_ccam._tcp.local.";
@@ -41,11 +41,23 @@ public abstract class DeviceScanner extends Thread {
     private WifiManager.MulticastLock mLock;
     private boolean mbRunning;
 
-    abstract public void onServiceResoledAsync(DeviceScanner thread, VdtCamera.ServiceInfo serviceInfo);
+    private DeviceScannerListener mListener = null;
 
-    abstract public void onRescanAsync(DeviceScanner thread);
+    public interface DeviceScannerListener {
+        void onServiceResoledAsync(DeviceScanner thread, VdtCamera.ServiceInfo serviceInfo);
 
-    public DeviceScanner(Context context) {
+        void onRescanAsync(DeviceScanner thread);
+    }
+
+    public void setListener(DeviceScannerListener listener) {
+        mListener = listener;
+    }
+
+
+
+
+
+    public DeviceScanner() {
         super("ServiceDiscovery");
     }
 
@@ -153,7 +165,9 @@ public abstract class DeviceScanner extends Thread {
 
             // TODO - sometimes, the service cannot be found
             // this is a workaround to find the service
-            onRescanAsync(this);
+            if (mListener != null) {
+                mListener.onRescanAsync(this);
+            }
             if (mdns != null) {
                 for (JmDNS dns : mdns) {
                     dns.removeServiceListener(SERVICE_TYPE, mServiceListener);
@@ -202,10 +216,12 @@ public abstract class DeviceScanner extends Thread {
                     VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(addresses[0], info
                         .getPort(), serverName,
                         name, bIsPcServer);
-                    onServiceResoledAsync(DeviceScanner.this, serviceInfo);
+                    if (mListener != null) {
+                        mListener.onServiceResoledAsync(DeviceScanner.this, serviceInfo);
+                    }
                 }
             } else {
-                Log.d(TAG, "serviceResolved: not running");
+                Logger.t(TAG).d("serviceResolved: not running");
             }
         }
     };

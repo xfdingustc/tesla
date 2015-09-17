@@ -51,6 +51,8 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
     private VdtCameraManager mVdtCameraManager;
     private CameraListRvAdapter mCameraListAdapter;
 
+    private DeviceScanner mDeviceScanner = null;
+
     Handler mHandler;
 
     WifiAdmin mWifiAdmin;
@@ -182,49 +184,42 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         }
     }
 
-    private DeviceScanner mSDThread;
+
 
     private void startDiscovery(WifiAdmin wifiAdmin) {
-        /*
-        CameraDiscovery.discoverCameras(getActivity(), new CameraDiscovery.Callback() {
-            @Override
-            public void onCameraFound(NsdServiceInfo cameraService) {
-                String serviceName = cameraService.getServiceName();
-                boolean bIsPcServer = serviceName.equals("Vidit Studio");
-                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-                        cameraService.getHost(),
-                        cameraService.getPort(),
-                        "", serviceName, bIsPcServer);
+        if (mDeviceScanner == null) {
+            mDeviceScanner = new DeviceScanner();
+            mDeviceScanner.setListener(new DeviceScanner.DeviceScannerListener() {
+                @Override
+                public void onServiceResoledAsync(final DeviceScanner thread, final VdtCamera
+                    .ServiceInfo serviceInfo) {
+                    Log.d(TAG, "onServiceResolved: " + serviceInfo.inetAddr.toString() + ", " + serviceInfo.serviceName);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (thread == mDeviceScanner) {
+                                CameraListFragment.this.onServiceResolved(serviceInfo);
+                            }
+                        }
+                    });
+                }
 
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onServiceResolved(serviceInfo);
-                    }
-                });
+                @Override
+                public void onRescanAsync(DeviceScanner thread) {
 
-            }
+                }
+            });
 
-            @Override
-            public void onError(int errorCode) {
-
-            }
-        }); */
-
-        if (mSDThread == null) {
-            mSDThread = new MySDThread(getActivity());
-
-            mSDThread.startWork(wifiAdmin == null ? null : wifiAdmin.getWifiManager());
+            mDeviceScanner.startWork(wifiAdmin == null ? null : wifiAdmin.getWifiManager());
 
             Logger.t(TAG).d("--- start discovery ---");
         }
     }
 
     void stopDiscovery() {
-        //CameraDiscovery.stopDiscovery();
-        if (mSDThread != null) {
-            mSDThread.stopWork();
-            mSDThread = null;
+        if (mDeviceScanner != null) {
+            mDeviceScanner.stopWork();
+            mDeviceScanner = null;
             Logger.t(TAG).d("=== stop discovery ===");
         }
     }
@@ -282,38 +277,5 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         CameraControlActivity.launch(getActivity(), camera);
     }
 
-    class MySDThread extends DeviceScanner {
 
-        public MySDThread(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void onServiceResoledAsync(final DeviceScanner thread, final VdtCamera.ServiceInfo
-            serviceInfo) {
-
-            Log.d(TAG, "onServiceResolved: " + serviceInfo.inetAddr.toString() + ", " + serviceInfo.serviceName);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (thread == mSDThread) {
-                        CameraListFragment.this.onServiceResolved(serviceInfo);
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void onRescanAsync(final DeviceScanner thread) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (thread == mSDThread) {
-                        //CameraListActivity.this.onRescan();
-                    }
-                }
-            });
-        }
-
-    }
 }
