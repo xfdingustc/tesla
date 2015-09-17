@@ -93,7 +93,7 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
-
+        ClipPlaybackActivity.launch(this, mVdtCamera, mClip);
     }
 
     @Override

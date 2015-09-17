@@ -104,7 +104,9 @@ abstract public class WifiAdmin {
 			mReceiver = null;
 		}
 	}
-
+	public WifiManager getWifiManager() {
+		return mWifiManager;
+	}
 
 	// API
 	public List<ScanResult> getScanResult() {

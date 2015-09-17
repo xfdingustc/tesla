@@ -56,11 +56,6 @@
         <service android:name=".ui.services.DownloadService"/>
 
         <activity
-            android:name=".ui.activities.CameraListActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name">
-        </activity>
-        <activity
             android:name=".ui.activities.CameraControlActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_camera_preview"

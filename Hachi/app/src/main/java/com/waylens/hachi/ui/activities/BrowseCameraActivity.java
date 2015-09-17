@@ -32,10 +32,9 @@ public class BrowseCameraActivity extends BaseActivity {
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
 
-    private Vdb mVdb;
+
     private VdtCamera mVdtCamera;
     private CameraClipSetAdapter mClipSetAdapter = null;
-    private String mHost;
 
     private VdbRequestQueue mVdbRequestQueue;
 
@@ -62,12 +61,6 @@ public class BrowseCameraActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
     protected void init() {
         super.init();
         initViews();
@@ -87,9 +80,6 @@ public class BrowseCameraActivity extends BaseActivity {
             hostString = mVdtCamera.getHostString();
         }
 
-
-        //mVdb.start(hostString);
-        mHost = hostString;
         mVdbRequestQueue = Snipe.newRequestQueue(this, mSharedCamera.getVdbConnection());
 
         initCameraVideoListView();
