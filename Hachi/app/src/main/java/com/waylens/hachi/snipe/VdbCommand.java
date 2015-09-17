@@ -163,9 +163,9 @@ public class VdbCommand {
 
         public static VdbCommand createCmdGetClipSetInfo(int type) {
             return new Builder()
-                .writeCmdCode(CMD_GetClipSetInfo, 0)
-                .writeInt32(type)
-                .build();
+                    .writeCmdCode(CMD_GetClipSetInfo, 0)
+                    .writeInt32(type)
+                    .build();
         }
 
         public static VdbCommand createCmdGetIndexPicture(ClipPos clipPos) {
@@ -174,23 +174,23 @@ public class VdbCommand {
                 cmd |= (1 << 16);
             }
             return new Builder()
-                .writeCmdCode(cmd, clipPos.getType())
-                .writeInt32(clipPos.cid.type)
-                .writeInt32(clipPos.cid.subType)
-                .writeInt32(clipPos.getType() | (clipPos.isLast() ? ClipPos.F_IS_LAST : 0))
-                .writeInt64(clipPos.getClipTimeMs())
-                .build();
+                    .writeCmdCode(cmd, clipPos.getType())
+                    .writeInt32(clipPos.cid.type)
+                    .writeInt32(clipPos.cid.subType)
+                    .writeInt32(clipPos.getType() | (clipPos.isLast() ? ClipPos.F_IS_LAST : 0))
+                    .writeInt64(clipPos.getClipTimeMs())
+                    .build();
         }
 
         public static VdbCommand createCmdGetClipPlaybackUrl(Clip clip, int stream, int urlType,
                                                              boolean muteAudio, long clipTimeMs) {
             return new Builder()
-                .writeCmdCode(CMD_GetPlaybackUrl, 0)
-                .writeClipId(clip.cid)
-                .writeInt32(stream)
-                .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
-                .writeInt64(clipTimeMs)
-                .build();
+                    .writeCmdCode(CMD_GetPlaybackUrl, 0)
+                    .writeClipId(clip.cid)
+                    .writeInt32(stream)
+                    .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
+                    .writeInt64(clipTimeMs)
+                    .build();
         }
 
         public static VdbCommand createCmdGetClipDownloadUrl(Clip clip, long startMs, long endMs,
@@ -201,21 +201,21 @@ public class VdbCommand {
             }
             int duration = (int) (endMs - startMs);
             return new Builder()
-                .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
-                .writeClipId(clip.cid)
-                .writeInt64(startMs)
-                .writeInt32(duration)
-                .writeInt32(downloadOption)
-                .build();
+                    .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
+                    .writeClipId(clip.cid)
+                    .writeInt64(startMs)
+                    .writeInt32(duration)
+                    .writeInt32(downloadOption)
+                    .build();
         }
 
         public static VdbCommand createCmdGetRawData(Clip clip, long clipTimeMs, int type) {
             return new Builder()
-                .writeCmdCode(CMD_GetRawData, 0)
-                .writeClipId(clip.cid)
-                .writeInt64(clipTimeMs)
-                .writeInt32(type)
-                .build();
+                    .writeCmdCode(CMD_GetRawData, 0)
+                    .writeClipId(clip.cid)
+                    .writeInt64(clipTimeMs)
+                    .writeInt32(type)
+                    .build();
         }
 
 
@@ -223,12 +223,28 @@ public class VdbCommand {
                                                           long clipTimeMs, int lengthMs,
                                                           int dataType) {
             return new Builder()
-                .writeCmdCode(CMD_GetRawDataBlock, forDownload ? 1 : 0)
-                .writeClipId(clip.cid)
-                .writeInt64(clipTimeMs)
-                .writeInt32(lengthMs)
-                .writeInt32(dataType)
-                .build();
+                    .writeCmdCode(CMD_GetRawDataBlock, forDownload ? 1 : 0)
+                    .writeClipId(clip.cid)
+                    .writeInt64(clipTimeMs)
+                    .writeInt32(lengthMs)
+                    .writeInt32(dataType)
+                    .build();
+        }
+
+        public static VdbCommand createCmdGetClipExtent(Clip clip) {
+            return new Builder()
+                    .writeCmdCode(CMD_GetClipExtent, 0)
+                    .writeClipId(clip.cid)
+                    .build();
+        }
+
+        public static VdbCommand createCmdSetClipExtent(Clip clip, long newClipStart, long newClipEnd) {
+            return new Builder()
+                    .writeCmdCode(CMD_SetClipExtent, 0)
+                    .writeClipId(clip.cid)
+                    .writeInt64(newClipStart)
+                    .writeInt64(newClipEnd)
+                    .build();
         }
     }
 }

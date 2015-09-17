@@ -31,6 +31,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RemoteClip;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -225,6 +226,13 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
         }
     }
 
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        if (mThread != null) {
+            mThread.quit();
+        }
+    }
 
     public void cleanup() {
         mHandler.post(new Runnable() {
@@ -235,7 +243,6 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
                     plays.nextElement().release();
                     Log.e("test", "Release MediaPlayer.");
                 }
-                mThread.quit();
                 Log.e("test", "Quite handler Thread");
             }
         });

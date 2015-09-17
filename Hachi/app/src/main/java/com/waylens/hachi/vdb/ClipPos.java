@@ -18,7 +18,7 @@ public class ClipPos {
 	private final boolean mbIsLast;
 	private final int mDate;
 	private final int mType; // TYPE_POSTER etc.
-	private final long mClipTimeMs; // absolute time in the clip
+	private long mClipTimeMs; // absolute time in the clip
 
 	private long mRealTimeMs; // real time returned by server
 	private int mDuration; // returned by server
@@ -60,6 +60,10 @@ public class ClipPos {
 
 	public final long getClipTimeMs() {
 		return mClipTimeMs;
+	}
+
+	public void setClipTimeMs(long clipTimeMs) {
+		mClipTimeMs = clipTimeMs;
 	}
 
 	public final long getRealTimeMs() {

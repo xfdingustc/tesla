@@ -113,12 +113,7 @@ public class LiveFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
         mClipSetAdapter.cleanup();
-        super.onDestroyView();
     }
 
     private void retrieveVideoList(int type) {

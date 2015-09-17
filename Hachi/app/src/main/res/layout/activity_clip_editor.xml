@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:rsb="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
@@ -31,26 +32,38 @@
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvClipFragments"
+    <SeekBar
+        android:id="@+id/video_seek_bar"
         android:layout_width="match_parent"
-        android:layout_height="72dp">
+        android:layout_height="32dp"/>
 
-    </android.support.v7.widget.RecyclerView>
-
-
-    <RelativeLayout
+    <include
+        layout="@layout/row_divider"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="1px"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        />
 
-        <ImageButton
-            android:id="@+id/btnDownload"
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/range_seek_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <org.florescu.android.rangeseekbar.RangeSeekBar
+            android:id="@+id/range_seek_bar"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_cloud_download_black_48dp"
-            android:background="@android:color/transparent"/>
-    </RelativeLayout>
-
+            android:layout_weight="1"
+            rsb:showLabels="false"
+            rsb:valuesAboveThumbs="false"/>
+        <ImageButton
+            android:id="@+id/btn_update_bookmark"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_autorenew_white_48dp"
+            android:contentDescription="@null"
+            android:background="?attr/selectableItemBackground"/>
+    </LinearLayout>
 </LinearLayout>

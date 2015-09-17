@@ -1,5 +1,7 @@
 package com.waylens.hachi.snipe;
 
+import android.util.Log;
+
 import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
@@ -36,6 +38,7 @@ public class VdbAcknowledge {
         this.mVdbConnection = vdbConnection;
         this.mCmdCode = cmdCode;
 
+        Log.e("test", String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]", statusCode, cmdCode));
         try {
             while (true) {
                 mReceiveBuffer = mVdbConnection.receivedAck();
