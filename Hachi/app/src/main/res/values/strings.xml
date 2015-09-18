@@ -267,5 +267,7 @@
     <string name="no_connected_camera">No connected camera!</string>
     <string name="camera_video_all">All</string>
     <string name="camera_video_bookmark">Bookmark</string>
+    <string name="label_mark_before">Time Before Mark</string>
+    <string name="label_mark_after">Time After Mark</string>
 
 </resources>

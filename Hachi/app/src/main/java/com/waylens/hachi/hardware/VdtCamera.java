@@ -260,6 +260,7 @@ public class VdtCamera {
             client.cmd_Cam_get_State();
             client.cmd_Network_GetWLanMode();
             client.cmd_Network_GetHostNum();
+            client.cmd_Rec_GetMarkTime();
         }
     }
 

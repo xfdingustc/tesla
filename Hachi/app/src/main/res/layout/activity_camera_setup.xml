@@ -351,6 +351,111 @@
             <View style="@style/horzSeparator" />
 
             <RelativeLayout
+                android:id="@+id/layoutMarkBeforeTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/listview"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingBottom="4dp"
+                android:paddingEnd="12dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="12dp"
+                android:paddingStart="4dp"
+                android:paddingTop="4dp" >
+
+                <ImageView
+                    android:id="@+id/imageView_mb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty_text"
+                    android:src="@drawable/dropdown_small" />
+
+                <TextView
+                    android:id="@+id/textView_mb"
+                    style="@style/prefTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/imageView_mb"
+                    android:layout_toStartOf="@+id/imageView_mb"
+                    android:text="@string/label_mark_before"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/text_mark_before"
+                    style="@style/prefValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/textView_mb"
+                    android:layout_toLeftOf="@+id/imageView_mb"
+                    android:layout_toStartOf="@+id/imageView_mb"
+                    android:text="@string/unkown_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </RelativeLayout>
+
+            <View style="@style/horzSeparator" />
+
+            <RelativeLayout
+                android:id="@+id/layoutMarkAfterTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/listview"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingBottom="4dp"
+                android:paddingEnd="12dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="12dp"
+                android:paddingStart="4dp"
+                android:paddingTop="4dp" >
+
+                <ImageView
+                    android:id="@+id/imageView_ma"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty_text"
+                    android:src="@drawable/dropdown_small" />
+
+                <TextView
+                    android:id="@+id/textView_ma"
+                    style="@style/prefTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/imageView_ma"
+                    android:layout_toStartOf="@+id/imageView_ma"
+                    android:text="@string/label_mark_after"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/text_mark_after"
+                    style="@style/prefValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/textView_ma"
+                    android:layout_toLeftOf="@+id/imageView_ma"
+                    android:layout_toStartOf="@+id/imageView_ma"
+                    android:text="@string/unkown_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </RelativeLayout>
+
+            <View style="@style/horzSeparator" />
+            <RelativeLayout
                 android:id="@+id/layoutAutoRecord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

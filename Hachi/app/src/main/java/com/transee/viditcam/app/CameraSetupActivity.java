@@ -19,11 +19,14 @@ import com.transee.ccam.WifiState;
 import com.transee.common.Utils;
 import com.transee.viditcam.actions.GetCameraName;
 import com.transee.viditcam.actions.SelectColorMode;
+import com.transee.viditcam.actions.SelectMarkTime;
 import com.transee.viditcam.actions.SelectVideoQuality;
 import com.transee.viditcam.actions.SelectVideoResolution;
 import com.transee.viditcam.actions.SyncDateTime;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
+
+import java.util.Arrays;
 
 public class CameraSetupActivity extends BaseActivity {
 
@@ -56,6 +59,12 @@ public class CameraSetupActivity extends BaseActivity {
     private TextView mTextWifiMode;
     private TextView mTextBtSupport;
     private TextView mTextFirmwareVersion;
+
+    private TextView mTextMarkBeforeTime;
+    private TextView mTextMarkAfterTime;
+
+    private int[] mMarkTimes;
+    private String[] mMarkTimesDesc;
 
     private CameraState getCameraStates() {
         return VdtCamera.getCameraStates(mVdtCamera);
@@ -188,6 +197,68 @@ public class CameraSetupActivity extends BaseActivity {
         mTextBtSupport = (TextView) layout.findViewById(R.id.textBtSupport);
 
         mTextFirmwareVersion = (TextView) findViewById(R.id.textVersion);
+        findViewById(R.id.layoutMarkBeforeTime).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeMarkBeforeTime();
+            }
+        });
+
+        findViewById(R.id.layoutMarkAfterTime).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeMarkAfterTime();
+            }
+        });
+
+        mMarkTimes = getResources().getIntArray(R.array.videoMarkTime);
+        mMarkTimesDesc = getResources().getStringArray(R.array.videoMarkTimeDesc);
+
+        mTextMarkBeforeTime = (TextView) findViewById(R.id.text_mark_before);
+        mTextMarkAfterTime = (TextView) findViewById(R.id.text_mark_after);
+    }
+
+    private String getMarkTimeDesc(int markTime) {
+        int pos = Arrays.binarySearch(mMarkTimes, markTime);
+        if (pos == -1) {
+            return getString(R.string.unkown_text);
+        } else {
+            return mMarkTimesDesc[pos];
+        }
+    }
+
+    void changeMarkAfterTime() {
+        final int markTime = getCameraStates().mMarkAfterTime;
+        int markTimeIndex = Arrays.binarySearch(mMarkTimes, markTime);
+        SelectMarkTime action = new SelectMarkTime(this, mMarkTimesDesc, markTimeIndex) {
+            @Override
+            public void onSelectMarkTime(int id) {
+                int newMarkTime = mMarkTimes[id];
+                if (newMarkTime != markTime) {
+                    getCameraClient().cmd_Rec_SetMarkTime(getCameraStates().mMarkBeforeTime, newMarkTime);
+                    getCameraStates().mMarkAfterTime = newMarkTime;
+                    updateMarkTime();
+                }
+            }
+        };
+        action.show();
+    }
+
+    void changeMarkBeforeTime() {
+        final int markTime = getCameraStates().mMarkBeforeTime;
+        int markTimeIndex = Arrays.binarySearch(mMarkTimes, markTime);
+        SelectMarkTime action = new SelectMarkTime(this, mMarkTimesDesc, markTimeIndex) {
+            @Override
+            public void onSelectMarkTime(int id) {
+                int newMarkTime = mMarkTimes[id];
+                if (newMarkTime != markTime) {
+                    getCameraClient().cmd_Rec_SetMarkTime(newMarkTime, getCameraStates().mMarkAfterTime);
+                    getCameraStates().mMarkBeforeTime = newMarkTime;
+                    updateMarkTime();
+                }
+            }
+        };
+        action.show();
     }
 
     private void onChangeCameraName() {
@@ -463,6 +534,12 @@ public class CameraSetupActivity extends BaseActivity {
         // firmware version
         //mTextFirmwareVersion.setText(states.mFirmwareVersion);
         mTextFirmwareVersion.setText(states.versionString());
+        updateMarkTime();
+    }
+
+    private void updateMarkTime() {
+        mTextMarkBeforeTime.setText(getMarkTimeDesc(getCameraStates().mMarkBeforeTime));
+        mTextMarkAfterTime.setText(getMarkTimeDesc(getCameraStates().mMarkAfterTime));
     }
 
     private void updateWifiStates() {

@@ -63,4 +63,22 @@
         <item>Take Photo</item>
         <item>Choose from Gallery</item>
     </string-array>
+
+    <integer-array name="videoMarkTime">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </integer-array>
+
+    <string-array name="videoMarkTimeDesc">
+        <item>2s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>15s</item>
+        <item>20s</item>
+        <item>30s</item>
+    </string-array>
 </resources>

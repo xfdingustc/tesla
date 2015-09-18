@@ -59,4 +59,10 @@ public interface AbsCameraClient {
     void userCmd_ExitThread();
 
     void cmd_Cam_get_getStorageInfor();
+
+    void cmd_Rec_MarkLiveVideo();
+
+    void cmd_Rec_GetMarkTime();
+
+    void cmd_Rec_SetMarkTime(int before, int after);
 }

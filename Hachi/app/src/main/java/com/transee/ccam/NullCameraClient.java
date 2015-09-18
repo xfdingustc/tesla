@@ -102,6 +102,21 @@ public class NullCameraClient implements AbsCameraClient {
 	}
 
 	@Override
+	public void cmd_Rec_MarkLiveVideo() {
+
+	}
+
+	@Override
+	public void cmd_Rec_GetMarkTime() {
+
+	}
+
+	@Override
+	public void cmd_Rec_SetMarkTime(int before, int after) {
+
+	}
+
+	@Override
 	public boolean syncState(CameraState user) {
 		return false;
 	}

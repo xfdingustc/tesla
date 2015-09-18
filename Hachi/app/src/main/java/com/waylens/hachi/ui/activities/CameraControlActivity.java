@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -46,7 +47,6 @@ import com.transee.ccam.CameraState;
 import com.transee.common.DateTime;
 import com.transee.common.GPSRawData;
 import com.transee.common.MjpegBitmap;
-import com.waylens.hachi.vdb.OBDData;
 import com.transee.common.Timer;
 import com.transee.common.Utils;
 import com.transee.vdb.PlaylistSet;
@@ -63,6 +63,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -110,6 +111,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     private ViditImageButton mVideoButton;
     private ViditImageButton mSetupButton;
     private ViditImageButton mRecordButton;
+    private ImageView mBtnBookmark;
 
     private View mModeView; // video or picture
     private RadioButton mVideoModeButton;
@@ -238,7 +240,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             if (serverAddr == null) {
                 mVdtCamera = null;
             } else {
-                //mVdtCamera.addCallback(mCameraCallback);
+                mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mMjpegView.startStream(serverAddr, new MyMjpegViewCallback(), true);
             }
             // mCamera.getClient().cmdGetResolution();
@@ -413,7 +415,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             @Override
             public void onRawDataAsync(int dataType, byte[] data) {
                 if (dataType == RawDataBlock.RAW_DATA_GPS
-                    && gpsSource == PrefsUtil.GPS_CAMERA) {
+                        && gpsSource == PrefsUtil.GPS_CAMERA) {
 
                     try {
                         final GPSRawData gpsRawData = GPSRawData.translate(data);
@@ -659,6 +661,16 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
         });
 
+        mBtnBookmark = (ImageView) findViewById(R.id.btn_bookmark);
+        mBtnBookmark.getDrawable().setColorFilter(getResources().getColor(R.color.style_color_primary), PorterDuff.Mode.MULTIPLY);
+        mBtnBookmark.setVisibility(View.GONE);
+        mBtnBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addBookmark();
+            }
+        });
+
         mSetupButton = (ViditImageButton) findViewById(R.id.btnSetup);
         mSetupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -697,7 +709,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
         mMjpegView.setAnchorTopThumbnail(0);
 
-        toggleFullScreen();
+        //toggleFullScreen();
 
         // position the Record button
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -761,6 +773,24 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
         gpsSource = PrefsUtil.getGPSource();
         initWeatherData();
+    }
+
+    private void addBookmark() {
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        if (states.mRecordState != CameraState.State_Record_Recording) {
+            return;
+        }
+        mBtnBookmark.setEnabled(false);
+        mBtnBookmark.getDrawable().setColorFilter(getResources().getColor(R.color.material_grey_600), PorterDuff.Mode.MULTIPLY);
+        mVdtCamera.getClient().cmd_Rec_MarkLiveVideo();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mBtnBookmark.setEnabled(true);
+                mBtnBookmark.getDrawable().setColorFilter(getResources().getColor(R.color.style_color_primary), PorterDuff.Mode.MULTIPLY);
+            }
+        }, states.mMarkAfterTime * 1000);
+
     }
 
     private void initWeatherData() {
@@ -999,11 +1029,13 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             default:
             case CameraState.State_Record_Unknown:
                 mRecordButton.setVisibility(View.GONE);
+                mBtnBookmark.setVisibility(View.GONE);
                 bEnable = false;
                 break;
             case CameraState.State_Record_Stopped:
                 mRecordButton.changeImages(R.drawable.start_record, R.drawable.start_record_pressed);
                 mRecordButton.setVisibility(visibility);
+                mBtnBookmark.setVisibility(View.GONE);
                 break;
             case CameraState.State_Record_Stopping:
                 bEnable = false;
@@ -1014,6 +1046,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             case CameraState.State_Record_Recording:
                 mRecordButton.changeImages(R.drawable.stop_record, R.drawable.stop_record_pressed);
                 mRecordButton.setVisibility(visibility);
+                mBtnBookmark.setVisibility(visibility);
                 break;
             case CameraState.State_Record_Switching:
                 bEnable = false;
@@ -1201,10 +1234,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
     }
 
-
-    /*
-    private final VdtCamera.Callback mCameraCallback = new VdtCamera.Callback() {
-
+    private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
         @Override
         public void onStateChanged(VdtCamera vdtCamera) {
             if (vdtCamera == mVdtCamera) {
@@ -1226,67 +1256,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         public void onWifiStateChanged(VdtCamera vdtCamera) {
 
         }
-
-        @Override
-        public void onStartRecordError(VdtCamera vdtCamera, int error) {
-            if (vdtCamera == mVdtCamera) {
-                CameraControlActivity.this.onStartRecordError(error);
-            }
-        }
-
-        @Override
-        public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
-
-        }
-
-        @Override
-        public void onScanBtDone(VdtCamera vdtCamera) {
-
-        }
-
-        @Override
-        public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
-
-        }
-
-        @Override
-        public void onConnected(VdtCamera vdtCamera) {
-
-        }
-
-        @Override
-        public void onDisconnected(VdtCamera vdtCamera) {
-            if (vdtCamera == mVdtCamera) {
-                removeCamera();
-                noCamera();
-            }
-        }
-
-        @Override
-        public void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot) {
-            if (vdtCamera == mVdtCamera && bOneShot) {
-                mMjpegView.startMask(5);
-                BeepManager.play(thisApp, R.raw.beep2, false);
-            }
-        }
-
-        @Override
-        public void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks) {
-            if (vdtCamera == mVdtCamera) {
-                if (bCapturing) {
-                    startBurst(numPictures, burstTicks);
-                } else {
-                    stopBurst();
-                }
-            }
-        }
-
-        @Override
-        public void onStillCaptureDone(VdtCamera vdtCamera) {
-            // TODO
-        }
-
-    }; */
+    };
 
     class MyMjpegViewCallback implements MjpegBitmap.Callback {
 

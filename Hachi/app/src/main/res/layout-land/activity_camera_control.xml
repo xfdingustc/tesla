@@ -65,6 +65,20 @@
             viditcam:noBackground="true"
             viditcam:pressedImage="@drawable/start_record_pressed" />
 
+        <ImageView
+            android:id="@+id/btn_bookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_bookmark_white_48dp"
+            android:background="?attr/selectableItemBackground"
+            android:layout_above="@id/imageButton1"
+            android:contentDescription="@null"/>
+
         <include
             android:id="@+id/recordState1"
             android:layout_width="wrap_content"
@@ -80,7 +94,7 @@
         android:id="@+id/map_holder"
         android:layout_width="326px"
         android:layout_height="420px"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:background="@drawable/map_outer_background_box"
         android:layout_gravity="left"
         android:padding="16px">
