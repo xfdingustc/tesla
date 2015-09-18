@@ -1,13 +1,10 @@
 package com.waylens.hachi.hardware;
 
-import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 
-import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -19,9 +16,9 @@ import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
-import javax.jmdns.ServiceTypeListener;
 
 /**
+ * //
  * Created by Xiaofei on 2015/9/17.
  */
 public class DeviceScanner extends Thread {
@@ -54,9 +51,6 @@ public class DeviceScanner extends Thread {
     }
 
 
-
-
-
     public DeviceScanner() {
         super("ServiceDiscovery");
     }
@@ -87,7 +81,6 @@ public class DeviceScanner extends Thread {
     @Override
     public void run() {
         try {
-
             Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
             while (en.hasMoreElements()) {
                 NetworkInterface ni = en.nextElement();
@@ -101,8 +94,7 @@ public class DeviceScanner extends Thread {
             }
 
         } catch (Exception e) {
-            Log.d(TAG, "startWork failed");
-            e.printStackTrace();
+            Logger.t(TAG).e("Error", e);
         }
 
         if (mWifiManager != null) {
@@ -110,12 +102,10 @@ public class DeviceScanner extends Thread {
         }
 
         try {
-
             for (InetAddress addr : mAddress) {
                 JmDNS dns = JmDNS.create(addr, SERVICE_VIDITCAM);
                 mdns.add(dns);
             }
-
             for (InetAddress addr : mAddress) {
                 JmDNS dns = JmDNS.create(addr, SERVICE_VIDIT_STUDIO);
                 mdns.add(dns);
@@ -132,17 +122,11 @@ public class DeviceScanner extends Thread {
                         dns.close();
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "Error", e);
+                    Logger.t(TAG).e("Error", e);
                 }
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
-
+            Logger.t(TAG).e("Error", e);
         } finally {
             try {
                 if (mWifiManager != null) {
@@ -186,7 +170,7 @@ public class DeviceScanner extends Thread {
                 // Vidit Camera, _ccam._tcp.local.
                 event.getDNS().requestServiceInfo(event.getType(), event.getName(), 1);
             } else {
-                Log.d(TAG, "serviceAdded: not running");
+                Logger.t(TAG).d("serviceAdded: not running");
             }
         }
 
@@ -214,8 +198,8 @@ public class DeviceScanner extends Thread {
                         serverName = serverName.substring(0, index);
                     }
                     VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(addresses[0], info
-                        .getPort(), serverName,
-                        name, bIsPcServer);
+                            .getPort(), serverName,
+                            name, bIsPcServer);
                     if (mListener != null) {
                         mListener.onServiceResoledAsync(DeviceScanner.this, serviceInfo);
                     }
@@ -223,18 +207,6 @@ public class DeviceScanner extends Thread {
             } else {
                 Logger.t(TAG).d("serviceResolved: not running");
             }
-        }
-    };
-
-    ServiceTypeListener mServiceTypeListener = new ServiceTypeListener() {
-        @Override
-        public void serviceTypeAdded(ServiceEvent event) {
-            Logger.t(TAG).d("serviceTypeAdded: " + event.getName() + ", " + event.getType());
-        }
-
-        @Override
-        public void subTypeForServiceTypeAdded(ServiceEvent event) {
-            Logger.t(TAG).d("subTypeForServiceTypeAdded: " + event.getName() + ", " + event.getType());
         }
     };
 
