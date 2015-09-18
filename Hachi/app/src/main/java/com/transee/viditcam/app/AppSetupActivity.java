@@ -108,43 +108,6 @@ public class AppSetupActivity extends BaseActivity {
                 mVideoEditPref.save(AppSetupActivity.this);
             }
         });
-
-        setUpDatMode();
-    }
-
-    private void setUpDatMode() {
-        rbReal = (RadioButton) findViewById(R.id.radio_real);
-        rbSimulation = (RadioButton) findViewById(R.id.radio_simulation);
-        int mode = PrefsUtil.getDataMode();
-        if (mode == PrefsUtil.MODE_REAL) {
-            rbReal.setChecked(true);
-        } else {
-            rbSimulation.setChecked(true);
-        }
-
-        gpsDevice = (RadioButton) findViewById(R.id.radio_gps_device);
-        gpsCamera = (RadioButton) findViewById(R.id.radio_gps_camera);
-        if (PrefsUtil.getGPSource() == PrefsUtil.GPS_DEVICE) {
-            gpsDevice.setChecked(true);
-        } else {
-            gpsCamera.setChecked(true);
-        }
-    }
-
-    public void onModeRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-        switch (view.getId()) {
-            case R.id.radio_real:
-                if (checked) {
-                    PrefsUtil.setDataMode(PrefsUtil.MODE_REAL);
-                }
-                break;
-            case R.id.radio_simulation:
-                if (checked) {
-                    PrefsUtil.setDataMode(PrefsUtil.MODE_SIMULATION);
-                }
-                break;
-        }
     }
 
     private PackageInfo getPackageInfo() {

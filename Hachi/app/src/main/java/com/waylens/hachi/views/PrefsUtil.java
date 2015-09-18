@@ -31,9 +31,6 @@ public class PrefsUtil {
 
     private static final String KEY_MODE = "data.mode";
 
-    public static final int MODE_REAL = 0;
-    public static final int MODE_SIMULATION = 1;
-
     public static final  int GPS_DEVICE = 0;
     public static final  int GPS_CAMERA = 1;
 
@@ -51,10 +48,6 @@ public class PrefsUtil {
 
     public static void setDataMode(int mode) {
         getPrefs().edit().putInt(KEY_MODE, mode).apply();
-    }
-
-    public static int getDataMode() {
-        return getPrefs().getInt(KEY_MODE, MODE_SIMULATION);
     }
 
     public static void initImageLoader(Context context) {

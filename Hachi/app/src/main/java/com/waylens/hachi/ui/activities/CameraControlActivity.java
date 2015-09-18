@@ -203,16 +203,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void startOverlay() {
-        int mode = PrefsUtil.getDataMode();
-        mode = PrefsUtil.MODE_REAL;
-        if (mode == PrefsUtil.MODE_SIMULATION) {
-            modeMsg.setVisibility(View.VISIBLE);
-            taskHandler.removeCallbacks(simulateDataTask);
-            taskHandler.post(simulateDataTask);
-        } else {
-            modeMsg.setVisibility(View.GONE);
-            taskHandler.removeCallbacks(simulateDataTask);
-        }
+        modeMsg.setVisibility(View.GONE);
+        taskHandler.removeCallbacks(simulateDataTask);
     }
 
     private void simulateData() {
@@ -431,10 +423,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                         Log.e(TAG, "GPS Error", e);
                     }
 
-                }
-
-                if (mMode != PrefsUtil.MODE_REAL) {
-                    return;
                 }
 
                 if (dataType == RawDataBlock.RAW_DATA_ODB) {
@@ -765,12 +753,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         weatherTemp = (TextView) findViewById(R.id.weather_temp);
         weatherWind = (TextView) findViewById(R.id.weather_wind);
         modeMsg = (TextView) findViewById(R.id.mode_msg);
-        mMode = PrefsUtil.getDataMode();
-        if (mMode == PrefsUtil.MODE_REAL) {
-            modeMsg.setVisibility(View.GONE);
-        } else {
-            modeMsg.setVisibility(View.VISIBLE);
-        }
+        modeMsg.setVisibility(View.GONE);
         gpsSource = PrefsUtil.getGPSource();
         initWeatherData();
     }
