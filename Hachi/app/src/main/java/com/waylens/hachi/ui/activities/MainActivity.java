@@ -26,6 +26,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.AccountFragment;
 import com.waylens.hachi.ui.fragments.CameraListFragment;
 import com.waylens.hachi.ui.fragments.CommentsFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.NotificationFragment;
@@ -244,21 +245,9 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     @Override
     public void onBackPressed() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
-        if (fragment == null) {
-            super.onBackPressed();
-        }
-        if (fragment instanceof CommentsFragment) {
-            Bundle args = fragment.getArguments();
-            final int position = args.getInt(CommentsFragment.ARG_MOMENT_POSITION);
-            final long momentID = args.getLong(CommentsFragment.ARG_MOMENT_ID);
-            boolean hasUpdates = args.getBoolean(CommentsFragment.ARG_HAS_UPDATES);
-
-            Fragment homeFragment = getFragmentManager().findFragmentById(R.id.fragment_content);
-            if (hasUpdates && homeFragment != null && homeFragment instanceof HomeFragment) {
-                HomeFragment fg = (HomeFragment) homeFragment;
-                fg.loadComment(momentID, position);
-            }
-            getFragmentManager().beginTransaction().remove(fragment).commit();
+        if (fragment instanceof FragmentNavigator) {
+            ((FragmentNavigator) fragment).onBack();
+            return;
         }
 
         super.onBackPressed();

@@ -18,6 +18,7 @@ import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.APIFilter;
 import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.ui.adapters.NotificationCommentsAdapter;
@@ -35,7 +36,8 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 9/6/15.
  */
-public class NotificationCommentsFragment extends BaseFragment implements RecyclerViewExt.OnLoadMoreListener {
+public class NotificationCommentsFragment extends BaseFragment implements RecyclerViewExt.OnLoadMoreListener,
+        FragmentNavigator{
 
     private static final int DEFAULT_COUNT = 10;
 
@@ -87,6 +89,20 @@ public class NotificationCommentsFragment extends BaseFragment implements Recycl
     public void onStart() {
         super.onStart();
         loadNotifications(0, true);
+        View appBarLayout = ((BaseActivity)getActivity()).getAppBarLayout();
+        if (appBarLayout != null) {
+            appBarLayout.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        View appBarLayout = ((BaseActivity)getActivity()).getAppBarLayout();
+        if (appBarLayout != null) {
+            appBarLayout.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
@@ -95,8 +111,9 @@ public class NotificationCommentsFragment extends BaseFragment implements Recycl
         super.onDestroyView();
     }
 
+    @Override
     @OnClick(R.id.btn_back)
-    public void back() {
+    public void onBack() {
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 

@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -30,6 +31,10 @@ public class BaseActivity extends AppCompatActivity {
     @Nullable
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+
+    @Nullable
+    @Bind(R.id.app_bar_layout)
+    AppBarLayout mAppBarLayout;
 
     public Hachi thisApp;
 
@@ -60,15 +65,21 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Nullable
     public Toolbar getToolbar() {
         return mToolbar;
+    }
+
+    @Nullable
+    public AppBarLayout getAppBarLayout() {
+        return mAppBarLayout;
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //ButterKnife.unbind(this);
+        ButterKnife.unbind(this);
     }
 
 

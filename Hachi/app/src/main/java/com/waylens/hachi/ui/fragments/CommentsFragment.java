@@ -24,9 +24,9 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.BasicUserInfo;
 import com.waylens.hachi.ui.entities.Comment;
-import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.utils.ServerMessage;
 
@@ -43,11 +43,10 @@ import butterknife.OnClick;
  * Created by Richard on 8/26/15.
  */
 public class CommentsFragment extends BaseFragment implements CommentsRecyclerAdapter.OnCommentClickListener,
-        CommentsRecyclerAdapter.OnLoadMoreListener {
+        CommentsRecyclerAdapter.OnLoadMoreListener, FragmentNavigator {
 
     public static final String ARG_MOMENT_ID = "arg.moment.id";
     public static final String ARG_MOMENT_POSITION = "arg.moment.mPosition";
-    public static final String ARG_HAS_UPDATES = "arg.has.updates";
 
     private static final int DEFAULT_COUNT = 10;
 
@@ -164,22 +163,6 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         }
     }
 
-    @OnClick(R.id.btn_back)
-    public void back() {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
-        if (hasUpdates && fragment != null && fragment instanceof HomeFragment) {
-            HomeFragment fg = (HomeFragment) fragment;
-            fg.loadComment(mMomentID, mPosition);
-        }
-
-        View view = getActivity().getCurrentFocus();
-        if (view != null) {
-            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-        getFragmentManager().beginTransaction().remove(this).commit();
-    }
-
     @OnClick(R.id.btn_send)
     public void sendComment() {
         if (TextUtils.isEmpty(mNewCommentView.getText())) {
@@ -224,8 +207,6 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
                         mAdapter.updateCommentID(position, commentID);
                         if (!hasUpdates) {
                             hasUpdates = true;
-                            Bundle args = getArguments();
-                            args.putBoolean(ARG_HAS_UPDATES, true);
                         }
                     }
                 },
@@ -247,5 +228,22 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     @Override
     public void loadMore() {
         loadComments(mCurrentCursor, false);
+    }
+
+    @OnClick(R.id.btn_back)
+    @Override
+    public void onBack() {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+        if (hasUpdates && fragment != null && fragment instanceof HomeFragment) {
+            HomeFragment fg = (HomeFragment) fragment;
+            fg.loadComment(mMomentID, mPosition);
+        }
+
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+        getFragmentManager().beginTransaction().remove(this).commit();
     }
 }

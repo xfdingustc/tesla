@@ -36,7 +36,8 @@ import butterknife.OnClick;
  * Like events
  * Created by Richard on 9/6/15.
  */
-public class NotificationLikesFragment extends BaseFragment implements RecyclerViewExt.OnLoadMoreListener {
+public class NotificationLikesFragment extends BaseFragment implements RecyclerViewExt.OnLoadMoreListener,
+        FragmentNavigator {
 
     private static final int DEFAULT_COUNT = 10;
 
@@ -96,8 +97,9 @@ public class NotificationLikesFragment extends BaseFragment implements RecyclerV
         super.onDestroyView();
     }
 
+    @Override
     @OnClick(R.id.btn_back)
-    public void back() {
+    public void onBack() {
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
