@@ -65,8 +65,10 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
 
     Resources mResources;
 
+    OnUserAvatarClickListener mOnUserAvatarClickListener;
     OnCommentMomentListener mOnCommentMomentListener;
     OnLikeMomentListener mOnLikeMomentListener;
+
 
 
     public MomentsRecyclerAdapter(ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
@@ -95,6 +97,10 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         int count = moments.size();
         mMoments.addAll(moments);
         notifyItemRangeInserted(start, count);
+    }
+
+    public void setOnUserAvatarClickListener(OnUserAvatarClickListener listener) {
+        mOnUserAvatarClickListener = listener;
     }
 
     public void setOnCommentMomentListener(OnCommentMomentListener listener) {
@@ -145,6 +151,15 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         ImageLoader.getInstance().displayImage(moment.thumbnail, holder.videoCover, ImageUtils.getVideoOptions());
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
+
+        holder.userAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnUserAvatarClickListener != null) {
+                    mOnUserAvatarClickListener.onUserAvatarClicked(moment, position);
+                }
+            }
+        });
 
         updateLikeState(holder, moment);
         updateLikeCount(holder, moment);
@@ -436,5 +451,9 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
 
     public interface OnCommentMomentListener {
         void onCommentMoment(Moment moment, int position);
+    }
+
+    public interface OnUserAvatarClickListener {
+        void onUserAvatarClicked(Moment moment, int position);
     }
 }

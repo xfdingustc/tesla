@@ -10,53 +10,36 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.transee.common.Utils;
 
 import java.util.List;
 
-// wifi broadcast:
-//	WIFI_STATE_CHANGED_ACTION
-//	WIFI_AP_STATE_CHANGED_ACTION
-//	SUPPLICANT_CONNECTION_CHANGE_ACTION
-//	NETWORK_STATE_CHANGED_ACTION
-//	SUPPLICANT_STATE_CHANGED_ACTION
-//	CONFIGURED_NETWORKS_CHANGED_ACTION
-//	SCAN_RESULTS_AVAILABLE_ACTION
-//	BATCHED_SCAN_RESULTS_AVAILABLE_ACTION
-//	RSSI_CHANGED_ACTION
-//	LINK_CONFIGURATION_CHANGED_ACTION
-//	NETWORK_IDS_CHANGED_ACTION
-
-// this class provides 3 services:
-//	track and keep wifi state
-//	connect to specified AP
-//	maintain wifi list
 
 public class WifiAdmin {
-    private static final String TAG = "WifiAdmin";
+    private static final String TAG = WifiAdmin.class.getSimpleName();
 
-    static final int STATE_IDLE = 0;
-    static final int STATE_CONNECTING = 1;
+    private static final int STATE_IDLE = 0;
+    private static final int STATE_CONNECTING = 1;
+
+    private int mState = STATE_IDLE;
 
     private final Context mContext;
     private final WifiManager mWifiManager;
     private final ConnectivityManager mConnectivityManager;
-    private MyBroadcastReceiver mReceiver;
+    private WifiStatusBroadcastReceiver mReceiver;
     private String mCurrSSID = "";
 
-    // wifi state
+
     private NetworkInfo mNetworkInfo;
 
-    // wifi-list
     private List<ScanResult> mScanResult;
 
     // connection
     private String mTargetSSID;
     private String mTargetPassword;
-    private int mState = STATE_IDLE;
+
     private WifiConfiguration mWifiConfig; // connecting if != null
     private WifiAdminListener mListener = null;
 
@@ -74,8 +57,6 @@ public class WifiAdmin {
     public void setListener(WifiAdminListener listener) {
         this.mListener = listener;
     }
-
-
 
 
     public WifiAdmin(Context context) {
@@ -99,7 +80,7 @@ public class WifiAdmin {
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
-        mReceiver = new MyBroadcastReceiver();
+        mReceiver = new WifiStatusBroadcastReceiver();
         mContext.registerReceiver(mReceiver, filter);
     }
 
@@ -133,15 +114,12 @@ public class WifiAdmin {
         return mTargetSSID;
     }
 
-    // API
+
     public void scan() {
-
         Logger.t(TAG).d("call scan()");
-
         mWifiManager.startScan();
     }
 
-    // API
     public void connectTo(String ssid, String password) {
         cancelConnect();
 
@@ -222,11 +200,8 @@ public class WifiAdmin {
 
                             Logger.t(TAG).d("enableNetwork OK");
                             mWifiConfig = null; // no further action
-                        } else {
-                            // TODO
                         }
                     } else {
-
                         Logger.t(TAG).d("disconnected state, currSSID: " + mCurrSSID);
                         if (mCurrSSID.equals(mTargetSSID)) {
                             mState = STATE_IDLE;
@@ -248,7 +223,6 @@ public class WifiAdmin {
             for (WifiConfiguration config : configs) {
                 String ssid = Utils.normalizeNetworkName(config.SSID);
                 if (ssid.equals(mTargetSSID)) {
-
                     Logger.t(TAG).d("updateNetwork: " + mTargetSSID);
                     wifiConfig.networkId = config.networkId;
                     return mWifiManager.updateNetwork(wifiConfig);
@@ -305,7 +279,7 @@ public class WifiAdmin {
         }
     }
 
-    class MyBroadcastReceiver extends BroadcastReceiver {
+    class WifiStatusBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -319,8 +293,6 @@ public class WifiAdmin {
 
                 Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION: " + getWifiStateName(state) + ", prev: "
                     + getWifiStateName(prevState));
-
-                // TODO
                 return;
             }
 

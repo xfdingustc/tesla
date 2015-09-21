@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.orhanobut.logger.Logger;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -26,7 +27,7 @@ public class DeviceScanner extends Thread {
 
     private static final String SERVICE_TYPE = "_ccam._tcp.local.";
 
-    static final int SCAN_INTERVAL = 3000;
+    private static final int SCAN_INTERVAL = 3000;
 
     public static final String SERVICE_VIDITCAM = "ViditCam";
     public static final String SERVICE_VIDIT_STUDIO = "Vidit Studio";
@@ -111,29 +112,27 @@ public class DeviceScanner extends Thread {
                 mdns.add(dns);
             }
 
-            try {
-                for (JmDNS dns : mdns) {
-                    dns.addServiceListener(SERVICE_TYPE, mServiceListener);
-                }
-                threadLoop();
-            } finally {
-                try {
-                    for (JmDNS dns : mdns) {
-                        dns.close();
-                    }
-                } catch (Exception e) {
-                    Logger.t(TAG).e("Error", e);
-                }
+
+
+            for (JmDNS dns : mdns) {
+                dns.addServiceListener(SERVICE_TYPE, mServiceListener);
             }
-        } catch (Exception e) {
-            Logger.t(TAG).e("Error", e);
+
+            threadLoop();
+
+            for (JmDNS dns : mdns) {
+                dns.close();
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+
         } finally {
-            try {
-                if (mWifiManager != null) {
-                    unlockWifi();
-                }
-            } catch (Exception e) {
-                Logger.t(TAG).e("Error", e);
+            if (mWifiManager != null) {
+                unlockWifi();
             }
         }
     }

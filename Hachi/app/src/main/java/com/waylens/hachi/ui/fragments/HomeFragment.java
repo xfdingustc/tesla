@@ -21,6 +21,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
+import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
@@ -39,7 +40,7 @@ import butterknife.Bind;
  * Created by Xiaofei on 2015/8/4.
  */
 public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnCommentMomentListener,
-        MomentsRecyclerAdapter.OnLikeMomentListener, SwipeRefreshLayout.OnRefreshListener, Refreshable {
+        MomentsRecyclerAdapter.OnLikeMomentListener, SwipeRefreshLayout.OnRefreshListener, Refreshable, MomentsRecyclerAdapter.OnUserAvatarClickListener {
 
     static final int DEFAULT_COUNT = 10;
 
@@ -67,6 +68,7 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
         mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
         mAdapter.setOnCommentMomentListener(this);
         mAdapter.setOnLikeMomentListener(this);
+        mAdapter.setOnUserAvatarClickListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
 
@@ -259,5 +261,11 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
         if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(enabled);
         }
+    }
+
+    @Override
+    public void onUserAvatarClicked(Moment moment, int position) {
+        String userId = moment.owner.userID;
+        UserProfileActivity.launch(getActivity(), userId);
     }
 }

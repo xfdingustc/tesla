@@ -16,6 +16,7 @@ public class WifiAdminManager {
     private static final String TAG = WifiAdminManager.class.getSimpleName();
 
     public static final int WIFI_SCAN_INTERVAL = 3000;
+
     private WifiAdmin mWifiAdmin;
 
     private Runnable mScanWifiAction;
