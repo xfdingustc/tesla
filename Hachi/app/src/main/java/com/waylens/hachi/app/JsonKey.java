@@ -13,4 +13,6 @@ public class JsonKey {
     public static final String AVATAR_URL = "avatarUrl";
     public static final String TOKEN = "token";
     public static final String IS_LINKED = "isLinked";
+
+    public static final String MOMENTS = "moments";
 }

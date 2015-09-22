@@ -37,6 +37,13 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
         mToken = null;
     }
 
+    public AuthorizedJsonRequest(String url,
+                                 Response.Listener<JSONObject> listener,
+                                 Response.ErrorListener errorListener) {
+        super(url, listener, errorListener);
+        mToken = null;
+    }
+
     public AuthorizedJsonRequest(int method,
                                  String url,
                                  JSONObject jsonRequest,

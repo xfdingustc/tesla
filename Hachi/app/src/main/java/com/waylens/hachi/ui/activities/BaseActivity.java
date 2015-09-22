@@ -42,6 +42,7 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void init() {
         mRequestQueue = Volley.newRequestQueue(this);
+        mRequestQueue.start();
 
     }
 

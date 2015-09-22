@@ -2,6 +2,9 @@ package com.waylens.hachi.ui.entities;
 
 import android.text.Spannable;
 
+import com.google.gson.annotations.Expose;
+import com.waylens.hachi.utils.ToStringUtils;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,18 +18,43 @@ public class Moment {
     public static final int TYPE_WAYLENS = 0;
     public static final int TYPE_YOUTUBE = 1;
 
+    @Expose
     public long id;
+
+    @Expose
     public String provider;
+
+    @Expose
     public String title;
+
+    @Expose
     public String description;
+
+    @Expose
     public String thumbnail;
+
+    @Expose
     public String captureTime;
+
+    @Expose
     public long uploadTime;
+
+    @Expose
     public int fragmentCount;
+
+    @Expose
     public long duration;
+
+    @Expose
     public int likesCount;
+
+    @Expose
     public int commentsCount;
+
+    @Expose
     public boolean isLiked;
+
+    @Expose
     public String videoID;
 
     public Spannable comments;
@@ -113,4 +141,8 @@ public class Moment {
         return moment;
     }
 
+    @Override
+    public String toString() {
+        return ToStringUtils.getString(this);
+    }
 }
