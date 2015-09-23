@@ -60,5 +60,7 @@ public class Constants {
 
     public static final String API_USERS = HOST_URL + "api/users";
 
+    public static final String API_FRIENDS = HOST_URL + "api/friends/";
+
     public enum EventType {FOLLOW_USER, COMMENT_MOMENT, LIKE_MOMENT, REFER_USER, PUBLISH_NEWS}
 }

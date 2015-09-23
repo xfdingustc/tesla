@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -54,11 +55,21 @@ public class UserProfileActivity extends BaseActivity {
     @Bind(R.id.userName)
     TextView mTvUserName;
 
-    @Bind(R.id.tvFollowersCount)
-    Button mTvFollowersCount;
+    @Bind(R.id.btnFollowersCount)
+    Button mBtnFollowersCount;
 
-    @Bind(R.id.tvFollowingCount)
-    Button mTvFollowingCount;
+    @Bind(R.id.btnFollowingCount)
+    Button mBtnFollowingCount;
+    
+    @OnClick(R.id.btnFollowersCount)
+    public void onBtnFollowerCountClicked() {
+        FollowListActivity.launch(this, mUserID, true);
+    }
+
+    @OnClick(R.id.btnFollowingCount)
+    public void onBtnFollowingCountClicked() {
+        FollowListActivity.launch(this, mUserID, false);
+    }
 
     public static void launch(Context context, String userID) {
         Intent intent = new Intent(context, UserProfileActivity.class);
@@ -119,8 +130,8 @@ public class UserProfileActivity extends BaseActivity {
 
         mTvUserName.setText(userInfo.userName);
 
-        mTvFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
-        mTvFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
+        mBtnFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
+        mBtnFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
     }
 
     private void setupUserMomentsFeed() {
