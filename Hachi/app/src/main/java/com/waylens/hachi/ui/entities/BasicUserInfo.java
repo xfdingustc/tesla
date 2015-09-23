@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.entities;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.ToStringUtils;
 
@@ -12,16 +13,24 @@ import org.json.JSONObject;
 
 public class BasicUserInfo {
     @Expose
-    public String userID = null;
+    public String userID;
 
     @Expose
-    public String userName = null;
+    public String userName;
 
     @Expose
-    public String avatarUrl = null;
+    public String avatarUrl;
 
     @Expose
-    public String name = null;
+    public String name;
+
+    @Expose
+    @SerializedName("followersCnt")
+    private int mFollowersCount;
+
+    @Expose
+    @SerializedName("followingsCnt")
+    private int mFollowingsCount;
 
     public static BasicUserInfo fromJson(JSONObject jsonOwner) {
         if (jsonOwner == null) {
@@ -45,5 +54,13 @@ public class BasicUserInfo {
     @Override
     public String toString() {
         return ToStringUtils.getString(this);
+    }
+
+    public int getFollowersCount() {
+        return mFollowersCount;
+    }
+
+    public int getFollowingsCount() {
+        return mFollowingsCount;
     }
 }

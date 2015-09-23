@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -53,6 +54,12 @@ public class UserProfileActivity extends BaseActivity {
     @Bind(R.id.userName)
     TextView mTvUserName;
 
+    @Bind(R.id.tvFollowersCount)
+    Button mTvFollowersCount;
+
+    @Bind(R.id.tvFollowingCount)
+    Button mTvFollowingCount;
+
     public static void launch(Context context, String userID) {
         Intent intent = new Intent(context, UserProfileActivity.class);
         intent.putExtra(USER_ID, userID);
@@ -89,7 +96,7 @@ public class UserProfileActivity extends BaseActivity {
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-
+                    Logger.t(TAG).json(response.toString());
                     Gson gson = new GsonBuilder()
                         .excludeFieldsWithoutExposeAnnotation()
                         .create();
@@ -111,6 +118,9 @@ public class UserProfileActivity extends BaseActivity {
         imageLoader.displayImage(userInfo.avatarUrl, mCivUserAvatar, ImageUtils.getAvatarOptions());
 
         mTvUserName.setText(userInfo.userName);
+
+        mTvFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
+        mTvFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
     }
 
     private void setupUserMomentsFeed() {
@@ -151,7 +161,6 @@ public class UserProfileActivity extends BaseActivity {
                     .create();
                 Moment moment = gson.fromJson(momentObject.toString(), Moment.class);
                 moments.add(moment);
-                Logger.t(TAG).d("Add moment: " + moment.toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();

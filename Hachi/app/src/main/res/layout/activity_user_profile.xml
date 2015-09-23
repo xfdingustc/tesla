@@ -60,6 +60,44 @@
                     android:background="@android:color/transparent"
                     android:src="@drawable/destination"/>
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_alignParentBottom="true">
+
+                    <View
+                        android:id="@+id/vSplitter"
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_marginBottom="24dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@color/material_grey_200"/>
+
+                    <Button
+                        android:id="@+id/tvFollowersCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:layout_toRightOf="@id/vSplitter"
+                        android:background="@android:color/transparent"
+                        android:textAllCaps="false"
+                        android:textColor="@color/material_grey_200"/>
+
+                    <Button
+                        android:id="@+id/tvFollowingCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="16dp"
+                        android:layout_toLeftOf="@id/vSplitter"
+                        android:background="@android:color/transparent"
+                        android:textAllCaps="false"
+                        android:textColor="@color/material_grey_200"/>
+
+                </RelativeLayout>
+
             </RelativeLayout>
 
 
