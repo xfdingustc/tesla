@@ -32,6 +32,10 @@ public class BasicUserInfo {
     @SerializedName("followingsCnt")
     private int mFollowingsCount;
 
+    @Expose
+    @SerializedName("isMyFollowing")
+    private boolean mIsMyFollowing;
+
     public static BasicUserInfo fromJson(JSONObject jsonOwner) {
         if (jsonOwner == null) {
             return null;
@@ -62,5 +66,9 @@ public class BasicUserInfo {
 
     public int getFollowingsCount() {
         return mFollowingsCount;
+    }
+
+    public boolean getIsMyFollowing() {
+        return mIsMyFollowing;
     }
 }

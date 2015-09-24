@@ -124,16 +124,15 @@ public class FollowListActivity extends BaseActivity {
     private List<BasicUserInfo> parseUserList(JSONObject response) {
         try {
             JSONArray userArray = response.getJSONArray("friends");
-            List<BasicUserInfo> userList = new ArrayList<>();
+            List<BasicUserInfo> userList;
 
             Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
 
-            for (int i = 0; i < userArray.length(); i++) {
-                JSONObject object = userArray.getJSONObject(i).getJSONObject("user");
-                userList.add(gson.fromJson(object.toString(), BasicUserInfo.class));
-            }
+            Type type = new TypeToken<ArrayList<BasicUserInfo>>() {}.getType();
+
+            userList = gson.fromJson(userArray.toString(), type);
 
 
             return userList;

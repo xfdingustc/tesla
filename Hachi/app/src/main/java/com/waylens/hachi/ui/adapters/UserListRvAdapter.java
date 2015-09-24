@@ -6,12 +6,24 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.ui.entities.BasicUserInfo;
 import com.waylens.hachi.utils.ImageUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -22,13 +34,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Xiaofei on 2015/9/23.
  */
-public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
     private final Context mContext;
     private List<BasicUserInfo> mUserList;
+    private RequestQueue mRequestQueue;
 
     public UserListRvAdapter(Context context) {
         this.mContext = context;
+        this.mRequestQueue = Volley.newRequestQueue(mContext);
+        mRequestQueue.start();
     }
 
     public void setUserList(List<BasicUserInfo> userList) {
@@ -53,6 +68,13 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(userInfo.avatarUrl, viewHolder.mUserAvater, ImageUtils.getAvatarOptions());
+
+        if (userInfo.getIsMyFollowing()) {
+            setFollowButton(viewHolder, false);
+        } else {
+            setFollowButton(viewHolder, true);
+
+        }
     }
 
     @Override
@@ -64,6 +86,57 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return 0;
     }
 
+    @Override
+    public void onClick(View v) {
+        UserListViewHolder viewHolder = (UserListViewHolder)v.getTag();
+        switch (v.getId()) {
+            case R.id.btnFollow:
+                int position = viewHolder.getPosition();
+                String userID = mUserList.get(position).userID;
+                addUserFollow(userID, viewHolder);
+                break;
+        }
+    }
+
+    public void addUserFollow(String userID, final UserListViewHolder viewHolder) {
+        String requestUrl = Constants.API_FRIENDS_FOLLOW;
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put(JsonKey.USER_ID, userID);
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
+                requestUrl, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    setFollowButton(viewHolder, true);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+            mRequestQueue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setFollowButton(UserListViewHolder viewHolder, boolean isFollowed) {
+        if (isFollowed) {
+            viewHolder.mBtnFollow.setEnabled(false);
+            viewHolder.mBtnFollow.setText(R.string.following);
+            viewHolder.mBtnFollow.setTextColor(mContext.getResources().getColor(android.R.color.white));
+            viewHolder.mBtnFollow.setBackgroundResource(R.color.style_color_primary);
+        } else {
+            viewHolder.mBtnFollow.setEnabled(true);
+            viewHolder.mBtnFollow.setText(R.string.add_follow);
+            viewHolder.mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
+            viewHolder.mBtnFollow.setTag(viewHolder);
+            viewHolder.mBtnFollow.setOnClickListener(this);
+
+        }
+    }
 
     public class UserListViewHolder extends RecyclerView.ViewHolder {
 
@@ -72,6 +145,9 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @Bind(R.id.tvUserName)
         TextView mTvUserName;
+
+        @Bind(R.id.btnFollow)
+        Button mBtnFollow;
 
         public UserListViewHolder(View itemView) {
             super(itemView);
