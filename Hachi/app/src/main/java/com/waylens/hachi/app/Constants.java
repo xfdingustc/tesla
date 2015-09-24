@@ -64,5 +64,7 @@ public class Constants {
 
     public static final String API_FRIENDS_FOLLOW = HOST_URL + "api/friends/follow";
 
+    public static final String API_FRIENDS_UNFOLLOW = HOST_URL + "api/friends/unfollow";
+
     public enum EventType {FOLLOW_USER, COMMENT_MOMENT, LIKE_MOMENT, REFER_USER, PUBLISH_NEWS}
 }

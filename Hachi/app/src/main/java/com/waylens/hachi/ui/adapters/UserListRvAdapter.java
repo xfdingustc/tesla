@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -35,6 +35,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Xiaofei on 2015/9/23.
  */
 public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
+    private static final String TAG = UserListRvAdapter.class.getSimpleName();
 
     private final Context mContext;
     private List<BasicUserInfo> mUserList;
@@ -60,7 +61,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        UserListViewHolder viewHolder = (UserListViewHolder)holder;
+        UserListViewHolder viewHolder = (UserListViewHolder) holder;
 
         BasicUserInfo userInfo = mUserList.get(position);
 
@@ -69,12 +70,14 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(userInfo.avatarUrl, viewHolder.mUserAvater, ImageUtils.getAvatarOptions());
 
-        if (userInfo.getIsMyFollowing()) {
-            setFollowButton(viewHolder, false);
-        } else {
+        if (userInfo.getIsFollowing()) {
             setFollowButton(viewHolder, true);
+        } else {
+            setFollowButton(viewHolder, false);
 
         }
+        viewHolder.mBtnFollow.setTag(viewHolder);
+        viewHolder.mBtnFollow.setOnClickListener(this);
     }
 
     @Override
@@ -88,54 +91,93 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onClick(View v) {
-        UserListViewHolder viewHolder = (UserListViewHolder)v.getTag();
+        UserListViewHolder viewHolder = (UserListViewHolder) v.getTag();
         switch (v.getId()) {
             case R.id.btnFollow:
                 int position = viewHolder.getPosition();
                 String userID = mUserList.get(position).userID;
-                addUserFollow(userID, viewHolder);
+                if (mUserList.get(position).getIsFollowing()) {
+                    unfollowUser(userID, viewHolder);
+                } else {
+                    followUser(userID, viewHolder);
+                }
                 break;
         }
     }
 
-    public void addUserFollow(String userID, final UserListViewHolder viewHolder) {
+    public void followUser(final String userID, final UserListViewHolder viewHolder) {
         String requestUrl = Constants.API_FRIENDS_FOLLOW;
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put(JsonKey.USER_ID, userID);
             AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
-                requestUrl, new Response.Listener<JSONObject>() {
+                requestUrl, requestBody, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    Logger.t(TAG).d("Follow user: " + userID);
                     setFollowButton(viewHolder, true);
+                    setUserIsFollowing(viewHolder, true);
+                    viewHolder.mBtnFollow.setEnabled(true);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    Logger.t(TAG).d(error.toString());
                 }
             });
             mRequestQueue.add(request);
+            viewHolder.mBtnFollow.setEnabled(false);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void setFollowButton(UserListViewHolder viewHolder, boolean isFollowed) {
-        if (isFollowed) {
+    public void unfollowUser(final String userID, final UserListViewHolder viewHolder) {
+        String requestUrl = Constants.API_FRIENDS_UNFOLLOW;
+        JSONObject requestBody = new JSONObject();
+
+        try {
+            requestBody.put(JsonKey.USER_ID, userID);
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
+                requestUrl, requestBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    setFollowButton(viewHolder, false);
+                    setUserIsFollowing(viewHolder, false);
+                    Logger.t(TAG).d("Unfollow user: " + userID);
+                    viewHolder.mBtnFollow.setEnabled(true);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+            mRequestQueue.add(request);
             viewHolder.mBtnFollow.setEnabled(false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setFollowButton(UserListViewHolder viewHolder, boolean isFollowing) {
+        if (isFollowing) {
             viewHolder.mBtnFollow.setText(R.string.following);
             viewHolder.mBtnFollow.setTextColor(mContext.getResources().getColor(android.R.color.white));
             viewHolder.mBtnFollow.setBackgroundResource(R.color.style_color_primary);
         } else {
-            viewHolder.mBtnFollow.setEnabled(true);
             viewHolder.mBtnFollow.setText(R.string.add_follow);
+            viewHolder.mBtnFollow.setTextColor(mContext.getResources().getColor(R.color.style_color_primary));
             viewHolder.mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
-            viewHolder.mBtnFollow.setTag(viewHolder);
-            viewHolder.mBtnFollow.setOnClickListener(this);
-
         }
+    }
+
+    private void setUserIsFollowing(UserListViewHolder viewHolder, boolean isFollowing) {
+        int position = viewHolder.getPosition();
+        BasicUserInfo user = mUserList.get(position);
+        user.setIsFollowing(isFollowing);
     }
 
     public class UserListViewHolder extends RecyclerView.ViewHolder {
