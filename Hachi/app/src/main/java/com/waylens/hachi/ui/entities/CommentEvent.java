@@ -15,8 +15,8 @@ public class CommentEvent extends NotificationEvent {
 
     public long commentID;
     public String content;
-    public BasicUserInfo author;
-    public BasicUserInfo replyTo;
+    public User author;
+    public User replyTo;
     public long createTime;
 
 
@@ -29,8 +29,8 @@ public class CommentEvent extends NotificationEvent {
         JSONObject jsonComment = jsonObject.optJSONObject("comment");
         commentEvent.commentID = jsonComment.optLong("commentID");
         commentEvent.content = jsonComment.optString("content");
-        commentEvent.author = BasicUserInfo.fromJson(jsonComment.optJSONObject("author"));
-        commentEvent.replyTo = BasicUserInfo.fromJson(jsonComment.optJSONObject("replyTo"));
+        commentEvent.author = User.fromJson(jsonComment.optJSONObject("author"));
+        commentEvent.replyTo = User.fromJson(jsonComment.optJSONObject("replyTo"));
         commentEvent.createTime = jsonComment.optLong("createTime");
         return commentEvent;
     }

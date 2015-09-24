@@ -8,7 +8,7 @@ import org.json.JSONObject;
 public class LikeEvent extends NotificationEvent {
 
     public long likeID;
-    public BasicUserInfo liker;
+    public User liker;
     public long createTime;
 
     LikeEvent(JSONObject jsonObject) {
@@ -20,7 +20,7 @@ public class LikeEvent extends NotificationEvent {
         JSONObject jsonLike = jsonObject.optJSONObject("like");
         if (jsonLike != null) {
             likeEvent.likeID = jsonLike.optLong("likeID");
-            likeEvent.liker = BasicUserInfo.fromJson(jsonLike.optJSONObject("user"));
+            likeEvent.liker = User.fromJson(jsonLike.optJSONObject("user"));
             likeEvent.createTime = jsonLike.optLong("createTime");
         }
         return likeEvent;

@@ -25,7 +25,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
-import com.waylens.hachi.ui.entities.BasicUserInfo;
+import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.utils.ServerMessage;
@@ -68,7 +68,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
 
     private int mPosition = 0;
 
-    BasicUserInfo mReplyTo;
+    User mReplyTo;
 
     boolean hasUpdates;
 
@@ -171,7 +171,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         Comment comment = new Comment();
         comment.content = mNewCommentView.getText().toString();
         comment.createTime = System.currentTimeMillis();
-        BasicUserInfo basicUserInfo = new BasicUserInfo();
+        User basicUserInfo = new User();
         basicUserInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();
         basicUserInfo.userName = SessionManager.getInstance().getUserName();
         basicUserInfo.userID = SessionManager.getInstance().getUserId();

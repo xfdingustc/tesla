@@ -19,7 +19,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
-import com.waylens.hachi.ui.entities.BasicUserInfo;
+import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
 
 import org.json.JSONException;
@@ -38,7 +38,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final String TAG = UserListRvAdapter.class.getSimpleName();
 
     private final Context mContext;
-    private List<BasicUserInfo> mUserList;
+    private List<User> mUserList;
     private RequestQueue mRequestQueue;
 
     public UserListRvAdapter(Context context) {
@@ -47,7 +47,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mRequestQueue.start();
     }
 
-    public void setUserList(List<BasicUserInfo> userList) {
+    public void setUserList(List<User> userList) {
         this.mUserList = userList;
         notifyDataSetChanged();
     }
@@ -63,7 +63,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         UserListViewHolder viewHolder = (UserListViewHolder) holder;
 
-        BasicUserInfo userInfo = mUserList.get(position);
+        User userInfo = mUserList.get(position);
 
         viewHolder.mTvUserName.setText(userInfo.userName);
 
@@ -176,7 +176,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void setUserIsFollowing(UserListViewHolder viewHolder, boolean isFollowing) {
         int position = viewHolder.getPosition();
-        BasicUserInfo user = mUserList.get(position);
+        User user = mUserList.get(position);
         user.setIsFollowing(isFollowing);
     }
 

@@ -20,7 +20,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.ui.adapters.UserProfileFeedAdapter;
-import com.waylens.hachi.ui.entities.BasicUserInfo;
+import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.utils.ImageUtils;
 
@@ -111,7 +111,7 @@ public class UserProfileActivity extends BaseActivity {
                     Gson gson = new GsonBuilder()
                         .excludeFieldsWithoutExposeAnnotation()
                         .create();
-                    BasicUserInfo userInfo = gson.fromJson(response.toString(), BasicUserInfo.class);
+                    User userInfo = gson.fromJson(response.toString(), User.class);
                     Logger.t(TAG).d("userInfo: " + userInfo.toString());
                     showUserInfo(userInfo);
                 }
@@ -124,7 +124,7 @@ public class UserProfileActivity extends BaseActivity {
         mRequestQueue.add(request);
     }
 
-    private void showUserInfo(BasicUserInfo userInfo) {
+    private void showUserInfo(User userInfo) {
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(userInfo.avatarUrl, mCivUserAvatar, ImageUtils.getAvatarOptions());
 

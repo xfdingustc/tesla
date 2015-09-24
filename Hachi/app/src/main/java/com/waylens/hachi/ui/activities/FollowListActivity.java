@@ -11,14 +11,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.adapters.UserListRvAdapter;
-import com.waylens.hachi.ui.entities.BasicUserInfo;
+import com.waylens.hachi.ui.entities.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +41,7 @@ public class FollowListActivity extends BaseActivity {
     private String mUserId;
     private boolean mIsFollowers;
 
-    private List<BasicUserInfo> mUserList;
+    private List<User> mUserList;
 
     private UserListRvAdapter mUserListAdatper;
 
@@ -121,16 +120,16 @@ public class FollowListActivity extends BaseActivity {
         mUserListAdatper.setUserList(mUserList);
     }
 
-    private List<BasicUserInfo> parseUserList(JSONObject response) {
+    private List<User> parseUserList(JSONObject response) {
         try {
             JSONArray userArray = response.getJSONArray("friends");
-            List<BasicUserInfo> userList;
+            List<User> userList;
 
             Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
 
-            Type type = new TypeToken<ArrayList<BasicUserInfo>>() {}.getType();
+            Type type = new TypeToken<ArrayList<User>>() {}.getType();
 
             userList = gson.fromJson(userArray.toString(), type);
 

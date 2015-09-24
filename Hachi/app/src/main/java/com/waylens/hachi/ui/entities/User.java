@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * Created by Richard on 8/26/15.
  */
 
-public class BasicUserInfo {
+public class User {
     @Expose
     public String userID;
 
@@ -36,19 +36,19 @@ public class BasicUserInfo {
     @SerializedName("isMyFollowing")
     private boolean mIsFollowing;
 
-    public static BasicUserInfo fromJson(JSONObject jsonOwner) {
+    public static User fromJson(JSONObject jsonOwner) {
         if (jsonOwner == null) {
             return null;
         }
-        BasicUserInfo userInfo = new BasicUserInfo();
+        User userInfo = new User();
         userInfo.userID = jsonOwner.optString("userID");
         userInfo.userName = jsonOwner.optString("userName");
         userInfo.avatarUrl = jsonOwner.optString("avatarUrl");
         return userInfo;
     }
 
-    public static BasicUserInfo fromCurrentUser() {
-        BasicUserInfo userInfo = new BasicUserInfo();
+    public static User fromCurrentUser() {
+        User userInfo = new User();
         userInfo.userID = SessionManager.getInstance().getUserId();
         userInfo.userName = SessionManager.getInstance().getUserName();
         userInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();

@@ -59,7 +59,7 @@ public class Moment {
 
     public Spannable comments;
 
-    public BasicUserInfo owner;
+    public User owner;
 
     public int type;
 
@@ -101,7 +101,7 @@ public class Moment {
         moment.commentsCount = jsonMoment.optInt("commentsCount");
         moment.isLiked = jsonMoment.optBoolean("isLiked");
 
-        moment.owner = BasicUserInfo.fromJson(jsonObject.optJSONObject("owner"));
+        moment.owner = User.fromJson(jsonObject.optJSONObject("owner"));
 
         return moment;
     }
@@ -136,7 +136,7 @@ public class Moment {
         moment.likesCount = jsonMoment.optInt("likesCount");
         moment.commentsCount = jsonMoment.optInt("commentsCount");
         moment.isLiked = jsonMoment.optBoolean("isLiked");
-        moment.owner = BasicUserInfo.fromCurrentUser();
+        moment.owner = User.fromCurrentUser();
 
         return moment;
     }

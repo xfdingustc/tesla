@@ -22,8 +22,8 @@ public class Comment {
     public long commentID;
     public String content;
     public long createTime;
-    public BasicUserInfo author;
-    public BasicUserInfo replyTo;
+    public User author;
+    public User replyTo;
 
     public int type;
 
@@ -36,8 +36,8 @@ public class Comment {
         comment.commentID = jsonObject.optLong("commentID");
         comment.content = jsonObject.optString("content");
         comment.createTime = jsonObject.optLong("createTime");
-        comment.author = BasicUserInfo.fromJson(jsonObject.optJSONObject("author"));
-        comment.replyTo = BasicUserInfo.fromJson(jsonObject.optJSONObject("replyTo"));
+        comment.author = User.fromJson(jsonObject.optJSONObject("author"));
+        comment.replyTo = User.fromJson(jsonObject.optJSONObject("replyTo"));
         return comment;
     }
 
