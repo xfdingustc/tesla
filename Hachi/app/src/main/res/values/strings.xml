@@ -269,6 +269,7 @@
     <string name="camera_video_bookmark">Bookmark</string>
     <string name="label_mark_before">Time Before Mark</string>
     <string name="label_mark_after">Time After Mark</string>
+    <string name="share">Share</string>
 
     <string name="followers">Followers</string>
     <string name="following">Following</string>

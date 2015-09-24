@@ -1,6 +1,7 @@
 package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbAcknowledge;
@@ -17,11 +18,17 @@ import com.waylens.hachi.vdb.SimpleClipSet;
  */
 public class ClipSetRequest extends VdbRequest<ClipSet> {
     private final static String TAG = ClipSetRequest.class.getSimpleName();
+    private static final int UUID_LENGTH = 36;
     private final VdbResponse.Listener<ClipSet> mListener;
+
+    public static final int FLAG_UNKNOWN = -1;
+    public static final int FLAG_CLIP_EXTRA = 1;
+    public static final int FLAG_CLIP_VDB_ID = 1 << 1;
 
     public static final int METHOD_GET = 0;
     public static final int METHOD_SET = 1;
     public static final String PARAMETER_TYPE = "type";
+    public static final String PARAMETER_FLAG = "flag";
 
     private final Bundle mParameters;
 
@@ -32,12 +39,18 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
         this.mParameters = parameters;
     }
 
+    public ClipSetRequest(Bundle parameters, VdbResponse.Listener<ClipSet> listener,
+                          VdbResponse.ErrorListener errorListener) {
+        this(0, parameters, listener, errorListener);
+    }
+
     @Override
     protected VdbCommand createVdbCommand() {
         switch (mMethod) {
             case METHOD_GET:
                 int type = mParameters.getInt(PARAMETER_TYPE);
-                mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(type);
+                int flag = mParameters.getInt(PARAMETER_FLAG, FLAG_UNKNOWN);
+                mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(type, flag);
                 break;
             case METHOD_SET:
                 break;
@@ -85,15 +98,31 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             RemoteClip clip = new RemoteClip(clipSet.clipType, clipId, null, clipDate); // TODO
             clip.clipLengthMs = response.readi32();
             clip.clipStartTime = response.readi64();
-            int num_streams = response.readi32();
-            if (num_streams > 0) {
+            int numStreams = response.readi16();
+            int flag = response.readi16();
+            Log.e("test", "Flag: " + flag);
+
+            if (numStreams > 0) {
                 readStreamInfo(clip, 0, response);
-                if (num_streams > 1) {
+                if (numStreams > 1) {
                     readStreamInfo(clip, 1, response);
-                    if (num_streams > 2) {
-                        response.skip(16 * (num_streams - 2));
+                    if (numStreams > 2) {
+                        response.skip(16 * (numStreams - 2));
                     }
                 }
+            }
+            int clipType = response.readi32();
+            Log.e("test", "clipType: " + clipType);
+            int extraSize = response.readi32();
+            Log.e("test", "extraSize: " + extraSize);
+            if (flag == FLAG_CLIP_EXTRA) {
+                String guid = new String(response.readByteArray(UUID_LENGTH));
+                clip.cid.setExtra(guid);
+                if (extraSize > UUID_LENGTH) {
+                    response.readByteArray(extraSize - UUID_LENGTH);
+                }
+            } else if (flag == FLAG_CLIP_VDB_ID) {
+                //TODO VDB_ID
             }
             clipSet.addClip(clip);
         }

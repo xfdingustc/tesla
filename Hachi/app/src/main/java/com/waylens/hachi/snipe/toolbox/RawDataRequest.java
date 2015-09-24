@@ -3,6 +3,7 @@ package com.waylens.hachi.snipe.toolbox;
 import android.os.Bundle;
 
 import com.transee.common.GPSRawData;
+import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.OBDData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
@@ -70,7 +71,7 @@ public class RawDataRequest extends VdbRequest<RawData> {
                 if (dataType == RawDataBlock.RAW_DATA_GPS) {
                     item.object = GPSRawData.translate(data);
                 } else if (dataType == RawDataBlock.RAW_DATA_ACC) {
-
+                    item.object = AccData.parse(data);
                 } else if (dataType == RawDataBlock.RAW_DATA_ODB) {
                     item.object = OBDData.parse(data);
                 }

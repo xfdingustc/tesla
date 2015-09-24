@@ -17,14 +17,13 @@ import com.waylens.hachi.vdb.PlaybackUrl;
 public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
     private static final String TAG = ClipPlaybackUrlRequest.class.getSimpleName();
     private final VdbResponse.Listener<PlaybackUrl> mListener;
-    private final Bundle mParameters;
-    private final Clip mClip;
+    protected final Bundle mParameters;
+    protected final Clip mClip;
 
     public static final String PARAMETER_STREAM = "stream";
     public static final String PARAMETER_URL_TYPE = "url_type";
     public static final String PARAMETER_MUTE_AUDIO = "mute_audio";
     public static final String PARAMETER_CLIP_TIME_MS = "clip_time_ms";
-
 
     public ClipPlaybackUrlRequest(Clip clip, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
         listener, VdbResponse.ErrorListener errorListener) {
@@ -46,7 +45,7 @@ public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
         boolean muteAudio = mParameters.getBoolean(PARAMETER_MUTE_AUDIO);
         long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
         mVdbCommand = VdbCommand.Factory.createCmdGetClipPlaybackUrl(mClip, stream, urlType,
-            muteAudio, clipTimeMs);
+            muteAudio, clipTimeMs, 0);
         return mVdbCommand;
     }
 

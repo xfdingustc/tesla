@@ -1,6 +1,7 @@
 package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 
@@ -152,20 +153,42 @@ public class VdbCommand {
         protected static final int CMD_MoveClip = 17;
         protected static final int CMD_GetPlaylistPlaybackUrl = 18;
 
+        //-----------------------
+        // since version 1.2
+        //-----------------------
         protected static final int CMD_GetClipExtent = 32;
         protected static final int CMD_SetClipExtent = 33;
+        protected static final int VDB_CMD_GetClipSetInfoEx = 34;
+        protected static final int VDB_CMD_GetAllClipSetInfo = 35;
+        protected static final int VDB_CMD_GetClipInfo = 36;
+
+        //-----------------------
+        // since version 1.3
+        //-----------------------
+        protected static final int VDB_CMD_GetRawDataSize = 37;
+        protected static final int CMD_GetPlaybackUrlEx = 38;
+        protected static final int VDB_CMD_GetPictureList = 39;
+        protected static final int VDB_CMD_ReadPicture = 40;
+        protected static final int VDB_CMD_RemovePicture = 41;
 
         private static final int URL_MUTE_AUDIO = (1 << 31);
 
-        public static final int DOWNLOAD_FOR_FILE = 1 << 0;
+        public static final int DOWNLOAD_FOR_FILE = 1;
         public static final int DOWNLOAD_FOR_IMAGE = 1 << 1;
         public static final int DOWNLOAD_FIRST_LOOP = 1 << 2;
 
-        public static VdbCommand createCmdGetClipSetInfo(int type) {
-            return new Builder()
-                    .writeCmdCode(CMD_GetClipSetInfo, 0)
-                    .writeInt32(type)
-                    .build();
+        public static VdbCommand createCmdGetClipSetInfo(int type, int flag) {
+            Builder builder = new Builder();
+
+            if (flag != ClipSetRequest.FLAG_UNKNOWN) {
+                builder.writeCmdCode(VDB_CMD_GetClipSetInfoEx, 0);
+                builder.writeInt32(type);
+                builder.writeInt32(flag);
+            } else {
+                builder.writeCmdCode(CMD_GetClipSetInfo, 0);
+                builder.writeInt32(type);
+            }
+            return builder.build();
         }
 
         public static VdbCommand createCmdGetIndexPicture(ClipPos clipPos) {
@@ -183,14 +206,24 @@ public class VdbCommand {
         }
 
         public static VdbCommand createCmdGetClipPlaybackUrl(Clip clip, int stream, int urlType,
-                                                             boolean muteAudio, long clipTimeMs) {
-            return new Builder()
-                    .writeCmdCode(CMD_GetPlaybackUrl, 0)
-                    .writeClipId(clip.cid)
+                                                             boolean muteAudio, long clipTimeMs, int clipLengthMs) {
+
+            Builder builder = new Builder();
+            if (clipLengthMs > 0) {
+                builder.writeCmdCode(CMD_GetPlaybackUrlEx, 0);
+            } else {
+                builder.writeCmdCode(CMD_GetPlaybackUrl, 0);
+            }
+            builder.writeClipId(clip.cid)
                     .writeInt32(stream)
                     .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
-                    .writeInt64(clipTimeMs)
-                    .build();
+                    .writeInt64(clipTimeMs);
+
+            if (clipLengthMs > 0) {
+                builder.writeInt32(clipLengthMs);
+            }
+            return builder.build();
+
         }
 
         public static VdbCommand createCmdGetClipDownloadUrl(Clip clip, long startMs, long endMs,

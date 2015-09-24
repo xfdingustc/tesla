@@ -383,7 +383,6 @@ public class SignUpFragment extends BaseFragment {
     }
 
     void uploadAvatar() {
-        mRequestQueue.start();
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_START_UPLOAD_AVATAR,
                 new Response.Listener<JSONObject>() {
                     @Override

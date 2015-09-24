@@ -51,11 +51,18 @@ public class HashUtils {
         return new String(str);
     }
 
-    public final static byte[] SHA1(File file) {
+    public static byte[] SHA1(File file) {
+        return SHA1(file, null, null);
+    }
+
+    public static byte[] SHA1(File file, byte[] header, byte[] tail) {
         try {
             FileInputStream in = new FileInputStream(file);
             MessageDigest sha1Inst = MessageDigest.getInstance("SHA-1");
-            byte[] buffer = new byte[1024 * 1024 * 10];
+            if (header != null) {
+                sha1Inst.update(header);
+            }
+            byte[] buffer = new byte[1024 * 4];
             int len = 0;
             int cnt = 0;
             Log.i(TAG, "file length = " + file.length());
@@ -65,6 +72,9 @@ public class HashUtils {
                 //sha1Inst.update(buffer);
                 Log.i(TAG, "time = " + cnt++ + " len = " + len);
             }
+            if (tail != null) {
+                sha1Inst.update(tail);
+            }
             return sha1Inst.digest();
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,7 +83,7 @@ public class HashUtils {
 
     }
 
-    public final static byte[] SHA1(byte[] data, int length) {
+    public static byte[] SHA1(byte[] data, int length) {
         try {
             MessageDigest sha1Inst = MessageDigest.getInstance("SHA-1");
             sha1Inst.update(data, 0, length);

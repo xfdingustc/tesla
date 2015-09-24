@@ -119,6 +119,7 @@ public class LiveFragment extends BaseFragment {
     private void retrieveVideoList(int type) {
         Bundle parameter = new Bundle();
         parameter.putInt(ClipSetRequest.PARAMETER_TYPE, type);
+        parameter.putInt(ClipSetRequest.PARAMETER_FLAG, ClipSetRequest.FLAG_CLIP_EXTRA);
         ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
