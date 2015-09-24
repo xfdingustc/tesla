@@ -9,15 +9,13 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.skin.Skin;
-import com.waylens.hachi.skin.SkinManager;
-import com.waylens.hachi.ui.services.DownloadService;
 import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.skin.SkinManager;
+import com.waylens.hachi.ui.services.DownloadService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.views.PrefsUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,7 +42,6 @@ public class Hachi extends Application {
     private void init() {
         mSharedContext = getApplicationContext();
 
-        PrefsUtil.init(this);
         initLogger();
 
         PreferenceUtils.initialize(this);

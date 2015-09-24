@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.transee.viditcam.app.comp.MapProvider;
 import com.waylens.hachi.R;
-import com.waylens.hachi.views.PrefsUtil;
 
 public class AppSetupActivity extends BaseActivity {
 
@@ -172,18 +171,5 @@ public class AppSetupActivity extends BaseActivity {
     }
 
     public void onGPSRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-        switch (view.getId()) {
-            case R.id.radio_gps_device:
-                if (checked) {
-                    PrefsUtil.setGPSSource(PrefsUtil.GPS_DEVICE);
-                }
-                break;
-            case R.id.radio_gps_camera:
-                if (checked) {
-                    PrefsUtil.setGPSSource(PrefsUtil.GPS_CAMERA);
-                }
-                break;
-        }
     }
 }

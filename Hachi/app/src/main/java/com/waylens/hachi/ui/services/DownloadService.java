@@ -17,7 +17,6 @@ import com.transee.vdb.RemuxHelper;
 import com.transee.vdb.RemuxerParams;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.ui.activities.CameraVideoActivity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -188,12 +187,14 @@ public class DownloadService extends Service {
                 mNotifBuilder.setContentTitle(getResources().getText(R.string.app_name));
                 mNotifBuilder.setSmallIcon(R.drawable.app_icon_small);
                 // intent to activate the activity
+                /*
                 Intent intent = new Intent(this, CameraVideoActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("isLocal", true);
                 intent.putExtras(bundle);
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
                 mNotifBuilder.setContentIntent(pendingIntent);
+                */
             }
         }
         switch (state) {

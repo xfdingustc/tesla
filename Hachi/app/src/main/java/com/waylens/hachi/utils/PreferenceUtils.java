@@ -18,8 +18,13 @@ public class PreferenceUtils {
     public static final String VERSION_CODE = "version_code";
     public static final String LOGIN_TYPE = "login_type";
     public static final String IS_LINKED = "is_linked";
-
     public static final String SEND_GCM_TOKEN_SERVER = "send.gcm.token.to.server";
+
+    public static final String KEY_WEATHER_TEMP_F = "weather.temp.f";
+    public static final String KEY_WEATHER_WIND_SPEED = "weather.wind.speed";
+    public static final String KEY_WEATHER_ICON_URL = "weather.icon.url";
+    public static final String KEY_WEATHER_UPDATE_TIME = "weather.update.time";
+
 
     private static Context mSharedAppContext = null;
     private static SharedPreferences mShare = null;

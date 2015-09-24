@@ -120,8 +120,8 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
-        //ClipPlaybackActivity.launch(this, mVdtCamera, mClip);
-        preparePlayback();
+        ClipPlaybackActivity.launch(this, mVdtCamera, mClip);
+        //preparePlayback();
     }
 
     @OnClick(R.id.btn_share)

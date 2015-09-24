@@ -59,6 +59,7 @@ import com.transee.viditcam.app.ViditImageButton;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
@@ -71,13 +72,9 @@ import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;
 import com.waylens.hachi.views.GearView;
-import com.waylens.hachi.views.PrefsUtil;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.Random;
 
@@ -97,6 +94,9 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     static final int STILLCAP_STATE_IDLE = 0;
     static final int STILLCAP_STATE_WAITING = 1; // pressed
     static final int STILLCAP_STATE_BURSTING = 2;
+
+    public static final int GPS_DEVICE = 0;
+    public static final int GPS_CAMERA = 1;
 
     private boolean mbToolbarVisible;
 
@@ -135,7 +135,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     TextView weatherWind;
     TextView modeMsg;
 
-    private int mMode;
     private Handler mHandler;
     private Random mRandom = new Random();
 
@@ -153,7 +152,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     LocationManager locationManager;
     LocationListener locationListener;
-    int gpsSource;
+    int gpsSource = GPS_DEVICE;
 
     private RequestQueue mRequestQueue;
 
@@ -197,7 +196,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                 onStillCaptureTimer();
             }
         };
-        PrefsUtil.initImageLoader(this);
         mHandler = new Handler();
         mRequestQueue = Volley.newRequestQueue(this);
     }
@@ -407,7 +405,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             @Override
             public void onRawDataAsync(int dataType, byte[] data) {
                 if (dataType == RawDataBlock.RAW_DATA_GPS
-                        && gpsSource == PrefsUtil.GPS_CAMERA) {
+                        && gpsSource == GPS_CAMERA) {
 
                     try {
                         final GPSRawData gpsRawData = GPSRawData.translate(data);
@@ -497,7 +495,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void getLocation() {
-        if (gpsSource != PrefsUtil.GPS_DEVICE) {
+        if (gpsSource != GPS_DEVICE) {
             return;
         }
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -628,7 +626,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             @Override
             public void onClick(View v) {
                 mVdtCamera.getClient().cmd_CAM_WantIdle();
-                startCameraActivity(mVdtCamera, CameraVideoActivity.class);
+                //startCameraActivity(mVdtCamera, CameraVideoActivity.class);
             }
         });
 
@@ -754,7 +752,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         weatherWind = (TextView) findViewById(R.id.weather_wind);
         modeMsg = (TextView) findViewById(R.id.mode_msg);
         modeMsg.setVisibility(View.GONE);
-        gpsSource = PrefsUtil.getGPSource();
         initWeatherData();
     }
 
@@ -777,9 +774,11 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void initWeatherData() {
-        String tempF = PrefsUtil.getWeatherTempF();
-        String windSpeedKmph = PrefsUtil.getWeatherWindSpeed();
-        String iconUrl = PrefsUtil.getWeatherIcon();
+        String tempF = PreferenceUtils.getString(PreferenceUtils.KEY_WEATHER_TEMP_F, null);
+
+        String windSpeedKmph = PreferenceUtils.getString(PreferenceUtils.KEY_WEATHER_WIND_SPEED, null);
+
+        String iconUrl = PreferenceUtils.getString(PreferenceUtils.KEY_WEATHER_ICON_URL, null);
         if (tempF == null) {
             return;
         }
@@ -789,7 +788,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void getWeatherData(double lat, double lng) {
-        long updateTime = PrefsUtil.getUpdateWeatherTime();
+        long updateTime = PreferenceUtils.getLong(PreferenceUtils.KEY_WEATHER_UPDATE_TIME, 0);
         long now = System.currentTimeMillis();
         Log.e("test", "now:" + now);
         Log.e("test", "updateTime:" + updateTime);
@@ -812,10 +811,10 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                             String tempF = current.optString("temp_F") + "\u00B0";
                             String windSpeedKmph = current.optString("windspeedKmph") + "Kmph";
                             String iconUrl = current.getJSONArray("weatherIconUrl").getJSONObject(0).getString("value");
-                            PrefsUtil.setWeatherTempF(tempF);
-                            PrefsUtil.setWeatherWindSpeed(windSpeedKmph);
-                            PrefsUtil.setWeatherIcon(iconUrl);
-                            PrefsUtil.setUpdateWeatherTime(System.currentTimeMillis());
+                            PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_TEMP_F, tempF);
+                            PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_WIND_SPEED, windSpeedKmph);
+                            PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_ICON_URL, iconUrl);
+                            PreferenceUtils.putLong(PreferenceUtils.KEY_WEATHER_UPDATE_TIME, System.currentTimeMillis());
                             weatherTemp.setText(tempF);
                             weatherWind.setText(windSpeedKmph);
                             ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
@@ -835,18 +834,6 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
         //String q = "31.190979000000002,121.60145658333334";
         //service.getWeather("e081e88edf6ffe4bcd0d12f34b26e", "json", "1", "12", q, callback);
-    }
-
-    public static byte[] streamToBytes(InputStream stream) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        if (stream != null) {
-            byte[] buf = new byte[1024];
-            int r;
-            while ((r = stream.read(buf)) != -1) {
-                baos.write(buf, 0, r);
-            }
-        }
-        return baos.toByteArray();
     }
 
     @Override
