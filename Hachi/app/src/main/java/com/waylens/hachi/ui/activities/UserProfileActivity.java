@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -43,6 +44,7 @@ public class UserProfileActivity extends BaseActivity {
     private static final String USER_ID = "user_id";
     private String mUserID;
     private UserProfileFeedAdapter mMomentRvAdapter;
+    private User mUser;
 
     private List<Moment> mMomentList;
 
@@ -60,6 +62,9 @@ public class UserProfileActivity extends BaseActivity {
 
     @Bind(R.id.btnFollowingCount)
     Button mBtnFollowingCount;
+
+    @Bind(R.id.btnFollow)
+    Button mBtnFollow;
     
     @OnClick(R.id.btnFollowersCount)
     public void onBtnFollowerCountClicked() {
@@ -69,6 +74,15 @@ public class UserProfileActivity extends BaseActivity {
     @OnClick(R.id.btnFollowingCount)
     public void onBtnFollowingCountClicked() {
         FollowListActivity.launch(this, mUserID, false);
+    }
+
+    @OnClick(R.id.btnFollow)
+    public void onBtnFollowClicked() {
+        if (mUser.getIsFollowing()) {
+            unfollowUser(mUserID);
+        } else {
+            followUser(mUserID);
+        }
     }
 
     public static void launch(Context context, String userID) {
@@ -111,9 +125,9 @@ public class UserProfileActivity extends BaseActivity {
                     Gson gson = new GsonBuilder()
                         .excludeFieldsWithoutExposeAnnotation()
                         .create();
-                    User userInfo = gson.fromJson(response.toString(), User.class);
-                    Logger.t(TAG).d("userInfo: " + userInfo.toString());
-                    showUserInfo(userInfo);
+                    mUser = gson.fromJson(response.toString(), User.class);
+                    Logger.t(TAG).d("userInfo: " + mUser.toString());
+                    showUserInfo(mUser);
                 }
             }, new Response.ErrorListener() {
             @Override
@@ -132,6 +146,8 @@ public class UserProfileActivity extends BaseActivity {
 
         mBtnFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
         mBtnFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
+
+        setFollowButton(userInfo.getIsFollowing());
     }
 
     private void setupUserMomentsFeed() {
@@ -178,5 +194,74 @@ public class UserProfileActivity extends BaseActivity {
         }
 
         return moments;
+    }
+
+    private void setFollowButton(boolean isFollowing) {
+        if (isFollowing) {
+            mBtnFollow.setText(R.string.following);
+            mBtnFollow.setTextColor(getResources().getColor(android.R.color.white));
+            mBtnFollow.setBackgroundResource(R.color.style_color_primary);
+        } else {
+            mBtnFollow.setText(R.string.add_follow);
+            mBtnFollow.setTextColor(getResources().getColor(R.color.style_color_primary));
+            mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
+        }
+    }
+
+    public void followUser(final String userID) {
+        String requestUrl = Constants.API_FRIENDS_FOLLOW;
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put(JsonKey.USER_ID, userID);
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
+                requestUrl, requestBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).d("Follow user: " + userID);
+                    setFollowButton(true);
+                    mUser.setIsFollowing(true);
+                    mBtnFollow.setEnabled(true);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+            mRequestQueue.add(request);
+           mBtnFollow.setEnabled(false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void unfollowUser(final String userID) {
+        String requestUrl = Constants.API_FRIENDS_UNFOLLOW;
+        JSONObject requestBody = new JSONObject();
+
+        try {
+            requestBody.put(JsonKey.USER_ID, userID);
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
+                requestUrl, requestBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    setFollowButton(false);
+                    mUser.setIsFollowing(false);
+                    Logger.t(TAG).d("Unfollow user: " + userID);
+                    mBtnFollow.setEnabled(true);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+            mRequestQueue.add(request);
+            mBtnFollow.setEnabled(false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }
