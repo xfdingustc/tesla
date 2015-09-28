@@ -20,20 +20,14 @@ import android.widget.FrameLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.YouTubeFragment;
 import com.waylens.hachi.utils.ImageUtils;
-import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.IOException;
@@ -68,7 +62,6 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     OnUserAvatarClickListener mOnUserAvatarClickListener;
     OnCommentMomentListener mOnCommentMomentListener;
     OnLikeMomentListener mOnLikeMomentListener;
-
 
 
     public MomentsRecyclerAdapter(ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
@@ -285,11 +278,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.setDisplay(holder);
                 mMediaPlayers.put(position, mediaPlayer);
-                if (moment.videoFragments == null) {
-                    loadVideoInfo(vh, moment, position);
-                } else {
-                    playVideoFragments(vh, moment.videoFragments, position);
-                }
+                playVideoFragments(vh, moment.videoURL, position);
+
             }
 
             @Override
@@ -316,32 +306,7 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         vh.progressBar.setVisibility(View.VISIBLE);
     }
 
-    void loadVideoInfo(final WaylensMomentVH vh, final Moment moment, final int position) {
-        String url = Constants.API_MOMENT_PLAY + moment.id;
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JSONArray videoFragments = response.optJSONArray("fragments");
-                        if (videoFragments == null) {
-                            return;
-                        }
-                        moment.videoFragments = videoFragments;
-                        playVideoFragments(vh, videoFragments, position);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                        //showMessage(errorInfo.get(1));
-                        Log.e("test", "Error: " + error);
-                    }
-                }));
-        mRequestQueue.start();
-    }
-
-    void playVideoFragments(final WaylensMomentVH vh, JSONArray videoFragments, int position) {
+    void playVideoFragments(final WaylensMomentVH vh, String videoURL, int position) {
         MediaPlayer mediaPlayer = mMediaPlayers.get(position);
         if (mediaPlayer == null) {
             Log.e("test", "MediaPlayer is null");
@@ -355,8 +320,6 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
             }
         });
         try {
-            String videoURL = videoFragments.optJSONObject(0).optString("videoUrl");
-            Log.e("test", "URL: " + videoURL);
             mediaPlayer.setDataSource(videoURL);
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
