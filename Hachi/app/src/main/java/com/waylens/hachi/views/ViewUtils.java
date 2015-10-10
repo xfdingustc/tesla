@@ -1,6 +1,9 @@
 package com.waylens.hachi.views;
 
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -39,9 +42,13 @@ public class ViewUtils {
         return digits;
     }
 
-    ;
 
     public static int[] getDigits(float number) {
         return getDigits(number, 0);
+    }
+
+    public static int dp2px(int dp, Resources resources) {
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics) + 0.5f);
     }
 }

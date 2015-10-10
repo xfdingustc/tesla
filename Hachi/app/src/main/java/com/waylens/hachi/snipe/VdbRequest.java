@@ -37,6 +37,8 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     private static final int REQUEST_TYPE_GETPLAYLISTPLAYBACKURL = 18;
     protected VdbCommand mVdbCommand;
 
+    private boolean mIsIgnorable;
+
 
     public VdbRequest(int method, VdbResponse.ErrorListener listener) {
         this.mMethod = method;
@@ -121,5 +123,13 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         return left == right ? this.mSequence - another.mSequence : right.ordinal() - left
             .ordinal();
 
+    }
+
+    public boolean isIgnorable() {
+        return mIsIgnorable;
+    }
+
+    public void setIgnorable(boolean isIgnorable) {
+        mIsIgnorable = isIgnorable;
     }
 }

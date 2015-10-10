@@ -59,6 +59,8 @@ public class ExecutorDelivery implements ResponseDelivery {
             if (mRequest.isCanceled()) {
                 mRequest.finish("canceled-at-delivery");
                 return;
+            } else {
+                mRequest.finish("finish-at-delivery");
             }
 
 

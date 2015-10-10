@@ -31,24 +31,21 @@ public class VdbAcknowledge {
     protected int mMsgFlags;
     protected int mCmdTag;
 
+    private static final int MAX_VALID_SIZE = 1024 * 1024 * 10;
+
     public VdbAcknowledge(int statusCode, boolean notModified, int cmdCode, VdbConnection
-                          vdbConnection) {
+            vdbConnection) throws IOException {
         this.statusCode = statusCode;
         this.notModified = notModified;
         this.mVdbConnection = vdbConnection;
         this.mCmdCode = cmdCode;
-
         Log.e("test", String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]", statusCode, cmdCode));
-        try {
-            while (true) {
-                mReceiveBuffer = mVdbConnection.receivedAck();
-                parseAcknowledge();
-                if (mCmdCode == mMsgCode) {
-                    break;
-                }
+        while (true) {
+            mReceiveBuffer = mVdbConnection.receivedAck();
+            parseAcknowledge();
+            if (mCmdCode == mMsgCode) {
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -67,7 +64,11 @@ public class VdbAcknowledge {
         mCmdRetCode = readi32();
         int extra_bytes = readi32();
         if (extra_bytes > 0) {
-            mMsgBuffer = new byte[VDB_ACK_SIZE + extra_bytes];
+            int size = VDB_ACK_SIZE + extra_bytes;
+            if (size > MAX_VALID_SIZE) {
+                throw new IOException("Abnormal size: " + size);
+            }
+            mMsgBuffer = new byte[size];
             System.arraycopy(mReceiveBuffer, 0, mMsgBuffer, 0, VDB_ACK_SIZE);
             mVdbConnection.readFully(mMsgBuffer, VDB_ACK_SIZE, extra_bytes);
             mReceiveBuffer = mMsgBuffer;
@@ -113,7 +114,7 @@ public class VdbAcknowledge {
     public long readi64() {
         int lo = readi32();
         int hi = readi32();
-        return ((long)hi << 32) | ((long)lo & 0xFFFFFFFFL);
+        return ((long) hi << 32) | ((long) lo & 0xFFFFFFFFL);
     }
 
     public void skip(int n) {

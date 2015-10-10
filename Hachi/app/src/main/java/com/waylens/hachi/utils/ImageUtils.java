@@ -65,9 +65,9 @@ public class ImageUtils {
 
     public static File getImageStorageDir(Context context, String type) {
         if (isExternalStorageReady()) {
-            return context.getExternalFilesDir(type);
+            return new File(context.getExternalCacheDir(), type);
         } else {
-            return new File(context.getFilesDir(), type);
+            return new File(context.getCacheDir(), type);
         }
     }
 
@@ -75,5 +75,4 @@ public class ImageUtils {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 && Environment.getExternalStorageDirectory().canWrite();
     }
-
 }

@@ -17,13 +17,9 @@ public class BasicVdbSocket implements VdbSocket {
             sendCmd(vdbRequest);
             return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getCommandCode(),
                 vdbRequest.getVdbConnection());
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (Exception e) {
+            throw new SnipeError();
         }
-
     }
 
     private void sendCmd(VdbRequest<?> vdbRequest) throws IOException {

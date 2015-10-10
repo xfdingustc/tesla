@@ -41,6 +41,7 @@ import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.views.VideoTrimmer;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 import org.json.JSONArray;
@@ -74,8 +75,8 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.video_seek_bar)
     SeekBar mSeekBar;
 
-    @Bind(R.id.range_seek_bar)
-    RangeSeekBar<Long> mRangeSeekBar;
+    @Bind(R.id.video_trimmer)
+    VideoTrimmer mVideoTrimmer;
 
     @Bind(R.id.btn_update_bookmark)
     ImageButton mBtnUpdateBookMark;
@@ -150,43 +151,6 @@ public class ClipEditActivity extends BaseActivity {
             }
         });
         //mVdbRequestQueue.add(rawDataBlockRequest);
-        /*
-        {"momentID":139,
-        "uploadServer":
-        {"ip":"115.29.247.213","port":42020,"privateKey":"qwertyuiopasdfgh"},
-        "uploadData":[{"guid":"f3e6be46-f22a-454a-8e3c-8133c7876927",
-        "dataType":"video","offset":0,"duration":36986,"uploadToken":"108"},
-        {"guid":"f3e6be46-f22a-454a-8e3c-8133c7876927","dataType":"raw","uploadToken":"18"}]}
-         */
-        //shareMoment();
-        /*
-        final File file = new File("/sdcard/Download/test.ts");
-        if (!file.exists()) {
-            Log.e("test", "File not exist");
-            return;
-        }
-        final byte[] header = BufferUtils.buildUploadHeader(BufferUtils.VDB_DATA_VIDEO, (int) file.length(), mClip.clipDate, 1, mClip.clipLengthMs);
-        final byte[] tail = BufferUtils.buildUploadTail(header.length + (int) file.length());
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024 * 4];
-        try {
-            outputStream.write(header);
-            FileInputStream inputStream = new FileInputStream(file);
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, len);
-            }
-            outputStream.write(tail);
-        } catch (Exception e) {
-            Log.e("test", "", e);
-        }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dataUploader.uploadBinary(outputStream.toByteArray(), ProtocolConstMsg.VIDIT_VIDEO_DATA, "108", "f3e6be46-f22a-454a-8e3c-8133c7876927");
-            }
-        }).start();
-        */
     }
 
     void shareMoment() {
@@ -248,7 +212,7 @@ public class ClipEditActivity extends BaseActivity {
         } else {
             getClipExtent();
             mRangeSeekBarContainer.setVisibility(View.VISIBLE);
-            mRangeSeekBar.setVisibility(View.INVISIBLE);
+            mVideoTrimmer.setVisibility(View.INVISIBLE);
             mSeekBar.setVisibility(View.GONE);
             //mBtnShare.setVisibility(View.VISIBLE);
         }
@@ -284,7 +248,7 @@ public class ClipEditActivity extends BaseActivity {
 
     void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
         clipPos.setClipTimeMs(clipTimeMs);
-        mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
+        mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture, true);
     }
 
     private void getClipExtent() {
@@ -306,7 +270,7 @@ public class ClipEditActivity extends BaseActivity {
 
     @SuppressWarnings("deprecation")
     void initRangeSeekBar() {
-        if (mRangeSeekBar == null) {
+        if (mVideoTrimmer == null) {
             return;
         }
         long minValue = mClipExtent.clipStartTimeMs - MAX_EXTENSION;
@@ -318,10 +282,11 @@ public class ClipEditActivity extends BaseActivity {
             maxValue = mClipExtent.maxClipEndTimeMs;
         }
 
-        mRangeSeekBar.setRangeValues(minValue, maxValue);
-        mRangeSeekBar.setSelectedMinValue(mClipExtent.clipStartTimeMs);
-        mRangeSeekBar.setSelectedMaxValue(mClipExtent.clipEndTimeMs);
-        mRangeSeekBar.setNotifyWhileDragging(true);
+        mVideoTrimmer.setInitRangeValues(minValue, maxValue);
+        mVideoTrimmer.setLeftValue(mClipExtent.clipStartTimeMs);
+        mVideoTrimmer.setRightValue(mClipExtent.clipEndTimeMs);
+
+        //mRangeSeekBar.setNotifyWhileDragging(true);
         oldStartValue = mClipExtent.clipStartTimeMs;
         oldEndValue = mClipExtent.clipEndTimeMs;
 
@@ -330,36 +295,46 @@ public class ClipEditActivity extends BaseActivity {
                 mClip.clipDate,
                 mClipExtent.clipStartTimeMs,
                 ClipPos.TYPE_POSTER, false);
-        mRangeSeekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Long>() {
+        mVideoTrimmer.setOnChangeListener(new VideoTrimmer.OnTrimmerChangeListener() {
             @Override
-            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> rangeSeekBar, Long startValue, Long endValue) {
-                if (startValue != mClipExtent.clipStartTimeMs || endValue != mClipExtent.clipEndTimeMs) {
+            public void onStartTrackingTouch(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag) {
+                //
+            }
+
+            @Override
+            public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
+                if (start != mClipExtent.clipStartTimeMs || end != mClipExtent.clipEndTimeMs) {
                     mBtnUpdateBookMark.getDrawable().setColorFilter(getResources().getColor(R.color.style_color_primary),
                             PorterDuff.Mode.MULTIPLY);
                 }
-                if (Math.abs(oldStartValue - startValue) > 1000) {
-                    refreshThumbnail(startValue, clipPos);
-                    oldStartValue = startValue;
+                if (Math.abs(oldStartValue - start) > 1000) {
+                    refreshThumbnail(start, clipPos);
+                    oldStartValue = start;
                 }
-                if (Math.abs(oldEndValue - endValue) > 1000) {
-                    refreshThumbnail(endValue, clipPos);
-                    oldEndValue = endValue;
+                if (Math.abs(oldEndValue - end) > 1000) {
+                    refreshThumbnail(end, clipPos);
+                    oldEndValue = end;
                 }
             }
+
+            @Override
+            public void onStopTrackingTouch(VideoTrimmer trimmer) {
+                //
+            }
         });
-        mRangeSeekBar.setVisibility(View.VISIBLE);
+        mVideoTrimmer.setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.btn_update_bookmark)
     public void updateBookmark() {
         if (mClipExtent == null
-                || (mClipExtent.clipStartTimeMs == mRangeSeekBar.getSelectedMinValue()
-                && mClipExtent.clipEndTimeMs == mRangeSeekBar.getSelectedMaxValue())) {
+                || (mClipExtent.clipStartTimeMs == mVideoTrimmer.getLeftValue()
+                && mClipExtent.clipEndTimeMs == mVideoTrimmer.getRightValue())) {
             return;
         }
         mVdbRequestQueue.add(new ClipExtentUpdateRequest(mClip,
-                mRangeSeekBar.getSelectedMinValue(),
-                mRangeSeekBar.getSelectedMaxValue(),
+                mVideoTrimmer.getLeftValue(),
+                mVideoTrimmer.getRightValue(),
                 new VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
@@ -375,6 +350,7 @@ public class ClipEditActivity extends BaseActivity {
                     }
                 }
         ));
+
     }
 
     private void preparePlayback() {

@@ -2,44 +2,41 @@ package com.waylens.hachi.snipe;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * VdbRequestQueue
  * Created by Xiaofei on 2015/8/17.
  */
 public class VdbRequestQueue {
     private static final String TAG = VdbRequestQueue.class.getSimpleName();
 
+    private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 1;
+
+    private static final int MAX_PENDING_REQUEST_COUNT = 4;
 
     private VdbConnection mVdbConnection;
 
-    public interface RequestFinishedListener<T> {
-        void onRequestFinished(VdbRequest<T> vdbRequest);
-    }
-
     private AtomicInteger mSequenceGenerator = new AtomicInteger();
-
-    private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 1;
 
     private final Set<VdbRequest<?>> mCurrentVdbRequests = new HashSet<VdbRequest<?>>();
 
     private final PriorityBlockingQueue<VdbRequest<?>> mVideoDatabaseQueue = new
-        PriorityBlockingQueue<VdbRequest<?>>();
+            PriorityBlockingQueue<VdbRequest<?>>();
 
+    private final CircularQueue<VdbRequest<?>> mIgnorableRequestQueue = new CircularQueue<>(1);
+
+    private AtomicInteger mPendingRequestCount = new AtomicInteger();
 
     private final VdbSocket mVdbSocket;
     private final ResponseDelivery mDelivery;
 
-
     private VdbDispatcher[] mVdbDispatchers;
-
-    private List<RequestFinishedListener> mFinishedListeners = new ArrayList<>();
 
     public VdbRequestQueue(VdbSocket vdbSocket, VdbConnection connection) {
         this(vdbSocket, DEFAULT_NETWORK_THREAD_POOL_SIZE, connection);
@@ -47,17 +44,15 @@ public class VdbRequestQueue {
 
     public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, VdbConnection connection) {
         this(vdbSocket, threadPoolSize,
-            new ExecutorDelivery(new Handler(Looper.getMainLooper())), connection);
+                new ExecutorDelivery(new Handler(Looper.getMainLooper())), connection);
     }
 
     public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, ResponseDelivery
-        delivery, VdbConnection connection) {
+            delivery, VdbConnection connection) {
         this.mVdbSocket = vdbSocket;
         this.mVdbDispatchers = new VdbDispatcher[threadPoolSize];
-
         this.mDelivery = delivery;
         this.mVdbConnection = connection;
-
     }
 
 
@@ -92,6 +87,22 @@ public class VdbRequestQueue {
     }
 
     public <T> VdbRequest<T> add(VdbRequest<T> vdbRequest) {
+        return add(vdbRequest, false);
+    }
+
+    private <T> VdbRequest<T> add(VdbRequest<T> vdbRequest, boolean isPendingRequest) {
+        if (vdbRequest.isIgnorable()) {
+            if (mPendingRequestCount.get() >= MAX_PENDING_REQUEST_COUNT) {
+                if (!isPendingRequest) {
+                    mIgnorableRequestQueue.offer(vdbRequest);
+                }
+                return vdbRequest;
+            } else {
+                int count = mPendingRequestCount.incrementAndGet();
+                Log.e("test", "Pending Count1: " + count);
+            }
+        }
+
         vdbRequest.setRequestQueue(this);
         synchronized (mCurrentVdbRequests) {
             mCurrentVdbRequests.add(vdbRequest);
@@ -100,10 +111,7 @@ public class VdbRequestQueue {
         vdbRequest.setSequence(getSequenceNumber());
         vdbRequest.addMarker("add-to-queue");
 
-
         mVideoDatabaseQueue.add(vdbRequest);
-
-
         return vdbRequest;
     }
 
@@ -111,10 +119,15 @@ public class VdbRequestQueue {
         synchronized (mCurrentVdbRequests) {
             mCurrentVdbRequests.remove(vdbRequest);
         }
-        synchronized (mFinishedListeners) {
-            for (RequestFinishedListener<T> listener : mFinishedListeners) {
-                listener.onRequestFinished(vdbRequest);
+
+        if (vdbRequest.isIgnorable()) {
+            int count = mPendingRequestCount.decrementAndGet();
+            Log.e("test", "Pending Count2: " + count);
+            VdbRequest request = mIgnorableRequestQueue.poll();
+            if (request != null) {
+                add(request, true);
             }
         }
+
     }
 }

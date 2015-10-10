@@ -57,4 +57,13 @@
         <attr name="scaleEndValue" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="VideoTrimmer">
+        <attr name="thumbWidth" format="dimension"/>
+        <attr name="progressBarWidth" format="dimension"/>
+        <attr name="boardWidth" format="dimension"/>
+        <attr name="leftThumb" format="reference" />
+        <attr name="rightThumb" format="reference" />
+    </declare-styleable>
+
+
 </resources>
