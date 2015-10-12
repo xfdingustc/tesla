@@ -15,6 +15,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.utils.ViewUtils;
 
 /**
  * Bar view for Whp, PSI, and baro

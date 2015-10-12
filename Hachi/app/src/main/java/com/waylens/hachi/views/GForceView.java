@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.utils.ViewUtils;
 
 /**
  * GForce View

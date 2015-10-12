@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
+import com.waylens.hachi.utils.ViewUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -378,55 +379,5 @@ public class VideoTrimmerController extends View {
 
     boolean isInThumbRange(Rect rect, float x) {
         return x > rect.left && x < rect.right;
-    }
-
-    public static class RecyclerViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
-        public final List<String> mItems = new ArrayList<>();
-
-        public RecyclerViewAdapter() {
-
-            File dir = Environment.getExternalStoragePublicDirectory("Download/images");
-            dir = Environment.getExternalStoragePublicDirectory("Download/images2");
-            //File dir = new File("/sdcard/Download/images");
-            int length = 2146000;
-            length = 30 * 1000;
-            for (int i = 0; i <= length; i += 1000) {
-                File file = new File(dir, "t_" + i + ".png");
-                if (file.exists()) {
-                    mItems.add(Uri.fromFile(file).toString());
-                }
-            }
-        }
-
-        @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ImageView view = new ImageView(parent.getContext());
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewUtils.dp2px(64, parent.getResources()),
-                    ViewUtils.dp2px(36, parent.getResources()));
-            view.setLayoutParams(params);
-            return new ItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ItemViewHolder holder, int position) {
-            String url = mItems.get(position);
-            ImageLoader.getInstance().displayImage(url, holder.imageView);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mItems.size();
-        }
-    }
-
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
-
-        public final ImageView imageView;
-
-        public ItemViewHolder(View itemView) {
-            super(itemView);
-            imageView = (ImageView) itemView;
-        }
-
     }
 }

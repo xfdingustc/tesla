@@ -3,13 +3,15 @@ package com.waylens.hachi.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,35 +30,24 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
-import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.snipe.toolbox.RawDataDumpRequest;
-import com.waylens.hachi.snipe.toolbox.RawDataRequest;
-import com.waylens.hachi.utils.BufferUtils;
-import com.waylens.hachi.utils.DataUploader;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
-import com.waylens.hachi.vdb.RawData;
-import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
 
-import org.florescu.android.rangeseekbar.RangeSeekBar;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Arrays;
-import java.util.Collections;
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import crs_svr.ProtocolConstMsg;
 
 /**
  * Created by Xiaofei on 2015/8/14.
@@ -73,7 +64,7 @@ public class ClipEditActivity extends BaseActivity {
     ImageButton mBtnPlay;
 
     @Bind(R.id.video_seek_bar)
-    SeekBar mSeekBar;
+    VideoPlayerProgressBar mSeekBar;
 
     @Bind(R.id.video_trimmer)
     VideoTrimmer mVideoTrimmer;
@@ -87,6 +78,9 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.btn_share)
     View mBtnShare;
 
+    @Bind(R.id.video_play_view)
+    SurfaceView mVideoPlayView;
+
     private static VdtCamera mSharedCamera;
     private static Clip mSharedClip;
 
@@ -96,7 +90,7 @@ public class ClipEditActivity extends BaseActivity {
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
 
-    int oldPosition;
+    long oldPosition;
 
     long startPlayTime;
 
@@ -104,6 +98,8 @@ public class ClipEditActivity extends BaseActivity {
     long oldEndValue;
 
     ClipExtent mClipExtent;
+    private MediaPlayer mPlayer;
+
 
     public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {
         Intent intent = new Intent(context, ClipEditActivity.class);
@@ -118,6 +114,19 @@ public class ClipEditActivity extends BaseActivity {
         init();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mPlayer != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mPlayer.reset();
+                    mPlayer.release();
+                }
+            }).start();
+        }
+    }
 
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
@@ -127,30 +136,46 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btn_share)
     public void shareVideo() {
-        long clipTimeMs = 0;
-        int lengthMs = mClip.clipLengthMs;
-        final DataUploader dataUploader = new DataUploader("115.29.247.213", 42020, "qwertyuiopasdfgh");
-        RawDataDumpRequest rawDataBlockRequest = new RawDataDumpRequest(mClip, clipTimeMs, lengthMs,
-                RawDataBlock.RAW_DATA_ODB,
-                new VdbResponse.Listener<byte[]>() {
-                    @Override
-                    public void onResponse(final byte[] response) {
-                        Log.e("test", "Data size: " + response.length);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dataUploader.uploadBinary(response, ProtocolConstMsg.VIDIT_RAW_OBD, "18", mClip.getVdbId());
-                            }
-                        }).start();
+        playVideo();
+    }
 
+    void playVideo() {
+        Bundle parameters = new Bundle();
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
+        parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime());
+
+        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
+            @Override
+            public void onResponse(PlaybackUrl playbackUrl) {
+                mPlayer = new MediaPlayer();
+                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mIvPreviewPicture.setVisibility(View.GONE);
+                mBtnPlay.setVisibility(View.GONE);
+                mPlayer.setDisplay(mVideoPlayView.getHolder());
+                mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        mediaPlayer.start();
+                        mSeekBar.setMediaPlayer(mPlayer);
                     }
-                }, new VdbResponse.ErrorListener() {
+                });
+                try {
+                    mPlayer.setDataSource(playbackUrl.url);
+                    mPlayer.prepareAsync();
+                } catch (IOException e) {
+                    Log.e("test", "", e);
+                }
+            }
+        }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-                Log.e("test", "", error);
+                //
             }
         });
-        //mVdbRequestQueue.add(rawDataBlockRequest);
+
+        mVdbRequestQueue.add(request);
     }
 
     void shareMoment() {
@@ -204,8 +229,8 @@ public class ClipEditActivity extends BaseActivity {
         final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
 
+        initSeekBar();
         if (mClip.cid.type == RemoteClip.TYPE_BUFFERED) {
-            initSeekBar();
             mSeekBar.setVisibility(View.VISIBLE);
             mRangeSeekBarContainer.setVisibility(View.GONE);
             //mBtnShare.setVisibility(View.GONE);
@@ -213,35 +238,34 @@ public class ClipEditActivity extends BaseActivity {
             getClipExtent();
             mRangeSeekBarContainer.setVisibility(View.VISIBLE);
             mVideoTrimmer.setVisibility(View.INVISIBLE);
-            mSeekBar.setVisibility(View.GONE);
+            mSeekBar.setVisibility(View.VISIBLE);
             //mBtnShare.setVisibility(View.VISIBLE);
         }
     }
 
     private void initSeekBar() {
         final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
-        mSeekBar.setMax(mClip.clipLengthMs);
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSeekBar.setClip(mClip, mVdbImageLoader);
+        mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Log.e("test", String.format("old[%d], new[%d] ", oldPosition, i));
-                if (Math.abs(oldPosition - i) > 1000) {
-                    refreshThumbnail(mClip.getStartTime() + i, clipPos);
-                    oldPosition = i;
+            public void onStartTrackingTouch(VideoPlayerProgressBar progressBar) {
+                Log.e("test", "Start dragging....");
+            }
+
+            @Override
+            public void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser) {
+                Log.e("test", "Progress: " + progress);
+                if (Math.abs(oldPosition - progress) > 1000) {
+                    refreshThumbnail(mClip.getStartTime() + progress, clipPos);
+                    oldPosition = progress;
                 } else {
                     Log.e("test", "Progress: skipped");
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                startPlayTime = seekBar.getProgress();
-                Log.e("test", "startPlayTime: " + startPlayTime);
+            public void onStopTrackingTouch(VideoPlayerProgressBar progressBar) {
+                Log.e("test", "Stop dragging....");
             }
         });
     }
@@ -282,11 +306,11 @@ public class ClipEditActivity extends BaseActivity {
             maxValue = mClipExtent.maxClipEndTimeMs;
         }
 
+        mVideoTrimmer.setBackgroundClip(mVdbImageLoader, mClip, minValue, maxValue);
         mVideoTrimmer.setInitRangeValues(minValue, maxValue);
         mVideoTrimmer.setLeftValue(mClipExtent.clipStartTimeMs);
         mVideoTrimmer.setRightValue(mClipExtent.clipEndTimeMs);
 
-        //mRangeSeekBar.setNotifyWhileDragging(true);
         oldStartValue = mClipExtent.clipStartTimeMs;
         oldEndValue = mClipExtent.clipEndTimeMs;
 
