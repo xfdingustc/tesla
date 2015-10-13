@@ -140,6 +140,17 @@ public class ClipEditActivity extends BaseActivity {
     }
 
     void playVideo() {
+        if (mPlayer != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mSeekBar.setMediaPlayer(null);
+                    mPlayer.reset();
+                    mPlayer.release();
+                }
+            }).start();
+        }
+
         Bundle parameters = new Bundle();
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
@@ -158,7 +169,8 @@ public class ClipEditActivity extends BaseActivity {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
                         mediaPlayer.start();
-                        mSeekBar.setMediaPlayer(mPlayer);
+                        //mSeekBar.setMediaPlayer(mPlayer);
+                        mVideoTrimmer.setMediaPlayer(mPlayer);
                     }
                 });
                 try {

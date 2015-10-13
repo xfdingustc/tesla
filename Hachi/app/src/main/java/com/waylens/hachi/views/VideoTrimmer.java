@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -166,6 +167,10 @@ public class VideoTrimmer extends FrameLayout {
 
     public long getProgress() {
         return mVideoTrimmerController.mProgress;
+    }
+
+    public void setMediaPlayer(MediaPlayer player) {
+        mVideoTrimmerController.setMediaPlayer(player);
     }
 
     public interface OnTrimmerChangeListener {

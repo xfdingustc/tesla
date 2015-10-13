@@ -10,11 +10,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,7 @@ import java.util.List;
  * <p/>
  * Created by Richard on 9/28/15.
  */
-public class VideoTrimmerController extends View {
+public class VideoTrimmerController extends View implements Progressive {
 
     private static final float MAX_VALUE = 1000.0f;
 
@@ -76,6 +78,8 @@ public class VideoTrimmerController extends View {
     private double mRangeValueLeft = 0;
     private double mRangeValueRight = MAX_VALUE;
 
+    private MediaPlayer mPlayer;
+    private ProgressHandler mHandler;
     private boolean showProgress;
 
     long mStart;
@@ -250,7 +254,7 @@ public class VideoTrimmerController extends View {
         }
     }
 
-    void setProgress(int value) {
+    void setProgress(long value) {
         if (value < mRangeValueLeft || value > mRangeValueRight) {
             return;
         }
@@ -379,5 +383,41 @@ public class VideoTrimmerController extends View {
 
     boolean isInThumbRange(Rect rect, float x) {
         return x > rect.left && x < rect.right;
+    }
+
+    public void setMediaPlayer(MediaPlayer player) {
+        if (mHandler != null) {
+            mHandler.stop();
+        }
+
+        if (player != null) {
+            mHandler = new ProgressHandler(this);
+            mHandler.start();
+            showProgress = true;
+        }
+        mPlayer = player;
+    }
+
+    @Override
+    public int updateProgress() {
+        int timeOffset;
+        try {
+            timeOffset = mPlayer.getCurrentPosition();
+        } catch (IllegalStateException e) {
+            Log.e("test", "", e);
+            return 0;
+        }
+        setProgress(timeOffset + mStart);
+        return 0;
+    }
+
+    @Override
+    public boolean isInProgress() {
+        try {
+            return !isDraggingThumb && !isDraggingProgressBar && mPlayer != null && mPlayer.isPlaying();
+        } catch (Exception e) {
+            Log.e("test", "", e);
+            return false;
+        }
     }
 }

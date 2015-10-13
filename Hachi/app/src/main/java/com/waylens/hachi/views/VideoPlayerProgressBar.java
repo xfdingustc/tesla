@@ -10,8 +10,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -33,7 +31,7 @@ import com.waylens.hachi.vdb.ClipPos;
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
  */
-public class VideoPlayerProgressBar extends FrameLayout {
+public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
 
     public RecyclerView mRecyclerView;
     MarkView mMarkView;
@@ -164,22 +162,19 @@ public class VideoPlayerProgressBar extends FrameLayout {
     }
 
     public void setMediaPlayer(MediaPlayer player) {
-        if (player == null) {
-            return;
-        }
-        mPlayer = player;
-        updateProgress();
-    }
-
-    void updateProgress() {
         if (mHandler != null) {
             mHandler.stop();
         }
-        mHandler = new ProgressHandler(this);
-        mHandler.start();
+
+        if (player != null) {
+            mHandler = new ProgressHandler(this);
+            mHandler.start();
+        }
+        mPlayer = player;
     }
 
-    private int setProgress() {
+    @Override
+    public int updateProgress() {
         int timeOffset;
         try {
             timeOffset = mPlayer.getCurrentPosition();
@@ -197,6 +192,16 @@ public class VideoPlayerProgressBar extends FrameLayout {
         int remainder = (int) offset % cellWidth;
         mLayoutManager.scrollToPositionWithOffset(position + 1, mScreenWidth / 2 - remainder);
         return (int) offset;
+    }
+
+    @Override
+    public boolean isInProgress() {
+        try {
+            return !mDragging && mPlayer != null && mPlayer.isPlaying();
+        } catch (Exception e) {
+            Log.e("test", "", e);
+            return false;
+        }
     }
 
     @SuppressLint("ViewConstructor")
@@ -307,41 +312,6 @@ public class VideoPlayerProgressBar extends FrameLayout {
             imageView = (ImageView) itemView;
         }
 
-    }
-
-    static class ProgressHandler extends Handler {
-        private static final int MSG_SHOW_PROGRESS = 100;
-
-        VideoPlayerProgressBar mProgressBar;
-
-        public ProgressHandler(VideoPlayerProgressBar progressBar) {
-            mProgressBar = progressBar;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_SHOW_PROGRESS:
-                    mProgressBar.setProgress();
-                    try {
-                        if (!mProgressBar.mDragging && mProgressBar.mPlayer.isPlaying()) {
-                            sendMessageDelayed(obtainMessage(MSG_SHOW_PROGRESS), 20);
-                        }
-                    } catch (IllegalStateException e) {
-                        Log.e("test", "", e);
-                        break;
-                    }
-                    break;
-            }
-        }
-
-        public void stop() {
-            removeMessages(MSG_SHOW_PROGRESS);
-        }
-
-        public void start() {
-            sendEmptyMessage(MSG_SHOW_PROGRESS);
-        }
     }
 
     public interface OnSeekBarChangeListener {
