@@ -106,6 +106,12 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         refreshComments();
     }
 
+    @Override
+    public void onDestroyView() {
+        mRequestQueue.cancelAll(Constants.API_COMMENTS);
+        super.onDestroyView();
+    }
+
     void refreshComments() {
         mCurrentCursor = 0;
         loadComments(mCurrentCursor, true);
@@ -128,7 +134,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
                     public void onErrorResponse(VolleyError error) {
                         onLoadCommentsFailed(error);
                     }
-                }));
+                }).setTag(Constants.API_COMMENTS));
 
     }
 
@@ -216,7 +222,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
                         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                         showMessage(errorInfo.msgResID);
                     }
-                }));
+                }).setTag(Constants.API_COMMENTS));
     }
 
     @Override

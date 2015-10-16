@@ -39,6 +39,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     private boolean mIsIgnorable;
 
+    private Object mTag;
 
     public VdbRequest(int method, VdbResponse.ErrorListener listener) {
         this.mMethod = method;
@@ -59,6 +60,15 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     public void addMarker(String tag) {
         // TODO: implement me
+    }
+
+    public VdbRequest<T> setTag(Object tag) {
+        mTag = tag;
+        return this;
+    }
+
+    public Object getTag() {
+        return mTag;
     }
 
     public void cancel() {

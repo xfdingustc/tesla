@@ -31,6 +31,8 @@ import butterknife.Bind;
 public class LiveFragment extends BaseFragment {
     private static final String TAG = "LiveFragment";
 
+    static final String TAG_CLIP_SET = "tag.clip_set";
+
     private VdbRequestQueue mVdbRequestQueue;
     private CameraClipSetAdapter mClipSetAdapter;
 
@@ -116,24 +118,32 @@ public class LiveFragment extends BaseFragment {
         mClipSetAdapter.cleanup();
     }
 
+    @Override
+    public void onDestroyView() {
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.cancelAll(TAG_CLIP_SET);
+        }
+        super.onDestroyView();
+    }
+
     private void retrieveVideoList(int type) {
         Bundle parameter = new Bundle();
         parameter.putInt(ClipSetRequest.PARAMETER_TYPE, type);
         parameter.putInt(ClipSetRequest.PARAMETER_FLAG, ClipSetRequest.FLAG_CLIP_EXTRA);
-        ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
+        mVdbRequestQueue.add(new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {
                         mClipSetAdapter.setClipSet(clipSet);
                         mViewAnimator.setDisplayedChild(1);
                     }
-                }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
 
-            }
-        });
-        mVdbRequestQueue.add(request);
+                    }
+                }).setTag(TAG_CLIP_SET));
     }
 
     VdtCamera getCamera() {

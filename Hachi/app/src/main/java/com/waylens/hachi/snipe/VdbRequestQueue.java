@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.android.volley.Request;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -128,6 +130,31 @@ public class VdbRequestQueue {
                 add(request, true);
             }
         }
+    }
 
+    public void cancelAll(final Object tag) {
+        if (tag == null) {
+            throw new IllegalArgumentException("Cannot cancelAll with a null tag");
+        }
+        cancelAll(new RequestFilter() {
+            @Override
+            public boolean apply(VdbRequest<?> request) {
+                return request.getTag().equals(tag);
+            }
+        });
+    }
+
+    public void cancelAll(RequestFilter filter) {
+        synchronized (mCurrentVdbRequests) {
+            for (VdbRequest<?> request : mCurrentVdbRequests) {
+                if (filter.apply(request)) {
+                    request.cancel();
+                }
+            }
+        }
+    }
+
+    public interface RequestFilter {
+        public boolean apply(VdbRequest<?> request);
     }
 }

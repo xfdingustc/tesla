@@ -44,6 +44,8 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
 
     static final int DEFAULT_COUNT = 10;
 
+    static final String TAG_HOME_REQUEST = "TAG_home.request";
+
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
@@ -98,12 +100,7 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
-            @Override
-            public boolean apply(Request<?> request) {
-                return true;
-            }
-        });
+        mRequestQueue.cancelAll(TAG_HOME_REQUEST);
     }
 
     void loadFeed(int cursor, final boolean isRefresh) {
@@ -120,7 +117,7 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
                     public void onErrorResponse(VolleyError error) {
                         onLoadFeedFailed(error);
                     }
-                }));
+                }).setTag(TAG_HOME_REQUEST));
     }
 
     void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
@@ -177,7 +174,7 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                 showMessage(errorInfo.msgResID);
             }
-        }));
+        }).setTag(TAG_HOME_REQUEST));
     }
 
     void refreshComment(long momentID, int position, JSONObject response) {
