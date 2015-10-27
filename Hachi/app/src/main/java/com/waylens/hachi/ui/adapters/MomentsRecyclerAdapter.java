@@ -59,9 +59,7 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
 
     Resources mResources;
 
-    OnUserAvatarClickListener mOnUserAvatarClickListener;
-    OnCommentMomentListener mOnCommentMomentListener;
-    OnLikeMomentListener mOnLikeMomentListener;
+    OnMomentActionListener mOnMomentActionListener;
 
 
     public MomentsRecyclerAdapter(ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
@@ -92,16 +90,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         notifyItemRangeInserted(start, count);
     }
 
-    public void setOnUserAvatarClickListener(OnUserAvatarClickListener listener) {
-        mOnUserAvatarClickListener = listener;
-    }
-
-    public void setOnCommentMomentListener(OnCommentMomentListener listener) {
-        mOnCommentMomentListener = listener;
-    }
-
-    public void setOnLikeMomentListener(OnLikeMomentListener listener) {
-        mOnLikeMomentListener = listener;
+    public void setOnMomentActionListener(OnMomentActionListener listener) {
+        mOnMomentActionListener = listener;
     }
 
     @Override
@@ -148,8 +138,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnUserAvatarClickListener != null) {
-                    mOnUserAvatarClickListener.onUserAvatarClicked(moment, position);
+                if (mOnMomentActionListener != null) {
+                    mOnMomentActionListener.onUserAvatarClicked(moment, position);
                 }
             }
         });
@@ -160,8 +150,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         holder.btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnLikeMomentListener != null) {
-                    mOnLikeMomentListener.onLikeMoment(moment, moment.isLiked);
+                if (mOnMomentActionListener != null) {
+                    mOnMomentActionListener.onLikeMoment(moment, moment.isLiked);
                 }
                 moment.isLiked = !moment.isLiked;
                 updateLikeState(holder, moment);
@@ -177,8 +167,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         holder.btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnCommentMomentListener != null) {
-                    mOnCommentMomentListener.onCommentMoment(moment, position);
+                if (mOnMomentActionListener != null) {
+                    mOnMomentActionListener.onCommentMoment(moment, position);
                 }
             }
         });
@@ -240,15 +230,11 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
             vh.videoControl.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mFragmentManager.beginTransaction().remove(videoFragment).commit();
-                    videoFragment = YouTubeFragment.newInstance();
-                    videoFragment.setVideoId(moment.videoID);
-                    vh.videoFragment = videoFragment;
-                    mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoFragment).commit();
-                    vh.videoControl.setVisibility(View.GONE);
+                    if (mOnMomentActionListener != null) {
+                        mOnMomentActionListener.onRequestVideoPlay(vh, moment, position);
+                    }
                 }
             });
-
         }
     }
 
@@ -408,15 +394,13 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         notifyItemChanged(position);
     }
 
-    public interface OnLikeMomentListener {
+    public interface OnMomentActionListener {
         void onLikeMoment(Moment moment, boolean isCancel);
-    }
 
-    public interface OnCommentMomentListener {
         void onCommentMoment(Moment moment, int position);
-    }
 
-    public interface OnUserAvatarClickListener {
         void onUserAvatarClicked(Moment moment, int position);
+
+        void onRequestVideoPlay(YouTubeMomentVH vh, Moment moment, int position);
     }
 }

@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,6 +24,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
+import com.waylens.hachi.ui.adapters.YouTubeMomentVH;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
@@ -39,8 +41,8 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnCommentMomentListener,
-        MomentsRecyclerAdapter.OnLikeMomentListener, SwipeRefreshLayout.OnRefreshListener, Refreshable, MomentsRecyclerAdapter.OnUserAvatarClickListener {
+public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnMomentActionListener,
+         SwipeRefreshLayout.OnRefreshListener, Refreshable {
 
     static final int DEFAULT_COUNT = 10;
 
@@ -62,15 +64,14 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     LinearLayoutManager mLinearLayoutManager;
 
     int mCurrentCursor;
+    private YouTubeFragment mYouTubeFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
-        mAdapter.setOnCommentMomentListener(this);
-        mAdapter.setOnLikeMomentListener(this);
-        mAdapter.setOnUserAvatarClickListener(this);
+        mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
 
@@ -264,5 +265,22 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     public void onUserAvatarClicked(Moment moment, int position) {
         String userId = moment.owner.userID;
         UserProfileActivity.launch(getActivity(), userId);
+    }
+
+    @Override
+    public void onRequestVideoPlay(YouTubeMomentVH vh, Moment moment, int position) {
+//        YouTubeFragment mYouTubeFragment = YouTubeFragment.newInstance();
+//        mYouTubeFragment.setVideoId(moment.videoID);
+//        getFragmentManager().beginTransaction().replace(R.id.standalone_video_container, mYouTubeFragment).commit();
+//        mVideoContainer.setVisibility(View.VISIBLE);
+        FragmentManager mFragmentManager = getFragmentManager();
+        if (mYouTubeFragment != null) {
+            mFragmentManager.beginTransaction().remove(mYouTubeFragment).commit();
+        }
+        mYouTubeFragment = YouTubeFragment.newInstance();
+        mYouTubeFragment.setVideoId(moment.videoID);
+        vh.videoFragment = mYouTubeFragment;
+        mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), mYouTubeFragment).commit();
+        vh.videoControl.setVisibility(View.GONE);
     }
 }

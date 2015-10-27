@@ -12,11 +12,16 @@ import com.waylens.hachi.app.Constants;
 /**
  * Created by Richard on 8/24/15.
  */
-public class YouTubeFragment extends YouTubePlayerFragment implements OnInitializedListener {
+public class YouTubeFragment extends YouTubePlayerFragment implements
+        OnInitializedListener, YouTubePlayer.OnFullscreenListener, FragmentNavigator {
 
     private YouTubePlayer player;
 
     private String videoId;
+
+    private boolean mIsFullScreen;
+
+    public static YouTubeFragment fullScreenFragment;
 
     public static YouTubeFragment newInstance() {
         return new YouTubeFragment();
@@ -55,18 +60,78 @@ public class YouTubeFragment extends YouTubePlayerFragment implements OnInitiali
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean restored) {
         player = youTubePlayer;
-        player.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
-        //player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
-        //player.setOnFullscreenListener((VideoListDemoActivity) getActivity());
         if (!restored && videoId != null) {
             player.cueVideo(videoId);
+            Log.e("test", "onInitializationSuccess");
         }
-        Log.e("test", "onInitializationSuccess");
+        player.setOnFullscreenListener(this);
+        player.setPlayerStateChangeListener(new PlayerStateListener());
+
     }
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
         this.player = null;
         Log.e("test", "onInitializationFailure");
+    }
+
+    @Override
+    public void onFullscreen(boolean isFullscreen) {
+        mIsFullScreen = isFullscreen;
+        if (isFullscreen) {
+            fullScreenFragment = this;
+        } else {
+            fullScreenFragment = null;
+        }
+    }
+
+    public boolean isFullScreen() {
+        return mIsFullScreen;
+    }
+
+    public void setFullScreen(boolean fullscreen) {
+        if (player != null) {
+            player.setFullscreen(fullscreen);
+        }
+    }
+
+    @Override
+    public void onBack() {
+        if (mIsFullScreen) {
+            setFullScreen(false);
+        }
+    }
+
+    class PlayerStateListener implements YouTubePlayer.PlayerStateChangeListener {
+
+        @Override
+        public void onLoading() {
+            //
+        }
+
+        @Override
+        public void onLoaded(String s) {
+            player.play();
+        }
+
+        @Override
+        public void onAdStarted() {
+
+        }
+
+        @Override
+        public void onVideoStarted() {
+
+        }
+
+        @Override
+        public void onVideoEnded() {
+
+        }
+
+        @Override
+        public void onError(YouTubePlayer.ErrorReason errorReason) {
+
+        }
     }
 }

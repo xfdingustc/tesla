@@ -13,9 +13,9 @@ import butterknife.Bind;
  */
 public class YouTubeMomentVH extends MomentViewHolder {
 
-    FrameLayout fragmentContainer;
+    public FrameLayout fragmentContainer;
 
-    YouTubeFragment videoFragment;
+    public YouTubeFragment videoFragment;
 
     public YouTubeMomentVH(View itemView, FrameLayout fragmentContainer) {
         super(itemView);

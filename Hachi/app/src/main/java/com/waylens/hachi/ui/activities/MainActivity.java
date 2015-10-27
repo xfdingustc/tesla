@@ -18,6 +18,7 @@ import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
@@ -31,6 +32,7 @@ import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.NotificationFragment;
 import com.waylens.hachi.ui.fragments.Refreshable;
+import com.waylens.hachi.ui.fragments.YouTubeFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -209,7 +211,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_content, fragment);
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -244,6 +245,11 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
     @Override
     public void onBackPressed() {
+        if (YouTubeFragment.fullScreenFragment != null) {
+            ((FragmentNavigator)YouTubeFragment.fullScreenFragment).onBack();
+            return;
+        }
+
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment instanceof FragmentNavigator) {
             ((FragmentNavigator) fragment).onBack();
