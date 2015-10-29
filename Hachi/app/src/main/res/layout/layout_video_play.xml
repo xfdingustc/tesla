@@ -23,7 +23,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_gravity="center"
-        android:background="@drawable/ic_not_ready"/>
+        android:background="@drawable/ic_not_interested_white_48dp"/>
 
     <ProgressBar
         android:id="@+id/video_loading"

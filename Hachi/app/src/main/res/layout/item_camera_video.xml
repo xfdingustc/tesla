@@ -78,7 +78,7 @@
                 android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_play_circle"/>
+                android:src="@drawable/ic_play_circle_outline_white_48dp"/>
         </FrameLayout>
 
 
