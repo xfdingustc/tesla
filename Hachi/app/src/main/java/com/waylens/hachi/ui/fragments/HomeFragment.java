@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,8 +24,8 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
+import com.waylens.hachi.ui.adapters.MomentViewHolder;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
-import com.waylens.hachi.ui.adapters.YouTubeMomentVH;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
@@ -42,7 +43,7 @@ import butterknife.Bind;
  * Created by Xiaofei on 2015/8/4.
  */
 public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnMomentActionListener,
-         SwipeRefreshLayout.OnRefreshListener, Refreshable {
+         SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator {
 
     static final int DEFAULT_COUNT = 10;
 
@@ -63,8 +64,9 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
 
     LinearLayoutManager mLinearLayoutManager;
 
+    Fragment mVideoFragment;
+
     int mCurrentCursor;
-    private YouTubeFragment mYouTubeFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -268,19 +270,41 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     }
 
     @Override
-    public void onRequestVideoPlay(YouTubeMomentVH vh, Moment moment, int position) {
-//        YouTubeFragment mYouTubeFragment = YouTubeFragment.newInstance();
-//        mYouTubeFragment.setVideoId(moment.videoID);
-//        getFragmentManager().beginTransaction().replace(R.id.standalone_video_container, mYouTubeFragment).commit();
-//        mVideoContainer.setVisibility(View.VISIBLE);
+    public void onRequestVideoPlay(MomentViewHolder vh, Moment moment, int position) {
         FragmentManager mFragmentManager = getFragmentManager();
-        if (mYouTubeFragment != null) {
-            mFragmentManager.beginTransaction().remove(mYouTubeFragment).commit();
+        if (mVideoFragment != null) {
+            mFragmentManager.beginTransaction().remove(mVideoFragment).commit();
+            mVideoFragment = null;
         }
-        mYouTubeFragment = YouTubeFragment.newInstance();
-        mYouTubeFragment.setVideoId(moment.videoID);
-        vh.videoFragment = mYouTubeFragment;
-        mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), mYouTubeFragment).commit();
-        vh.videoControl.setVisibility(View.GONE);
+
+        if (moment.type == Moment.TYPE_YOUTUBE) {
+            YouTubeFragment youTubeFragment = YouTubeFragment.newInstance();
+            youTubeFragment.setVideoId(moment.videoID);
+            vh.videoFragment = youTubeFragment;
+            mVideoFragment = youTubeFragment;
+            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
+        } else {
+            VideoPlayFragment videoPlayFragment = new VideoPlayFragment();
+            videoPlayFragment.setSource(moment.videoURL);
+            vh.videoFragment = videoPlayFragment;
+            mVideoFragment = videoPlayFragment;
+            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
+        }
+        //vh.videoControl.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        if (YouTubeFragment.fullScreenFragment != null) {
+            YouTubeFragment.fullScreenFragment.setFullScreen(false);
+            return true;
+        }
+
+        if (VideoPlayFragment.fullScreenPlayer != null) {
+            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
+            return true;
+        }
+        return false;
     }
 }

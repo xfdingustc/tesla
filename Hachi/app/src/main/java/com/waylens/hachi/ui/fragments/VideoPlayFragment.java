@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -18,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.waylens.hachi.R;
 
@@ -30,10 +33,10 @@ import butterknife.ButterKnife;
  * Video Player
  * Created by Richard on 10/26/15.
  */
-public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
+public class VideoPlayFragment extends Fragment implements View.OnClickListener,
         MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener {
 
-    private static final String TAG = "FragmentVideoPlay";
+    private static final String TAG = "VideoPlayFragment";
 
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
@@ -47,11 +50,13 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
     private static final int STATE_PAUSED = 4;
     private static final int STATE_PLAYBACK_COMPLETED = 5;
 
-    private static final int DEFAULT_TIMEOUT = 1000;
+    private static final int DEFAULT_TIMEOUT = 3000;
     private static final long MAX_PROGRESS = 1000L;
 
     private int mCurrentState = STATE_IDLE;
     private int mTargetState = STATE_IDLE;
+
+    public static VideoPlayFragment fullScreenPlayer;
 
     @Bind(R.id.root_container)
     FrameLayout mRootContainer;
@@ -77,6 +82,9 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
     @Bind(R.id.btn_fullscreen)
     ImageView mBtnFullScreen;
 
+    @Bind(R.id.text_video_time)
+    TextView mVideoTime;
+
     private SurfaceHolder mSurfaceHolder;
 
     private MediaPlayer mMediaPlayer;
@@ -89,7 +97,6 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
 
     private ViewGroup mRootView;
 
-    static String VIDEO_URL = "http://192.168.2.3:8085/clip/0/1644c89e/1/0-1800799-0-0.m3u8";
     private int mPausePosition;
     private int mVideoWidth;
     private int mVideoHeight;
@@ -99,7 +106,6 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new VideoHandler(this);
-        VIDEO_URL = "http://192.168.2.3:8085/clip/1/55e6f08e/1/904904-38038-0-0.m3u8";
     }
 
     @Override
@@ -132,12 +138,7 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
         mSurfaceView.getHolder().addCallback(this);
         mBtnFullScreen.setOnClickListener(this);
         mProgressBar.setMax((int) MAX_PROGRESS);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        setSource(VIDEO_URL);
+        mVideoController.setVisibility(View.GONE);
     }
 
     @Override
@@ -147,6 +148,9 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
         mHandler.removeMessages(FADE_OUT);
         mHandler.removeMessages(SHOW_PROGRESS);
         release(true);
+        if (fullScreenPlayer == this) {
+            fullScreenPlayer = null;
+        }
     }
 
     public void setSource(String source) {
@@ -166,12 +170,14 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRootView.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
+            fullScreenPlayer = this;
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mRootView.removeView(mVideoContainer);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRootContainer.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_white_36dp);
+            fullScreenPlayer = null;
         }
         mIsFullScreen = fullScreen;
     }
@@ -232,6 +238,7 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
         mPausePosition = mMediaPlayer.getCurrentPosition();
         mCurrentState = STATE_PAUSED;
         mTargetState = STATE_PAUSED;
+        mHandler.removeMessages(SHOW_PROGRESS);
     }
 
     private void start() {
@@ -283,9 +290,18 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
             mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
         }
         showController(DEFAULT_TIMEOUT);
+        int duration = mMediaPlayer.getDuration();
+        int position = mMediaPlayer.getCurrentPosition();
+        updateVideoTime(position, duration);
+
         if (mTargetState == STATE_PLAYING) {
             start();
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateVideoTime(int position, int duration) {
+        mVideoTime.setText(DateUtils.formatElapsedTime(position / 1000) + " / " + DateUtils.formatElapsedTime(duration / 1000));
     }
 
     @Override
@@ -351,6 +367,9 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
     }
 
     void toggleController() {
+        if (mProgressLoading.getVisibility() == View.VISIBLE) {
+            return;
+        }
         mVideoController.setVisibility(mVideoController.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
@@ -396,12 +415,13 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
             //int percent = mMediaPlayer.getBufferPercentage();
             //mProgress.setSecondaryProgress(percent * 10);
         }
+        updateVideoTime(position, duration);
     }
 
     static class VideoHandler extends Handler {
-        FragmentVideoPlay thisFragment;
+        VideoPlayFragment thisFragment;
 
-        VideoHandler(FragmentVideoPlay fragment) {
+        VideoHandler(VideoPlayFragment fragment) {
             super();
             thisFragment = fragment;
         }
@@ -418,6 +438,4 @@ public class FragmentVideoPlay extends Fragment implements View.OnClickListener,
             }
         }
     }
-
-
 }

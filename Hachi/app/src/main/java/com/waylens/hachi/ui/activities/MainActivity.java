@@ -245,17 +245,17 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
     @Override
     public void onBackPressed() {
-        if (YouTubeFragment.fullScreenFragment != null) {
-            ((FragmentNavigator)YouTubeFragment.fullScreenFragment).onBack();
-            return;
-        }
-
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
-        if (fragment instanceof FragmentNavigator) {
-            ((FragmentNavigator) fragment).onBack();
+        if (fragment instanceof FragmentNavigator
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
+        fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+        if (fragment instanceof FragmentNavigator
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            return;
+        }
         super.onBackPressed();
     }
 

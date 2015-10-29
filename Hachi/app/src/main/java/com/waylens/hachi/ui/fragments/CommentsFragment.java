@@ -237,7 +237,6 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     }
 
     @OnClick(R.id.btn_back)
-    @Override
     public void onBack() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (hasUpdates && fragment != null && fragment instanceof HomeFragment) {
@@ -251,5 +250,11 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
         getFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        onBack();
+        return true;
     }
 }

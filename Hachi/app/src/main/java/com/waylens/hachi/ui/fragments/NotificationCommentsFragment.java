@@ -111,10 +111,15 @@ public class NotificationCommentsFragment extends BaseFragment implements Recycl
         super.onDestroyView();
     }
 
-    @Override
     @OnClick(R.id.btn_back)
     public void onBack() {
         getFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        onBack();
+        return true;
     }
 
     void loadNotifications(int cursor, final boolean isRefresh) {

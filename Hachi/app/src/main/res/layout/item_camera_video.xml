@@ -50,7 +50,7 @@
         <FrameLayout
             android:id="@+id/video_container"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="202dp">
 
             <ImageView
                 android:id="@+id/video_cover"

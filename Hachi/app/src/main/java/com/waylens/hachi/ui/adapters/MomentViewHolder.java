@@ -1,13 +1,16 @@
 package com.waylens.hachi.ui.adapters;
 
+import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.utils.ViewUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -63,8 +66,14 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.moment_comment)
     TextView commentView;
 
+    @Bind(R.id.video_fragment_container)
+    public FrameLayout fragmentContainer;
+
+    public Fragment videoFragment;
+
     public MomentViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        fragmentContainer.setId(ViewUtils.generateViewId());
     }
 }

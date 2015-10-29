@@ -55,10 +55,36 @@
 
     </LinearLayout>
 
-    <ViewStub
-        android:id="@+id/video_player_stub"
+    <FrameLayout
+        android:id="@+id/video_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="202dp">
+
+        <ImageView
+            android:id="@+id/video_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@null"/>
+
+        <ImageView
+            android:id="@+id/video_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_circle_outline_white_48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@null"/>
+
+        <TextView
+            android:id="@+id/video_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:background="@drawable/round_rectangle_background"
+            tools:text="01:08"/>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

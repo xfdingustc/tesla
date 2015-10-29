@@ -13,7 +13,7 @@ import com.waylens.hachi.app.Constants;
  * Created by Richard on 8/24/15.
  */
 public class YouTubeFragment extends YouTubePlayerFragment implements
-        OnInitializedListener, YouTubePlayer.OnFullscreenListener, FragmentNavigator {
+        OnInitializedListener, YouTubePlayer.OnFullscreenListener {
 
     private YouTubePlayer player;
 
@@ -92,13 +92,6 @@ public class YouTubeFragment extends YouTubePlayerFragment implements
     public void setFullScreen(boolean fullscreen) {
         if (player != null) {
             player.setFullscreen(fullscreen);
-        }
-    }
-
-    @Override
-    public void onBack() {
-        if (mIsFullScreen) {
-            setFullScreen(false);
         }
     }
 

@@ -1,14 +1,17 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
+import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
@@ -16,9 +19,12 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RemoteClip;
 
 import butterknife.Bind;
@@ -28,7 +34,7 @@ import butterknife.Bind;
  * <p/>
  * Created by Xiaofei on 2015/8/4.
  */
-public class LiveFragment extends BaseFragment {
+public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.ClipActionListener, FragmentNavigator {
     private static final String TAG = "LiveFragment";
 
     static final String TAG_CLIP_SET = "tag.clip_set";
@@ -85,6 +91,7 @@ public class LiveFragment extends BaseFragment {
 
         mClipSetAdapter = new CameraClipSetAdapter(getActivity(), mVdtCamera,
                 mVdbRequestQueue);
+        mClipSetAdapter.setClipActionListener(this);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
         mRvCameraVideoList.setLayoutManager(mLinearLayoutManager);
 
@@ -110,12 +117,6 @@ public class LiveFragment extends BaseFragment {
 
             }
         });
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mClipSetAdapter.cleanup();
     }
 
     @Override
@@ -163,6 +164,51 @@ public class LiveFragment extends BaseFragment {
             }
         }
         return camera;
+    }
+
+    @Override
+    public void onRequestVideoPlay(final CameraClipSetAdapter.CameraClipViewHolder holder, Clip clip) {
+        Bundle parameters = new Bundle();
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
+        parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, clip.getStartTime());
+
+        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(clip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
+            @Override
+            public void onResponse(PlaybackUrl playbackUrl) {
+                Log.e("test", "URL: " + playbackUrl.url);
+                //playVideo(holder, playbackUrl);
+                VideoPlayFragment videoPlayFragment = new VideoPlayFragment();
+                videoPlayFragment.setSource(playbackUrl.url);
+                getFragmentManager().beginTransaction().replace(holder.videoContainer.getId(), videoPlayFragment).commit();
+
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                //
+            }
+        });
+
+        mVdbRequestQueue.add(request);
+    }
+
+    @Override
+    public void onRemoveVideoPlayFragment(final CameraClipSetAdapter.CameraClipViewHolder holder) {
+        Fragment fragment = getFragmentManager().findFragmentById(holder.videoContainer.getId());
+        if (fragment != null) {
+            getFragmentManager().beginTransaction().remove(fragment).commit();
+        }
+    }
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        if (VideoPlayFragment.fullScreenPlayer != null) {
+            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
+            return true;
+        }
+        return false;
     }
 
     static class VideoTab {
