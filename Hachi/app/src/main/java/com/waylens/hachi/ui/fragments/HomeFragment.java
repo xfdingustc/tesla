@@ -30,6 +30,7 @@ import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.views.DragLayout.OnViewDragListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +44,7 @@ import butterknife.Bind;
  * Created by Xiaofei on 2015/8/4.
  */
 public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnMomentActionListener,
-         SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator {
+        SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener {
 
     static final int DEFAULT_COUNT = 10;
 
@@ -284,8 +285,7 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
             mVideoFragment = youTubeFragment;
             mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
         } else {
-            MomentPlayFragment videoPlayFragment = new MomentPlayFragment();
-            videoPlayFragment.setMoment(moment);
+            MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment, this);
             vh.videoFragment = videoPlayFragment;
             mVideoFragment = videoPlayFragment;
             mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
@@ -305,5 +305,19 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onStartDragging() {
+        Log.e("test", "onStartDragging");
+        mVideoListView.setLayoutFrozen(true);
+        mRefreshLayout.setEnabled(false);
+    }
+
+    @Override
+    public void onStopDragging() {
+        Log.e("test", "onStopDragging");
+        mVideoListView.setLayoutFrozen(false);
+        mRefreshLayout.setEnabled(true);
     }
 }

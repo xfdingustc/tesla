@@ -22,6 +22,7 @@ import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.GaugeView;
 
 /**
@@ -35,10 +36,11 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
     SparseIntArray mTypedState = new SparseIntArray();
     SparseIntArray mTypedPosition = new SparseIntArray();
-
     GaugeView mObdView;
 
-    public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue, Clip clip) {
+    public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
+                                                      Clip clip,
+                                                      DragLayout.OnViewDragListener listener) {
         Bundle args = new Bundle();
         CameraVideoPlayFragment fragment = new CameraVideoPlayFragment();
         fragment.setArguments(args);
@@ -47,7 +49,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.mTypedState.put(RawDataBlock.RAW_DATA_ODB, RAW_DATA_STATE_UNKNOWN);
         fragment.mTypedState.put(RawDataBlock.RAW_DATA_ACC, RAW_DATA_STATE_UNKNOWN);
         fragment.mTypedState.put(RawDataBlock.RAW_DATA_GPS, RAW_DATA_STATE_UNKNOWN);
-
+        fragment.mDragListener = listener;
         return fragment;
     }
 

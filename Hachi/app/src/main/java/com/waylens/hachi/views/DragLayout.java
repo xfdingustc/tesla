@@ -21,6 +21,8 @@ public class DragLayout extends FrameLayout {
 
     private View mDragView;
 
+    OnViewDragListener mDragListener;
+
     public DragLayout(Context context) {
         this(context, null, 0);
     }
@@ -60,6 +62,10 @@ public class DragLayout extends FrameLayout {
         return true;
     }
 
+    public void setOnViewDragListener(OnViewDragListener listener) {
+        mDragListener = listener;
+    }
+
     class ViewDragHelperCallback extends ViewDragHelper.Callback {
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
@@ -92,9 +98,21 @@ public class DragLayout extends FrameLayout {
         @Override
         public void onViewDragStateChanged(int state) {
             super.onViewDragStateChanged(state);
-            Log.e("test", "State: " + state);
+            if (mDragListener == null) {
+                return;
+            }
+            if (state == ViewDragHelper.STATE_DRAGGING) {
+                mDragListener.onStartDragging();
+            } else if (state == ViewDragHelper.STATE_IDLE) {
+                mDragListener.onStopDragging();
+            }
         }
     }
 
+    public interface OnViewDragListener {
+        void onStartDragging();
+
+        void onStopDragging();
+    }
 
 }

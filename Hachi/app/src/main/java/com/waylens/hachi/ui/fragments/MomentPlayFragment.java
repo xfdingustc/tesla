@@ -19,6 +19,7 @@ import com.waylens.hachi.ui.entities.MomentAcc;
 import com.waylens.hachi.ui.entities.MomentOBD;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.GaugeView;
 
 import org.json.JSONArray;
@@ -46,6 +47,15 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     int mOBDPosition;
 
+    public static MomentPlayFragment newInstance(Moment moment, DragLayout.OnViewDragListener listener) {
+        Bundle args = new Bundle();
+        MomentPlayFragment fragment = new MomentPlayFragment();
+        fragment.setArguments(args);
+        fragment.mMomentID = moment.id;
+        fragment.setSource(moment.videoURL);
+        fragment.mDragListener = listener;
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,11 +114,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
             }
         }
         return obd;
-    }
-
-    public void setMoment(Moment moment) {
-        mMomentID = moment.id;
-        setSource(moment.videoURL);
     }
 
     void onLoadRawDataSuccessfully() {

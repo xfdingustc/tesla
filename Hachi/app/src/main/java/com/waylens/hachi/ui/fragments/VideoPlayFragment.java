@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.views.DragLayout;
 
 import java.io.IOException;
 
@@ -68,7 +69,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     FrameLayout mRootContainer;
 
     @Bind(R.id.waylens_video_container)
-    FrameLayout mVideoContainer;
+    DragLayout mVideoContainer;
 
     @Bind(R.id.video_controllers)
     FrameLayout mVideoController;
@@ -90,6 +91,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     @Bind(R.id.text_video_time)
     TextView mVideoTime;
+
+    protected DragLayout.OnViewDragListener mDragListener;
 
     private SurfaceHolder mSurfaceHolder;
 
@@ -145,6 +148,9 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mBtnFullScreen.setOnClickListener(this);
         mProgressBar.setMax((int) MAX_PROGRESS);
         mVideoController.setVisibility(View.INVISIBLE);
+        if (mDragListener != null) {
+            mVideoContainer.setOnViewDragListener(mDragListener);
+        }
     }
 
     @Override
@@ -157,6 +163,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         if (fullScreenPlayer == this) {
             fullScreenPlayer = null;
         }
+        mDragListener = null;
     }
 
     protected void setSource(String source) {

@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
-import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
@@ -19,15 +17,12 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
-import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.PlaybackUrl;
-import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.views.DragLayout;
 
 import butterknife.Bind;
 
@@ -36,7 +31,8 @@ import butterknife.Bind;
  * <p>
  * Created by Xiaofei on 2015/8/4.
  */
-public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.ClipActionListener, FragmentNavigator {
+public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.ClipActionListener,
+        FragmentNavigator, DragLayout.OnViewDragListener {
     private static final String TAG = "LiveFragment";
 
     static final String TAG_CLIP_SET = "tag.clip_set";
@@ -170,7 +166,7 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
 
     @Override
     public void onRequestVideoPlay(final CameraClipSetAdapter.CameraClipViewHolder holder, Clip clip) {
-        CameraVideoPlayFragment fragment = CameraVideoPlayFragment.newInstance(mVdbRequestQueue, clip);
+        CameraVideoPlayFragment fragment = CameraVideoPlayFragment.newInstance(mVdbRequestQueue, clip, this);
         getFragmentManager().beginTransaction().replace(holder.videoContainer.getId(), fragment).commit();
     }
 
@@ -189,6 +185,16 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onStartDragging() {
+        mRvCameraVideoList.setLayoutFrozen(true);
+    }
+
+    @Override
+    public void onStopDragging() {
+        mRvCameraVideoList.setLayoutFrozen(false);
     }
 
     static class VideoTab {
