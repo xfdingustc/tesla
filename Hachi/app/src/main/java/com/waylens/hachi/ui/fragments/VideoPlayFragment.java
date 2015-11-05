@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
  * Video Player
  * Created by Richard on 10/26/15.
  */
-public class VideoPlayFragment extends Fragment implements View.OnClickListener,
+public abstract class VideoPlayFragment extends Fragment implements View.OnClickListener,
         MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener {
 
     private static final String TAG = "VideoPlayFragment";
@@ -53,8 +53,14 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
     private static final int DEFAULT_TIMEOUT = 3000;
     private static final long MAX_PROGRESS = 1000L;
 
+    protected static final int RAW_DATA_STATE_UNKNOWN = -1;
+    protected static final int RAW_DATA_STATE_READY = 0;
+    protected static final int RAW_DATA_STATE_ERROR = 1;
+
     private int mCurrentState = STATE_IDLE;
     private int mTargetState = STATE_IDLE;
+
+    protected int mRawDataState =  RAW_DATA_STATE_UNKNOWN;
 
     public static VideoPlayFragment fullScreenPlayer;
 
@@ -138,7 +144,7 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
         mSurfaceView.getHolder().addCallback(this);
         mBtnFullScreen.setOnClickListener(this);
         mProgressBar.setMax((int) MAX_PROGRESS);
-        mVideoController.setVisibility(View.GONE);
+        mVideoController.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -153,7 +159,7 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    public void setSource(String source) {
+    protected void setSource(String source) {
         mVideoSource = source;
         mTargetState = STATE_PLAYING;
         mPausePosition = 0;
@@ -257,10 +263,11 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
                 mCurrentState != STATE_PREPARING);
     }
 
-    private void openVideo() {
+    protected void openVideo() {
         if (mVideoSource == null
                 || mSurfaceView == null
-                || mSurfaceHolder == null) {
+                || mSurfaceHolder == null
+                || mRawDataState == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
         mProgressLoading.setVisibility(View.VISIBLE);
@@ -317,6 +324,10 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.e("test", "surfaceChanged - w:" + width + "; h:" + height);
+        if (mMediaPlayer == null) {
+            return;
+        }
+
         mMediaPlayer.setDisplay(holder);
 
         if (isInPlaybackState() && mSurfaceDestroyed) {
@@ -364,13 +375,14 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
         mBtnPlay.setImageResource(R.drawable.ic_refresh_white_48dp);
         showController(0);
         mHandler.removeMessages(SHOW_PROGRESS);
+        onPlayCompletion();
     }
 
     void toggleController() {
         if (mProgressLoading.getVisibility() == View.VISIBLE) {
             return;
         }
-        mVideoController.setVisibility(mVideoController.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        mVideoController.setVisibility(mVideoController.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
     }
 
     void showController(int timeout) {
@@ -386,7 +398,7 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
     }
 
     private void hideControllers() {
-        mVideoController.setVisibility(View.GONE);
+        mVideoController.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 && mCurrentState == STATE_PLAYING) {
             hideSystemUI();
@@ -400,12 +412,14 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    private void setProgress() {
+    protected void setProgress() {
         if (mMediaPlayer == null) {
             return;
         }
         int position = mMediaPlayer.getCurrentPosition();
         int duration = mMediaPlayer.getDuration();
+        Log.e("test", "duration: " + duration + "; position: " + position);
+
         if (mProgressBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
@@ -416,7 +430,12 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener,
             //mProgress.setSecondaryProgress(percent * 10);
         }
         updateVideoTime(position, duration);
+        displayOverlay(position);
     }
+
+    protected abstract void displayOverlay(int position);
+
+    protected abstract void onPlayCompletion();
 
     static class VideoHandler extends Handler {
         VideoPlayFragment thisFragment;

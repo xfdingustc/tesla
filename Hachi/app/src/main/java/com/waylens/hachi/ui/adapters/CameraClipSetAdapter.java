@@ -27,7 +27,6 @@ import butterknife.ButterKnife;
 public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdapter.CameraClipViewHolder> {
 
     private static final String TAG = CameraClipSetAdapter.class.getSimpleName();
-    private final VdbRequestQueue mRequestQueue;
     private final VdbImageLoader mVdbImageLoader;
     private final VdtCamera mVdtCamera;
     private Context mContext;
@@ -39,8 +38,7 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
     public CameraClipSetAdapter(Context context, VdtCamera vdtCamera, VdbRequestQueue queue) {
         this.mContext = context;
         this.mVdtCamera = vdtCamera;
-        this.mRequestQueue = queue;
-        this.mVdbImageLoader = new VdbImageLoader(mRequestQueue);
+        this.mVdbImageLoader = new VdbImageLoader(queue);
     }
 
     public void setClipSet(ClipSet clipSet) {

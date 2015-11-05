@@ -480,14 +480,14 @@ public class GaugeView extends View {
 
     private void drawSpeed(Canvas canvas) {
         int[] digits = ViewUtils.getDigits(mSpeed);
-        float scale = getWidth() / DIAMETER;
-        float top = 188 * scale;
-        float bottom = top + mBitmapNumbers[0].getHeight() * scale * TEXT_SCALE;
-        float left = (getWidth() - getTotalWidth(digits) * TEXT_SCALE) / 2 * scale;
+        //float scale = getWidth() / DIAMETER;
+        float top = 188;
+        float bottom = top + mBitmapNumbers[0].getHeight() * TEXT_SCALE;
+        float left = (DIAMETER - getTotalWidth(digits) * TEXT_SCALE) / 2;
         float right;
         RectF rectF = new RectF();
         for (int digit : digits) {
-            right = left + mBitmapNumbers[digit].getWidth() * scale * TEXT_SCALE;
+            right = left + mBitmapNumbers[digit].getWidth() * TEXT_SCALE;
             rectF.set(left / DIAMETER, top / DIAMETER, right / DIAMETER, bottom / DIAMETER);
             canvas.drawBitmap(mBitmapNumbers[digit], null, rectF, null);
             left = right;
@@ -536,7 +536,6 @@ public class GaugeView extends View {
 
         canvas.drawArc(mOuterArcRect, startAngle + sweepAngle, totalAngle - sweepAngle, false, mScalePaintDark);
         canvas.drawArc(mInnerArcRect, startAngle + sweepAngle, totalAngle - sweepAngle, false, mScalePaintDark);
-
 
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
         canvas.rotate(155, 0.5f, 0.5f);
@@ -589,7 +588,7 @@ public class GaugeView extends View {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(0.005f);
+        //paint.setStrokeWidth(0.005f);
         paint.setTextSize(0.05f);
         paint.setTypeface(Typeface.SANS_SERIF);
         paint.setTextAlign(Paint.Align.CENTER);
@@ -601,7 +600,7 @@ public class GaugeView extends View {
         Paint paint = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.GRAY);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(0.005f);
+        //paint.setStrokeWidth(0.005f);
         paint.setTextSize(0.05f);
         paint.setTypeface(Typeface.SANS_SERIF);
         paint.setTextAlign(Paint.Align.CENTER);

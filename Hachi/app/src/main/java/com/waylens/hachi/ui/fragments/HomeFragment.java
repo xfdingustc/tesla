@@ -284,15 +284,14 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
             mVideoFragment = youTubeFragment;
             mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
         } else {
-            VideoPlayFragment videoPlayFragment = new VideoPlayFragment();
-            videoPlayFragment.setSource(moment.videoURL);
+            MomentPlayFragment videoPlayFragment = new MomentPlayFragment();
+            videoPlayFragment.setMoment(moment);
             vh.videoFragment = videoPlayFragment;
             mVideoFragment = videoPlayFragment;
             mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
         }
         //vh.videoControl.setVisibility(View.GONE);
     }
-
 
     @Override
     public boolean onInterceptBackPressed() {

@@ -139,6 +139,9 @@ public class VdbRequestQueue {
         cancelAll(new RequestFilter() {
             @Override
             public boolean apply(VdbRequest<?> request) {
+                if (request.getTag() == null) {
+                    return false;
+                }
                 return request.getTag().equals(tag);
             }
         });
