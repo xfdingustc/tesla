@@ -309,14 +309,12 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
 
     @Override
     public void onStartDragging() {
-        Log.e("test", "onStartDragging");
         mVideoListView.setLayoutFrozen(true);
         mRefreshLayout.setEnabled(false);
     }
 
     @Override
     public void onStopDragging() {
-        Log.e("test", "onStopDragging");
         mVideoListView.setLayoutFrozen(false);
         mRefreshLayout.setEnabled(true);
     }

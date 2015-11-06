@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.mapbox.mapboxsdk.views.MapView;
+
 /**
  * FrameLayout - Drag container
  * Created by Richard on 10/30/15.
@@ -70,7 +72,7 @@ public class DragLayout extends FrameLayout {
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
             mDragView = child;
-            return child instanceof GaugeView;
+            return child instanceof GaugeView || child instanceof MapView;
         }
 
         @Override

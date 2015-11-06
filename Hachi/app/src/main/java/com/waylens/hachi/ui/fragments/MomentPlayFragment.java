@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,10 +14,18 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.overlay.Icon;
+import com.mapbox.mapboxsdk.overlay.Marker;
+import com.mapbox.mapboxsdk.overlay.PathOverlay;
+import com.mapbox.mapboxsdk.tileprovider.tilesource.MapboxTileLayer;
+import com.mapbox.mapboxsdk.views.MapView;
+import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentAcc;
+import com.waylens.hachi.ui.entities.MomentGPS;
 import com.waylens.hachi.ui.entities.MomentOBD;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
@@ -42,10 +52,16 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     ArrayList<MomentOBD> mMomentOBD = new ArrayList<>();
     ArrayList<MomentAcc> mMomentAcc = new ArrayList<>();
+    ArrayList<MomentGPS> mMomentGPS = new ArrayList<>();
 
     GaugeView mObdView;
+    MapView mMapView;
 
     int mOBDPosition;
+    private Marker mMarker;
+    private PathOverlay mPathOverlay;
+    private int mGPSPosition;
+    private boolean mIsReplay;
 
     public static MomentPlayFragment newInstance(Moment moment, DragLayout.OnViewDragListener listener) {
         Bundle args = new Bundle();
@@ -82,21 +98,55 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     @Override
     protected void displayOverlay(int position) {
-        if (mMomentOBD.size() == 0) {
-            return;
+        if (mMomentOBD.size() > 0) {
+            MomentOBD obd = getODB(position);
+            if (obd != null) {
+                mObdView.setSpeed(obd.speed);
+                mObdView.setTargetValue(obd.rpm / 1000.0f);
+            } else {
+                Log.e("test", "Position: " + position + "; mOBDPosition: " + mOBDPosition);
+            }
         }
-        MomentOBD obd = getODB(position);
-        if(obd != null) {
-            mObdView.setSpeed(obd.speed);
-            mObdView.setTargetValue(obd.rpm / 1000.0f);
-        } else {
-            Log.e("test", "Position: " + position + "; mOBDPosition: " + mOBDPosition);
+
+        if (mMomentGPS.size() > 0) {
+            if (mIsReplay) {
+                mIsReplay = false;
+                mPathOverlay.clearPath();
+                MomentGPS firstGPS = mMomentGPS.get(0);
+                mMarker.setPoint(new LatLng(firstGPS.latitude, firstGPS.longitude));
+            }
+            MomentGPS gps = getGPS(position);
+            if (gps != null) {
+                LatLng point = new LatLng(gps.latitude, gps.longitude);
+                mMarker.setPoint(point);
+                mPathOverlay.addPoint(point);
+            }
         }
+
+    }
+
+    private MomentGPS getGPS(int position) {
+        MomentGPS gps = null;
+        while (mGPSPosition < mMomentGPS.size()) {
+            MomentGPS tmp = mMomentGPS.get(mGPSPosition);
+            if (tmp.captureTime == position) {
+                gps = tmp;
+                break;
+            } else if (tmp.captureTime < position) {
+                gps = tmp;
+                mGPSPosition++;
+            } else if (tmp.captureTime > position) {
+                break;
+            }
+        }
+        return gps;
     }
 
     @Override
     protected void onPlayCompletion() {
         mOBDPosition = 0;
+        mGPSPosition = 0;
+        mIsReplay = true;
     }
 
     MomentOBD getODB(int position) {
@@ -125,9 +175,38 @@ public class MomentPlayFragment extends VideoPlayFragment {
             mVideoContainer.addView(mObdView, params);
         }
 
+
+        if (mMomentGPS.size() > 0 && mMapView == null) {
+            mMapView = new MapView(getActivity());
+            mMapView.setAccessToken(Constants.MAP_BOX_ACCESS_TOKEN);
+            mMapView.setTileSource(new MapboxTileLayer("liangyx.mp66kbb8"));
+            mMapView.setZoom(16);
+            LatLng center = getGPSCenter();//new LatLng(31.190979000000002, 121.60145658333334);
+            mMapView.setCenter(center);
+            MomentGPS firstGPS = mMomentGPS.get(0);
+            mMarker = mMapView.addMarker(new Marker("Current", "Your current location", new LatLng(firstGPS.latitude, firstGPS.longitude)));
+            Drawable icon = getResources().getDrawable(R.drawable.map_car_inner_red_triangle);
+            mMarker.setIcon(new Icon(icon));
+            mMapView.addMarker(mMarker);
+            mPathOverlay = new PathOverlay(Color.rgb(252, 219, 12), 3);
+            mMapView.addOverlay(mPathOverlay);
+            int defaultSize = ViewUtils.dp2px(96, getResources());
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
+            mVideoContainer.addView(mMapView, params);
+        }
+
         mRawDataState = RAW_DATA_STATE_READY;
         mProgressLoading.setVisibility(View.GONE);
         openVideo();
+    }
+
+    LatLng getGPSCenter() {
+        int size = mMomentGPS.size();
+        if (size == 0) {
+            return null;
+        }
+        MomentGPS gps = mMomentGPS.get(size / 2);
+        return new LatLng(gps.latitude, gps.longitude);
     }
 
     void onLoadRawDataError(String msg) {
@@ -230,6 +309,21 @@ public class MomentPlayFragment extends VideoPlayFragment {
                         accObj.getInt("z")
                 ));
             }
+
+            JSONObject gps = response.getJSONObject("gps");
+            captureTime = gps.getJSONArray("captureTime");
+            JSONArray coordinates = gps.getJSONObject("coordinate").getJSONArray("coordinates");
+
+            for (int i = 0; i < captureTime.length(); i++) {
+                JSONArray coordinateObj = coordinates.getJSONArray(i);
+                mMomentGPS.add(new MomentGPS(
+                        captureTime.getLong(i),
+                        coordinateObj.getDouble(0),
+                        coordinateObj.getDouble(1),
+                        coordinateObj.getDouble(2)
+                ));
+            }
+
             return true;
         } catch (JSONException e) {
             Log.e("test", "", e);

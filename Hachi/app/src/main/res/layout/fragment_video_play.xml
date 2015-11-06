@@ -19,7 +19,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="202dp">
+    android:layout_height="202dp"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto">
 
     <com.waylens.hachi.views.DragLayout
         android:id="@+id/waylens_video_container"
@@ -72,6 +73,15 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_pause_circle_outline_white_48dp"/>
         </FrameLayout>
+        <!--
+        <com.mapbox.mapboxsdk.views.MapView
+            android:id="@+id/mapboxMapView"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            mapbox:mapid="liangyx.mp66kbb8"
+            mapbox:accessToken="sk.eyJ1IjoibGlhbmd5eCIsImEiOiJjaWduYjFmajIwMGEyNjFtMzAyZ2xkNTN6In0.k1oa9ynRfAHp_3ka68JJ_w"
+            />
+            -->
         <ProgressBar
             android:id="@+id/progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
