@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.waylens.hachi"
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 23
         versionCode 12
         versionName "0.12"
@@ -67,4 +67,5 @@ dependencies {
         transitive = true
     }
     compile 'com.google.code.gson:gson:2.3.1'
+
 }
