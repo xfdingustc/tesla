@@ -9,7 +9,7 @@ import com.transee.common.TcpConnection;
 import com.transee.vdb.Vdb.MarkLiveInfo;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.DownloadInfoEx;
+import com.waylens.hachi.vdb.DownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -493,7 +493,7 @@ public class RemoteVdbClient extends VdbClient {
         int clipType = readi32();
         int clipId = readi32();
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
-        DownloadInfoEx downloadInfo = new DownloadInfoEx(cid);
+        DownloadInfo downloadInfo = new DownloadInfo(cid);
 
         int download_opt = readi32();
         downloadInfo.opt = download_opt;
@@ -534,7 +534,7 @@ public class RemoteVdbClient extends VdbClient {
         }
     }
 
-    private void remuxFileForImage(DownloadInfoEx downloadInfo, int sessionCounter) {
+    private void remuxFileForImage(DownloadInfo downloadInfo, int sessionCounter) {
         HttpRemuxer remuxer = new HttpRemuxer(sessionCounter) {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {

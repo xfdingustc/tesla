@@ -115,7 +115,7 @@ public class LocalVdbClient extends VdbClient {
 	private DownloadService.Callback mServiceCallback = new DownloadService.Callback() {
 		@Override
 		public void onStateChangedAsync(final DownloadService service, final int reason, final int state,
-				final DownloadService.Item item, final int progress) {
+				final DownloadService.DownloadItem item, final int progress) {
 			switch (reason) {
 			case DownloadService.REASON_ITEM_ADDED:
 				break;
@@ -176,7 +176,7 @@ public class LocalVdbClient extends VdbClient {
 		}
 	}
 
-	private DownloadingClip createClip(SimpleClipSet clipSet, DownloadService.Item item) {
+	private DownloadingClip createClip(SimpleClipSet clipSet, DownloadService.DownloadItem item) {
 		if (item == null)
 			return null;
 
@@ -202,7 +202,7 @@ public class LocalVdbClient extends VdbClient {
 	}
 
 	private void getDownloadInfo(DownloadService service) {
-		DownloadService.DownloadInfo downloadInfo = new DownloadService.DownloadInfo();
+		DownloadService.DownloadStatusInfo downloadInfo = new DownloadService.DownloadStatusInfo();
 		service.getDownloadInfo(downloadInfo);
 		if (downloadInfo.item != null || downloadInfo.list.size() > 0) {
 			SimpleClipSet clipSet = new SimpleClipSet(Clip.CAT_LOCAL, LocalClip.TYPE_DOWNLOADING);

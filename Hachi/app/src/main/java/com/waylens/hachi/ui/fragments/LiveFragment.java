@@ -28,11 +28,11 @@ import butterknife.Bind;
 
 /**
  * Live Fragment
- * <p>
+ * <p/>
  * Created by Xiaofei on 2015/8/4.
  */
 public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.ClipActionListener,
-        FragmentNavigator, DragLayout.OnViewDragListener {
+    FragmentNavigator, DragLayout.OnViewDragListener {
     private static final String TAG = "LiveFragment";
 
     static final String TAG_CLIP_SET = "tag.clip_set";
@@ -54,8 +54,8 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
     LinearLayoutManager mLinearLayoutManager;
 
     VideoTab[] mVideoTabs = new VideoTab[]{
-            new VideoTab(R.string.camera_video_all, 0, RemoteClip.TYPE_BUFFERED),
-            new VideoTab(R.string.camera_video_bookmark, 0, RemoteClip.TYPE_MARKED),
+        new VideoTab(R.string.camera_video_all, 0, RemoteClip.TYPE_BUFFERED),
+        new VideoTab(R.string.camera_video_bookmark, 0, RemoteClip.TYPE_MARKED),
     };
 
     @Override
@@ -82,13 +82,12 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
     void initViews() {
         mVdtCamera = getCamera();
         if (mVdtCamera != null) {
-            mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera.getVdbConnection());
+            mVdbRequestQueue = Snipe.newRequestQueue(getActivity());
         } else {
             mViewAnimator.setDisplayedChild(2);
         }
 
-        mClipSetAdapter = new CameraClipSetAdapter(getActivity(), mVdtCamera,
-                mVdbRequestQueue);
+        mClipSetAdapter = new CameraClipSetAdapter(getActivity(), mVdbRequestQueue);
         mClipSetAdapter.setClipActionListener(this);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
         mRvCameraVideoList.setLayoutManager(mLinearLayoutManager);
@@ -130,19 +129,19 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
         parameter.putInt(ClipSetRequest.PARAMETER_TYPE, type);
         parameter.putInt(ClipSetRequest.PARAMETER_FLAG, ClipSetRequest.FLAG_CLIP_EXTRA);
         mVdbRequestQueue.add(new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
-                new VdbResponse.Listener<ClipSet>() {
-                    @Override
-                    public void onResponse(ClipSet clipSet) {
-                        mClipSetAdapter.setClipSet(clipSet);
-                        mViewAnimator.setDisplayedChild(1);
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet clipSet) {
+                    mClipSetAdapter.setClipSet(clipSet);
+                    mViewAnimator.setDisplayedChild(1);
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
 
-                    }
-                }).setTag(TAG_CLIP_SET));
+                }
+            }).setTag(TAG_CLIP_SET));
     }
 
     VdtCamera getCamera() {

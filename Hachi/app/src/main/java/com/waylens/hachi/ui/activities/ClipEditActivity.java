@@ -10,12 +10,16 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
+import com.transee.vdb.RemuxHelper;
+import com.transee.vdb.RemuxerParams;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -30,11 +34,14 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
+import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.DownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
@@ -78,13 +85,15 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.btn_share)
     View mBtnShare;
 
+    @Bind(R.id.btnDownload)
+    Button mBtnDownload;
+
     @Bind(R.id.video_play_view)
     SurfaceView mVideoPlayView;
 
     private static VdtCamera mSharedCamera;
     private static Clip mSharedClip;
 
-    private VdtCamera mVdtCamera;
     private Clip mClip;
 
     private VdbRequestQueue mVdbRequestQueue;
@@ -101,9 +110,8 @@ public class ClipEditActivity extends BaseActivity {
     private MediaPlayer mPlayer;
 
 
-    public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {
+    public static void launch(Context context, Clip clip) {
         Intent intent = new Intent(context, ClipEditActivity.class);
-        mSharedCamera = vdtCamera;
         mSharedClip = clip;
         context.startActivity(intent);
     }
@@ -130,8 +138,14 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
-        ClipPlaybackActivity.launch(this, mVdtCamera, mClip);
+        ClipPlaybackActivity.launch(this, mClip);
         //preparePlayback();
+    }
+
+    @OnClick(R.id.btnDownload)
+    public void onBtnDownload() {
+        //downloadClip();
+
     }
 
     @OnClick(R.id.btn_share)
@@ -229,9 +243,8 @@ public class ClipEditActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        mVdtCamera = mSharedCamera;
         mClip = mSharedClip;
-        mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera.getVdbConnection());
+        mVdbRequestQueue = Snipe.newRequestQueue(this);
         mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
         initViews();
     }
@@ -416,6 +429,68 @@ public class ClipEditActivity extends BaseActivity {
 
     private void downloadTs(String url) {
         File dir = ImageUtils.getImageStorageDir(this, "Download");
+
+    }
+
+
+
+
+    private static class DownloadState {
+        DownloadInfo downloadInfo;
+        int stream;
+        Clip.StreamInfo si;
+        RawDataBlock.DownloadRawDataBlock mAccData;
+        RawDataBlock.DownloadRawDataBlock mGpsData;
+        RawDataBlock.DownloadRawDataBlock mObdData;
+    }
+
+    private DownloadState mDownloadState;
+
+    private void startDownload(DownloadInfo downloadInfo, int stream, Clip.StreamInfo si) {
+        mDownloadState = new DownloadState();
+        mDownloadState.downloadInfo = downloadInfo;
+        mDownloadState.stream = stream;
+        mDownloadState.si = si;
+
+        downloadVideo(mDownloadState);
+
+    }
+
+
+
+
+
+    private void downloadVideo(DownloadState ds) {
+        DownloadInfo.DownloadStreamInfo dsi = ds.stream == 0 ? ds.downloadInfo.main : ds.downloadInfo.sub;
+
+        RemuxerParams params = new RemuxerParams();
+        // clip params
+        params.setClipDate(dsi.clipDate); // TODO
+        params.setClipTimeMs(dsi.clipTimeMs); // TODO
+        params.setClipLength(dsi.lengthMs);
+        // stream info
+        params.setStreamVersion(ds.si.version);
+        params.setVideoCoding(ds.si.video_coding);
+        params.setVideoFrameRate(ds.si.video_framerate);
+        params.setVideoWidth(ds.si.video_width);
+        params.setVideoHeight(ds.si.video_height);
+        params.setAudioCoding(ds.si.audio_coding);
+        params.setAudioNumChannels(ds.si.audio_num_channels);
+        params.setAudioSamplingFreq(ds.si.audio_sampling_freq);
+        // download params
+        params.setInputFile(dsi.url + ",0,-1;");
+        params.setInputMime("ts");
+        params.setOutputFormat("mp4");
+        params.setPosterData(ds.downloadInfo.posterData);
+        params.setGpsData(ds.mGpsData != null ? ds.mGpsData.ack_data : null);
+        params.setAccData(ds.mAccData != null ? ds.mAccData.ack_data : null);
+        params.setObdData(ds.mObdData != null ? ds.mObdData.ack_data : null);
+        params.setDurationMs(dsi.lengthMs);
+        //params.setDisableAudio(mEditor.bMuteAudio);
+        //params.setAudioFileName(mEditor.audioFileName);
+        params.setAudioFormat("mp3");
+        // add to queue
+        RemuxHelper.remux(this, params);
 
     }
 }

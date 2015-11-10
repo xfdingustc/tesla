@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.services;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +16,11 @@ import com.transee.vdb.RemuxHelper;
 import com.transee.vdb.RemuxerParams;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.DownloadInfo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -50,16 +54,50 @@ public class DownloadService extends Service {
     private NotificationManager mNotifManager;
     private NotificationCompat.Builder mNotifBuilder;
 
-    public interface Callback {
-        void onStateChangedAsync(DownloadService service, int reason, int state, Item item, int progress);
-    }
-
     // items in download list or downloading
-    public static class Item {
+    public static class DownloadItem {
         public int id; // unique id
         public String outputFile;
         public RemuxerParams params;
     }
+
+    public static class DownloadStatusInfo {
+        public DownloadItem item; // may be null
+        public int state;
+        public int percent;
+        public List<DownloadItem> list;
+    }
+
+
+    public static void download(Clip clip) {
+        download(clip);
+    }
+
+    private void downloadClip(final Clip clip) {
+//        DownloadUrlRequest request = new DownloadUrlRequest(clip, new VdbResponse.Listener<DownloadInfo>() {
+//            @Override
+//            public void onResponse(DownloadInfo response) {
+//                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
+//                //Logger.t(TAG).d("on response:!!!!: " + response.sub.url);
+//                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
+//
+//                startDownload(response, 0, clip.streams[0]);
+//            }
+//        }, new VdbResponse.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(SnipeError error) {
+//
+//            }
+//        });
+//        mVdbRequestQueue.add(request);
+    }
+
+    public interface Callback {
+        void onStateChangedAsync(DownloadService service, int reason, int state, DownloadItem item, int progress);
+    }
+
+
+
 
     private WorkQueue mWorkQueue;
     private Thread mWorkThread;
@@ -79,17 +117,7 @@ public class DownloadService extends Service {
         }
     }
 
-    ;
-
-    public static class DownloadInfo {
-        public Item item; // may be null
-        public int state;
-        public int percent;
-        public List<Item> list;
-    }
-
-    // API - called by client
-    public void getDownloadInfo(DownloadInfo info) {
+    public void getDownloadInfo(DownloadStatusInfo info) {
         mWorkQueue.getDownloadInfo(info);
     }
 
@@ -142,7 +170,7 @@ public class DownloadService extends Service {
 
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
-            Item item = new Item();
+            DownloadItem item = new DownloadItem();
             item.params = new RemuxerParams(bundle);
 
             Logger.t(TAG).d("add item to work q: " + item.params.getInputFile());
@@ -174,7 +202,7 @@ public class DownloadService extends Service {
 
 
 
-    private void broadcastInfo(int reason, int state, Item item, int progress, int remain) {
+    private void broadcastInfo(int reason, int state, DownloadItem item, int progress, int remain) {
         synchronized (this) {
             for (int i = 0; i < mCallbackList.size(); i++) {
                 Callback callback = mCallbackList.get(i);
@@ -238,7 +266,7 @@ public class DownloadService extends Service {
         int state; //
         int progress; // REASON_PROGRESS
         int remain; // NOTIF_BROADCAST
-        Item item;
+        DownloadItem item;
 
         void clear() {
             code = NOTIF_NONE;
@@ -282,7 +310,7 @@ public class DownloadService extends Service {
             }
         };
 
-        Item item = notif.item;
+        DownloadItem item = notif.item;
         int remain = mWorkQueue.initDownload(remuxer, item);
         broadcastInfo(REASON_DOWNLOAD_STARTED, DOWNLOAD_STATE_RUNNING, item, 0, remain);
 
@@ -310,7 +338,7 @@ public class DownloadService extends Service {
     }
 
     private void finishDownloadItem(Notification notif) {
-        Item item = notif.item;
+        DownloadItem item = notif.item;
         RemuxerParams params = item.params;
         Mp4Info info = new Mp4Info();
         info.clip_date = params.getClipDate();
@@ -361,9 +389,9 @@ public class DownloadService extends Service {
 
         int code;
         int param;
-        Item item;
+        DownloadItem item;
 
-        public Command(int code, int param, Item item) {
+        public Command(int code, int param, DownloadItem item) {
             this.code = code;
             this.param = param;
             this.item = item;
@@ -372,10 +400,10 @@ public class DownloadService extends Service {
 
     class WorkQueue {
 
-        private LinkedList<Item> mDownloadList = new LinkedList<Item>();
+        private LinkedList<DownloadItem> mDownloadList = new LinkedList<DownloadItem>();
         private LinkedList<Command> mCommandQueue = new LinkedList<Command>();
 
-        private Item mDownloadingItem = null;
+        private DownloadItem mDownloadingItem = null;
         private int mDownloadState = DOWNLOAD_STATE_IDLE;
         private int mDownloadPercent = 0;
 
@@ -396,18 +424,18 @@ public class DownloadService extends Service {
         }
 
         // called by client
-        synchronized public void getDownloadInfo(DownloadInfo info) {
+        synchronized public void getDownloadInfo(DownloadStatusInfo info) {
             info.item = mDownloadingItem;
             info.state = mDownloadState;
             info.percent = mDownloadPercent;
-            info.list = new ArrayList<Item>();
-            for (Item item : mDownloadList) {
+            info.list = new ArrayList<DownloadItem>();
+            for (DownloadItem item : mDownloadList) {
                 info.list.add(item);
             }
         }
 
         // called by client
-        synchronized final void addItem(Item item) {
+        synchronized final void addItem(DownloadItem item) {
             Command cmd = new Command(Command.CMD_ADD_ITEM, 0, item);
             mCommandQueue.addLast(cmd);
             wakeup();
@@ -507,7 +535,7 @@ public class DownloadService extends Service {
         }
 
         // called by service thread
-        synchronized private int initDownload(HttpRemuxer remuxer, Item item) {
+        synchronized private int initDownload(HttpRemuxer remuxer, DownloadItem item) {
             mRemuxer = remuxer;
             mDownloadingItem = item;
             mDownloadState = DOWNLOAD_STATE_RUNNING;

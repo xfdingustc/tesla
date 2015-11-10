@@ -22,7 +22,6 @@ public class VdbRequestQueue {
 
     private static final int MAX_PENDING_REQUEST_COUNT = 4;
 
-    private VdbConnection mVdbConnection;
 
     private AtomicInteger mSequenceGenerator = new AtomicInteger();
 
@@ -40,21 +39,21 @@ public class VdbRequestQueue {
 
     private VdbDispatcher[] mVdbDispatchers;
 
-    public VdbRequestQueue(VdbSocket vdbSocket, VdbConnection connection) {
-        this(vdbSocket, DEFAULT_NETWORK_THREAD_POOL_SIZE, connection);
+    public VdbRequestQueue(VdbSocket vdbSocket) {
+        this(vdbSocket, DEFAULT_NETWORK_THREAD_POOL_SIZE);
     }
 
-    public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, VdbConnection connection) {
+    public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize) {
         this(vdbSocket, threadPoolSize,
-                new ExecutorDelivery(new Handler(Looper.getMainLooper())), connection);
+                new ExecutorDelivery(new Handler(Looper.getMainLooper())));
     }
 
     public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, ResponseDelivery
-            delivery, VdbConnection connection) {
+            delivery) {
         this.mVdbSocket = vdbSocket;
         this.mVdbDispatchers = new VdbDispatcher[threadPoolSize];
         this.mDelivery = delivery;
-        this.mVdbConnection = connection;
+
     }
 
 
@@ -80,9 +79,6 @@ public class VdbRequestQueue {
         } */
     }
 
-    public VdbConnection getConnection() {
-        return mVdbConnection;
-    }
 
     public int getSequenceNumber() {
         return mSequenceGenerator.incrementAndGet();

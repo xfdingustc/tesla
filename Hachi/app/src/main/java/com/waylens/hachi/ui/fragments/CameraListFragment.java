@@ -79,6 +79,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
             public void onCameraVdbConnected(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("camera vdb connected");
                 mCameraListAdapter.notifyDataSetChanged();
+
             }
 
             @Override

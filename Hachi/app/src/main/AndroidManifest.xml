@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.waylens.hachi"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="com.waylens.hachi"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -18,23 +17,21 @@
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
-
     <application
         android:name=".app.Hachi"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
 
         <activity
             android:name=".ui.activities.MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="nosensor"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -42,7 +39,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.activities.LoginActivity"
             android:windowSoftInputMode="adjustResize"/>
@@ -55,8 +51,7 @@
         <activity android:name=".ui.activities.UserProfileActivity"/>
         <activity android:name=".ui.activities.FollowListActivity"/>
 
-
-        <!--Copied from Vidit app-->
+        <!-- Copied from Vidit app -->
         <service android:name=".ui.services.DownloadService"/>
 
         <activity
@@ -91,14 +86,12 @@
             android:name="com.transee.viditcam.app.AppSetupActivity"
             android:label="@string/title_activity_app_setup">
         </activity>
-        <!--END COPY Vidit App-->
-
+        <!-- END COPY Vidit App -->
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity
             android:name=".ui.activities.ClipPlaybackActivity"
             android:screenOrientation="landscape"/>
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -117,26 +110,27 @@
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+
                 <category android:name="com.waylens.hachi"/>
             </intent-filter>
         </receiver>
 
         <service
-            android:name="com.waylens.hachi.gcm.WaylensGcmListenerService"
+            android:name=".gcm.WaylensGcmListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
             </intent-filter>
         </service>
         <service
-            android:name="com.waylens.hachi.gcm.WaylensInstanceIDListenerService"
+            android:name=".gcm.WaylensInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
             </intent-filter>
         </service>
         <service
-            android:name="com.waylens.hachi.gcm.RegistrationIntentService"
+            android:name=".gcm.RegistrationIntentService"
             android:exported="false">
         </service>
         <!-- [END gcm_receiver] -->
@@ -144,6 +138,11 @@
         <meta-data
             android:name="BUG_HD_SDK_GENERAL_KEY"
             android:value="111f96d8caee6c27d509925c4fb204ae"/>
+
+        <service
+            android:name=".ui.services.DownloadIntentService"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

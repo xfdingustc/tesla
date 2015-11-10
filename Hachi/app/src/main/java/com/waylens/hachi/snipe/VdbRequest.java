@@ -92,7 +92,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     }
 
     public VdbConnection getVdbConnection() {
-        return mVdbRequestQueue.getConnection();
+        return Snipe.getVdbConnect();
     }
 
     public final VdbRequest<?> setSequence(int sequence) {

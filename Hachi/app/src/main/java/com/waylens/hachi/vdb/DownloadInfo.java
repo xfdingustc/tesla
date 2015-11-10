@@ -3,7 +3,7 @@ package com.waylens.hachi.vdb;
 /**
  * Created by Xiaofei on 2015/8/28.
  */
-public class DownloadInfoEx {
+public class DownloadInfo {
 
     public static class DownloadStreamInfo {
         public int clipDate;
@@ -19,7 +19,7 @@ public class DownloadInfoEx {
     public final DownloadStreamInfo sub = new DownloadStreamInfo();
     public byte[] posterData;
 
-    public DownloadInfoEx(Clip.ID cid) {
+    public DownloadInfo(Clip.ID cid) {
         this.cid = cid;
     }
 }

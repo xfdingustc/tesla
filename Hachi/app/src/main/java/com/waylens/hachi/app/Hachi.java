@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
@@ -13,6 +14,7 @@ import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.skin.SkinManager;
+import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.ui.services.DownloadService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -39,6 +41,12 @@ public class Hachi extends Application {
         init();
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
     private void init() {
         mSharedContext = getApplicationContext();
 
@@ -56,6 +64,8 @@ public class Hachi extends Application {
         ImageUtils.initImageLoader(this);
 
         FIR.init(this);
+
+        Snipe.init();
 
         SkinManager.initialize(this);
         SkinManager.getManager().load();
@@ -125,7 +135,7 @@ public class Hachi extends Application {
     private ArrayList<DownloadCallback> mDownloadCallbackList = new ArrayList<DownloadCallback>();
 
     public interface DownloadCallback {
-        public void onDownloadInfo(DownloadService.DownloadInfo downloadInfo);
+        void onDownloadInfo(DownloadService.DownloadStatusInfo downloadInfo);
     }
 
     /*

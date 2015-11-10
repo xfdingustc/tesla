@@ -50,7 +50,6 @@ public class ClipPlaybackActivity extends BaseActivity {
     private VdtCamera mVdtCamera;
     private Clip mClip;
 
-    private static VdtCamera mSharedCamera;
     private static Clip mSharedClip;
 
     private RawDataBlock mAccDataBlock;
@@ -77,9 +76,8 @@ public class ClipPlaybackActivity extends BaseActivity {
     }
 
 
-    public static void launch(Context context, VdtCamera vdtCamera, Clip clip) {
+    public static void launch(Context context, Clip clip) {
         Intent intent = new Intent(context, ClipPlaybackActivity.class);
-        mSharedCamera = vdtCamera;
         mSharedClip = clip;
         context.startActivity(intent);
     }
@@ -103,9 +101,8 @@ public class ClipPlaybackActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        mVdtCamera = mSharedCamera;
         mClip = mSharedClip;
-        mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera.getVdbConnection());
+        mVdbRequestQueue = Snipe.newRequestQueue(this);
         mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
         initViews();
     }

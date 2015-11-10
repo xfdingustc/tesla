@@ -7,9 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.RemoteClip;
-import com.transee.vdb.Vdb;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
@@ -19,6 +16,8 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.RemoteClip;
 
 import butterknife.Bind;
 
@@ -80,7 +79,7 @@ public class BrowseCameraActivity extends BaseActivity {
             hostString = mVdtCamera.getHostString();
         }
 
-        mVdbRequestQueue = Snipe.newRequestQueue(this, mSharedCamera.getVdbConnection());
+        mVdbRequestQueue = Snipe.newRequestQueue(this);
 
         initCameraVideoListView();
     }
@@ -107,8 +106,7 @@ public class BrowseCameraActivity extends BaseActivity {
 
     private void initCameraVideoListView() {
         mRvCameraVideoList.setLayoutManager(new LinearLayoutManager(this));
-        mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, mVdtCamera,
-            mVdbRequestQueue);
+        mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, mVdbRequestQueue);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
 
         Bundle parameter = new Bundle();
@@ -130,12 +128,7 @@ public class BrowseCameraActivity extends BaseActivity {
         mVdbRequestQueue.add(request);
 
 
-
-
     }
-
-
-
 
 
 }

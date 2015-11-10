@@ -28,16 +28,14 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
 
     private static final String TAG = CameraClipSetAdapter.class.getSimpleName();
     private final VdbImageLoader mVdbImageLoader;
-    private final VdtCamera mVdtCamera;
     private Context mContext;
 
     private ClipSet mClipSet = null;
 
     private ClipActionListener mClipActionListener;
 
-    public CameraClipSetAdapter(Context context, VdtCamera vdtCamera, VdbRequestQueue queue) {
+    public CameraClipSetAdapter(Context context, VdbRequestQueue queue) {
         this.mContext = context;
-        this.mVdtCamera = vdtCamera;
         this.mVdbImageLoader = new VdbImageLoader(queue);
     }
 
@@ -68,7 +66,7 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
         holder.mBtnVideoEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClipEditActivity.launch(mContext, mVdtCamera, clip);
+                ClipEditActivity.launch(mContext, clip);
             }
         });
         holder.mBtnVideoPlay.setOnClickListener(new View.OnClickListener() {
