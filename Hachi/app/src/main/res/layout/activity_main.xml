@@ -32,6 +32,7 @@
             android:id="@+id/main_tabs"
             android:layout_width="match_parent"
             android:layout_height="@dimen/abc_action_bar_default_height_material"
-            app:tabIndicatorHeight="0dp"/>
+            app:tabIndicatorHeight="0dp"
+            app:tabGravity="fill"/>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

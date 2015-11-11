@@ -10,9 +10,9 @@ public class Constants {
 
     public static final String API_WEATHER = "http://api.worldweatheronline.com/free/v2/weather.ashx?format=json&num_of_days=1&tp=12&key=e081e88edf6ffe4bcd0d12f34b26e&q=%s";
 
-    public static final String HOST_URL = "http://ws.waylens.com:9000/";
+    //public static final String HOST_URL = "http://ws.waylens.com:9000/";
 
-    //public static final String HOST_URL = "http://192.168.20.172:9000/";
+    public static final String HOST_URL = "http://192.168.20.172:9000/";
 
     public static final String API_SIGN_UP = HOST_URL + "api/users/signup";
 
@@ -68,6 +68,8 @@ public class Constants {
     public static final String API_FRIENDS_FOLLOW = HOST_URL + "api/friends/follow";
 
     public static final String API_FRIENDS_UNFOLLOW = HOST_URL + "api/friends/unfollow";
+
+    public static final String MAP_BOX_ACCESS_TOKEN = "sk.eyJ1IjoibGlhbmd5eCIsImEiOiJjaWduYjFmajIwMGEyNjFtMzAyZ2xkNTN6In0.k1oa9ynRfAHp_3ka68JJ_w";
 
     public enum EventType {FOLLOW_USER, COMMENT_MOMENT, LIKE_MOMENT, REFER_USER, PUBLISH_NEWS}
 }

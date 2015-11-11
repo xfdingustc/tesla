@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -14,11 +13,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.annotations.SpriteFactory;
+import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.overlay.Icon;
-import com.mapbox.mapboxsdk.overlay.Marker;
-import com.mapbox.mapboxsdk.overlay.PathOverlay;
-import com.mapbox.mapboxsdk.tileprovider.tilesource.MapboxTileLayer;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -58,8 +57,9 @@ public class MomentPlayFragment extends VideoPlayFragment {
     MapView mMapView;
 
     int mOBDPosition;
-    private Marker mMarker;
-    private PathOverlay mPathOverlay;
+    private MarkerOptions mMarkerOptions;
+    private PolylineOptions mPolylineOptions;
+
     private int mGPSPosition;
     private boolean mIsReplay;
 
@@ -86,6 +86,17 @@ public class MomentPlayFragment extends VideoPlayFragment {
         if (mRawDataState != RAW_DATA_STATE_READY) {
             readRawURL();
         }
+        if (mMapView != null) {
+            mMapView.onStart();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        if (mMapView != null) {
+            mMapView.onStop();
+        }
+        super.onStop();
     }
 
     @Override
@@ -111,18 +122,19 @@ public class MomentPlayFragment extends VideoPlayFragment {
         if (mMomentGPS.size() > 0) {
             if (mIsReplay) {
                 mIsReplay = false;
-                mPathOverlay.clearPath();
-                MomentGPS firstGPS = mMomentGPS.get(0);
-                mMarker.setPoint(new LatLng(firstGPS.latitude, firstGPS.longitude));
+                mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
             }
             MomentGPS gps = getGPS(position);
             if (gps != null) {
+                mMapView.removeAllAnnotations();
                 LatLng point = new LatLng(gps.latitude, gps.longitude);
-                mMarker.setPoint(point);
-                mPathOverlay.addPoint(point);
+                mMarkerOptions.position(point);
+                mPolylineOptions.add(point);
+                mMapView.addMarker(mMarkerOptions);
+                mMapView.addPolyline(mPolylineOptions);
+                mMapView.setCenterCoordinate(point);
             }
         }
-
     }
 
     private MomentGPS getGPS(int position) {
@@ -177,22 +189,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
 
         if (mMomentGPS.size() > 0 && mMapView == null) {
-            mMapView = new MapView(getActivity());
-            mMapView.setAccessToken(Constants.MAP_BOX_ACCESS_TOKEN);
-            mMapView.setTileSource(new MapboxTileLayer("liangyx.mp66kbb8"));
-            mMapView.setZoom(16);
-            LatLng center = getGPSCenter();//new LatLng(31.190979000000002, 121.60145658333334);
-            mMapView.setCenter(center);
-            MomentGPS firstGPS = mMomentGPS.get(0);
-            mMarker = mMapView.addMarker(new Marker("Current", "Your current location", new LatLng(firstGPS.latitude, firstGPS.longitude)));
-            Drawable icon = getResources().getDrawable(R.drawable.map_car_inner_red_triangle);
-            mMarker.setIcon(new Icon(icon));
-            mMapView.addMarker(mMarker);
-            mPathOverlay = new PathOverlay(Color.rgb(252, 219, 12), 3);
-            mMapView.addOverlay(mPathOverlay);
-            int defaultSize = ViewUtils.dp2px(96, getResources());
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
-            mVideoContainer.addView(mMapView, params);
+            initMapView();
         }
 
         mRawDataState = RAW_DATA_STATE_READY;
@@ -200,13 +197,25 @@ public class MomentPlayFragment extends VideoPlayFragment {
         openVideo();
     }
 
-    LatLng getGPSCenter() {
-        int size = mMomentGPS.size();
-        if (size == 0) {
-            return null;
-        }
-        MomentGPS gps = mMomentGPS.get(size / 2);
-        return new LatLng(gps.latitude, gps.longitude);
+    private void initMapView() {
+        mMapView = new MapView(getActivity(), Constants.MAP_BOX_ACCESS_TOKEN);
+        mMapView.setStyleUrl(Style.DARK);
+        mMapView.setZoomLevel(14);
+        mMapView.setLogoVisibility(View.GONE);
+        mMapView.onCreate(null);
+        MomentGPS firstGPS = mMomentGPS.get(0);
+        SpriteFactory spriteFactory = new SpriteFactory(mMapView);
+        LatLng firstPoint = new LatLng(firstGPS.latitude, firstGPS.longitude);
+        mMarkerOptions = new MarkerOptions().position(firstPoint)
+                .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
+        mMapView.addMarker(mMarkerOptions);
+        mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
+        mMapView.setCenterCoordinate(firstPoint);
+        mMapView.addPolyline(mPolylineOptions);
+
+        int defaultSize = ViewUtils.dp2px(96, getResources());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
+        mVideoContainer.addView(mMapView, params);
     }
 
     void onLoadRawDataError(String msg) {

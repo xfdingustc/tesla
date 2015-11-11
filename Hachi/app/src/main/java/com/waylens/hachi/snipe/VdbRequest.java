@@ -125,6 +125,13 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     abstract protected void deliverResponse(T response);
 
+
+    protected  void deliverError(SnipeError error) {
+        if (mErrorListener != null) {
+            mErrorListener.onErrorResponse(error);
+        }
+    }
+
     @Override
     public int compareTo(VdbRequest<T> another) {
         Priority left = this.getPriority();

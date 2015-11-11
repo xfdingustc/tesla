@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,13 +10,21 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.annotations.SpriteFactory;
+import com.mapbox.mapboxsdk.constants.Style;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.views.MapView;
+import com.transee.common.GPSRawData;
 import com.transee.vdb.VdbClient;
+import com.waylens.hachi.R;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.ui.entities.MomentOBD;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.OBDData;
@@ -37,6 +46,11 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     SparseIntArray mTypedState = new SparseIntArray();
     SparseIntArray mTypedPosition = new SparseIntArray();
     GaugeView mObdView;
+    MapView mMapView;
+
+    private MarkerOptions mMarkerOptions;
+    private PolylineOptions mPolylineOptions;
+    private boolean mIsReplay;
 
     public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
                                                       Clip clip,
@@ -66,6 +80,17 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         } else {
             loadPlayURL();
         }
+        if (mMapView != null) {
+            mMapView.onStart();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        if (mMapView != null) {
+            mMapView.onStop();
+        }
+        super.onStop();
     }
 
     @Override
@@ -74,11 +99,27 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             return;
         }
         RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
-        if(obd != null) {
-            mObdView.setSpeed(((OBDData)obd.object).speed);
-            mObdView.setTargetValue(((OBDData)obd.object).rpm / 1000.0f);
+        if (obd != null) {
+            mObdView.setSpeed(((OBDData) obd.object).speed);
+            mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
         } else {
             Log.e("test", "Position: " + position + "; mOBDPosition: " + mTypedPosition.get(RawDataBlock.RAW_DATA_ODB));
+        }
+
+        RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
+        if (gps != null) {
+            if (mIsReplay) {
+                mIsReplay = false;
+                mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
+            }
+            GPSRawData gpsRawData = (GPSRawData) gps.object;
+            mMapView.removeAllAnnotations();
+            LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
+            mMarkerOptions.position(point);
+            mPolylineOptions.add(point);
+            mMapView.addMarker(mMarkerOptions);
+            mMapView.addPolyline(mPolylineOptions);
+            mMapView.setCenterCoordinate(point);
         }
     }
 
@@ -106,6 +147,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     @Override
     protected void onPlayCompletion() {
         mTypedPosition.clear();
+        mIsReplay = true;
     }
 
     boolean isRawDataReady() {
@@ -134,27 +176,30 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             return;
         }
 
+        Log.e("test", "DataType[1]: " + dataType);
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip, mClip.getStartTime(), mClip.clipLengthMs,
                 dataType,
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
                     public void onResponse(RawDataBlock response) {
+                        Log.e("test", "DataType[2]: " + dataType);
                         mTypedRawData.put(dataType, response);
                         mTypedState.put(dataType, RAW_DATA_STATE_READY);
-                        onLoadRawDataSuccessfully();
+                        onLoadRawDataFinished();
                     }
                 },
                 new VdbResponse.ErrorListener() {
                     @Override
                     public void onErrorResponse(SnipeError error) {
                         mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
+                        onLoadRawDataFinished();
                         Log.e("test", "", error);
                     }
                 });
         mVdbRequestQueue.add(obdRequest);
     }
 
-    void onLoadRawDataSuccessfully() {
+    void onLoadRawDataFinished() {
         if (mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_UNKNOWN
                 || mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
                 || mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
@@ -170,6 +215,31 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             params.gravity = Gravity.BOTTOM | Gravity.END;
             mVideoContainer.addView(mObdView, params);
         }
+
+        if (mTypedRawData.get(RawDataBlock.RAW_DATA_GPS) != null && mMapView == null) {
+            initMapView();
+        }
+    }
+
+    private void initMapView() {
+        mMapView = new MapView(getActivity(), Constants.MAP_BOX_ACCESS_TOKEN);
+        mMapView.setStyleUrl(Style.DARK);
+        mMapView.setZoomLevel(14);
+        mMapView.setLogoVisibility(View.GONE);
+        mMapView.onCreate(null);
+        GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataBlock.RAW_DATA_GPS).getRawDataItem(0).object;
+        SpriteFactory spriteFactory = new SpriteFactory(mMapView);
+        LatLng firstPoint = new LatLng(firstGPS.coord.lat_orig, firstGPS.coord.lng_orig);
+        mMarkerOptions = new MarkerOptions().position(firstPoint)
+                .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
+        mMapView.addMarker(mMarkerOptions);
+        mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
+        mMapView.setCenterCoordinate(firstPoint);
+        mMapView.addPolyline(mPolylineOptions);
+
+        int defaultSize = ViewUtils.dp2px(96, getResources());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
+        mVideoContainer.addView(mMapView, params);
     }
 
     void loadPlayURL() {
