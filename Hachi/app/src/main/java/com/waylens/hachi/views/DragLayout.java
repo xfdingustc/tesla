@@ -51,7 +51,8 @@ public class DragLayout extends FrameLayout {
             mDragHelper.cancel();
             return false;
         }
-        return mDragHelper.shouldInterceptTouchEvent(ev);
+        View toCapture = mDragHelper.findTopChildUnder((int) ev.getX(), (int)ev.getY());
+        return toCapture instanceof MapView || mDragHelper.shouldInterceptTouchEvent(ev);
     }
 
     @Override

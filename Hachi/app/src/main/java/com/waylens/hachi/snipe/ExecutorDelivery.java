@@ -33,12 +33,11 @@ public class ExecutorDelivery implements ResponseDelivery {
         vdbRequest.markDelivered();
         vdbRequest.addMarker("post-response");
         mResponsePoster.execute(new ResponseDeliveryRunnable(vdbRequest, vdbResponse, runnable));
-
     }
 
     @Override
     public void postError(VdbRequest<?> vdbRequest, SnipeError error) {
-
+        postResponse(vdbRequest, null, null);
     }
 
     private class ResponseDeliveryRunnable implements Runnable {
@@ -66,6 +65,8 @@ public class ExecutorDelivery implements ResponseDelivery {
 
             if (mResponse != null && mResponse.isSuccess()) {
                 mRequest.deliverResponse(mResponse.result);
+            } else {
+                mRequest.deliverError(new SnipeError());
             }
         }
     }

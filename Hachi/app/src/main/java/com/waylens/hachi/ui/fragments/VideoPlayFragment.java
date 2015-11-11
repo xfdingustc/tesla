@@ -425,7 +425,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         }
         int position = mMediaPlayer.getCurrentPosition();
         int duration = mMediaPlayer.getDuration();
-        Log.e("test", "duration: " + duration + "; position: " + position);
+        //Log.e("test", "duration: " + duration + "; position: " + position);
 
         if (mProgressBar != null) {
             if (duration > 0) {

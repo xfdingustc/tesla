@@ -35,9 +35,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.overlay.Icon;
-import com.mapbox.mapboxsdk.overlay.Marker;
-import com.mapbox.mapboxsdk.overlay.PathOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.transee.ccam.AbsCameraClient;
@@ -147,8 +144,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
     };
 
-    private PathOverlay pathOverlay;
-    private Marker marker;
+    //private PathOverlay pathOverlay;
+    //private Marker marker;
 
     LocationManager locationManager;
     LocationListener locationListener;
@@ -473,6 +470,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateMap(GPSRawData gpsRawData) {
+        /*
         if (mapView == null || pathOverlay == null || marker == null) {
             return;
         }
@@ -480,10 +478,12 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         pathOverlay.addPoint(latLng);
         marker.setPoint(latLng);
         mapView.setCenter(latLng);
+        */
 
     }
 
     private void updateMap(Location location) {
+        /*
         if (mapView == null || pathOverlay == null || marker == null) {
             return;
         }
@@ -491,6 +491,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         pathOverlay.addPoint(latLng);
         marker.setPoint(latLng);
         mapView.setCenter(latLng);
+        */
 
     }
 
@@ -736,6 +737,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         mOverlayView = findViewById(R.id.overlay_view);
 
         mapView = (MapView) findViewById(R.id.mapbox_view);
+        /*
         mapView.setZoom(16);
         pathOverlay = new PathOverlay(Color.rgb(252, 219, 12), 3);
         mapView.addOverlay(pathOverlay);
@@ -745,7 +747,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         Drawable icon = getResources().getDrawable(R.drawable.map_car_inner_red_triangle);
         marker.setIcon(new Icon(icon));
         mapView.addMarker(marker);
-
+          */
         mapHolder = findViewById(R.id.map_holder);
         weatherIcon = (ImageView) findViewById(R.id.weather_icon);
         weatherTemp = (TextView) findViewById(R.id.weather_temp);
