@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 
 import com.transee.common.ByteStream;
 import com.transee.common.GPSRawData;
+import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.ui.services.DownloadService;
 import com.waylens.hachi.vdb.Clip;
@@ -236,7 +237,7 @@ public class LocalVdbClient extends VdbClient {
 	protected void cmdGetClipSetInfo(int type) throws IOException {
 		SimpleClipSet clipSet = new SimpleClipSet(Clip.CAT_LOCAL, LocalClip.TYPE_FILE);
 
-		String path = Hachi.getVideoDownloadPath();
+		String path = DownloadManager.getManager().getVideoDownloadPath();
 		File[] fileList = (new File(path)).listFiles();
 		if (fileList == null) {
 			mCallback.onClipSetInfoAsync(clipSet);

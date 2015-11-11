@@ -6,15 +6,15 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.DownloadInfo;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 
 /**
  * Created by Xiaofei on 2015/8/27.
  */
-public class DownloadUrlRequest extends VdbRequest<DownloadInfo> {
+public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
     private static final String TAG = DownloadUrlRequest.class.getSimpleName();
 
-    private final VdbResponse.Listener<DownloadInfo> mListener;
+    private final VdbResponse.Listener<ClipDownloadInfo> mListener;
     private final Clip mClip;
 
     public static final int DOWNLOAD_OPT_MAIN_STREAM = (1 << 0);
@@ -23,11 +23,11 @@ public class DownloadUrlRequest extends VdbRequest<DownloadInfo> {
     public static final int DOWNLOAD_OPT_PLAYLIST = (1 << 3);
     public static final int DOWNLOAD_OPT_MUTE_AUDIO = (1 << 4);
 
-    public DownloadUrlRequest(Clip clip, VdbResponse.Listener<DownloadInfo> listener, VdbResponse.ErrorListener errorListener) {
+    public DownloadUrlRequest(Clip clip, VdbResponse.Listener<ClipDownloadInfo> listener, VdbResponse.ErrorListener errorListener) {
         this(0, clip, listener, errorListener);
     }
 
-    public DownloadUrlRequest(int method, Clip clip, VdbResponse.Listener<DownloadInfo> listener, VdbResponse.ErrorListener errorListener) {
+    public DownloadUrlRequest(int method, Clip clip, VdbResponse.Listener<ClipDownloadInfo> listener, VdbResponse.ErrorListener errorListener) {
         super(method, errorListener);
         this.mClip = clip;
         this.mListener = listener;
@@ -42,7 +42,7 @@ public class DownloadUrlRequest extends VdbRequest<DownloadInfo> {
     }
 
     @Override
-    protected VdbResponse<DownloadInfo> parseVdbResponse(VdbAcknowledge response) {
+    protected VdbResponse<ClipDownloadInfo> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
             Logger.t(TAG).e("ackGetDownloadUrl: failed: " + response.getRetCode());
 
@@ -52,39 +52,39 @@ public class DownloadUrlRequest extends VdbRequest<DownloadInfo> {
         int clipType = response.readi32();
         int clipId = response.readi32();
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
-        DownloadInfo downloadInfo = new DownloadInfo(cid);
+        ClipDownloadInfo clipDownloadInfo = new ClipDownloadInfo(cid);
 
         int download_opt = response.readi32();
-        downloadInfo.opt = download_opt;
+        clipDownloadInfo.opt = download_opt;
 
         if ((download_opt & DOWNLOAD_OPT_MAIN_STREAM) != 0) {
-            downloadInfo.main.clipDate = response.readi32();
-            downloadInfo.main.clipTimeMs = response.readi64();
-            downloadInfo.main.lengthMs = response.readi32();
-            downloadInfo.main.size = response.readi64();
-            downloadInfo.main.url = response.readString();
+            clipDownloadInfo.main.clipDate = response.readi32();
+            clipDownloadInfo.main.clipTimeMs = response.readi64();
+            clipDownloadInfo.main.lengthMs = response.readi32();
+            clipDownloadInfo.main.size = response.readi64();
+            clipDownloadInfo.main.url = response.readString();
         }
 
         if ((download_opt & DOWNLOAD_OPT_SUB_STREAM_1) != 0) {
-            downloadInfo.sub.clipDate = response.readi32();
-            downloadInfo.sub.clipTimeMs = response.readi64();
-            downloadInfo.sub.lengthMs = response.readi32();
-            downloadInfo.sub.size = response.readi64();
-            downloadInfo.sub.url = response.readString();
+            clipDownloadInfo.sub.clipDate = response.readi32();
+            clipDownloadInfo.sub.clipTimeMs = response.readi64();
+            clipDownloadInfo.sub.lengthMs = response.readi32();
+            clipDownloadInfo.sub.size = response.readi64();
+            clipDownloadInfo.sub.url = response.readString();
         }
 
         if ((download_opt & DOWNLOAD_OPT_INDEX_PICT) != 0) {
             int pictureSize = response.readi32();
-            downloadInfo.posterData = new byte[pictureSize];
-            response.readByteArray(downloadInfo.posterData, pictureSize);
+            clipDownloadInfo.posterData = new byte[pictureSize];
+            response.readByteArray(clipDownloadInfo.posterData, pictureSize);
         }
 
 
-        return VdbResponse.success(downloadInfo);
+        return VdbResponse.success(clipDownloadInfo);
     }
 
     @Override
-    protected void deliverResponse(DownloadInfo response) {
+    protected void deliverResponse(ClipDownloadInfo response) {
         mListener.onResponse(response);
     }
 }

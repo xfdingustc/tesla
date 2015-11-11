@@ -17,9 +17,6 @@ import android.widget.ImageView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.orhanobut.logger.Logger;
-import com.transee.vdb.RemuxHelper;
-import com.transee.vdb.RemuxerParams;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -34,14 +31,12 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
-import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
+import com.waylens.hachi.ui.services.DownloadIntentService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.DownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
-import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
@@ -144,7 +139,7 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnDownload)
     public void onBtnDownload() {
-        //downloadClip();
+        DownloadIntentService.startDownload(this, mClip);
 
     }
 
@@ -226,18 +221,18 @@ public class ClipEditActivity extends BaseActivity {
             Log.e("test", "", e);
         }
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENTS, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("test", "Response: " + response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("test", "", error);
-                    }
-                }));
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.e("test", "Response: " + response);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("test", "", error);
+                }
+            }));
     }
 
     @Override
@@ -435,62 +430,13 @@ public class ClipEditActivity extends BaseActivity {
 
 
 
-    private static class DownloadState {
-        DownloadInfo downloadInfo;
-        int stream;
-        Clip.StreamInfo si;
-        RawDataBlock.DownloadRawDataBlock mAccData;
-        RawDataBlock.DownloadRawDataBlock mGpsData;
-        RawDataBlock.DownloadRawDataBlock mObdData;
-    }
-
-    private DownloadState mDownloadState;
-
-    private void startDownload(DownloadInfo downloadInfo, int stream, Clip.StreamInfo si) {
-        mDownloadState = new DownloadState();
-        mDownloadState.downloadInfo = downloadInfo;
-        mDownloadState.stream = stream;
-        mDownloadState.si = si;
-
-        downloadVideo(mDownloadState);
-
-    }
 
 
 
 
 
-    private void downloadVideo(DownloadState ds) {
-        DownloadInfo.DownloadStreamInfo dsi = ds.stream == 0 ? ds.downloadInfo.main : ds.downloadInfo.sub;
 
-        RemuxerParams params = new RemuxerParams();
-        // clip params
-        params.setClipDate(dsi.clipDate); // TODO
-        params.setClipTimeMs(dsi.clipTimeMs); // TODO
-        params.setClipLength(dsi.lengthMs);
-        // stream info
-        params.setStreamVersion(ds.si.version);
-        params.setVideoCoding(ds.si.video_coding);
-        params.setVideoFrameRate(ds.si.video_framerate);
-        params.setVideoWidth(ds.si.video_width);
-        params.setVideoHeight(ds.si.video_height);
-        params.setAudioCoding(ds.si.audio_coding);
-        params.setAudioNumChannels(ds.si.audio_num_channels);
-        params.setAudioSamplingFreq(ds.si.audio_sampling_freq);
-        // download params
-        params.setInputFile(dsi.url + ",0,-1;");
-        params.setInputMime("ts");
-        params.setOutputFormat("mp4");
-        params.setPosterData(ds.downloadInfo.posterData);
-        params.setGpsData(ds.mGpsData != null ? ds.mGpsData.ack_data : null);
-        params.setAccData(ds.mAccData != null ? ds.mAccData.ack_data : null);
-        params.setObdData(ds.mObdData != null ? ds.mObdData.ack_data : null);
-        params.setDurationMs(dsi.lengthMs);
-        //params.setDisableAudio(mEditor.bMuteAudio);
-        //params.setAudioFileName(mEditor.audioFileName);
-        params.setAudioFormat("mp3");
-        // add to queue
-        RemuxHelper.remux(this, params);
 
-    }
+
+
 }

@@ -3,7 +3,8 @@ package com.waylens.hachi.utils;
 import android.content.Context;
 import android.os.Environment;
 
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -32,7 +33,7 @@ public class ImageUtils {
                 .discCacheFileNameGenerator(new Md5FileNameGenerator())
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
                 .discCacheFileCount(300)
-                .discCache(new UnlimitedDiscCache(getImageStorageDir(context, "cache-img")))
+                .discCache(new UnlimitedDiskCache(getImageStorageDir(context, "cache-img")))
                 .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
                 .imageDownloader(new BaseImageDownloader(context, 5 * 1000, 30 * 1000))
                 .build();

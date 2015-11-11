@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import com.transee.camera.AndroidCamera;
-import com.transee.ccam.BarcodeDecoder;
+
 import com.transee.common.BeepManager;
 import com.transee.common.Utils;
 import com.transee.common.ViewfinderView;
@@ -30,7 +30,7 @@ public class AddCameraActivity extends BaseActivity {
 	private ViewfinderView mViewfinder;
 	private SurfaceView mSurfaceView;
 	private AndroidCamera mAndroidCamera;
-	private BarcodeDecoder mBarcodeDecoder;
+	//private BarcodeDecoder mBarcodeDecoder;
 	private SurfaceHolder mSurfaceHolder;
 	private MySurfaceHolderCallback mSurfaceHolderCallback;
 	private boolean mbSurfaceReady;
@@ -80,18 +80,18 @@ public class AddCameraActivity extends BaseActivity {
 
 	@Override
 	protected void onStartActivity() {
-		mBarcodeDecoder = new MyBarcodeDecoder();
-		mBarcodeDecoder.start();
+		//mBarcodeDecoder = new MyBarcodeDecoder();
+		//mBarcodeDecoder.start();
 		checkSurface();
 	}
 
 	@Override
 	protected void onStopActivity() {
 		closeAndroidCamera();
-		if (mBarcodeDecoder != null) {
-			mBarcodeDecoder.interrupt();
-			mBarcodeDecoder = null;
-		}
+//		if (mBarcodeDecoder != null) {
+//			mBarcodeDecoder.interrupt();
+//			mBarcodeDecoder = null;
+//		}
 	}
 
 	@Override
@@ -257,10 +257,10 @@ public class AddCameraActivity extends BaseActivity {
 	}
 
 	private void onCameraPreviewFrame(int dataWidth, int dataHeight, byte[] data) {
-		if (mBarcodeDecoder != null) {
-			Rect rect = getViewfinderRectOnPreview(dataWidth, dataHeight);
-			mBarcodeDecoder.requestDecode(data, dataWidth, dataHeight, rect);
-		}
+//		if (mBarcodeDecoder != null) {
+//			Rect rect = getViewfinderRectOnPreview(dataWidth, dataHeight);
+//			mBarcodeDecoder.requestDecode(data, dataWidth, dataHeight, rect);
+//		}
 	}
 
 	private boolean shouldRedoFocus() {
@@ -272,13 +272,13 @@ public class AddCameraActivity extends BaseActivity {
 		if (DEBUG) {
 			Log.d(TAG, "decode error");
 		}
-		if (mBarcodeDecoder != null && mAndroidCamera != null) {
-			if (!shouldRedoFocus()) {
-				requestPreviewData();
-			} else {
-				startAutoFocus();
-			}
-		}
+//		if (mBarcodeDecoder != null && mAndroidCamera != null) {
+//			if (!shouldRedoFocus()) {
+//				requestPreviewData();
+//			} else {
+//				startAutoFocus();
+//			}
+//		}
 	}
 
 	private boolean parseWifiInfo(String result) {
@@ -326,15 +326,15 @@ public class AddCameraActivity extends BaseActivity {
 		if (DEBUG) {
 			Log.d(TAG, "decode done: " + result);
 		}
-		if (mBarcodeDecoder != null && mAndroidCamera != null) {
-			if (parseWifiInfo(result)) {
-				showResult(result, true);
-				BeepManager.play(this, R.raw.beep1, false);
-			} else {
-				showResult(result, false);
-				BeepManager.play(this, R.raw.beep2, false);
-			}
-		}
+//		if (mBarcodeDecoder != null && mAndroidCamera != null) {
+//			if (parseWifiInfo(result)) {
+//				showResult(result, true);
+//				BeepManager.play(this, R.raw.beep1, false);
+//			} else {
+//				showResult(result, false);
+//				BeepManager.play(this, R.raw.beep2, false);
+//			}
+//		}
 	}
 
 	AndroidCamera.FrameCallback mFrameCallback = new AndroidCamera.FrameCallback() {
@@ -357,33 +357,33 @@ public class AddCameraActivity extends BaseActivity {
 		}
 	}
 
-	class MyBarcodeDecoder extends BarcodeDecoder {
-
-		@Override
-		public void onDecodeError(final BarcodeDecoder decoder) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (decoder == mBarcodeDecoder) {
-						onBarcodeDecodeError();
-					}
-				}
-			});
-		}
-
-		@Override
-		public void onDecodeDone(final BarcodeDecoder decoder, final String result) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (decoder == mBarcodeDecoder) {
-						onBarcodeDecodeDone(result);
-					}
-				}
-			});
-		}
-
-	}
+//	class MyBarcodeDecoder extends BarcodeDecoder {
+//
+//		@Override
+//		public void onDecodeError(final BarcodeDecoder decoder) {
+//			runOnUiThread(new Runnable() {
+//				@Override
+//				public void run() {
+//					if (decoder == mBarcodeDecoder) {
+//						onBarcodeDecodeError();
+//					}
+//				}
+//			});
+//		}
+//
+//		@Override
+//		public void onDecodeDone(final BarcodeDecoder decoder, final String result) {
+//			runOnUiThread(new Runnable() {
+//				@Override
+//				public void run() {
+//					if (decoder == mBarcodeDecoder) {
+//						onBarcodeDecodeDone(result);
+//					}
+//				}
+//			});
+//		}
+//
+//	}
 
 	class MySurfaceHolderCallback implements SurfaceHolder.Callback {
 

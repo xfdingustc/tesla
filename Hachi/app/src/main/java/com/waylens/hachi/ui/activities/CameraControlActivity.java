@@ -63,7 +63,7 @@ import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.DownloadInfo;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
@@ -318,7 +318,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
 
             @Override
-            public void onDownloadUrlReadyAsync(DownloadInfo downloadInfom, boolean bFirstLoop) {
+            public void onDownloadUrlReadyAsync(ClipDownloadInfo downloadInfom, boolean bFirstLoop) {
                 Log.e(TAG, "onDownloadUrlReadyAsync");
             }
 

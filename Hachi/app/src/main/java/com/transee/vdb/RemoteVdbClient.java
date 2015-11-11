@@ -9,7 +9,7 @@ import com.transee.common.TcpConnection;
 import com.transee.vdb.Vdb.MarkLiveInfo;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.DownloadInfo;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -493,31 +493,31 @@ public class RemoteVdbClient extends VdbClient {
         int clipType = readi32();
         int clipId = readi32();
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
-        DownloadInfo downloadInfo = new DownloadInfo(cid);
+        ClipDownloadInfo clipDownloadInfo = new ClipDownloadInfo(cid);
 
         int download_opt = readi32();
-        downloadInfo.opt = download_opt;
+        clipDownloadInfo.opt = download_opt;
 
         if ((download_opt & DOWNLOAD_OPT_MAIN_STREAM) != 0) {
-            downloadInfo.main.clipDate = readi32();
-            downloadInfo.main.clipTimeMs = readi64();
-            downloadInfo.main.lengthMs = readi32();
-            downloadInfo.main.size = readi64();
-            downloadInfo.main.url = readString();
+            clipDownloadInfo.main.clipDate = readi32();
+            clipDownloadInfo.main.clipTimeMs = readi64();
+            clipDownloadInfo.main.lengthMs = readi32();
+            clipDownloadInfo.main.size = readi64();
+            clipDownloadInfo.main.url = readString();
         }
 
         if ((download_opt & DOWNLOAD_OPT_SUB_STREAM_1) != 0) {
-            downloadInfo.sub.clipDate = readi32();
-            downloadInfo.sub.clipTimeMs = readi64();
-            downloadInfo.sub.lengthMs = readi32();
-            downloadInfo.sub.size = readi64();
-            downloadInfo.sub.url = readString();
+            clipDownloadInfo.sub.clipDate = readi32();
+            clipDownloadInfo.sub.clipTimeMs = readi64();
+            clipDownloadInfo.sub.lengthMs = readi32();
+            clipDownloadInfo.sub.size = readi64();
+            clipDownloadInfo.sub.url = readString();
         }
 
         if ((download_opt & DOWNLOAD_OPT_INDEX_PICT) != 0) {
             int pictureSize = readi32();
-            downloadInfo.posterData = new byte[pictureSize];
-            readByteArray(downloadInfo.posterData, pictureSize);
+            clipDownloadInfo.posterData = new byte[pictureSize];
+            readByteArray(clipDownloadInfo.posterData, pictureSize);
         }
 
         if (mHasVdbId) {
@@ -528,13 +528,13 @@ public class RemoteVdbClient extends VdbClient {
             if (DEBUG_ANIM) {
                 Log.d(TAG, "download url received");
             }
-            remuxFileForImage(downloadInfo, mUser1);
+            remuxFileForImage(clipDownloadInfo, mUser1);
         } else {
-            mCallback.onDownloadUrlReadyAsync(downloadInfo, (mCmdTag & DOWNLOAD_FIRST_LOOP) != 0);
+            mCallback.onDownloadUrlReadyAsync(clipDownloadInfo, (mCmdTag & DOWNLOAD_FIRST_LOOP) != 0);
         }
     }
 
-    private void remuxFileForImage(DownloadInfo downloadInfo, int sessionCounter) {
+    private void remuxFileForImage(ClipDownloadInfo clipDownloadInfo, int sessionCounter) {
         HttpRemuxer remuxer = new HttpRemuxer(sessionCounter) {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
@@ -549,7 +549,7 @@ public class RemoteVdbClient extends VdbClient {
         };
 
         RemuxerParams params = new RemuxerParams();
-        params.setInputFile(downloadInfo.main.url + ",0,-1;");
+        params.setInputFile(clipDownloadInfo.main.url + ",0,-1;");
         params.setInputMime("ts");
         params.setOutputFormat("mp4");
         params.setDurationMs(1);

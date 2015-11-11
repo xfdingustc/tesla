@@ -12,7 +12,7 @@ import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.DownloadInfo;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -83,7 +83,7 @@ abstract public class Vdb {
 
         void onDownloadUrlFailed(Vdb vdb);
 
-        void onDownloadUrlReady(Vdb vdb, DownloadInfo downloadInfo, boolean bFirstLoop);
+        void onDownloadUrlReady(Vdb vdb, ClipDownloadInfo clipDownloadInfo, boolean bFirstLoop);
 
         void onDownloadStarted(Vdb vdb, int id);
 
@@ -409,11 +409,11 @@ abstract public class Vdb {
         }
 
         @Override
-        public void onDownloadUrlReadyAsync(final DownloadInfo downloadInfo, final boolean bFirstLoop) {
+        public void onDownloadUrlReadyAsync(final ClipDownloadInfo clipDownloadInfo, final boolean bFirstLoop) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onDownloadUrlReady(Vdb.this, downloadInfo, bFirstLoop);
+                    mCallback.onDownloadUrlReady(Vdb.this, clipDownloadInfo, bFirstLoop);
                 }
             });
         }

@@ -9,7 +9,7 @@ import com.transee.vdb.Vdb.MarkLiveInfo;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.DownloadInfo;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -96,7 +96,7 @@ abstract public class VdbClient {
 
         void onDownloadUrlFailedAsync();
 
-        void onDownloadUrlReadyAsync(DownloadInfo downloadInfom, boolean bFirstLoop);
+        void onDownloadUrlReadyAsync(ClipDownloadInfo clipDownloadInfom, boolean bFirstLoop);
 
         void onPlaybackUrlReadyAsync(PlaybackUrl playbackUrl);
 

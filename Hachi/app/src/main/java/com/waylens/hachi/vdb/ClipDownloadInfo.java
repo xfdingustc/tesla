@@ -3,9 +3,9 @@ package com.waylens.hachi.vdb;
 /**
  * Created by Xiaofei on 2015/8/28.
  */
-public class DownloadInfo {
+public class ClipDownloadInfo {
 
-    public static class DownloadStreamInfo {
+    public static class StreamDownloadInfo {
         public int clipDate;
         public long clipTimeMs;
         public int lengthMs;
@@ -15,11 +15,11 @@ public class DownloadInfo {
 
     public final Clip.ID cid;
     public int opt;
-    public final DownloadStreamInfo main = new DownloadStreamInfo();
-    public final DownloadStreamInfo sub = new DownloadStreamInfo();
+    public final StreamDownloadInfo main = new StreamDownloadInfo();
+    public final StreamDownloadInfo sub = new StreamDownloadInfo();
     public byte[] posterData;
 
-    public DownloadInfo(Clip.ID cid) {
+    public ClipDownloadInfo(Clip.ID cid) {
         this.cid = cid;
     }
 }

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.multidex.MultiDex;
+
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
@@ -30,8 +30,7 @@ import im.fir.sdk.FIR;
 public class Hachi extends Application {
     private static final String TAG = Hachi.class.getSimpleName();
 
-    public static final String VIDEO_DOWNLOAD_PATH = "/Transee/video/Vidit/";
-    public static final String PICTURE_DOWNLOAD_PATH = "/Transee/picture/Vidit/";
+
 
     private static Context mSharedContext = null;
 
@@ -44,7 +43,7 @@ public class Hachi extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        MultiDex.install(this);
+        //MultiDex.install(this);
     }
 
     private void init() {
@@ -91,17 +90,7 @@ public class Hachi extends Application {
             .hideThreadInfo();
     }
 
-    static private final String getPath(String subdir) {
-        //		String extStore = System.getenv("SECONDARY_STORAGE");
-        //		Log.d(TAG, extStore);
-        File sdCardDir = Environment.getExternalStorageDirectory();
-        if (sdCardDir == null)
-            return null;
-        String dir = sdCardDir.toString() + subdir;
-        File dirFile = new File(dir);
-        dirFile.mkdirs();
-        return dir;
-    }
+
 
     public final void test() {
         // /data/data/com.transee.viditcam/files
@@ -113,15 +102,7 @@ public class Hachi extends Application {
         Log.d(TAG, "ext files dir: " + tt.getPath());
     }
 
-    // API
-    static public final String getVideoDownloadPath() {
-        return getPath(VIDEO_DOWNLOAD_PATH);
-    }
 
-    // API
-    static public final String getPicturePath() {
-        return getPath(PICTURE_DOWNLOAD_PATH);
-    }
 
     // API
     static public final void addToMediaStore(Context context, String filename) {

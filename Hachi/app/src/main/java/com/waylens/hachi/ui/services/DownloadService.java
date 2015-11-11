@@ -16,11 +16,7 @@ import com.transee.vdb.RemuxHelper;
 import com.transee.vdb.RemuxerParams;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.DownloadInfo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -74,22 +70,7 @@ public class DownloadService extends Service {
     }
 
     private void downloadClip(final Clip clip) {
-//        DownloadUrlRequest request = new DownloadUrlRequest(clip, new VdbResponse.Listener<DownloadInfo>() {
-//            @Override
-//            public void onResponse(DownloadInfo response) {
-//                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
-//                //Logger.t(TAG).d("on response:!!!!: " + response.sub.url);
-//                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
-//
-//                startDownload(response, 0, clip.streams[0]);
-//            }
-//        }, new VdbResponse.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(SnipeError error) {
-//
-//            }
-//        });
-//        mVdbRequestQueue.add(request);
+
     }
 
     public interface Callback {
