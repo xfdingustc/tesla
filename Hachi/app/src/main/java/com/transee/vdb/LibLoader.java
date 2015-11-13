@@ -7,7 +7,7 @@ public class LibLoader {
     static Object mLock = new Object();
     static boolean mbLoaded = false;
 
-    static void load() {
+    public static void load() {
         synchronized (mLock) {
             if (!mbLoaded) {
                 mbLoaded = true;

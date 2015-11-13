@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.services;
+package com.waylens.hachi.ui.services.download;
 
 import android.app.NotificationManager;
 import android.app.Service;
@@ -10,9 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.HttpRemuxer;
 import com.transee.vdb.Mp4Info;
-import com.transee.vdb.RemuxHelper;
 import com.transee.vdb.RemuxerParams;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
@@ -284,12 +282,13 @@ public class DownloadService extends Service {
 
         Logger.t(TAG).d("start download item " + notif.item.params.getInputFile());
 
-        HttpRemuxer remuxer = new HttpRemuxer(0) {
+        HttpRemuxer remuxer = new HttpRemuxer(0);
+        remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
                 processRemuxerEvent(remuxer, event, arg1, arg2);
             }
-        };
+        });
 
         DownloadItem item = notif.item;
         int remain = mWorkQueue.initDownload(remuxer, item);

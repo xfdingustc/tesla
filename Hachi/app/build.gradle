@@ -13,6 +13,12 @@ android {
         versionCode 12
         versionName "0.12"
         //multiDexEnabled true
+
+        ndk {
+            moduleName "HttpRemuxer"
+            ldLibs "log"
+            abiFilters "armeabi", "armeabi-v7a"
+        }
     }
 
     signingConfigs {

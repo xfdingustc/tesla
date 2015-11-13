@@ -1,12 +1,10 @@
-package com.waylens.hachi.ui.services;
+package com.waylens.hachi.ui.services.download;
 
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.HttpRemuxer;
-import com.transee.vdb.RemuxHelper;
 import com.transee.vdb.RemuxerParams;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
@@ -21,10 +19,20 @@ import com.waylens.hachi.vdb.RawDataBlock;
 public class DownloadIntentService extends IntentService {
     private static final String TAG = DownloadIntentService.class.getSimpleName();
 
+
     private static final String ACTION_DOWNLOAD = "com.waylens.hachi.ui.services.action.DOWNLOAD";
     private static Clip mSharedClip;
 
     private static final String EXTRA_CLIP = "com.waylens.hachi.ui.services.extra.CLIP";
+
+    public static final String INTENT_FILTER_DOWNLOAD_INTENT_SERVICE = "download_intent_service";
+    public static final String EVENT_EXTRA_WHAT = "event_what";
+    public static final String EVENT_EXTRA_DOWNLOAD_PROGRESS = "download_progress";
+
+    public static final int EVENT_WHAT_DOWNLOAD_STARTED = 0;
+    public static final int EVENT_WHAT_DOWNLOAD_PROGRESS = 1;
+    public static final int EVENT_WHAT_DOWNLOAD_FINSHED = 2;
+
 
     private VdbRequestQueue mVdbRequestQueue;
     private Clip mClip;
@@ -149,24 +157,29 @@ public class DownloadIntentService extends IntentService {
 
         Logger.t(TAG).d("start download item " + params.getInputFile());
 
-        HttpRemuxer remuxer = new HttpRemuxer(0) {
+        HttpRemuxer remuxer = new HttpRemuxer(0);
+        remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
-                //processRemuxerEvent(remuxer, event, arg1, arg2);
-                Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
-            }
-        };
+                //Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
+                switch (event) {
+                    case HttpRemuxer.EVENT_ERROR:
+                        handleRemuxerError(arg1, arg2);
+                        break;
+                    case HttpRemuxer.EVENT_PROGRESS:
+                        handleRemuxerProgress(arg1);
+                        break;
+                    case HttpRemuxer.EVENT_FINISHED:
+                        handleRemuxerFinished(arg1, arg2);
+                        break;
 
-        //DownloadService.DownloadItem item = notif.item;
-        //int remain = mWorkQueue.initDownload(remuxer, item);
+                }
+            }
+        });
 
         // TODO:
         //broadcastInfo(REASON_DOWNLOAD_STARTED, DOWNLOAD_STATE_RUNNING, item, 0, remain);
 
-
-        Logger.t(TAG).d("run remuxer");
-
-        //RemuxerParams params = item.params;
         int clipDate = params.getClipDate();
         long clipTimeMs = params.getClipTimeMs();
         String outputFile = RemuxHelper.genDownloadFileName(clipDate, clipTimeMs);
@@ -178,6 +191,35 @@ public class DownloadIntentService extends IntentService {
             Logger.t(TAG).d("remux is running output file is: " + outputFile);
         }
     }
+
+    private void handleRemuxerError(int arg1, int arg2) {
+
+    }
+
+    private void handleRemuxerProgress(int progress) {
+        broadcastDownloadProgress(progress);
+
+    }
+
+
+
+    private void handleRemuxerFinished(int arg1, int arg2) {
+
+    }
+
+
+
+
+    private void broadcastDownloadProgress(int progress) {
+        Intent intent = new Intent(INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
+        intent.putExtra(EVENT_EXTRA_WHAT, EVENT_WHAT_DOWNLOAD_PROGRESS);
+        intent.putExtra(EVENT_EXTRA_DOWNLOAD_PROGRESS, progress);
+        sendBroadcast(intent);
+    }
+
+
+
+
 
 
 }

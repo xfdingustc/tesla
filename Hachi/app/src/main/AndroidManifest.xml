@@ -52,7 +52,7 @@
         <activity android:name=".ui.activities.FollowListActivity"/>
 
         <!-- Copied from Vidit app -->
-        <service android:name=".ui.services.DownloadService"/>
+        <service android:name=".ui.services.download.DownloadService"/>
 
         <activity
             android:name=".ui.activities.CameraControlActivity"
@@ -140,7 +140,7 @@
             android:value="111f96d8caee6c27d509925c4fb204ae"/>
 
         <service
-            android:name=".ui.services.DownloadIntentService"
+            android:name=".ui.services.download.DownloadIntentService"
             android:exported="false">
         </service>
     </application>

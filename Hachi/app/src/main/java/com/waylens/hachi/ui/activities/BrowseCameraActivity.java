@@ -37,7 +37,6 @@ public class BrowseCameraActivity extends BaseActivity {
 
     private VdbRequestQueue mVdbRequestQueue;
 
-    private static VdtCamera mSharedCamera;
 
     public static void launch(Context context, VdtCamera camera) {
         Intent intent = new Intent(context, BrowseCameraActivity.class);
@@ -46,7 +45,6 @@ public class BrowseCameraActivity extends BaseActivity {
         bundle.putString(SSID, camera.getSSID());
         bundle.putString(HOST_STRING, camera.getHostString());
         intent.putExtras(bundle);
-        mSharedCamera = camera;
         context.startActivity(intent);
     }
 

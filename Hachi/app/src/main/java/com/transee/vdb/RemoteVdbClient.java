@@ -7,6 +7,7 @@ import android.util.Log;
 import com.transee.common.GPSRawData;
 import com.transee.common.TcpConnection;
 import com.transee.vdb.Vdb.MarkLiveInfo;
+import com.waylens.hachi.ui.services.download.HttpRemuxer;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
@@ -535,7 +536,8 @@ public class RemoteVdbClient extends VdbClient {
     }
 
     private void remuxFileForImage(ClipDownloadInfo clipDownloadInfo, int sessionCounter) {
-        HttpRemuxer remuxer = new HttpRemuxer(sessionCounter) {
+        HttpRemuxer remuxer = new HttpRemuxer(sessionCounter);
+        remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
                 if (event == HttpRemuxer.EVENT_FINISHED) {
@@ -546,7 +548,7 @@ public class RemoteVdbClient extends VdbClient {
                     endRemux(remuxer);
                 }
             }
-        };
+        });
 
         RemuxerParams params = new RemuxerParams();
         params.setInputFile(clipDownloadInfo.main.url + ",0,-1;");

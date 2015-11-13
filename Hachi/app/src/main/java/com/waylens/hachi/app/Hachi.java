@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 
 import android.util.Log;
 
@@ -15,7 +14,7 @@ import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.snipe.Snipe;
-import com.waylens.hachi.ui.services.DownloadService;
+import com.waylens.hachi.ui.services.download.DownloadService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 

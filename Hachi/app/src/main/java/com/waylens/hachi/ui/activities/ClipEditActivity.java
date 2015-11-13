@@ -1,7 +1,9 @@
 package com.waylens.hachi.ui.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -21,7 +24,6 @@ import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -31,7 +33,7 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
-import com.waylens.hachi.ui.services.DownloadIntentService;
+import com.waylens.hachi.ui.services.download.DownloadIntentService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
@@ -86,7 +88,10 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.video_play_view)
     SurfaceView mVideoPlayView;
 
-    private static VdtCamera mSharedCamera;
+    @Bind(R.id.downloadProgressBar)
+    ProgressBar mDownloadProgressBar;
+
+
     private static Clip mSharedClip;
 
     private Clip mClip;
@@ -104,6 +109,8 @@ public class ClipEditActivity extends BaseActivity {
     ClipExtent mClipExtent;
     private MediaPlayer mPlayer;
 
+    private BroadcastReceiver mBroadcastReceiver;
+
 
     public static void launch(Context context, Clip clip) {
         Intent intent = new Intent(context, ClipEditActivity.class);
@@ -115,6 +122,7 @@ public class ClipEditActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+
     }
 
     @Override
@@ -242,7 +250,10 @@ public class ClipEditActivity extends BaseActivity {
         mVdbRequestQueue = Snipe.newRequestQueue(this);
         mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
         initViews();
+        initBroadcastReceiver();
     }
+
+
 
     private void initViews() {
         setContentView(R.layout.activity_clip_editor);
@@ -262,6 +273,8 @@ public class ClipEditActivity extends BaseActivity {
             //mBtnShare.setVisibility(View.VISIBLE);
         }
     }
+
+
 
     private void initSeekBar() {
         final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
@@ -290,7 +303,23 @@ public class ClipEditActivity extends BaseActivity {
         });
     }
 
-    void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
+    private void initBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter(DownloadIntentService
+            .INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
+
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleDownloadBroadcastIntent(intent);
+            }
+        };
+
+        registerReceiver(mBroadcastReceiver, intentFilter);
+    }
+
+
+
+    private void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
         clipPos.setClipTimeMs(clipTimeMs);
         mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture, true);
     }
@@ -429,7 +458,17 @@ public class ClipEditActivity extends BaseActivity {
 
 
 
+    private void handleDownloadBroadcastIntent(Intent intent) {
+        int event_what = intent.getIntExtra(DownloadIntentService.EVENT_EXTRA_WHAT, -1);
+        switch (event_what) {
+            case DownloadIntentService.EVENT_WHAT_DOWNLOAD_PROGRESS:
+                int progress = intent.getIntExtra(DownloadIntentService
+                    .EVENT_EXTRA_DOWNLOAD_PROGRESS, 0);
+                mDownloadProgressBar.setProgress(progress);
+                break;
+        }
 
+    }
 
 
 
