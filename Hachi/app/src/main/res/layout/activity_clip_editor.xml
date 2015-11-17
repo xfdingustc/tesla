@@ -95,6 +95,12 @@
         android:layout_gravity="center_horizontal"
         android:text="@string/download"/>
 
+    <TextView
+        android:id="@+id/tvDownloadInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
 
     <ProgressBar
         android:id="@+id/downloadProgressBar"

@@ -10,8 +10,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.transee.common.DateTime;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipEditActivity;
@@ -60,8 +60,8 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
         final Clip clip = mClipSet.getClip(position);
         holder.videoDesc.setText("Mocked description");
         holder.videoTime.setText(clip.getDateTimeString());
-        holder.videoDuration.setText(clip.getDurationString());
-        ClipPos clipPos = new ClipPos(clip, clip.getStartTime(), ClipPos.TYPE_POSTER, false);
+        holder.videoDuration.setText(DateTime.secondsToString(clip.getDurationMs() / 1000));
+        ClipPos clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, holder.videoCover);
         holder.mBtnVideoEdit.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -9,11 +9,15 @@ import java.util.List;
 
 public class Clip {
 
+    protected int mDurationMs;
+
     // clip categories: one vdb provoides one category
     public static final int CAT_UNKNOWN = 0; // unknown clip type
     public static final int CAT_REMOTE = 1; // vidit camera clips: RemoteClip
     public static final int CAT_LOCAL = 2; // downloaded & downloading clips: LocalClip
     public static final int CAT_NATIVE = 3; // Android native clips: not implemented
+
+
 
     // --------------------------------------------------------------
     // CAT_REMOTE:
@@ -119,7 +123,7 @@ public class Clip {
     public int clipDate;
 
     // clip length ms
-    public int clipLengthMs;
+
 
     // clip size in bytes
     public long clipSize = -1;
@@ -139,6 +143,11 @@ public class Clip {
     public boolean isLocal() {
         return false;
     }
+
+    public int getDurationMs() {
+        return mDurationMs;
+    }
+
 
     // API
     public final String getDateTimeString() {
@@ -160,18 +169,13 @@ public class Clip {
         return DateTime.getDayName(clipDate, 0);
     }
 
-    // API
-    public final String getDurationString() {
-        return DateTime.secondsToString(clipLengthMs / 1000);
-    }
-
     // inherit
     public Clip.StreamInfo getStream(int index) {
         return (index < 0 || index >= streams.length) ? null : streams[index];
     }
 
     // inherit
-    public long getStartTime() {
+    public long getStartTimeMs() {
         return 0;
     }
 
@@ -190,10 +194,6 @@ public class Clip {
         return -1;
     }
 
-    // inherit
-    public Uri getUri() {
-        return null;
-    }
 
     // inherit
     public String getVdbId() {

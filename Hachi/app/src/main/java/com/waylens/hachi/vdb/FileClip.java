@@ -27,12 +27,8 @@ public class FileClip extends LocalClip {
 
 	@Override
 	public boolean contains(long timeMs) {
-		return timeMs >= 0 && timeMs < clipLengthMs;
+		return timeMs >= 0 && timeMs < getDurationMs();
 	}
 
-	@Override
-	public Uri getUri() {
-		return Uri.fromFile(file);
-	}
 
 }

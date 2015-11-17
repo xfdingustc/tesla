@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -89,6 +90,9 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.video_play_view)
     SurfaceView mVideoPlayView;
 
+    @Bind(R.id.tvDownloadInfo)
+    TextView mTvDownloadInfo;
+
     @Bind(R.id.downloadProgressBar)
     ProgressBar mDownloadProgressBar;
 
@@ -148,8 +152,8 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnDownload)
     public void onBtnDownload() {
-        long startTimeMs = mClip.getStartTime();
-        long endTimeMs = mClip.getStartTime() + mClip.clipLengthMs / 4;
+        long startTimeMs = mClip.getStartTimeMs();
+        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 4;
         ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
         DownloadIntentService.startDownload(this, clipFragment);
 
@@ -176,7 +180,7 @@ public class ClipEditActivity extends BaseActivity {
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime());
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs());
 
         ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override
@@ -223,9 +227,9 @@ public class ClipEditActivity extends BaseActivity {
             JSONObject fragment = new JSONObject();
             fragment.put("guid", mClip.getVdbId());
             fragment.put("clipCaptureTime", mClip.clipDate * 1000l);
-            fragment.put("beginTime", (int) mClip.getStartTime());
+            fragment.put("beginTime", (int) mClip.getStartTimeMs());
             fragment.put("offset", 0);
-            fragment.put("duration", mClip.clipLengthMs);
+            fragment.put("duration", mClip.getDurationMs());
             JSONArray fragments = new JSONArray();
             fragments.put(fragment);
             params.put("fragments", fragments);
@@ -261,7 +265,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_clip_editor);
-        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
+        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
 
         initSeekBar();
@@ -281,7 +285,7 @@ public class ClipEditActivity extends BaseActivity {
 
 
     private void initSeekBar() {
-        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
+        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mSeekBar.setClip(mClip, mVdbImageLoader);
         mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
             @Override
@@ -293,7 +297,7 @@ public class ClipEditActivity extends BaseActivity {
             public void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser) {
                 Log.e("test", "Progress: " + progress);
                 if (Math.abs(oldPosition - progress) > 1000) {
-                    refreshThumbnail(mClip.getStartTime() + progress, clipPos);
+                    refreshThumbnail(mClip.getStartTimeMs() + progress, clipPos);
                     oldPosition = progress;
                 } else {
                     Log.e("test", "Progress: skipped");
@@ -435,7 +439,7 @@ public class ClipEditActivity extends BaseActivity {
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_TS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime() + 33 * 1000);
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs() + 33 * 1000);
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, 1000);
 
         ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mClip, parameters,
@@ -468,7 +472,12 @@ public class ClipEditActivity extends BaseActivity {
             case DownloadIntentService.EVENT_WHAT_DOWNLOAD_PROGRESS:
                 int progress = intent.getIntExtra(DownloadIntentService
                     .EVENT_EXTRA_DOWNLOAD_PROGRESS, 0);
+                mTvDownloadInfo.setText("Downloading: " + progress + "%");
                 mDownloadProgressBar.setProgress(progress);
+                break;
+            case DownloadIntentService.EVENT_WHAT_DOWNLOAD_FINSHED:
+                mTvDownloadInfo.setText("Download finished");
+                mDownloadProgressBar.setProgress(0);
                 break;
         }
 

@@ -127,8 +127,9 @@ public class RemoteVdbClient extends VdbClient {
         for (int i = 0; i < totalClips; i++) {
             int clipId = readi32();
             int clipDate = readi32();
-            RemoteClip clip = new RemoteClip(clipSet.clipType, clipId, null, clipDate); // TODO
-            clip.clipLengthMs = readi32();
+            int duration = readi32();
+            RemoteClip clip = new RemoteClip(clipSet.clipType, clipId, null, clipDate, duration); // TODO
+
             clip.clipStartTime = readi64();
             int num_streams = readi32();
             if (num_streams > 0) {
@@ -832,8 +833,7 @@ public class RemoteVdbClient extends VdbClient {
             int flags = readi16();
             int clipType = readi32At(16 * numStreams);
 
-            RemoteClip clip = new RemoteClip(clipType, clipId, null, clipDate);
-            clip.clipLengthMs = clipDuration;
+            RemoteClip clip = new RemoteClip(clipType, clipId, null, clipDate, clipDuration);
             clip.clipStartTime = clipStartTime;
             if (numStreams > 0) {
                 readStreamInfo(clip, 0);
@@ -899,8 +899,8 @@ public class RemoteVdbClient extends VdbClient {
         int clipType = readi32();
         int clipId = readi32();
         int clipDate = readi32();
-        RemoteClip clip = new RemoteClip(clipType, clipId, null, clipDate);
-        clip.clipLengthMs = readi32();
+        int duration = readi32();
+        RemoteClip clip = new RemoteClip(clipType, clipId, null, clipDate, duration);
         clip.index = clipIndex;
         clip.clipStartTime = readi64();
         int num_streams = readi32();

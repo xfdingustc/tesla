@@ -110,7 +110,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     private void initViews() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_clip_playback);
-        ClipPos clipPos = new ClipPos(mClip, mClip.getStartTime(), ClipPos.TYPE_POSTER, false);
+        ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
 
 
@@ -118,7 +118,7 @@ public class ClipPlaybackActivity extends BaseActivity {
 
     private void loadRawData() {
         long clipTimeMs = 0;
-        int lengthMs = mClip.clipLengthMs;
+        int lengthMs = mClip.getDurationMs();
 
         RawDataBlockRequest accRequest = new RawDataBlockRequest(mClip, clipTimeMs, lengthMs,
             RawDataBlock.RAW_DATA_ACC,
@@ -228,7 +228,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime());
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs());
 
         ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override

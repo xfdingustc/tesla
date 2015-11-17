@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.view.View;
 
+import com.transee.common.DateTime;
 import com.transee.common.HashCache;
 import com.transee.common.Utils;
 import com.transee.common.VideoListView;
@@ -238,7 +239,7 @@ public abstract class ClipSetAdapter extends VideoListAdapter {
     private final void getClipPreviewImage(int index, int offset, int size) {
         Clip clip = getClipItem(index);
         if (clip != null) {
-            long clipTimeMs = (long) clip.clipLengthMs * offset / size + clip.getStartTime();
+            long clipTimeMs = (long) clip.getDurationMs() * offset / size + clip.getStartTimeMs();
             ClipPos clipPos = new ClipPos(clip, clipTimeMs, ClipPos.TYPE_PREVIEW, false);
             mVdb.getClient().requestClipImage(clip, clipPos, 0, 0);
         }
@@ -260,7 +261,7 @@ public abstract class ClipSetAdapter extends VideoListAdapter {
             // line 1
             item.setTextLeft(1, clip.getTimeString());
             // line 2, left
-            String length_info = clip.getDurationString();
+            String length_info = DateTime.secondsToString(clip.getDurationMs() / 1000);
             if (clip.streams.length > 0) {
                 length_info += MediaHelper.formatVideoInfo(mActivity, clip.streams[0]);
             }

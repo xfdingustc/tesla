@@ -97,7 +97,7 @@ public class LocalVdb extends Vdb {
 				fclip.streams[0] = clip.streams[0];
 				fclip.index = clip.index;
 				fclip.clipDate = clip.clipDate;
-				fclip.clipLengthMs = clip.clipLengthMs;
+				//fclip.setDurationMs(clip.getDurationMs());
 				mFileClipSet.addClip(fclip);
 				mCallback.onDownloadFinished(this, clip, fclip);
 			}

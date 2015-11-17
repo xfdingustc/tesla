@@ -95,8 +95,9 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
         for (int i = 0; i < totalClips; i++) {
             int clipId = response.readi32();
             int clipDate = response.readi32();
-            RemoteClip clip = new RemoteClip(clipSet.clipType, clipId, null, clipDate); // TODO
-            clip.clipLengthMs = response.readi32();
+            int duration = response.readi32();
+            RemoteClip clip = new RemoteClip(clipSet.clipType, clipId, null, clipDate, duration);
+
             clip.clipStartTime = response.readi64();
             int numStreams = response.readi16();
             int flag = response.readi16();

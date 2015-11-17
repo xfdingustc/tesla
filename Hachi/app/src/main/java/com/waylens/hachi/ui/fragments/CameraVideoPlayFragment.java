@@ -177,7 +177,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         }
 
         Log.e("test", "DataType[1]: " + dataType);
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip, mClip.getStartTime(), mClip.clipLengthMs,
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip, mClip.getStartTimeMs(),
+            mClip.getDurationMs(),
                 dataType,
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
@@ -250,7 +251,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTime());
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs());
 
         ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override

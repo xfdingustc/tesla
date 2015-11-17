@@ -166,7 +166,6 @@ public class DownloadIntentService extends IntentService {
         remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
-                //Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
                 switch (event) {
                     case HttpRemuxer.EVENT_ERROR:
                         handleRemuxerError(arg1, arg2);
@@ -175,7 +174,8 @@ public class DownloadIntentService extends IntentService {
                         handleRemuxerProgress(arg1);
                         break;
                     case HttpRemuxer.EVENT_FINISHED:
-                        handleRemuxerFinished(arg1, arg2);
+                        Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
+                        handleRemuxerFinished();
                         break;
 
                 }
@@ -208,17 +208,25 @@ public class DownloadIntentService extends IntentService {
 
 
 
-    private void handleRemuxerFinished(int arg1, int arg2) {
-
+    private void handleRemuxerFinished() {
+        broadcastDownloadFinished();
+        requestRawDataDownload();
     }
 
-
+    private void requestRawDataDownload() {
+    }
 
 
     private void broadcastDownloadProgress(int progress) {
         Intent intent = new Intent(INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
         intent.putExtra(EVENT_EXTRA_WHAT, EVENT_WHAT_DOWNLOAD_PROGRESS);
         intent.putExtra(EVENT_EXTRA_DOWNLOAD_PROGRESS, progress);
+        sendBroadcast(intent);
+    }
+    
+    private void broadcastDownloadFinished() {
+        Intent intent = new Intent(INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
+        intent.putExtra(EVENT_EXTRA_WHAT, EVENT_WHAT_DOWNLOAD_FINSHED);
         sendBroadcast(intent);
     }
 

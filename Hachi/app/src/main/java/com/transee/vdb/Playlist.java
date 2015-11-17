@@ -36,7 +36,7 @@ public class Playlist {
 	}
 
 	public final long getOffsetMs() {
-		return numClips == 0 ? 0 : clipSet.getClip(0).getStartTime();
+		return numClips == 0 ? 0 : clipSet.getClip(0).getStartTimeMs();
 	}
 
 	public void clear() {
@@ -54,7 +54,7 @@ public class Playlist {
 	public void insertClip(Clip clip) {
 		clipSet.insertClipByIndex(clip);
 		numClips++;
-		mTotalLengthMs += clip.clipLengthMs;
+		mTotalLengthMs += clip.getDurationMs();
 	}
 
 	public boolean moveClip(Clip clip) {

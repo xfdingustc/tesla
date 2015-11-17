@@ -19,20 +19,21 @@ public class RemoteClip extends Clip {
 	// length(ms) removed at the head
 	public long clipStartTime;
 
-	public RemoteClip(int type, int subType, Object extra, int clipDate) {
+	public RemoteClip(int type, int subType, Object extra, int clipDate, int duration) {
 		// a remote clip has 2 streams at most
 		super(new Clip.ID(CAT_REMOTE, type, subType, extra), 2);
 		this.clipDate = clipDate;
+		this.mDurationMs = duration;
 	}
 
 	@Override
-	public long getStartTime() {
+	public long getStartTimeMs() {
 		return clipStartTime;
 	}
 
 	@Override
 	public boolean contains(long timeMs) {
-		return timeMs >= clipStartTime && timeMs < clipStartTime + clipLengthMs;
+		return timeMs >= clipStartTime && timeMs < clipStartTime + mDurationMs;
 	}
 
 	@Override

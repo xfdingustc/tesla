@@ -49,7 +49,7 @@ public class SimpleClipSet extends ClipSet {
 		clip.index = clips.size();
 		clips.add(clip);
 		totalClips++;
-		totalLengthMs += clip.clipLengthMs;
+		totalLengthMs += clip.getDurationMs();
 	}
 
 	public void setLiveClipId(Clip.ID liveClipId) {
@@ -68,7 +68,7 @@ public class SimpleClipSet extends ClipSet {
 		}
 		clips.add(i, clip);
 		totalClips++;
-		totalLengthMs += clip.clipLengthMs;
+		totalLengthMs += clip.getDurationMs();
 	}
 
 	// by index
@@ -81,7 +81,7 @@ public class SimpleClipSet extends ClipSet {
 		}
 		clips.add(i, clip);
 		totalClips++;
-		totalLengthMs += clip.clipLengthMs;
+		totalLengthMs += clip.getDurationMs();
 		for (; i < totalClips; i++) {
 			clip = clips.get(i);
 			clip.index = i;
@@ -95,7 +95,7 @@ public class SimpleClipSet extends ClipSet {
 			if (clip.cid.equals(cid)) {
 				clips.remove(i);
 				totalClips--;
-				totalLengthMs -= clip.clipLengthMs;
+				totalLengthMs -= clip.getDurationMs();
 				return true;
 			}
 		}
@@ -108,8 +108,8 @@ public class SimpleClipSet extends ClipSet {
 		for (i = 0; i < clips.size(); i++) {
 			Clip tmp = clips.get(i);
 			if (tmp.cid.equals(clip.cid)) {
-				totalLengthMs -= tmp.clipLengthMs;
-				totalLengthMs += clip.clipLengthMs;
+				totalLengthMs -= tmp.getDurationMs();
+				totalLengthMs += clip.getDurationMs();
 				clips.set(i, clip);
 				if (isLive) {
 					liveClipId = bFinished ? null : clip.cid;
