@@ -1,8 +1,6 @@
-package com.waylens.hachi.ui.services.download;
+package com.transee.vdb;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.LibLoader;
-import com.transee.vdb.RemuxerParams;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

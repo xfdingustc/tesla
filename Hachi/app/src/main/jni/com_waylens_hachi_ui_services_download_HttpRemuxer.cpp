@@ -1,15 +1,43 @@
 //
 // Created by Xiaofei on 2015/11/12.
 //
-#define LOG_TAG "remuxer_jni"
+#define LOG_TAG "HttpRemuxer_Jni"
+
+//#include "avf_common.h"
+//#include "avf_if.h"
+//#include "avf_osal.h"
+//#include "avf_remuxer_api.h"
+
+
 
 #include "jni.h"
 #include "com_waylens_hachi_ui_services_download_HttpRemuxer.h"
 
+//static struct {
+//    JavaVM *jvm; // Java Virtual Machine
+//    jfieldID contextID; // HttpRemuxer.mNativeContext
+//    jmethodID notifyID; // HttpRemuxer.notify()
+//} g_info;
+
+
+//static inline static void set_remuxer(JNIEnv *env, jobject thiz, avf_remuxer_t *remuxer)
+//{
+// //   env->SetIntField(thiz, g_info.contextID, (int)remuxer);
+//}
 
 JNIEXPORT void JNICALL Java_com_waylens_hachi_ui_services_download_HttpRemuxer_native_1init
         (JNIEnv *env, jobject thiz) {
+    //AVF_LOGI("native init");
 
+//    jobject obj = env->NewGlobalRef(thiz);
+//
+//    avf_remuxer_t *remuxer;
+//    if ((remuxer = avf_remuxer_create(remuxer_callback, (void*)obj)) == NULL) {
+//        env->DeleteGlobalRef(obj);
+//        return;
+//    }
+//
+//    set_remuxer(env, thiz, remuxer);
 }
 
 /*

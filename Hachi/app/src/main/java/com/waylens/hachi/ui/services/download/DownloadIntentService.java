@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.orhanobut.logger.Logger;
+import com.transee.vdb.HttpRemuxer;
 import com.transee.vdb.RemuxerParams;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
