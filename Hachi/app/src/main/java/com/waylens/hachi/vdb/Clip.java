@@ -205,17 +205,6 @@ public class Clip {
     }
 
 
-    public List<ClipFragment> getFragments(int interval) {
-        List<ClipFragment> fragments = new ArrayList<>();
-        int fragmentCount = clipLengthMs / interval;
 
-        for (int i = 0; i < fragmentCount; i++) {
-            ClipPos clipPos = new ClipPos(this, i * interval, ClipPos.TYPE_POSTER, false);
-            ClipFragment fragment = new ClipFragment(clipPos);
-            fragments.add(fragment);
-        }
-
-        return fragments;
-    }
 
 }

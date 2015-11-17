@@ -37,6 +37,7 @@ import com.waylens.hachi.ui.services.download.DownloadIntentService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
+import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RemoteClip;
@@ -147,7 +148,10 @@ public class ClipEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnDownload)
     public void onBtnDownload() {
-        DownloadIntentService.startDownload(this, mClip);
+        long startTimeMs = mClip.getStartTime();
+        long endTimeMs = mClip.getStartTime() + mClip.clipLengthMs / 4;
+        ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
+        DownloadIntentService.startDownload(this, clipFragment);
 
     }
 

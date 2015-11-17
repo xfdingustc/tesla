@@ -14,6 +14,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
+import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.RawDataBlock;
 
 
@@ -22,7 +23,7 @@ public class DownloadIntentService extends IntentService {
 
 
     private static final String ACTION_DOWNLOAD = "com.waylens.hachi.ui.services.action.DOWNLOAD";
-    private static Clip mSharedClip;
+    private static ClipFragment mSharedClipFragment;
 
     private static final String EXTRA_CLIP = "com.waylens.hachi.ui.services.extra.CLIP";
 
@@ -36,7 +37,7 @@ public class DownloadIntentService extends IntentService {
 
 
     private VdbRequestQueue mVdbRequestQueue;
-    private Clip mClip;
+    private ClipFragment mClipFragment;
 
 
     private static class DownloadOptions {
@@ -55,10 +56,10 @@ public class DownloadIntentService extends IntentService {
         super("DownloadIntentService");
     }
 
-    public static void startDownload(Context context, Clip clip) {
+    public static void startDownload(Context context, ClipFragment clipFragment) {
         Intent intent = new Intent(context, DownloadIntentService.class);
         intent.setAction(ACTION_DOWNLOAD);
-        mSharedClip = clip;
+        mSharedClipFragment = clipFragment;
         context.startService(intent);
     }
 
@@ -74,8 +75,8 @@ public class DownloadIntentService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_DOWNLOAD.equals(action)) {
-                mClip = mSharedClip;
-                handleActionDownloadClip(mClip);
+                mClipFragment = mSharedClipFragment;
+                handleActionDownloadClip(mClipFragment);
             }
         }
     }
@@ -85,18 +86,21 @@ public class DownloadIntentService extends IntentService {
         mVdbRequestQueue.start();
     }
 
-    private void handleActionDownloadClip(Clip clip) {
-        requestDownloadUrl(clip);
+    private void handleActionDownloadClip(ClipFragment clipFragment) {
+        requestDownloadUrl(clipFragment);
     }
 
-    private void requestDownloadUrl(final Clip clip) {
-        DownloadUrlRequest request = new DownloadUrlRequest(clip, new VdbResponse.Listener<ClipDownloadInfo>() {
+    private void requestDownloadUrl(final ClipFragment clipFragment) {
+
+
+        DownloadUrlRequest request = new DownloadUrlRequest(clipFragment, new VdbResponse
+            .Listener<ClipDownloadInfo>() {
             @Override
             public void onResponse(ClipDownloadInfo response) {
                 Logger.t(TAG).d("on response:!!!!: " + response.main.url);
                 Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
 
-                startDownload(response, 0, clip.streams[0]);
+                startDownload(response, 0, clipFragment.getClip().streams[0]);
             }
         }, new VdbResponse.ErrorListener() {
             @Override
