@@ -8,6 +8,12 @@ public class ClipFragment {
     private final long mStartTimeMs;
     private final long mEndTimeMs;
 
+    public ClipFragment(Clip clip) {
+        this.mClip = clip;
+        this.mStartTimeMs = clip.getStartTimeMs();
+        this.mEndTimeMs = clip.getStartTimeMs() + clip.getDurationMs();
+    }
+
     public ClipFragment(Clip clip, long startTimeMs, long endTimeMs) {
         this.mClip = clip;
         this.mStartTimeMs = startTimeMs;

@@ -25,6 +25,7 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
@@ -120,8 +121,9 @@ public class ClipPlaybackActivity extends BaseActivity {
         long clipTimeMs = 0;
         int lengthMs = mClip.getDurationMs();
 
-        RawDataBlockRequest accRequest = new RawDataBlockRequest(mClip, clipTimeMs, lengthMs,
-            RawDataBlock.RAW_DATA_ACC,
+        ClipFragment clipFragment = new ClipFragment(mClip);
+
+        RawDataBlockRequest accRequest = new RawDataBlockRequest(clipFragment, RawDataBlock.RAW_DATA_ACC,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
@@ -136,8 +138,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         });
         mVdbRequestQueue.add(accRequest);
 
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip, clipTimeMs, lengthMs,
-            RawDataBlock.RAW_DATA_ODB,
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment, RawDataBlock.RAW_DATA_ODB,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {

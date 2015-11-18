@@ -210,11 +210,10 @@ public class DownloadIntentService extends IntentService {
 
     private void handleRemuxerFinished() {
         broadcastDownloadFinished();
-        requestRawDataDownload();
+
     }
 
-    private void requestRawDataDownload() {
-    }
+
 
 
     private void broadcastDownloadProgress(int progress) {

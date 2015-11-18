@@ -252,14 +252,13 @@ public class VdbCommand {
         }
 
 
-        public static VdbCommand createCmdGetRawDataBlock(Clip clip, boolean forDownload,
-                                                          long clipTimeMs, int lengthMs,
+        public static VdbCommand createCmdGetRawDataBlock(ClipFragment clipFragment, boolean forDownload,
                                                           int dataType) {
             return new Builder()
                 .writeCmdCode(CMD_GetRawDataBlock, forDownload ? 1 : 0)
-                .writeClipId(clip.cid)
-                .writeInt64(clipTimeMs)
-                .writeInt32(lengthMs)
+                .writeClipId(clipFragment.getClip().cid)
+                .writeInt64(clipFragment.getStartTimeMs())
+                .writeInt32(clipFragment.getDurationMs())
                 .writeInt32(dataType)
                 .build();
         }

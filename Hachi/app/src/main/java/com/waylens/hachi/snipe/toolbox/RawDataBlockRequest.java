@@ -7,6 +7,7 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
@@ -18,26 +19,21 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
     private static final String TAG = RawDataBlockRequest.class.getSimpleName();
     private final VdbResponse.Listener<RawDataBlock> mListener;
 
-    private final Clip mClip;
-    private final Long mClipTimeMs;
-    private final int mLengthMs;
+    private final ClipFragment mClipFragment;
     private final int mDataType;
 
-    public RawDataBlockRequest(Clip clip, Long clipTimeMs, int lengthMs, int dataType,
+    public RawDataBlockRequest(ClipFragment clipFragment, int dataType,
                                VdbResponse.Listener<RawDataBlock> listener,
                                VdbResponse.ErrorListener errorListener) {
         super(0, errorListener);
         this.mListener = listener;
-        this.mClip = clip;
-        this.mClipTimeMs = clipTimeMs;
-        this.mLengthMs = lengthMs;
+        this.mClipFragment = clipFragment;
         this.mDataType = dataType;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClip, false, mClipTimeMs, mLengthMs,
-                mDataType);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment, false, mDataType);
         return mVdbCommand;
     }
 

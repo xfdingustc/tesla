@@ -34,6 +34,7 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
+import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.services.download.DownloadIntentService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.Clip;
@@ -41,6 +42,7 @@ import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
@@ -62,6 +64,31 @@ public class ClipEditActivity extends BaseActivity {
     private static final String TAG = ClipEditActivity.class.getSimpleName();
 
     private static final int MAX_EXTENSION = 1000 * 30;
+
+    private static Clip mSharedClip;
+
+    private Clip mClip;
+    private ClipFragment mSelectedClipFragment;
+
+    private RawDataBlock mAccDataBlock;
+    private RawDataBlock mObdDataBlock;
+    private RawDataBlock mGpsDataBlock;
+
+    private VdbRequestQueue mVdbRequestQueue;
+    private VdbImageLoader mVdbImageLoader;
+
+    private long oldPosition;
+
+    private long oldStartValue;
+    private long oldEndValue;
+
+    private ClipExtent mClipExtent;
+    private MediaPlayer mPlayer;
+
+    private BroadcastReceiver mBroadcastReceiver;
+
+
+
 
     @Bind(R.id.ivPreviewPicture)
     ImageView mIvPreviewPicture;
@@ -97,24 +124,52 @@ public class ClipEditActivity extends BaseActivity {
     ProgressBar mDownloadProgressBar;
 
 
-    private static Clip mSharedClip;
+    @OnClick(R.id.btnPlay)
+    public void onBtnPlayClicked() {
+        ClipPlaybackActivity.launch(this, mClip);
+        //preparePlayback();
+    }
 
-    private Clip mClip;
+    @OnClick(R.id.btnDownload)
+    public void onBtnDownload() {
+        mSelectedClipFragment = getSelectedClipFragment();
+        requestDownloadVideoClip();
 
-    private VdbRequestQueue mVdbRequestQueue;
-    private VdbImageLoader mVdbImageLoader;
 
-    long oldPosition;
+    }
 
-    long startPlayTime;
+    @OnClick(R.id.btn_share)
+    public void shareVideo() {
+        playVideo();
+    }
 
-    long oldStartValue;
-    long oldEndValue;
+    @OnClick(R.id.btn_update_bookmark)
+    public void updateBookmark() {
+        if (mClipExtent == null
+            || (mClipExtent.clipStartTimeMs == mVideoTrimmer.getLeftValue()
+            && mClipExtent.clipEndTimeMs == mVideoTrimmer.getRightValue())) {
+            return;
+        }
+        mVdbRequestQueue.add(new ClipExtentUpdateRequest(mClip,
+            mVideoTrimmer.getLeftValue(),
+            mVideoTrimmer.getRightValue(),
+            new VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+                    if (response == 0) {
+                        mBtnUpdateBookMark.getDrawable().setColorFilter(null);
+                    }
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Log.e("test", "", error);
+                }
+            }
+        ));
 
-    ClipExtent mClipExtent;
-    private MediaPlayer mPlayer;
-
-    private BroadcastReceiver mBroadcastReceiver;
+    }
 
 
     public static void launch(Context context, Clip clip) {
@@ -122,6 +177,7 @@ public class ClipEditActivity extends BaseActivity {
         mSharedClip = clip;
         context.startActivity(intent);
     }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,27 +200,80 @@ public class ClipEditActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.btnPlay)
-    public void onBtnPlayClicked() {
-        ClipPlaybackActivity.launch(this, mClip);
-        //preparePlayback();
+    @Override
+    protected void init() {
+        super.init();
+        mClip = mSharedClip;
+        mVdbRequestQueue = Snipe.newRequestQueue(this);
+        mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
+        initViews();
+        initBroadcastReceiver();
     }
 
-    @OnClick(R.id.btnDownload)
-    public void onBtnDownload() {
-        long startTimeMs = mClip.getStartTimeMs();
-        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 4;
-        ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
-        DownloadIntentService.startDownload(this, clipFragment);
 
+    private void initViews() {
+        setContentView(R.layout.activity_clip_editor);
+        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
+
+        initSeekBar();
+        if (mClip.cid.type == RemoteClip.TYPE_BUFFERED) {
+            mSeekBar.setVisibility(View.VISIBLE);
+            mRangeSeekBarContainer.setVisibility(View.GONE);
+            //mBtnShare.setVisibility(View.GONE);
+        } else {
+            getClipExtent();
+            mRangeSeekBarContainer.setVisibility(View.VISIBLE);
+            mVideoTrimmer.setVisibility(View.INVISIBLE);
+            mSeekBar.setVisibility(View.VISIBLE);
+            //mBtnShare.setVisibility(View.VISIBLE);
+        }
     }
 
-    @OnClick(R.id.btn_share)
-    public void shareVideo() {
-        playVideo();
+
+    private void initSeekBar() {
+        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        mSeekBar.setClip(mClip, mVdbImageLoader);
+        mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStartTrackingTouch(VideoPlayerProgressBar progressBar) {
+                Log.e("test", "Start dragging....");
+            }
+
+            @Override
+            public void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser) {
+                Log.e("test", "Progress: " + progress);
+                if (Math.abs(oldPosition - progress) > 1000) {
+                    refreshThumbnail(mClip.getStartTimeMs() + progress, clipPos);
+                    oldPosition = progress;
+                } else {
+                    Log.e("test", "Progress: skipped");
+                }
+            }
+
+            @Override
+            public void onStopTrackingTouch(VideoPlayerProgressBar progressBar) {
+                Log.e("test", "Stop dragging....");
+            }
+        });
     }
 
-    void playVideo() {
+    private void initBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter(DownloadIntentService
+            .INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
+
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleDownloadBroadcastIntent(intent);
+            }
+        };
+
+        registerReceiver(mBroadcastReceiver, intentFilter);
+    }
+
+
+    private void playVideo() {
         if (mPlayer != null) {
             new Thread(new Runnable() {
                 @Override
@@ -251,81 +360,6 @@ public class ClipEditActivity extends BaseActivity {
             }));
     }
 
-    @Override
-    protected void init() {
-        super.init();
-        mClip = mSharedClip;
-        mVdbRequestQueue = Snipe.newRequestQueue(this);
-        mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
-        initViews();
-        initBroadcastReceiver();
-    }
-
-
-
-    private void initViews() {
-        setContentView(R.layout.activity_clip_editor);
-        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-        mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
-
-        initSeekBar();
-        if (mClip.cid.type == RemoteClip.TYPE_BUFFERED) {
-            mSeekBar.setVisibility(View.VISIBLE);
-            mRangeSeekBarContainer.setVisibility(View.GONE);
-            //mBtnShare.setVisibility(View.GONE);
-        } else {
-            getClipExtent();
-            mRangeSeekBarContainer.setVisibility(View.VISIBLE);
-            mVideoTrimmer.setVisibility(View.INVISIBLE);
-            mSeekBar.setVisibility(View.VISIBLE);
-            //mBtnShare.setVisibility(View.VISIBLE);
-        }
-    }
-
-
-
-    private void initSeekBar() {
-        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-        mSeekBar.setClip(mClip, mVdbImageLoader);
-        mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStartTrackingTouch(VideoPlayerProgressBar progressBar) {
-                Log.e("test", "Start dragging....");
-            }
-
-            @Override
-            public void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser) {
-                Log.e("test", "Progress: " + progress);
-                if (Math.abs(oldPosition - progress) > 1000) {
-                    refreshThumbnail(mClip.getStartTimeMs() + progress, clipPos);
-                    oldPosition = progress;
-                } else {
-                    Log.e("test", "Progress: skipped");
-                }
-            }
-
-            @Override
-            public void onStopTrackingTouch(VideoPlayerProgressBar progressBar) {
-                Log.e("test", "Stop dragging....");
-            }
-        });
-    }
-
-    private void initBroadcastReceiver() {
-        IntentFilter intentFilter = new IntentFilter(DownloadIntentService
-            .INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
-
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                handleDownloadBroadcastIntent(intent);
-            }
-        };
-
-        registerReceiver(mBroadcastReceiver, intentFilter);
-    }
-
-
 
     private void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
         clipPos.setClipTimeMs(clipTimeMs);
@@ -372,10 +406,10 @@ public class ClipEditActivity extends BaseActivity {
         oldEndValue = mClipExtent.clipEndTimeMs;
 
         final ClipPos clipPos = new ClipPos(null,
-                mClipExtent.readCid,
-                mClip.clipDate,
-                mClipExtent.clipStartTimeMs,
-                ClipPos.TYPE_POSTER, false);
+            mClipExtent.readCid,
+            mClip.clipDate,
+            mClipExtent.clipStartTimeMs,
+            ClipPos.TYPE_POSTER, false);
         mVideoTrimmer.setOnChangeListener(new VideoTrimmer.OnTrimmerChangeListener() {
             @Override
             public void onStartTrackingTouch(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag) {
@@ -386,7 +420,7 @@ public class ClipEditActivity extends BaseActivity {
             public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
                 if (start != mClipExtent.clipStartTimeMs || end != mClipExtent.clipEndTimeMs) {
                     mBtnUpdateBookMark.getDrawable().setColorFilter(getResources().getColor(R.color.style_color_primary),
-                            PorterDuff.Mode.MULTIPLY);
+                        PorterDuff.Mode.MULTIPLY);
                 }
                 if (Math.abs(oldStartValue - start) > 1000) {
                     refreshThumbnail(start, clipPos);
@@ -406,32 +440,12 @@ public class ClipEditActivity extends BaseActivity {
         mVideoTrimmer.setVisibility(View.VISIBLE);
     }
 
-    @OnClick(R.id.btn_update_bookmark)
-    public void updateBookmark() {
-        if (mClipExtent == null
-                || (mClipExtent.clipStartTimeMs == mVideoTrimmer.getLeftValue()
-                && mClipExtent.clipEndTimeMs == mVideoTrimmer.getRightValue())) {
-            return;
-        }
-        mVdbRequestQueue.add(new ClipExtentUpdateRequest(mClip,
-                mVideoTrimmer.getLeftValue(),
-                mVideoTrimmer.getRightValue(),
-                new VdbResponse.Listener<Integer>() {
-                    @Override
-                    public void onResponse(Integer response) {
-                        if (response == 0) {
-                            mBtnUpdateBookMark.getDrawable().setColorFilter(null);
-                        }
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        Log.e("test", "", error);
-                    }
-                }
-        ));
 
+    private ClipFragment getSelectedClipFragment() {
+        long startTimeMs = mClip.getStartTimeMs();
+        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 4;
+        ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
+        return clipFragment;
     }
 
     private void preparePlayback() {
@@ -443,18 +457,18 @@ public class ClipEditActivity extends BaseActivity {
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, 1000);
 
         ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mClip, parameters,
-                new VdbResponse.Listener<PlaybackUrl>() {
-                    @Override
-                    public void onResponse(PlaybackUrl playbackUrl) {
-                        Log.e("test", "URL: " + playbackUrl.url);
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        Log.e("test", "", error);
-                    }
-                });
+            new VdbResponse.Listener<PlaybackUrl>() {
+                @Override
+                public void onResponse(PlaybackUrl playbackUrl) {
+                    Log.e("test", "URL: " + playbackUrl.url);
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Log.e("test", "", error);
+                }
+            });
 
         mVdbRequestQueue.add(request);
     }
@@ -463,7 +477,6 @@ public class ClipEditActivity extends BaseActivity {
         File dir = ImageUtils.getImageStorageDir(this, "Download");
 
     }
-
 
 
     private void handleDownloadBroadcastIntent(Intent intent) {
@@ -478,17 +491,50 @@ public class ClipEditActivity extends BaseActivity {
             case DownloadIntentService.EVENT_WHAT_DOWNLOAD_FINSHED:
                 mTvDownloadInfo.setText("Download finished");
                 mDownloadProgressBar.setProgress(0);
+                requestDownloadRawData();
                 break;
         }
 
     }
 
 
+    private void requestDownloadVideoClip() {
 
+        DownloadIntentService.startDownload(this, mSelectedClipFragment);
+    }
 
+    private void requestDownloadRawData() {
+        RawDataBlockRequest accRequest = new RawDataBlockRequest(mSelectedClipFragment, RawDataBlock.RAW_DATA_ACC,
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    mAccDataBlock = response;
+                    mTvDownloadInfo.setText("ACC data is downloaded!!!");
 
+                }
+            }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
 
+            }
+        });
+        mVdbRequestQueue.add(accRequest);
 
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mSelectedClipFragment, RawDataBlock.RAW_DATA_ODB,
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    mTvDownloadInfo.setText("OBD data is downloaded!!!!");
+                    mObdDataBlock = response;
+                }
+            }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(obdRequest);
+    }
 
 
 }

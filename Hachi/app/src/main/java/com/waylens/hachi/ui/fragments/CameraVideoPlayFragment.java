@@ -27,6 +27,7 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -152,8 +153,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     boolean isRawDataReady() {
         return mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_READY
-                && mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_READY
-                && mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
+            && mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
     }
 
     void loadRawData() {
@@ -177,33 +178,32 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         }
 
         Log.e("test", "DataType[1]: " + dataType);
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip, mClip.getStartTimeMs(),
-            mClip.getDurationMs(),
-                dataType,
-                new VdbResponse.Listener<RawDataBlock>() {
-                    @Override
-                    public void onResponse(RawDataBlock response) {
-                        Log.e("test", "DataType[2]: " + dataType);
-                        mTypedRawData.put(dataType, response);
-                        mTypedState.put(dataType, RAW_DATA_STATE_READY);
-                        onLoadRawDataFinished();
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
-                        onLoadRawDataFinished();
-                        Log.e("test", "", error);
-                    }
-                });
+        ClipFragment clipFragment = new ClipFragment(mClip);
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment, dataType,
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    Log.e("test", "DataType[2]: " + dataType);
+                    mTypedRawData.put(dataType, response);
+                    mTypedState.put(dataType, RAW_DATA_STATE_READY);
+                    onLoadRawDataFinished();
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
+                    onLoadRawDataFinished();
+                    Log.e("test", "", error);
+                }
+            });
         mVdbRequestQueue.add(obdRequest);
     }
 
     void onLoadRawDataFinished() {
         if (mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_UNKNOWN
-                || mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
-                || mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
+            || mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
         mRawDataState = RAW_DATA_STATE_READY;
@@ -232,7 +232,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         SpriteFactory spriteFactory = new SpriteFactory(mMapView);
         LatLng firstPoint = new LatLng(firstGPS.coord.lat_orig, firstGPS.coord.lng_orig);
         mMarkerOptions = new MarkerOptions().position(firstPoint)
-                .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
+            .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
         mMapView.addMarker(mMarkerOptions);
         mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
         mMapView.setCenterCoordinate(firstPoint);

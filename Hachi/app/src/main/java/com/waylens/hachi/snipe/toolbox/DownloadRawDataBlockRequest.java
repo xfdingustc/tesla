@@ -8,6 +8,7 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.RawDataBlock;
 
@@ -18,29 +19,28 @@ public class DownloadRawDataBlockRequest extends VdbRequest<RawDataBlock.Downloa
     private static final String TAG = DownloadRawDataBlockRequest.class.getSimpleName();
     private final VdbResponse.Listener<RawDataBlock.DownloadRawDataBlock> mListener;
     private final Bundle mParameters;
-    private final Clip mClip;
+    private final ClipFragment mClipFragment;
 
     public static final String PARAMETER_CLIP_TIME_MS = "clip_time_ms";
     public static final String PARAMETER_LENGTH_MS = "length_ms";
     public static final String PARAMETER_DATA_TYPE = "data_type";
 
 
-    public DownloadRawDataBlockRequest(Clip clip, Bundle parameters,
+    public DownloadRawDataBlockRequest(ClipFragment clipFragment, Bundle parameters,
                                        VdbResponse.Listener<RawDataBlock.DownloadRawDataBlock> listener,
                                        VdbResponse.ErrorListener errorListener) {
         super(0, errorListener);
         this.mListener = listener;
         this.mParameters = parameters;
-        this.mClip = clip;
+        this.mClipFragment = clipFragment;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
-        long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
-        int lengthMs = mParameters.getInt(PARAMETER_LENGTH_MS);
+        //long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
+        //int lengthMs = mParameters.getInt(PARAMETER_LENGTH_MS);
         int dataType = mParameters.getInt(PARAMETER_DATA_TYPE);
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClip, true, clipTimeMs,
-            lengthMs, dataType);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment, true, dataType);
         return mVdbCommand;
     }
 
