@@ -1,10 +1,5 @@
 package com.waylens.hachi.skin;
 
-import com.waylens.hachi.views.ContainerLayouts;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.waylens.hachi.views;
+package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
 

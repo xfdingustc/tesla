@@ -1,15 +1,8 @@
-package com.waylens.hachi.views;
+package com.waylens.hachi.views.dashboard;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.os.Build;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.skin.Panel;
@@ -88,10 +81,12 @@ public class DashboardView extends ContainerView implements OverlayProvider {
         List<Panel> panelList = mSkin.getPanels();
         for (Panel panel : panelList) {
             if (panel instanceof PanelGforce) {
+                Logger.t(TAG).d("Add Panel: " + panel.toString());
                 PanelGforce gforcePanel = (PanelGforce)panel;
                 PanelGforceView panelGforceView = new PanelGforceView(getContext(), gforcePanel,
                     mEventBus);
                 addView(panelGforceView);
+
             }
         }
     }

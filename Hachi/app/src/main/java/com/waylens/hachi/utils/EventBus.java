@@ -1,7 +1,6 @@
 package com.waylens.hachi.utils;
 
-import com.waylens.hachi.skin.Element;
-import com.waylens.hachi.views.ElementView;
+import com.waylens.hachi.views.dashboard.ElementView;
 
 import java.util.HashMap;
 

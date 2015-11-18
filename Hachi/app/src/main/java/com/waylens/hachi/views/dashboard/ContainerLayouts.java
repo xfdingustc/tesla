@@ -1,4 +1,4 @@
-package com.waylens.hachi.views;
+package com.waylens.hachi.views.dashboard;
 
 /**
  * Created by Xiaofei on 2015/9/9.

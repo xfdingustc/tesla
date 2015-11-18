@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.views.ContainerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;

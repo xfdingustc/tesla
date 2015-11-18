@@ -43,7 +43,6 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.services.download.DownloadIntentService;
-import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipFragment;
@@ -51,7 +50,7 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.views.DashboardView;
+import com.waylens.hachi.views.dashboard.DashboardView;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
 import com.waylens.mediatranscoder.MediaTranscoder;
@@ -487,10 +486,6 @@ public class ClipEditActivity extends BaseActivity {
         mVdbRequestQueue.add(request);
     }
 
-    private void downloadTs(String url) {
-        File dir = ImageUtils.getImageStorageDir(this, "Download");
-
-    }
 
 
     private void handleDownloadBroadcastIntent(Intent intent) {
@@ -565,9 +560,10 @@ public class ClipEditActivity extends BaseActivity {
 
     private void prepareDashboardView() {
         mDashboardView = new DashboardView(this);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(1920, 1080);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(1080, 1920);
         addContentView(mDashboardView, layoutParams);
-        mDashboardView.setVisibility(View.INVISIBLE);
+        //mDashboardView.setVisibility(View.INVISIBLE);
+        //mDashboardView.set
     }
 
     private void beginTranscode() {

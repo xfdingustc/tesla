@@ -1,4 +1,4 @@
-package com.waylens.hachi.views;
+package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,6 +9,7 @@ import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.ElementNumber;
 import com.waylens.hachi.skin.Font;
 import com.waylens.hachi.skin.SkinManager;
+import com.waylens.hachi.views.dashboard.ElementView;
 
 /**
  * Created by Xiaofei on 2015/9/17.

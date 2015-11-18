@@ -1,9 +1,8 @@
 package com.waylens.hachi.skin;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.waylens.hachi.views.ContainerLayouts;
+import com.waylens.hachi.views.dashboard.ContainerLayouts;
 
 import org.json.JSONObject;
 

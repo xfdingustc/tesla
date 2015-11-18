@@ -1,11 +1,10 @@
-package com.waylens.hachi.views;
+package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.View;
 
 import com.waylens.hachi.skin.Element;
-import com.waylens.hachi.utils.EventBus;
+import com.waylens.hachi.views.dashboard.PanelView;
 
 /**
  * Created by Xiaofei on 2015/9/9.

@@ -31,7 +31,7 @@ import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.views.DashboardView;
+import com.waylens.hachi.views.dashboard.DashboardView;
 
 import java.io.IOException;
 

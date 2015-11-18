@@ -1,13 +1,10 @@
-package com.waylens.hachi.views;
+package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.widget.ImageView;
 
 import com.waylens.hachi.skin.Element;
-import com.waylens.hachi.skin.ElementStaticImage;
-import com.waylens.hachi.utils.EventBus;
 
 /**
  * Created by Xiaofei on 2015/9/9.

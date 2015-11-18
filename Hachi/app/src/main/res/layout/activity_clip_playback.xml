@@ -26,9 +26,9 @@
 
 
 
-    <com.waylens.hachi.views.DashboardView
+    <com.waylens.hachi.views.dashboard.DashboardView
         android:id="@+id/dashboard"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.waylens.hachi.views.DashboardView>
+        android:layout_height="match_parent"></com.waylens.hachi.views.dashboard.DashboardView>
 
 </RelativeLayout>

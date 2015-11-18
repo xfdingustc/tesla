@@ -1,4 +1,4 @@
-package com.waylens.hachi.views;
+package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,6 +6,7 @@ import android.graphics.Rect;
 
 import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.ElementProgressImage;
+import com.waylens.hachi.views.dashboard.ElementView;
 
 /**
  * Created by Xiaofei on 2015/9/10.
