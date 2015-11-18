@@ -17,13 +17,14 @@ import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.utils.EventBus;
+import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import java.util.List;
 
 /**
  * Created by Xiaofei on 2015/9/6.
  */
-public class DashboardView extends ContainerView {
+public class DashboardView extends ContainerView implements OverlayProvider {
     private final static String TAG = DashboardView.class.getSimpleName();
 
     public static final String GFORCE_LEFT = "GforceLeft";
@@ -69,7 +70,17 @@ public class DashboardView extends ContainerView {
         mEventBus.postEvent(key, value);
     }
 
+    @Override
+    public Bitmap updateTexImage(long pts) {
+//        if (mListener != null) {
+//            mListener.update(pts);
+//        }
+        Bitmap bitmap = getDrawingCache();
+        return bitmap;
+    }
+
     private void init() {
+        setDrawingCacheEnabled(true);
         addPanels();
     }
 

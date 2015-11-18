@@ -30,6 +30,7 @@ public class DownloadIntentService extends IntentService {
     public static final String INTENT_FILTER_DOWNLOAD_INTENT_SERVICE = "download_intent_service";
     public static final String EVENT_EXTRA_WHAT = "event_what";
     public static final String EVENT_EXTRA_DOWNLOAD_PROGRESS = "download_progress";
+    public static final String EVENT_EXTRA_DOWNLOAD_FILE_PATH = "download_file_path";
 
     public static final int EVENT_WHAT_DOWNLOAD_STARTED = 0;
     public static final int EVENT_WHAT_DOWNLOAD_PROGRESS = 1;
@@ -38,6 +39,8 @@ public class DownloadIntentService extends IntentService {
 
     private VdbRequestQueue mVdbRequestQueue;
     private ClipFragment mClipFragment;
+
+    private String mDownloadFilePath;
 
 
     private static class DownloadOptions {
@@ -162,6 +165,7 @@ public class DownloadIntentService extends IntentService {
 
         Logger.t(TAG).d("start download item " + params.getInputFile());
 
+
         HttpRemuxer remuxer = new HttpRemuxer(0);
         remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
             @Override
@@ -193,6 +197,7 @@ public class DownloadIntentService extends IntentService {
         } else {
             //item.outputFile = outputFile;
             remuxer.run(params, outputFile);
+            mDownloadFilePath = outputFile;
             Logger.t(TAG).d("remux is running output file is: " + outputFile);
         }
     }
@@ -226,6 +231,7 @@ public class DownloadIntentService extends IntentService {
     private void broadcastDownloadFinished() {
         Intent intent = new Intent(INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
         intent.putExtra(EVENT_EXTRA_WHAT, EVENT_WHAT_DOWNLOAD_FINSHED);
+        intent.putExtra(EVENT_EXTRA_DOWNLOAD_FILE_PATH, mDownloadFilePath);
         sendBroadcast(intent);
     }
 

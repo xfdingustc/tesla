@@ -1,26 +1,33 @@
 package com.waylens.hachi.ui.activities;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -44,14 +51,19 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
+import com.waylens.hachi.views.DashboardView;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
+import com.waylens.mediatranscoder.MediaTranscoder;
+import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import butterknife.Bind;
@@ -87,8 +99,10 @@ public class ClipEditActivity extends BaseActivity {
 
     private BroadcastReceiver mBroadcastReceiver;
 
+    private String mDownloadedFilePath;
 
 
+    private DashboardView mDashboardView;
 
     @Bind(R.id.ivPreviewPicture)
     ImageView mIvPreviewPicture;
@@ -121,7 +135,7 @@ public class ClipEditActivity extends BaseActivity {
     TextView mTvDownloadInfo;
 
     @Bind(R.id.downloadProgressBar)
-    ProgressBar mDownloadProgressBar;
+    ProgressBar mProgressBar;
 
 
     @OnClick(R.id.btnPlay)
@@ -443,7 +457,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private ClipFragment getSelectedClipFragment() {
         long startTimeMs = mClip.getStartTimeMs();
-        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 4;
+        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 64;
         ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
         return clipFragment;
     }
@@ -486,11 +500,13 @@ public class ClipEditActivity extends BaseActivity {
                 int progress = intent.getIntExtra(DownloadIntentService
                     .EVENT_EXTRA_DOWNLOAD_PROGRESS, 0);
                 mTvDownloadInfo.setText("Downloading: " + progress + "%");
-                mDownloadProgressBar.setProgress(progress);
+                mProgressBar.setProgress(progress);
                 break;
             case DownloadIntentService.EVENT_WHAT_DOWNLOAD_FINSHED:
-                mTvDownloadInfo.setText("Download finished");
-                mDownloadProgressBar.setProgress(0);
+                mDownloadedFilePath = intent.getStringExtra(DownloadIntentService
+                    .EVENT_EXTRA_DOWNLOAD_FILE_PATH);
+                mTvDownloadInfo.setText("Download finished: " + mDownloadedFilePath);
+                mProgressBar.setProgress(0);
                 requestDownloadRawData();
                 break;
         }
@@ -526,6 +542,7 @@ public class ClipEditActivity extends BaseActivity {
                 public void onResponse(RawDataBlock response) {
                     mTvDownloadInfo.setText("OBD data is downloaded!!!!");
                     mObdDataBlock = response;
+                    startTranscodeTask();
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -534,6 +551,97 @@ public class ClipEditActivity extends BaseActivity {
             }
         });
         mVdbRequestQueue.add(obdRequest);
+    }
+
+    private void startTranscodeTask() {
+        mTvDownloadInfo.setText("Start transcoding task");
+
+        prepareDashboardView();
+
+        beginTranscode();
+
+    }
+
+
+    private void prepareDashboardView() {
+        mDashboardView = new DashboardView(this);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(1920, 1080);
+        addContentView(mDashboardView, layoutParams);
+        mDashboardView.setVisibility(View.INVISIBLE);
+    }
+
+    private void beginTranscode() {
+        final File file;
+
+        try {
+            file = File.createTempFile("transcode_test", ".mp4", getExternalFilesDir(null));
+        } catch (IOException e) {
+            Logger.t(TAG).e("Failed to create temporary file.");
+            Toast.makeText(this, "Failed to create temporary file.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        ContentResolver resolver = getContentResolver();
+        final ParcelFileDescriptor parcelFileDescriptor;
+
+        Uri fileUri = Uri.fromFile(new File(mDownloadedFilePath));
+        try {
+            parcelFileDescriptor = resolver.openFileDescriptor(fileUri, "r");
+        } catch (FileNotFoundException e) {
+            //Log.w("Could not open '" + data.getDataString() + "'", e);
+            Toast.makeText(this, "File not found.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+
+        mProgressBar.setMax(1000);
+        final long startTime = SystemClock.uptimeMillis();
+
+        MediaTranscoder.Listener listener = new MediaTranscoder.Listener() {
+            @Override
+            public void onTranscodeProgress(double progress) {
+                if (progress < 0) {
+                    mProgressBar.setIndeterminate(true);
+                } else {
+                    mProgressBar.setIndeterminate(false);
+                    mProgressBar.setProgress((int) Math.round(progress * 1000));
+                }
+            }
+
+            @Override
+            public void onTranscodeCompleted() {
+                Logger.t(TAG).d("transcoding took " + (SystemClock.uptimeMillis() - startTime) + "ms");
+                Toast.makeText(ClipEditActivity.this, "transcoded file placed on " + file, Toast
+                    .LENGTH_LONG)
+                    .show();
+
+                mProgressBar.setIndeterminate(false);
+                mProgressBar.setProgress(1000);
+                startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(file), "video/mp4"));
+                try {
+                    parcelFileDescriptor.close();
+                } catch (IOException e) {
+                    Log.w("Error while closing", e);
+                }
+            }
+
+            @Override
+            public void onTranscodeFailed(Exception exception) {
+                mProgressBar.setIndeterminate(false);
+                mProgressBar.setProgress(0);
+
+                Toast.makeText(ClipEditActivity.this, "Transcoder error occurred.", Toast.LENGTH_LONG).show();
+                mTvDownloadInfo.setText("Transcoder error");
+                try {
+                    parcelFileDescriptor.close();
+                } catch (IOException e) {
+                    Log.w("Error while closing", e);
+                }
+            }
+        };
+        Logger.t(TAG).d("transcoding into " + file);
+        MediaTranscoder.getInstance().transcodeVideo(fileDescriptor, file.getAbsolutePath(),
+            MediaFormatStrategyPresets.createAndroid720pStrategy(), listener, mDashboardView);
     }
 
 
