@@ -50,9 +50,9 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.views.dashboard.DashboardView;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
+import com.waylens.hachi.views.dashboard.DashboardView;
 import com.waylens.mediatranscoder.MediaTranscoder;
 import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 
@@ -456,7 +456,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private ClipFragment getSelectedClipFragment() {
         long startTimeMs = mClip.getStartTimeMs();
-        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 64;
+        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 16;
         ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
         return clipFragment;
     }
@@ -485,7 +485,6 @@ public class ClipEditActivity extends BaseActivity {
 
         mVdbRequestQueue.add(request);
     }
-
 
 
     private void handleDownloadBroadcastIntent(Intent intent) {
@@ -562,6 +561,8 @@ public class ClipEditActivity extends BaseActivity {
         mDashboardView = new DashboardView(this);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(1080, 1920);
         addContentView(mDashboardView, layoutParams);
+        //mDashboardView.setBackgroundColor(Color.CYAN);
+        //mDashboardView.set;
         //mDashboardView.setVisibility(View.INVISIBLE);
         //mDashboardView.set
     }

@@ -81,7 +81,7 @@ public class DashboardView extends ContainerView implements OverlayProvider {
         List<Panel> panelList = mSkin.getPanels();
         for (Panel panel : panelList) {
             if (panel instanceof PanelGforce) {
-                Logger.t(TAG).d("Add Panel: " + panel.toString());
+                //Logger.t(TAG).d("Add Panel: " + panel.toString());
                 PanelGforce gforcePanel = (PanelGforce)panel;
                 PanelGforceView panelGforceView = new PanelGforceView(getContext(), gforcePanel,
                     mEventBus);

@@ -254,4 +254,11 @@ public class GlUtil {
 
         return textures[0];
     }
+
+    public static void releaseTexture(int texture) {
+        int[] textures = new int[1];
+        textures[0] = texture;
+
+        GLES20.glDeleteTextures(1, textures, 0);
+    }
 }

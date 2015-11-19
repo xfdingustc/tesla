@@ -1,6 +1,8 @@
 package com.waylens.mediatranscoder.engine.surfaces;
 
 
+import android.graphics.Bitmap;
+
 import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 /**
@@ -31,7 +33,9 @@ public class OverlaySurface {
     }
 
     public void drawImage(long pts, float[] texMatrix) {
-        mOverlayTextureId = GlUtil.createTextureFromBitmap(mOverlayProvider.updateTexImage(pts));
+        Bitmap texImage = mOverlayProvider.updateTexImage(pts);
+        mOverlayTextureId = GlUtil.createTextureFromBitmap(texImage);
         mFullScreenOverlay.drawFrame(mOverlayTextureId, texMatrix);
+        GlUtil.releaseTexture(mOverlayTextureId);
     }
 }
