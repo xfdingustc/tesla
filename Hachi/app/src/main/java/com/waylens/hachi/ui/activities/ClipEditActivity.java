@@ -101,7 +101,7 @@ public class ClipEditActivity extends BaseActivity {
     private String mDownloadedFilePath;
 
 
-    private DashboardView mDashboardView;
+
 
     @Bind(R.id.ivPreviewPicture)
     ImageView mIvPreviewPicture;
@@ -136,6 +136,8 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.downloadProgressBar)
     ProgressBar mProgressBar;
 
+    @Bind(R.id.dashboardView)
+    DashboardView mDashboardView;
 
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
@@ -558,9 +560,10 @@ public class ClipEditActivity extends BaseActivity {
 
 
     private void prepareDashboardView() {
-        mDashboardView = new DashboardView(this);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(1080, 1920);
-        addContentView(mDashboardView, layoutParams);
+        //mDashboardView = new DashboardView(this);
+        //FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(980, 1520);
+        //addContentView(mDashboardView, layoutParams);
+//        mDashboardView.setTo
         //mDashboardView.setBackgroundColor(Color.CYAN);
         //mDashboardView.set;
         //mDashboardView.setVisibility(View.INVISIBLE);
