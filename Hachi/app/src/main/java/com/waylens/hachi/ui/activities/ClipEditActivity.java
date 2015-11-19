@@ -81,9 +81,6 @@ public class ClipEditActivity extends BaseActivity {
     private Clip mClip;
     private ClipFragment mSelectedClipFragment;
 
-    private RawDataBlock mAccDataBlock;
-    private RawDataBlock mObdDataBlock;
-    private RawDataBlock mGpsDataBlock;
 
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
@@ -100,6 +97,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private String mDownloadedFilePath;
 
+    private DashboardView.Adapter mDashboardViewAdapter;
 
 
 
@@ -230,6 +228,9 @@ public class ClipEditActivity extends BaseActivity {
         setContentView(R.layout.activity_clip_editor);
         final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
+
+        mDashboardViewAdapter = new DashboardView.Adapter();
+        mDashboardView.setAdapter(mDashboardViewAdapter);
 
         initSeekBar();
         if (mClip.cid.type == RemoteClip.TYPE_BUFFERED) {
@@ -458,7 +459,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private ClipFragment getSelectedClipFragment() {
         long startTimeMs = mClip.getStartTimeMs();
-        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 16;
+        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() ;
         ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
         return clipFragment;
     }
@@ -520,7 +521,7 @@ public class ClipEditActivity extends BaseActivity {
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
-                    mAccDataBlock = response;
+                    mDashboardViewAdapter.setAccDataBlock(response);
                     mTvDownloadInfo.setText("ACC data is downloaded!!!");
 
                 }
@@ -537,7 +538,7 @@ public class ClipEditActivity extends BaseActivity {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     mTvDownloadInfo.setText("OBD data is downloaded!!!!");
-                    mObdDataBlock = response;
+                    mDashboardViewAdapter.setObdDataBlock(response);
                     startTranscodeTask();
                 }
             }, new VdbResponse.ErrorListener() {
@@ -584,12 +585,18 @@ public class ClipEditActivity extends BaseActivity {
 
         MediaTranscoder.Listener listener = new MediaTranscoder.Listener() {
             @Override
-            public void onTranscodeProgress(double progress) {
+            public void onTranscodeProgress(double progress, final long currentTimeMs) {
                 if (progress < 0) {
                     mProgressBar.setIndeterminate(true);
                 } else {
                     mProgressBar.setIndeterminate(false);
                     mProgressBar.setProgress((int) Math.round(progress * 1000));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDashboardView.update(currentTimeMs);
+                        }
+                    });
                 }
             }
 

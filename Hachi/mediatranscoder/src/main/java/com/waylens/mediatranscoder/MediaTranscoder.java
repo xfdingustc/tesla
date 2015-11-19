@@ -91,8 +91,8 @@ public class MediaTranscoder {
         final FileInputStream finalFileInputStream = fileInputStream;
         transcodeVideo(inFileDescriptor, outPath, outFormatStrategy, new Listener() {
             @Override
-            public void onTranscodeProgress(double progress) {
-                listener.onTranscodeProgress(progress);
+            public void onTranscodeProgress(double progress, long currentTimeMs) {
+                listener.onTranscodeProgress(progress, currentTimeMs);
             }
 
             @Override
@@ -142,11 +142,11 @@ public class MediaTranscoder {
                     MediaTranscoderEngine engine = new MediaTranscoderEngine();
                     engine.setProgressCallback(new MediaTranscoderEngine.ProgressCallback() {
                         @Override
-                        public void onProgress(final double progress) {
+                        public void onProgress(final double progress, final long currentTimeMs) {
                             handler.post(new Runnable() { // TODO: reuse instance
                                 @Override
                                 public void run() {
-                                    listener.onTranscodeProgress(progress);
+                                    listener.onTranscodeProgress(progress, currentTimeMs);
                                 }
                             });
                         }
@@ -184,7 +184,7 @@ public class MediaTranscoder {
          *
          * @param progress Progress in [0.0, 1.0] range, or negative value if progress is unknown.
          */
-        void onTranscodeProgress(double progress);
+        void onTranscodeProgress(double progress, long currentTimeMs);
 
         /**
          * Called when transcode completed.

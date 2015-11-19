@@ -70,6 +70,7 @@ public class DashboardView extends ContainerView implements OverlayProvider {
     private void updateGpsData(long pts) {
 
     }
+
     private void updateObdData(long pts) {
         if (mAdapter != null) {
             RawDataItem item = mAdapter.getObdDataItem(pts);
@@ -105,9 +106,6 @@ public class DashboardView extends ContainerView implements OverlayProvider {
 
     @Override
     public Bitmap updateTexImage(long pts) {
-//        if (mListener != null) {
-//            mListener.update(pts);
-//        }
         Bitmap bitmap = getDrawingCache();
         return bitmap;
     }
@@ -122,7 +120,7 @@ public class DashboardView extends ContainerView implements OverlayProvider {
         for (Panel panel : panelList) {
             if (panel instanceof PanelGforce) {
                 //Logger.t(TAG).d("Add Panel: " + panel.toString());
-                PanelGforce gforcePanel = (PanelGforce)panel;
+                PanelGforce gforcePanel = (PanelGforce) panel;
                 PanelGforceView panelGforceView = new PanelGforceView(getContext(), gforcePanel,
                     mEventBus);
                 addView(panelGforceView);
@@ -130,9 +128,6 @@ public class DashboardView extends ContainerView implements OverlayProvider {
             }
         }
     }
-
-
-
 
 
     public static class Adapter {

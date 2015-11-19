@@ -190,7 +190,9 @@ public class MediaTranscoderEngine {
         if (mDurationUs <= 0) {
             double progress = PROGRESS_UNKNOWN;
             mProgress = progress;
-            if (mProgressCallback != null) mProgressCallback.onProgress(progress); // unknown
+            if (mProgressCallback != null) {
+                mProgressCallback.onProgress(progress, 0); // unknown
+            }
         }
         while (!(mVideoTrackTranscoder.isFinished() && mAudioTrackTranscoder.isFinished())) {
             boolean stepped = mVideoTrackTranscoder.stepPipeline()
@@ -201,7 +203,10 @@ public class MediaTranscoderEngine {
                 double audioProgress = mAudioTrackTranscoder.isFinished() ? 1.0 : Math.min(1.0, (double) mAudioTrackTranscoder.getWrittenPresentationTimeUs() / mDurationUs);
                 double progress = (videoProgress + audioProgress) / 2.0;
                 mProgress = progress;
-                if (mProgressCallback != null) mProgressCallback.onProgress(progress);
+                if (mProgressCallback != null) {
+                    mProgressCallback.onProgress(progress, mVideoTrackTranscoder
+                        .getWrittenPresentationTimeUs() / 1000);
+                }
             }
             if (!stepped) {
                 try {
@@ -219,6 +224,6 @@ public class MediaTranscoderEngine {
          *
          * @param progress Progress in [0.0, 1.0] range, or negative value if progress is unknown.
          */
-        void onProgress(double progress);
+        void onProgress(double progress, long currentTimeMs);
     }
 }
