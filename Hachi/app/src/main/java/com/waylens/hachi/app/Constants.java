@@ -12,7 +12,7 @@ public class Constants {
 
     //public static final String HOST_URL = "http://ws.waylens.com:9000/";
 
-    public static final String HOST_URL = "http://192.168.20.172:9000/";
+    public static final String HOST_URL = "http://192.168.20.112:9000/";
 
     public static final String API_SIGN_UP = HOST_URL + "api/users/signup";
 

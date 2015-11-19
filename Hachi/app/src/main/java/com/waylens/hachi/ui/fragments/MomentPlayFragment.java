@@ -69,6 +69,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
         fragment.setArguments(args);
         fragment.mMomentID = moment.id;
         fragment.setSource(moment.videoURL);
+        //fragment.setSource("http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8");
         fragment.mDragListener = listener;
         return fragment;
     }
@@ -97,6 +98,12 @@ public class MomentPlayFragment extends VideoPlayFragment {
             mMapView.onStop();
         }
         super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        mRequestQueue.cancelAll(REQUEST_TAG);
+        super.onDestroyView();
     }
 
     @Override
@@ -242,7 +249,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                 onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
             }
-        }));
+        }).setTag(REQUEST_TAG));
         mProgressLoading.setVisibility(View.VISIBLE);
     }
 
@@ -277,7 +284,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                             ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                             onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
                         }
-                    }));
+                    }).setTag(REQUEST_TAG));
         } catch (JSONException e) {
             Log.e("test", "", e);
         }

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,9 +36,12 @@ import butterknife.ButterKnife;
  * Created by Richard on 10/26/15.
  */
 public abstract class VideoPlayFragment extends Fragment implements View.OnClickListener,
-        MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnErrorListener {
 
     private static final String TAG = "VideoPlayFragment";
+
+    protected static final String REQUEST_TAG = "RETRIEVE_RAW_DATA";
 
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
@@ -154,12 +158,20 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        mHandler.removeMessages(FADE_OUT);
+        mHandler.removeMessages(SHOW_PROGRESS);
+        if (mMediaPlayer != null) {
+            release(true);
+        }
+        mVideoSource = null;
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        mHandler.removeMessages(FADE_OUT);
-        mHandler.removeMessages(SHOW_PROGRESS);
-        release(true);
         if (fullScreenPlayer == this) {
             fullScreenPlayer = null;
         }
@@ -282,6 +294,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.setOnCompletionListener(this);
+            mMediaPlayer.setOnErrorListener(this);
             mMediaPlayer.setDataSource(mVideoSource);
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
@@ -383,6 +396,25 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         showController(0);
         mHandler.removeMessages(SHOW_PROGRESS);
         onPlayCompletion();
+    }
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN && extra == MediaPlayer.MEDIA_ERROR_IO) {
+            Snackbar.make(getView(), "Cannot load video.", Snackbar.LENGTH_SHORT).show();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        getFragmentManager().beginTransaction().remove(VideoPlayFragment.this).commit();
+                    } catch (Exception e) {
+                        Log.e("test", "", e);
+                    }
+                }
+            }, 1000);
+            return true;
+        }
+        return false;
     }
 
     void toggleController() {
