@@ -19,6 +19,10 @@ public class ContainerView extends ViewGroup {
         super(context, attrs);
     }
 
+
+
+
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         measureChildren(widthMeasureSpec, heightMeasureSpec);

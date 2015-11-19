@@ -23,14 +23,11 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.DashboardView;
 
 import java.io.IOException;
@@ -48,14 +45,12 @@ public class ClipPlaybackActivity extends BaseActivity {
     private VdbImageLoader mVdbImageLoader;
     private MediaPlayer mClipPlayer;
 
-    private VdtCamera mVdtCamera;
     private Clip mClip;
 
     private static Clip mSharedClip;
 
-    private RawDataBlock mAccDataBlock;
-    private RawDataBlock mObdDataBlock;
-    private RawDataBlock mGpsDataBlock;
+
+    private DashboardView.Adapter mDashboardViewAdapter;
 
 
     @Bind(R.id.svClipPlayback)
@@ -105,7 +100,10 @@ public class ClipPlaybackActivity extends BaseActivity {
         mClip = mSharedClip;
         mVdbRequestQueue = Snipe.newRequestQueue(this);
         mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
+
+
         initViews();
+
     }
 
     private void initViews() {
@@ -114,12 +112,12 @@ public class ClipPlaybackActivity extends BaseActivity {
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
 
+        mDashboardViewAdapter = new DashboardView.Adapter();
+        mDashboardView.setAdapter(mDashboardViewAdapter);
 
     }
 
     private void loadRawData() {
-        long clipTimeMs = 0;
-        int lengthMs = mClip.getDurationMs();
 
         ClipFragment clipFragment = new ClipFragment(mClip);
 
@@ -127,8 +125,8 @@ public class ClipPlaybackActivity extends BaseActivity {
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
-                    mAccDataBlock = response;
-
+                    Logger.t(TAG).d("Get ACC data block");
+                    mDashboardViewAdapter.setAccDataBlock(response);
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -142,7 +140,8 @@ public class ClipPlaybackActivity extends BaseActivity {
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
-                    mObdDataBlock = response;
+                    Logger.t(TAG).d("Get Obd data block");
+                    mDashboardViewAdapter.setObdDataBlock(response);
                     startPlayback();
                 }
             }, new VdbResponse.ErrorListener() {
@@ -155,36 +154,27 @@ public class ClipPlaybackActivity extends BaseActivity {
     }
 
     private void startPlayback() {
-        startAccRenderThread();
-        startObdRenderThread();
+        startUpdateDashboardViewThread();
     }
 
-    private void startAccRenderThread() {
+    private void startUpdateDashboardViewThread() {
         final long startPlayTime = System.currentTimeMillis();
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-                for (int i = 0; i < mAccDataBlock.header.mNumItems; ) {
-                    RawDataItem accItem = mAccDataBlock.getRawDataItem(i);
-                    long currentPlayTime = System.currentTimeMillis() - startPlayTime;
-                    if (accItem.clipTimeMs < currentPlayTime) {
-                        final AccData accData = (AccData) accItem.object;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDashboardView.setRawData(DashboardView.GFORCE_LEFT, (float) accData.accX * 5);
-                                mDashboardView.setRawData(DashboardView.GFORCE_RIGHT, (float) accData.accY * 5);
-                            }
-                        });
-
-                        i++;
-                    } else {
-                        try {
-                            Thread.sleep((accItem.clipTimeMs - currentPlayTime) / 2);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                while (true) {
+                    final long currentPlayTime = System.currentTimeMillis() - startPlayTime;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDashboardView.update(currentPlayTime);
                         }
+                    });
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -192,37 +182,6 @@ public class ClipPlaybackActivity extends BaseActivity {
     }
 
 
-    private void startObdRenderThread() {
-        final long startPlayTime = System.currentTimeMillis();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                for (int i = 0; i < mObdDataBlock.header.mNumItems; ) {
-                    RawDataItem obdItem = mObdDataBlock.getRawDataItem(i);
-                    long currentPlayTime = System.currentTimeMillis() - startPlayTime;
-                    if (obdItem.clipTimeMs < currentPlayTime) {
-                        final OBDData obdData = (OBDData) obdItem.object;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDashboardView.setRawData(DashboardView.RPM, (float) obdData.rpm / 1000);
-                                mDashboardView.setRawData(DashboardView.MPH, obdData.speed);
-                            }
-                        });
-
-                        i++;
-                    } else {
-                        try {
-                            Thread.sleep((obdItem.clipTimeMs - currentPlayTime) / 2);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }).start();
-    }
 
     private void preparePlayback() {
         Bundle parameters = new Bundle();

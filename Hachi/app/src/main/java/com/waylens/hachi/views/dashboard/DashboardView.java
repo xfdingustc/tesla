@@ -10,6 +10,10 @@ import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.utils.EventBus;
+import com.waylens.hachi.vdb.AccData;
+import com.waylens.hachi.vdb.OBDData;
+import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import java.util.List;
@@ -29,7 +33,7 @@ public class DashboardView extends ContainerView implements OverlayProvider {
 
     private EventBus mEventBus = new EventBus();
 
-
+    private Adapter mAdapter = null;
 
     public DashboardView(Context context) {
         this(context, null);
@@ -40,6 +44,42 @@ public class DashboardView extends ContainerView implements OverlayProvider {
         init();
     }
 
+
+    public void setAdapter(Adapter adapter) {
+        this.mAdapter = adapter;
+    }
+
+    public void update(long pts) {
+        updateAccData(pts);
+        updateGpsData(pts);
+        updateObdData(pts);
+    }
+
+    private void updateAccData(long pts) {
+        if (mAdapter != null) {
+            RawDataItem item = mAdapter.getAccDataItem(pts);
+            if (item != null) {
+                AccData accData = (AccData) item.object;
+                Logger.t(TAG).d("Update gforce left as: " + (float) accData.accX * 5);
+                setRawData(DashboardView.GFORCE_LEFT, (float) accData.accX * 5);
+                setRawData(DashboardView.GFORCE_RIGHT, (float) accData.accY * 5);
+            }
+        }
+    }
+
+    private void updateGpsData(long pts) {
+
+    }
+    private void updateObdData(long pts) {
+        if (mAdapter != null) {
+            RawDataItem item = mAdapter.getObdDataItem(pts);
+            if (item != null) {
+                OBDData obdData = (OBDData) item.object;
+                setRawData(DashboardView.RPM, (float) obdData.rpm / 1000);
+                setRawData(DashboardView.MPH, obdData.speed);
+            }
+        }
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -90,5 +130,55 @@ public class DashboardView extends ContainerView implements OverlayProvider {
             }
         }
     }
+
+
+
+
+
+    public static class Adapter {
+        private RawDataBlock mAccDataBlock;
+        private RawDataBlock mObdDataBlock;
+        private RawDataBlock mGpsDataBlock;
+
+        public Adapter() {
+
+        }
+
+        public void setAccDataBlock(RawDataBlock accDataBlock) {
+            this.mAccDataBlock = accDataBlock;
+        }
+
+        public void setObdDataBlock(RawDataBlock obdDataBlock) {
+            this.mObdDataBlock = obdDataBlock;
+        }
+
+        public void setGpsDataBlock(RawDataBlock gpsDataBlock) {
+            this.mGpsDataBlock = gpsDataBlock;
+        }
+
+        public RawDataItem getAccDataItem(long pts) {
+            return getRawDataItem(mAccDataBlock, pts);
+        }
+
+        public RawDataItem getObdDataItem(long pts) {
+            return getRawDataItem(mObdDataBlock, pts);
+        }
+
+        public RawDataItem getGpsDataItem(long pts) {
+            return getRawDataItem(mGpsDataBlock, pts);
+        }
+
+        // TODO: We need refine this algorithm:
+        private RawDataItem getRawDataItem(RawDataBlock datablock, long pts) {
+            for (int i = 0; i < datablock.header.mNumItems; i++) {
+                RawDataItem item = datablock.getRawDataItem(i);
+                if (item.clipTimeMs > pts) {
+                    return item;
+                }
+            }
+            return null;
+        }
+    }
+
 
 }
