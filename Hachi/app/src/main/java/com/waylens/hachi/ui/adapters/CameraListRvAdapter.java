@@ -10,14 +10,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.transee.ccam.CameraState;
-import com.transee.viditcam.app.CameraSetupActivity;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
-import com.waylens.hachi.ui.activities.BrowseCameraActivity;
-import com.waylens.hachi.ui.activities.CameraControlActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

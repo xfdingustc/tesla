@@ -7,6 +7,7 @@ import android.util.Log;
 import com.transee.common.GPSRawData;
 import com.transee.common.TcpConnection;
 import com.transee.vdb.Vdb.MarkLiveInfo;
+import com.waylens.hachi.ui.services.download.RemuxerParams;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipDownloadInfo;

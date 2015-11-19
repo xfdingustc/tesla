@@ -1,15 +1,12 @@
 package com.waylens.hachi.ui.services.download;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Environment;
 import android.os.StatFs;
 
 import com.transee.common.DateTime;
-import com.transee.vdb.RemuxerParams;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.DownloadManager;
-import com.waylens.hachi.ui.services.download.DownloadService;
+
 
 import java.io.File;
 
@@ -71,11 +68,5 @@ public class RemuxHelper {
 		}
 	}
 
-	// API
-	public static final void remux(Context context, RemuxerParams params) {
-		Intent intent = new Intent(context, DownloadService.class);
-		intent.putExtras(params.getBundle());
-		context.startService(intent);
-	}
 
 }

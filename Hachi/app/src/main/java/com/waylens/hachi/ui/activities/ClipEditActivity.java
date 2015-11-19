@@ -552,22 +552,7 @@ public class ClipEditActivity extends BaseActivity {
     private void startTranscodeTask() {
         mTvDownloadInfo.setText("Start transcoding task");
 
-        prepareDashboardView();
-
         beginTranscode();
-
-    }
-
-
-    private void prepareDashboardView() {
-        //mDashboardView = new DashboardView(this);
-        //FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(980, 1520);
-        //addContentView(mDashboardView, layoutParams);
-//        mDashboardView.setTo
-        //mDashboardView.setBackgroundColor(Color.CYAN);
-        //mDashboardView.set;
-        //mDashboardView.setVisibility(View.INVISIBLE);
-        //mDashboardView.set
     }
 
     private void beginTranscode() {

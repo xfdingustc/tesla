@@ -51,8 +51,6 @@
         <activity android:name=".ui.activities.UserProfileActivity"/>
         <activity android:name=".ui.activities.FollowListActivity"/>
 
-        <!-- Copied from Vidit app -->
-        <service android:name=".ui.services.download.DownloadService"/>
 
         <activity
             android:name=".ui.activities.CameraControlActivity"
@@ -66,7 +64,7 @@
             android:label="@string/title_activity_add_camera">
         </activity>
         <activity
-            android:name="com.transee.viditcam.app.CameraSetupActivity"
+            android:name=".ui.activities.CameraSetupActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_camera_setup">
         </activity>

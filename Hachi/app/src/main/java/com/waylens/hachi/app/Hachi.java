@@ -14,7 +14,6 @@ import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.snipe.Snipe;
-import com.waylens.hachi.ui.services.download.DownloadService;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -111,44 +110,4 @@ public class Hachi extends Application {
     }
 
 
-
-    private ArrayList<DownloadCallback> mDownloadCallbackList = new ArrayList<DownloadCallback>();
-
-    public interface DownloadCallback {
-        void onDownloadInfo(DownloadService.DownloadStatusInfo downloadInfo);
-    }
-
-    /*
-    private void onDownloadInfoChanged() {
-        DownloadService.DownloadInfo downloadInfo = mDownloadAdmin.getDownloadInfo();
-        for (int i = 0; i < mDownloadCallbackList.size(); i++) {
-            DownloadCallback callback = mDownloadCallbackList.get(i);
-            callback.onDownloadInfo(downloadInfo);
-        }
-    }
-
-    public DownloadAdmin attachDownloadAdmin(DownloadCallback callback) {
-        mDownloadCallbackList.add(callback);
-        if (mDownloadAdmin == null) {
-            mDownloadAdmin = new DownloadAdmin(this) {
-                @Override
-                public void downloadInfoChanged(DownloadAdmin admin) {
-                    if (admin == mDownloadAdmin) {
-                        onDownloadInfoChanged();
-                    }
-                }
-            };
-        }
-        return mDownloadAdmin;
-    }
-
-    public void detachDownloadAdmin(DownloadCallback callback) {
-        mDownloadCallbackList.remove(callback);
-        if (mDownloadCallbackList.size() == 0) {
-            if (mDownloadAdmin != null) {
-                mDownloadAdmin.release();
-                mDownloadAdmin = null;
-            }
-        }
-    }*/
 }

@@ -11,7 +11,6 @@ public class LibLoader {
         synchronized (mLock) {
             if (!mbLoaded) {
                 mbLoaded = true;
-                Logger.t(TAG).d("LLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                 System.loadLibrary("avfmedia");
             }
         }

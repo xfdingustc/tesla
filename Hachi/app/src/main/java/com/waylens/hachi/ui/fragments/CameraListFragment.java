@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.NetworkInfo;
@@ -186,7 +185,6 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
     }
 
 
-
     private void startDiscovery(WifiAdmin wifiAdmin) {
         if (mDeviceScanner == null) {
             mDeviceScanner = new DeviceScanner();
@@ -261,6 +259,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
 
     @Override
     public void onSetup(VdtCamera camera) {
+
         CameraSetupActivity.launch(getActivity(), camera);
     }
 
