@@ -115,7 +115,7 @@
         android:id="@+id/dashboardView"
         android:layout_width="1920px"
         android:layout_height="1080px"
-        android:visibility="visible">
+        android:visibility="invisible">
 
     </com.waylens.hachi.views.dashboard.DashboardView>
 </LinearLayout>
