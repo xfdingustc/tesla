@@ -48,6 +48,8 @@ public class PanelGforceView extends PanelView {
                 case Element.ELEMENT_TYPE_NUMBER_VIEW:
                     elementView = new NumberView(getContext(), element);
                     break;
+                case Element.ELEMENT_TYPE_MAP:
+                    break;
 
             }
             if (elementView != null) {

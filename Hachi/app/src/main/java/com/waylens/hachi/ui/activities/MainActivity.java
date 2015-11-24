@@ -36,9 +36,7 @@ import com.waylens.hachi.utils.PushUtils;
 import java.io.File;
 
 import butterknife.Bind;
-import im.fir.sdk.FIR;
-import im.fir.sdk.callback.VersionCheckCallback;
-import im.fir.sdk.version.AppVersion;
+
 
 public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener, TabSwitchable {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -96,6 +94,8 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
         initViews();
         downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 
+        /*
+
         FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
             @Override
             public void onSuccess(AppVersion appVersion, boolean result) {
@@ -124,7 +124,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
             public void onFinish() {
                 Log.e("FIR", "onFinish");
             }
-        });
+        }); */
 
         if (SessionManager.getInstance().isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
             Intent intent = new Intent(this, RegistrationIntentService.class);

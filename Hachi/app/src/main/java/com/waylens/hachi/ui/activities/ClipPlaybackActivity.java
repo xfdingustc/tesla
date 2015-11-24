@@ -28,7 +28,7 @@ import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.views.dashboard.DashboardView;
+import com.waylens.hachi.views.dashboard2.DashboardLayout;
 
 import java.io.IOException;
 
@@ -50,7 +50,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     private static Clip mSharedClip;
 
 
-    private DashboardView.Adapter mDashboardViewAdapter;
+    //private DashboardView.Adapter mDashboardViewAdapter;
 
 
     @Bind(R.id.svClipPlayback)
@@ -60,7 +60,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     ImageView mIvBackground;
 
     @Bind(R.id.dashboard)
-    DashboardView mDashboardView;
+    DashboardLayout mDashboardView;
 
     @Bind(R.id.btnPlay)
     ImageButton mBtnPlay;
@@ -112,8 +112,8 @@ public class ClipPlaybackActivity extends BaseActivity {
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
 
-        mDashboardViewAdapter = new DashboardView.Adapter();
-        mDashboardView.setAdapter(mDashboardViewAdapter);
+        //mDashboardViewAdapter = new DashboardView.Adapter();
+        //mDashboardView.setAdapter(mDashboardViewAdapter);
 
     }
 
@@ -126,7 +126,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("Get ACC data block");
-                    mDashboardViewAdapter.setAccDataBlock(response);
+                    //mDashboardViewAdapter.setAccDataBlock(response);
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -141,7 +141,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("Get Obd data block");
-                    mDashboardViewAdapter.setObdDataBlock(response);
+                    //mDashboardViewAdapter.setObdDataBlock(response);
                     startPlayback();
                 }
             }, new VdbResponse.ErrorListener() {
@@ -167,7 +167,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mDashboardView.update(currentPlayTime);
+                            //mDashboardView.update(currentPlayTime);
                         }
                     });
 

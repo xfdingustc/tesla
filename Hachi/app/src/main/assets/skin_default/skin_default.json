@@ -156,7 +156,14 @@
             "MarginRight": "48",
             "Alignment": "Top_Right",
             "Resource": "skin_default/map/map-compass_icon.png"
+          },
+          {
+            "Name": "map",
+            "Type": "Map",
+            "Alignment": "center",
+            "Subscribe": "GPS"
           }
+
         ]
       },
       {

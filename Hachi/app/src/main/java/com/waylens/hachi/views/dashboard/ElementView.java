@@ -2,6 +2,7 @@ package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.views.dashboard.PanelView;
@@ -21,6 +22,8 @@ public class ElementView extends View {
     public String getSubscribe() {
         return mElement.getSubscribe();
     }
+
+
 
     private void init() {
         PanelView.LayoutParams layoutParams = new PanelView.LayoutParams(mElement.getMarginTop(),

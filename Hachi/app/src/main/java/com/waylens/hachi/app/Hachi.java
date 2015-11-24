@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
@@ -18,16 +17,13 @@ import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 
-import im.fir.sdk.FIR;
 
 /**
  * Created by Xiaofei on 2015/8/4.
  */
 public class Hachi extends Application {
     private static final String TAG = Hachi.class.getSimpleName();
-
 
 
     private static Context mSharedContext = null;
@@ -60,7 +56,7 @@ public class Hachi extends Application {
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
 
-        FIR.init(this);
+        //FIR.init(this);
 
         Snipe.init();
 
@@ -89,7 +85,6 @@ public class Hachi extends Application {
     }
 
 
-
     public final void test() {
         // /data/data/com.transee.viditcam/files
         Context context = this.getApplicationContext();
@@ -99,7 +94,6 @@ public class Hachi extends Application {
         tt = context.getExternalFilesDir(null);
         Log.d(TAG, "ext files dir: " + tt.getPath());
     }
-
 
 
     // API

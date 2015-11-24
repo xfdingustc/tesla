@@ -3,13 +3,20 @@ package com.waylens.hachi.views.dashboard;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.FrameLayout;
 
+
+import com.mapbox.mapboxsdk.constants.Style;
+import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.skin.Panel;
 import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.utils.EventBus;
+import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -24,10 +31,12 @@ import java.util.List;
 public class DashboardView extends ContainerView implements OverlayProvider {
     private final static String TAG = DashboardView.class.getSimpleName();
 
-    public static final String GFORCE_LEFT = "GforceLeft";
-    public static final String GFORCE_RIGHT = "GforceRight";
-    public static final String RPM = "RPM";
-    public static final String MPH = "MPH";
+    private static final String GFORCE_LEFT = "GforceLeft";
+    private static final String GFORCE_RIGHT = "GforceRight";
+    private static final String RPM = "RPM";
+    private static final String MPH = "MPH";
+
+    private static MapView mMapView = null;
 
     private Skin mSkin = SkinManager.getManager().getSkin();
 
@@ -113,7 +122,10 @@ public class DashboardView extends ContainerView implements OverlayProvider {
     private void init() {
         setDrawingCacheEnabled(true);
         addPanels();
+        //addMapView();
     }
+
+
 
     private void addPanels() {
         List<Panel> panelList = mSkin.getPanels();
@@ -127,6 +139,17 @@ public class DashboardView extends ContainerView implements OverlayProvider {
 
             }
         }
+    }
+
+    private void addMapView() {
+        mMapView = new MapView(getContext(), Constants.MAP_BOX_ACCESS_TOKEN);
+        mMapView.setStyleUrl(Style.DARK);
+        mMapView.setZoomLevel(14);
+        mMapView.setLogoVisibility(View.GONE);
+        mMapView.onCreate(null);
+        int defaultSize = ViewUtils.dp2px(96, getResources());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
+        addView(mMapView, params);
     }
 
 
