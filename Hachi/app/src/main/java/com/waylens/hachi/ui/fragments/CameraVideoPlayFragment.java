@@ -10,6 +10,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.annotations.SpriteFactory;
@@ -19,12 +24,18 @@ import com.mapbox.mapboxsdk.views.MapView;
 import com.transee.common.GPSRawData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
+import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.utils.DataUploader;
+import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
@@ -32,8 +43,24 @@ import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.UploadUrl;
 import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.GaugeView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import crs_svr.ProtocolConstMsg;
 
 /**
  * Created by Richard on 11/4/15.
@@ -53,6 +80,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     private PolylineOptions mPolylineOptions;
     private boolean mIsReplay;
 
+    private RequestQueue mRequestQueue;
+
     public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
                                                       Clip clip,
                                                       DragLayout.OnViewDragListener listener) {
@@ -71,16 +100,25 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue.start();
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
         if (!isRawDataReady()) {
             loadRawData();
         } else {
             loadPlayURL();
         }
+
+        //createMoment();
+        //getUploadUrl_Video(null);
+        //sendVideoFile();
         if (mMapView != null) {
             mMapView.onStart();
         }
@@ -276,4 +314,290 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
         mVdbRequestQueue.add(request.setTag(REQUEST_TAG));
     }
+
+    void getUploadUrl_Video(final JSONObject momentInfo) {
+        Bundle parameters = new Bundle();
+        parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
+        parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, mClip.getStartTimeMs());
+        parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, mClip.getDurationMs());
+        parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, VdbCommand.Factory.UPLOAD_GET_V0);
+
+        ClipUploadUrlRequest request = new ClipUploadUrlRequest(mClip, parameters,
+                new VdbResponse.Listener<UploadUrl>() {
+                    @Override
+                    public void onResponse(UploadUrl response) {
+                        readDataVideo(response.url, momentInfo);
+                        //saveToSdcardVideo(response.url);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "", error);
+                    }
+                });
+
+        mVdbRequestQueue.add(request);
+    }
+
+    void getUploadUrl_Raw(final JSONObject momentInfo) {
+        Bundle parameters = new Bundle();
+        parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
+        parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, mClip.getStartTimeMs());
+        parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, mClip.getDurationMs());
+        parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, VdbCommand.Factory.UPLOAD_GET_RAW);
+
+        ClipUploadUrlRequest request = new ClipUploadUrlRequest(mClip, parameters,
+                new VdbResponse.Listener<UploadUrl>() {
+                    @Override
+                    public void onResponse(UploadUrl response) {
+                        readDataRaw(response.url, momentInfo);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "", error);
+                    }
+                });
+
+        mVdbRequestQueue.add(request);
+    }
+
+    String findToken(JSONObject momentInfo, String type) {
+        JSONArray jsonArray = momentInfo.optJSONArray("uploadData");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.optJSONObject(i);
+            if (type.equals(jsonObject.optString("dataType"))) {
+                return jsonObject.optString("uploadToken");
+            }
+        }
+        return null;
+    }
+
+    String findGuid(JSONObject momentInfo, String type) {
+        JSONArray jsonArray = momentInfo.optJSONArray("uploadData");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.optJSONObject(i);
+            if (type.equals(jsonObject.optString("dataType"))) {
+                return jsonObject.optString("guid");
+            }
+        }
+        return null;
+    }
+
+    private void readDataRaw(final String urlString, final JSONObject momentInfo) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream inputStream = null;
+                try {
+                    URL url = new URL(urlString);
+                    URLConnection conn = url.openConnection();
+                    inputStream = conn.getInputStream();
+                    Log.e("test", "ContentLength: " + conn.getContentLength());
+
+                    JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
+                    String ip = uploadServer.optString("ip");
+                    int port = uploadServer.optInt("port");
+                    String privateKey = uploadServer.optString("privateKey");
+                    String token = findToken(momentInfo, "raw");
+                    String guid = findGuid(momentInfo, "raw");
+                    DataUploader uploader = new DataUploader(ip, port, privateKey);
+                    //uploader.setUploaderListener(uploadListener);
+                    uploader.uploadStream(inputStream, conn.getContentLength(), ProtocolConstMsg.VIDIT_RAW_DATA, token, guid);
+                    Log.e("test", "===================== Raw done!");
+                } catch (Exception e) {
+                    Log.e("test", "", e);
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            Log.e("test", "", e);
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private void readDataVideo(final String urlString, final JSONObject momentInfo) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream inputStream = null;
+                try {
+                    URL url = new URL(urlString);
+                    URLConnection conn = url.openConnection();
+                    inputStream = conn.getInputStream();
+                    Log.e("test", "ContentLength: " + conn.getContentLength());
+                    JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
+                    String ip = uploadServer.optString("ip");
+                    int port = uploadServer.optInt("port");
+                    String privateKey = uploadServer.optString("privateKey");
+                    String token = findToken(momentInfo, "video");
+                    String guid = findGuid(momentInfo, "video");
+                    DataUploader uploader = new DataUploader(ip, port, privateKey);
+                    //uploader.setUploaderListener(uploadListener);
+                    uploader.uploadStream(inputStream, conn.getContentLength(), ProtocolConstMsg.VIDIT_VIDEO_DATA, token, guid);
+                    Log.e("test", "================= Video done!");
+                    //getUploadUrl_Raw(momentInfo);
+                } catch (Exception e) {
+                    Log.e("test", "", e);
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            Log.e("test", "", e);
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    void createMoment() {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("title", "Moment from Android");
+            JSONObject raw = new JSONObject();
+            raw.put("guid", mClip.getVdbId());
+            JSONArray rawArray = new JSONArray();
+            rawArray.put(raw);
+            params.put("rawData", rawArray);
+            JSONObject fragment = new JSONObject();
+            fragment.put("guid", mClip.getVdbId());
+            fragment.put("clipCaptureTime", mClip.clipDate * 1000l);
+            fragment.put("beginTime", (int) mClip.getStartTimeMs());
+            fragment.put("offset", 0);
+            fragment.put("duration", mClip.getDurationMs());
+            JSONArray fragments = new JSONArray();
+            fragments.put(fragment);
+            params.put("fragments", fragments);
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENTS, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("test", "response: " + response);
+                        getUploadUrl_Video(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("test", "", error);
+                    }
+                }));
+    }
+
+    private void saveToSdcardVideo(final String urlString) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream inputStream = null;
+                FileOutputStream outputStream = null;
+                try {
+                    URL url = new URL(urlString);
+                    URLConnection conn = url.openConnection();
+                    inputStream = conn.getInputStream();
+                    Log.e("test", "ContentLength: " + conn.getContentLength());
+                    File dir = ImageUtils.getImageStorageDir(getActivity(), "upload");
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    outputStream = new FileOutputStream(new File(dir, "speedtest.clip"));
+                    byte[] buffer = new byte[2 * 1024];
+                    int len;
+                    long s = System.currentTimeMillis();
+                    while ((len = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, len);
+                    }
+                    long e = System.currentTimeMillis();
+                    Log.e("test", "================= Video done after: " + (e - s));
+                } catch (Exception e) {
+                    Log.e("test", "", e);
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            Log.e("test", "", e);
+                        }
+                    }
+                    if (outputStream != null) {
+                        try {
+                            outputStream.close();
+                        } catch (IOException e) {
+                            Log.e("test", "", e);
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private void sendVideoFile() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream inputStream = null;
+                try {
+                    File dir = ImageUtils.getImageStorageDir(getActivity(), "upload");
+                    File file = new File(dir, "speedtest.clip");
+                    inputStream = new FileInputStream(file);
+                    Log.e("test", "ContentLength: " + file.length());
+
+                    String ip = "192.168.20.160";
+                    int port = 35020;
+                    String privateKey = "qwertyuiopasdfgh";
+                    String token = "217";
+                    String guid = "f3e6be46-f22a-454a-8e3c-8133c7876927";
+                    DataUploader uploader = new DataUploader(ip, port, privateKey);
+                    uploader.setUploaderListener(uploadListener);
+                    long s = System.currentTimeMillis();
+                    uploader.uploadStream(inputStream, (int) file.length(), ProtocolConstMsg.VIDIT_VIDEO_DATA, token, guid);
+                    long e = System.currentTimeMillis();
+                    Log.e("test", "================= Video done after: " + (e - s));
+                } catch (Exception e) {
+                    Log.e("test", "", e);
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            Log.e("test", "", e);
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    DataUploader.UploadListener uploadListener = new DataUploader.UploadListener() {
+        @Override
+        public void onUploadStarted() {
+            Log.e("test", "onUploadStarted");
+        }
+
+        @Override
+        public void onUploadProgress(float progress) {
+            Log.e("test", "onUploadProgress: " + progress);
+        }
+
+        @Override
+        public void onUploadFinished() {
+            Log.e("test", "onUploadFinished");
+        }
+
+        @Override
+        public void onUploadError(String error) {
+            Log.e("test", "onUploadError: " + error);
+        }
+    };
 }

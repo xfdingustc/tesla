@@ -70,6 +70,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
         fragment.mMomentID = moment.id;
         fragment.setSource(moment.videoURL);
         //fragment.setSource("http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8");
+        //fragment.setSource("http://monitor.vidit.com.cn:8083/waylens/hls/s2.m3u8");
         fragment.mDragListener = listener;
         return fragment;
     }

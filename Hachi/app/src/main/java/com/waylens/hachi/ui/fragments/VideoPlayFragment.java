@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.views.DragLayout;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -295,7 +297,10 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.setOnErrorListener(this);
-            mMediaPlayer.setDataSource(mVideoSource);
+            //mMediaPlayer.setDataSource(mVideoSource);
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("Cookie", "user=richard;key1=value1");
+            mMediaPlayer.setDataSource(null, Uri.parse(mVideoSource), headers);
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;

@@ -1,6 +1,7 @@
 package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
+import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
@@ -154,6 +155,9 @@ public class VdbCommand {
         protected static final int CMD_MoveClip = 17;
         protected static final int CMD_GetPlaylistPlaybackUrl = 18;
 
+        //since version 1.4
+        protected static final int CMD_GetUploadUrl = 19;
+
         //-----------------------
         // since version 1.2
         //-----------------------
@@ -178,6 +182,23 @@ public class VdbCommand {
         public static final int DOWNLOAD_FOR_IMAGE = 1 << 1;
         public static final int DOWNLOAD_FIRST_LOOP = 1 << 2;
 
+        /*
+        CMD_GetUploadUrl
+         */
+        public static final int UPLOAD_GET_V0 = 1;    // video stream 0
+        public static final int UPLOAD_GET_V1 = (1 << 1);    // video stream 1
+        public static final int UPLOAD_GET_PIC = (1 << 2);    // picture
+        public static final int UPLOAD_GET_GPS = (1 << 3);    // gps
+        public static final int UPLOAD_GET_OBD = (1 << 4);    // obd
+        public static final int UPLOAD_GET_ACC = (1 << 5);    // acc
+
+        public static final int UPLOAD_GET_PIC_RAW = (UPLOAD_GET_PIC | UPLOAD_GET_GPS | UPLOAD_GET_OBD | UPLOAD_GET_ACC);
+        public static final int UPLOAD_GET_RAW = (UPLOAD_GET_GPS | UPLOAD_GET_OBD | UPLOAD_GET_ACC);
+        public static final int UPLOAD_GET_VIDEO = (UPLOAD_GET_V0 | UPLOAD_GET_V1);
+        public static final int UPLOAD_GET_STREAM_0 = (UPLOAD_GET_V0 | UPLOAD_GET_RAW);
+        public static final int UPLOAD_GET_STREAM_1 = (UPLOAD_GET_V1 | UPLOAD_GET_RAW);
+
+
         public static VdbCommand createCmdGetClipSetInfo(int type, int flag) {
             Builder builder = new Builder();
 
@@ -198,12 +219,12 @@ public class VdbCommand {
                 cmd |= (1 << 16);
             }
             return new Builder()
-                .writeCmdCode(cmd, clipPos.getType())
-                .writeInt32(clipPos.cid.type)
-                .writeInt32(clipPos.cid.subType)
-                .writeInt32(clipPos.getType() | (clipPos.isLast() ? ClipPos.F_IS_LAST : 0))
-                .writeInt64(clipPos.getClipTimeMs())
-                .build();
+                    .writeCmdCode(cmd, clipPos.getType())
+                    .writeInt32(clipPos.cid.type)
+                    .writeInt32(clipPos.cid.subType)
+                    .writeInt32(clipPos.getType() | (clipPos.isLast() ? ClipPos.F_IS_LAST : 0))
+                    .writeInt64(clipPos.getClipTimeMs())
+                    .build();
         }
 
         public static VdbCommand createCmdGetClipPlaybackUrl(Clip clip, int stream, int urlType,
@@ -216,9 +237,9 @@ public class VdbCommand {
                 builder.writeCmdCode(CMD_GetPlaybackUrl, 0);
             }
             builder.writeClipId(clip.cid)
-                .writeInt32(stream)
-                .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
-                .writeInt64(clipTimeMs);
+                    .writeInt32(stream)
+                    .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
+                    .writeInt64(clipTimeMs);
 
             if (clipLengthMs > 0) {
                 builder.writeInt32(clipLengthMs);
@@ -234,49 +255,67 @@ public class VdbCommand {
             }
             //int duration = (int) (endMs - startMs);
             return new Builder()
-                .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
-                .writeClipId(clipFragment.getClip().cid)
-                .writeInt64(clipFragment.getStartTimeMs())
-                .writeInt32(clipFragment.getDurationMs())
-                .writeInt32(downloadOption)
-                .build();
+                    .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
+                    .writeClipId(clipFragment.getClip().cid)
+                    .writeInt64(clipFragment.getStartTimeMs())
+                    .writeInt32(clipFragment.getDurationMs())
+                    .writeInt32(downloadOption)
+                    .build();
         }
 
         public static VdbCommand createCmdGetRawData(Clip clip, long clipTimeMs, int type) {
             return new Builder()
-                .writeCmdCode(CMD_GetRawData, 0)
-                .writeClipId(clip.cid)
-                .writeInt64(clipTimeMs)
-                .writeInt32(type)
-                .build();
+                    .writeCmdCode(CMD_GetRawData, 0)
+                    .writeClipId(clip.cid)
+                    .writeInt64(clipTimeMs)
+                    .writeInt32(type)
+                    .build();
         }
 
 
         public static VdbCommand createCmdGetRawDataBlock(ClipFragment clipFragment, boolean forDownload,
                                                           int dataType) {
             return new Builder()
-                .writeCmdCode(CMD_GetRawDataBlock, forDownload ? 1 : 0)
-                .writeClipId(clipFragment.getClip().cid)
-                .writeInt64(clipFragment.getStartTimeMs())
-                .writeInt32(clipFragment.getDurationMs())
-                .writeInt32(dataType)
-                .build();
+                    .writeCmdCode(CMD_GetRawDataBlock, forDownload ? 1 : 0)
+                    .writeClipId(clipFragment.getClip().cid)
+                    .writeInt64(clipFragment.getStartTimeMs())
+                    .writeInt32(clipFragment.getDurationMs())
+                    .writeInt32(dataType)
+                    .build();
         }
 
         public static VdbCommand createCmdGetClipExtent(Clip clip) {
             return new Builder()
-                .writeCmdCode(CMD_GetClipExtent, 0)
-                .writeClipId(clip.cid)
-                .build();
+                    .writeCmdCode(CMD_GetClipExtent, 0)
+                    .writeClipId(clip.cid)
+                    .build();
         }
 
         public static VdbCommand createCmdSetClipExtent(Clip clip, long newClipStart, long newClipEnd) {
             return new Builder()
-                .writeCmdCode(CMD_SetClipExtent, 0)
-                .writeClipId(clip.cid)
-                .writeInt64(newClipStart)
-                .writeInt64(newClipEnd)
-                .build();
+                    .writeCmdCode(CMD_SetClipExtent, 0)
+                    .writeClipId(clip.cid)
+                    .writeInt64(newClipStart)
+                    .writeInt64(newClipEnd)
+                    .build();
+        }
+
+        public static VdbCommand createCmdGetUploadUrl(Clip clip,
+                                                       boolean isPlayList,
+                                                       long clipTimeMs,
+                                                       int lengthMs,
+                                                       int uploadOpt) {
+            int playListValue = isPlayList ? 1 : 0;
+            return new Builder()
+                    .writeCmdCode(CMD_GetUploadUrl, 0)
+                    .writeInt32(playListValue)
+                    .writeClipId(clip.cid)
+                    .writeInt64(clipTimeMs)
+                    .writeInt32(lengthMs)
+                    .writeInt32(uploadOpt)
+                    .writeInt32(0)
+                    .writeInt32(0)
+                    .build();
         }
     }
 }

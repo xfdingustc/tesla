@@ -53,13 +53,14 @@ public class DataUploader {
     private byte mDataType;
     private String mToken;
     private String mGuid;
+    private long mStartTime;
 
     public DataUploader(String serverAddress, int port, String privateKey) {
         mAddress = serverAddress;
         mPort = port;
         mPrivateKey = privateKey;
         CommWaylensParse.private_key = mPrivateKey;
-        CommWaylensParse.encode_type = (byte) ProtocolConstMsg.ENCODE_TYPE_AES;
+        CommWaylensParse.encode_type = (byte) ProtocolConstMsg.ENCODE_TYPE_OPEN;
     }
 
     public interface UploadListener {
@@ -89,6 +90,19 @@ public class DataUploader {
         uploadImpl();
     }
 
+    public void uploadStream(InputStream inputStream, int contentLength, int dataType, String token, String guid) {
+        if (inputStream == null) {
+            return;
+        }
+        totalCount = contentLength;
+        mDataType = (byte) dataType;
+        mToken = token;
+        mTotalSHA1 = null;
+        mGuid = guid;
+        mInputStream = inputStream;
+        uploadImpl();
+    }
+
     public void uploadFile(File file, int dataType, String token, String guid, byte[] header, byte[] tail) {
         if (file == null || !file.exists()) {
             Log.i(TAG, "File does not exist.");
@@ -102,7 +116,7 @@ public class DataUploader {
         } else {
             mToken = DEFAULT_AVATAR_TOKEN;
         }
-        mGuid =  guid;
+        mGuid = guid;
         mTotalSHA1 = null;
 
         try {
@@ -127,7 +141,7 @@ public class DataUploader {
             stopUpload();
         } catch (Exception e) {
             if (mListener != null) {
-                mListener.onUploadError("Error");
+                mListener.onUploadError("Error: " + e.getMessage());
             }
             Log.d(TAG, "", e);
         } finally {
@@ -246,20 +260,30 @@ public class DataUploader {
     }
 
     private void doUpload() throws IOException, IllegalStateException {
-        byte[] data = new byte[4 * 1024 * 1024];
+        byte[] data = new byte[4 * 1024];
         int packetNumber = 0;
-
+        mStartTime = System.currentTimeMillis();
         while (true) {
             int read_bytes_cnt = mInputStream.read(data);
+            int second_read_cnt = 0;
+            if (read_bytes_cnt > 0 && read_bytes_cnt < data.length) {
+                second_read_cnt = mInputStream.read(data, read_bytes_cnt, data.length - read_bytes_cnt);
+            }
             if (read_bytes_cnt < 0) {
                 break;
             }
-            mPacketSHA1 = HashUtils.SHA1(data, read_bytes_cnt);
-            uploadPacket(data, read_bytes_cnt, packetNumber++);
-            int server_ret = receiveData();
+
+            if (second_read_cnt > 0) {
+                read_bytes_cnt = read_bytes_cnt + second_read_cnt;
+            }
+            //mPacketSHA1 = HashUtils.SHA1(data, read_bytes_cnt);
+            //uploadPacket(data, read_bytes_cnt, packetNumber++);
+            uploadBlock(data, read_bytes_cnt, 0, 0, packetNumber++);
+
+            /*int server_ret = receiveData();
             if (server_ret != BLOCK_UPLOAD_FINISHED_RETURN_VAL) {
                 throw new IOException("In upload content: upload packet failed ret =  " + server_ret);
-            }
+            }*/
         }
     }
 
@@ -311,16 +335,27 @@ public class DataUploader {
 
             byte[] data = Arrays.copyOfRange(packet, start, end);
             uploadBlock(data, end - start, blockType, blockNum++, packetNum);
-            mUploadCount += end - start;
-            if (mListener != null) {
-                float percent = (float) mUploadCount * 100 / totalCount;
-                mListener.onUploadProgress(percent);
-            }
-
             start += BLOCK_SIZE;
             if (eos) {
                 break;
             }
+        }
+    }
+
+    private void updateProgress(int blockSize) {
+        if (mListener != null) {
+            mUploadCount += blockSize;
+            float percent = 0;
+            if (totalCount != 0) {
+                percent = (float) mUploadCount * 100 / totalCount;
+            }
+            long duration = System.currentTimeMillis() - mStartTime;
+            float speed = 0;
+            if (duration != 0) {
+                speed = (mUploadCount * 1.0f) / duration / 1024 * 1000;
+            }
+            Log.e("test", "Speed: " + speed + " [KB]");
+            mListener.onUploadProgress(percent);
         }
     }
 
@@ -340,15 +375,16 @@ public class DataUploader {
         if (mTotalSHA1 != null) {
             tran_data.file_sha1 = mTotalSHA1;
         }
-        tran_data.block_sha1 = mPacketSHA1;
+        tran_data.block_sha1 = new byte[20]; //mPacketSHA1;
         tran_data.upload_type = ProtocolConstMsg.HISTORY_DATA;
-        tran_data.block_num = block_num | (block_type << 30);
+        tran_data.block_num = 0; //block_num | (block_type << 30);
         tran_data.data_type = mDataType;
         tran_data.seq_num = packet_num;
         tran_data.length = (short) block_size;
         tran_data.buf = block;
         int ilen = CommWaylensParse.encode(comm_header, tran_data, data);
         sendData(data, ilen);
+        updateProgress(block_size);
     }
 
     @NonNull

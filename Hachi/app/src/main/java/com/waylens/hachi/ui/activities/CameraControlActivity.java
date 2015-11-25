@@ -34,6 +34,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.annotations.Sprite;
+import com.mapbox.mapboxsdk.annotations.SpriteFactory;
+import com.mapbox.mapboxsdk.constants.Style;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.transee.ccam.AbsCameraClient;
@@ -57,9 +63,9 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
@@ -143,8 +149,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
     };
 
-    //private PathOverlay pathOverlay;
-    //private Marker marker;
+    private PolylineOptions mPolylineOptions;
+    private MarkerOptions mMarkerOptions;
 
     LocationManager locationManager;
     LocationListener locationListener;
@@ -469,28 +475,23 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateMap(GPSRawData gpsRawData) {
-        /*
-        if (mapView == null || pathOverlay == null || marker == null) {
+        if (mapView == null || mMarkerOptions == null || mPolylineOptions == null) {
             return;
         }
         LatLng latLng = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
-        pathOverlay.addPoint(latLng);
-        marker.setPoint(latLng);
-        mapView.setCenter(latLng);
-        */
-
+        mPolylineOptions.add(latLng);
+        mMarkerOptions.position(latLng);
+        mapView.setCenterCoordinate(latLng);
     }
 
     private void updateMap(Location location) {
-        /*
-        if (mapView == null || pathOverlay == null || marker == null) {
+        if (mapView == null || mMarkerOptions == null || mPolylineOptions == null) {
             return;
         }
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        pathOverlay.addPoint(latLng);
-        marker.setPoint(latLng);
-        mapView.setCenter(latLng);
-        */
+        mPolylineOptions.add(latLng);
+        mMarkerOptions.position(latLng);
+        mapView.setCenterCoordinate(latLng);
 
     }
 
@@ -585,6 +586,9 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
             locationManager.removeUpdates(locationListener);
         }
+
+        mapView.onStop();
+
     }
 
     @Override
@@ -593,11 +597,13 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         startOverlay();
         getLocation();
+        mapView.onResume();
     }
 
     @Override
     public void onPause() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mapView.onPause();
         super.onPause();
     }
 
@@ -736,17 +742,22 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         mOverlayView = findViewById(R.id.overlay_view);
 
         mapView = (MapView) findViewById(R.id.mapbox_view);
-        /*
-        mapView.setZoom(16);
-        pathOverlay = new PathOverlay(Color.rgb(252, 219, 12), 3);
-        mapView.addOverlay(pathOverlay);
+
+        mapView.setZoomLevel(11);
+        mapView.setStyleUrl(Style.DARK);
+
+
         LatLng aCenter = new LatLng(31.190979000000002, 121.60145658333334);
-        mapView.setCenter(aCenter);
-        marker = mapView.addMarker(new Marker("Current", "Your current location", aCenter));
-        Drawable icon = getResources().getDrawable(R.drawable.map_car_inner_red_triangle);
-        marker.setIcon(new Icon(icon));
-        mapView.addMarker(marker);
-          */
+        mapView.setCenterCoordinate(aCenter);
+        SpriteFactory spriteFactory = new SpriteFactory(mapView);
+        Sprite icon = spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle);
+        mMarkerOptions = new MarkerOptions().position(aCenter).icon(icon);
+        mapView.addMarker(mMarkerOptions);
+
+        mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(aCenter);
+        mapView.addPolyline(mPolylineOptions);
+        mapView.onCreate(null);
+
         mapHolder = findViewById(R.id.map_holder);
         weatherIcon = (ImageView) findViewById(R.id.weather_icon);
         weatherTemp = (TextView) findViewById(R.id.weather_temp);

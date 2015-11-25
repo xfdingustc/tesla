@@ -6,7 +6,7 @@ package com.waylens.hachi.vdb;
 public class ClipExtent {
     public final Clip.ID cid;
 
-    public final Clip.ID readCid;
+    public final Clip.ID originalCid;
 
     public long minClipStartTimeMs;
 
@@ -16,8 +16,8 @@ public class ClipExtent {
 
     public long clipEndTimeMs;
 
-    public ClipExtent(Clip.ID cid, Clip.ID realCid) {
+    public ClipExtent(Clip.ID cid, Clip.ID originalCid) {
         this.cid = cid;
-        this.readCid = realCid;
+        this.originalCid = originalCid;
     }
 }

@@ -13,6 +13,8 @@ import java.security.NoSuchAlgorithmException;
 public class HashUtils {
     private static final String TAG = HashUtils.class.getSimpleName();
 
+    private static MessageDigest sha1Inst;
+
     public final static byte[] MD5(String s) {
 
         try {
@@ -85,7 +87,9 @@ public class HashUtils {
 
     public static byte[] SHA1(byte[] data, int length) {
         try {
-            MessageDigest sha1Inst = MessageDigest.getInstance("SHA-1");
+            if (sha1Inst == null) {
+                sha1Inst = MessageDigest.getInstance("SHA-1");
+            }
             sha1Inst.update(data, 0, length);
             return sha1Inst.digest();
         } catch (NoSuchAlgorithmException e) {

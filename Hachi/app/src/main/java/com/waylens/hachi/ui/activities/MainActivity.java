@@ -106,16 +106,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
             }
 
             @Override
-            public void onFail(String s, int i) {
-                Log.e("FIR", "onFail: " + s);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("FIR", "onError");
-            }
-
-            @Override
             public void onStart() {
                 Log.e("FIR", "onStart");
             }

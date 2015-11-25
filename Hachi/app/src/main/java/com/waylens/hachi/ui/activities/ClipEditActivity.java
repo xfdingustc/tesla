@@ -422,7 +422,7 @@ public class ClipEditActivity extends BaseActivity {
         oldEndValue = mClipExtent.clipEndTimeMs;
 
         final ClipPos clipPos = new ClipPos(null,
-            mClipExtent.readCid,
+            mClipExtent.originalCid,
             mClip.clipDate,
             mClipExtent.clipStartTimeMs,
             ClipPos.TYPE_POSTER, false);
