@@ -1,6 +1,7 @@
 package com.waylens.hachi.skin;
 
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 
 import com.waylens.hachi.views.dashboard.ContainerLayouts;
 
@@ -39,9 +40,18 @@ public abstract class Element implements ContainerLayouts {
     private static final String TAG_XCOORD = "XCoord";
     private static final String TAG_YCOORD = "YCoord";
 
+    public static final String MATCH_PARENT = "MatchParent";
+    public static final String WRAP_CONTENT = "WrapContent";
+
+    public static final int SIZE_MODE_MATCH_PARENT = 0;
+    public static final int SIZE_MODE_WRAP_CONTENT = 1;
+    public static final int SIZE_MODE_FIXED = 2;
+
     protected int mType;
     private int mWidth;
     private int mHeight;
+    private int mWidthSizeMode;
+    private int mHeightSizeMode;
     private int mMarginTop = 0;
     private int mMarginBottom = 0;
     private int mMarginLeft = 0;
@@ -54,23 +64,20 @@ public abstract class Element implements ContainerLayouts {
     private String mSubscribe = null;
     protected String mResourceUrl;
 
-    private static class Attribute {
-        public Attribute(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-        String name;
-        String value;
-    }
-
-    private List<Attribute> mAttributeList = new ArrayList<>();
-
     public int getType() {
         return mType;
     }
 
+    public int getWidthSizeMode() {
+        return mWidthSizeMode;
+    }
+
+    public int getHeightSizeMode() {
+        return mHeightSizeMode;
+    }
+
     public int getWidth() {
-        if (mWidth != 0) {
+        if (mWidth != 0 || getResource() == null) {
             return mWidth;
         } else {
             return getResource().getWidth();
@@ -78,12 +85,14 @@ public abstract class Element implements ContainerLayouts {
     }
 
     public int getHeight() {
-        if (mHeight != 0) {
+        if (mHeight != 0 || getResource() == null) {
             return mHeight;
         } else {
             return getResource().getHeight();
         }
     }
+
+
 
     public int getAlignment() {
         return mAlignment;
@@ -123,11 +132,29 @@ public abstract class Element implements ContainerLayouts {
 
 
     public void parse(JSONObject object) {
-        Attribute attribute;
-        mWidth = object.optInt(TAG_WIDTH);
-        //attribute = new Attribute(com.android.internal.R.styleable.ViewGroup_Layout_layout_width)
+        // Get width & widthMode
+        String width = object.optString(TAG_WIDTH, null);
 
-        mHeight = object.optInt(TAG_HEIGHT);
+        if (width.equals(MATCH_PARENT)) {
+            mWidthSizeMode = SIZE_MODE_MATCH_PARENT;
+        } else if (width.equals(WRAP_CONTENT)) {
+            mWidthSizeMode = SIZE_MODE_WRAP_CONTENT;
+        } else {
+            mWidthSizeMode = SIZE_MODE_FIXED;
+            mWidth = Integer.parseInt(width);
+        }
+
+        // Get height & heightMode
+        String height = object.optString(TAG_HEIGHT, null);
+        if (height.equals(MATCH_PARENT)) {
+            mHeightSizeMode = SIZE_MODE_MATCH_PARENT;
+        } else if (height.equals(WRAP_CONTENT)) {
+            mHeightSizeMode = SIZE_MODE_WRAP_CONTENT;
+        } else  {
+            mHeightSizeMode = SIZE_MODE_FIXED;
+            mHeight = Integer.parseInt(height);
+        }
+
         String alignment = object.optString(TAG_ALIGNMENT);
         mAlignment = getAlignment(alignment);
         mMarginTop = object.optInt(TAG_MARGIN_TOP);

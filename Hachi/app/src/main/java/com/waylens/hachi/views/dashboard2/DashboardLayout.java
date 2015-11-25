@@ -1,7 +1,6 @@
 package com.waylens.hachi.views.dashboard2;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
@@ -10,14 +9,13 @@ import com.waylens.hachi.skin.Panel;
 import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
-import com.waylens.hachi.views.dashboard.ContainerLayouts;
 
 import java.util.List;
 
 /**
  * Created by Xiaofei on 2015/11/20.
  */
-public class DashboardLayout extends RelativeLayout  {
+public class DashboardLayout extends RelativeLayout {
     private static final String TAG = DashboardLayout.class.getSimpleName();
 
     private Skin mSkin = SkinManager.getManager().getSkin();
