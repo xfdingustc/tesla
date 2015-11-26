@@ -1,5 +1,6 @@
 package com.waylens.hachi.snipe.toolbox;
 
+import com.orhanobut.logger.Logger;
 import com.transee.common.GPSRawData;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -33,13 +34,14 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
     @Override
     protected VdbCommand createVdbCommand() {
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment, false, mDataType);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment, true, mDataType);
         return mVdbCommand;
     }
 
     @Override
     protected VdbResponse<RawDataBlock> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
+            Logger.t(TAG).d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: " + response.getRetCode());
             return null;
         }
 

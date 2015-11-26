@@ -1,7 +1,6 @@
 package com.waylens.hachi.views.dashboard2;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,28 +11,29 @@ import com.mapbox.mapboxsdk.views.MapView;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.Panel;
-import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Created by Xiaofei on 2015/11/20.
  */
 public class PanelLayout extends RelativeLayout {
     private Panel mPanel;
+    private EventBus mEventBus;
 
-    public PanelLayout(Context context, Panel panel) {
-        this(context, null, panel);
+    public PanelLayout(Context context, Panel panel, EventBus eventBus) {
+        this(context, null, panel, eventBus);
     }
 
-    public PanelLayout(Context context, AttributeSet attrs, Panel panel) {
+    public PanelLayout(Context context, AttributeSet attrs, Panel panel, EventBus eventBus) {
         super(context, attrs);
-        init(panel);
+        init(panel, eventBus);
     }
 
-    private void init(Panel panel) {
+    private void init(Panel panel, EventBus eventBus) {
         this.mPanel = panel;
+        this.mEventBus = eventBus;
         addElements();
     }
 
@@ -57,7 +57,12 @@ public class PanelLayout extends RelativeLayout {
                 ((MapView)elementView).setZoomLevel(14);
                 ((MapView)elementView).setLogoVisibility(View.GONE);
                 ((MapView)elementView).onCreate(null);
-                elementView.setBackgroundColor(Color.CYAN);
+                if (element.getSubscribe() != null) {
+                    MapViewEventSubscriber mapViewEventSubscriber = new MapViewEventSubscriber(
+                        (MapView)elementView);
+                    mEventBus.register(mapViewEventSubscriber);
+                }
+
                 break;
         }
 

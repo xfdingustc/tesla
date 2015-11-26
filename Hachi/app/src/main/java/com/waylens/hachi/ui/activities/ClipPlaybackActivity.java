@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -50,7 +49,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     private static Clip mSharedClip;
 
 
-    //private DashboardView.Adapter mDashboardViewAdapter;
+    private DashboardLayout.Adapter mDashboardLayoutAdapter;
 
 
     @Bind(R.id.svClipPlayback)
@@ -60,7 +59,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     ImageView mIvBackground;
 
     @Bind(R.id.dashboard)
-    DashboardLayout mDashboardView;
+    DashboardLayout mDashboardLayout;
 
     @Bind(R.id.btnPlay)
     ImageButton mBtnPlay;
@@ -112,8 +111,8 @@ public class ClipPlaybackActivity extends BaseActivity {
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
 
-        //mDashboardViewAdapter = new DashboardView.Adapter();
-        //mDashboardView.setAdapter(mDashboardViewAdapter);
+        mDashboardLayoutAdapter = new DashboardLayout.Adapter();
+        mDashboardLayout.setAdapter(mDashboardLayoutAdapter);
 
     }
 
@@ -126,7 +125,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("Get ACC data block");
-                    //mDashboardViewAdapter.setAccDataBlock(response);
+                    mDashboardLayoutAdapter.setAccDataBlock(response);
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -136,18 +135,34 @@ public class ClipPlaybackActivity extends BaseActivity {
         });
         mVdbRequestQueue.add(accRequest);
 
+        RawDataBlockRequest gpsRequest = new RawDataBlockRequest(clipFragment, RawDataBlock
+            .RAW_DATA_GPS, new VdbResponse.Listener<RawDataBlock>() {
+            @Override
+            public void onResponse(RawDataBlock response) {
+                Logger.t(TAG).d("Get GPS data block");
+                //mDashboardLayoutAdapter.setGpsDataBlock(response);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Logger.t(TAG).d("Get GPS failed");
+            }
+        });
+        mVdbRequestQueue.add(gpsRequest);
+
+
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment, RawDataBlock.RAW_DATA_ODB,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("Get Obd data block");
-                    //mDashboardViewAdapter.setObdDataBlock(response);
-                    startPlayback();
+                    mDashboardLayoutAdapter.setObdDataBlock(response);
+                    //startPlayback();
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-
+                Logger.t(TAG).d("Get OBD failed");
             }
         });
         mVdbRequestQueue.add(obdRequest);
@@ -167,7 +182,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //mDashboardView.update(currentPlayTime);
+                            mDashboardLayout.update(currentPlayTime);
                         }
                     });
 
@@ -180,7 +195,6 @@ public class ClipPlaybackActivity extends BaseActivity {
             }
         }).start();
     }
-
 
 
     private void preparePlayback() {

@@ -15,7 +15,7 @@ import com.waylens.hachi.skin.Panel;
 import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
-import com.waylens.hachi.utils.EventBus;
+import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.OBDData;

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.PanelGforce;
-import com.waylens.hachi.utils.EventBus;
+import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class PanelGforceView extends PanelView {
 
             }
             if (elementView != null) {
-                mEventBus.register(elementView);
+                //mEventBus.register(elementView);
                 addView(elementView);
             }
         }
