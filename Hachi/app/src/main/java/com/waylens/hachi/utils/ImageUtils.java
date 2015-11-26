@@ -12,6 +12,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+import com.nostra13.universalimageloader.utils.L;
 import com.waylens.hachi.R;
 
 import java.io.File;
@@ -38,6 +39,7 @@ public class ImageUtils {
                 .imageDownloader(new BaseImageDownloader(context, 5 * 1000, 30 * 1000))
                 .build();
         ImageLoader.getInstance().init(config);
+        L.writeLogs(false);
     }
 
     public static DisplayImageOptions getAvatarOptions() {

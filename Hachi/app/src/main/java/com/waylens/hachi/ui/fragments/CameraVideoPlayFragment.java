@@ -118,7 +118,6 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
         //createMoment();
         //getUploadUrl_Video(null);
-        //sendVideoFile();
         if (mMapView != null) {
             mMapView.onStart();
         }
@@ -320,7 +319,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
         parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, mClip.getStartTimeMs());
         parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, mClip.getDurationMs());
-        parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, VdbCommand.Factory.UPLOAD_GET_V0);
+        parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, VdbCommand.Factory.UPLOAD_GET_V1);
 
         ClipUploadUrlRequest request = new ClipUploadUrlRequest(mClip, parameters,
                 new VdbResponse.Listener<UploadUrl>() {
@@ -432,12 +431,20 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
                     URLConnection conn = url.openConnection();
                     inputStream = conn.getInputStream();
                     Log.e("test", "ContentLength: " + conn.getContentLength());
+                    /*
                     JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
                     String ip = uploadServer.optString("ip");
                     int port = uploadServer.optInt("port");
                     String privateKey = uploadServer.optString("privateKey");
                     String token = findToken(momentInfo, "video");
                     String guid = findGuid(momentInfo, "video");
+                    */
+                    String ip = "192.168.20.160";
+                    int port = 35020;
+                    String privateKey = "qwertyuiopasdfgh";
+                    String token = "220";
+                    String guid = "53f37022-43ba-404b-a5f8-389c823c1e0b";
+
                     DataUploader uploader = new DataUploader(ip, port, privateKey);
                     //uploader.setUploaderListener(uploadListener);
                     uploader.uploadStream(inputStream, conn.getContentLength(), ProtocolConstMsg.VIDIT_VIDEO_DATA, token, guid);

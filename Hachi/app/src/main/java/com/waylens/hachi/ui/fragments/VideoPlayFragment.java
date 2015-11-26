@@ -29,6 +29,7 @@ import com.waylens.hachi.views.DragLayout;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -67,7 +68,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private int mCurrentState = STATE_IDLE;
     private int mTargetState = STATE_IDLE;
 
-    protected int mRawDataState =  RAW_DATA_STATE_UNKNOWN;
+    protected int mRawDataState = RAW_DATA_STATE_UNKNOWN;
 
     public static VideoPlayFragment fullScreenPlayer;
 
@@ -107,6 +108,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private VideoHandler mHandler;
 
     private String mVideoSource;
+
+    private HashMap<String, String> mHeaders;
 
     private boolean mIsFullScreen;
 
@@ -181,7 +184,12 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     protected void setSource(String source) {
+        setSource(source, null);
+    }
+
+    protected void setSource(String source, HashMap<String, String> headers) {
         mVideoSource = source;
+        mHeaders = headers;
         mTargetState = STATE_PLAYING;
         mPausePosition = 0;
         openVideo();
@@ -297,10 +305,11 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.setOnErrorListener(this);
-            //mMediaPlayer.setDataSource(mVideoSource);
-            HashMap<String, String> headers = new HashMap<>();
-            headers.put("Cookie", "user=richard;key1=value1");
-            mMediaPlayer.setDataSource(null, Uri.parse(mVideoSource), headers);
+            if (mHeaders != null) {
+                mMediaPlayer.setDataSource(getActivity(), Uri.parse(mVideoSource), mHeaders);
+            } else {
+                mMediaPlayer.setDataSource(mVideoSource);
+            }
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;

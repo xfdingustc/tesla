@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Clip {
-
-    protected int mDurationMs;
-
     // clip categories: one vdb provoides one category
     public static final int CAT_UNKNOWN = 0; // unknown clip type
     public static final int CAT_REMOTE = 1; // vidit camera clips: RemoteClip
@@ -122,8 +119,10 @@ public class Clip {
     // date when the clip is created
     public int clipDate;
 
-    // clip length ms
+    public int gmtOffset;
 
+    // clip length ms
+    protected int mDurationMs;
 
     // clip size in bytes
     public long clipSize = -1;

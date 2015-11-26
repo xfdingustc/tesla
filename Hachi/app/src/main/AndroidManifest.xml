@@ -64,7 +64,7 @@
             android:label="@string/title_activity_add_camera">
         </activity>
         <activity
-            android:name=".ui.activities.CameraSetupActivity"
+            android:name="com.transee.viditcam.app.CameraSetupActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_camera_setup">
         </activity>

@@ -112,16 +112,16 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                     }
                 }
             }
-            int clipType = response.readi32();
-            Log.e("test", "clipType: " + clipType);
-            int extraSize = response.readi32();
-            Log.e("test", "extraSize: " + extraSize);
+            response.readi32(); //int clipType
+            response.readi32(); //int extraSize
             if (flag == FLAG_CLIP_EXTRA) {
                 String guid = new String(response.readByteArray(UUID_LENGTH));
                 clip.cid.setExtra(guid);
-                if (extraSize > UUID_LENGTH) {
-                    response.readByteArray(extraSize - UUID_LENGTH);
-                }
+
+                response.readi32(); //int ref_clip_date
+                clip.gmtOffset = response.readi32();
+                response.readi32(); //int real_clip_id
+
             } else if (flag == FLAG_CLIP_VDB_ID) {
                 //TODO VDB_ID
             }

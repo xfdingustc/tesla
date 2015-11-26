@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
+
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -58,6 +61,7 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
     @Override
     public void onBindViewHolder(final CameraClipViewHolder holder, int position) {
         final Clip clip = mClipSet.getClip(position);
+        Log.e("test", "Date: " + new Date(((long)clip.clipDate - clip.gmtOffset) * 1000));
         holder.videoDesc.setText("Mocked description");
         holder.videoTime.setText(clip.getDateTimeString());
         holder.videoDuration.setText(DateTime.secondsToString(clip.getDurationMs() / 1000));
