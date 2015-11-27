@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -53,6 +52,7 @@ import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
 import com.waylens.hachi.views.dashboard.DashboardView;
+import com.waylens.hachi.views.dashboard2.DashboardLayout;
 import com.waylens.mediatranscoder.MediaTranscoder;
 import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 
@@ -97,8 +97,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private String mDownloadedFilePath;
 
-    private DashboardView.Adapter mDashboardViewAdapter;
-
+    private DashboardLayout.Adapter mDashboardLayoutAdapter;
 
 
     @Bind(R.id.ivPreviewPicture)
@@ -134,8 +133,8 @@ public class ClipEditActivity extends BaseActivity {
     @Bind(R.id.downloadProgressBar)
     ProgressBar mProgressBar;
 
-    @Bind(R.id.dashboardView)
-    DashboardView mDashboardView;
+    @Bind(R.id.dashboardLayout)
+    DashboardLayout mDashboardLayout;
 
     @OnClick(R.id.btnPlay)
     public void onBtnPlayClicked() {
@@ -229,8 +228,8 @@ public class ClipEditActivity extends BaseActivity {
         final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
 
-        mDashboardViewAdapter = new DashboardView.Adapter();
-        mDashboardView.setAdapter(mDashboardViewAdapter);
+        mDashboardLayoutAdapter = new DashboardLayout.Adapter();
+        mDashboardLayout.setAdapter(mDashboardLayoutAdapter);
 
         initSeekBar();
         if (mClip.cid.type == RemoteClip.TYPE_BUFFERED) {
@@ -459,7 +458,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private ClipFragment getSelectedClipFragment() {
         long startTimeMs = mClip.getStartTimeMs();
-        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() ;
+        long endTimeMs = mClip.getStartTimeMs() + mClip.getDurationMs() / 256;
         ClipFragment clipFragment = new ClipFragment(mClip, startTimeMs, endTimeMs);
         return clipFragment;
     }
@@ -521,7 +520,7 @@ public class ClipEditActivity extends BaseActivity {
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
-                    mDashboardViewAdapter.setAccDataBlock(response);
+                    mDashboardLayoutAdapter.setAccDataBlock(response);
                     mTvDownloadInfo.setText("ACC data is downloaded!!!");
 
                 }
@@ -533,12 +532,27 @@ public class ClipEditActivity extends BaseActivity {
         });
         mVdbRequestQueue.add(accRequest);
 
+        RawDataBlockRequest gpsRequest = new RawDataBlockRequest(mSelectedClipFragment,
+            RawDataBlock.RAW_DATA_GPS, new VdbResponse.Listener<RawDataBlock>() {
+            @Override
+            public void onResponse(RawDataBlock response) {
+                mTvDownloadInfo.setText("GPS data is downloaded!!!!");
+                mDashboardLayoutAdapter.setGpsDataBlock(response);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(gpsRequest);
+
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(mSelectedClipFragment, RawDataBlock.RAW_DATA_ODB,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     mTvDownloadInfo.setText("OBD data is downloaded!!!!");
-                    mDashboardViewAdapter.setObdDataBlock(response);
+                    mDashboardLayoutAdapter.setObdDataBlock(response);
                     startTranscodeTask();
                 }
             }, new VdbResponse.ErrorListener() {
@@ -594,7 +608,7 @@ public class ClipEditActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mDashboardView.update(currentTimeMs);
+                            mDashboardLayout.update(currentTimeMs);
                         }
                     });
                 }
@@ -633,7 +647,7 @@ public class ClipEditActivity extends BaseActivity {
         };
         Logger.t(TAG).d("transcoding into " + file);
         MediaTranscoder.getInstance().transcodeVideo(fileDescriptor, file.getAbsolutePath(),
-            MediaFormatStrategyPresets.createAndroid720pStrategy(), listener, mDashboardView);
+            MediaFormatStrategyPresets.createAndroid720pStrategy(), listener, mDashboardLayout);
     }
 
 

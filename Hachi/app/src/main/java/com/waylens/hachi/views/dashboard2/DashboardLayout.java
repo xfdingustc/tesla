@@ -1,27 +1,34 @@
 package com.waylens.hachi.views.dashboard2;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.TextureView;
+import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.skin.Panel;
 import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
-import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard2.eventbus.EventConstants;
+import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import java.util.List;
 
 /**
  * Created by Xiaofei on 2015/11/20.
  */
-public class DashboardLayout extends RelativeLayout {
+public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     private static final String TAG = DashboardLayout.class.getSimpleName();
 
     private Skin mSkin = SkinManager.getManager().getSkin();
@@ -38,13 +45,54 @@ public class DashboardLayout extends RelativeLayout {
         init();
     }
 
+    @Override
+    public Bitmap updateTexImage(long pts) {
+/*
+        buildDrawingCache();
+
+*/
+        Bitmap mapBitmap = null;
+        TextureView mTextureView = null;
+        if (mMapView != null) {
+            for (int i = 0; i < mMapView.getChildCount(); i++) {
+                View view = mMapView.getChildAt(i);
+                if (view instanceof TextureView) {
+                    Logger.t(TAG).d("Found TextureView");
+                    mTextureView = (TextureView) view;
+                    break;
+                }
+            }
+
+            if (mTextureView != null) {
+                mapBitmap = mTextureView.getBitmap();
+            }
+        }
+
+
+        Bitmap bitmap = getDrawingCache();
+        if (mapBitmap != null) {
+            Canvas canvas = new Canvas(bitmap);
+            Rect srcRect = new Rect(0, 0, mapBitmap.getWidth(), mapBitmap.getHeight());
+
+            canvas.drawBitmap(mapBitmap, srcRect, srcRect, null);
+            
+
+        }
+        return bitmap;
+
+
+    }
+
     private void init() {
+        setDrawingCacheEnabled(true);
         addPanels();
     }
 
     public void setAdapter(Adapter adapter) {
         mAdapter = adapter;
     }
+
+    private MapView mMapView;
 
     private void addPanels() {
         List<Panel> panelList = mSkin.getPanels();
@@ -54,7 +102,9 @@ public class DashboardLayout extends RelativeLayout {
                 PanelLayout layout = new PanelLayout(getContext(), panel, mEventBus);
                 LayoutParams params = LayoutParamUtils.createLayoutParam(panel);
                 addView(layout, params);
-
+                if (layout.getMapView() != null) {
+                    mMapView = layout.getMapView();
+                }
             }
         }
     }
@@ -133,6 +183,10 @@ public class DashboardLayout extends RelativeLayout {
 
         // TODO: We need refine this algorithm:
         private RawDataItem getRawDataItem(RawDataBlock datablock, long pts) {
+            if (datablock == null) {
+                return null;
+            }
+
             for (int i = 0; i < datablock.header.mNumItems; i++) {
                 RawDataItem item = datablock.getRawDataItem(i);
                 if (item.clipTimeMs > pts) {

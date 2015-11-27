@@ -21,6 +21,7 @@ import com.mapbox.mapboxsdk.annotations.SpriteFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
+import com.orhanobut.logger.Logger;
 import com.transee.common.GPSRawData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
@@ -66,6 +67,7 @@ import crs_svr.ProtocolConstMsg;
  * Created by Richard on 11/4/15.
  */
 public class CameraVideoPlayFragment extends VideoPlayFragment {
+    private static final String TAG = CameraVideoPlayFragment.class.getSimpleName();
 
     private VdbRequestQueue mVdbRequestQueue;
     private Clip mClip;
@@ -147,7 +149,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             mObdView.setSpeed(((OBDData) obd.object).speed);
             mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
         } else {
-            Log.e("test", "Position: " + position + "; mOBDPosition: " + mTypedPosition.get(RawDataBlock.RAW_DATA_ODB));
+            Logger.t(TAG).e("Position: " + position + "; mOBDPosition: " + mTypedPosition
+                .get(RawDataBlock.RAW_DATA_ODB));
         }
 
         RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
@@ -220,14 +223,14 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             return;
         }
 
-        Log.e("test", "DataType[1]: " + dataType);
+        Logger.t(TAG).d("DataType[1]: " + dataType);
 
         ClipFragment clipFragment = new ClipFragment(mClip);
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment, dataType,
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
                     public void onResponse(RawDataBlock response) {
-                        Log.e("test", "DataType[2]: " + dataType);
+                        Logger.t(TAG).d("resoponse datatype: " + dataType);
                         mTypedRawData.put(dataType, response);
                         mTypedState.put(dataType, RAW_DATA_STATE_READY);
                         onLoadRawDataFinished();
@@ -238,7 +241,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
                     public void onErrorResponse(SnipeError error) {
                         mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
                         onLoadRawDataFinished();
-                        Log.e("test", "", error);
+                        Logger.t(TAG).d("error response:");
                     }
                 });
         mVdbRequestQueue.add(obdRequest.setTag(REQUEST_TAG));

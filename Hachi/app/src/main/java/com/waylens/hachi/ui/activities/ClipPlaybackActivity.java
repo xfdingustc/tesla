@@ -140,7 +140,7 @@ public class ClipPlaybackActivity extends BaseActivity {
             @Override
             public void onResponse(RawDataBlock response) {
                 Logger.t(TAG).d("Get GPS data block");
-                //mDashboardLayoutAdapter.setGpsDataBlock(response);
+                mDashboardLayoutAdapter.setGpsDataBlock(response);
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -157,7 +157,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                 public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("Get Obd data block");
                     mDashboardLayoutAdapter.setObdDataBlock(response);
-                    //startPlayback();
+                    startPlayback();
                 }
             }, new VdbResponse.ErrorListener() {
             @Override

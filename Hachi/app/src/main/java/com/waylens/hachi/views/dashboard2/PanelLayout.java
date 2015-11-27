@@ -22,6 +22,10 @@ public class PanelLayout extends RelativeLayout {
     private Panel mPanel;
     private EventBus mEventBus;
 
+    private MapView mMapView = null;
+
+
+
     public PanelLayout(Context context, Panel panel, EventBus eventBus) {
         this(context, null, panel, eventBus);
     }
@@ -62,6 +66,7 @@ public class PanelLayout extends RelativeLayout {
                         (MapView)elementView);
                     mEventBus.register(mapViewEventSubscriber);
                 }
+                mMapView = (MapView)elementView;
 
                 break;
         }
@@ -71,5 +76,9 @@ public class PanelLayout extends RelativeLayout {
             LayoutParams params = LayoutParamUtils.createLayoutParam(element);
             addView(elementView, params);
         }
+    }
+
+    public MapView getMapView() {
+        return mMapView;
     }
 }

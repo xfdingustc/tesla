@@ -64,6 +64,9 @@ repositories {
     maven {
         url "http://maven.bughd.com/public"
     }
+    maven {
+        url "http://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 
@@ -88,7 +91,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'im.fir:sdk:latest.integration@aar'
     compile 'javax.jmdns:jmdns:3.4.1'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:2.2.0@aar') {
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:2.3.0-SNAPSHOT@aar') {
         transitive = true
     }
     compile 'com.google.code.gson:gson:2.3.1'
