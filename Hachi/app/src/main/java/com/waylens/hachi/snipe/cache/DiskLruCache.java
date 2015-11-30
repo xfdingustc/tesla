@@ -37,6 +37,14 @@ public class DiskLruCache {
         }
     }
 
+    void init() {
+        File[] files = cacheDir.listFiles();
+        for (File file : files) {
+            mFileLruCache.put(file.getName(), (int) file.length() / 1024);
+        }
+    }
+
+
     public static DiskLruCache getDiskLruCache(Context context, int maxSize) {
         if (instance == null) {
             synchronized (DiskLruCache.class) {
@@ -45,6 +53,7 @@ public class DiskLruCache {
                 }
             }
         }
+        instance.init();
         return instance;
     }
 
@@ -102,6 +111,7 @@ public class DiskLruCache {
         protected void entryRemoved(boolean evicted, String key, Integer oldValue, Integer newValue) {
             if (evicted) {
                 new File(cacheDir, key).delete();
+                Log.e("test", "Delete: " + key);
             }
             super.entryRemoved(evicted, key, oldValue, newValue);
         }

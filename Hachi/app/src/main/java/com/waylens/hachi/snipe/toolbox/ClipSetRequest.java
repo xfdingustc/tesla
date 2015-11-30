@@ -19,7 +19,7 @@ import com.waylens.hachi.vdb.SimpleClipSet;
 public class ClipSetRequest extends VdbRequest<ClipSet> {
     private final static String TAG = ClipSetRequest.class.getSimpleName();
     private static final int UUID_LENGTH = 36;
-    private final VdbResponse.Listener<ClipSet> mListener;
+    private VdbResponse.Listener<ClipSet> mListener;
 
     public static final int FLAG_UNKNOWN = -1;
     public static final int FLAG_CLIP_EXTRA = 1;
@@ -75,6 +75,15 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
     @Override
     protected void deliverResponse(ClipSet response) {
         mListener.onResponse(response);
+        clean();
+    }
+
+    @Override
+    public void clean() {
+        super.clean();
+        if (mListener != null) {
+            mListener = null;
+        }
     }
 
     private VdbResponse<ClipSet> parseGetClipSetResponse(VdbAcknowledge response) {

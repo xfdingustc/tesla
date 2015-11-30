@@ -10,6 +10,15 @@ import com.waylens.hachi.hardware.VdtCameraManager;
  */
 public class Snipe {
     private static VdbConnection mVdbConnection;
+
+    public static VdbRequestQueue newRequestQueue() {
+        VdbSocket vdbSocket = new BasicVdbSocket();
+        VdbRequestQueue queue = new VdbRequestQueue(vdbSocket);
+        queue.start();
+
+        return queue;
+    }
+
     public static VdbRequestQueue newRequestQueue(Context context) {
         VdbSocket vdbSocket = new BasicVdbSocket();
         VdbRequestQueue queue = new VdbRequestQueue(vdbSocket);

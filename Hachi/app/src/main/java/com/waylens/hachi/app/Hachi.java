@@ -13,6 +13,7 @@ import com.waylens.hachi.hardware.WifiAdminManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -55,7 +56,7 @@ public class Hachi extends Application {
         WifiAdminManager.initialize(this);
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
-
+        VdbImageLoader.init(this, 1024 * 64);
         //FIR.init(this);
 
         Snipe.init();

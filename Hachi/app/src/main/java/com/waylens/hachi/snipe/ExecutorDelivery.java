@@ -56,10 +56,10 @@ public class ExecutorDelivery implements ResponseDelivery {
         @Override
         public void run() {
             if (mRequest.isCanceled()) {
-                mRequest.finish("canceled-at-delivery");
+                mRequest.finish("canceled-at-delivery", true);
                 return;
             } else {
-                mRequest.finish("finish-at-delivery");
+                mRequest.finish("finish-at-delivery", false);
             }
 
 

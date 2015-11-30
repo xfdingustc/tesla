@@ -26,17 +26,14 @@ import crs_svr.ProtocolConstMsg;
 import crs_svr.WaylensCommHead;
 
 /**
+ *
  * Created by Xiaofei on 2015/3/18.
  */
 public class DataUploader {
     private static final String TAG = "DataUploader";
-
     private static final String DEFAULT_AVATAR_TOKEN = "avatar";
-
-    private static final int BLOCK_UPLOAD_FINISHED_RETURN_VAL = 1;
-    private static final int FILE_UPLOAD_FINISHED_RETURN_VAL = 2;
-
     private static final int BLOCK_SIZE = 1024 * 4;
+    private static final int PACKET_HEADER_SIZE = 2;
 
     private String mAddress;
     private int mPort;
@@ -49,7 +46,6 @@ public class DataUploader {
     private long mUploadCount;
     private long totalCount = 1;
     private byte[] mTotalSHA1;
-    private byte[] mPacketSHA1;
     private byte mDataType;
     private String mToken;
     private String mGuid;
@@ -122,9 +118,7 @@ public class DataUploader {
         try {
             mInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            if (mListener != null) {
-                mListener.onUploadError("File not fount");
-            }
+            logError(e);
             return;
         }
         uploadImpl();
@@ -140,13 +134,17 @@ public class DataUploader {
             doUpload();
             stopUpload();
         } catch (Exception e) {
-            if (mListener != null) {
-                mListener.onUploadError("Error: " + e.getMessage());
-            }
-            Log.d(TAG, "", e);
+            logError(e);
         } finally {
             release();
         }
+    }
+
+    private void logError(Exception e) {
+        if (mListener != null) {
+            mListener.onUploadError("Error: " + e.getMessage());
+        }
+        Log.d(TAG, "", e);
     }
 
     private void init() throws IOException {
@@ -187,7 +185,7 @@ public class DataUploader {
         int length = CommWaylensParse.encode(comm_header, login, data);
         sendData(data, length);
         int ret = receiveData();
-        if (ret != 0) {
+        if (ret != ProtocolConstMsg.RES_STATE_OK) {
             throw new IOException("Error, Login return: " + ret);
         }
     }
@@ -198,20 +196,19 @@ public class DataUploader {
     }
 
     private int receiveData() throws IOException {
-        byte[] data = new byte[1024];
-        int packet_size;
-        final int PACKET_HEADER_SIZE = 2;
+        byte[] data = new byte[PACKET_HEADER_SIZE];
         InputStream input = mSocket.getInputStream();
         int msg_length = input.read(data, 0, PACKET_HEADER_SIZE);
-        packet_size = DigitUtils.hBytes2Short(data);
+        if (msg_length != PACKET_HEADER_SIZE) {
+            logError(new RuntimeException("Error to read response header."));
+            return ProtocolConstMsg.RES_STATE_FAIL;
+        }
+        int packet_size = DigitUtils.hBytes2Short(data);
         byte[] response_cmd = new byte[packet_size];
         response_cmd[0] = data[0];
         response_cmd[1] = data[1];
 
-        input.read(data, 0, packet_size - PACKET_HEADER_SIZE);
-        for (int i = 0; i < packet_size - PACKET_HEADER_SIZE; i++) {
-            response_cmd[i + PACKET_HEADER_SIZE] = data[i];
-        }
+        input.read(response_cmd, PACKET_HEADER_SIZE, packet_size - PACKET_HEADER_SIZE);
 
         WaylensCommHead comm_head = new WaylensCommHead();
         CrsCommResponse response = new CrsCommResponse();
@@ -242,14 +239,14 @@ public class DataUploader {
         sendData(data, length);
         int ret = receiveData();
         // File already exist, so return false;
-        if (ret == 2) {
+        if (ret == ProtocolConstMsg.RES_FILE_TRANS_COMPLETE) {
             if (mListener != null) {
                 mListener.onUploadFinished();
             }
             return false;
         }
 
-        if (ret != 0) {
+        if (ret != ProtocolConstMsg.RES_STATE_OK) {
             throw new IOException("Error, startUpload return: " + ret);
         }
 
@@ -279,7 +276,6 @@ public class DataUploader {
             //mPacketSHA1 = HashUtils.SHA1(data, read_bytes_cnt);
             //uploadPacket(data, read_bytes_cnt, packetNumber++);
             uploadBlock(data, read_bytes_cnt, 0, 0, packetNumber++);
-
             /*int server_ret = receiveData();
             if (server_ret != BLOCK_UPLOAD_FINISHED_RETURN_VAL) {
                 throw new IOException("In upload content: upload packet failed ret =  " + server_ret);
@@ -298,7 +294,7 @@ public class DataUploader {
         int len = CommWaylensParse.encode(comm_header, upload, data);
         sendData(data, len);
         int server_ret = receiveData();
-        if (server_ret != FILE_UPLOAD_FINISHED_RETURN_VAL) {
+        if (server_ret != ProtocolConstMsg.RES_FILE_TRANS_COMPLETE) {
             throw new IOException("Stop uploading failed ret = " + server_ret);
         }
     }

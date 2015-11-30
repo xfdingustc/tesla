@@ -15,10 +15,12 @@ import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
+import com.waylens.hachi.ui.adapters.ClipFilmAdapter;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.RemoteClip;
@@ -38,7 +40,7 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
     static final String TAG_CLIP_SET = "tag.clip_set";
 
     private VdbRequestQueue mVdbRequestQueue;
-    private CameraClipSetAdapter mClipSetAdapter;
+    private ClipFilmAdapter mClipSetAdapter;
 
     VdtCamera mVdtCamera;
 
@@ -87,8 +89,9 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
             mViewAnimator.setDisplayedChild(2);
         }
 
-        mClipSetAdapter = new CameraClipSetAdapter(getActivity(), mVdbRequestQueue);
-        mClipSetAdapter.setClipActionListener(this);
+        //mClipSetAdapter = new CameraClipSetAdapter(getActivity(), mVdbRequestQueue);
+        //mClipSetAdapter.setClipActionListener(this);
+        mClipSetAdapter = new ClipFilmAdapter();
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
         mRvCameraVideoList.setLayoutManager(mLinearLayoutManager);
 
@@ -120,7 +123,9 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
     public void onDestroyView() {
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.cancelAll(TAG_CLIP_SET);
+            mVdbRequestQueue = null;
         }
+        mTabLayout.setOnTabSelectedListener(null);
         super.onDestroyView();
     }
 

@@ -2,8 +2,10 @@ package com.waylens.hachi.snipe;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StatFs;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -12,10 +14,13 @@ import com.waylens.hachi.snipe.cache.DiskLruCache;
 import com.waylens.hachi.snipe.cache.MemoryLurCache;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.utils.DigitUtils;
+import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.ClipPos;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Xiaofei on 2015/8/25.
@@ -27,7 +32,7 @@ public class VdbImageLoader {
 
     private final HashMap<String, BatchedVdbImageRequest> mInFlightRequest = new HashMap<>();
 
-    private final HashMap<String, BatchedVdbImageRequest> mBatchedResponses = new HashMap<>();
+    private final ConcurrentHashMap<String, BatchedVdbImageRequest> mBatchedResponses = new ConcurrentHashMap<>();
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -46,10 +51,23 @@ public class VdbImageLoader {
         }
     }
 
+    /**
+     *
+     * @param context
+     * @param maxSize - size in KB;
+     */
     public static void init(Context context, int maxSize) {
-        if (diskLruCache == null) {
-            diskLruCache = DiskLruCache.getDiskLruCache(context, maxSize);
+        if (diskLruCache != null || !ImageUtils.isExternalStorageReady()) {
+            return;
         }
+
+        StatFs statFs = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        long availableBytes = statFs.getAvailableBytes() / 1024;
+        int size = maxSize;
+        if (availableBytes < maxSize) {
+            size = (int) availableBytes / 2;
+        }
+        diskLruCache = DiskLruCache.getDiskLruCache(context, size);
     }
 
 
@@ -93,11 +111,10 @@ public class VdbImageLoader {
         throwIfNotOnMainThread();
 
         final String cacheKey = getCacheKey(clipPos, maxWidth, maxHeight, scaleType);
-
+        //Log.e("test", "cacheKey: " + cacheKey);
         VdbImageContainer imageContainer;
-        Bitmap bitmap = memoryLurCache.get(cacheKey);
+        Bitmap bitmap = loadImageFromCache(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
-            Log.e(TAG, "Use cached Bitmap: " + clipPos.getClipTimeMs() + "; cacheKey: " + cacheKey);
             imageContainer = new VdbImageContainer(bitmap, clipPos, listener);
             listener.onResponse(imageContainer, true);
         } else {
@@ -112,10 +129,31 @@ public class VdbImageLoader {
         return imageContainer;
     }
 
+    private Bitmap loadImageFromCache(String cacheKey) {
+        Bitmap bitmap = memoryLurCache.get(cacheKey);
+        if (bitmap != null) {
+            Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
+            return bitmap;
+        }
+        if (diskLruCache != null) {
+            bitmap = diskLruCache.get(cacheKey);
+            if (bitmap != null) {
+                Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
+                return bitmap;
+            }
+        }
+        return null;
+    }
+
+    private void cacheImages(String cacheKey, Bitmap bitmap) {
+        memoryLurCache.put(cacheKey, bitmap);
+        diskLruCache.put(cacheKey, bitmap);
+    }
+
 
     protected VdbRequest<Bitmap> makeVdbImageRequest(ClipPos clipPos, int maxWidth,
-                                                     int maxHeight, ScaleType scaleType, final
-                                                     String cacheKey) {
+                                                     int maxHeight, ScaleType scaleType,
+                                                     final String cacheKey) {
 
         return new VdbImageRequest(clipPos, new VdbResponse.Listener<Bitmap>() {
             @Override
@@ -198,7 +236,8 @@ public class VdbImageLoader {
             mRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    for (BatchedVdbImageRequest bir : mBatchedResponses.values()) {
+                    for (String key : mBatchedResponses.keySet()) {
+                        BatchedVdbImageRequest bir = mBatchedResponses.get(key);
                         for (VdbImageContainer container : bir.mContainers) {
                             if (container.mListener == null) {
                                 continue;
@@ -206,13 +245,12 @@ public class VdbImageLoader {
 
                             if (bir.getError() == null) {
                                 container.mBitmap = bir.mResponseBitmap;
-                                memoryLurCache.put(cacheKey, bir.mResponseBitmap);
                                 container.mListener.onResponse(container, false);
+                                cacheImages(key, bir.mResponseBitmap);
                             }
                         }
+                        mBatchedResponses.remove(key);
                     }
-
-                    mBatchedResponses.clear();
                     mRunnable = null;
 
                 }

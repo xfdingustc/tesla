@@ -53,7 +53,7 @@ public class VdbDispatcher extends Thread {
                 vdbRequest.addMarker("vdb-queue-take");
 
                 if (vdbRequest.isCanceled()) {
-                    vdbRequest.finish("vdb-discard-cancelled");
+                    vdbRequest.finish("vdb-discard-cancelled", true);
                     continue;
                 }
 
@@ -62,7 +62,7 @@ public class VdbDispatcher extends Thread {
                 vdbRequest.addMarker("vdb-complete");
 
                 if (vdbAcknowledge.notModified && vdbRequest.hasHadResponseDelivered()) {
-                    vdbRequest.finish("not-modified");
+                    vdbRequest.finish("not-modified", true);
                     continue;
                 }
 

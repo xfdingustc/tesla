@@ -6,7 +6,7 @@ package com.waylens.hachi.snipe;
  */
 public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     protected int mMethod;
-    private final VdbResponse.ErrorListener mErrorListener;
+    private VdbResponse.ErrorListener mErrorListener;
 
     private Integer mSequence;
 
@@ -80,9 +80,12 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     }
 
 
-    void finish(final String tag) {
+    void finish(final String tag, boolean shouldClean) {
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.finish(this);
+        }
+        if (shouldClean) {
+            clean();
         }
     }
 
@@ -102,7 +105,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
 
     public void markDelivered() {
-        mResponseDelivered  = true;
+        mResponseDelivered = true;
     }
 
     public boolean hasHadResponseDelivered() {
@@ -126,10 +129,11 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     abstract protected void deliverResponse(T response);
 
 
-    protected  void deliverError(SnipeError error) {
+    protected void deliverError(SnipeError error) {
         if (mErrorListener != null) {
             mErrorListener.onErrorResponse(error);
         }
+        clean();
     }
 
     @Override
@@ -138,7 +142,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         Priority right = another.getPriority();
 
         return left == right ? this.mSequence - another.mSequence : right.ordinal() - left
-            .ordinal();
+                .ordinal();
 
     }
 
@@ -148,5 +152,11 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     public void setIgnorable(boolean isIgnorable) {
         mIsIgnorable = isIgnorable;
+    }
+
+    public void clean() {
+        if (mErrorListener != null) {
+            mErrorListener = null;
+        }
     }
 }
