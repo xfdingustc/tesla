@@ -1,4 +1,4 @@
-package com.waylens.hachi.views.dashboard2;
+package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -11,7 +11,7 @@ import com.mapbox.mapboxsdk.views.MapView;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.skin.Element;
 import com.waylens.hachi.skin.Panel;
-import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
+import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 
 import java.util.List;
 

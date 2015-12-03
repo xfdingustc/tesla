@@ -1,4 +1,4 @@
-package com.waylens.hachi.views.dashboard2;
+package com.waylens.hachi.views.dashboard;
 
 import android.graphics.Color;
 
@@ -10,8 +10,8 @@ import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
 import com.transee.common.GPSRawData;
 import com.waylens.hachi.R;
-import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
-import com.waylens.hachi.views.dashboard2.eventbus.EventConstants;
+import com.waylens.hachi.views.dashboard.eventbus.EventBus;
+import com.waylens.hachi.views.dashboard.eventbus.EventConstants;
 
 
 
@@ -33,10 +33,6 @@ public class MapViewEventSubscriber implements EventBus.EventSubscriber {
     }
 
     private void initMapView() {
-        //mMapView.
-        //mMapView.setDrawingCacheEnabled(true);
-        //mMapView.getOverlay()
-
         spriteFactory = new SpriteFactory(mMapView);
         mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
         LatLng firstPoint = new LatLng(0, 0);

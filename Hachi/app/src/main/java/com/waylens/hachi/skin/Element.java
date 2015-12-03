@@ -1,19 +1,13 @@
 package com.waylens.hachi.skin;
 
 import android.graphics.Bitmap;
-import android.graphics.Paint;
-
-import com.waylens.hachi.views.dashboard.ContainerLayouts;
 
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Xiaofei on 2015/9/7.
  */
-public abstract class Element implements ContainerLayouts {
+public abstract class Element {
     public static final String ELEMENT_TYPE_FRAME_SEQUENCE_STR = "FrameSequence";
     public static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
     public static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
@@ -46,6 +40,16 @@ public abstract class Element implements ContainerLayouts {
     public static final int SIZE_MODE_MATCH_PARENT = 0;
     public static final int SIZE_MODE_WRAP_CONTENT = 1;
     public static final int SIZE_MODE_FIXED = 2;
+
+    public static final int TOP_LEFT = 1;
+    public static final int TOP_CENTER = 2;
+    public static final int TOP_RIGHT = 3;
+    public static final int CENTER_LEFT = 4;
+    public static final int CENTER = 5;
+    public static final int CENTER_RIGHT = 6;
+    public static final int BOTTOM_LEFT = 7;
+    public static final int BOTTOM_CENTER = 8;
+    public static final int BOTTOM_RIGHT = 9;
 
     protected int mType;
     private int mWidth;
@@ -91,7 +95,6 @@ public abstract class Element implements ContainerLayouts {
             return getResource().getHeight();
         }
     }
-
 
 
     public int getAlignment() {
@@ -150,7 +153,7 @@ public abstract class Element implements ContainerLayouts {
             mHeightSizeMode = SIZE_MODE_MATCH_PARENT;
         } else if (height.equals(WRAP_CONTENT)) {
             mHeightSizeMode = SIZE_MODE_WRAP_CONTENT;
-        } else  {
+        } else {
             mHeightSizeMode = SIZE_MODE_FIXED;
             mHeight = Integer.parseInt(height);
         }
@@ -165,7 +168,6 @@ public abstract class Element implements ContainerLayouts {
         mXCoord = (float) object.optDouble(TAG_XCOORD);
         mYCoord = (float) object.optDouble(TAG_YCOORD);
         mSubscribe = object.optString(TAG_SUBSCRIBE);
-
 
 
     }

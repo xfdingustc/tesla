@@ -1,16 +1,16 @@
-package com.waylens.hachi.views.dashboard2;
+package com.waylens.hachi.views.dashboard;
 
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.skin.Element;
-import com.waylens.hachi.views.dashboard.ContainerLayouts;
+
 
 /**
  * Created by Xiaofei on 2015/11/24.
  */
-public class LayoutParamUtils implements ContainerLayouts {
+public class LayoutParamUtils {
     private static final String TAG = LayoutParamUtils.class.getSimpleName();
 
     public static RelativeLayout.LayoutParams createLayoutParam(Element element) {
@@ -34,38 +34,38 @@ public class LayoutParamUtils implements ContainerLayouts {
             (widthMeasureSpec, heightMeasureSpec);
 
         switch (element.getAlignment()) {
-            case TOP_LEFT:
+            case Element.TOP_LEFT:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 1);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 1);
                 break;
-            case TOP_CENTER:
+            case Element.TOP_CENTER:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 1);
                 layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, 1);
                 break;
-            case TOP_RIGHT:
+            case Element.TOP_RIGHT:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 1);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
                 break;
-            case CENTER_LEFT:
+            case Element.CENTER_LEFT:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 1);
                 layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, 1);
                 break;
-            case CENTER:
+            case Element.CENTER:
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, 1);
                 break;
-            case CENTER_RIGHT:
+            case Element.CENTER_RIGHT:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
                 layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, 1);
                 break;
-            case BOTTOM_LEFT:
+            case Element.BOTTOM_LEFT:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 1);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 1);
                 break;
-            case BOTTOM_CENTER:
+            case Element.BOTTOM_CENTER:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 1);
                 layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, 1);
                 break;
-            case BOTTOM_RIGHT:
+            case Element.BOTTOM_RIGHT:
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 1);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
                 break;

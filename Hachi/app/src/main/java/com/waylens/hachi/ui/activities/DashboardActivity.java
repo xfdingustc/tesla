@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.views.dashboard.DashboardView;
+import com.waylens.hachi.views.dashboard.DashboardLayout;
 
 import butterknife.Bind;
 
@@ -17,7 +17,7 @@ import butterknife.Bind;
 public class DashboardActivity extends BaseActivity {
 
     @Bind(R.id.dashboard)
-    DashboardView mDashboardView;
+    DashboardLayout mDashboardLayout;
 
 
     public static void launch(Context context) {

@@ -1,4 +1,4 @@
-package com.waylens.hachi.views.dashboard2.eventbus;
+package com.waylens.hachi.views.dashboard.eventbus;
 
 /**
  * Created by Xiaofei on 2015/11/25.

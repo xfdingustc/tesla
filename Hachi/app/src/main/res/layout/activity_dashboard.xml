@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.waylens.hachi.views.dashboard.DashboardView
+    <com.waylens.hachi.views.dashboard.DashboardLayout
         android:id="@+id/dashboard"
         android:background="@android:color/transparent"
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.waylens.hachi.views.dashboard2;
+package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.RelativeLayout;
+
 
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
@@ -19,8 +20,8 @@ import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.views.dashboard2.eventbus.EventBus;
-import com.waylens.hachi.views.dashboard2.eventbus.EventConstants;
+import com.waylens.hachi.views.dashboard.eventbus.EventBus;
+import com.waylens.hachi.views.dashboard.eventbus.EventConstants;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import java.util.List;
@@ -47,10 +48,6 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
     @Override
     public Bitmap updateTexImage(long pts) {
-/*
-        buildDrawingCache();
-
-*/
         Bitmap mapBitmap = null;
         TextureView mTextureView = null;
         if (mMapView != null) {

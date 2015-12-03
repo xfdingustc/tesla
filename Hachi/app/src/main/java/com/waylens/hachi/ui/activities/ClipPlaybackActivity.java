@@ -27,7 +27,7 @@ import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.views.dashboard2.DashboardLayout;
+import com.waylens.hachi.views.dashboard.DashboardLayout;
 
 import java.io.IOException;
 
