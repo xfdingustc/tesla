@@ -26,9 +26,9 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentAcc;
 import com.waylens.hachi.ui.entities.MomentGPS;
 import com.waylens.hachi.ui.entities.MomentOBD;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
-import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.GaugeView;
 
 import org.json.JSONArray;
@@ -63,7 +63,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
     private int mGPSPosition;
     private boolean mIsReplay;
 
-    public static MomentPlayFragment newInstance(Moment moment, DragLayout.OnViewDragListener listener) {
+    public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
         Bundle args = new Bundle();
         MomentPlayFragment fragment = new MomentPlayFragment();
         fragment.setArguments(args);

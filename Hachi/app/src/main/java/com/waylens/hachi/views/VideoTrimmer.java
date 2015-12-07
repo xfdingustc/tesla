@@ -103,6 +103,49 @@ public class VideoTrimmer extends FrameLayout {
         addView(mVideoTrimmerController, layoutParams);
     }
 
+    public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, int defaultHeight) {
+        if (clip == null) {
+            return;
+        }
+
+        int width = mRecyclerView.getWidth();
+        if (width == 0) {
+            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            if (size.x == 0) {
+                return;
+            }
+            width = size.x;
+        }
+
+        int height = mRecyclerView.getHeight();
+        if (height == 0) {
+            height = defaultHeight;
+        }
+        int imgWidth = height * 16 / 9;
+        int itemCount = width / imgWidth;
+        if (width % imgWidth != 0) {
+            itemCount++;
+        }
+
+        setInitRangeValues(clip.getStartTimeMs(), clip.getStartTimeMs() + clip.getDurationMs());
+        long period =  clip.getDurationMs() / (itemCount - 1);
+        List<ClipPos> items = new ArrayList<>();
+        for (int i = 0; i < itemCount; i++) {
+            //items.add(new ClipPos(clip, clip.getStartTimeMs() + period * i, ClipPos.TYPE_POSTER, false));
+            long posTime = clip.getStartTimeMs() + period * i;
+            if (posTime >= (clip.getStartTimeMs() + clip.getDurationMs())) {
+                posTime = posTime - 10; //magic number.
+            }
+            items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
+        }
+        //items.add(new ClipPos(clip, clip.getStartTimeMs() + clip.getDurationMs(), ClipPos.TYPE_POSTER, false));
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(imageLoader, items, imgWidth, height);
+        mRecyclerView.setAdapter(adapter);
+    }
+
     public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, long startMs, long endMs) {
         if (clip == null) {
             return;
@@ -185,14 +228,6 @@ public class VideoTrimmer extends FrameLayout {
 
         public TrimmerLayoutManager(Context context) {
             super(context);
-        }
-
-        public TrimmerLayoutManager(Context context, int orientation, boolean reverseLayout) {
-            super(context, orientation, reverseLayout);
-        }
-
-        public TrimmerLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-            super(context, attrs, defStyleAttr, defStyleRes);
         }
 
         @Override

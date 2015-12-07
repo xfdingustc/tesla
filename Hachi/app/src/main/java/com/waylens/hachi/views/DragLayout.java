@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.mapbox.mapboxsdk.views.MapView;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 
 /**
  * FrameLayout - Drag container
@@ -110,12 +111,6 @@ public class DragLayout extends FrameLayout {
                 mDragListener.onStopDragging();
             }
         }
-    }
-
-    public interface OnViewDragListener {
-        void onStartDragging();
-
-        void onStopDragging();
     }
 
 }

@@ -112,6 +112,8 @@ public class Clip {
 
     public final ID cid;
 
+    public ID realCid;
+
     public final StreamInfo[] streams;
 
     public int index; // index in ClipSet

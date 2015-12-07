@@ -25,11 +25,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.views.DragLayout;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -99,7 +99,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     @Bind(R.id.text_video_time)
     TextView mVideoTime;
 
-    protected DragLayout.OnViewDragListener mDragListener;
+    protected OnViewDragListener mDragListener;
 
     private SurfaceHolder mSurfaceHolder;
 

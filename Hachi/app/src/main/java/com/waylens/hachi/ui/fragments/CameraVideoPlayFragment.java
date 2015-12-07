@@ -27,7 +27,6 @@ import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -35,6 +34,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.DataUploader;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ViewUtils;
@@ -45,7 +45,6 @@ import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.UploadUrl;
-import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.GaugeView;
 
 import org.json.JSONArray;
@@ -57,7 +56,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -86,7 +84,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
                                                       Clip clip,
-                                                      DragLayout.OnViewDragListener listener) {
+                                                      OnViewDragListener listener) {
         Bundle args = new Bundle();
         CameraVideoPlayFragment fragment = new CameraVideoPlayFragment();
         fragment.setArguments(args);
@@ -145,7 +143,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             return;
         }
         RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
-        if (obd != null) {
+        if (obd != null && obd.object != null) {
             mObdView.setSpeed(((OBDData) obd.object).speed);
             mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
         } else {
@@ -434,19 +432,22 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
                     URLConnection conn = url.openConnection();
                     inputStream = conn.getInputStream();
                     Log.e("test", "ContentLength: " + conn.getContentLength());
-                    /*
+
                     JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
                     String ip = uploadServer.optString("ip");
                     int port = uploadServer.optInt("port");
                     String privateKey = uploadServer.optString("privateKey");
                     String token = findToken(momentInfo, "video");
                     String guid = findGuid(momentInfo, "video");
-                    */
+
+
+                    /*
                     String ip = "192.168.20.160";
                     int port = 35020;
                     String privateKey = "qwertyuiopasdfgh";
                     String token = "220";
                     String guid = "53f37022-43ba-404b-a5f8-389c823c1e0b";
+                    */
 
                     DataUploader uploader = new DataUploader(ip, port, privateKey);
                     //uploader.setUploaderListener(uploadListener);

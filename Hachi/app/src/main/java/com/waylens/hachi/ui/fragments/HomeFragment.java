@@ -30,7 +30,7 @@ import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.views.DragLayout.OnViewDragListener;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;

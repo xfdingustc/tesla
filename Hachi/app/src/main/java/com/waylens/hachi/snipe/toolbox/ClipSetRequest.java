@@ -1,7 +1,6 @@
 package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbAcknowledge;
@@ -110,7 +109,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             clip.clipStartTime = response.readi64();
             int numStreams = response.readi16();
             int flag = response.readi16();
-            Log.e("test", "Flag: " + flag);
+            //Log.e("test", "Flag: " + flag);
 
             if (numStreams > 0) {
                 readStreamInfo(clip, 0, response);
@@ -129,7 +128,9 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
 
                 response.readi32(); //int ref_clip_date
                 clip.gmtOffset = response.readi32();
-                response.readi32(); //int real_clip_id
+                int realClipId = response.readi32(); //int real_clip_id
+                clip.realCid = new Clip.ID(Clip.CAT_REMOTE, clipSet.clipType, realClipId, guid);
+
 
             } else if (flag == FLAG_CLIP_VDB_ID) {
                 //TODO VDB_ID

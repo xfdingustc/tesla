@@ -80,7 +80,7 @@ public class VideoTrimmerController extends View implements Progressive {
 
     private MediaPlayer mPlayer;
     private ProgressHandler mHandler;
-    private boolean showProgress;
+    private boolean showProgress = true;
 
     long mStart;
     long mEnd;
@@ -188,14 +188,15 @@ public class VideoTrimmerController extends View implements Progressive {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 isDraggingThumb = evalPressedThumb(event.getX());
-                isDraggingProgressBar = isInRectFRange(mRectProgress, event.getX());
+                isDraggingProgressBar = isDraggingProgress(event.getX());
                 if (isDraggingThumb) {
                     setPressed(true);
                     invalidate();
                     onStartTrackingTouch();
                     trackTouchEvent(event);
                 } else if (isDraggingProgressBar) {
-                    mTouchDistProgress = (int) event.getX() - mProgressLeft;
+                    mTouchDistProgress = mProgressBarWidth / 2; //(int) event.getX() - mProgressLeft;
+                    mProgressLeft = (int) event.getX() - mTouchDistProgress;
                     setPressed(true);
                     invalidate();
                     onStartTrackingTouch();
@@ -208,7 +209,7 @@ public class VideoTrimmerController extends View implements Progressive {
                 trackTouchEvent(event);
                 break;
             case MotionEvent.ACTION_UP:
-                if (isDraggingThumb) {
+                if (isDraggingThumb || isDraggingProgressBar) {
                     trackTouchEvent(event);
                     onStopTrackingTouch();
                     setPressed(false);
@@ -377,8 +378,8 @@ public class VideoTrimmerController extends View implements Progressive {
         return isDraggingLeft || isDraggingRight;
     }
 
-    boolean isInRectFRange(RectF rectF, float x) {
-        return x > rectF.left && x < rectF.right;
+    boolean isDraggingProgress(float x) {
+        return x > mRectLeft.right && x < mRectRight.left;
     }
 
     boolean isInThumbRange(Rect rect, float x) {

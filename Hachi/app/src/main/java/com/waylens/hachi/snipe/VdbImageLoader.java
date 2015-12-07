@@ -17,7 +17,6 @@ import com.waylens.hachi.utils.DigitUtils;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.vdb.ClipPos;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +40,7 @@ public class VdbImageLoader {
     static MemoryLurCache memoryLurCache;
 
     static DiskLruCache diskLruCache;
+    private boolean mUseCache;
 
     public VdbImageLoader(VdbRequestQueue queue) {
         this.mRequestQueue = queue;
@@ -98,10 +98,15 @@ public class VdbImageLoader {
     }
 
     public void displayVdbImage(ClipPos clipPos, ImageView imageView) {
-        displayVdbImage(clipPos, imageView, false);
+        displayVdbImage(clipPos, imageView, false, true);
     }
 
     public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean isIgnorable) {
+        displayVdbImage(clipPos, imageView, isIgnorable, true);
+    }
+
+    public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean isIgnorable, boolean useCache) {
+        mUseCache = useCache;
         VdbImageListener listener = VdbImageLoader.getImageListener(imageView, 0, 0);
         get(clipPos, listener, 0, 0, ImageView.ScaleType.CENTER_INSIDE, isIgnorable);
     }
@@ -130,15 +135,19 @@ public class VdbImageLoader {
     }
 
     private Bitmap loadImageFromCache(String cacheKey) {
+        if (!mUseCache) {
+            return null;
+        }
+
         Bitmap bitmap = memoryLurCache.get(cacheKey);
         if (bitmap != null) {
-            Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
+            //Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
             return bitmap;
         }
         if (diskLruCache != null) {
             bitmap = diskLruCache.get(cacheKey);
             if (bitmap != null) {
-                Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
+                //Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
                 return bitmap;
             }
         }
@@ -146,8 +155,10 @@ public class VdbImageLoader {
     }
 
     private void cacheImages(String cacheKey, Bitmap bitmap) {
-        memoryLurCache.put(cacheKey, bitmap);
-        diskLruCache.put(cacheKey, bitmap);
+        if (mUseCache) {
+            memoryLurCache.put(cacheKey, bitmap);
+            diskLruCache.put(cacheKey, bitmap);
+        }
     }
 
 
