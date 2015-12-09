@@ -90,7 +90,7 @@ public class VideoTrimmer extends FrameLayout {
     void initChildren() {
         mRecyclerView = new RecyclerView(getContext());
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(mThumbWidth, 0, mThumbWidth, 0);
+        //layoutParams.setMargins(mThumbWidth, 0, mThumbWidth, 0);
         layoutParams.gravity = Gravity.BOTTOM;
         addView(mRecyclerView, layoutParams);
         mRecyclerView.setHasFixedSize(true);
@@ -104,49 +104,14 @@ public class VideoTrimmer extends FrameLayout {
     }
 
     public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, int defaultHeight) {
-        if (clip == null) {
-            return;
-        }
-
-        int width = mRecyclerView.getWidth();
-        if (width == 0) {
-            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            if (size.x == 0) {
-                return;
-            }
-            width = size.x;
-        }
-
-        int height = mRecyclerView.getHeight();
-        if (height == 0) {
-            height = defaultHeight;
-        }
-        int imgWidth = height * 16 / 9;
-        int itemCount = width / imgWidth;
-        if (width % imgWidth != 0) {
-            itemCount++;
-        }
-
-        setInitRangeValues(clip.getStartTimeMs(), clip.getStartTimeMs() + clip.getDurationMs());
-        long period =  clip.getDurationMs() / (itemCount - 1);
-        List<ClipPos> items = new ArrayList<>();
-        for (int i = 0; i < itemCount; i++) {
-            //items.add(new ClipPos(clip, clip.getStartTimeMs() + period * i, ClipPos.TYPE_POSTER, false));
-            long posTime = clip.getStartTimeMs() + period * i;
-            if (posTime >= (clip.getStartTimeMs() + clip.getDurationMs())) {
-                posTime = posTime - 10; //magic number.
-            }
-            items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
-        }
-        //items.add(new ClipPos(clip, clip.getStartTimeMs() + clip.getDurationMs(), ClipPos.TYPE_POSTER, false));
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(imageLoader, items, imgWidth, height);
-        mRecyclerView.setAdapter(adapter);
+        setBackgroundClip(imageLoader,
+                clip,
+                clip.getStartTimeMs(),
+                clip.getStartTimeMs() + clip.getDurationMs(),
+                defaultHeight);
     }
 
-    public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, long startMs, long endMs) {
+    public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, long startMs, long endMs, int defaultHeight) {
         if (clip == null) {
             return;
         }
@@ -172,10 +137,13 @@ public class VideoTrimmer extends FrameLayout {
         }
         long period = (endMs - startMs) / (itemCount - 1);
         List<ClipPos> items = new ArrayList<>();
-        for (int i = 0; i < itemCount - 1; i++) {
-            items.add(new ClipPos(clip, startMs + period * i, ClipPos.TYPE_POSTER, false));
+        for (int i = 0; i < itemCount; i++) {
+            long posTime = clip.getStartTimeMs() + period * i;
+            if (posTime >= (clip.getStartTimeMs() + clip.getDurationMs())) {
+                posTime = posTime - 10; //magic number.
+            }
+            items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
         }
-        items.add(new ClipPos(clip, endMs, ClipPos.TYPE_POSTER, false));
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(imageLoader, items, imgWidth, height);
         mRecyclerView.setAdapter(adapter);
     }
@@ -184,7 +152,7 @@ public class VideoTrimmer extends FrameLayout {
         mVideoTrimmerController.setOnChangeListener(listener, this);
     }
 
-    public void setProgress(int progress) {
+    public void setProgress(long progress) {
         mVideoTrimmerController.setProgress(progress);
     }
 

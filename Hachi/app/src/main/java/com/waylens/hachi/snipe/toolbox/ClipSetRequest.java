@@ -129,7 +129,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                 response.readi32(); //int ref_clip_date
                 clip.gmtOffset = response.readi32();
                 int realClipId = response.readi32(); //int real_clip_id
-                clip.realCid = new Clip.ID(Clip.CAT_REMOTE, clipSet.clipType, realClipId, guid);
+                clip.realCid = new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED, realClipId, guid);
 
 
             } else if (flag == FLAG_CLIP_VDB_ID) {

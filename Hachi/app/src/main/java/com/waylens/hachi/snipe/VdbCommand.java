@@ -227,7 +227,7 @@ public class VdbCommand {
                     .build();
         }
 
-        public static VdbCommand createCmdGetClipPlaybackUrl(Clip clip, int stream, int urlType,
+        public static VdbCommand createCmdGetClipPlaybackUrl(Clip.ID cid, int stream, int urlType,
                                                              boolean muteAudio, long clipTimeMs, int clipLengthMs) {
 
             Builder builder = new Builder();
@@ -236,7 +236,7 @@ public class VdbCommand {
             } else {
                 builder.writeCmdCode(CMD_GetPlaybackUrl, 0);
             }
-            builder.writeClipId(clip.cid)
+            builder.writeClipId(cid)
                     .writeInt32(stream)
                     .writeInt32(muteAudio ? urlType | URL_MUTE_AUDIO : urlType)
                     .writeInt64(clipTimeMs);

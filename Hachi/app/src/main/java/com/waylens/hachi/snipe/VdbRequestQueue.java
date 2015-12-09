@@ -2,9 +2,6 @@ package com.waylens.hachi.snipe;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-
-import com.android.volley.Request;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -97,7 +94,7 @@ public class VdbRequestQueue {
                 return vdbRequest;
             } else {
                 int count = mPendingRequestCount.incrementAndGet();
-                Log.e("test", "Pending Count1: " + count);
+                //Log.e("test", "Pending Count1: " + count);
             }
         }
 
@@ -120,7 +117,7 @@ public class VdbRequestQueue {
 
         if (vdbRequest.isIgnorable()) {
             int count = mPendingRequestCount.decrementAndGet();
-            Log.e("test", "Pending Count2: " + count);
+            //Log.e("test", "Pending Count2: " + count);
             VdbRequest request = mIgnorableRequestQueue.poll();
             if (request != null) {
                 add(request, true);

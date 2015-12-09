@@ -3,7 +3,6 @@ package com.waylens.hachi.snipe.toolbox;
 import android.os.Bundle;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
@@ -18,22 +17,22 @@ public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
     private static final String TAG = ClipPlaybackUrlRequest.class.getSimpleName();
     private final VdbResponse.Listener<PlaybackUrl> mListener;
     protected final Bundle mParameters;
-    protected final Clip mClip;
+    protected final Clip.ID mCid;
 
     public static final String PARAMETER_STREAM = "stream";
     public static final String PARAMETER_URL_TYPE = "url_type";
     public static final String PARAMETER_MUTE_AUDIO = "mute_audio";
     public static final String PARAMETER_CLIP_TIME_MS = "clip_time_ms";
 
-    public ClipPlaybackUrlRequest(Clip clip, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
-        listener, VdbResponse.ErrorListener errorListener) {
-        this(0, clip, parameters, listener, errorListener);
+    public ClipPlaybackUrlRequest(Clip.ID cid, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
+            listener, VdbResponse.ErrorListener errorListener) {
+        this(0, cid, parameters, listener, errorListener);
     }
 
-    public ClipPlaybackUrlRequest(int method, Clip clip, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
-        listener, VdbResponse.ErrorListener errorListener) {
+    public ClipPlaybackUrlRequest(int method, Clip.ID cid, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
+            listener, VdbResponse.ErrorListener errorListener) {
         super(method, errorListener);
-        this.mClip = clip;
+        this.mCid = cid;
         this.mParameters = parameters;
         this.mListener = listener;
     }
@@ -44,8 +43,8 @@ public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
         int urlType = mParameters.getInt(PARAMETER_URL_TYPE);
         boolean muteAudio = mParameters.getBoolean(PARAMETER_MUTE_AUDIO);
         long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
-        mVdbCommand = VdbCommand.Factory.createCmdGetClipPlaybackUrl(mClip, stream, urlType,
-            muteAudio, clipTimeMs, 0);
+        mVdbCommand = VdbCommand.Factory.createCmdGetClipPlaybackUrl(mCid, stream, urlType,
+                muteAudio, clipTimeMs, 0);
         return mVdbCommand;
     }
 

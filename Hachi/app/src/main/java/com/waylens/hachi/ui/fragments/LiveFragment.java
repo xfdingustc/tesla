@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +19,6 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
-import com.waylens.hachi.ui.adapters.ClipEditViewHolder;
 import com.waylens.hachi.ui.adapters.ClipFilmAdapter;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.vdb.Clip;
@@ -35,7 +33,7 @@ import butterknife.Bind;
  * Created by Xiaofei on 2015/8/4.
  */
 public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.ClipActionListener,
-        FragmentNavigator, OnViewDragListener, ClipFilmAdapter.OnEditClipListener {
+        FragmentNavigator, OnViewDragListener, ClipFilmAdapter.OnEditClipListener, ClipEditFragment.OnActionListener {
     private static final String TAG = "LiveFragment";
 
     static final String TAG_CLIP_SET = "tag.clip_set";
@@ -56,7 +54,7 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
 
     LinearLayoutManager mLinearLayoutManager;
 
-    ClipEditViewHolder mHolder;
+    ClipFilmAdapter.ClipEditViewHolder mHolder;
 
     VideoTab[] mVideoTabs = new VideoTab[]{
             new VideoTab(R.string.camera_video_all, 0, RemoteClip.TYPE_BUFFERED),
@@ -132,6 +130,15 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
             mVdbRequestQueue = null;
         }
         mTabLayout.setOnTabSelectedListener(null);
+        if (mHolder != null && mHolder.clipEditFragment != null) {
+            getActivity()
+                    .getFragmentManager()
+                    .beginTransaction().
+                    remove(mHolder.clipEditFragment)
+                    .commitAllowingStateLoss();
+            mHolder.clipEditFragment = null;
+            mHolder = null;
+        }
         mRvCameraVideoList.setAdapter(null);
         mClipSetAdapter.mOnEditClipListener = null;
         mClipSetAdapter = null;
@@ -212,17 +219,43 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
     }
 
     @Override
-    public void onEditClip(final Clip clip, final ClipEditViewHolder holder, final int position) {
+    public void onEditClip(final Clip clip, final ClipFilmAdapter.ClipEditViewHolder holder, final int position) {
         if (mHolder != null && mHolder != holder) {
-            mHolder.isEditing = false;
+            if (mHolder.clipEditFragment != null) {
+                getFragmentManager().beginTransaction().remove(mHolder.clipEditFragment).commit();
+                mHolder.clipEditFragment = null;
+            }
             mHolder.editorView.setVisibility(View.GONE);
             mHolder.clipFilm.setVisibility(View.VISIBLE);
         }
 
+        mRvCameraVideoList.setLayoutFrozen(false);
         mHolder = holder;
+        holder.editorView.setVisibility(View.VISIBLE);
+        mHolder.clipFilm.setVisibility(View.GONE);
+        ClipEditFragment fragment = ClipEditFragment.newInstance(clip, position, this);
+        getFragmentManager().beginTransaction().replace(holder.editorView.getId(), fragment).commit();
+        mHolder.clipEditFragment = fragment;
+    }
 
+    @Override
+    public void onStopEditing(int position) {
+        ClipFilmAdapter.ClipEditViewHolder holder = (ClipFilmAdapter.ClipEditViewHolder)
+                mRvCameraVideoList.findViewHolderForAdapterPosition(position);
+        if (holder != null) {
+            if (holder.clipEditFragment != null) {
+                getFragmentManager().beginTransaction().remove(holder.clipEditFragment).commit();
+                holder.clipEditFragment = null;
+            }
+            holder.editorView.setVisibility(View.GONE);
+            holder.clipFilm.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void onFragmentStart(int position) {
         if (mLinearLayoutManager.findLastVisibleItemPosition() != mClipSetAdapter.getItemCount() - 1) {
             mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
+            mRvCameraVideoList.requestLayout();
         }
     }
 

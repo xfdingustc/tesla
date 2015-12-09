@@ -13,19 +13,22 @@ import android.view.WindowManager;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.ui.fragments.ClipEditFragment;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.views.VideoTrimmer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Richard on 11/26/15.
  */
-public class ClipFilmAdapter extends RecyclerView.Adapter<ClipEditViewHolder> {
+public class ClipFilmAdapter extends RecyclerView.Adapter<ClipFilmAdapter.ClipEditViewHolder> {
 
     public static final int DEFAULT_HEIGHT = 64;
 
@@ -54,7 +57,6 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<ClipEditViewHolder> {
     @Override
     public void onBindViewHolder(final ClipEditViewHolder holder, final int position) {
         final Clip clip = mClipSet.getClip(position);
-        holder.isEditing = false;
 
         int width = holder.clipFilm.getWidth();
         int height = holder.clipFilm.getHeight();
@@ -91,73 +93,6 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<ClipEditViewHolder> {
         ClipThumbnailAdapter clipThumbnailAdapter = new ClipThumbnailAdapter(mImageLoader, items, imgWidth, height);
         holder.clipFilm.setLayoutManager(new ThumbnailLayoutManager(context));
         holder.clipFilm.setAdapter(clipThumbnailAdapter);
-
-        /*
-        holder.clipFilm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startEditing(holder, clip);
-                if (mOnEditClipListener != null) {
-                    mOnEditClipListener.onEditClip(clip, holder, position);
-                }
-            }
-        });
-        */
-    }
-
-    public void startEditing(final ClipEditViewHolder holder, final Clip clip) {
-        holder.isEditing = true;
-        holder.editorView.setVisibility(View.VISIBLE);
-        holder.mVideoTrimmer.setBackgroundClip(mImageLoader, clip, ViewUtils.dp2px(64, holder.itemView.getResources()));
-        ClipPos clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-        mImageLoader.displayVdbImage(clipPos, holder.mVideoCover);
-        holder.mVideoCover.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishEditing(holder);
-                notifyItemChanged(holder.getAdapterPosition());
-            }
-        });
-
-        holder.mVideoTrimmer.setOnChangeListener(new VideoTrimmer.OnTrimmerChangeListener() {
-            @Override
-            public void onStartTrackingTouch(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag) {
-                if (mOnEditClipListener != null) {
-                    mOnEditClipListener.onStartDragging();
-                }
-            }
-
-            @Override
-            public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
-                if (holder.mVideoCover != null) {
-                    ClipPos clipPos = new ClipPos(clip, progress, ClipPos.TYPE_POSTER, false);
-                    mImageLoader.displayVdbImage(clipPos, holder.mVideoCover, true, false);
-                }
-            }
-
-            @Override
-            public void onStopTrackingTouch(VideoTrimmer trimmer) {
-                if (mOnEditClipListener != null) {
-                    mOnEditClipListener.onStopDragging();
-                }
-            }
-        });
-
-        holder.clipFilm.setVisibility(View.GONE);
-    }
-
-    void finishEditing(ClipEditViewHolder holder) {
-        if (holder == null) {
-            return;
-        }
-        if (holder.isEditing) {
-            holder.isEditing = false;
-            holder.editorView.setVisibility(View.GONE);
-            holder.clipFilm.setVisibility(View.VISIBLE);
-        }
-        holder.mVideoTrimmer.setOnChangeListener(null);
-        holder.mVideoCover.setOnClickListener(null);
-
     }
 
     @Override
@@ -177,7 +112,6 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<ClipEditViewHolder> {
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
                 Clip clip = mClipSet.getClip(position);
-                startEditing(holder, clip);
                 if (mOnEditClipListener != null) {
                     mOnEditClipListener.onEditClip(clip, holder, position);
                 }
@@ -187,8 +121,13 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<ClipEditViewHolder> {
 
     @Override
     public void onViewDetachedFromWindow(ClipEditViewHolder holder) {
-        finishEditing(holder);
+        holder.editorView.setVisibility(View.GONE);
+        holder.clipFilm.setVisibility(View.VISIBLE);
         holder.clipFilm.setOnClickListener(null);
+        if (holder.clipEditFragment != null) {
+            holder.clipEditFragment.getFragmentManager().beginTransaction().remove(holder.clipEditFragment).commit();
+            holder.clipEditFragment = null;
+        }
         super.onViewDetachedFromWindow(holder);
 
     }
@@ -202,12 +141,6 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<ClipEditViewHolder> {
 
     public interface OnEditClipListener {
         void onEditClip(Clip clip, ClipEditViewHolder holder, int position);
-
-        void onStartDragging();
-
-        void onStopDragging();
-
-
     }
 
     static class ThumbnailLayoutManager extends LinearLayoutManager {
@@ -220,6 +153,22 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<ClipEditViewHolder> {
         @Override
         public boolean canScrollHorizontally() {
             return false;
+        }
+    }
+
+    public static class ClipEditViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.clip_film_view)
+        public RecyclerView clipFilm;
+
+        @Bind(R.id.video_editor)
+        public View editorView;
+
+        public ClipEditFragment clipEditFragment;
+
+        public ClipEditViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            editorView.setId(ViewUtils.generateViewId());
         }
     }
 }

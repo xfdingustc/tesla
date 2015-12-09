@@ -148,9 +148,9 @@ public class VideoTrimmerController extends View implements Progressive {
         mRightStartPos = w - mThumbWidth;
         mTotalViewLength = w - mThumbWidth * 2 - mProgressBarWidth;
         mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, h);
-        mRectLeftEx.set(mThumbWidth, 0, mLeftStartPos, h);
+        mRectLeftEx.set(0, 0, mLeftStartPos, h);
         mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, h);
-        mRectRightEx.set(mRectRight.right, 0, getWidth() - mThumbWidth, h);
+        mRectRightEx.set(mRectRight.right, 0, w, h);
         mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, h);
     }
 
@@ -297,8 +297,12 @@ public class VideoTrimmerController extends View implements Progressive {
         mLeftStartPos = (int) (normalizedValue / getRange() * mTotalViewLength);
         int height = getHeight();
         mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, height);
-        mRectLeftEx.set(mThumbWidth, 0, mLeftStartPos, height);
-        invalidate();
+        mRectLeftEx.set(0, 0, mLeftStartPos, height);
+        if (mProgress < mStart) {
+            setProgress(mStart);
+        } else {
+            invalidate();
+        }
     }
 
     void setRightValue(long value) {
@@ -310,8 +314,12 @@ public class VideoTrimmerController extends View implements Progressive {
         mRightStartPos = (int) (normalizedValue/getRange() * mTotalViewLength) + mProgressBarWidth + mThumbWidth;
         int height = getHeight();
         mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, height);
-        mRectRightEx.set(mRectRight.right, 0, getWidth() - mThumbWidth, height);
-        invalidate();
+        mRectRightEx.set(mRectRight.right, 0, getWidth(), height);
+        if (mProgress > mEnd) {
+            setProgress(mEnd);
+        } else {
+            invalidate();
+        }
     }
 
     void trackTouchEvent(MotionEvent event) {
@@ -327,7 +335,7 @@ public class VideoTrimmerController extends View implements Progressive {
                 mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, height);
             }
             mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, height);
-            mRectLeftEx.set(mThumbWidth, 0, mLeftStartPos, height);
+            mRectLeftEx.set(0, 0, mLeftStartPos, height);
             invalidate();
         }
         if (isDraggingRight
@@ -339,7 +347,7 @@ public class VideoTrimmerController extends View implements Progressive {
                 mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, height);
             }
             mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, height);
-            mRectRightEx.set(mRectRight.right, 0, getWidth() - mThumbWidth, height);
+            mRectRightEx.set(mRectRight.right, 0, getWidth(), height);
             invalidate();
         }
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    android:animateLayoutChanges="true"
+    android:animateLayoutChanges="false"
     android:minHeight="64dp">
 
     <com.waylens.hachi.ui.views.ClickableRecyclerView
@@ -16,78 +16,5 @@
         android:layout_width="match_parent"
         android:layout_height="266dp"
         android:visibility="gone"
-        >
-
-        <com.waylens.hachi.views.DragLayout
-            android:id="@+id/drag_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="64dp">
-
-            <SurfaceView
-                android:id="@+id/video_surface"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-            <ImageView
-                android:id="@+id/video_cover"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"/>
-
-            <ImageView
-                android:id="@+id/btn_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_play_circle_outline_white_48dp"/>
-
-            <ProgressBar
-                android:id="@+id/progress_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginLeft="32dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/sailor"/>
-
-                <ImageView
-                    android:id="@+id/btn_add"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/sailor"/>
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginRight="32dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/sailor"/>
-            </LinearLayout>
-
-        </com.waylens.hachi.views.DragLayout>
-
-        <com.waylens.hachi.views.VideoTrimmer
-            android:id="@+id/video_trimmer"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_gravity="bottom"/>
-
-    </FrameLayout>
+        />
 </FrameLayout>

@@ -109,14 +109,14 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        /*
         if (!isRawDataReady()) {
             loadRawData();
         } else {
             loadPlayURL();
-        }
+        }*/
 
-        //createMoment();
+        createMoment();
         //getUploadUrl_Video(null);
         if (mMapView != null) {
             mMapView.onStart();
@@ -298,7 +298,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs());
 
-        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
+        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip.cid, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override
             public void onResponse(PlaybackUrl playbackUrl) {
                 setSource(playbackUrl.url);

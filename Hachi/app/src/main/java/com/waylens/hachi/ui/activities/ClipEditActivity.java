@@ -42,6 +42,7 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.services.download.DownloadIntentService;
+import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipFragment;
@@ -305,7 +306,7 @@ public class ClipEditActivity extends BaseActivity {
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs());
 
-        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip, parameters, new VdbResponse.Listener<PlaybackUrl>() {
+        ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip.cid, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override
             public void onResponse(PlaybackUrl playbackUrl) {
                 mPlayer = new MediaPlayer();
@@ -411,7 +412,7 @@ public class ClipEditActivity extends BaseActivity {
             maxValue = mClipExtent.maxClipEndTimeMs;
         }
 
-        mVideoTrimmer.setBackgroundClip(mVdbImageLoader, mClip, minValue, maxValue);
+        mVideoTrimmer.setBackgroundClip(mVdbImageLoader, mClip, minValue, maxValue, ViewUtils.dp2px(64, getResources()));
         mVideoTrimmer.setInitRangeValues(minValue, maxValue);
         mVideoTrimmer.setLeftValue(mClipExtent.clipStartTimeMs);
         mVideoTrimmer.setRightValue(mClipExtent.clipEndTimeMs);
@@ -470,7 +471,7 @@ public class ClipEditActivity extends BaseActivity {
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs() + 33 * 1000);
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, 1000);
 
-        ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mClip, parameters,
+        ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mClip.cid, parameters,
             new VdbResponse.Listener<PlaybackUrl>() {
                 @Override
                 public void onResponse(PlaybackUrl playbackUrl) {
