@@ -109,14 +109,14 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     @Override
     public void onStart() {
         super.onStart();
-        /*
+
         if (!isRawDataReady()) {
             loadRawData();
         } else {
             loadPlayURL();
-        }*/
+        }
 
-        createMoment();
+        //createMoment();
         //getUploadUrl_Video(null);
         if (mMapView != null) {
             mMapView.onStart();
@@ -142,7 +142,9 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         if (mObdView == null) {
             return;
         }
-        RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
+        //TODO: On some devices, such as XiaoMi4, MediaPlayer.getCurrentPosition values start from clip.startTimeMs, instead of 0
+        //Should fix it.
+        RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position - (int)mClip.getStartTimeMs());
         if (obd != null && obd.object != null) {
             mObdView.setSpeed(((OBDData) obd.object).speed);
             mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
