@@ -57,8 +57,8 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
     ClipFilmAdapter.ClipEditViewHolder mHolder;
 
     VideoTab[] mVideoTabs = new VideoTab[]{
-            new VideoTab(R.string.camera_video_all, 0, RemoteClip.TYPE_BUFFERED),
             new VideoTab(R.string.camera_video_bookmark, 0, RemoteClip.TYPE_MARKED),
+            new VideoTab(R.string.camera_video_all, 0, RemoteClip.TYPE_BUFFERED),
     };
 
 
@@ -124,12 +124,8 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
     }
 
     @Override
-    public void onDestroyView() {
-        if (mVdbRequestQueue != null) {
-            mVdbRequestQueue.cancelAll(TAG_CLIP_SET);
-            mVdbRequestQueue = null;
-        }
-        mTabLayout.setOnTabSelectedListener(null);
+    public void onStop() {
+        super.onStop();
         if (mHolder != null && mHolder.clipEditFragment != null) {
             getActivity()
                     .getFragmentManager()
@@ -139,6 +135,15 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
             mHolder.clipEditFragment = null;
             mHolder = null;
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.cancelAll(TAG_CLIP_SET);
+            mVdbRequestQueue = null;
+        }
+        mTabLayout.setOnTabSelectedListener(null);
         mRvCameraVideoList.setAdapter(null);
         mClipSetAdapter.mOnEditClipListener = null;
         mClipSetAdapter = null;

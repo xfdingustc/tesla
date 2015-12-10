@@ -140,7 +140,7 @@ public class VideoTrimmer extends FrameLayout {
         for (int i = 0; i < itemCount; i++) {
             long posTime = clip.getStartTimeMs() + period * i;
             if (posTime >= (clip.getStartTimeMs() + clip.getDurationMs())) {
-                posTime = posTime - 10; //magic number.
+                posTime = clip.getStartTimeMs() + clip.getDurationMs() - 10; //magic number.
             }
             items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
         }

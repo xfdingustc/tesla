@@ -42,4 +42,8 @@
     <color name="textColor1">#808080</color>
     <color name="textColor2">#609216</color>
 
+    <!-- Start new UI Design Color -->
+    <color name="edit_background">#FF2F2F2F</color>
+    <!-- END new UI Design Color -->
+
 </resources>

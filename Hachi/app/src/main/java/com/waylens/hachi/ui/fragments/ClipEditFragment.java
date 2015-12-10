@@ -300,6 +300,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 }
                 if (isInPlaybackState()) {
                     seekTo((int) mSeekToPosition);
+                } else {
+                    mBtnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
+                    mBtnPlay.setVisibility(View.VISIBLE);
                 }
             }
         });

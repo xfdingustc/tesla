@@ -58,8 +58,8 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     String apkFile;
 
     private BottomTab mTabList[] = {
-            new BottomTab(R.drawable.ic_home, TAB_HOME_TAG),
             new BottomTab(R.drawable.ic_live, TAB_LIVE_TAG),
+            new BottomTab(R.drawable.ic_home, TAB_HOME_TAG),
             new BottomTab(R.drawable.ic_highlights, TAB_HIGHLIGHTS_TAG),
             new BottomTab(R.drawable.ic_notifications, TAB_NOTIFICATIONS_TAG),
             new BottomTab(R.drawable.ic_account, TAB_ACCOUNT_TAG)

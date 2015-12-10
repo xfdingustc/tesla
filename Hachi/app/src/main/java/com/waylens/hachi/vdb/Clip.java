@@ -15,7 +15,6 @@ public class Clip {
     public static final int CAT_NATIVE = 3; // Android native clips: not implemented
 
 
-
     // --------------------------------------------------------------
     // CAT_REMOTE:
     // 		type: clipType (buffered 0, marked 1, or plist_id >= 256)
@@ -205,7 +204,9 @@ public class Clip {
         return "Clip id: " + cid;
     }
 
-
+    public long getStandardClipDate() {
+        return (clipDate - gmtOffset) * 1000l;
+    }
 
 
 }
