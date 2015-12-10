@@ -34,7 +34,7 @@ import butterknife.Bind;
  */
 public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.ClipActionListener,
         FragmentNavigator, OnViewDragListener, ClipFilmAdapter.OnEditClipListener, ClipEditFragment.OnActionListener {
-    private static final String TAG = "LiveFragment";
+    private static final String TAG = LiveFragment.class.getSimpleName();
 
     static final String TAG_CLIP_SET = "tag.clip_set";
 

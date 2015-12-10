@@ -12,6 +12,9 @@
     <color name="text_like_counter">#2b5a83</color>
     <color name="none_color">#00000000</color>
 
+    <color name="background_color">#4A4A4A</color>
+    <color name="background_color_dark">#2F2F2F</color>
+
 
     <color name="btn_send_normal">#02c754</color>
     <color name="btn_send_pressed">#006633</color>

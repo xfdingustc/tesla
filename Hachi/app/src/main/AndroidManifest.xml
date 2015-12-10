@@ -43,7 +43,6 @@
         <activity
             android:name=".ui.activities.LoginActivity"
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".ui.activities.SignupActivity"/>
         <activity android:name=".ui.activities.BrowseCameraActivity"/>
         <activity android:name=".ui.activities.ClipEditActivity"/>
         <activity
@@ -60,6 +59,8 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoBackground">
         </activity>
+
+        <activity android:name=".ui.activities.CameraControlActivity2"/>
         <activity
             android:name="com.transee.viditcam.app.AddCameraActivity"
             android:label="@string/title_activity_add_camera">
