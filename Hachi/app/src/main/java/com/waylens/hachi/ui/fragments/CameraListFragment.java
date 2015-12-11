@@ -270,7 +270,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         args.putBoolean("isPcServer", camera.isPcServer());
         args.putString("ssid", camera.getSSID());
         args.putString("hostString", camera.getHostString());
-        ((TabSwitchable) getActivity()).switchTab(1, args);
+        ((TabSwitchable) getActivity()).switchTab(0, args);
     }
 
     @Override

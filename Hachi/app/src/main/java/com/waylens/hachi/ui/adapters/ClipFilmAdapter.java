@@ -85,14 +85,6 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             sectionItem.sectionCount++;
         }
-        for (ClipFilmItem item : items) {
-            mCalendar.setTimeInMillis(item.clip.getStandardClipDate());
-            if (item.type == ClipFilmItem.TYPE_SECTION) {
-                Log.e("test", "Section: " + item.sectionCount + "; Date: " + mCalendar.getTime());
-            } else {
-                Log.e("test", "Item - Date: " + mCalendar.getTime());
-            }
-        }
     }
 
     boolean isSameDate(Clip clip) {
@@ -158,8 +150,10 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
             ClipThumbnailAdapter clipThumbnailAdapter = new ClipThumbnailAdapter(mImageLoader, items, imgWidth, height);
-            holder.clipFilm.setLayoutManager(new ThumbnailLayoutManager(context));
+            ThumbnailLayoutManager layoutManager = new ThumbnailLayoutManager(context);
+            holder.clipFilm.setLayoutManager(layoutManager);
             holder.clipFilm.setAdapter(clipThumbnailAdapter);
+            layoutManager.scrollToPositionWithOffset(0, - imgWidth / 2);
         } else {
             SectionViewHolder holder = (SectionViewHolder) viewHolder;
             holder.clipDateView.setText(item.clip.getDateString());

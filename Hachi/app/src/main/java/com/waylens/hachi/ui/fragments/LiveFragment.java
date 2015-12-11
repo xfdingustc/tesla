@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,9 +17,7 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
-import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
 import com.waylens.hachi.ui.adapters.ClipFilmAdapter;
-import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.RemoteClip;
@@ -32,8 +29,8 @@ import butterknife.Bind;
  * <p/>
  * Created by Xiaofei on 2015/8/4.
  */
-public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.ClipActionListener,
-        FragmentNavigator, OnViewDragListener, ClipFilmAdapter.OnEditClipListener, ClipEditFragment.OnActionListener {
+public class LiveFragment extends BaseFragment implements FragmentNavigator,
+        ClipFilmAdapter.OnEditClipListener, ClipEditFragment.OnActionListener {
     private static final String TAG = LiveFragment.class.getSimpleName();
 
     static final String TAG_CLIP_SET = "tag.clip_set";
@@ -188,20 +185,6 @@ public class LiveFragment extends BaseFragment implements CameraClipSetAdapter.C
             }
         }
         return camera;
-    }
-
-    @Override
-    public void onRequestVideoPlay(final CameraClipSetAdapter.CameraClipViewHolder holder, Clip clip) {
-        CameraVideoPlayFragment fragment = CameraVideoPlayFragment.newInstance(mVdbRequestQueue, clip, this);
-        getFragmentManager().beginTransaction().replace(holder.videoContainer.getId(), fragment).commit();
-    }
-
-    @Override
-    public void onRemoveVideoPlayFragment(final CameraClipSetAdapter.CameraClipViewHolder holder) {
-        Fragment fragment = getFragmentManager().findFragmentById(holder.videoContainer.getId());
-        if (fragment != null) {
-            getFragmentManager().beginTransaction().remove(fragment).commit();
-        }
     }
 
     @Override

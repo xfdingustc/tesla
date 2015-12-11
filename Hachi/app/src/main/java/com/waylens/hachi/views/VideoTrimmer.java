@@ -146,6 +146,7 @@ public class VideoTrimmer extends FrameLayout {
         }
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(imageLoader, items, imgWidth, height);
         mRecyclerView.setAdapter(adapter);
+        ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(0, -imgWidth / 2);
     }
 
     public void setOnChangeListener(OnTrimmerChangeListener listener) {

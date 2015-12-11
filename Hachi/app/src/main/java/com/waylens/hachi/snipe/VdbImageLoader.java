@@ -58,6 +58,7 @@ public class VdbImageLoader {
      */
     public static void init(Context context, int maxSize) {
         if (diskLruCache != null || !ImageUtils.isExternalStorageReady()) {
+            Log.e("test", "isExternalStorageReady: " + ImageUtils.isExternalStorageReady());
             return;
         }
 
@@ -68,6 +69,7 @@ public class VdbImageLoader {
             size = (int) availableBytes / 2;
         }
         diskLruCache = DiskLruCache.getDiskLruCache(context, size);
+        Log.e("test", "DiskLruCache is initialized.");
     }
 
 
@@ -157,7 +159,9 @@ public class VdbImageLoader {
     private void cacheImages(String cacheKey, Bitmap bitmap) {
         if (mUseCache) {
             memoryLurCache.put(cacheKey, bitmap);
-            diskLruCache.put(cacheKey, bitmap);
+            if (diskLruCache != null) {
+                diskLruCache.put(cacheKey, bitmap);
+            }
         }
     }
 

@@ -41,32 +41,49 @@
         <LinearLayout
             android:id="@+id/control_panel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:orientation="horizontal">
-
+            android:layout_height="48dp"
+            android:orientation="vertical"
+            android:layout_gravity="bottom|center_horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/style_color_primary">
             <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginLeft="32dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
                 android:contentDescription="@null"
-                android:src="@drawable/sailor"/>
+                android:src="@drawable/ic_delete_white_24dp"/>
 
             <ImageView
                 android:id="@+id/btn_add"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginRight="32dp"
                 android:contentDescription="@null"
-                android:src="@drawable/sailor"/>
+                android:src="@drawable/ic_delete_white_24dp"/>
 
             <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginRight="32dp"
                 android:contentDescription="@null"
-                android:src="@drawable/sailor"/>
+                android:src="@drawable/ic_delete_white_24dp"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_delete_white_24dp"/>
+            </LinearLayout>
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/style_color_primary"/>
         </LinearLayout>
 
     </com.waylens.hachi.views.DragLayout>
