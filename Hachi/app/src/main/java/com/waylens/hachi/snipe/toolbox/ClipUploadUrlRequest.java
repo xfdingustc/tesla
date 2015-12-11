@@ -23,15 +23,13 @@ public class ClipUploadUrlRequest extends VdbRequest<UploadUrl> {
     private static final String TAG = "ClipUploadUrlRequest";
 
     private Clip mClip;
-    private VdbResponse.Listener<UploadUrl> mListener;
     private Bundle mParams;
 
     public ClipUploadUrlRequest(Clip clip, Bundle params,
                                 VdbResponse.Listener<UploadUrl> listener,
                                 VdbResponse.ErrorListener errorListener) {
-        super(0, errorListener);
+        super(0, listener, errorListener);
         mClip = clip;
-        mListener = listener;
         mParams = params;
     }
 
@@ -65,10 +63,5 @@ public class ClipUploadUrlRequest extends VdbRequest<UploadUrl> {
         Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
         UploadUrl uploadUrl = new UploadUrl(isPlayList, cid, realTimeMs, lengthMs, uploadOpt, url);
         return VdbResponse.success(uploadUrl);
-    }
-
-    @Override
-    protected void deliverResponse(UploadUrl response) {
-        mListener.onResponse(response);
     }
 }

@@ -15,18 +15,16 @@ public class ClipExtentUpdateRequest extends VdbRequest<Integer> {
     private Clip mClip;
     private long mClipStart;
     private long mClipEnd;
-    private VdbResponse.Listener<Integer> mListener;
 
     public ClipExtentUpdateRequest(Clip clip,
                                    long newClipStart,
                                    long newClipEnd,
                                    VdbResponse.Listener<Integer> listener,
                                    VdbResponse.ErrorListener errorListener) {
-        super(0, errorListener);
+        super(0, listener, errorListener);
         mClip = clip;
         mClipStart = newClipStart;
         mClipEnd = newClipEnd;
-        mListener = listener;
     }
 
     @Override
@@ -38,12 +36,5 @@ public class ClipExtentUpdateRequest extends VdbRequest<Integer> {
     @Override
     protected VdbResponse<Integer> parseVdbResponse(VdbAcknowledge response) {
         return VdbResponse.success(response.getRetCode());
-    }
-
-    @Override
-    protected void deliverResponse(Integer response) {
-        if (mListener != null) {
-            mListener.onResponse(response);
-        }
     }
 }

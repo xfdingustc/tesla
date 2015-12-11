@@ -29,6 +29,7 @@ import com.waylens.hachi.ui.entities.MomentOBD;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.views.GaugeView;
 
 import org.json.JSONArray;
@@ -68,7 +69,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
         MomentPlayFragment fragment = new MomentPlayFragment();
         fragment.setArguments(args);
         fragment.mMomentID = moment.id;
-        //fragment.setSource(moment.videoURL);
+        fragment.setSource(moment.videoURL);
         //fragment.setSource("http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8");
         //fragment.setSource("http://monitor.vidit.com.cn:8083/waylens/hls/s2.m3u8");
         /*
@@ -78,7 +79,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 + "CloudFront-Key-Pair-Id=APKAIZCLN7KQEMMEJXJQ; Path=/; Domain=cloudfront.net; Secure; HTTPOnly";
         headers.put("Cookie", cookie);
         */
-        fragment.setSource("https://d15yj7tk7j047u.cloudfront.net/2.m3u8", null);
+        //fragment.setSource("https://d2o7nk9c8hjp89.cloudfront.net/public/8119898bbc8c44f09ad1910a5f6bfaa3/195/play_6.m3u8", null);
         fragment.mDragListener = listener;
         return fragment;
     }
@@ -86,7 +87,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mRequestQueue.start();
     }
 

@@ -38,6 +38,7 @@ import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.DataUploader;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.OBDData;
@@ -101,7 +102,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mRequestQueue.start();
 
     }

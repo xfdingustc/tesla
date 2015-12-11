@@ -21,7 +21,6 @@ import com.waylens.hachi.snipe.VdbResponse;
 public class VdbImageRequest extends VdbRequest<Bitmap> {
     private final static String TAG = VdbImageRequest.class.getSimpleName();
 
-    private final VdbResponse.Listener<Bitmap> mListener;
     private final Config mDecoderConfig;
     private final int mMaxWidth;
     private final int mMaxHeight;
@@ -31,9 +30,8 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, int
         maxWidth, int maxHeight, ScaleType scaleType, Config decodeConfig, VdbResponse
                                .ErrorListener errorListener) {
-        super(0, errorListener);
+        super(0, listener, errorListener);
         this.mClipPos = clipPos;
-        this.mListener = listener;
         this.mDecoderConfig = decodeConfig;
         this.mMaxWidth = maxWidth;
         this.mMaxHeight = maxHeight;
@@ -94,10 +92,5 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
             return null;
         }
 
-    }
-
-    @Override
-    protected void deliverResponse(Bitmap response) {
-        mListener.onResponse(response);
     }
 }

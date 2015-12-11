@@ -17,7 +17,6 @@ import com.waylens.hachi.vdb.RawDataBlock;
  */
 public class DownloadRawDataBlockRequest extends VdbRequest<RawDataBlock.DownloadRawDataBlock> {
     private static final String TAG = DownloadRawDataBlockRequest.class.getSimpleName();
-    private final VdbResponse.Listener<RawDataBlock.DownloadRawDataBlock> mListener;
     private final Bundle mParameters;
     private final ClipFragment mClipFragment;
 
@@ -29,8 +28,7 @@ public class DownloadRawDataBlockRequest extends VdbRequest<RawDataBlock.Downloa
     public DownloadRawDataBlockRequest(ClipFragment clipFragment, Bundle parameters,
                                        VdbResponse.Listener<RawDataBlock.DownloadRawDataBlock> listener,
                                        VdbResponse.ErrorListener errorListener) {
-        super(0, errorListener);
-        this.mListener = listener;
+        super(0, listener, errorListener);
         this.mParameters = parameters;
         this.mClipFragment = clipFragment;
     }
@@ -69,10 +67,5 @@ public class DownloadRawDataBlockRequest extends VdbRequest<RawDataBlock.Downloa
         block.ack_data = response.readByteArray(size + header.mNumItems * 8 + header.mDataSize);
 
         return VdbResponse.success(block);
-    }
-
-    @Override
-    protected void deliverResponse(RawDataBlock.DownloadRawDataBlock response) {
-        mListener.onResponse(response);
     }
 }

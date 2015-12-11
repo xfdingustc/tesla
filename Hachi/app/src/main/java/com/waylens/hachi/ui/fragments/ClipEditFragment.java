@@ -228,6 +228,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             release(true);
         }
         mVideoSource = null;
+        mTypedRawData.clear();
     }
 
     @Override
@@ -648,6 +649,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        Log.e("test", "MediaPlayer Error: " + what + "; extra: " + extra);
         if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN && extra == MediaPlayer.MEDIA_ERROR_IO) {
             Snackbar.make(getView(), "Cannot load video.", Snackbar.LENGTH_SHORT).show();
             mHandler.postDelayed(new Runnable() {

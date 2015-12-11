@@ -16,6 +16,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONObject;
 
@@ -40,7 +41,7 @@ public class NotificationFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
     }
 
     @Nullable
@@ -59,6 +60,7 @@ public class NotificationFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         mRequestQueue.cancelAll(TAG_NOTIFICATIONS);
+        mRequestQueue = null;
         super.onDestroyView();
 
     }

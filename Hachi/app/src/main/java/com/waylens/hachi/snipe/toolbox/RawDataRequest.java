@@ -19,7 +19,6 @@ import com.waylens.hachi.vdb.RawDataItem;
  * Created by Xiaofei on 2015/9/11.
  */
 public class RawDataRequest extends VdbRequest<RawData> {
-    private final VdbResponse.Listener<RawData> mListener;
     private final Bundle mParameters;
     private final Clip mClip;
 
@@ -28,9 +27,8 @@ public class RawDataRequest extends VdbRequest<RawData> {
 
     public RawDataRequest(Clip clip, Bundle parameters, VdbResponse.Listener<RawData> listener,
                           VdbResponse.ErrorListener errorListener) {
-        super(0, errorListener);
+        super(0, listener, errorListener);
         this.mClip = clip;
-        this.mListener = listener;
         this.mParameters = parameters;
     }
 
@@ -83,10 +81,5 @@ public class RawDataRequest extends VdbRequest<RawData> {
 
         return VdbResponse.success(result);
 
-    }
-
-    @Override
-    protected void deliverResponse(RawData response) {
-        mListener.onResponse(response);
     }
 }

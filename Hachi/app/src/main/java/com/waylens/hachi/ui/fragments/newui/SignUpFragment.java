@@ -11,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.Bind;
 
@@ -46,7 +47,7 @@ public class SignUpFragment extends BaseFragment{
 
 
     private void init() {
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
 
     }
 

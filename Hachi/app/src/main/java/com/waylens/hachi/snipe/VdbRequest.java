@@ -1,11 +1,15 @@
 package com.waylens.hachi.snipe;
 
 
+import com.transee.vdb.Vdb;
+
 /**
  * Created by Xiaofei on 2015/8/17.
  */
 public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     protected int mMethod;
+    private VdbResponse.Listener<T> mListener;
+
     private VdbResponse.ErrorListener mErrorListener;
 
     private Integer mSequence;
@@ -41,11 +45,11 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     private Object mTag;
 
-    public VdbRequest(int method, VdbResponse.ErrorListener listener) {
+    public VdbRequest(int method, VdbResponse.Listener<T> listener, VdbResponse.ErrorListener errorListener) {
         this.mMethod = method;
-        this.mErrorListener = listener;
+        this.mListener = listener;
+        this.mErrorListener = errorListener;
     }
-
 
     public enum Priority {
         LOW,
@@ -126,7 +130,12 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     }
 
 
-    abstract protected void deliverResponse(T response);
+    final protected void deliverResponse(T response) {
+        if (mListener != null) {
+            mListener.onResponse(response);
+        }
+        clean();
+    }
 
 
     protected void deliverError(SnipeError error) {
@@ -154,9 +163,9 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         mIsIgnorable = isIgnorable;
     }
 
-    public void clean() {
-        if (mErrorListener != null) {
-            mErrorListener = null;
-        }
+    void clean() {
+        mListener = null;
+        mErrorListener = null;
+        mVdbCommand = null;
     }
 }

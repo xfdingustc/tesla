@@ -15,7 +15,6 @@ import com.waylens.hachi.vdb.PlaybackUrl;
  */
 public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
     private static final String TAG = ClipPlaybackUrlRequest.class.getSimpleName();
-    private final VdbResponse.Listener<PlaybackUrl> mListener;
     protected final Bundle mParameters;
     protected final Clip.ID mCid;
 
@@ -31,10 +30,9 @@ public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
 
     public ClipPlaybackUrlRequest(int method, Clip.ID cid, Bundle parameters, VdbResponse.Listener<PlaybackUrl>
             listener, VdbResponse.ErrorListener errorListener) {
-        super(method, errorListener);
+        super(0, listener, errorListener);
         this.mCid = cid;
         this.mParameters = parameters;
-        this.mListener = listener;
     }
 
     @Override
@@ -78,10 +76,5 @@ public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
         playbackUrl.offsetMs = 0;
 
         return VdbResponse.success(playbackUrl);
-    }
-
-    @Override
-    protected void deliverResponse(PlaybackUrl response) {
-        mListener.onResponse(response);
     }
 }

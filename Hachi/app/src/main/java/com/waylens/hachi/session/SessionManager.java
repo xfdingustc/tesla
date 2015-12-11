@@ -2,11 +2,8 @@ package com.waylens.hachi.session;
 
 import android.content.Context;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -24,7 +21,6 @@ public class SessionManager {
     public static final int LOGIN_TYPE_SNS = 2;
 
     private static SessionManager mSharedManager = null;
-    private RequestQueue mRequestQueue;
 
     private String mUserName;
     private String mUserId;
@@ -35,13 +31,8 @@ public class SessionManager {
     private int mLoginType;
     private boolean mIsLinked;
 
-
-    private static Context mSharedAppContext = null;
-
-
     private SessionManager() {
         resetSessionInfo();
-        mRequestQueue = Volley.newRequestQueue(mSharedAppContext);
     }
 
     private void resetSessionInfo() {
@@ -61,7 +52,7 @@ public class SessionManager {
 
 
     public static void initialize(Context context) {
-        mSharedAppContext = context;
+        //
     }
 
     public String getUserName() {

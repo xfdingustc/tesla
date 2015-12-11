@@ -39,6 +39,7 @@ import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,7 +100,7 @@ public class SignInFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCallbackManager = CallbackManager.Factory.create();
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
     }
 
     @Nullable

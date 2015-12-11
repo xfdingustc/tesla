@@ -14,8 +14,6 @@ import com.waylens.hachi.vdb.ClipFragment;
  */
 public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
     private static final String TAG = DownloadUrlRequest.class.getSimpleName();
-
-    private final VdbResponse.Listener<ClipDownloadInfo> mListener;
     private final ClipFragment mClipFragment;
 
     public static final int DOWNLOAD_OPT_MAIN_STREAM = (1 << 0);
@@ -31,9 +29,8 @@ public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
 
     public DownloadUrlRequest(int method, ClipFragment clipFragment, VdbResponse.Listener<ClipDownloadInfo>
         listener, VdbResponse.ErrorListener errorListener) {
-        super(method, errorListener);
+        super(0, listener, errorListener);
         this.mClipFragment = clipFragment;
-        this.mListener = listener;
     }
 
     @Override
@@ -83,10 +80,5 @@ public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
 
 
         return VdbResponse.success(clipDownloadInfo);
-    }
-
-    @Override
-    protected void deliverResponse(ClipDownloadInfo response) {
-        mListener.onResponse(response);
     }
 }

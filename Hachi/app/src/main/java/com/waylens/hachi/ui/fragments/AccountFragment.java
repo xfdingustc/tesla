@@ -33,6 +33,7 @@ import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,7 +93,7 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
         mHighlightColor = getResources().getColor(R.color.style_color_primary);
         mGreyColor = getResources().getColor(R.color.material_grey_500);
 
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
@@ -184,9 +185,7 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     void logout() {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        requestQueue.start();
-        requestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_DEVICE_DEACTIVATION,
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_DEVICE_DEACTIVATION,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

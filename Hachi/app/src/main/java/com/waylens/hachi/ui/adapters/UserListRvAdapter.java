@@ -21,6 +21,7 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +44,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public UserListRvAdapter(Context context) {
         this.mContext = context;
-        this.mRequestQueue = Volley.newRequestQueue(mContext);
+        this.mRequestQueue = VolleyUtil.newVolleyRequestQueue(context);
         mRequestQueue.start();
     }
 

@@ -24,6 +24,7 @@ import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +57,7 @@ public class LinkAccountFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
     }
 
     @Override

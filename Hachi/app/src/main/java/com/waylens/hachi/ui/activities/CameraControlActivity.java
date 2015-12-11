@@ -62,6 +62,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipPos;
@@ -199,7 +200,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
         };
         mHandler = new Handler();
-        mRequestQueue = Volley.newRequestQueue(this);
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(this);
     }
 
     private void startOverlay() {

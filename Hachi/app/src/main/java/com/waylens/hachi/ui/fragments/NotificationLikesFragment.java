@@ -23,6 +23,7 @@ import com.waylens.hachi.ui.entities.APIFilter;
 import com.waylens.hachi.ui.entities.LikeEvent;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -63,7 +64,7 @@ public class NotificationLikesFragment extends BaseFragment implements RecyclerV
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new NotificationLikesAdapter(null, getResources());
         mLayoutManager = new LinearLayoutManager(getActivity());
         mUnreadEventIDs = new ArrayList<>();

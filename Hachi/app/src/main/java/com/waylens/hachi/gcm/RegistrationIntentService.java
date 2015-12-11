@@ -37,6 +37,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,7 +89,7 @@ public class RegistrationIntentService extends IntentService {
             return;
         }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        RequestQueue requestQueue = VolleyUtil.newVolleyRequestQueue(this);
         JSONObject params = new JSONObject();
         try {
             params.put("deviceType", Constants.DEVICE_TYPE);

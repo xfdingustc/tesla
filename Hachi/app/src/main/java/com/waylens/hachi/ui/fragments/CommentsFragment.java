@@ -29,6 +29,7 @@ import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +78,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mAdapter = new CommentsRecyclerAdapter(null);
         mAdapter.setOnCommentClickListener(this);

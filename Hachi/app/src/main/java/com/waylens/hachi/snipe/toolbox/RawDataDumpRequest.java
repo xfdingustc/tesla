@@ -10,17 +10,13 @@ import com.waylens.hachi.vdb.ClipFragment;
  * Created by Richard on 9/22/15.
  */
 public class RawDataDumpRequest extends VdbRequest<byte[]> {
-
-    private final VdbResponse.Listener<byte[]> mListener;
-
     private final ClipFragment mClipFragment;
     private final int mDataType;
 
     public RawDataDumpRequest(ClipFragment clipFragment, int dataType,
                               VdbResponse.Listener<byte[]> listener,
                               VdbResponse.ErrorListener errorListener) {
-        super(0, errorListener);
-        this.mListener = listener;
+        super(0, listener, errorListener);
         this.mClipFragment = clipFragment;
         this.mDataType = dataType;
     }
@@ -37,10 +33,5 @@ public class RawDataDumpRequest extends VdbRequest<byte[]> {
             return null;
         }
         return VdbResponse.success(response.mReceiveBuffer);
-    }
-
-    @Override
-    protected void deliverResponse(byte[] response) {
-        mListener.onResponse(response);
     }
 }

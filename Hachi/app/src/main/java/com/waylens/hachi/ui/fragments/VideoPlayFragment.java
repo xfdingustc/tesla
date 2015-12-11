@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -120,10 +121,16 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private int mVideoHeight;
     private boolean mSurfaceDestroyed;
 
+    HandlerThread mNonUIThread;
+    Handler mNonUIHandler;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new VideoHandler(this);
+        mNonUIThread = new HandlerThread("ReleaseMediaPlayer");
+        mNonUIThread.start();
+        mNonUIHandler = new Handler(mNonUIThread.getLooper());
     }
 
     @Override
@@ -171,6 +178,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             release(true);
         }
         mVideoSource = null;
+        mNonUIThread.quitSafely();
     }
 
     @Override
@@ -388,18 +396,23 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         }
     }
 
-    private void release(boolean clearTargetState) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-            mCurrentState = STATE_IDLE;
-            if (clearTargetState) {
-                mTargetState = STATE_IDLE;
+    private void release(final boolean clearTargetState) {
+        mNonUIHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                    mCurrentState = STATE_IDLE;
+                    if (clearTargetState) {
+                        mTargetState = STATE_IDLE;
+                    }
+                }
+                mVideoWidth = 0;
+                mVideoHeight = 0;
             }
-        }
-        mVideoWidth = 0;
-        mVideoHeight = 0;
+        });
     }
 
     @Override

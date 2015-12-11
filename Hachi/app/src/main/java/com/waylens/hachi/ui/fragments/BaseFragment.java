@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
@@ -99,5 +101,4 @@ public class BaseFragment extends Fragment {
     void showMessage(String message) {
         Snackbar.make(mRootView, message, Snackbar.LENGTH_SHORT).show();
     }
-
 }

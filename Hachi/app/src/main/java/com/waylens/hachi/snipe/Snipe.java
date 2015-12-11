@@ -11,20 +11,32 @@ import com.waylens.hachi.hardware.VdtCameraManager;
 public class Snipe {
     private static VdbConnection mVdbConnection;
 
-    public static VdbRequestQueue newRequestQueue() {
-        VdbSocket vdbSocket = new BasicVdbSocket();
-        VdbRequestQueue queue = new VdbRequestQueue(vdbSocket);
-        queue.start();
+    private static volatile VdbRequestQueue _REQUEST_QUEUE_SINGLETON;
 
-        return queue;
+    public static VdbRequestQueue newRequestQueue() {
+        if (_REQUEST_QUEUE_SINGLETON == null) {
+            synchronized (VdbRequestQueue.class) {
+                if (_REQUEST_QUEUE_SINGLETON == null) {
+                    VdbSocket vdbSocket = new BasicVdbSocket();
+                    _REQUEST_QUEUE_SINGLETON = new VdbRequestQueue(vdbSocket);
+                    _REQUEST_QUEUE_SINGLETON.start();
+                }
+            }
+        }
+        return _REQUEST_QUEUE_SINGLETON;
     }
 
     public static VdbRequestQueue newRequestQueue(Context context) {
-        VdbSocket vdbSocket = new BasicVdbSocket();
-        VdbRequestQueue queue = new VdbRequestQueue(vdbSocket);
-        queue.start();
-
-        return queue;
+        if (_REQUEST_QUEUE_SINGLETON == null) {
+            synchronized (VdbRequestQueue.class) {
+                if (_REQUEST_QUEUE_SINGLETON == null) {
+                    VdbSocket vdbSocket = new BasicVdbSocket();
+                    _REQUEST_QUEUE_SINGLETON = new VdbRequestQueue(vdbSocket);
+                    _REQUEST_QUEUE_SINGLETON.start();
+                }
+            }
+        }
+        return _REQUEST_QUEUE_SINGLETON;
     }
 
     public static void init() {

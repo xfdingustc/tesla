@@ -24,6 +24,7 @@ import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.ui.adapters.NotificationCommentsAdapter;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -63,7 +64,7 @@ public class NotificationCommentsFragment extends BaseFragment implements Recycl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new NotificationCommentsAdapter(null);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mUnreadEventIDs = new ArrayList<>();

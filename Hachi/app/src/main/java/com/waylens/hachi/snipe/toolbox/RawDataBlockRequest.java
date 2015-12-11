@@ -18,16 +18,13 @@ import com.waylens.hachi.vdb.RawDataItem;
  */
 public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
     private static final String TAG = RawDataBlockRequest.class.getSimpleName();
-    private final VdbResponse.Listener<RawDataBlock> mListener;
-
     private final ClipFragment mClipFragment;
     private final int mDataType;
 
     public RawDataBlockRequest(ClipFragment clipFragment, int dataType,
                                VdbResponse.Listener<RawDataBlock> listener,
                                VdbResponse.ErrorListener errorListener) {
-        super(0, errorListener);
-        this.mListener = listener;
+        super(0, listener, errorListener);
         this.mClipFragment = clipFragment;
         this.mDataType = dataType;
     }
@@ -86,10 +83,5 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
 
         return VdbResponse.success(block);
-    }
-
-    @Override
-    protected void deliverResponse(RawDataBlock response) {
-        mListener.onResponse(response);
     }
 }

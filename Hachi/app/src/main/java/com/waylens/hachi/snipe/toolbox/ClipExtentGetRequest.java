@@ -17,12 +17,10 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
     private static final String TAG = "ClipExtentGetRequest";
 
     private Clip mClip;
-    private VdbResponse.Listener<ClipExtent> mListener;
 
     public ClipExtentGetRequest(Clip clip, VdbResponse.Listener<ClipExtent> listener, VdbResponse.ErrorListener errorListener) {
-        super(0, errorListener);
+        super(0, listener, errorListener);
         mClip = clip;
-        mListener = listener;
     }
 
     @Override
@@ -55,12 +53,5 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
         clipExtent.clipStartTimeMs = clipStartTimeMs;
         clipExtent.clipEndTimeMs = clipEndTimeMs;
         return VdbResponse.success(clipExtent);
-    }
-
-    @Override
-    protected void deliverResponse(ClipExtent response) {
-        if (mListener !=  null) {
-            mListener.onResponse(response);
-        }
     }
 }

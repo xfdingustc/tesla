@@ -19,6 +19,7 @@ import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -41,7 +42,7 @@ public class BaseActivity extends AppCompatActivity {
     protected RequestQueue mRequestQueue;
 
     protected void init() {
-        mRequestQueue = Volley.newRequestQueue(this);
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(this);
         mRequestQueue.start();
 
     }

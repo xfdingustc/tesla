@@ -36,6 +36,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.ContentUploader;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,7 +124,7 @@ public class SignUpFragment extends BaseFragment {
         if (args != null) {
             mPreSetEmail = args.getString(ARG_KEY_EMAIL, "");
         }
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
     }
 
     @Nullable
