@@ -276,4 +276,6 @@
     <string name="following">Following</string>
     <string name="add_follow">+ FOLLOW</string>
 
+    <string name="live_view">LIVE VIEW</string>
+
 </resources>

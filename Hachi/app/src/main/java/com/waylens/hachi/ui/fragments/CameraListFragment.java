@@ -275,8 +275,8 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
 
     @Override
     public void onPreview(VdtCamera camera) {
-        //CameraControlActivity.launch(getActivity(), camera);
-        CameraControlActivity2.launch(getActivity());
+//        CameraControlActivity.launch(getActivity(), camera);
+        CameraControlActivity2.launch(getActivity(), camera);
     }
 
 

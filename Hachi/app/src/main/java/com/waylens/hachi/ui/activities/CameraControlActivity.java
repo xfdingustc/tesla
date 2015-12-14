@@ -42,13 +42,14 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.orhanobut.logger.Logger;
 import com.transee.ccam.AbsCameraClient;
 import com.transee.ccam.BtState;
 import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.common.DateTime;
 import com.transee.common.GPSRawData;
-import com.transee.common.MjpegBitmap;
+import com.waylens.hachi.views.camerapreview.CameraLiveView;
 import com.transee.common.Timer;
 import com.transee.common.Utils;
 import com.transee.vdb.PlaylistSet;
@@ -105,7 +106,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private VdtCamera mVdtCamera;
     private FrameLayout mMjpegViewHolder;
-    private MjpegBitmap mMjpegView;
+    private CameraLiveView mMjpegView;
     private Timer mUpdateTimer;
     private Timer mStillCaptureTimer;
 
@@ -181,14 +182,14 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     @SuppressLint("InflateParams")
     @Override
     protected void onCreateActivity(Bundle savedInstanceState) {
-        mMjpegView = (MjpegBitmap) getLayoutInflater().inflate(R.layout.group_camera_preview, null);
-        mMjpegView.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
+//        mMjpegView = (CameraLiveView) getLayoutInflater().inflate(R.layout.group_camera_preview, null);
+//        mMjpegView.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
 
         mUpdateTimer = new Timer() {
             @Override
             public void onTimer(Timer timer) {
                 if (mVdtCamera != null) {
-                    updateRecordTime();
+//                    updateRecordTime();
                 }
             }
         };
@@ -196,7 +197,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         mStillCaptureTimer = new Timer() {
             @Override
             public void onTimer(Timer timer) {
-                onStillCaptureTimer();
+//                onStillCaptureTimer();
             }
         };
         mHandler = new Handler();
@@ -229,10 +230,12 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     protected void onStartActivity() {
         mVdtCamera = getCameraFromIntent(null);
         if (mVdtCamera != null) {
+
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
                 mVdtCamera = null;
             } else {
+                Logger.t(TAG).d("Start stream serverAddr: " + serverAddr);
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mMjpegView.startStream(serverAddr, new MyMjpegViewCallback(), true);
             }
@@ -247,12 +250,12 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             client.cmd_audio_getMicState();
             client.cmd_Rec_List_Resolutions(); // see if still capture is supported
             ((CameraClient) client).userCmd_GetSetup();
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startVdbClient();
-                }
-            }, 1000);
+//            mHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    startVdbClient();
+//                }
+//            }, 1000);
         }
         if (mVdtCamera == null) {
             noCamera();
@@ -625,8 +628,10 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
 
         mMjpegViewHolder = (FrameLayout) findViewById(R.id.mjpegViewHolder);
-        Utils.setViewFullSize(this, mMjpegView);
-        mMjpegViewHolder.addView(mMjpegView);
+//        Utils.setViewFullSize(this, mMjpegView);
+//        mMjpegViewHolder.addView(mMjpegView);
+
+        mMjpegView = (CameraLiveView)findViewById(R.id.mjpegView1);
 
         mVideoButton = (ViditImageButton) findViewById(R.id.btnVideo);
         mVideoButton.setOnClickListener(new View.OnClickListener() {
@@ -851,14 +856,15 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     @Override
     protected void onSetupUI() {
-        if (isPortrait()) {
-            mMjpegView.setThumbnailScale(3);
-            mMjpegView.setBackgroundColor(getResources().getColor(R.color.previewBackground));
-        } else {
-            mMjpegView.setThumbnailScale(4);
-            mMjpegView.setBackgroundColor(Color.BLACK);
-        }
-        updateRecordState();
+        //mMjpegView.setBackgroundColor(Color.BLACK);
+//        if (isPortrait()) {
+//            mMjpegView.setThumbnailScale(3);
+//            mMjpegView.setBackgroundColor(getResources().getColor(R.color.previewBackground));
+//        } else {
+//            mMjpegView.setThumbnailScale(4);
+//            mMjpegView.setBackgroundColor(Color.BLACK);
+//        }
+        //updateRecordState();
     }
 
     private void noCamera() {
@@ -1241,12 +1247,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         }
     };
 
-    class MyMjpegViewCallback implements MjpegBitmap.Callback {
+    class MyMjpegViewCallback implements CameraLiveView.Callback {
 
-        @Override
-        public void onDown() {
-            // toggleToolbar();
-        }
 
         @Override
         public void onSingleTapUp() {
