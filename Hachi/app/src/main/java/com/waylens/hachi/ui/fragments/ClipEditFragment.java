@@ -47,7 +47,6 @@ import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
-import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
@@ -225,7 +224,13 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mHandler.removeMessages(FADE_OUT);
         mHandler.removeMessages(SHOW_PROGRESS);
         if (mMediaPlayer != null) {
-            release(true);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    release(true);
+                }
+            }).start();
+
         }
         mVideoSource = null;
         mTypedRawData.clear();
@@ -627,15 +632,16 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         RawDataItem rawDataItem = null;
         while (pos < raw.dataSize.length) {
             RawDataItem tmp = raw.getRawDataItem(pos);
-            if (raw.timeOffsetMs[pos] == position) {
+            long timeOffsetMs = raw.timeOffsetMs[pos] + raw.header.mRequestedTimeMs;
+            if (timeOffsetMs == position) {
                 rawDataItem = tmp;
-                mTypedPosition.put(RawDataBlock.RAW_DATA_ODB, pos);
+                mTypedPosition.put(dataType, pos);
                 break;
-            } else if (raw.timeOffsetMs[pos] < position) {
+            } else if (timeOffsetMs < position) {
                 rawDataItem = tmp;
-                mTypedPosition.put(RawDataBlock.RAW_DATA_ODB, pos);
+                mTypedPosition.put(dataType, pos);
                 pos++;
-            } else if (raw.timeOffsetMs[pos] > position) {
+            } else if (timeOffsetMs > position) {
                 break;
             }
         }
@@ -696,7 +702,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 //Log.e("test", "setProgress - position: " + position + "; real: "
                 //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
                 if (mInitPosition == 0) {
-                    mVideoTrimmer.setProgress(position + mPlaybackUrl.realTimeMs);
+                    position = position + (int) mPlaybackUrl.realTimeMs;
                 }
                 mVideoTrimmer.setProgress(position);
             }
@@ -704,7 +710,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             //mProgress.setSecondaryProgress(percent * 10);
         }
 
-        displayOverlay(position - (int) mInitPosition);
+        displayOverlay(position);
     }
 
     @Override
@@ -734,8 +740,12 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
         Logger.t(TAG).d("DataType[1]: " + dataType);
 
-        ClipFragment clipFragment = new ClipFragment(mClip);
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment, dataType,
+        Bundle params = new Bundle();
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mClip.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mClip.getDurationMs());
+
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip.cid, params,
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
                     public void onResponse(RawDataBlock response) {

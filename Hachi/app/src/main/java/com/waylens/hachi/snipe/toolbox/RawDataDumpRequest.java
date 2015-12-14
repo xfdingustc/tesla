@@ -23,7 +23,7 @@ public class RawDataDumpRequest extends VdbRequest<byte[]> {
 
     @Override
     protected VdbCommand createVdbCommand() {
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment, false, mDataType);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment.getClip().cid, false, mDataType, mClipFragment.getStartTimeMs(), mClipFragment.getDurationMs());
         return mVdbCommand;
     }
 

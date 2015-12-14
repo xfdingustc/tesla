@@ -14,7 +14,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.annotations.SpriteFactory;
@@ -227,7 +226,12 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         Logger.t(TAG).d("DataType[1]: " + dataType);
 
         ClipFragment clipFragment = new ClipFragment(mClip);
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment, dataType,
+        Bundle params = new Bundle();
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
+
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
                     public void onResponse(RawDataBlock response) {

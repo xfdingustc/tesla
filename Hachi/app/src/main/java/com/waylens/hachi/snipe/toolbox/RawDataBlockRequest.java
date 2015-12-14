@@ -1,5 +1,7 @@
 package com.waylens.hachi.snipe.toolbox;
 
+import android.os.Bundle;
+
 import com.orhanobut.logger.Logger;
 import com.transee.common.GPSRawData;
 import com.waylens.hachi.snipe.VdbAcknowledge;
@@ -8,7 +10,6 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
@@ -18,20 +19,28 @@ import com.waylens.hachi.vdb.RawDataItem;
  */
 public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
     private static final String TAG = RawDataBlockRequest.class.getSimpleName();
-    private final ClipFragment mClipFragment;
+    private final Clip.ID mCid;
     private final int mDataType;
+    private final long mClipTimeMs;
+    private final int mDuration;
 
-    public RawDataBlockRequest(ClipFragment clipFragment, int dataType,
+    public static final String PARAM_CLIP_TIME = "clip.time.ms";
+    public static final String PARAM_CLIP_LENGTH = "clip.length.ms";
+    public static final String PARAM_DATA_TYPE = "raw.data.type";
+
+    public RawDataBlockRequest(Clip.ID cid, Bundle params,
                                VdbResponse.Listener<RawDataBlock> listener,
                                VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
-        this.mClipFragment = clipFragment;
-        this.mDataType = dataType;
+        this.mCid = cid;
+        this.mDataType = params.getInt(PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_NULL);
+        mClipTimeMs = params.getLong(PARAM_CLIP_TIME, 0);
+        mDuration = params.getInt(PARAM_CLIP_LENGTH, 0);
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment, true, mDataType);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mCid, true, mDataType, mClipTimeMs, mDuration);
         return mVdbCommand;
     }
 

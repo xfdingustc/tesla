@@ -35,10 +35,10 @@ public class DownloadRawDataBlockRequest extends VdbRequest<RawDataBlock.Downloa
 
     @Override
     protected VdbCommand createVdbCommand() {
-        //long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
-        //int lengthMs = mParameters.getInt(PARAMETER_LENGTH_MS);
+        long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
+        int lengthMs = mParameters.getInt(PARAMETER_LENGTH_MS);
         int dataType = mParameters.getInt(PARAMETER_DATA_TYPE);
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment, true, dataType);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment.getClip().cid, true, dataType, clipTimeMs, lengthMs);
         return mVdbCommand;
     }
 

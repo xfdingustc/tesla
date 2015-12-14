@@ -516,7 +516,12 @@ public class ClipEditActivity extends BaseActivity {
     }
 
     private void requestDownloadRawData() {
-        RawDataBlockRequest accRequest = new RawDataBlockRequest(mSelectedClipFragment, RawDataBlock.RAW_DATA_ACC,
+        Bundle params = new Bundle();
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_ACC);
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mSelectedClipFragment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mSelectedClipFragment.getDurationMs());
+
+        RawDataBlockRequest accRequest = new RawDataBlockRequest(mSelectedClipFragment.getClip().cid, params,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
@@ -532,8 +537,12 @@ public class ClipEditActivity extends BaseActivity {
         });
         mVdbRequestQueue.add(accRequest);
 
-        RawDataBlockRequest gpsRequest = new RawDataBlockRequest(mSelectedClipFragment,
-            RawDataBlock.RAW_DATA_GPS, new VdbResponse.Listener<RawDataBlock>() {
+        params = new Bundle();
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_GPS);
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mSelectedClipFragment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mSelectedClipFragment.getDurationMs());
+        RawDataBlockRequest gpsRequest = new RawDataBlockRequest(mSelectedClipFragment.getClip().cid,
+            params, new VdbResponse.Listener<RawDataBlock>() {
             @Override
             public void onResponse(RawDataBlock response) {
                 mTvDownloadInfo.setText("GPS data is downloaded!!!!");
@@ -547,7 +556,11 @@ public class ClipEditActivity extends BaseActivity {
         });
         mVdbRequestQueue.add(gpsRequest);
 
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mSelectedClipFragment, RawDataBlock.RAW_DATA_ODB,
+        params = new Bundle();
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_ODB);
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mSelectedClipFragment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mSelectedClipFragment.getDurationMs());
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mSelectedClipFragment.getClip().cid, params,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {

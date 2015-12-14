@@ -14,9 +14,9 @@ public class RawDataBlock {
 
 
 
-    public static final int F_RAW_DATA_GPS = (1 << RAW_DATA_GPS);
-    public static final int F_RAW_DATA_ACC = (1 << RAW_DATA_ACC);
-    public static final int F_RAW_DATA_ODB = (1 << RAW_DATA_ODB);
+    public static final byte F_RAW_DATA_GPS = (1 << RAW_DATA_GPS);
+    public static final byte F_RAW_DATA_ACC = (1 << RAW_DATA_ACC);
+    public static final byte F_RAW_DATA_ODB = (1 << RAW_DATA_ODB);
 
     public static class RawDataBlockHeader {
         public final Clip.ID cid;
