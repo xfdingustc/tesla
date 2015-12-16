@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:background="@color/background_color"
               android:orientation="vertical">
 
@@ -15,7 +15,7 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp">
 
@@ -23,10 +23,13 @@
         <TextView
             android:id="@+id/tvCameraStatus"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_centerInParent="true"/>
 
-    </LinearLayout>
-    
+    </RelativeLayout>
+
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -40,13 +43,58 @@
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp">
+        android:layout_height="48dp">
 
-    </LinearLayout>
-    
-    
+        <ImageButton
+            android:id="@+id/btnMicControl"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_mic_white_24dp"/>
+
+
+        <ImageButton
+            android:id="@+id/btnFullscreen"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_fullscreen_white_24dp"/>
+
+        <ImageButton
+            android:id="@+id/btnWaterLine"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/btnFullscreen"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_border_all_white_24dp"/>
+
+
+        <ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/btnWaterLine"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_av_timer_white_24dp"/>
+
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabBookmark"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_bookmark_white_48dp"/>
+
+
 
 
 </LinearLayout>

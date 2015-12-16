@@ -6,10 +6,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.AbsCameraClient;
 import com.transee.ccam.CameraClient;
+import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.VdtCamera;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
@@ -46,6 +49,9 @@ public class CameraControlActivity2 extends BaseActivity {
 
     @Bind(R.id.cameraPreview)
     CameraLiveView mLiveView;
+
+    @Bind(R.id.tvCameraStatus)
+    TextView mTvCameraStatus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,9 +95,6 @@ public class CameraControlActivity2 extends BaseActivity {
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mLiveView.startStream(serverAddr, new CameraLiveViewCallback(), true);
             }
-            // mCamera.getClient().cmdGetResolution();
-            // mCamera.getClient().cmdGetQuality();
-            // mCamera.getClient().cmdGetColorMode();
 
             AbsCameraClient client = mVdtCamera.getClient();
             client.cmd_CAM_WantPreview();
@@ -106,6 +109,7 @@ public class CameraControlActivity2 extends BaseActivity {
                     //startVdbClient();
                 }
             }, 1000);
+            updateRecordState();
         }
 
     }
@@ -135,7 +139,28 @@ public class CameraControlActivity2 extends BaseActivity {
     };
 
     private void updateRecordState() {
-
+        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        switch (states.mRecordState) {
+            default:
+            case CameraState.State_Record_Unknown:
+                mTvCameraStatus.setText(R.string.record_unknown);
+                break;
+            case CameraState.State_Record_Stopped:
+                mTvCameraStatus.setText(R.string.record_stopped);
+                break;
+            case CameraState.State_Record_Stopping:
+                mTvCameraStatus.setText(R.string.record_stopping);
+                break;
+            case CameraState.State_Record_Starting:
+                mTvCameraStatus.setText(R.string.record_starting);
+                break;
+            case CameraState.State_Record_Recording:
+                mTvCameraStatus.setText(R.string.record_recording);
+                break;
+            case CameraState.State_Record_Switching:
+                mTvCameraStatus.setText(R.string.record_switching);
+                break;
+        }
     }
 
     class CameraLiveViewCallback implements CameraLiveView.Callback {

@@ -250,12 +250,12 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             client.cmd_audio_getMicState();
             client.cmd_Rec_List_Resolutions(); // see if still capture is supported
             ((CameraClient) client).userCmd_GetSetup();
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    startVdbClient();
-//                }
-//            }, 1000);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startVdbClient();
+                }
+            }, 1000);
         }
         if (mVdtCamera == null) {
             noCamera();
