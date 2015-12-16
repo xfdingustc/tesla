@@ -13,7 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.transee.ccam.BtState;
-import com.waylens.hachi.hardware.vdtcamera.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.ccam.WifiState;
 import com.transee.common.Utils;
@@ -65,14 +64,6 @@ public class CameraSetupActivity extends BaseActivity {
 
     private int[] mMarkTimes;
     private String[] mMarkTimesDesc;
-
-    private CameraState getCameraStates() {
-        return VdtCamera.getState(mVdtCamera);
-    }
-
-    private BtState getBtStates() {
-        return VdtCamera.getBtStates(mVdtCamera);
-    }
 
 
     @Override
@@ -225,15 +216,15 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     void changeMarkAfterTime() {
-        final int markTime = getCameraStates().mMarkAfterTime;
+        final int markTime = mVdtCamera.getState().mMarkAfterTime;
         int markTimeIndex = Arrays.binarySearch(mMarkTimes, markTime);
         SelectMarkTime action = new SelectMarkTime(this, mMarkTimesDesc, markTimeIndex) {
             @Override
             public void onSelectMarkTime(int id) {
                 int newMarkTime = mMarkTimes[id];
                 if (newMarkTime != markTime) {
-                    mVdtCamera.setRecordMarkTime(getCameraStates().mMarkBeforeTime, newMarkTime);
-                    getCameraStates().mMarkAfterTime = newMarkTime;
+                    mVdtCamera.setRecordMarkTime(mVdtCamera.getState().mMarkBeforeTime, newMarkTime);
+                    mVdtCamera.getState().mMarkAfterTime = newMarkTime;
                     updateMarkTime();
                 }
             }
@@ -242,15 +233,15 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     void changeMarkBeforeTime() {
-        final int markTime = getCameraStates().mMarkBeforeTime;
+        final int markTime = mVdtCamera.getState().mMarkBeforeTime;
         int markTimeIndex = Arrays.binarySearch(mMarkTimes, markTime);
         SelectMarkTime action = new SelectMarkTime(this, mMarkTimesDesc, markTimeIndex) {
             @Override
             public void onSelectMarkTime(int id) {
                 int newMarkTime = mMarkTimes[id];
                 if (newMarkTime != markTime) {
-                    mVdtCamera.setRecordMarkTime(newMarkTime, getCameraStates().mMarkAfterTime);
-                    getCameraStates().mMarkBeforeTime = newMarkTime;
+                    mVdtCamera.setRecordMarkTime(newMarkTime, mVdtCamera.getState().mMarkAfterTime);
+                    mVdtCamera.getState().mMarkBeforeTime = newMarkTime;
                     updateMarkTime();
                 }
             }
@@ -259,7 +250,7 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void onChangeCameraName() {
-        GetCameraName action = new GetCameraName(this, getCameraStates().mCameraName) {
+        GetCameraName action = new GetCameraName(this, mVdtCamera.getState().mCameraName) {
             @Override
             public void onCameraNameChanged(String value) {
                 if (mVdtCamera != null) {
@@ -273,13 +264,13 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void changeVideoResolution() {
-        SelectVideoResolution action = new SelectVideoResolution(this, getCameraStates()) {
+        SelectVideoResolution action = new SelectVideoResolution(this, mVdtCamera.getState()) {
             @Override
             protected void onSelectVideoResolution(int resolutionIndex) {
                 if (mVdtCamera != null) {
                     mVdtCamera.setRecordResolution(resolutionIndex);
                     mVdtCamera.getRecordResolution();
-                    VdtCamera.getState(mVdtCamera).mVideoResolutionIndex = resolutionIndex;
+                    mVdtCamera.getState().mVideoResolutionIndex = resolutionIndex;
                     updateVideoResolution(null);
                 }
             }
@@ -288,13 +279,13 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void changeVideoQuality() {
-        SelectVideoQuality action = new SelectVideoQuality(this, getCameraStates()) {
+        SelectVideoQuality action = new SelectVideoQuality(this, mVdtCamera.getState()) {
             @Override
             protected void onSelectVideoQuality(int qualityIndex) {
                 if (mVdtCamera != null) {
                     mVdtCamera.setRecordQuality(qualityIndex);
                     mVdtCamera.getRecordQuality();
-                    VdtCamera.getState(mVdtCamera).mVideoQualityIndex = qualityIndex;
+                    mVdtCamera.getState().mVideoQualityIndex = qualityIndex;
                     updateVideoQuality(null);
                 }
             }
@@ -303,13 +294,13 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void changeColorMode() {
-        SelectColorMode action = new SelectColorMode(this, getCameraStates()) {
+        SelectColorMode action = new SelectColorMode(this, mVdtCamera.getState()) {
             @Override
             protected void onSelectColorMode(int index) {
                 if (mVdtCamera != null) {
                     mVdtCamera.setRecordColorMode(index);
                     mVdtCamera.getRecordColorMode();
-                    VdtCamera.getState(mVdtCamera).mColorModeIndex = index;
+                    mVdtCamera.getState().mColorModeIndex = index;
                     updateColorMode(null);
                 }
             }
@@ -319,7 +310,7 @@ public class CameraSetupActivity extends BaseActivity {
 
     private void toggleRecordMode(int flag) {
         if (mVdtCamera != null) {
-            CameraState states = getCameraStates();
+            CameraState states = mVdtCamera.getState();
             int flags = Utils.toggleBit(states.mRecordModeIndex, flag);
             mVdtCamera.setRecordRecMode(flags);
             mVdtCamera.getRecordRecMode();
@@ -329,7 +320,7 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void onMuteAudio() {
-        CameraState states = getCameraStates();
+        CameraState states = mVdtCamera.getState();
         if (states.mMicState != CameraState.State_Mic_Unknown) { // &&
             // states.mMicVol
             // >= 0) {
@@ -380,7 +371,7 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void onClickBluetooth() {
-        if (getBtStates().mBtSupport == BtState.BT_Support_Yes) {
+        if (mVdtCamera.getBtStates().mBtSupport == BtState.BT_Support_Yes) {
             super.startCameraActivity(mVdtCamera, CameraBtSetupActivity.class);
         }
     }
@@ -401,31 +392,34 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void updateVideoResolution(Resources res) {
-        if (res == null)
+        if (res == null) {
             res = getResources();
-        int index = getCameraStates().mVideoResolutionIndex;
+        }
+        int index = mVdtCamera.getState().mVideoResolutionIndex;
         String[] resolutionNames = res.getStringArray(R.array.resolution);
         mTextVideoResolution.setText(Utils.getStringFromArray(index, resolutionNames));
     }
 
     private void updateVideoQuality(Resources res) {
-        if (res == null)
+        if (res == null) {
             res = getResources();
-        int index = getCameraStates().mVideoQualityIndex;
+        }
+        int index = mVdtCamera.getState().mVideoQualityIndex;
         String[] qualityNames = res.getStringArray(R.array.quality);
         mTextVideoQuality.setText(Utils.getStringFromArray(index, qualityNames));
     }
 
     private void updateColorMode(Resources res) {
-        if (res == null)
+        if (res == null) {
             res = getResources();
-        int index = getCameraStates().mColorModeIndex;
+        }
+        int index = mVdtCamera.getState().mColorModeIndex;
         String[] colorModeNames = res.getStringArray(R.array.colormode);
         mTextColorMode.setText(Utils.getStringFromArray(index, colorModeNames));
     }
 
     private void updateRecordMode() {
-        int index = getCameraStates().mRecordModeIndex;
+        int index = mVdtCamera.getState().mRecordModeIndex;
         boolean checked = index >= 0 && (index & CameraState.FLAG_AUTO_RECORD) != 0;
         mCBAutoRecord.setChecked(checked);
         checked = index >= 0 && (index & CameraState.FLAG_LOOP_RECORD) != 0;
@@ -433,7 +427,7 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void updateMicState() {
-        boolean checked = getCameraStates().mMicState == CameraState.State_Mic_ON;
+        boolean checked = mVdtCamera.getState().mMicState == CameraState.State_Mic_ON;
         mCBEnableMic.setChecked(checked);
     }
 
@@ -441,7 +435,7 @@ public class CameraSetupActivity extends BaseActivity {
         Resources res = getResources();
 
         // camera name
-        CameraState states = getCameraStates();
+        CameraState states = mVdtCamera.getState();
         mTextCameraName.setText(getCameraName(states));
 
         // battery vol
@@ -536,12 +530,12 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void updateMarkTime() {
-        mTextMarkBeforeTime.setText(getMarkTimeDesc(getCameraStates().mMarkBeforeTime));
-        mTextMarkAfterTime.setText(getMarkTimeDesc(getCameraStates().mMarkAfterTime));
+        mTextMarkBeforeTime.setText(getMarkTimeDesc(mVdtCamera.getState().mMarkBeforeTime));
+        mTextMarkAfterTime.setText(getMarkTimeDesc(mVdtCamera.getState().mMarkAfterTime));
     }
 
     private void updateWifiStates() {
-        WifiState states = VdtCamera.getWifiStates(mVdtCamera);
+        WifiState states = mVdtCamera.getWifiStates();
         switch (states.mWifiMode) {
             default:
             case WifiState.WIFI_Mode_Unknown:
@@ -562,7 +556,7 @@ public class CameraSetupActivity extends BaseActivity {
         boolean bHighlight = false;
         int textId = 0;
 
-        BtState btStates = getBtStates();
+        BtState btStates = mVdtCamera.getBtStates();
         switch (btStates.mBtSupport) {
             default:
             case BtState.BT_Support_Unknown:

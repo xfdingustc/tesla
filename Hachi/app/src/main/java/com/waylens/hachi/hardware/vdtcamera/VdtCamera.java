@@ -27,7 +27,7 @@ public class VdtCamera {
     private List<Callback> mCallbacks = new ArrayList<>();
     private final Handler mHandler;
     private final ServiceInfo mServiceInfo;
-    private final CameraClient mClient;
+    private final VdtCameraController mController;
 
     private InetSocketAddress mPreviewAddress;
 
@@ -35,90 +35,6 @@ public class VdtCamera {
     private BtState mBtStates = new BtState();
     private GpsState mGpsStates = new GpsState();
     private WifiState mWifiStates = new WifiState();
-
-    public void setRecordRecMode(int flags) {
-        mClient.cmd_Rec_Set_RecMode(flags);
-    }
-
-    public void getRecordRecMode() {
-        mClient.cmd_Rec_get_RecMode();
-    }
-
-    public void setAudioMic(int state, int vol) {
-        mClient.cmd_audio_setMic(state, vol);
-    }
-
-    public void getAudioMicState() {
-        mClient.cmd_audio_getMicState();
-    }
-
-    public void setNetworkSynctime(long time, int timezone) {
-        mClient.cmd_Network_Synctime(time, timezone);
-    }
-
-    public void GetSetup() {
-        mClient.userCmd_GetSetup();
-    }
-
-    public void startClient() {
-        mClient.start();
-    }
-
-    public void stopClient() {
-        mClient.stop();
-    }
-
-    public void setCameraWantIdle() {
-        mClient.cmd_CAM_WantIdle();
-    }
-
-    public void startPreview() {
-        mClient.cmd_CAM_WantPreview();
-    }
-
-    public void getCameraTime() {
-        mClient.ack_Cam_get_time();
-    }
-
-    public void getRecordResolutionList() {
-        mClient.cmd_Rec_List_Resolutions();
-    }
-
-    public void markLiveVideo() {
-        mClient.cmd_Rec_MarkLiveVideo();
-    }
-
-    public void stopRecording() {
-        mClient.ack_Cam_stop_rec();
-    }
-
-    public void startRecording() {
-        mClient.cmd_Cam_start_rec();
-    }
-
-    public void startStillCapture(boolean oneShot) {
-        mClient.cmd_Rec_StartStillCapture(true);
-    }
-
-    public void stopStillCapture() {
-        mClient.cmd_Rec_StopStillCapture();
-    }
-
-    public void setRecordStillMode(boolean stillMode) {
-        mClient.cmd_Rec_SetStillMode(stillMode);
-    }
-
-    public void getNetworkHostHum() {
-        mClient.cmd_Network_GetHostNum();
-    }
-
-    public void setNetworkRmvHost(String ssid) {
-        mClient.cmd_Network_RmvHost(ssid);
-    }
-
-    public void setAddNetworkHost(String ssid, String password) {
-        mClient.cmd_Network_AddHost(ssid, password);
-    }
 
 
     static public class ServiceInfo {
@@ -198,7 +114,7 @@ public class VdtCamera {
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
         mHandler = new Handler();
-        mClient = new MyCameraClient(serviceInfo.inetAddr, serviceInfo.port);
+        mController = new MyCameraClient(serviceInfo.inetAddr, serviceInfo.port);
     }
 
     // API
@@ -251,23 +167,23 @@ public class VdtCamera {
 
 
     // API - camera can be null
-    static public CameraState getState(VdtCamera vdtCamera) {
-        return vdtCamera == null ? CameraState.nullState : vdtCamera.mStates;
+    public CameraState getState() {
+        return mStates;
     }
 
     // API - camera can be null
-    static public BtState getBtStates(VdtCamera vdtCamera) {
-        return vdtCamera == null ? BtState.nullState : vdtCamera.mBtStates;
+    public BtState getBtStates() {
+        return mBtStates;
     }
 
     // API - camera can be null
-    static public WifiState getWifiStates(VdtCamera vdtCamera) {
-        return vdtCamera == null ? WifiState.nullState : vdtCamera.mWifiStates;
+    public WifiState getWifiStates() {
+        return mWifiStates;
     }
 
     // API
     public InetSocketAddress getInetSocketAddress() {
-        return mClient.getInetSocketAddress();
+        return mController.getInetSocketAddress();
     }
 
     // API
@@ -276,7 +192,7 @@ public class VdtCamera {
     }
 
     private void onCameraConnected() {
-        InetSocketAddress addr = mClient.getInetSocketAddress();
+        InetSocketAddress addr = mController.getInetSocketAddress();
         if (addr != null) {
             mPreviewAddress = new InetSocketAddress(addr.getAddress(), 8081);
             if (mOnConnectionChangeListener != null) {
@@ -328,25 +244,24 @@ public class VdtCamera {
 
     // called on camera thread
     private void initCameraState() {
-        if (mClient instanceof CameraClient) {
-            CameraClient client = mClient;
-            client.cmd_Cam_getApiVersion();
-            client.cmd_fw_getVersion();
-            client.cmd_fw_getVersion();
-            client.cmd_Cam_get_Name();
-            client.cmd_Rec_List_Resolutions(); // see if still capture is supported
-            client.cmd_Cam_get_getAllInfor();
-            client.cmd_Cam_get_State();
-            client.cmd_Network_GetWLanMode();
-            client.cmd_Network_GetHostNum();
-            client.cmd_Rec_GetMarkTime();
-        }
+        VdtCameraController client = mController;
+        client.cmd_Cam_getApiVersion();
+        client.cmd_fw_getVersion();
+        client.cmd_fw_getVersion();
+        client.cmd_Cam_get_Name();
+        client.cmd_Rec_List_Resolutions(); // see if still capture is supported
+        client.cmd_Cam_get_getAllInfor();
+        client.cmd_Cam_get_State();
+        client.cmd_Network_GetWLanMode();
+        client.cmd_Network_GetHostNum();
+        client.cmd_Rec_GetMarkTime();
+
     }
 
     // client told us camera state has changed,
     // so synchronize our state with it (on main thread)
     private void syncCameraState() {
-        if (mClient.syncState(mStates)) {
+        if (mController.syncState(mStates)) {
             if (mOnStateChangeListener != null) {
                 mOnStateChangeListener.onStateChanged(this);
             }
@@ -354,7 +269,7 @@ public class VdtCamera {
     }
 
     private void syncBtState() {
-        if (mClient.syncBtState(mBtStates)) {
+        if (mController.syncBtState(mBtStates)) {
             if (mOnStateChangeListener != null) {
                 mOnStateChangeListener.onBtStateChanged(this);
             }
@@ -362,7 +277,7 @@ public class VdtCamera {
     }
 
     private void syncGpsState() {
-        if (mClient.syncGpsState(mGpsStates)) {
+        if (mController.syncGpsState(mGpsStates)) {
             if (mOnStateChangeListener != null) {
                 mOnStateChangeListener.onGpsStateChanged(this);
             }
@@ -370,7 +285,7 @@ public class VdtCamera {
     }
 
     private void syncWifiState() {
-        if (mClient.syncWifiState(mWifiStates)) {
+        if (mController.syncWifiState(mWifiStates)) {
             if (mOnStateChangeListener != null) {
                 mOnStateChangeListener.onWifiStateChanged(this);
             }
@@ -459,7 +374,7 @@ public class VdtCamera {
         }
     };
 
-    class MyCameraClient extends CameraClient {
+    class MyCameraClient extends VdtCameraController {
 
         public MyCameraClient(InetAddress host, int port) {
             super(host, port);
@@ -581,64 +496,146 @@ public class VdtCamera {
 
     // Control APIs
     public void setBtEnable(boolean enable) {
-        mClient.cmd_CAM_BT_Enable(enable);
+        mController.cmd_CAM_BT_Enable(enable);
     }
 
     public void doBtScan() {
-        mClient.cmd_CAM_BT_doScan();
+        mController.cmd_CAM_BT_doScan();
     }
 
     public void getBtHostNumber() {
-        mClient.cmd_CAM_BT_getHostNum();
+        mController.cmd_CAM_BT_getHostNum();
     }
 
     public void doBtUnbind(int type, String mac) {
-        mClient.cmd_CAM_BT_doUnBind(type, mac);
+        mController.cmd_CAM_BT_doUnBind(type, mac);
     }
 
     public void setRecordOverlay(int flags) {
-        mClient.cmd_Rec_setOverlay(flags);
+        mController.cmd_Rec_setOverlay(flags);
     }
 
     public void getRecordOverlayState() {
-        mClient.cmd_Rec_getOverlayState();
+        mController.cmd_Rec_getOverlayState();
     }
 
     public void setRecordMarkTime(int markBeforeTime, int newMarkTime) {
-        mClient.cmd_Rec_SetMarkTime(markBeforeTime, newMarkTime);
+        mController.cmd_Rec_SetMarkTime(markBeforeTime, newMarkTime);
     }
 
     public void setCameraName(String name) {
-       mClient.cmd_Cam_set_Name(name);
+        mController.cmd_Cam_set_Name(name);
     }
 
     public void getCameraName() {
-        mClient.cmd_Cam_get_Name();
+        mController.cmd_Cam_get_Name();
     }
 
     public void setRecordResolution(int resolutionIndex) {
-        mClient.cmd_Rec_Set_Resolution(resolutionIndex);
+        mController.cmd_Rec_Set_Resolution(resolutionIndex);
     }
 
     public void getRecordResolution() {
-        mClient.cmd_Rec_get_Resolution();
+        mController.cmd_Rec_get_Resolution();
     }
 
     public void setRecordQuality(int qualityIndex) {
-        mClient.cmd_Rec_Set_Quality(qualityIndex);
+        mController.cmd_Rec_Set_Quality(qualityIndex);
     }
 
     public void getRecordQuality() {
-        mClient.cmd_Rec_get_Quality();
+        mController.cmd_Rec_get_Quality();
     }
 
     public void setRecordColorMode(int index) {
-        mClient.cmd_Rec_Set_ColorMode(index);
+        mController.cmd_Rec_Set_ColorMode(index);
     }
 
     public void getRecordColorMode() {
-        mClient.cmd_Rec_get_ColorMode();
+        mController.cmd_Rec_get_ColorMode();
     }
 
+    public void setRecordRecMode(int flags) {
+        mController.cmd_Rec_Set_RecMode(flags);
+    }
 
+    public void getRecordRecMode() {
+        mController.cmd_Rec_get_RecMode();
+    }
+
+    public void setAudioMic(int state, int vol) {
+        mController.cmd_audio_setMic(state, vol);
+    }
+
+    public void getAudioMicState() {
+        mController.cmd_audio_getMicState();
+    }
+
+    public void setNetworkSynctime(long time, int timezone) {
+        mController.cmd_Network_Synctime(time, timezone);
+    }
+
+    public void GetSetup() {
+        mController.userCmd_GetSetup();
+    }
+
+    public void startClient() {
+        mController.start();
+    }
+
+    public void stopClient() {
+        mController.stop();
+    }
+
+    public void setCameraWantIdle() {
+        mController.cmd_CAM_WantIdle();
+    }
+
+    public void startPreview() {
+        mController.cmd_CAM_WantPreview();
+    }
+
+    public void getCameraTime() {
+        mController.ack_Cam_get_time();
+    }
+
+    public void getRecordResolutionList() {
+        mController.cmd_Rec_List_Resolutions();
+    }
+
+    public void markLiveVideo() {
+        mController.cmd_Rec_MarkLiveVideo();
+    }
+
+    public void stopRecording() {
+        mController.ack_Cam_stop_rec();
+    }
+
+    public void startRecording() {
+        mController.cmd_Cam_start_rec();
+    }
+
+    public void startStillCapture(boolean oneShot) {
+        mController.cmd_Rec_StartStillCapture(oneShot);
+    }
+
+    public void stopStillCapture() {
+        mController.cmd_Rec_StopStillCapture();
+    }
+
+    public void setRecordStillMode(boolean stillMode) {
+        mController.cmd_Rec_SetStillMode(stillMode);
+    }
+
+    public void getNetworkHostHum() {
+        mController.cmd_Network_GetHostNum();
+    }
+
+    public void setNetworkRmvHost(String ssid) {
+        mController.cmd_Network_RmvHost(ssid);
+    }
+
+    public void setAddNetworkHost(String ssid, String password) {
+        mController.cmd_Network_AddHost(ssid, password);
+    }
 }

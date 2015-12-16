@@ -59,9 +59,6 @@ public class CameraBtSetupActivity extends BaseActivity {
     private int mColorHighlight;
     private int mColorDisabled;
 
-    private BtState getBtStates() {
-        return VdtCamera.getBtStates(mVdtCamera);
-    }
 
     @Override
     protected void requestContentView() {
@@ -150,7 +147,7 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     private void onClickEnableBt() {
         if (mVdtCamera != null) {
-            BtState states = getBtStates();
+            BtState states = mVdtCamera.getBtStates();
             if (states.canEnableBt()) {
                 boolean bEnable = states.mBtState == BtState.BT_State_Disabled;
                 mVdtCamera.setBtEnable(bEnable);
@@ -162,12 +159,12 @@ public class CameraBtSetupActivity extends BaseActivity {
     }
 
     private void onClickRemoteController() {
-        BtState states = getBtStates();
+        BtState states = mVdtCamera.getBtStates();
         unbindDevice(states, BtState.BT_Type_HID, states.mHidState);
     }
 
     private void onClickObdDevice() {
-        BtState states = getBtStates();
+        BtState states = mVdtCamera.getBtStates();
         unbindDevice(states, BtState.BT_Type_OBD, states.mObdState);
     }
 
@@ -193,7 +190,7 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     private void onClickScanBtDevice() {
         if (mVdtCamera != null) {
-            BtState states = getBtStates();
+            BtState states = mVdtCamera.getBtStates();
             if (states.canOperate()) {
                 if (states.mBtState == BtState.BT_State_Disabled) {
                     DialogBuilder action = new DialogBuilder(this);
@@ -211,7 +208,7 @@ public class CameraBtSetupActivity extends BaseActivity {
     }
 
     private void updateBtEnabled() {
-        BtState states = getBtStates();
+        BtState states = mVdtCamera.getBtStates();
         boolean bEnabled = states.mBtState == BtState.BT_State_Enabled;
         mCBEnableBt.setChecked(bEnabled);
         mProgressBar1.setVisibility(states.mbBtEnabling ? View.VISIBLE : View.GONE);
@@ -256,13 +253,13 @@ public class CameraBtSetupActivity extends BaseActivity {
     }
 
     private void updateBtScanning() {
-        BtState states = getBtStates();
+        BtState states = mVdtCamera.getBtStates();
         mProgressBar2.setVisibility(states.mbBtScanning ? View.VISIBLE : View.GONE);
     }
 
     private void updateBtState() {
         updateBtEnabled();
-        BtState states = VdtCamera.getBtStates(mVdtCamera);
+        BtState states = mVdtCamera.getBtStates();
         updateDeviceState(states.mHidState, mHidDevice);
         if (ENABLE_OBD) {
             updateDeviceState(states.mObdState, mObdDevice);
@@ -296,7 +293,7 @@ public class CameraBtSetupActivity extends BaseActivity {
 
         final BtItem item = (BtItem) view.getTag();
 
-        BtState states = getBtStates();
+        BtState states = mVdtCamera.getBtStates();
         if (states.isDeviceBound(item.type)) {
             DialogBuilder builder = new DialogBuilder(this);
             if (states.isDeviceBound(item.type, item.mac)) {

@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.CameraClient;
 import com.transee.viditcam.actions.GetWifiAP;
 import com.transee.viditcam.actions.RemoveWifiAP;
 import com.transee.viditcam.actions.SelectWifiAp;

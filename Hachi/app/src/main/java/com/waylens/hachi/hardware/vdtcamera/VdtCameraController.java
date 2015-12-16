@@ -23,10 +23,10 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-abstract public class CameraClient implements ICameraClient {
-
+abstract public class VdtCameraController {
+    public static final String TAG = VdtCameraController.class.getSimpleName();
     static final boolean DEBUG = true;
-    static final String TAG = "CameraClient";
+
 
     abstract public void onConnected();
 
@@ -59,27 +59,23 @@ abstract public class CameraClient implements ICameraClient {
     private final GpsState mGpsStates = new GpsState();
     private final WifiState mWifiStates = new WifiState();
 
-    @Override
+
     public boolean syncState(CameraState user) {
         return mStates.syncStates(user);
     }
 
-    @Override
     public boolean syncBtState(BtState user) {
         return mBtStates.syncStates(user);
     }
 
-    @Override
     public boolean syncGpsState(GpsState user) {
         return mGpsStates.syncStates(user);
     }
 
-    @Override
     public boolean syncWifiState(WifiState user) {
         return mWifiStates.syncStates(user);
     }
 
-    @Override
     public InetSocketAddress getInetSocketAddress() {
         return getConnection().getInetSocketAddress();
     }
@@ -238,7 +234,6 @@ abstract public class CameraClient implements ICameraClient {
         mQueue.postRequest(request);
     }
 
-    @Override
     public void userCmd_ExitThread() {
         Request request = new Request(CMD_Domain_user, UserCmd_ExitThread, "", "");
         mQueue.postRequest(request);
@@ -344,7 +339,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Cam_start_rec
     // ========================================================
-    @Override
     public void cmd_Cam_start_rec() {
         postRequest(CMD_Domain_cam, CMD_Cam_start_rec);
     }
@@ -352,7 +346,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Cam_stop_rec
     // ========================================================
-    @Override
     public void ack_Cam_stop_rec() {
         postRequest(CMD_Domain_cam, CMD_Cam_stop_rec);
     }
@@ -360,7 +353,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Cam_get_time
     // ========================================================
-    @Override
     public void ack_Cam_get_time() {
         postRequest(CMD_Domain_cam, CMD_Cam_get_time);
     }
@@ -384,7 +376,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Cam_get_getStorageInfor
     // ========================================================
-    @Override
     public void cmd_Cam_get_getStorageInfor() {
         postRequest(CMD_Domain_cam, CMD_Cam_get_getStorageInfor);
     }
@@ -472,7 +463,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Cam_PowerOff
     // ========================================================
-    @Override
     public void cmd_Cam_PowerOff() {
         postRequest(CMD_Domain_cam, CMD_Cam_PowerOff);
     }
@@ -480,7 +470,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Cam_Reboot
     // ========================================================
-    @Override
     public void cmd_Cam_Reboot() {
         postRequest(CMD_Domain_cam, CMD_Cam_Reboot);
     }
@@ -542,7 +531,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Network_ConnectHost
     // ========================================================
-    @Override
     public void cmd_Network_ConnectHost(int mode, String apName) {
         if (apName == null)
             apName = "";
@@ -584,7 +572,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_audio_getMicState
     // ========================================================
-    @Override
     public void cmd_audio_getMicState() {
         postRequest(CMD_Domain_cam, CMD_audio_getMicState);
     }
@@ -634,7 +621,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_CAM_BT_Enable
     // ========================================================
-    @Override
     public void cmd_CAM_BT_Enable(boolean bEnable) {
         if (mStates.version12()) {
             postRequest(CMD_Domain_cam, CMD_CAM_BT_Enable, bEnable ? 1 : 0);
@@ -676,7 +662,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_CAM_BT_getHostNum
     // ========================================================
-    @Override
     public void cmd_CAM_BT_getHostNum() {
         postRequest(CMD_Domain_cam, CMD_CAM_BT_getHostNum);
     }
@@ -711,7 +696,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_CAM_BT_doScan
     // ========================================================
-    @Override
     public void cmd_CAM_BT_doScan() {
         if (mStates.version12()) {
             postRequest(CMD_Domain_cam, CMD_CAM_BT_doScan);
@@ -726,7 +710,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_CAM_BT_doBind
     // ========================================================
-    @Override
     public void cmd_CAM_BT_doBind(int type, String mac) {
         Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
         postRequest(CMD_Domain_cam, CMD_CAM_BT_doBind, Integer.toString(type), mac);
@@ -745,7 +728,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_CAM_BT_doUnBind
     // ========================================================
-    @Override
     public void cmd_CAM_BT_doUnBind(int type, String mac) {
         Log.d(TAG, "cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
         postRequest(CMD_Domain_cam, CMD_CAM_BT_doUnBind, Integer.toString(type), mac);
@@ -767,7 +749,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_CAM_WantIdle
     // ========================================================
-    @Override
     public void cmd_CAM_WantIdle() {
         postRequest(CMD_Domain_cam, CMD_CAM_WantIdle);
     }
@@ -775,7 +756,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_CAM_WantPreview
     // ========================================================
-    @Override
     public void cmd_CAM_WantPreview() {
         postRequest(CMD_Domain_cam, CMD_CAM_WantPreview);
     }
@@ -792,7 +772,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Rec_List_Resolutions
     // ========================================================
-    @Override
     public void cmd_Rec_List_Resolutions() {
         postRequest(CMD_Domain_rec, CMD_Rec_List_Resolutions);
     }
@@ -874,7 +853,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Rec_get_RecMode
     // ========================================================
-    @Override
     public void cmd_Rec_get_RecMode() {
         postRequest(CMD_Domain_rec, CMD_Rec_get_RecMode);
     }
@@ -968,7 +946,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Rec_SetStillMode
     // ========================================================
-    @Override
     public void cmd_Rec_SetStillMode(boolean bStillMode) {
         postRequest(CMD_Domain_rec, CMD_Rec_SetStillMode, bStillMode ? 1 : 0);
     }
@@ -976,7 +953,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Rec_StartStillCapture
     // ========================================================
-    @Override
     public void cmd_Rec_StartStillCapture(boolean bOneShot) {
         postRequest(CMD_Domain_rec, CMD_Rec_StartStillCapture, bOneShot ? 1 : 0);
     }
@@ -989,7 +965,6 @@ abstract public class CameraClient implements ICameraClient {
     // ========================================================
     // CMD_Rec_StopStillCapture
     // ========================================================
-    @Override
     public void cmd_Rec_StopStillCapture() {
         postRequest(CMD_Domain_rec, CMD_Rec_StopStillCapture);
     }
@@ -1015,12 +990,10 @@ abstract public class CameraClient implements ICameraClient {
     /**
      * This cmd does not have response.
      */
-    @Override
     public void cmd_Rec_MarkLiveVideo() {
         postRequest(CMD_Domain_rec, CMD_Rec_Mark_Live_Video);
     }
 
-    @Override
     public void cmd_Rec_GetMarkTime() {
         postRequest(CMD_Domain_rec, CMD_Rec_Get_Mark_Time);
     }
@@ -1034,7 +1007,6 @@ abstract public class CameraClient implements ICameraClient {
         }
     }
 
-    @Override
     public void cmd_Rec_SetMarkTime(int before, int after) {
         if (before < 0 || after < 0) {
             return;
@@ -1055,12 +1027,11 @@ abstract public class CameraClient implements ICameraClient {
 
     // ========================================================
 
-    public CameraClient(InetAddress host, int port) {
+    public VdtCameraController(InetAddress host, int port) {
         InetSocketAddress address = new InetSocketAddress(host, port);
         mConnection = new MyTcpConnection("ccam", address);
     }
 
-    @Override
     public void start() {
         mConnection.start(null);
     }
@@ -1604,22 +1575,22 @@ abstract public class CameraClient implements ICameraClient {
 
         @Override
         public void onConnectedAsync() {
-            CameraClient.this.onConnected();
+            VdtCameraController.this.onConnected();
         }
 
         @Override
         public void onConnectErrorAsync() {
-            CameraClient.this.onDisconnected();
+            VdtCameraController.this.onDisconnected();
         }
 
         @Override
         public void cmdLoop(Thread thread) throws IOException, InterruptedException {
-            CameraClient.this.cmdLoop(thread);
+            VdtCameraController.this.cmdLoop(thread);
         }
 
         @Override
         public void msgLoop(Thread thread) throws IOException, InterruptedException {
-            CameraClient.this.msgLoop(thread);
+            VdtCameraController.this.msgLoop(thread);
         }
     }
 

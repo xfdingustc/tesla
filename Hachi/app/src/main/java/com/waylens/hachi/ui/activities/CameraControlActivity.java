@@ -538,7 +538,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             return false;
         }
 
-        BtState btState = VdtCamera.getBtStates(mVdtCamera);
+        BtState btState = mVdtCamera.getBtStates();
         return (btState.mBtState == BtState.BT_State_Enabled)
                 && (btState.mObdState.mState == BtState.BTDEV_State_On);
     }
@@ -767,7 +767,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void addBookmark() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         if (states.mRecordState != CameraState.State_Record_Recording) {
             return;
         }
@@ -902,7 +902,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void onClickRecordButton() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         if (states.mRecordState == CameraState.State_Record_Recording) {
             mVdtCamera.stopRecording();
         } else if (states.mRecordState == CameraState.State_Record_Stopped) {
@@ -931,7 +931,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     // set a timer to do still capture
     private void onRecordButtonPressed() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         if (!states.canDoStillCapture())
             return;
 
@@ -957,7 +957,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateRecordTime() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         if (states.mRecordState == CameraState.State_Record_Recording) {
             if (mUpdateTimer.tag == TIMER_IDLE) {
                 states.mRecordDuration = -2; // TODO
@@ -1006,7 +1006,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void updateRecordButton() {
         int visibility = isLandscape() && !mbToolbarVisible ? View.GONE : View.VISIBLE;
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         boolean bEnable = true;
         switch (states.mRecordState) {
             default:
@@ -1052,7 +1052,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateModeState() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         if (states.canDoStillCapture()
                 && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
             mModeView.setVisibility(View.VISIBLE);
@@ -1072,7 +1072,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateRecordState() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
 
         switch (states.mRecordState) {
             case CameraState.State_Record_Stopped:
@@ -1202,7 +1202,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void onClickVideoMode() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         if (states.mRecordState == CameraState.State_Record_Stopped) {
             mVdtCamera.setRecordStillMode(false);
             updateModeState();
@@ -1210,7 +1210,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void onClickPictureMode() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         if (states.mRecordState == CameraState.State_Record_Stopped) {
             mVdtCamera.setRecordStillMode(true);
             updateModeState();

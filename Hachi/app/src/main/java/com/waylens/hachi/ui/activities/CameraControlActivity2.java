@@ -149,7 +149,7 @@ public class CameraControlActivity2 extends BaseActivity {
     };
 
     private void updateRecordState() {
-        CameraState states = VdtCamera.getState(mVdtCamera);
+        CameraState states = mVdtCamera.getState();
         switch (states.mRecordState) {
             default:
             case CameraState.State_Record_Unknown:

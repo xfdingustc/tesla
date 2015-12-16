@@ -22,10 +22,6 @@ public class CameraOverlaySetupActivity extends BaseActivity {
     private CheckBox mCBShowGPS;
     private CheckBox mCBShowSpeed;
 
-    private CameraState getCameraStates() {
-        return VdtCamera.getState(mVdtCamera);
-    }
-
 
     @Override
     protected void requestContentView() {
@@ -73,7 +69,7 @@ public class CameraOverlaySetupActivity extends BaseActivity {
 
     private void toggleOverlayFlag(int flag) {
         if (mVdtCamera != null) {
-            CameraState states = getCameraStates();
+            CameraState states = mVdtCamera.getState();
             int flags = Utils.toggleBit(states.mOverlayFlags, flag);
 			mVdtCamera.setRecordOverlay(flags);
             mVdtCamera.getRecordOverlayState();
@@ -84,7 +80,7 @@ public class CameraOverlaySetupActivity extends BaseActivity {
     }
 
     private void updateOverlayStates() {
-        int flags = getCameraStates().mOverlayFlags;
+        int flags = mVdtCamera.getState().mOverlayFlags;
         boolean checked = flags >= 0 && (flags & CameraState.OVERLAY_FLAG_NAME) != 0;
         mCBShowName.setChecked(checked);
         checked = flags >= 0 && (flags & CameraState.OVERLAY_FLAG_TIME) != 0;
