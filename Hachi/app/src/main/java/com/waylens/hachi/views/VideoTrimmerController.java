@@ -273,15 +273,23 @@ public class VideoTrimmerController extends View implements Progressive {
         invalidate();
     }
 
-    void setInitRangeValues(long left, long right) {
-        if (left < 0 || right < 0 || left >= right) {
+    void setInitRangeValues(long min, long max) {
+        if (min < 0 || max < 0 || min >= max) {
             return;
         }
-        mRangeValueLeft = left;
-        mRangeValueRight = right;
-        mStart = left;
-        mEnd = right;
-        mProgress = left;
+        mRangeValueLeft = min;
+        mRangeValueRight = max;
+        mStart = min;
+        mEnd = max;
+        mProgress = min;
+    }
+
+    double getMinValue() {
+        return mRangeValueLeft;
+    }
+
+    double getMaxValue() {
+        return mRangeValueRight;
     }
 
     double getRange() {

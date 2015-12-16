@@ -256,13 +256,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         if (isInPlaybackState() && !mMediaPlayer.isPlaying()) {
             resumeVideo();
         } else {
-            mProgressLoading.setVisibility(View.VISIBLE);
-            hideControllers();
-            if (!isRawDataReady()) {
-                loadRawData();
-            } else {
-                loadPlayURL();
-            }
+            loadClipInfo();
         }
     }
 
@@ -346,6 +340,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                     mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
                 }
                 mSeekToPosition = progress;
+                mTypedPosition.clear();
             }
 
             @Override
@@ -356,7 +351,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 if (mOldClipStartTimeMs != trimmer.getLeftValue() || mOldClipEndTimeMs != trimmer.getRightValue()) {
                     mOldClipStartTimeMs = trimmer.getLeftValue();
                     mOldClipEndTimeMs = trimmer.getRightValue();
-                    loadPlayURL();
+                    loadClipInfo();
                     return;
                 }
                 if (isInPlaybackState()) {
@@ -368,6 +363,16 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             }
         });
 
+    }
+
+    void loadClipInfo() {
+        mProgressLoading.setVisibility(View.VISIBLE);
+        hideControllers();
+        if (!isRawDataReady()) {
+            loadRawData();
+        } else {
+            loadPlayURL();
+        }
     }
 
     void loadPlayURL() {
@@ -698,7 +703,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
         if (mVideoTrimmer != null) {
             if (duration > 0) {
-                //long pos = position - mInitPosition + mInitPosition;
                 //Log.e("test", "setProgress - position: " + position + "; real: "
                 //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
                 if (mInitPosition == 0) {
@@ -720,6 +724,10 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     void loadRawData() {
         mProgressLoading.setVisibility(View.VISIBLE);
+        mTypedRawData.clear();
+        mTypedState.clear();
+        mTypedPosition.clear();
+
         if (mTypedState.get(RawDataBlock.RAW_DATA_ODB) != RAW_DATA_STATE_READY) {
             loadRawData(RawDataBlock.RAW_DATA_ODB);
         }
@@ -742,8 +750,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
         Bundle params = new Bundle();
         params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
-        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mClip.getStartTimeMs());
-        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mClip.getDurationMs());
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, (long) mVideoTrimmer.getMinValue());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, (int) mVideoTrimmer.getMaxValue());
 
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip.cid, params,
                 new VdbResponse.Listener<RawDataBlock>() {

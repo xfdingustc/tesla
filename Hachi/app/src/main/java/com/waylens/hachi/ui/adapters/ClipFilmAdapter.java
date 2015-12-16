@@ -72,7 +72,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ClipFilmItem sectionItem = null;
         for (Clip clip : clips) {
             if (sectionItem == null || !isSameDate(clip)) {
-                mCalendar.setTimeInMillis(clip.clipDate * 1000l - clip.gmtOffset);
+                mCalendar.setTimeInMillis(clip.getStandardClipDate());
                 mCalendar.set(Calendar.HOUR_OF_DAY, 0);
                 mCalendar.set(Calendar.MINUTE, 0);
                 mCalendar.set(Calendar.SECOND, 0);
