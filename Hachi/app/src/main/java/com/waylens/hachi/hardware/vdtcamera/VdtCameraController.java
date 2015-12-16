@@ -4,7 +4,6 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.transee.ccam.BtState;
-import com.transee.ccam.CameraState;
 import com.transee.ccam.GpsState;
 import com.transee.ccam.SimpleInputStream;
 import com.transee.ccam.SimpleOutputStream;
@@ -23,7 +22,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-abstract public class VdtCameraController {
+abstract class VdtCameraController {
     public static final String TAG = VdtCameraController.class.getSimpleName();
     static final boolean DEBUG = true;
 

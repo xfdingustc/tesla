@@ -43,7 +43,7 @@ import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.BtState;
-import com.transee.ccam.CameraState;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.transee.common.DateTime;
 import com.transee.common.GPSRawData;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
@@ -768,7 +768,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void addBookmark() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState != CameraState.State_Record_Recording) {
+        if (states.mRecordState != CameraState.STATE_RECORD_RECORDING) {
             return;
         }
         mBtnBookmark.setEnabled(false);
@@ -903,9 +903,9 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void onClickRecordButton() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.State_Record_Recording) {
+        if (states.mRecordState == CameraState.STATE_RECORD_RECORDING) {
             mVdtCamera.stopRecording();
-        } else if (states.mRecordState == CameraState.State_Record_Stopped) {
+        } else if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
             if (!states.mbIsStill) {
                 mVdtCamera.startRecording();
             } else {
@@ -938,7 +938,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         if (!states.mbIsStill)
             return;
 
-        if (states.mRecordState == CameraState.State_Record_Stopped) {
+        if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
             if (mStillCaptureState == STILLCAP_STATE_IDLE) {
                 mStillCaptureState = STILLCAP_STATE_WAITING;
                 mStillCaptureTimer.run(300);
@@ -958,7 +958,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void updateRecordTime() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.State_Record_Recording) {
+        if (states.mRecordState == CameraState.STATE_RECORD_RECORDING) {
             if (mUpdateTimer.tag == TIMER_IDLE) {
                 states.mRecordDuration = -2; // TODO
                 states.mbRecordDurationUpdated = false;
@@ -1010,28 +1010,28 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         boolean bEnable = true;
         switch (states.mRecordState) {
             default:
-            case CameraState.State_Record_Unknown:
+            case CameraState.STATE_RECORD_UNKNOWN:
                 mRecordButton.setVisibility(View.GONE);
                 mBtnBookmark.setVisibility(View.GONE);
                 bEnable = false;
                 break;
-            case CameraState.State_Record_Stopped:
+            case CameraState.STATE_RECORD_STOPPED:
                 mRecordButton.changeImages(R.drawable.start_record, R.drawable.start_record_pressed);
                 mRecordButton.setVisibility(visibility);
                 mBtnBookmark.setVisibility(View.GONE);
                 break;
-            case CameraState.State_Record_Stopping:
+            case CameraState.STATE_RECORD_STOPPING:
                 bEnable = false;
                 break;
-            case CameraState.State_Record_Starting:
+            case CameraState.STATE_RECORD_STARTING:
                 bEnable = false;
                 break;
-            case CameraState.State_Record_Recording:
+            case CameraState.STATE_RECORD_RECORDING:
                 mRecordButton.changeImages(R.drawable.stop_record, R.drawable.stop_record_pressed);
                 mRecordButton.setVisibility(visibility);
                 mBtnBookmark.setVisibility(visibility);
                 break;
-            case CameraState.State_Record_Switching:
+            case CameraState.STATE_RECORD_SWITCHING:
                 bEnable = false;
                 break;
         }
@@ -1054,7 +1054,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     private void updateModeState() {
         CameraState states = mVdtCamera.getState();
         if (states.canDoStillCapture()
-                && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
+                && (states.mRecordState == CameraState.STATE_RECORD_STOPPED || states
+            .mRecordState == CameraState.STATE_RECORD_SWITCHING)) {
             mModeView.setVisibility(View.VISIBLE);
             mTextRecordState.setText("");
             if (states.mbIsStill) {
@@ -1075,21 +1076,21 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         CameraState states = mVdtCamera.getState();
 
         switch (states.mRecordState) {
-            case CameraState.State_Record_Stopped:
+            case CameraState.STATE_RECORD_STOPPED:
                 if (mStillCaptureState == STILLCAP_STATE_IDLE) {
                     setRecordStateDrawable(0);
                     mTextRecordState.setText("");
                 }
                 break;
-            case CameraState.State_Record_Stopping:
+            case CameraState.STATE_RECORD_STOPPING:
                 setRecordStateDrawable(0);
                 mTextRecordState.setText(R.string.info_stop_recording);
                 break;
-            case CameraState.State_Record_Starting:
+            case CameraState.STATE_RECORD_STARTING:
                 setRecordStateDrawable(0);
                 mTextRecordState.setText(R.string.info_start_recording);
                 break;
-            case CameraState.State_Record_Recording:
+            case CameraState.STATE_RECORD_RECORDING:
                 setRecordStateDrawable(R.drawable.recording);
                 break;
             default:
@@ -1099,7 +1100,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                 break;
         }
 
-        if (states.mRecordState == CameraState.State_Record_Switching) {
+        if (states.mRecordState == CameraState.STATE_RECORD_SWITCHING) {
             mMjpegView.startMask(1000);
         } else {
             mMjpegView.startMask(0);
@@ -1203,7 +1204,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void onClickVideoMode() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.State_Record_Stopped) {
+        if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
             mVdtCamera.setRecordStillMode(false);
             updateModeState();
         }
@@ -1211,7 +1212,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void onClickPictureMode() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.State_Record_Stopped) {
+        if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
             mVdtCamera.setRecordStillMode(true);
             updateModeState();
         }

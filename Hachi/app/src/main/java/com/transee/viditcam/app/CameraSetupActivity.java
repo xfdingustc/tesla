@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.transee.ccam.BtState;
-import com.transee.ccam.CameraState;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.transee.ccam.WifiState;
 import com.transee.common.Utils;
 import com.transee.viditcam.actions.GetCameraName;

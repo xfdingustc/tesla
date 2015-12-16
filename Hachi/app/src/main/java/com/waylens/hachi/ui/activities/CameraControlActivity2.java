@@ -10,7 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.CameraState;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
@@ -152,23 +152,23 @@ public class CameraControlActivity2 extends BaseActivity {
         CameraState states = mVdtCamera.getState();
         switch (states.mRecordState) {
             default:
-            case CameraState.State_Record_Unknown:
+            case CameraState.STATE_RECORD_UNKNOWN:
                 mTvCameraStatus.setText(R.string.record_unknown);
                 break;
-            case CameraState.State_Record_Stopped:
+            case CameraState.STATE_RECORD_STOPPED:
                 mTvCameraStatus.setText(R.string.record_stopped);
                 toggleFab(false);
                 break;
-            case CameraState.State_Record_Stopping:
+            case CameraState.STATE_RECORD_STOPPING:
                 mTvCameraStatus.setText(R.string.record_stopping);
                 break;
-            case CameraState.State_Record_Starting:
+            case CameraState.STATE_RECORD_STARTING:
                 mTvCameraStatus.setText(R.string.record_starting);
                 break;
-            case CameraState.State_Record_Recording:
+            case CameraState.STATE_RECORD_RECORDING:
                 mTvCameraStatus.setText(R.string.record_recording);
                 break;
-            case CameraState.State_Record_Switching:
+            case CameraState.STATE_RECORD_SWITCHING:
                 mTvCameraStatus.setText(R.string.record_switching);
                 break;
         }

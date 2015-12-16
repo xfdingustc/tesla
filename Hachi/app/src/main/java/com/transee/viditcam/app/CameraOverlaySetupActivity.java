@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 
-import com.transee.ccam.CameraState;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.transee.common.Utils;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -136,77 +136,5 @@ public class CameraOverlaySetupActivity extends BaseActivity {
     }
 
 
-	/*
-    private final VdtCamera.Callback mCameraCallback = new VdtCamera.Callback() {
 
-		@Override
-		public void onStateChanged(VdtCamera vdtCamera) {
-			if (vdtCamera == mVdtCamera) {
-				updateCameraState();
-			}
-		}
-
-		@Override
-		public void onBtStateChanged(VdtCamera vdtCamera) {
-
-		}
-
-		@Override
-		public void onGpsStateChanged(VdtCamera vdtCamera) {
-
-		}
-
-		@Override
-		public void onWifiStateChanged(VdtCamera vdtCamera) {
-
-		}
-
-		@Override
-		public void onStartRecordError(VdtCamera vdtCamera, int error) {
-
-		}
-
-		@Override
-		public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
-
-		}
-
-		@Override
-		public void onScanBtDone(VdtCamera vdtCamera) {
-
-		}
-
-		@Override
-		public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
-
-		}
-
-		@Override
-		public void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot) {
-
-		}
-
-		@Override
-		public void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks) {
-
-		}
-
-		@Override
-		public void onStillCaptureDone(VdtCamera vdtCamera) {
-
-		}
-
-		@Override
-		public void onConnected(VdtCamera vdtCamera) {
-
-		}
-
-		@Override
-		public void onDisconnected(VdtCamera vdtCamera) {
-			if (vdtCamera == mVdtCamera) {
-				removeCamera();
-				noCamera();
-			}
-		}
-	}; */
 }

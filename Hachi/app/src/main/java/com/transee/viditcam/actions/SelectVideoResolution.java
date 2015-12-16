@@ -2,7 +2,7 @@ package com.transee.viditcam.actions;
 
 import android.app.Activity;
 
-import com.transee.ccam.CameraState;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.R;
 
 abstract public class SelectVideoResolution extends SingleSelect {

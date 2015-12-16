@@ -14,7 +14,7 @@ import android.widget.PopupWindow.OnDismissListener;
 
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
-import com.transee.ccam.CameraState;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 
