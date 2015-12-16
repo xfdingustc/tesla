@@ -6,20 +6,19 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.view.View;
+import android.support.design.widget.FloatingActionButton;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.AbsCameraClient;
-import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
 
 import java.net.InetSocketAddress;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2015/12/10.
@@ -35,6 +34,8 @@ public class CameraControlActivity2 extends BaseActivity {
     private static final String HOST_STRING = "hostString";
 
     private Handler mHandler;
+
+    private boolean mIsRecording = false;
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
         Intent intent = new Intent(startingActivity, CameraControlActivity2.class);
@@ -52,6 +53,22 @@ public class CameraControlActivity2 extends BaseActivity {
 
     @Bind(R.id.tvCameraStatus)
     TextView mTvCameraStatus;
+
+    @Bind(R.id.fabBookmark)
+    FloatingActionButton mFabBookmark;
+
+
+    @OnClick(R.id.fabBookmark)
+    public void onFabClick() {
+        if (mIsRecording) {
+            addBookmark();
+        } else {
+            startRecording();
+        }
+    }
+
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,19 +113,12 @@ public class CameraControlActivity2 extends BaseActivity {
                 mLiveView.startStream(serverAddr, new CameraLiveViewCallback(), true);
             }
 
-            AbsCameraClient client = mVdtCamera.getClient();
-            client.cmd_CAM_WantPreview();
-            client.cmd_Rec_get_RecMode();
-            client.ack_Cam_get_time();
-            client.cmd_audio_getMicState();
-            client.cmd_Rec_List_Resolutions(); // see if still capture is supported
-            ((CameraClient) client).userCmd_GetSetup();
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //startVdbClient();
-                }
-            }, 1000);
+            mVdtCamera.startPreview();
+            mVdtCamera.getRecordRecMode();
+            mVdtCamera.getCameraTime();
+            mVdtCamera.getAudioMicState();
+            mVdtCamera.getRecordResolutionList();
+            mVdtCamera.GetSetup();
             updateRecordState();
         }
 
@@ -139,7 +149,7 @@ public class CameraControlActivity2 extends BaseActivity {
     };
 
     private void updateRecordState() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         switch (states.mRecordState) {
             default:
             case CameraState.State_Record_Unknown:
@@ -147,6 +157,7 @@ public class CameraControlActivity2 extends BaseActivity {
                 break;
             case CameraState.State_Record_Stopped:
                 mTvCameraStatus.setText(R.string.record_stopped);
+                toggleFab(false);
                 break;
             case CameraState.State_Record_Stopping:
                 mTvCameraStatus.setText(R.string.record_stopping);
@@ -161,6 +172,23 @@ public class CameraControlActivity2 extends BaseActivity {
                 mTvCameraStatus.setText(R.string.record_switching);
                 break;
         }
+    }
+
+    private void toggleFab(boolean isRecording) {
+        mIsRecording = isRecording;
+        if (mIsRecording) {
+            mFabBookmark.setImageResource(R.drawable.ic_bookmark_white_48dp);
+        } else {
+            mFabBookmark.setImageResource(R.drawable.ic_album_white_48dp);
+        }
+    }
+
+    private void addBookmark() {
+
+    }
+
+    private void startRecording() {
+        mVdtCamera.startRecording();
     }
 
     class CameraLiveViewCallback implements CameraLiveView.Callback {

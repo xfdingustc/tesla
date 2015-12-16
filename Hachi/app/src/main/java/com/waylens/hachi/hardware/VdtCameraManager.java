@@ -6,6 +6,7 @@ import android.net.wifi.ScanResult;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.PasswordList;
 import com.transee.common.Utils;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -283,7 +284,7 @@ public class VdtCameraManager {
             mConnectedVdtCameras.add(vdtCamera);
         } else {
             mConnectingVdtCameras.add(vdtCamera);
-            vdtCamera.getClient().start();
+            vdtCamera.startClient();
         }
 
         for (Callback callback : mCallbackList) {
@@ -384,7 +385,7 @@ public class VdtCameraManager {
 
     private void clearCameras(List<VdtCamera> list) {
         for (VdtCamera c : list) {
-            c.getClient().stop();
+            c.stopClient();
         }
         list.clear();
     }
@@ -417,7 +418,7 @@ public class VdtCameraManager {
             index++;
         }
         Logger.t(TAG).d("camera connected, but was not connecting, stop it");
-        vdtCamera.getClient().stop();
+        vdtCamera.stopClient();
     }
 
     private void onCameraVdbConnected(VdtCamera vdtCamera) {
@@ -430,7 +431,7 @@ public class VdtCameraManager {
         // disconnect msg may be sent from msg thread,
         // need to stop it fully
         //vdtCamera.removeCallback(mCameraCallback);
-        vdtCamera.getClient().stop();
+        vdtCamera.stopClient();
 
         for (int i = 0; i < mConnectedVdtCameras.size(); i++) {
             if (mConnectedVdtCameras.get(i) == vdtCamera) {

@@ -9,8 +9,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.waylens.hachi.hardware.VdtCamera;
-import com.transee.ccam.CameraClient;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.CameraClient;
 import com.transee.viditcam.actions.GetWifiAP;
 import com.transee.viditcam.actions.RemoveWifiAP;
 import com.transee.viditcam.actions.SelectWifiAp;
@@ -31,9 +31,6 @@ public class CameraWifiSetupActivity extends BaseActivity {
     private WifiListAdapter mListAdapter;
     private Button mAddNetworkButton;
 
-    private CameraClient getCameraClient() {
-        return (CameraClient) mVdtCamera.getClient();
-    }
 
     @Override
     protected void requestContentView() {
@@ -81,7 +78,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
         mbRequested = isActivityRequested();
 
         //mVdtCamera.addCallback(mCameraCallback);
-        getCameraClient().cmd_Network_GetHostNum();
+        mVdtCamera.getNetworkHostHum();
 
         mListAdapter.clear();
         WifiAdmin wifiAdmin = WifiAdminManager.getManager().attachWifiAdmin(mWifiCallback);
@@ -110,7 +107,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
     private void removeWifiAP(String ssid) {
         if (mVdtCamera != null) {
             mListAdapter.removeSSID(ssid);
-            getCameraClient().cmd_Network_RmvHost(ssid);
+            mVdtCamera.setNetworkRmvHost(ssid);
         }
     }
 
@@ -148,7 +145,7 @@ public class CameraWifiSetupActivity extends BaseActivity {
     private void addWifiAP(String ssid, String password) {
         if (ssid != null && ssid.length() > 0 && !mListAdapter.exists(ssid)) {
             mListAdapter.addSSID(ssid);
-            getCameraClient().cmd_Network_AddHost(ssid, password);
+            mVdtCamera.setAddNetworkHost(ssid, password);
         }
     }
 

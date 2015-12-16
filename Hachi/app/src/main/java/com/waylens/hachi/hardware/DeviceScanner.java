@@ -4,6 +4,7 @@ import android.net.wifi.WifiManager;
 import android.support.annotation.Nullable;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
 import java.io.IOException;
 import java.net.Inet4Address;

@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.transee.ccam.BtState;
-import com.transee.ccam.CameraClient;
+import com.waylens.hachi.hardware.vdtcamera.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.ccam.WifiState;
 import com.transee.common.Utils;
@@ -24,7 +24,7 @@ import com.transee.viditcam.actions.SelectVideoQuality;
 import com.transee.viditcam.actions.SelectVideoResolution;
 import com.transee.viditcam.actions.SyncDateTime;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
 import java.util.Arrays;
 
@@ -67,16 +67,13 @@ public class CameraSetupActivity extends BaseActivity {
     private String[] mMarkTimesDesc;
 
     private CameraState getCameraStates() {
-        return VdtCamera.getCameraStates(mVdtCamera);
+        return VdtCamera.getState(mVdtCamera);
     }
 
     private BtState getBtStates() {
         return VdtCamera.getBtStates(mVdtCamera);
     }
 
-    private CameraClient getCameraClient() {
-        return (CameraClient) mVdtCamera.getClient();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,7 +232,7 @@ public class CameraSetupActivity extends BaseActivity {
             public void onSelectMarkTime(int id) {
                 int newMarkTime = mMarkTimes[id];
                 if (newMarkTime != markTime) {
-                    getCameraClient().cmd_Rec_SetMarkTime(getCameraStates().mMarkBeforeTime, newMarkTime);
+                    mVdtCamera.setRecordMarkTime(getCameraStates().mMarkBeforeTime, newMarkTime);
                     getCameraStates().mMarkAfterTime = newMarkTime;
                     updateMarkTime();
                 }
@@ -252,7 +249,7 @@ public class CameraSetupActivity extends BaseActivity {
             public void onSelectMarkTime(int id) {
                 int newMarkTime = mMarkTimes[id];
                 if (newMarkTime != markTime) {
-                    getCameraClient().cmd_Rec_SetMarkTime(newMarkTime, getCameraStates().mMarkAfterTime);
+                    mVdtCamera.setRecordMarkTime(newMarkTime, getCameraStates().mMarkAfterTime);
                     getCameraStates().mMarkBeforeTime = newMarkTime;
                     updateMarkTime();
                 }
@@ -266,8 +263,8 @@ public class CameraSetupActivity extends BaseActivity {
             @Override
             public void onCameraNameChanged(String value) {
                 if (mVdtCamera != null) {
-                    getCameraClient().cmd_Cam_set_Name(value);
-                    getCameraClient().cmd_Cam_get_Name(); // TODO
+                    mVdtCamera.setCameraName(value);
+                    mVdtCamera.getCameraName();
                     // TODO - update UI now?
                 }
             }
@@ -280,9 +277,9 @@ public class CameraSetupActivity extends BaseActivity {
             @Override
             protected void onSelectVideoResolution(int resolutionIndex) {
                 if (mVdtCamera != null) {
-                    getCameraClient().cmd_Rec_Set_Resolution(resolutionIndex);
-                    getCameraClient().cmd_Rec_get_Resolution(); // TODO
-                    VdtCamera.getCameraStates(mVdtCamera).mVideoResolutionIndex = resolutionIndex;
+                    mVdtCamera.setRecordResolution(resolutionIndex);
+                    mVdtCamera.getRecordResolution();
+                    VdtCamera.getState(mVdtCamera).mVideoResolutionIndex = resolutionIndex;
                     updateVideoResolution(null);
                 }
             }
@@ -295,9 +292,9 @@ public class CameraSetupActivity extends BaseActivity {
             @Override
             protected void onSelectVideoQuality(int qualityIndex) {
                 if (mVdtCamera != null) {
-                    getCameraClient().cmd_Rec_Set_Quality(qualityIndex);
-                    getCameraClient().cmd_Rec_get_Quality(); // TODO
-                    VdtCamera.getCameraStates(mVdtCamera).mVideoQualityIndex = qualityIndex;
+                    mVdtCamera.setRecordQuality(qualityIndex);
+                    mVdtCamera.getRecordQuality();
+                    VdtCamera.getState(mVdtCamera).mVideoQualityIndex = qualityIndex;
                     updateVideoQuality(null);
                 }
             }
@@ -310,9 +307,9 @@ public class CameraSetupActivity extends BaseActivity {
             @Override
             protected void onSelectColorMode(int index) {
                 if (mVdtCamera != null) {
-                    getCameraClient().cmd_Rec_Set_ColorMode(index);
-                    getCameraClient().cmd_Rec_get_ColorMode(); // TODO
-                    VdtCamera.getCameraStates(mVdtCamera).mColorModeIndex = index;
+                    mVdtCamera.setRecordColorMode(index);
+                    mVdtCamera.getRecordColorMode();
+                    VdtCamera.getState(mVdtCamera).mColorModeIndex = index;
                     updateColorMode(null);
                 }
             }
@@ -324,8 +321,8 @@ public class CameraSetupActivity extends BaseActivity {
         if (mVdtCamera != null) {
             CameraState states = getCameraStates();
             int flags = Utils.toggleBit(states.mRecordModeIndex, flag);
-            getCameraClient().cmd_Rec_Set_RecMode(flags);
-            getCameraClient().cmd_Rec_get_RecMode(); // TODO
+            mVdtCamera.setRecordRecMode(flags);
+            mVdtCamera.getRecordRecMode();
             states.mRecordModeIndex = flags;
             updateRecordMode();
         }
@@ -348,8 +345,9 @@ public class CameraSetupActivity extends BaseActivity {
             } else {
                 return;
             }
-            getCameraClient().cmd_audio_setMic(state, vol);
-            getCameraClient().cmd_audio_getMicState();
+
+            mVdtCamera.setAudioMic(state, vol);
+            mVdtCamera.getAudioMicState();
             // force refresh
             states.mMicState = state;
             states.mMicVol = vol;
@@ -362,7 +360,7 @@ public class CameraSetupActivity extends BaseActivity {
             @Override
             public void onSyncDateTime(long timeMillis, int timezone) {
                 if (mVdtCamera != null) {
-                    getCameraClient().cmd_Network_Synctime(timeMillis / 1000, timezone / (3600 * 1000));
+                    mVdtCamera.setNetworkSynctime(timeMillis / 1000, timezone / (3600 * 1000));
                 }
             }
         };
@@ -611,7 +609,8 @@ public class CameraSetupActivity extends BaseActivity {
             return;
         }
         //mVdtCamera.addCallback(mCameraCallback);
-        getCameraClient().userCmd_GetSetup();
+        mVdtCamera.GetSetup();
+
         updateCameraState();
         updateBtStates();
         updateWifiStates();

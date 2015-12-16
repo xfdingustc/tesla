@@ -2,7 +2,7 @@ package com.waylens.hachi.snipe;
 
 import android.content.Context;
 
-import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
 
 /**

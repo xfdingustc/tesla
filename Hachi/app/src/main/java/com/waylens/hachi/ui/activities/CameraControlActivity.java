@@ -33,7 +33,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.annotations.Sprite;
@@ -43,15 +42,12 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.AbsCameraClient;
 import com.transee.ccam.BtState;
-import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.common.DateTime;
 import com.transee.common.GPSRawData;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
 import com.transee.common.Timer;
-import com.transee.common.Utils;
 import com.transee.vdb.PlaylistSet;
 import com.transee.vdb.RemoteVdbClient;
 import com.transee.vdb.Vdb;
@@ -61,7 +57,7 @@ import com.transee.viditcam.app.CameraSetupActivity;
 import com.transee.viditcam.app.ViditImageButton;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.Clip;
@@ -239,17 +235,14 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mMjpegView.startStream(serverAddr, new MyMjpegViewCallback(), true);
             }
-            // mCamera.getClient().cmdGetResolution();
-            // mCamera.getClient().cmdGetQuality();
-            // mCamera.getClient().cmdGetColorMode();
 
-            AbsCameraClient client = mVdtCamera.getClient();
-            client.cmd_CAM_WantPreview();
-            client.cmd_Rec_get_RecMode();
-            client.ack_Cam_get_time();
-            client.cmd_audio_getMicState();
-            client.cmd_Rec_List_Resolutions(); // see if still capture is supported
-            ((CameraClient) client).userCmd_GetSetup();
+            mVdtCamera.startPreview();
+            mVdtCamera.getRecordRecMode();
+            mVdtCamera.getCameraTime();
+            mVdtCamera.getAudioMicState();
+            mVdtCamera.getRecordResolutionList();
+            mVdtCamera.GetSetup();
+
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -637,7 +630,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         mVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mVdtCamera.getClient().cmd_CAM_WantIdle();
+                mVdtCamera.setCameraWantIdle();
                 //startCameraActivity(mVdtCamera, CameraVideoActivity.class);
             }
         });
@@ -774,13 +767,13 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void addBookmark() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         if (states.mRecordState != CameraState.State_Record_Recording) {
             return;
         }
         mBtnBookmark.setEnabled(false);
         mBtnBookmark.getDrawable().setColorFilter(getResources().getColor(R.color.material_grey_600), PorterDuff.Mode.MULTIPLY);
-        mVdtCamera.getClient().cmd_Rec_MarkLiveVideo();
+        mVdtCamera.markLiveVideo();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -909,25 +902,26 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void onClickRecordButton() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Recording) {
-            mVdtCamera.getClient().ack_Cam_stop_rec();
+            mVdtCamera.stopRecording();
         } else if (states.mRecordState == CameraState.State_Record_Stopped) {
             if (!states.mbIsStill) {
-                mVdtCamera.getClient().cmd_Cam_start_rec();
+                mVdtCamera.startRecording();
             } else {
                 switch (mStillCaptureState) {
                     case STILLCAP_STATE_IDLE:
                         break;
                     case STILLCAP_STATE_WAITING:
                         mStillCaptureState = STILLCAP_STATE_IDLE;
-                        mVdtCamera.getClient().cmd_Rec_StartStillCapture(true);
+                        mVdtCamera.startStillCapture(true);
                         //mMjpegView.startMask(5);
                         //BeepManager.play(thisApp, R.raw.beep2, false);
                         mStillCaptureTimer.cancel();
                         break;
                     case STILLCAP_STATE_BURSTING:
-                        mVdtCamera.getClient().cmd_Rec_StopStillCapture();
+
+                        mVdtCamera.stopStillCapture();
                         mStillCaptureState = STILLCAP_STATE_IDLE;
                         break;
                 }
@@ -937,7 +931,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     // set a timer to do still capture
     private void onRecordButtonPressed() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         if (!states.canDoStillCapture())
             return;
 
@@ -956,19 +950,19 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         // timeout, begin bursting
         if (mStillCaptureState == STILLCAP_STATE_WAITING) {
             if (mVdtCamera != null) {
-                mVdtCamera.getClient().cmd_Rec_StartStillCapture(false);
+                mVdtCamera.startStillCapture(false);
             }
             mStillCaptureState = STILLCAP_STATE_BURSTING;
         }
     }
 
     private void updateRecordTime() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Recording) {
             if (mUpdateTimer.tag == TIMER_IDLE) {
                 states.mRecordDuration = -2; // TODO
                 states.mbRecordDurationUpdated = false;
-                mVdtCamera.getClient().ack_Cam_get_time();
+                mVdtCamera.getCameraTime();
                 mUpdateTimer.tag = TIMER_SCHEDULING;
             } else if (mUpdateTimer.tag == TIMER_SCHEDULING) {
                 if (states.mbRecordDurationUpdated) {
@@ -1012,7 +1006,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void updateRecordButton() {
         int visibility = isLandscape() && !mbToolbarVisible ? View.GONE : View.VISIBLE;
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         boolean bEnable = true;
         switch (states.mRecordState) {
             default:
@@ -1058,7 +1052,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateModeState() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         if (states.canDoStillCapture()
                 && (states.mRecordState == CameraState.State_Record_Stopped || states.mRecordState == CameraState.State_Record_Switching)) {
             mModeView.setVisibility(View.VISIBLE);
@@ -1078,7 +1072,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void updateRecordState() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
 
         switch (states.mRecordState) {
             case CameraState.State_Record_Stopped:
@@ -1208,17 +1202,17 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     }
 
     private void onClickVideoMode() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Stopped) {
-            mVdtCamera.getClient().cmd_Rec_SetStillMode(false);
+            mVdtCamera.setRecordStillMode(false);
             updateModeState();
         }
     }
 
     private void onClickPictureMode() {
-        CameraState states = VdtCamera.getCameraStates(mVdtCamera);
+        CameraState states = VdtCamera.getState(mVdtCamera);
         if (states.mRecordState == CameraState.State_Record_Stopped) {
-            mVdtCamera.getClient().cmd_Rec_SetStillMode(true);
+            mVdtCamera.setRecordStillMode(true);
             updateModeState();
         }
     }

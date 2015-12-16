@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.transee.ccam.BtState;
-import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.waylens.hachi.R;
 
@@ -153,7 +153,7 @@ public class CameraBtSetupActivity extends BaseActivity {
             BtState states = getBtStates();
             if (states.canEnableBt()) {
                 boolean bEnable = states.mBtState == BtState.BT_State_Disabled;
-                mVdtCamera.getClient().cmd_CAM_BT_Enable(bEnable);
+                mVdtCamera.setBtEnable(bEnable);
                 // force refresh
                 states.enableBt(bEnable);
                 updateBtEnabled();
@@ -203,7 +203,7 @@ public class CameraBtSetupActivity extends BaseActivity {
                     return;
                 }
                 clearAllDevices();
-                mVdtCamera.getClient().cmd_CAM_BT_doScan();
+                mVdtCamera.doBtScan();
                 states.scanBt();
                 updateBtScanning();
             }
@@ -272,25 +272,27 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     private void fetchScanResult() {
         if (mVdtCamera != null) {
-            mVdtCamera.getClient().cmd_CAM_BT_getHostNum();
+            mVdtCamera.getBtHostNumber();
+
         }
     }
 
     final private void unbindBtDevice(int type, String mac) {
         if (mVdtCamera != null) {
-            mVdtCamera.getClient().cmd_CAM_BT_doUnBind(type, mac);
+            mVdtCamera.doBtUnbind(type, mac);
         }
     }
 
     final private void bindBtDevice(BtItem item) {
         if (mVdtCamera != null) {
-            mVdtCamera.getClient().cmd_CAM_BT_doBind(item.type, item.mac);
+            mVdtCamera.doBtUnbind(item.type, item.mac);
         }
     }
 
     private void onClickBtDevItem(View view) {
-        if (mVdtCamera == null)
+        if (mVdtCamera == null) {
             return;
+        }
 
         final BtItem item = (BtItem) view.getTag();
 

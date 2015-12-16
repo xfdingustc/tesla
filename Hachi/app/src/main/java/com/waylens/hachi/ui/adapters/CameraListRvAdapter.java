@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
 
 import butterknife.Bind;
@@ -66,7 +66,7 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolder.mBtnPreview.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
                 viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
             }
-            CameraState state = VdtCamera.getCameraStates(camera);
+            CameraState state = VdtCamera.getState(camera);
             if (TextUtils.isEmpty(state.mCameraName)) {
                 viewHolder.mCameraName.setText(camera.getSSID());
             } else {

@@ -1,14 +1,11 @@
-package com.waylens.hachi.hardware;
+package com.waylens.hachi.hardware.vdtcamera;
 
 import android.os.Handler;
 import android.util.Log;
 
-import com.transee.ccam.AbsCameraClient;
 import com.transee.ccam.BtState;
-import com.transee.ccam.CameraClient;
 import com.transee.ccam.CameraState;
 import com.transee.ccam.GpsState;
-import com.transee.ccam.NullCameraClient;
 import com.transee.ccam.WifiState;
 import com.waylens.hachi.snipe.VdbConnection;
 
@@ -27,10 +24,10 @@ public class VdtCamera {
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
-    private List<Callback> mCallbacks = new ArrayList<Callback>();
+    private List<Callback> mCallbacks = new ArrayList<>();
     private final Handler mHandler;
     private final ServiceInfo mServiceInfo;
-    private final AbsCameraClient mClient;
+    private final CameraClient mClient;
 
     private InetSocketAddress mPreviewAddress;
 
@@ -38,6 +35,91 @@ public class VdtCamera {
     private BtState mBtStates = new BtState();
     private GpsState mGpsStates = new GpsState();
     private WifiState mWifiStates = new WifiState();
+
+    public void setRecordRecMode(int flags) {
+        mClient.cmd_Rec_Set_RecMode(flags);
+    }
+
+    public void getRecordRecMode() {
+        mClient.cmd_Rec_get_RecMode();
+    }
+
+    public void setAudioMic(int state, int vol) {
+        mClient.cmd_audio_setMic(state, vol);
+    }
+
+    public void getAudioMicState() {
+        mClient.cmd_audio_getMicState();
+    }
+
+    public void setNetworkSynctime(long time, int timezone) {
+        mClient.cmd_Network_Synctime(time, timezone);
+    }
+
+    public void GetSetup() {
+        mClient.userCmd_GetSetup();
+    }
+
+    public void startClient() {
+        mClient.start();
+    }
+
+    public void stopClient() {
+        mClient.stop();
+    }
+
+    public void setCameraWantIdle() {
+        mClient.cmd_CAM_WantIdle();
+    }
+
+    public void startPreview() {
+        mClient.cmd_CAM_WantPreview();
+    }
+
+    public void getCameraTime() {
+        mClient.ack_Cam_get_time();
+    }
+
+    public void getRecordResolutionList() {
+        mClient.cmd_Rec_List_Resolutions();
+    }
+
+    public void markLiveVideo() {
+        mClient.cmd_Rec_MarkLiveVideo();
+    }
+
+    public void stopRecording() {
+        mClient.ack_Cam_stop_rec();
+    }
+
+    public void startRecording() {
+        mClient.cmd_Cam_start_rec();
+    }
+
+    public void startStillCapture(boolean oneShot) {
+        mClient.cmd_Rec_StartStillCapture(true);
+    }
+
+    public void stopStillCapture() {
+        mClient.cmd_Rec_StopStillCapture();
+    }
+
+    public void setRecordStillMode(boolean stillMode) {
+        mClient.cmd_Rec_SetStillMode(stillMode);
+    }
+
+    public void getNetworkHostHum() {
+        mClient.cmd_Network_GetHostNum();
+    }
+
+    public void setNetworkRmvHost(String ssid) {
+        mClient.cmd_Network_RmvHost(ssid);
+    }
+
+    public void setAddNetworkHost(String ssid, String password) {
+        mClient.cmd_Network_AddHost(ssid, password);
+    }
+
 
     static public class ServiceInfo {
         public String ssid;
@@ -116,8 +198,7 @@ public class VdtCamera {
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
         mHandler = new Handler();
-        mClient = serviceInfo.bPcServer ? new NullCameraClient() : new MyCameraClient(serviceInfo.inetAddr,
-            serviceInfo.port);
+        mClient = new MyCameraClient(serviceInfo.inetAddr, serviceInfo.port);
     }
 
     // API
@@ -158,21 +239,19 @@ public class VdtCamera {
 
 
     public boolean idMatch(String ssid, String hostString) {
-        if (ssid == null || hostString == null)
+        if (ssid == null || hostString == null) {
             return false;
+        }
         String myHostString = getHostString();
-        if (mServiceInfo.ssid == null || myHostString == null)
+        if (mServiceInfo.ssid == null || myHostString == null) {
             return false;
+        }
         return mServiceInfo.ssid.equals(ssid) && myHostString.equals(hostString);
     }
 
-    // API
-    public AbsCameraClient getClient() {
-        return mClient;
-    }
 
     // API - camera can be null
-    static public CameraState getCameraStates(VdtCamera vdtCamera) {
+    static public CameraState getState(VdtCamera vdtCamera) {
         return vdtCamera == null ? CameraState.nullState : vdtCamera.mStates;
     }
 
@@ -250,7 +329,7 @@ public class VdtCamera {
     // called on camera thread
     private void initCameraState() {
         if (mClient instanceof CameraClient) {
-            CameraClient client = (CameraClient) mClient;
+            CameraClient client = mClient;
             client.cmd_Cam_getApiVersion();
             client.cmd_fw_getVersion();
             client.cmd_fw_getVersion();
@@ -498,4 +577,68 @@ public class VdtCamera {
         }
 
     }
+
+
+    // Control APIs
+    public void setBtEnable(boolean enable) {
+        mClient.cmd_CAM_BT_Enable(enable);
+    }
+
+    public void doBtScan() {
+        mClient.cmd_CAM_BT_doScan();
+    }
+
+    public void getBtHostNumber() {
+        mClient.cmd_CAM_BT_getHostNum();
+    }
+
+    public void doBtUnbind(int type, String mac) {
+        mClient.cmd_CAM_BT_doUnBind(type, mac);
+    }
+
+    public void setRecordOverlay(int flags) {
+        mClient.cmd_Rec_setOverlay(flags);
+    }
+
+    public void getRecordOverlayState() {
+        mClient.cmd_Rec_getOverlayState();
+    }
+
+    public void setRecordMarkTime(int markBeforeTime, int newMarkTime) {
+        mClient.cmd_Rec_SetMarkTime(markBeforeTime, newMarkTime);
+    }
+
+    public void setCameraName(String name) {
+       mClient.cmd_Cam_set_Name(name);
+    }
+
+    public void getCameraName() {
+        mClient.cmd_Cam_get_Name();
+    }
+
+    public void setRecordResolution(int resolutionIndex) {
+        mClient.cmd_Rec_Set_Resolution(resolutionIndex);
+    }
+
+    public void getRecordResolution() {
+        mClient.cmd_Rec_get_Resolution();
+    }
+
+    public void setRecordQuality(int qualityIndex) {
+        mClient.cmd_Rec_Set_Quality(qualityIndex);
+    }
+
+    public void getRecordQuality() {
+        mClient.cmd_Rec_get_Quality();
+    }
+
+    public void setRecordColorMode(int index) {
+        mClient.cmd_Rec_Set_ColorMode(index);
+    }
+
+    public void getRecordColorMode() {
+        mClient.cmd_Rec_get_ColorMode();
+    }
+
+
 }

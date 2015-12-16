@@ -13,8 +13,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-import com.waylens.hachi.hardware.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
 import com.transee.ccam.CameraState;
 import com.waylens.hachi.R;
