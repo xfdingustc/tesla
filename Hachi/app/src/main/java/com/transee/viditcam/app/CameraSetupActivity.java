@@ -28,9 +28,9 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import java.util.Arrays;
 
 public class CameraSetupActivity extends BaseActivity {
-
+    private static final String TAG = CameraSetupActivity.class.getSimpleName();
     static final boolean DEBUG = false;
-    static final String TAG = "CameraSetupActivity";
+
 
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
@@ -65,7 +65,15 @@ public class CameraSetupActivity extends BaseActivity {
     private int[] mMarkTimes;
     private String[] mMarkTimesDesc;
 
-
+    public static void launch(Context context, VdtCamera camera) {
+        Intent intent = new Intent(context, CameraSetupActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
+        bundle.putString(SSID, camera.getSSID());
+        bundle.putString(HOST_STRING, camera.getHostString());
+        intent.putExtras(bundle);
+        context.startActivity(intent);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -321,15 +329,15 @@ public class CameraSetupActivity extends BaseActivity {
 
     private void onMuteAudio() {
         CameraState states = mVdtCamera.getState();
-        if (states.mMicState != CameraState.State_Mic_Unknown) { // &&
+        if (states.getMicState() != CameraState.STATE_MIC_UNKNOWN) { // &&
             // states.mMicVol
             // >= 0) {
-            int state = states.mMicState;
+            int state = states.getMicState();
             int vol = 5;
-            if (state == CameraState.State_Mic_ON) {
-                state = CameraState.State_Mic_MUTE;
-            } else if (state == CameraState.State_Mic_MUTE) {
-                state = CameraState.State_Mic_ON;
+            if (state == CameraState.STATE_MIC_ON) {
+                state = CameraState.STATE_MIC_OFF;
+            } else if (state == CameraState.STATE_MIC_OFF) {
+                state = CameraState.STATE_MIC_ON;
                 if (states.mMicVol > 0) {
                     vol = states.mMicVol;
                 }
@@ -340,7 +348,7 @@ public class CameraSetupActivity extends BaseActivity {
             mVdtCamera.setAudioMic(state, vol);
             mVdtCamera.getAudioMicState();
             // force refresh
-            states.mMicState = state;
+            //states.getMicState() = state;
             states.mMicVol = vol;
             updateMicState();
         }
@@ -427,7 +435,7 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void updateMicState() {
-        boolean checked = mVdtCamera.getState().mMicState == CameraState.State_Mic_ON;
+        boolean checked = mVdtCamera.getState().getMicState() == CameraState.STATE_MIC_ON;
         mCBEnableMic.setChecked(checked);
     }
 
@@ -463,19 +471,19 @@ public class CameraSetupActivity extends BaseActivity {
         // batter state
         switch (states.mBatteryState) {
             default:
-            case CameraState.State_Battery_Unknown:
+            case CameraState.STATE_BATTERY_UNKNOWN:
                 mTextBatteryInfo.setText(R.string.unkown_text);
                 break;
-            case CameraState.State_Battery_Full:
+            case CameraState.STATE_BATTERY_FULL:
                 mTextBatteryInfo.setText(R.string.lable_battery_full);
                 break;
-            case CameraState.State_Battery_NotCharging:
+            case CameraState.STATE_BATTERY_NOT_CHARGING:
                 mTextBatteryInfo.setText(R.string.lable_battery_not_charging);
                 break;
-            case CameraState.State_Battery_Discharging:
+            case CameraState.STATE_BATTERY_DISCHARGING:
                 mTextBatteryInfo.setText(R.string.lable_battery_discharging);
                 break;
-            case CameraState.State_Battery_Charging:
+            case CameraState.STATE_BATTERY_CHARGING:
                 mTextBatteryInfo.setText(R.string.lable_battery_charging);
                 break;
         }
@@ -483,26 +491,26 @@ public class CameraSetupActivity extends BaseActivity {
         // storage state
         switch (states.mStorageState) {
             default:
-            case CameraState.State_Storage_Unknown:
+            case CameraState.STATE_STORAGE_UNKNOWN:
                 mStorageUsage.setVisibility(View.INVISIBLE);
                 mTextStorageInfo.setText(R.string.unkown_text);
                 break;
-            case CameraState.State_storage_noStorage:
+            case CameraState.STATE_STORAGE_NO_STORAGE:
                 mStorageUsage.setVisibility(View.INVISIBLE);
                 mTextStorageInfo.setText(R.string.lable_storage_notf);
                 break;
-            case CameraState.State_storage_loading:
+            case CameraState.STATE_STORAGE_LOADING:
                 mStorageUsage.setVisibility(View.INVISIBLE);
                 mTextStorageInfo.setText(R.string.lable_storage_loading);
                 break;
-            case CameraState.State_storage_ready:
+            case CameraState.STATE_STORAGE_READY:
                 updateStorageInfo(res, states);
                 break;
-            case CameraState.State_storage_error:
+            case CameraState.STATE_STORAGE_ERROR:
                 mStorageUsage.setVisibility(View.INVISIBLE);
                 mTextStorageInfo.setText(R.string.lable_storage_error);
                 break;
-            case CameraState.State_storage_usbdisc:
+            case CameraState.STATE_STORAGE_USBDISC:
                 mStorageUsage.setVisibility(View.INVISIBLE);
                 mTextStorageInfo.setText(R.string.lable_storage_usbdisc);
                 break;
@@ -635,15 +643,7 @@ public class CameraSetupActivity extends BaseActivity {
         finish();
     }
 
-    public static void launch(Context context, VdtCamera camera) {
-        Intent intent = new Intent(context, CameraSetupActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
-        bundle.putString(SSID, camera.getSSID());
-        bundle.putString(HOST_STRING, camera.getHostString());
-        intent.putExtras(bundle);
-        context.startActivity(intent);
-    }
+
 
 	/*
 

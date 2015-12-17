@@ -15,11 +15,11 @@ public class MediaHelper {
 			switch (si.video_framerate) {
 			case StdMedia.FrameRate_59_94:
 			case StdMedia.FrameRate_60:
-				index = CameraState.Video_Resolution_1080p60;
+				index = CameraState.VIDEO_RESOLUTION_1080_P_60;
 				break;
 			case StdMedia.FrameRate_29_97:
 			case StdMedia.FrameRate_30:
-				index = CameraState.Video_Resolution_1080p30;
+				index = CameraState.VIDEO_RESOLUTION_1080P30;
 				break;
 			default:
 				break;
@@ -28,14 +28,14 @@ public class MediaHelper {
 			switch (si.video_framerate) {
 			case StdMedia.FrameRate_59_94:
 			case StdMedia.FrameRate_60:
-				index = CameraState.Video_Resolution_720p60;
+				index = CameraState.VIDEO_RESOLUTION_720_P_60;
 				break;
 			case StdMedia.FrameRate_29_97:
 			case StdMedia.FrameRate_30:
-				index = CameraState.Video_Resolution_720p30;
+				index = CameraState.VIDEO_RESOLUTION_720_P_30;
 				break;
 			case StdMedia.FrameRate_120:
-				index = CameraState.Video_Resolution_720p120;
+				index = CameraState.VIDEO_RESOLUTION_720_P_120;
 				break;
 			default:
 				break;
@@ -44,11 +44,11 @@ public class MediaHelper {
 			switch (si.video_framerate) {
 			case StdMedia.FrameRate_59_94:
 			case StdMedia.FrameRate_60:
-				index = CameraState.Video_Resolution_480p60;
+				index = CameraState.VIDEO_RESOLUTION_480_P_60;
 				break;
 			case StdMedia.FrameRate_29_97:
 			case StdMedia.FrameRate_30:
-				index = CameraState.Video_Resolution_480p30;
+				index = CameraState.VIDEO_RESOLUTION_480_P_30;
 				break;
 			default:
 				break;
@@ -57,11 +57,11 @@ public class MediaHelper {
 			switch (si.video_framerate) {
 			case StdMedia.FrameRate_59_94:
 			case StdMedia.FrameRate_60:
-				index = CameraState.Video_Resolution_4Kp60;
+				index = CameraState.VIDEO_RESOLUTION_4_KP_60;
 				break;
 			case StdMedia.FrameRate_29_97:
 			case StdMedia.FrameRate_30:
-				index = CameraState.Video_Resolution_4Kp30;
+				index = CameraState.VIDEO_RESOLUTION_4_KP_30;
 				break;
 			default:
 				break;

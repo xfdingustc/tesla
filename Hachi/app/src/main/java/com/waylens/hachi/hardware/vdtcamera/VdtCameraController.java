@@ -415,15 +415,15 @@ abstract class VdtCameraController {
             }
             mQueue.scheduleGetAllInfo();
         } else {
-            int batteryState = CameraState.State_Battery_Unknown;
+            int batteryState = CameraState.STATE_BATTERY_UNKNOWN;
             if (p1.equals("Full")) {
-                batteryState = CameraState.State_Battery_Full;
+                batteryState = CameraState.STATE_BATTERY_FULL;
             } else if (p1.equals("Not charging")) {
-                batteryState = CameraState.State_Battery_NotCharging;
+                batteryState = CameraState.STATE_BATTERY_NOT_CHARGING;
             } else if (p1.equals("Discharging")) {
-                batteryState = CameraState.State_Battery_Discharging;
+                batteryState = CameraState.STATE_BATTERY_DISCHARGING;
             } else if (p1.equals("Charging")) {
-                batteryState = CameraState.State_Battery_Charging;
+                batteryState = CameraState.STATE_BATTERY_CHARGING;
             }
             int powerState = Integer.parseInt(p2);
             mStates.setPowerState(batteryState, powerState);
@@ -561,7 +561,7 @@ abstract class VdtCameraController {
     // CMD_audio_setMic
     // ========================================================
     public void cmd_audio_setMic(int state, int gain) {
-        if (state == CameraState.State_Mic_ON && gain == 0)
+        if (state == CameraState.STATE_MIC_ON && gain == 0)
             gain = 5;
         String p1 = Integer.toString(state);
         String p2 = Integer.toString(gain);

@@ -7,7 +7,7 @@ import com.orhanobut.logger.Logger;
 import java.util.Locale;
 
 public class CameraState {
-    public static final String TAG = "CameraState";
+    public static final String TAG = CameraState.class.getSimpleName();
 
     public static final int STATE_RECORD_UNKNOWN = -1;
     public static final int STATE_RECORD_STOPPED = 0;
@@ -16,55 +16,55 @@ public class CameraState {
     public static final int STATE_RECORD_RECORDING = 3;
     public static final int STATE_RECORD_SWITCHING = 4;
 
-    public static final int State_Mic_Unknown = -1;
-    public static final int State_Mic_ON = 0;
-    public static final int State_Mic_MUTE = 1;
+    public static final int STATE_MIC_UNKNOWN = -1;
+    public static final int STATE_MIC_ON = 0;
+    public static final int STATE_MIC_OFF = 1;
 
-    public static final int State_Battery_Unknown = -1;
-    public static final int State_Battery_Full = 0;
-    public static final int State_Battery_NotCharging = 1;
-    public static final int State_Battery_Discharging = 2;
-    public static final int State_Battery_Charging = 3;
+    public static final int STATE_BATTERY_UNKNOWN = -1;
+    public static final int STATE_BATTERY_FULL = 0;
+    public static final int STATE_BATTERY_NOT_CHARGING = 1;
+    public static final int STATE_BATTERY_DISCHARGING = 2;
+    public static final int STATE_BATTERY_CHARGING = 3;
 
-    public static final int State_Power_Unknown = -1;
-    public static final int State_Power_No = 0;
-    public static final int State_Power_Yes = 1;
+    public static final int STATE_POWER_UNKNOWN = -1;
+    public static final int STATE_POWER_NO = 0;
+    public static final int STATE_POWER_YES = 1;
 
-    public static final int State_Storage_Unknown = -1;
-    public static final int State_storage_noStorage = 0;
-    public static final int State_storage_loading = 1;
-    public static final int State_storage_ready = 2;
-    public static final int State_storage_error = 3;
-    public static final int State_storage_usbdisc = 4;
+    public static final int STATE_STORAGE_UNKNOWN = -1;
+    public static final int STATE_STORAGE_NO_STORAGE = 0;
+    public static final int STATE_STORAGE_LOADING = 1;
+    public static final int STATE_STORAGE_READY = 2;
+    public static final int STATE_STORAGE_ERROR = 3;
+    public static final int STATE_STORAGE_USBDISC = 4;
 
     public static final int OVERLAY_FLAG_NAME = 0x01;
     public static final int OVERLAY_FLAG_TIME = 0x02;
     public static final int OVERLAY_FLAG_GPS = 0x04;
     public static final int OVERLAY_FLAG_SPEED = 0x08;
 
-    public static final int Video_Resolution_Unknown = -1;
-    public static final int Video_Resolution_1080p30 = 0;
-    public static final int Video_Resolution_1080p60 = 1;
-    public static final int Video_Resolution_720p30 = 2;
-    public static final int Video_Resolution_720p60 = 3;
-    public static final int Video_Resolution_4Kp30 = 4;
-    public static final int Video_Resolution_4Kp60 = 5;
-    public static final int Video_Resolution_480p30 = 6;
-    public static final int Video_Resolution_480p60 = 7;
-    public static final int Video_Resolution_720p120 = 8;
-    public static final int Video_Resolution_Still = 9;
+    public static final int VIDEO_RESOLUTION_UNKNOWN = -1;
+    public static final int VIDEO_RESOLUTION_1080P30 = 0;
+    public static final int VIDEO_RESOLUTION_1080_P_60 = 1;
+    public static final int VIDEO_RESOLUTION_720_P_30 = 2;
+    public static final int VIDEO_RESOLUTION_720_P_60 = 3;
+    public static final int VIDEO_RESOLUTION_4_KP_30 = 4;
+    public static final int VIDEO_RESOLUTION_4_KP_60 = 5;
+    public static final int VIDEO_RESOLUTION_480_P_30 = 6;
+    public static final int VIDEO_RESOLUTION_480_P_60 = 7;
+    public static final int VIDEO_RESOLUTION_720_P_120 = 8;
+    public static final int VIDEO_RESOLUTION_STILL = 9;
     public static final int Video_Resolution_Num = 10;
 
-    public static final int Video_Quality_Unknown = -1;
+    public static final int VIDEO_QUALITY_UNKNOWN = -1;
     public static final int Video_Quality_Supper = 0;
     public static final int Video_Quality_HI = 1;
     public static final int Video_Quality_Mid = 2;
     public static final int Video_Quality_LOW = 3;
     public static final int Video_Quality_Num = 4;
 
-    public static final int Rec_Mode_Unknown = -1;
-    public static final int FLAG_AUTO_RECORD = 0x01;
-    public static final int FLAG_LOOP_RECORD = 0x02;
+    public static final int REC_MODE_UNKNOWN = -1;
+    public static final int FLAG_AUTO_RECORD = 1 << 1;
+    public static final int FLAG_LOOP_RECORD = 1 << 2;
     public static final int Rec_Mode_Manual = 0;
     public static final int Rec_Mode_AutoStart = FLAG_AUTO_RECORD;
     public static final int Rec_Mode_Manual_circle = FLAG_LOOP_RECORD;
@@ -90,33 +90,34 @@ public class CameraState {
     public int mApiVersion = 0;
     public String mBuild = "";
 
-    public int mRecordState = STATE_RECORD_UNKNOWN;
+    private int mRecordState = STATE_RECORD_UNKNOWN;
+
     public boolean mbIsStill = false;
     public int mRecordDuration = -1;
     public boolean mbRecordDurationUpdated; //
     public long mRecordTimeFetchedTime;
 
-    public int mMicState = State_Mic_Unknown;
+    private int mMicState = STATE_MIC_UNKNOWN;
     public int mMicVol = -1; // TODO
 
-    public int mBatteryState = State_Battery_Unknown;
-    public int mPowerState = State_Power_Unknown;
+    public int mBatteryState = STATE_BATTERY_UNKNOWN;
+    public int mPowerState = STATE_POWER_UNKNOWN;
     public int mBatteryVol = -1; // TODO
 
-    public int mStorageState = State_Storage_Unknown;
+    public int mStorageState = STATE_STORAGE_UNKNOWN;
     public long mStorageTotalSpace = 0;
     public long mStorageFreeSpace = 0;
 
     public int mOverlayFlags = -1; // TODO
 
     public int mVideoResolutionList = 0; // TODO
-    public int mVideoResolutionIndex = Video_Resolution_Unknown;
+    public int mVideoResolutionIndex = VIDEO_RESOLUTION_UNKNOWN;
 
     public int mVideoQualityList = 0; // TODO
-    public int mVideoQualityIndex = Video_Quality_Unknown;
+    public int mVideoQualityIndex = VIDEO_QUALITY_UNKNOWN;
 
     public int mRecordModeList = 0; // TODO
-    public int mRecordModeIndex = Rec_Mode_Unknown;
+    public int mRecordModeIndex = REC_MODE_UNKNOWN;
 
     public int mColorModeList = 0; // TODO
     public int mColorModeIndex = Color_Mode_Unknown;
@@ -184,7 +185,7 @@ public class CameraState {
     }
 
     public boolean canDoStillCapture() {
-        return (mVideoResolutionList & (1 << Video_Resolution_Still)) != 0;
+        return (mVideoResolutionList & (1 << VIDEO_RESOLUTION_STILL)) != 0;
     }
 
     public boolean version12() {
@@ -382,6 +383,14 @@ public class CameraState {
             mMarkAfterTime = after;
             stateChanged();
         }
+    }
+
+    public int getRecordState() {
+        return mRecordState;
+    }
+
+    public int getMicState() {
+        return mMicState;
     }
 
 }

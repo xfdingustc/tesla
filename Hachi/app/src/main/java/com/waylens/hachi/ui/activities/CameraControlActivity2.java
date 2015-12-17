@@ -3,15 +3,16 @@ package com.waylens.hachi.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
 
@@ -33,9 +34,6 @@ public class CameraControlActivity2 extends BaseActivity {
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
 
-    private Handler mHandler;
-
-    private boolean mIsRecording = false;
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
         Intent intent = new Intent(startingActivity, CameraControlActivity2.class);
@@ -54,20 +52,17 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.tvCameraStatus)
     TextView mTvCameraStatus;
 
+    @Bind(R.id.btnMicControl)
+    ImageButton mBtnMicControl;
+
     @Bind(R.id.fabBookmark)
     FloatingActionButton mFabBookmark;
 
 
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
-        if (mIsRecording) {
-            addBookmark();
-        } else {
-            startRecording();
-        }
+        handleOnFabClicked();
     }
-
-
 
 
     @Override
@@ -79,7 +74,6 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        mHandler = new Handler();
         initViews();
     }
 
@@ -87,6 +81,8 @@ public class CameraControlActivity2 extends BaseActivity {
         setContentView(R.layout.activity_camera_control2);
         setupToolbar();
         initCameraPreview();
+        updateMicControlButton();
+
     }
 
 
@@ -119,17 +115,22 @@ public class CameraControlActivity2 extends BaseActivity {
             mVdtCamera.getAudioMicState();
             mVdtCamera.getRecordResolutionList();
             mVdtCamera.GetSetup();
-            updateRecordState();
+            updateCameraState(mVdtCamera.getState());
+
         }
 
     }
 
+    private void updateCameraState(CameraState state) {
+        updateCameraStatusInfo(state);
+        updateFloatActionButton(state);
+    }
+
+
     private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
         @Override
         public void onStateChanged(VdtCamera vdtCamera) {
-            if (vdtCamera == mVdtCamera) {
-                updateRecordState();
-            }
+            updateCameraState(vdtCamera.getState());
         }
 
         @Override
@@ -148,16 +149,13 @@ public class CameraControlActivity2 extends BaseActivity {
         }
     };
 
-    private void updateRecordState() {
-        CameraState states = mVdtCamera.getState();
-        switch (states.mRecordState) {
-            default:
+    private void updateCameraStatusInfo(CameraState state) {
+        switch (state.getRecordState()) {
             case CameraState.STATE_RECORD_UNKNOWN:
                 mTvCameraStatus.setText(R.string.record_unknown);
                 break;
             case CameraState.STATE_RECORD_STOPPED:
                 mTvCameraStatus.setText(R.string.record_stopped);
-                toggleFab(false);
                 break;
             case CameraState.STATE_RECORD_STOPPING:
                 mTvCameraStatus.setText(R.string.record_stopping);
@@ -166,30 +164,65 @@ public class CameraControlActivity2 extends BaseActivity {
                 mTvCameraStatus.setText(R.string.record_starting);
                 break;
             case CameraState.STATE_RECORD_RECORDING:
+                //int recordMode = mVdtCamera.getRecordRecMode();
                 mTvCameraStatus.setText(R.string.record_recording);
                 break;
             case CameraState.STATE_RECORD_SWITCHING:
                 mTvCameraStatus.setText(R.string.record_switching);
                 break;
+            default:
+                break;
         }
     }
 
-    private void toggleFab(boolean isRecording) {
-        mIsRecording = isRecording;
-        if (mIsRecording) {
-            mFabBookmark.setImageResource(R.drawable.ic_bookmark_white_48dp);
+    private void updateFloatActionButton(CameraState state) {
+        switch (state.getRecordState()) {
+            case CameraState.STATE_RECORD_UNKNOWN:
+                break;
+            case CameraState.STATE_RECORD_STOPPED:
+                mFabBookmark.setEnabled(true);
+                mFabBookmark.setImageResource(R.drawable.ic_album_white_48dp);
+                break;
+            case CameraState.STATE_RECORD_STOPPING:
+                mFabBookmark.setEnabled(false);
+                break;
+            case CameraState.STATE_RECORD_STARTING:
+                mFabBookmark.setEnabled(false);
+                break;
+            case CameraState.STATE_RECORD_RECORDING:
+                mFabBookmark.setEnabled(true);
+                mFabBookmark.setImageResource(R.drawable.ic_stop_white_48dp);
+                break;
+            case CameraState.STATE_RECORD_SWITCHING:
+                mFabBookmark.setEnabled(false);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void updateMicControlButton() {
+        boolean micEnabled = mVdtCamera.isMicEnabled();
+        if (micEnabled) {
+            mBtnMicControl.setColorFilter(getResources().getColor(R.color.style_color_primary));
         } else {
-            mFabBookmark.setImageResource(R.drawable.ic_album_white_48dp);
+            mBtnMicControl.clearColorFilter();
         }
     }
 
-    private void addBookmark() {
 
+    private void handleOnFabClicked() {
+        switch (mVdtCamera.getState().getRecordState()) {
+            case CameraState.STATE_RECORD_RECORDING:
+                mVdtCamera.stopRecording();
+                break;
+            case CameraState.STATE_RECORD_STOPPED:
+                mVdtCamera.startRecording();
+                break;
+        }
     }
 
-    private void startRecording() {
-        mVdtCamera.startRecording();
-    }
 
     class CameraLiveViewCallback implements CameraLiveView.Callback {
 

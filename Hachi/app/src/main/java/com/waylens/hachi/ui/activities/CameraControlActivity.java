@@ -43,10 +43,8 @@ import com.mapbox.mapboxsdk.views.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.BtState;
-import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.transee.common.DateTime;
 import com.transee.common.GPSRawData;
-import com.waylens.hachi.views.camerapreview.CameraLiveView;
 import com.transee.common.Timer;
 import com.transee.vdb.PlaylistSet;
 import com.transee.vdb.RemoteVdbClient;
@@ -57,6 +55,7 @@ import com.transee.viditcam.app.CameraSetupActivity;
 import com.transee.viditcam.app.ViditImageButton;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -72,6 +71,7 @@ import com.waylens.hachi.views.BarView;
 import com.waylens.hachi.views.GForceView;
 import com.waylens.hachi.views.GaugeView;
 import com.waylens.hachi.views.GearView;
+import com.waylens.hachi.views.camerapreview.CameraLiveView;
 
 import org.json.JSONObject;
 
@@ -404,7 +404,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             @Override
             public void onRawDataAsync(int dataType, byte[] data) {
                 if (dataType == RawDataBlock.RAW_DATA_GPS
-                        && gpsSource == GPS_CAMERA) {
+                    && gpsSource == GPS_CAMERA) {
 
                     try {
                         final GPSRawData gpsRawData = GPSRawData.translate(data);
@@ -517,8 +517,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
             // here to request the missing permissions, and then overriding
@@ -540,7 +540,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
         BtState btState = mVdtCamera.getBtStates();
         return (btState.mBtState == BtState.BT_State_Enabled)
-                && (btState.mObdState.mState == BtState.BTDEV_State_On);
+            && (btState.mObdState.mState == BtState.BTDEV_State_On);
     }
 
     private String getHostString(VdtCamera vdtCamera) {
@@ -570,8 +570,8 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         taskHandler.removeCallbacks(simulateDataTask);
         if (locationManager != null && locationListener != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
                 // here to request the missing permissions, and then overriding
@@ -624,7 +624,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 //        Utils.setViewFullSize(this, mMjpegView);
 //        mMjpegViewHolder.addView(mMjpegView);
 
-        mMjpegView = (CameraLiveView)findViewById(R.id.mjpegView1);
+        mMjpegView = (CameraLiveView) findViewById(R.id.mjpegView1);
 
         mVideoButton = (ViditImageButton) findViewById(R.id.btnVideo);
         mVideoButton.setOnClickListener(new View.OnClickListener() {
@@ -768,7 +768,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void addBookmark() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState != CameraState.STATE_RECORD_RECORDING) {
+        if (states.getRecordState() != CameraState.STATE_RECORD_RECORDING) {
             return;
         }
         mBtnBookmark.setEnabled(false);
@@ -810,36 +810,36 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
         String url = String.format(Constants.API_WEATHER, lat + "," + lng);
         mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject current = response.getJSONObject("data").getJSONArray("current_condition").getJSONObject(0);
-                            if (mapHolder == null) {
-                                return;
-                            }
-
-                            String tempF = current.optString("temp_F") + "\u00B0";
-                            String windSpeedKmph = current.optString("windspeedKmph") + "Kmph";
-                            String iconUrl = current.getJSONArray("weatherIconUrl").getJSONObject(0).getString("value");
-                            PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_TEMP_F, tempF);
-                            PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_WIND_SPEED, windSpeedKmph);
-                            PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_ICON_URL, iconUrl);
-                            PreferenceUtils.putLong(PreferenceUtils.KEY_WEATHER_UPDATE_TIME, System.currentTimeMillis());
-                            weatherTemp.setText(tempF);
-                            weatherWind.setText(windSpeedKmph);
-                            ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
-                        } catch (Exception e) {
-                            Log.e("test", "", e);
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        JSONObject current = response.getJSONObject("data").getJSONArray("current_condition").getJSONObject(0);
+                        if (mapHolder == null) {
+                            return;
                         }
+
+                        String tempF = current.optString("temp_F") + "\u00B0";
+                        String windSpeedKmph = current.optString("windspeedKmph") + "Kmph";
+                        String iconUrl = current.getJSONArray("weatherIconUrl").getJSONObject(0).getString("value");
+                        PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_TEMP_F, tempF);
+                        PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_WIND_SPEED, windSpeedKmph);
+                        PreferenceUtils.putString(PreferenceUtils.KEY_WEATHER_ICON_URL, iconUrl);
+                        PreferenceUtils.putLong(PreferenceUtils.KEY_WEATHER_UPDATE_TIME, System.currentTimeMillis());
+                        weatherTemp.setText(tempF);
+                        weatherWind.setText(windSpeedKmph);
+                        ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
+                    } catch (Exception e) {
+                        Log.e("test", "", e);
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("test", "Error: " + error);
-                    }
-                }));
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("test", "Error: " + error);
+                }
+            }));
 
         mRequestQueue.start();
 
@@ -903,9 +903,9 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void onClickRecordButton() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.STATE_RECORD_RECORDING) {
+        if (states.getRecordState() == CameraState.STATE_RECORD_RECORDING) {
             mVdtCamera.stopRecording();
-        } else if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
+        } else if (states.getRecordState() == CameraState.STATE_RECORD_STOPPED) {
             if (!states.mbIsStill) {
                 mVdtCamera.startRecording();
             } else {
@@ -938,7 +938,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         if (!states.mbIsStill)
             return;
 
-        if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
+        if (states.getRecordState() == CameraState.STATE_RECORD_STOPPED) {
             if (mStillCaptureState == STILLCAP_STATE_IDLE) {
                 mStillCaptureState = STILLCAP_STATE_WAITING;
                 mStillCaptureTimer.run(300);
@@ -958,7 +958,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void updateRecordTime() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.STATE_RECORD_RECORDING) {
+        if (states.getRecordState() == CameraState.STATE_RECORD_RECORDING) {
             if (mUpdateTimer.tag == TIMER_IDLE) {
                 states.mRecordDuration = -2; // TODO
                 states.mbRecordDurationUpdated = false;
@@ -1008,7 +1008,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
         int visibility = isLandscape() && !mbToolbarVisible ? View.GONE : View.VISIBLE;
         CameraState states = mVdtCamera.getState();
         boolean bEnable = true;
-        switch (states.mRecordState) {
+        switch (states.getRecordState()) {
             default:
             case CameraState.STATE_RECORD_UNKNOWN:
                 mRecordButton.setVisibility(View.GONE);
@@ -1053,9 +1053,9 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void updateModeState() {
         CameraState states = mVdtCamera.getState();
-        if (states.canDoStillCapture()
-                && (states.mRecordState == CameraState.STATE_RECORD_STOPPED || states
-            .mRecordState == CameraState.STATE_RECORD_SWITCHING)) {
+        if (states.canDoStillCapture() &&
+            (states.getRecordState() == CameraState.STATE_RECORD_STOPPED
+                || states.getRecordState() == CameraState.STATE_RECORD_SWITCHING)) {
             mModeView.setVisibility(View.VISIBLE);
             mTextRecordState.setText("");
             if (states.mbIsStill) {
@@ -1075,7 +1075,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
     private void updateRecordState() {
         CameraState states = mVdtCamera.getState();
 
-        switch (states.mRecordState) {
+        switch (states.getRecordState()) {
             case CameraState.STATE_RECORD_STOPPED:
                 if (mStillCaptureState == STILLCAP_STATE_IDLE) {
                     setRecordStateDrawable(0);
@@ -1100,7 +1100,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
                 break;
         }
 
-        if (states.mRecordState == CameraState.STATE_RECORD_SWITCHING) {
+        if (states.getRecordState() == CameraState.STATE_RECORD_SWITCHING) {
             mMjpegView.startMask(1000);
         } else {
             mMjpegView.startMask(0);
@@ -1120,7 +1120,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
         // mic mute state
         // TODO: optimize
-        if (states.mMicState > 0 && (states.mMicState == CameraState.State_Mic_MUTE)) {
+        if (states.getMicState() > 0 && (states.getMicState() == CameraState.STATE_MIC_OFF)) {
             showCameraState(STATE_MUTE, R.drawable.mic_off);
         } else {
             hideCameraState(STATE_MUTE);
@@ -1204,7 +1204,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void onClickVideoMode() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
+        if (states.getRecordState() == CameraState.STATE_RECORD_STOPPED) {
             mVdtCamera.setRecordStillMode(false);
             updateModeState();
         }
@@ -1212,7 +1212,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
 
     private void onClickPictureMode() {
         CameraState states = mVdtCamera.getState();
-        if (states.mRecordState == CameraState.STATE_RECORD_STOPPED) {
+        if (states.getRecordState() == CameraState.STATE_RECORD_STOPPED) {
             mVdtCamera.setRecordStillMode(true);
             updateModeState();
         }

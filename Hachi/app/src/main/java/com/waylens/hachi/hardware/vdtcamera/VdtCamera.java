@@ -14,7 +14,6 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-// use SSID + hostString to identify a camera
 
 public class VdtCamera {
     private static final String TAG = VdtCamera.class.getSimpleName();
@@ -30,7 +29,7 @@ public class VdtCamera {
 
     private InetSocketAddress mPreviewAddress;
 
-    private CameraState mStates = new CameraState();
+    private CameraState mState = new CameraState();
     private BtState mBtStates = new BtState();
     private GpsState mGpsStates = new GpsState();
     private WifiState mWifiStates = new WifiState();
@@ -167,7 +166,7 @@ public class VdtCamera {
 
     // API - camera can be null
     public CameraState getState() {
-        return mStates;
+        return mState;
     }
 
     // API - camera can be null
@@ -260,7 +259,7 @@ public class VdtCamera {
     // client told us camera state has changed,
     // so synchronize our state with it (on main thread)
     private void syncCameraState() {
-        if (mController.syncState(mStates)) {
+        if (mController.syncState(mState)) {
             if (mOnStateChangeListener != null) {
                 mOnStateChangeListener.onStateChanged(this);
             }
@@ -493,6 +492,7 @@ public class VdtCamera {
     }
 
 
+
     // Control APIs
     public void setBtEnable(boolean enable) {
         mController.cmd_CAM_BT_Enable(enable);
@@ -636,5 +636,10 @@ public class VdtCamera {
 
     public void setAddNetworkHost(String ssid, String password) {
         mController.cmd_Network_AddHost(ssid, password);
+    }
+
+    public boolean isMicEnabled() {
+        int micState = mState.getMicState();
+        return micState == CameraState.STATE_MIC_ON;
     }
 }
