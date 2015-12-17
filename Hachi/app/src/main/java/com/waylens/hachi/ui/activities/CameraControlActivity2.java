@@ -7,7 +7,11 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Layout;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
@@ -15,6 +19,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
+import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.net.InetSocketAddress;
 
@@ -58,10 +64,34 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.fabBookmark)
     FloatingActionButton mFabBookmark;
 
+    @Bind(R.id.dashboard)
+    DashboardLayout mDashboard;
+
+    //@Bind(R.id.dashboardHolder)
+    //RelativeLayout mDashboardHolder;
+
+    @Bind(R.id.liveViewLayout)
+    FixedAspectRatioFrameLayout mLiveViewLayout;
+
+    @Bind(R.id.btnShowOverlay)
+    ImageButton mBtnShowOverlay;
+
 
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
         handleOnFabClicked();
+    }
+
+    @OnClick(R.id.btnShowOverlay)
+    public void onBtnShowOverlayClick() {
+        if (mDashboard.getVisibility() == View.VISIBLE) {
+            mDashboard.setVisibility(View.INVISIBLE);
+            mBtnShowOverlay.clearColorFilter();
+        } else {
+            mDashboard.setVisibility(View.VISIBLE);
+            initDashboardLayout();
+            mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
+        }
     }
 
 
@@ -69,6 +99,12 @@ public class CameraControlActivity2 extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -81,9 +117,13 @@ public class CameraControlActivity2 extends BaseActivity {
         setContentView(R.layout.activity_camera_control2);
         setupToolbar();
         initCameraPreview();
+
+
         updateMicControlButton();
 
     }
+
+
 
 
     @Override
@@ -98,13 +138,10 @@ public class CameraControlActivity2 extends BaseActivity {
         mVdtCamera = getCameraFromIntent(null);
         mLiveView.setBackgroundColor(Color.BLACK);
         if (mVdtCamera != null) {
-            Logger.t(TAG).d("Start preview camera");
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
                 mVdtCamera = null;
             } else {
-                Logger.t(TAG).d("Start preview camera2");
-                Logger.t(TAG).d("Start stream serverAddr: " + serverAddr);
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mLiveView.startStream(serverAddr, new CameraLiveViewCallback(), true);
             }
@@ -120,6 +157,17 @@ public class CameraControlActivity2 extends BaseActivity {
         }
 
     }
+
+    private void initDashboardLayout() {
+        int width = mLiveViewLayout.getMeasuredWidth();
+        int height = mLiveViewLayout.getMeasuredHeight();
+        float widthScale = (float)width / DashboardLayout.NORMAL_WIDTH;
+        float heightScale = (float)height / DashboardLayout.NORMAL_HEIGHT;
+        Logger.t(TAG).d("scaleX = " + widthScale + " scaleY = " + heightScale);
+        mDashboard.setScaleX(widthScale);
+        mDashboard.setScaleY(heightScale);
+    }
+
 
     private void updateCameraState(CameraState state) {
         updateCameraStatusInfo(state);

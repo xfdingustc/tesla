@@ -9,11 +9,9 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.skin.Panel;
-import com.waylens.hachi.skin.PanelGforce;
 import com.waylens.hachi.skin.Skin;
 import com.waylens.hachi.skin.SkinManager;
 import com.waylens.hachi.vdb.AccData;
@@ -31,6 +29,9 @@ import java.util.List;
  */
 public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     private static final String TAG = DashboardLayout.class.getSimpleName();
+
+    public static final int NORMAL_WIDTH = 1920;
+    public static final int NORMAL_HEIGHT = 1080;
 
     private Skin mSkin = SkinManager.getManager().getSkin();
     private Adapter mAdapter;
@@ -72,7 +73,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
             Rect srcRect = new Rect(0, 0, mapBitmap.getWidth(), mapBitmap.getHeight());
 
             canvas.drawBitmap(mapBitmap, srcRect, srcRect, null);
-            
+
 
         }
         return bitmap;
@@ -94,14 +95,12 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     private void addPanels() {
         List<Panel> panelList = mSkin.getPanels();
         for (Panel panel : panelList) {
-            if (panel instanceof PanelGforce) {
-                Logger.t(TAG).d("ADD Panels, alignment: " + panel.getAlignment());
-                PanelLayout layout = new PanelLayout(getContext(), panel, mEventBus);
-                LayoutParams params = LayoutParamUtils.createLayoutParam(panel);
-                addView(layout, params);
-                if (layout.getMapView() != null) {
-                    mMapView = layout.getMapView();
-                }
+            Logger.t(TAG).d("ADD Panels, alignment: " + panel.getAlignment());
+            PanelLayout layout = new PanelLayout(getContext(), panel, mEventBus);
+            LayoutParams params = LayoutParamUtils.createLayoutParam(panel);
+            addView(layout, params);
+            if (layout.getMapView() != null) {
+                mMapView = layout.getMapView();
             }
         }
     }

@@ -35,6 +35,11 @@ public class PanelLayout extends RelativeLayout {
         init(panel, eventBus);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
     private void init(Panel panel, EventBus eventBus) {
         this.mPanel = panel;
         this.mEventBus = eventBus;

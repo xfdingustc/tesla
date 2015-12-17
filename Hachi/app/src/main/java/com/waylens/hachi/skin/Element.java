@@ -138,10 +138,10 @@ public abstract class Element {
         // Get width & widthMode
         String width = object.optString(TAG_WIDTH, null);
 
-        if (width.equals(MATCH_PARENT)) {
-            mWidthSizeMode = SIZE_MODE_MATCH_PARENT;
-        } else if (width.equals(WRAP_CONTENT)) {
+        if (width == null || width.equals(WRAP_CONTENT)) {
             mWidthSizeMode = SIZE_MODE_WRAP_CONTENT;
+        } else if (width.equals(MATCH_PARENT)) {
+            mWidthSizeMode = SIZE_MODE_MATCH_PARENT;
         } else {
             mWidthSizeMode = SIZE_MODE_FIXED;
             mWidth = Integer.parseInt(width);
@@ -149,10 +149,10 @@ public abstract class Element {
 
         // Get height & heightMode
         String height = object.optString(TAG_HEIGHT, null);
-        if (height.equals(MATCH_PARENT)) {
-            mHeightSizeMode = SIZE_MODE_MATCH_PARENT;
-        } else if (height.equals(WRAP_CONTENT)) {
+        if (height == null || height.equals(WRAP_CONTENT)) {
             mHeightSizeMode = SIZE_MODE_WRAP_CONTENT;
+        } else if (height.equals(MATCH_PARENT)) {
+            mHeightSizeMode = SIZE_MODE_MATCH_PARENT;
         } else {
             mHeightSizeMode = SIZE_MODE_FIXED;
             mHeight = Integer.parseInt(height);
@@ -213,7 +213,7 @@ public abstract class Element {
 
     public static class ElementFractory {
         public static Element createElement(String type) {
-            int elementType = 0;
+            int elementType = -1;
             if (type.equals(ELEMENT_TYPE_FRAME_SEQUENCE_STR)) {
                 elementType = ELEMENT_TYPE_FRAME_SEQUENCE;
             } else if (type.equals(ELEMENT_TYPE_STATIC_IMAGE_STR)) {

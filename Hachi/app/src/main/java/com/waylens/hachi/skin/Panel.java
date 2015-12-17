@@ -1,50 +1,56 @@
 package com.waylens.hachi.skin;
 
+import android.graphics.Bitmap;
+
+import com.orhanobut.logger.Logger;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Xiaofei on 2015/9/7.
  */
-public abstract class Panel extends Element  {
-    public static final String PANEL_TYPE_GFORCE_STR = "gforce";
-    protected static final int PANEL_TYPE_GFORCE = 0;
+public class Panel extends Element {
+    private static final String TAG = Panel.class.getSimpleName();
+    private static final String TAG_TYPE = "Type";
+    private static final String TAG_ELEMENTS = "Elements";
 
-    private static final String TAG_WIDTH = "Width";
-    private static final String TAG_HEIGHT = "Height";
-
-
-    protected int mType;
     protected List<Element> mElementList = new ArrayList<>();
 
     public List<Element> getElementList() {
         return mElementList;
     }
 
-
-    public static class PanelFactory {
-        public static Panel createPanel(String type) {
-            int panelType = 0;
-
-            if (type.equals(PANEL_TYPE_GFORCE)) {
-                panelType = 0;
-            }
-
-
-
-            return createPanel(panelType);
-
-        }
-
-        public static Panel createPanel(int type) {
-            switch (type) {
-                case PANEL_TYPE_GFORCE:
-                    return new PanelGforce();
+    @Override
+    public void parse(JSONObject object) {
+        super.parse(object);
+        try {
+            JSONArray elements = object.getJSONArray(TAG_ELEMENTS);
+            for (int i = 0; i < elements.length(); i++) {
+                JSONObject elementObj = elements.getJSONObject(i);
+                String elementType = elementObj.getString(TAG_TYPE);
+                Logger.t(TAG).d("Create one element type: " + elementType);
+                Element element = Element.ElementFractory.createElement(elementType);
+                if (element != null) {
+                    element.parse(elementObj);
+                    mElementList.add(element);
+                } else {
+                    Logger.t(TAG).d("Unknown element");
+                }
 
             }
-
-            return null;
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
+
+    @Override
+    public Bitmap getResource() {
+        return null;
+    }
+
 }
