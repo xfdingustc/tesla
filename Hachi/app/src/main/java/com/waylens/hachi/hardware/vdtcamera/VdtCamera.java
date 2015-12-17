@@ -242,17 +242,16 @@ public class VdtCamera {
 
     // called on camera thread
     private void initCameraState() {
-        VdtCameraController client = mController;
-        client.cmd_Cam_getApiVersion();
-        client.cmd_fw_getVersion();
-        client.cmd_fw_getVersion();
-        client.cmd_Cam_get_Name();
-        client.cmd_Rec_List_Resolutions(); // see if still capture is supported
-        client.cmd_Cam_get_getAllInfor();
-        client.cmd_Cam_get_State();
-        client.cmd_Network_GetWLanMode();
-        client.cmd_Network_GetHostNum();
-        client.cmd_Rec_GetMarkTime();
+        mController.cmd_Cam_getApiVersion();
+        mController.cmd_fw_getVersion();
+        mController.cmd_fw_getVersion();
+        mController.cmd_Cam_get_Name();
+        mController.cmd_Rec_List_Resolutions(); // see if still capture is supported
+        mController.cmd_Cam_get_getAllInfor();
+        mController.cmd_Cam_get_State();
+        mController.cmd_Network_GetWLanMode();
+        mController.cmd_Network_GetHostNum();
+        mController.cmd_Rec_GetMarkTime();
 
     }
 

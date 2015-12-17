@@ -23,8 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 abstract class VdtCameraController {
-    public static final String TAG = VdtCameraController.class.getSimpleName();
-    static final boolean DEBUG = true;
+    private static final String TAG = VdtCameraController.class.getSimpleName();
+    private static final boolean DEBUG = true;
 
 
     abstract public void onConnected();
@@ -80,42 +80,42 @@ abstract class VdtCameraController {
     }
 
     // domains
-    public static final int CMD_Domain_user = -1;
-    public static final int CMD_Domain_cam = 0;
-    public static final int CMD_Domain_p2p = 1;
-    public static final int CMD_Domain_rec = 2;
-    public static final int CMD_Domain_decode = 3;
-    public static final int CMD_Domain_network = 4;
-    public static final int CMD_Domain_power = 5;
-    public static final int CMD_Domain_storage = 6;
-    public static final int CMD_Domain_stream = 7;
-    public static final int CMD_Domain_MotorControl = 8;
+    private static final int CMD_Domain_user = -1;
+    private static final int CMD_Domain_cam = 0;
+    private static final int CMD_Domain_p2p = 1;
+    private static final int CMD_Domain_rec = 2;
+    private static final int CMD_Domain_decode = 3;
+    private static final int CMD_Domain_network = 4;
+    private static final int CMD_Domain_power = 5;
+    private static final int CMD_Domain_storage = 6;
+    private static final int CMD_Domain_stream = 7;
+    private static final int CMD_Domain_MotorControl = 8;
 
     // CMD_Domain_cam
-    public static final int CMD_Cam_getMode = 0;
-    public static final int CMD_Cam_getMode_result = 1;
-    public static final int CMD_Cam_getApiVersion = 2;
-    public static final int CMD_Cam_isApiSupported = 3;
-    public static final int CMD_Cam_get_Name = 4;
-    public static final int CMD_Cam_get_Name_result = 5;
-    public static final int CMD_Cam_set_Name = 6;
-    public static final int CMD_Cam_set_Name_result = 7;
-    public static final int CMD_Cam_get_State = 8;
-    public static final int CMD_Cam_get_State_result = 9;
-    public static final int CMD_Cam_start_rec = 10;
-    public static final int CMD_Cam_stop_rec = 11;
-    public static final int CMD_Cam_get_time = 12;
-    public static final int CMD_Cam_get_time_result = 13;
+    private static final int CMD_Cam_getMode = 0;
+    private static final int CMD_Cam_getMode_result = 1;
+    private static final int CMD_Cam_getApiVersion = 2;
+    private static final int CMD_Cam_isApiSupported = 3;
+    private static final int CMD_Cam_get_Name = 4;
+    private static final int CMD_Cam_get_Name_result = 5;
+    private static final int CMD_Cam_set_Name = 6;
+    private static final int CMD_Cam_set_Name_result = 7;
+    private static final int CMD_Cam_get_State = 8;
+    private static final int CMD_Cam_get_State_result = 9;
+    private static final int CMD_Cam_start_rec = 10;
+    private static final int CMD_Cam_stop_rec = 11;
+    private static final int CMD_Cam_get_time = 12;
+    private static final int CMD_Cam_get_time_result = 13;
 
-    public static final int CMD_Cam_get_getAllInfor = 14;
-    public static final int CMD_Cam_get_getStorageInfor = 15;
-    public static final int CMD_Cam_msg_Storage_infor = 16;
-    public static final int CMD_Cam_msg_StorageSpace_infor = 17;
-    public static final int CMD_Cam_msg_Battery_infor = 18;
-    public static final int CMD_Cam_msg_power_infor = 19;
-    public static final int CMD_Cam_msg_BT_infor = 20;
-    public static final int CMD_Cam_msg_GPS_infor = 21;
-    public static final int CMD_Cam_msg_Internet_infor = 22;
+    private static final int CMD_Cam_get_getAllInfor = 14;
+    private static final int CMD_Cam_get_getStorageInfor = 15;
+    private static final int CMD_Cam_msg_Storage_infor = 16;
+    private static final int CMD_Cam_msg_StorageSpace_infor = 17;
+    private static final int CMD_Cam_msg_Battery_infor = 18;
+    private static final int CMD_Cam_msg_power_infor = 19;
+    private static final int CMD_Cam_msg_BT_infor = 20;
+    private static final int CMD_Cam_msg_GPS_infor = 21;
+    private static final int CMD_Cam_msg_Internet_infor = 22;
     public static final int CMD_Cam_msg_Mic_infor = 23;
     public static final int CMD_Cam_set_StreamSize = 24;
 
