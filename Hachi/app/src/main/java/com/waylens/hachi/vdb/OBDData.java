@@ -28,8 +28,8 @@ public class OBDData {
     public static final int PID_THROTTLE = 0x11;    // Throttle Position
     public static final int PID_BP = 0x33;          // - barometric pressure
     public static final int PID_IMP = 0x0B;         // - intake manifold absolute pressure
-    public static final int PID_P_TORQUE = 0x62;    // - Actual engine percent torque
-    public static final int PID_R_TORQUE = 0x63;    // - Engine reference torque
+    public static final int PID_AEPT = 0x62;    // - Actual engine percent torque
+    public static final int PID_ERT = 0x63;    // - Engine reference torque
 
     private static final int[] g_pid_data_size_table = new int[]{
             4, 4, 2, 2, 1, 1, 2, 2,        // 00 - 07
@@ -114,7 +114,7 @@ public class OBDData {
             }
             index += len;
         }
-        Log.e("test", String.format("speed[%d], t[%d], rpm[%d]", speed, temperature, rpm));
+        //Log.e("test", String.format("speed[%d], t[%d], rpm[%d]", speed, temperature, rpm));
         return new OBDData(speed, temperature, rpm);
     }
 
