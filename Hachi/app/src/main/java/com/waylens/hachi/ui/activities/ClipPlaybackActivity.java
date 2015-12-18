@@ -28,6 +28,7 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.waylens.hachi.views.dashboard.adapters.BlockAdapter;
 
 import java.io.IOException;
 
@@ -49,7 +50,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     private static Clip mSharedClip;
 
 
-    private DashboardLayout.Adapter mDashboardLayoutAdapter;
+    private BlockAdapter mDashboardLayoutAdapter;
 
 
     @Bind(R.id.svClipPlayback)
@@ -111,7 +112,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
 
-        mDashboardLayoutAdapter = new DashboardLayout.Adapter();
+        mDashboardLayoutAdapter = new BlockAdapter();
         mDashboardLayout.setAdapter(mDashboardLayoutAdapter);
 
     }

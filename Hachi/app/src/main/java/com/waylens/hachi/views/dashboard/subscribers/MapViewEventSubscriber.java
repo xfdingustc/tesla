@@ -1,4 +1,4 @@
-package com.waylens.hachi.views.dashboard;
+package com.waylens.hachi.views.dashboard.subscribers;
 
 import android.graphics.Color;
 

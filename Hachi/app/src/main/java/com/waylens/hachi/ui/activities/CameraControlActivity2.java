@@ -20,6 +20,7 @@ import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.waylens.hachi.views.dashboard.adapters.SimulatorRawDataAdapter;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.net.InetSocketAddress;
@@ -36,6 +37,8 @@ public class CameraControlActivity2 extends BaseActivity {
     private static final String TAG = CameraControlActivity2.class.getSimpleName();
 
     private VdtCamera mVdtCamera;
+    private SimulatorRawDataAdapter mRawDataAdapter;
+
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
@@ -67,8 +70,6 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.dashboard)
     DashboardLayout mDashboard;
 
-    //@Bind(R.id.dashboardHolder)
-    //RelativeLayout mDashboardHolder;
 
     @Bind(R.id.liveViewLayout)
     FixedAspectRatioFrameLayout mLiveViewLayout;
@@ -110,6 +111,7 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+
         initViews();
     }
 
@@ -120,10 +122,28 @@ public class CameraControlActivity2 extends BaseActivity {
 
 
         updateMicControlButton();
+        mRawDataAdapter = new SimulatorRawDataAdapter();
+        mDashboard.setAdapter(mRawDataAdapter);
 
+        startUpdateThread();
     }
 
+    private void startUpdateThread() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    mDashboard.update(-1);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
 
+            }
+        }).start();
+    }
 
 
     @Override

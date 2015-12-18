@@ -11,15 +11,15 @@ import android.widget.RelativeLayout;
 
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.vdb.AccData;
+import com.waylens.hachi.vdb.OBDData;
+import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.views.dashboard.adapters.IRawDataAdapter;
+import com.waylens.hachi.views.dashboard.eventbus.EventBus;
+import com.waylens.hachi.views.dashboard.eventbus.EventConstants;
 import com.waylens.hachi.views.dashboard.models.Panel;
 import com.waylens.hachi.views.dashboard.models.Skin;
 import com.waylens.hachi.views.dashboard.models.SkinManager;
-import com.waylens.hachi.vdb.AccData;
-import com.waylens.hachi.vdb.OBDData;
-import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.views.dashboard.eventbus.EventBus;
-import com.waylens.hachi.views.dashboard.eventbus.EventConstants;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     public static final int NORMAL_HEIGHT = 1080;
 
     private Skin mSkin = SkinManager.getManager().getSkin();
-    private Adapter mAdapter;
+    private IRawDataAdapter mAdapter;
 
     private EventBus mEventBus = new EventBus();
 
@@ -66,7 +66,6 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
             }
         }
 
-
         Bitmap bitmap = getDrawingCache();
         if (mapBitmap != null) {
             Canvas canvas = new Canvas(bitmap);
@@ -77,8 +76,6 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
         }
         return bitmap;
-
-
     }
 
     private void init() {
@@ -86,7 +83,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         addPanels();
     }
 
-    public void setAdapter(Adapter adapter) {
+    public void setAdapter(IRawDataAdapter adapter) {
         mAdapter = adapter;
     }
 
@@ -138,58 +135,10 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
             RawDataItem item = mAdapter.getObdDataItem(pts);
             if (item != null) {
                 OBDData obdData = (OBDData) item.object;
+                mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
                 //setRawData(DashboardView.RPM, (float) obdData.rpm / 1000);
                 //setRawData(DashboardView.MPH, obdData.speed);
             }
-        }
-    }
-
-    public static class Adapter {
-        private RawDataBlock mAccDataBlock;
-        private RawDataBlock mObdDataBlock;
-        private RawDataBlock mGpsDataBlock;
-
-        public Adapter() {
-
-        }
-
-        public void setAccDataBlock(RawDataBlock accDataBlock) {
-            this.mAccDataBlock = accDataBlock;
-        }
-
-        public void setObdDataBlock(RawDataBlock obdDataBlock) {
-            this.mObdDataBlock = obdDataBlock;
-        }
-
-        public void setGpsDataBlock(RawDataBlock gpsDataBlock) {
-            this.mGpsDataBlock = gpsDataBlock;
-        }
-
-        public RawDataItem getAccDataItem(long pts) {
-            return getRawDataItem(mAccDataBlock, pts);
-        }
-
-        public RawDataItem getObdDataItem(long pts) {
-            return getRawDataItem(mObdDataBlock, pts);
-        }
-
-        public RawDataItem getGpsDataItem(long pts) {
-            return getRawDataItem(mGpsDataBlock, pts);
-        }
-
-        // TODO: We need refine this algorithm:
-        private RawDataItem getRawDataItem(RawDataBlock datablock, long pts) {
-            if (datablock == null) {
-                return null;
-            }
-
-            for (int i = 0; i < datablock.header.mNumItems; i++) {
-                RawDataItem item = datablock.getRawDataItem(i);
-                if (item.clipTimeMs > pts) {
-                    return item;
-                }
-            }
-            return null;
         }
     }
 

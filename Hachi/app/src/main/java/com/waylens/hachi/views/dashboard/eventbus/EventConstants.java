@@ -5,4 +5,5 @@ package com.waylens.hachi.views.dashboard.eventbus;
  */
 public class EventConstants {
     public static final String EVENT_GPS = "GPS";
+    public static final String EVENT_RPM = "RPM";
 }

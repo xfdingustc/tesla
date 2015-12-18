@@ -4,12 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.models.Element;
 
 /**
  * Created by Xiaofei on 2015/12/18.
  */
-public class RingProgressImageView extends ProgressImageView {
+public class RingProgressImageView extends ProgressImageView implements EventBus.EventSubscriber{
     private int mStartRadius = 0;
     private int mEndRadius = 0;
 
@@ -22,7 +23,6 @@ public class RingProgressImageView extends ProgressImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
 
         int drawRadius = mStartRadius +
             (int) ((mEndRadius - mStartRadius) * mProgress / mProgressMax);

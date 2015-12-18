@@ -53,6 +53,7 @@ import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 import com.waylens.hachi.views.VideoTrimmer;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.waylens.hachi.views.dashboard.adapters.BlockAdapter;
 import com.waylens.mediatranscoder.MediaTranscoder;
 import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 
@@ -97,7 +98,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private String mDownloadedFilePath;
 
-    private DashboardLayout.Adapter mDashboardLayoutAdapter;
+    private BlockAdapter mDashboardLayoutAdapter;
 
 
     @Bind(R.id.ivPreviewPicture)
@@ -228,7 +229,7 @@ public class ClipEditActivity extends BaseActivity {
         final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvPreviewPicture);
 
-        mDashboardLayoutAdapter = new DashboardLayout.Adapter();
+        mDashboardLayoutAdapter = new BlockAdapter();
         mDashboardLayout.setAdapter(mDashboardLayoutAdapter);
 
         initSeekBar();
