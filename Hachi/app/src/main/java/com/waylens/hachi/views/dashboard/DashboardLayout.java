@@ -11,9 +11,9 @@ import android.widget.RelativeLayout;
 
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.skin.Panel;
-import com.waylens.hachi.skin.Skin;
-import com.waylens.hachi.skin.SkinManager;
+import com.waylens.hachi.views.dashboard.models.Panel;
+import com.waylens.hachi.views.dashboard.models.Skin;
+import com.waylens.hachi.views.dashboard.models.SkinManager;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;

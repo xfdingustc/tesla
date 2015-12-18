@@ -9,9 +9,10 @@ import android.widget.RelativeLayout;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.skin.Element;
-import com.waylens.hachi.skin.Panel;
+import com.waylens.hachi.views.dashboard.models.Element;
+import com.waylens.hachi.views.dashboard.models.Panel;
 import com.waylens.hachi.views.dashboard.eventbus.EventBus;
+import com.waylens.hachi.views.dashboard.views.ProgressImageView;
 
 import java.util.List;
 
@@ -73,6 +74,9 @@ public class PanelLayout extends RelativeLayout {
                 }
                 mMapView = (MapView)elementView;
 
+                break;
+            case Element.ELEMENT_TYPE_PROGRESS_IMAGE:
+                elementView = new ProgressImageView(getContext(), element);
                 break;
         }
 

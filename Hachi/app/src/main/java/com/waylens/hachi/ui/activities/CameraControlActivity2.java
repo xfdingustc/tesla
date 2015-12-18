@@ -163,7 +163,6 @@ public class CameraControlActivity2 extends BaseActivity {
         int height = mLiveViewLayout.getMeasuredHeight();
         float widthScale = (float)width / DashboardLayout.NORMAL_WIDTH;
         float heightScale = (float)height / DashboardLayout.NORMAL_HEIGHT;
-        Logger.t(TAG).d("scaleX = " + widthScale + " scaleY = " + heightScale);
         mDashboard.setScaleX(widthScale);
         mDashboard.setScaleY(heightScale);
     }

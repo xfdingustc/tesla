@@ -1,26 +1,29 @@
-package com.waylens.hachi.skin;
+package com.waylens.hachi.views.dashboard.models;
 
 import android.graphics.Bitmap;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Xiaofei on 2015/9/7.
  */
 public abstract class Element {
-    public static final String ELEMENT_TYPE_FRAME_SEQUENCE_STR = "FrameSequence";
-    public static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
-    public static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
-    public static final String ELEMENT_TYPE_ROTATE_PROGRESS_IMAGE_STR = "RotateProgressImage";
-    public static final String ELEMENT_TYPE_NUMBER_VIEW_STR = "NumberView";
-    public static final String ELEMENT_TYPE_MAP_STR = "Map";
-
     public static final int ELEMENT_TYPE_FRAME_SEQUENCE = 0;
     public static final int ELEMENT_TYPE_STATIC_IMAGE = 1;
     public static final int ELEMENT_TYPE_PROGRESS_IMAGE = 2;
     public static final int ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE = 3;
     public static final int ELEMENT_TYPE_NUMBER_VIEW = 4;
     public static final int ELEMENT_TYPE_MAP = 5;
+
+    private static final String ELEMENT_TYPE_FRAME_SEQUENCE_STR = "FrameSequence";
+    private static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
+    private static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
+    private static final String ELEMENT_TYPE_ROTATE_PROGRESS_IMAGE_STR = "RotateProgressImage";
+    private static final String ELEMENT_TYPE_NUMBER_VIEW_STR = "NumberView";
+    private static final String ELEMENT_TYPE_MAP_STR = "Map";
 
     private static final String TAG_WIDTH = "Width";
     private static final String TAG_HEIGHT = "Height";
@@ -68,8 +71,14 @@ public abstract class Element {
     private String mSubscribe = null;
     protected String mResourceUrl;
 
+    protected Map<String, String> mAttributeSet = new HashMap<>();
+
     public int getType() {
         return mType;
+    }
+
+    public String getAttribute(String name) {
+        return mAttributeSet.get(name);
     }
 
     public int getWidthSizeMode() {
@@ -172,17 +181,6 @@ public abstract class Element {
 
     }
 
-    public int getAttributeCount() {
-        return 0;
-    }
-
-    public String getAttributeName(int index) {
-        return null;
-    }
-
-    public String getAttributeValue(int index) {
-        return null;
-    }
 
 
     private int getAlignment(String alignment) {

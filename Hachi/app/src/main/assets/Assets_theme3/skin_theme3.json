@@ -1,725 +1,1042 @@
 {
   "Dashboard": {
-	"Fonts": [
-	  {
-		"Font": "30px_red",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/red/30px/number-0.png"},
-          {"1": "Assets_theme3/numbers/red/30px/number-1.png"},
-          {"2": "Assets_theme3/numbers/red/30px/number-2.png"},
-          {"3": "Assets_theme3/numbers/red/30px/number-3.png"},
-          {"4": "Assets_theme3/numbers/red/30px/number-4.png"},
-          {"5": "Assets_theme3/numbers/red/30px/number-5.png"},
-          {"6": "Assets_theme3/numbers/red/30px/number-6.png"},
-          {"7": "Assets_theme3/numbers/red/30px/number-7.png"},
-          {"8": "Assets_theme3/numbers/red/30px/number-8.png"},
-          {"9": "Assets_theme3/numbers/red/30px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/red/30px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/red/30px/dot.png"}		  
+    "Fonts": [
+      {
+        "Font": "30px_red",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/red/30px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/red/30px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/red/30px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/red/30px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/red/30px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/red/30px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/red/30px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/red/30px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/red/30px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/red/30px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/red/30px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/red/30px/dot.png"
+          }
         ]
-	  },
-	  {
-		"Font": "38px_red",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/red/38px/number-0.png"},
-          {"1": "Assets_theme3/numbers/red/38px/number-1.png"},
-          {"2": "Assets_theme3/numbers/red/38px/number-2.png"},
-          {"3": "Assets_theme3/numbers/red/38px/number-3.png"},
-          {"4": "Assets_theme3/numbers/red/38px/number-4.png"},
-          {"5": "Assets_theme3/numbers/red/38px/number-5.png"},
-          {"6": "Assets_theme3/numbers/red/38px/number-6.png"},
-          {"7": "Assets_theme3/numbers/red/38px/number-7.png"},
-          {"8": "Assets_theme3/numbers/red/38px/number-8.png"},
-          {"9": "Assets_theme3/numbers/red/38px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/red/38px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/red/38px/dot.png"}	
-		]
-	  },	
-	  {
-		"Font": "26px_white",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/white/26px/number-0.png"},
-          {"1": "Assets_theme3/numbers/white/26px/number-1.png"},
-          {"2": "Assets_theme3/numbers/white/26px/number-2.png"},
-          {"3": "Assets_theme3/numbers/white/26px/number-3.png"},
-          {"4": "Assets_theme3/numbers/white/26px/number-4.png"},
-          {"5": "Assets_theme3/numbers/white/26px/number-5.png"},
-          {"6": "Assets_theme3/numbers/white/26px/number-6.png"},
-          {"7": "Assets_theme3/numbers/white/26px/number-7.png"},
-          {"8": "Assets_theme3/numbers/white/26px/number-8.png"},
-          {"9": "Assets_theme3/numbers/white/26px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/white/26px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/white/26px/dot.png"}	
-		]
-	  },
-	  {
-		"Font": "30px_white",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/white/30px/number-0.png"},
-          {"1": "Assets_theme3/numbers/white/30px/number-1.png"},
-          {"2": "Assets_theme3/numbers/white/30px/number-2.png"},
-          {"3": "Assets_theme3/numbers/white/30px/number-3.png"},
-          {"4": "Assets_theme3/numbers/white/30px/number-4.png"},
-          {"5": "Assets_theme3/numbers/white/30px/number-5.png"},
-          {"6": "Assets_theme3/numbers/white/30px/number-6.png"},
-          {"7": "Assets_theme3/numbers/white/30px/number-7.png"},
-          {"8": "Assets_theme3/numbers/white/30px/number-8.png"},
-          {"9": "Assets_theme3/numbers/white/30px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/white/30px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/white/30px/dot.png"}	
-		]
-	  },
-	  {
-		"Font": "38px_white",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/white/38px/number-0.png"},
-          {"1": "Assets_theme3/numbers/white/38px/number-1.png"},
-          {"2": "Assets_theme3/numbers/white/38px/number-2.png"},
-          {"3": "Assets_theme3/numbers/white/38px/number-3.png"},
-          {"4": "Assets_theme3/numbers/white/38px/number-4.png"},
-          {"5": "Assets_theme3/numbers/white/38px/number-5.png"},
-          {"6": "Assets_theme3/numbers/white/38px/number-6.png"},
-          {"7": "Assets_theme3/numbers/white/38px/number-7.png"},
-          {"8": "Assets_theme3/numbers/white/38px/number-8.png"},
-          {"9": "Assets_theme3/numbers/white/38px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/white/38px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/white/38px/dot.png"}	
-		]
-	  },
-	  {
-		"Font": "50px_white",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/white/50px/number-0.png"},
-          {"1": "Assets_theme3/numbers/white/50px/number-1.png"},
-          {"2": "Assets_theme3/numbers/white/50px/number-2.png"},
-          {"3": "Assets_theme3/numbers/white/50px/number-3.png"},
-          {"4": "Assets_theme3/numbers/white/50px/number-4.png"},
-          {"5": "Assets_theme3/numbers/white/50px/number-5.png"},
-          {"6": "Assets_theme3/numbers/white/50px/number-6.png"},
-          {"7": "Assets_theme3/numbers/white/50px/number-7.png"},
-          {"8": "Assets_theme3/numbers/white/50px/number-8.png"},
-          {"9": "Assets_theme3/numbers/white/50px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/white/50px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/white/50px/dot.png"}	
-		]
-	  },
-	  {
-		"Font": "30px_yellow",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/yellow/30px/number-0.png"},
-          {"1": "Assets_theme3/numbers/yellow/30px/number-1.png"},
-          {"2": "Assets_theme3/numbers/yellow/30px/number-2.png"},
-          {"3": "Assets_theme3/numbers/yellow/30px/number-3.png"},
-          {"4": "Assets_theme3/numbers/yellow/30px/number-4.png"},
-          {"5": "Assets_theme3/numbers/yellow/30px/number-5.png"},
-          {"6": "Assets_theme3/numbers/yellow/30px/number-6.png"},
-          {"7": "Assets_theme3/numbers/yellow/30px/number-7.png"},
-          {"8": "Assets_theme3/numbers/yellow/30px/number-8.png"},
-          {"9": "Assets_theme3/numbers/yellow/30px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/yellow/30px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/yellow/30px/dot.png"}	
-		]
-	  },	
-	  {
-		"Font": "38px_yellow",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/yellow/38px/number-0.png"},
-          {"1": "Assets_theme3/numbers/yellow/38px/number-1.png"},
-          {"2": "Assets_theme3/numbers/yellow/38px/number-2.png"},
-          {"3": "Assets_theme3/numbers/yellow/38px/number-3.png"},
-          {"4": "Assets_theme3/numbers/yellow/38px/number-4.png"},
-          {"5": "Assets_theme3/numbers/yellow/38px/number-5.png"},
-          {"6": "Assets_theme3/numbers/yellow/38px/number-6.png"},
-          {"7": "Assets_theme3/numbers/yellow/38px/number-7.png"},
-          {"8": "Assets_theme3/numbers/yellow/38px/number-8.png"},
-          {"9": "Assets_theme3/numbers/yellow/38px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/yellow/38px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/yellow/38px/dot.png"}	
-		]
-	  },
-	  {
-		"Font": "50px_yellow",
-		"Numbers": [
-          {"0": "Assets_theme3/numbers/yellow/50px/number-0.png"},
-          {"1": "Assets_theme3/numbers/yellow/50px/number-1.png"},
-          {"2": "Assets_theme3/numbers/yellow/50px/number-2.png"},
-          {"3": "Assets_theme3/numbers/yellow/50px/number-3.png"},
-          {"4": "Assets_theme3/numbers/yellow/50px/number-4.png"},
-          {"5": "Assets_theme3/numbers/yellow/50px/number-5.png"},
-          {"6": "Assets_theme3/numbers/yellow/50px/number-6.png"},
-          {"7": "Assets_theme3/numbers/yellow/50px/number-7.png"},
-          {"8": "Assets_theme3/numbers/yellow/50px/number-8.png"},
-          {"9": "Assets_theme3/numbers/yellow/50px/number-9.png"},
-		  {"degree": "Assets_theme3/numbers/yellow/50px/degree.png"},
-		  {"dot": "Assets_theme3/numbers/yellow/50px/dot.png"}	
-		]
-	  },	 
-	  {
-		"Font": "15px_alphabet",
-		"Numbers": [
-          {"a": "Assets_theme3/gps_suite/aaa.png"},
-	      {"b": "Assets_theme3/gps_suite/bbb.png"},
-		  {"c": "Assets_theme3/gps_suite/ccc.png"},
-		  {"d": "Assets_theme3/gps_suite/ddd.png"},
-		  {"e": "Assets_theme3/gps_suite/eee.png"},
-		  {"f": "Assets_theme3/gps_suite/fff.png"},
-		  {"g": "Assets_theme3/gps_suite/ggg.png"},
-		  {"h": "Assets_theme3/gps_suite/hhh.png"},
-		  {"i": "Assets_theme3/gps_suite/iii.png"},
-		  {"j": "Assets_theme3/gps_suite/jjj.png"},
-		  {"k": "Assets_theme3/gps_suite/kkk.png"},
-		  {"l": "Assets_theme3/gps_suite/lll.png"},
-		  {"m": "Assets_theme3/gps_suite/mmm.png"},
-		  {"n": "Assets_theme3/gps_suite/nnn.png"},
-		  {"o": "Assets_theme3/gps_suite/ooo.png"},
-		  {"p": "Assets_theme3/gps_suite/ppp.png"},
-		  {"q": "Assets_theme3/gps_suite/qqq.png"},
-		  {"r": "Assets_theme3/gps_suite/rrr.png"},
-		  {"s": "Assets_theme3/gps_suite/sss.png"},
-		  {"t": "Assets_theme3/gps_suite/ttt.png"},
-		  {"u": "Assets_theme3/gps_suite/uuu.png"},
-		  {"v": "Assets_theme3/gps_suite/vvv.png"},
-		  {"w": "Assets_theme3/gps_suite/www.png"},
-		  {"x": "Assets_theme3/gps_suite/xxx.png"},
-		  {"y": "Assets_theme3/gps_suite/yyy.png"},
-		  {"z": "Assets_theme3/gps_suite/zzz.png"}		  
-		]
-	  },     
-	  {
-		"Font": "month",
-		"Numbers": [
-          {"0": "Assets_theme3/month/JAN.png"},
-          {"1": "Assets_theme3/month/FEB.png"},
-          {"2": "Assets_theme3/month/MAR.png"},
-          {"3": "Assets_theme3/month/APR.png"},
-          {"4": "Assets_theme3/month/MAY.png"},
-          {"5": "Assets_theme3/month/JUN.png"},
-          {"6": "Assets_theme3/month/JUL.png"},
-          {"7": "Assets_theme3/month/AUG.png"},
-          {"8": "Assets_theme3/month/SEP.png"},
-          {"9": "Assets_theme3/month/OCT.png"},	
-          {"10": "Assets_theme3/month/NOV.png"},
-          {"11": "Assets_theme3/month/DEC.png"}
-		]
-	  }, 	 
-	  {
-		"Font": "misc",
-		"Numbers": [
-          {"am": "Assets_theme3/timedate_suite/AM.png"},
-          {"pm": "Assets_theme3/timedate_suite/PM.png"},
-		  {"plus": "Assets_theme3/boost_suite/boostdisplayPlus.png"},
-          {"minus": "Assets_theme3/boost_suite/boostdisplayMinus.png"},
-		  {"roll_texture": "Assets_theme3/roll_suite/ROLLdisplayTYI"},
-		  {"roll_separate": "Assets_theme3/roll_suite/ROLLdisplayYs.png"}
-		]
-	  }, 	  
-	  {
-		"Font": "weather",
-		"Numbers": [
-		  {"sunny": "Assets_theme3/ambient_suite/sunny.png"},
-		  {"cloudy": "Assets_theme3/ambient_suite/sunny.png"},
-		  {"foggy": "Assets_theme3/ambient_suite/sunny.png"},
-		  {"rainy": "Assets_theme3/ambient_suite/sunny.png"},
-		  {"snowy": "Assets_theme3/ambient_suite/sunny.png"},
-		  {"stormy": "Assets_theme3/ambient_suite/sunny.png"}
-		]
-	  }	  
-	],
-	
-	"Panels": [
-	  {
-	    "Name": "ambient_weather",
-		"Width": "330",
-		"Height": "108",
-		"Alignment": "Top_Left",
-		"MarginLeft": "10",
-		"MarginTop": "60",
-		"Elements": [
-		  {
-		    "Name": "ambient_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "0",
-			"MarginLeft": "0",
-			"Resource": "Assets_theme3/ambient_suite/ambientbase.png"
-		  },
-		  {
-		    "Name": "fahrenheit_icon",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "40",
-			"MarginLeft": "35",			
-			"Resource": "Assets_theme3/ambient_suite/fdegreeicon.png"
-		  },
-		  {
-		    "Name": "fahrenheit",
-			"Type": "NumberView",
-			"Alignment": "Top_Left",
-			"MarginTop": "35",
-			"MarginLeft": "62",
-			"Font": "26px_white",
-			"Subscribe": "WEATHER_TEMP"
-		  },
-		  {
-		    "Name": "fahrenheit_degree",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "33",
-			"MarginLeft": "98",			
-			"Resource": "Assets_theme3/ambient_suite/fdegree.png"
-		  },		  
-		  {
-		    "Name": "windspeed_icon",
-			"Type": "StaticImage",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "12",
-			"MarginLeft": "35",
-			"Resource": "Assets_theme3/ambient_suite/mphicon.png"
-		  },
-		  {
-		    "Name": "windspeed",
-			"Type": "NumberView",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "12",
-			"MarginLeft": "62",
-			"Font": "26px_white",
-			"Subscribe": "WIND_SPEED"
-		  },
-		  {
-		    "Name": "windspeed_mph",
-			"Type": "StaticImage",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "12",
-			"MarginLeft": "98",
-			"Resource": "Assets_theme3/ambient_suite/mph.png"
-		  },		  
-		  {
-		    "Name": "humidity_icon",
-			"Type": "StaticImage",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "12",
-			"MarginLeft": "142",			
-			"Resource": "Assets_theme3/ambient_suite/humidity.png"			
-		  },
-		  {
-		    "Name": "humidity",
-			"Type": "NumberView",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "12",
-			"MarginLeft": "172",
-			"Font": "26px_white",
-			"Subscribe": "HUMIDITY"		  
-		  },
-		  {
-		    "Name": "percent_icon",
-			"Type": "StaticImage",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "12",
-			"MarginLeft": "214",			
-			"Resource": "Assets_theme3/ambient_suite/percent.png"			    
-		  },
-		  {
-		    "Name": "airpressure_icon",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "40",
-			"MarginLeft": "142",			
-			"Resource": "Assets_theme3/ambient_suite/airpressureicon.png"			
-		  },		  
-		  {
-		    "Name": "air_pressure",
-			"Type": "FloatNumberView",
-			"Alignment": "Top_Left",
-			"MarginTop": "35",
-			"MarginLeft": "172",
-			"Font": "26px_white",
-			"Subscribe": "AIR_PRESSURE"		  
-		  },
-		  {
-		    "Name": "inHg_icon",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "45",
-			"MarginLeft": "214",			
-			"Resource": "Assets_theme3/ambient_suite/inhg.png"			    
-		  },		  
-		  {
-		    "Name": "weather_desc_icon",
-			"Type": "WeatherView",
-			"Alignment": "Top_Right",
-			"MarginRight": "21",
-			"MarginTop": "39",			
-			"Font": "weather",
-			"Subscribe": "WEATHER_CODE"
-		  }
-		]
-	  },
-	  {
-	    "Name": "time_date",
-		"Width": "330",
-		"Height": "108",
-		"Alignment": "Top_Left",
-		"MarginLeft": "10",
-		"MarginTop": "188",
-		"Elements": [
-		  {
-		    "Name": "timedate_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "0",
-			"MarginLeft": "0",
-			"Resource": "Assets_theme3/timedate_suite/timedatebase.png" 		
-		  },		
-		  {		  
-		    "Name": "time",
-			"Type": "TimeView",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "26",
-			"MarginLeft": "35",
-			"Font": "38px_white",
-			"Resource": "Assets_theme3/numbers/white/38px/colon.png",
-			"Subscribe": "CLIP_TIME_AP"		  		    
-		  },
-		  {
-		    "Name": "am_pm",
-			"Type": "AMPMView",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "50",
-			"MarginLeft": "185",
-			"Font": "misc",
-			"Subscribe": "CLIP_TIME_AP"		  
-		  },
+      },
+      {
+        "Font": "38px_red",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/red/38px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/red/38px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/red/38px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/red/38px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/red/38px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/red/38px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/red/38px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/red/38px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/red/38px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/red/38px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/red/38px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/red/38px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "26px_white",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/white/26px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/white/26px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/white/26px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/white/26px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/white/26px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/white/26px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/white/26px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/white/26px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/white/26px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/white/26px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/white/26px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/white/26px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "30px_white",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/white/30px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/white/30px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/white/30px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/white/30px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/white/30px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/white/30px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/white/30px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/white/30px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/white/30px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/white/30px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/white/30px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/white/30px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "38px_white",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/white/38px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/white/38px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/white/38px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/white/38px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/white/38px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/white/38px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/white/38px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/white/38px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/white/38px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/white/38px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/white/38px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/white/38px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "50px_white",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/white/50px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/white/50px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/white/50px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/white/50px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/white/50px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/white/50px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/white/50px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/white/50px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/white/50px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/white/50px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/white/50px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/white/50px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "30px_yellow",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/yellow/30px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/yellow/30px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/yellow/30px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/yellow/30px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/yellow/30px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/yellow/30px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/yellow/30px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/yellow/30px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/yellow/30px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/yellow/30px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/yellow/30px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/yellow/30px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "38px_yellow",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/yellow/38px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/yellow/38px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/yellow/38px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/yellow/38px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/yellow/38px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/yellow/38px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/yellow/38px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/yellow/38px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/yellow/38px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/yellow/38px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/yellow/38px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/yellow/38px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "50px_yellow",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/numbers/yellow/50px/number-0.png"
+          },
+          {
+            "1": "Assets_theme3/numbers/yellow/50px/number-1.png"
+          },
+          {
+            "2": "Assets_theme3/numbers/yellow/50px/number-2.png"
+          },
+          {
+            "3": "Assets_theme3/numbers/yellow/50px/number-3.png"
+          },
+          {
+            "4": "Assets_theme3/numbers/yellow/50px/number-4.png"
+          },
+          {
+            "5": "Assets_theme3/numbers/yellow/50px/number-5.png"
+          },
+          {
+            "6": "Assets_theme3/numbers/yellow/50px/number-6.png"
+          },
+          {
+            "7": "Assets_theme3/numbers/yellow/50px/number-7.png"
+          },
+          {
+            "8": "Assets_theme3/numbers/yellow/50px/number-8.png"
+          },
+          {
+            "9": "Assets_theme3/numbers/yellow/50px/number-9.png"
+          },
+          {
+            "degree": "Assets_theme3/numbers/yellow/50px/degree.png"
+          },
+          {
+            "dot": "Assets_theme3/numbers/yellow/50px/dot.png"
+          }
+        ]
+      },
+      {
+        "Font": "15px_alphabet",
+        "Numbers": [
+          {
+            "a": "Assets_theme3/gps_suite/aaa.png"
+          },
+          {
+            "b": "Assets_theme3/gps_suite/bbb.png"
+          },
+          {
+            "c": "Assets_theme3/gps_suite/ccc.png"
+          },
+          {
+            "d": "Assets_theme3/gps_suite/ddd.png"
+          },
+          {
+            "e": "Assets_theme3/gps_suite/eee.png"
+          },
+          {
+            "f": "Assets_theme3/gps_suite/fff.png"
+          },
+          {
+            "g": "Assets_theme3/gps_suite/ggg.png"
+          },
+          {
+            "h": "Assets_theme3/gps_suite/hhh.png"
+          },
+          {
+            "i": "Assets_theme3/gps_suite/iii.png"
+          },
+          {
+            "j": "Assets_theme3/gps_suite/jjj.png"
+          },
+          {
+            "k": "Assets_theme3/gps_suite/kkk.png"
+          },
+          {
+            "l": "Assets_theme3/gps_suite/lll.png"
+          },
+          {
+            "m": "Assets_theme3/gps_suite/mmm.png"
+          },
+          {
+            "n": "Assets_theme3/gps_suite/nnn.png"
+          },
+          {
+            "o": "Assets_theme3/gps_suite/ooo.png"
+          },
+          {
+            "p": "Assets_theme3/gps_suite/ppp.png"
+          },
+          {
+            "q": "Assets_theme3/gps_suite/qqq.png"
+          },
+          {
+            "r": "Assets_theme3/gps_suite/rrr.png"
+          },
+          {
+            "s": "Assets_theme3/gps_suite/sss.png"
+          },
+          {
+            "t": "Assets_theme3/gps_suite/ttt.png"
+          },
+          {
+            "u": "Assets_theme3/gps_suite/uuu.png"
+          },
+          {
+            "v": "Assets_theme3/gps_suite/vvv.png"
+          },
+          {
+            "w": "Assets_theme3/gps_suite/www.png"
+          },
+          {
+            "x": "Assets_theme3/gps_suite/xxx.png"
+          },
+          {
+            "y": "Assets_theme3/gps_suite/yyy.png"
+          },
+          {
+            "z": "Assets_theme3/gps_suite/zzz.png"
+          }
+        ]
+      },
+      {
+        "Font": "month",
+        "Numbers": [
+          {
+            "0": "Assets_theme3/month/JAN.png"
+          },
+          {
+            "1": "Assets_theme3/month/FEB.png"
+          },
+          {
+            "2": "Assets_theme3/month/MAR.png"
+          },
+          {
+            "3": "Assets_theme3/month/APR.png"
+          },
+          {
+            "4": "Assets_theme3/month/MAY.png"
+          },
+          {
+            "5": "Assets_theme3/month/JUN.png"
+          },
+          {
+            "6": "Assets_theme3/month/JUL.png"
+          },
+          {
+            "7": "Assets_theme3/month/AUG.png"
+          },
+          {
+            "8": "Assets_theme3/month/SEP.png"
+          },
+          {
+            "9": "Assets_theme3/month/OCT.png"
+          },
+          {
+            "10": "Assets_theme3/month/NOV.png"
+          },
+          {
+            "11": "Assets_theme3/month/DEC.png"
+          }
+        ]
+      },
+      {
+        "Font": "misc",
+        "Numbers": [
+          {
+            "am": "Assets_theme3/timedate_suite/AM.png"
+          },
+          {
+            "pm": "Assets_theme3/timedate_suite/PM.png"
+          },
+          {
+            "plus": "Assets_theme3/boost_suite/boostdisplayPlus.png"
+          },
+          {
+            "minus": "Assets_theme3/boost_suite/boostdisplayMinus.png"
+          },
+          {
+            "roll_texture": "Assets_theme3/roll_suite/ROLLdisplayTYI"
+          },
+          {
+            "roll_separate": "Assets_theme3/roll_suite/ROLLdisplayYs.png"
+          }
+        ]
+      },
+      {
+        "Font": "weather",
+        "Numbers": [
+          {
+            "sunny": "Assets_theme3/ambient_suite/sunny.png"
+          },
+          {
+            "cloudy": "Assets_theme3/ambient_suite/sunny.png"
+          },
+          {
+            "foggy": "Assets_theme3/ambient_suite/sunny.png"
+          },
+          {
+            "rainy": "Assets_theme3/ambient_suite/sunny.png"
+          },
+          {
+            "snowy": "Assets_theme3/ambient_suite/sunny.png"
+          },
+          {
+            "stormy": "Assets_theme3/ambient_suite/sunny.png"
+          }
+        ]
+      }
+    ],
+    "Panels": [
+      {
+        "Name": "ambient_weather",
+        "Width": "330",
+        "Height": "108",
+        "Alignment": "Top_Left",
+        "MarginLeft": "10",
+        "MarginTop": "60",
+        "Elements": [
+          {
+            "Name": "ambient_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/ambient_suite/ambientbase.png"
+          },
+          {
+            "Name": "fahrenheit_icon",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "40",
+            "MarginLeft": "35",
+            "Resource": "Assets_theme3/ambient_suite/fdegreeicon.png"
+          },
+          {
+            "Name": "fahrenheit",
+            "Type": "NumberView",
+            "Alignment": "Top_Left",
+            "MarginTop": "35",
+            "MarginLeft": "62",
+            "Font": "26px_white",
+            "Subscribe": "WEATHER_TEMP"
+          },
+          {
+            "Name": "fahrenheit_degree",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "33",
+            "MarginLeft": "98",
+            "Resource": "Assets_theme3/ambient_suite/fdegree.png"
+          },
+          {
+            "Name": "windspeed_icon",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "12",
+            "MarginLeft": "35",
+            "Resource": "Assets_theme3/ambient_suite/mphicon.png"
+          },
+          {
+            "Name": "windspeed",
+            "Type": "NumberView",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "12",
+            "MarginLeft": "62",
+            "Font": "26px_white",
+            "Subscribe": "WIND_SPEED"
+          },
+          {
+            "Name": "windspeed_mph",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "12",
+            "MarginLeft": "98",
+            "Resource": "Assets_theme3/ambient_suite/mph.png"
+          },
+          {
+            "Name": "humidity_icon",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "12",
+            "MarginLeft": "142",
+            "Resource": "Assets_theme3/ambient_suite/humidity.png"
+          },
+          {
+            "Name": "humidity",
+            "Type": "NumberView",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "12",
+            "MarginLeft": "172",
+            "Font": "26px_white",
+            "Subscribe": "HUMIDITY"
+          },
+          {
+            "Name": "percent_icon",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "12",
+            "MarginLeft": "214",
+            "Resource": "Assets_theme3/ambient_suite/percent.png"
+          },
+          {
+            "Name": "airpressure_icon",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "40",
+            "MarginLeft": "142",
+            "Resource": "Assets_theme3/ambient_suite/airpressureicon.png"
+          },
+          {
+            "Name": "air_pressure",
+            "Type": "FloatNumberView",
+            "Alignment": "Top_Left",
+            "MarginTop": "35",
+            "MarginLeft": "172",
+            "Font": "26px_white",
+            "Subscribe": "AIR_PRESSURE"
+          },
+          {
+            "Name": "inHg_icon",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "45",
+            "MarginLeft": "214",
+            "Resource": "Assets_theme3/ambient_suite/inhg.png"
+          },
+          {
+            "Name": "weather_desc_icon",
+            "Type": "WeatherView",
+            "Alignment": "Top_Right",
+            "MarginRight": "21",
+            "MarginTop": "39",
+            "Font": "weather",
+            "Subscribe": "WEATHER_CODE"
+          }
+        ]
+      },
+      {
+        "Name": "time_date",
+        "Width": "330",
+        "Height": "108",
+        "Alignment": "Top_Left",
+        "MarginLeft": "10",
+        "MarginTop": "188",
+        "Elements": [
+          {
+            "Name": "timedate_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/timedate_suite/timedatebase.png"
+          },
+          {
+            "Name": "time",
+            "Type": "TimeView",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "26",
+            "MarginLeft": "35",
+            "Font": "38px_white",
+            "Resource": "Assets_theme3/numbers/white/38px/colon.png",
+            "Subscribe": "CLIP_TIME_AP"
+          },
+          {
+            "Name": "am_pm",
+            "Type": "AMPMView",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "50",
+            "MarginLeft": "185",
+            "Font": "misc",
+            "Subscribe": "CLIP_TIME_AP"
+          },
           {
             "Name": "month",
-            "Type": "MonthView",          
+            "Type": "MonthView",
             "Alignment": "Top_Left",
-			"MarginLeft": "275",
-            "MarginTop": "30", 			
+            "MarginLeft": "275",
+            "MarginTop": "30",
             "Font": "month",
-			"Subscribe": "CLIP_MONTH"
-          },	
+            "Subscribe": "CLIP_MONTH"
+          },
           {
             "Name": "date",
-            "Type": "NumberView",           
+            "Type": "NumberView",
             "Alignment": "Top_Left",
-			"MarginLeft": "275",
-            "MarginTop": "50",			
+            "MarginLeft": "275",
+            "MarginTop": "50",
             "Font": "30px_yellow",
-			"Subscribe": "CLIP_DATE"
-          }		  
-		]
-	  },
-	  {
-	    "Name": "boost",
-		"Width": "330",
-		"Height": "108",
-		"Alignment": "Top_Left",
-		"MarginLeft": "10",
-		"MarginTop": "316",
-		"Elements": [
-		  {
-		    "Name": "psi_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "0",
-			"MarginLeft": "0",
-			"Resource": "Assets_theme3/boost_suite/boostbase.png"		
-		  },		
+            "Subscribe": "CLIP_DATE"
+          }
+        ]
+      },
+      {
+        "Name": "boost",
+        "Width": "330",
+        "Height": "108",
+        "Alignment": "Top_Left",
+        "MarginLeft": "10",
+        "MarginTop": "316",
+        "Elements": [
+          {
+            "Name": "psi_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/boost_suite/boostbase.png"
+          },
           {
             "Name": "psi",
-            "Type": "FloatNumberView",          
+            "Type": "FloatNumberView",
             "Alignment": "Bottom_Left",
-			"MarginLeft": "90",
-            "MarginBottom": "26", 
-			"Font": "38px_white",
-			"Subscribe": "BARO_PRESSURE"
-          },	
-		  {
-		    "Name": "inHg_icon",
-			"Type": "StaticImage",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "38",
-			"MarginLeft": "180",			
-			"Resource": "Assets_theme3/boost_suite/boostdisplayInHG.png"			    
-		  },	
+            "MarginLeft": "90",
+            "MarginBottom": "26",
+            "Font": "38px_white",
+            "Subscribe": "BARO_PRESSURE"
+          },
+          {
+            "Name": "inHg_icon",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "38",
+            "MarginLeft": "180",
+            "Resource": "Assets_theme3/boost_suite/boostdisplayInHG.png"
+          },
           {
             "Name": "psi_progress_positive",
             "Type": "ProgressImage",
-			"Style": "Round",
-			"Direction": "Clockwise",
-			"Alignment": "Bottom_Right",
-			"MarginBottom": "9",
-			"MarginRight": "9",
-			"StartAngle": "45",
-			"EndAngle": "270",
-			"Max": "35",
-			"Min": "0",
+            "Style": "Round",
+            "Direction": "Clockwise",
+            "Alignment": "Bottom_Right",
+            "MarginBottom": "9",
+            "MarginRight": "9",
+            "StartAngle": "45",
+            "EndAngle": "270",
+            "Max": "35",
+            "Min": "0",
             "Resource": "Assets_theme3/boost_suite/boostdisplayY.png",
-			"Subscribe": "BARO_PRESSURE"
+            "Subscribe": "BARO_PRESSURE"
           },
-		  {
+          {
             "Name": "psi_progress_negative",
             "Type": "ProgressImage",
-			"Style": "Round",
-			"Direction": "CounterClockwise",
-			"Alignment": "Bottom_Right",
-			"MarginBottom": "9",
-			"MarginRight": "9",			
-			"StartAngle": "45",
-			"EndAngle": "-90",
-			"Max": "0",
-			"Min": "-30",
+            "Style": "Round",
+            "Direction": "CounterClockwise",
+            "Alignment": "Bottom_Right",
+            "MarginBottom": "9",
+            "MarginRight": "9",
+            "StartAngle": "45",
+            "EndAngle": "-90",
+            "Max": "0",
+            "Min": "-30",
             "Resource": "Assets_theme3/boost_suite/boostdisplayR.png",
-			"Subscribe": "BARO_PRESSURE"
+            "Subscribe": "BARO_PRESSURE"
           },
-		  {
-		    "Name": "sign",
-			"Type": "SignView",
-			"Alignment": "Bottom_Right",
-			"MarginBottom": "30",
-			"MarginRight": "30",
-			"Font": "misc",
-			"Subscribe": "BARO_PRESSURE"		  
-		  }		  
-		]
-	  },
-	  {
-	    "Name": "speed",
-		"Width": "342",
-		"Height": "348",
-		"Alignment": "Bottom_Left",
-		"MarginLeft": "10",
-		"MarginBottom": "10",
-		"Elements": [
-		  {
-		    "Name": "speed_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "0",
-			"MarginLeft": "0",
-			"Resource": "Assets_theme3/speed_suite/speedbase.png"		
-		  },
-		  {
-		    "Name": "speed_center",
-			"Type": "StaticImage",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "95",
-			"MarginLeft": "95",
-			"Resource": "Assets_theme3/speed_suite/speeddisplayD.png"		
-		  },			  
+          {
+            "Name": "sign",
+            "Type": "SignView",
+            "Alignment": "Bottom_Right",
+            "MarginBottom": "30",
+            "MarginRight": "30",
+            "Font": "misc",
+            "Subscribe": "BARO_PRESSURE"
+          }
+        ]
+      },
+      {
+        "Name": "speed",
+        "Width": "342",
+        "Height": "348",
+        "Alignment": "Bottom_Left",
+        "MarginLeft": "10",
+        "MarginBottom": "10",
+        "Elements": [
+          {
+            "Name": "speed_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/speed_suite/speedbase.png"
+          },
+          {
+            "Name": "speed_center",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "95",
+            "MarginLeft": "95",
+            "Resource": "Assets_theme3/speed_suite/speeddisplayD.png"
+          },
           {
             "Name": "speed_record1",
             "Type": "ProgressImage",
-			"Style": "Ring",
-			"Direction": "Outgoing",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "46",
-			"MarginLeft": "46",
-			"StartRadius": "67",
-			"EndRadius": "116",            
-			"Max": "100",
-			"Min": "0",
+            "Style": "Ring",
+            "Direction": "Outgoing",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "46",
+            "MarginLeft": "46",
+            "StartRadius": "67",
+            "EndRadius": "116",
+            "Max": "100",
+            "Min": "0",
             "Resource": "Assets_theme3/speed_suite/speeddisplayY1.png",
-			"Subscribe": "MAX_MPH"
+            "Subscribe": "MAX_MPH"
           },
           {
             "Name": "speed_record2",
             "Type": "ProgressImage",
-			"Style": "Ring",
-			"Direction": "Outgoing",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "22",
-			"MarginLeft": "22",			
-			"StartRadius": "116",
-			"EndRadius": "140",
-			"Max": "200",
-			"Min": "100",
+            "Style": "Ring",
+            "Direction": "Outgoing",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "22",
+            "MarginLeft": "22",
+            "StartRadius": "116",
+            "EndRadius": "140",
+            "Max": "200",
+            "Min": "100",
             "Resource": "Assets_theme3/speed_suite/speeddisplayR1.png",
-			"Subscribe": "MAX_MPH"
-          },		  
+            "Subscribe": "MAX_MPH"
+          },
           {
             "Name": "speed_progress1",
             "Type": "ProgressImage",
-			"Style": "Ring",
-			"Direction": "Outgoing",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "46",
-			"MarginLeft": "46",			
-			"StartRadius": "67",
-			"EndRadius": "116",
-			"Max": "100",
-			"Min": "0",
+            "Style": "Ring",
+            "Direction": "Outgoing",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "46",
+            "MarginLeft": "46",
+            "StartRadius": "67",
+            "EndRadius": "116",
+            "Max": "100",
+            "Min": "0",
             "Resource": "Assets_theme3/speed_suite/speeddisplayY2.png",
-			"Subscribe": "MPH"
+            "Subscribe": "MPH"
           },
           {
             "Name": "speed_progress2",
             "Type": "ProgressImage",
-			"Style": "Ring",
-			"Direction": "Outgoing",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "46",
-			"MarginLeft": "46",			
-			"StartRadius": "116",
-			"EndRadius": "140",
-			"Max": "200",
-			"Min": "100",
+            "Style": "Ring",
+            "Direction": "Outgoing",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "46",
+            "MarginLeft": "46",
+            "StartRadius": "116",
+            "EndRadius": "140",
+            "Max": "200",
+            "Min": "100",
             "Resource": "Assets_theme3/speed_suite/speeddisplayR2.png",
-			"Subscribe": "MPH"
-          },		  
+            "Subscribe": "MPH"
+          },
           {
             "Name": "speed_value",
             "Type": "NumberView",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "147",
-			"MarginLeft": "138",            
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "147",
+            "MarginLeft": "138",
             "Font": "50px_white",
-			"Subscribe": "MPH"
-          } 
-		]
-	  },
-	  {
-	    "Name": "rpm",
-		"Width": "210",
-		"Height": "228",
-		"Alignment": "Bottom_Left",
-		"MarginLeft": "370",
-		"MarginBottom": "10",
-		"Elements": [		
-		  {
-		    "Name": "rpm_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "0",
-			"MarginLeft": "0",
-			"Resource": "Assets_theme3/rpm_suite/RPMbase.png"		
-		  },	
+            "Subscribe": "MPH"
+          }
+        ]
+      },
+      {
+        "Name": "rpm",
+        "Width": "210",
+        "Height": "228",
+        "Alignment": "Bottom_Left",
+        "MarginLeft": "370",
+        "MarginBottom": "10",
+        "Elements": [
+          {
+            "Name": "rpm_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/rpm_suite/RPMbase.png"
+          },
           {
             "Name": "rpm_progress",
             "Type": "ProgressImage",
-			"Style": "Ring",
-			"Direction": "Outgoing",
+            "Style": "Ring",
+            "Width": "174",
+            "Height": "174",
+            "Direction": "Outgoing",
             "Alignment": "Bottom_Left",
-			"MarginBottom": "18",
-			"MarginLeft": "18",			
-			"StartRadius": "46",
-			"EndRadius": "87",
-			"Max": "12000",
-			"Min": "0",
+            "MarginBottom": "18",
+            "MarginLeft": "18",
+            "StartRadius": "46",
+            "EndRadius": "87",
+            "Max": "12000",
+            "Min": "0",
             "Resource": "Assets_theme3/rpm_suite/RPMdisplayR.png",
-			"Subscribe": "RPM"
-          },		
-		  {
-		    "Name": "rpm_center",
-			"Type": "StaticImage",
-			"Alignment": "Bottom_Left",
-			"MarginBottom": "64",
-			"MarginLeft": "64",
-			"Resource": "Assets_theme3/rpm_suite/RPMbasedisplayD.png"		
-		  },		  
+            "Subscribe": "RPM"
+          },
+          {
+            "Name": "rpm_center",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "64",
+            "MarginLeft": "64",
+            "Resource": "Assets_theme3/rpm_suite/RPMbasedisplayD.png"
+          },
           {
             "Name": "rpm_value",
             "Type": "FloatNumberView",
             "Alignment": "Top_Center",
-			"MarginTop": "104",			
+            "MarginTop": "104",
             "Font": "38px_white",
-			"FontDecimal": "26px_white",
-			"Subscribe": "RPM"
-          }		  
-		]
-	  },
-	  {
-	    "Name": "roll",
-		"Width": "210",
-		"Height": "228",
-		"Alignment": "Bottom_Right",
-		"MarginRight": "450",
-		"MarginBottom": "10",
-		"Elements": [
-		  {
-		    "Name": "roll_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "0",
-			"MarginLeft": "0",
-			"Resource": "Assets_theme3/roll_suite/ROLLbase.png"		
-		  },
-		  {
-		    "Name": "center_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "59",
-			"MarginLeft": "77",
-			"Resource": "Assets_theme3/roll_suite/ROLLbasedisplayD.png"		
-		  },
+            "FontDecimal": "26px_white",
+            "Subscribe": "RPM"
+          }
+        ]
+      },
+      {
+        "Name": "roll",
+        "Width": "210",
+        "Height": "228",
+        "Alignment": "Bottom_Right",
+        "MarginRight": "450",
+        "MarginBottom": "10",
+        "Elements": [
+          {
+            "Name": "roll_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/roll_suite/ROLLbase.png"
+          },
+          {
+            "Name": "center_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "59",
+            "MarginLeft": "77",
+            "Resource": "Assets_theme3/roll_suite/ROLLbasedisplayD.png"
+          },
           {
             "Name": "roll_progress",
-            "Type": "RollView",			
+            "Type": "RollView",
             "Alignment": "Top_Center",
-			"MarginTop": "35",
-			"StartAngle": "-90",
-			"EndAngle": "90",
-			"Font": "misc",
-			"Subscribe": "ROLL"
+            "MarginTop": "35",
+            "StartAngle": "-90",
+            "EndAngle": "90",
+            "Font": "misc",
+            "Subscribe": "ROLL"
           },
           {
             "Name": "roll_value",
-            "Type": "NumberView",			
+            "Type": "NumberView",
             "Alignment": "Top_Center",
-			"MarginTop": "104",
-			"Font": "38px_white",
-			"Subscribe": "ROLL"
-          }		  
-		]
-	  },		  
-	  {
-	    "Name": "map",
-		"Width": "326",
-		"Height": "350",
-		"Alignment": "Top_Right",
-		"MarginRight": "10",
-		"MarginTop": "30",
-		"Elements": [
-		  {
-		    "Name": "map_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Left",
-			"MarginTop": "0",
-			"MarginLeft": "0",
-			"Resource": "Assets_theme3/gps_suite/GPSbase.png"	
-		  },
+            "MarginTop": "104",
+            "Font": "38px_white",
+            "Subscribe": "ROLL"
+          }
+        ]
+      },
+      {
+        "Name": "map",
+        "Width": "326",
+        "Height": "350",
+        "Alignment": "Top_Right",
+        "MarginRight": "10",
+        "MarginTop": "30",
+        "Elements": [
+          {
+            "Name": "map_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/gps_suite/GPSbase.png"
+          },
           {
             "Name": "map_content",
             "Type": "MapView",
-			"Style": "Ellipse",
-			"Alignment": "Top_Left",
-			"MarginTop": "24",
-			"MarginLeft": "0",
-			"Radius": "140",           
+            "Style": "Ellipse",
+            "Alignment": "Top_Left",
+            "MarginTop": "24",
+            "MarginLeft": "0",
+            "Radius": "140",
             "Subscribe": "MAP"
-          },		  
-		  {
-		    "Name": "arrow_background",
-			"Type": "StaticImage",
-			"Alignment": "Top_Center",
-			"MarginTop": "32",
-			"Resource": "Assets_theme3/gps_suite/orientation.png"	
-		  },
-		  {
-			"Name": "north_dot",
-			"Type": "DotView",
-			"Style": "Circle",
-			"Alignment": "Top_Center",
-			"MarginTop": "24",
-			"StartAngle": "0",
-			"EndAngle": "359",
-			"Radius": "140",
-			"Resource": "Assets_theme3/gps_suite/north.png",
-			"Subscribe": "MAP_ANGLE"
-		  }		  
-		]
-	  }  
-	]
+          },
+          {
+            "Name": "arrow_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Center",
+            "MarginTop": "32",
+            "Resource": "Assets_theme3/gps_suite/orientation.png"
+          },
+          {
+            "Name": "north_dot",
+            "Type": "DotView",
+            "Style": "Circle",
+            "Alignment": "Top_Center",
+            "MarginTop": "24",
+            "StartAngle": "0",
+            "EndAngle": "359",
+            "Radius": "140",
+            "Resource": "Assets_theme3/gps_suite/north.png",
+            "Subscribe": "MAP_ANGLE"
+          }
+        ]
+      }
+    ]
   }
 }
   

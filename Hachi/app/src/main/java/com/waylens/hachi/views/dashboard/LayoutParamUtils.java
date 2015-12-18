@@ -4,7 +4,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.skin.Element;
+import com.waylens.hachi.views.dashboard.models.Element;
 
 
 /**

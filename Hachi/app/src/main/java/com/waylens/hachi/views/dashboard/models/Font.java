@@ -1,4 +1,4 @@
-package com.waylens.hachi.skin;
+package com.waylens.hachi.views.dashboard.models;
 
 import android.content.Context;
 import android.graphics.Bitmap;

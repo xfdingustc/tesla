@@ -1,9 +1,7 @@
-package com.waylens.hachi.skin;
+package com.waylens.hachi.views.dashboard.models;
 
 import android.content.Context;
 import android.util.Xml;
-
-import com.orhanobut.logger.Logger;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
