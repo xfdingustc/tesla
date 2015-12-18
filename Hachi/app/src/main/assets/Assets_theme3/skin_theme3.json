@@ -930,8 +930,10 @@
             "Name": "rpm_center",
             "Type": "StaticImage",
             "Alignment": "Bottom_Left",
-            "MarginBottom": "64",
-            "MarginLeft": "64",
+            "Width": "128",
+            "Height": "92",
+            "MarginBottom": "59",
+            "MarginLeft": "59",
             "Resource": "Assets_theme3/rpm_suite/RPMbasedisplayD.png"
           },
           {

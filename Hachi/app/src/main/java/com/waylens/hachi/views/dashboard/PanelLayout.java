@@ -8,12 +8,12 @@ import android.widget.RelativeLayout;
 
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.views.MapView;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.models.Element;
 import com.waylens.hachi.views.dashboard.models.Panel;
-import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.views.ProgressImageView;
+import com.waylens.hachi.views.dashboard.views.RingProgressImageView;
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ public class PanelLayout extends RelativeLayout {
     private EventBus mEventBus;
 
     private MapView mMapView = null;
-
 
 
     public PanelLayout(Context context, Panel panel, EventBus eventBus) {
@@ -65,20 +64,25 @@ public class PanelLayout extends RelativeLayout {
                 break;
             case Element.ELEMENT_TYPE_MAP:
                 elementView = new MapView(getContext(), Constants.MAP_BOX_ACCESS_TOKEN);
-                ((MapView)elementView).setStyleUrl(Style.DARK);
-                ((MapView)elementView).setZoomLevel(14);
-                ((MapView)elementView).setLogoVisibility(View.GONE);
-                ((MapView)elementView).onCreate(null);
+                ((MapView) elementView).setStyleUrl(Style.DARK);
+                ((MapView) elementView).setZoomLevel(14);
+                ((MapView) elementView).setLogoVisibility(View.GONE);
+                ((MapView) elementView).onCreate(null);
                 if (element.getSubscribe() != null) {
                     MapViewEventSubscriber mapViewEventSubscriber = new MapViewEventSubscriber(
-                        (MapView)elementView);
+                        (MapView) elementView);
                     mEventBus.register(mapViewEventSubscriber);
                 }
-                mMapView = (MapView)elementView;
+                mMapView = (MapView) elementView;
 
                 break;
             case Element.ELEMENT_TYPE_PROGRESS_IMAGE:
-                elementView = new ProgressImageView(getContext(), element);
+                String style = element.getAttribute(Element.ATTRIBUTE_STYLE);
+                if (style == null) {
+                    elementView = new ProgressImageView(getContext(), element);
+                } else if(style.equals(ProgressImageView.PROGRESS_IMAGE_STYLE_RING_STR)){
+                    elementView = new RingProgressImageView(getContext(), element);
+                }
                 break;
         }
 
