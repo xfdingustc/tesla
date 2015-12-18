@@ -136,6 +136,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
             if (item != null) {
                 OBDData obdData = (OBDData) item.object;
                 mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
+                mEventBus.postEvent(EventConstants.EVENT_MPH, (float) obdData.speed);
                 //setRawData(DashboardView.RPM, (float) obdData.rpm / 1000);
                 //setRawData(DashboardView.MPH, obdData.speed);
             }

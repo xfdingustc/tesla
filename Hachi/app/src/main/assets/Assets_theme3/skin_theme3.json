@@ -814,17 +814,12 @@
             "MarginLeft": "0",
             "Resource": "Assets_theme3/speed_suite/speedbase.png"
           },
-          {
-            "Name": "speed_center",
-            "Type": "StaticImage",
-            "Alignment": "Bottom_Left",
-            "MarginBottom": "95",
-            "MarginLeft": "95",
-            "Resource": "Assets_theme3/speed_suite/speeddisplayD.png"
-          },
+
           {
             "Name": "speed_record1",
             "Type": "ProgressImage",
+            "Width": "232",
+            "Height": "232",
             "Style": "Ring",
             "Direction": "Outgoing",
             "Alignment": "Bottom_Left",
@@ -835,26 +830,13 @@
             "Max": "100",
             "Min": "0",
             "Resource": "Assets_theme3/speed_suite/speeddisplayY1.png",
-            "Subscribe": "MAX_MPH"
-          },
-          {
-            "Name": "speed_record2",
-            "Type": "ProgressImage",
-            "Style": "Ring",
-            "Direction": "Outgoing",
-            "Alignment": "Bottom_Left",
-            "MarginBottom": "22",
-            "MarginLeft": "22",
-            "StartRadius": "116",
-            "EndRadius": "140",
-            "Max": "200",
-            "Min": "100",
-            "Resource": "Assets_theme3/speed_suite/speeddisplayR1.png",
-            "Subscribe": "MAX_MPH"
+            "Subscribe": "MPH"
           },
           {
             "Name": "speed_progress1",
             "Type": "ProgressImage",
+            "Width": "232",
+            "Height": "232",
             "Style": "Ring",
             "Direction": "Outgoing",
             "Alignment": "Bottom_Left",
@@ -868,19 +850,12 @@
             "Subscribe": "MPH"
           },
           {
-            "Name": "speed_progress2",
-            "Type": "ProgressImage",
-            "Style": "Ring",
-            "Direction": "Outgoing",
+            "Name": "speed_center",
+            "Type": "StaticImage",
             "Alignment": "Bottom_Left",
-            "MarginBottom": "46",
-            "MarginLeft": "46",
-            "StartRadius": "116",
-            "EndRadius": "140",
-            "Max": "200",
-            "Min": "100",
-            "Resource": "Assets_theme3/speed_suite/speeddisplayR2.png",
-            "Subscribe": "MPH"
+            "MarginBottom": "95",
+            "MarginLeft": "95",
+            "Resource": "Assets_theme3/speed_suite/speeddisplayD.png"
           },
           {
             "Name": "speed_value",
