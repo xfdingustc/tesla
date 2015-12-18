@@ -177,6 +177,10 @@ public class VideoTrimmer extends FrameLayout {
         return mVideoTrimmerController.getMaxValue();
     }
 
+    public double getRange() {
+        return mVideoTrimmerController.getRange();
+    }
+
     public long getLeftValue() {
         return mVideoTrimmerController.mStart;
     }

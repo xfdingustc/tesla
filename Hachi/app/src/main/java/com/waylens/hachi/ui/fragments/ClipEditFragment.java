@@ -34,6 +34,7 @@ import com.transee.common.GPSRawData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.skin.Panel;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -44,6 +45,7 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.views.OnViewDragListener;
+import com.waylens.hachi.ui.views.TriangleView;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
@@ -116,6 +118,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @Bind(R.id.control_panel)
     View mControlPanel;
+
+    @Bind(R.id.triangle_view)
+    TriangleView mTriangleView;
 
     @Bind(R.id.drag_container)
     DragLayout mDragLayout;
@@ -190,7 +195,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mImageLoader.displayVdbImage(clipPos, videoCover);
         mSurfaceView.getHolder().addCallback(this);
-        mControlPanel.setVisibility(View.INVISIBLE);
+        //mControlPanel.setVisibility(View.INVISIBLE);
         mDragLayout.setOnViewDragListener(new OnViewDragListener() {
             @Override
             public void onStartDragging() {
@@ -253,6 +258,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @OnClick(R.id.btn_play)
     public void playVideo() {
+        mControlPanel.setTranslationX(0);
         if (isInPlaybackState() && !mMediaPlayer.isPlaying()) {
             resumeVideo();
         } else {
@@ -341,6 +347,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 }
                 mSeekToPosition = progress;
                 mTypedPosition.clear();
+                calculateMidOfTrimmer(start, end);
             }
 
             @Override
@@ -363,6 +370,40 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             }
         });
 
+    }
+
+    void calculateMidOfTrimmer(long start, long end) {
+        if (mOldClipStartTimeMs == start && mOldClipEndTimeMs == end) {
+            return;
+        }
+        double range = mVideoTrimmer.getRange();
+        int panelMid = mControlPanel.getLeft() + (mTriangleView.getLeft() + mTriangleView.getWidth() / 2);
+        int screenWidth = mVideoTrimmer.getWidth();
+        int mid = (int) (((end + start) / 2 - mVideoTrimmer.getMinValue()) / range * screenWidth);
+        int x = mid - panelMid;
+        int x1 = x;
+        int x2 = 0;
+        if (x < -mControlPanel.getLeft()) {
+            x1 = -mControlPanel.getLeft();
+            x2 = x - x1;
+            if (x2 < -mTriangleView.getLeft()) {
+                x2 = -mTriangleView.getLeft();
+            }
+            mTriangleView.setTranslationX(x2);
+        } else if (x > (screenWidth - mControlPanel.getRight())) {
+            x1 = screenWidth - mControlPanel.getRight();
+            x2 = x - x1;
+            if (x2 > mControlPanel.getWidth() - mTriangleView.getRight()) {
+                x2 = mControlPanel.getWidth() - mTriangleView.getRight();
+            }
+            mTriangleView.setTranslationX(x2);
+        }
+        Log.e("test", "X: " + x + "; x1: " + x1 + "; x2: " + x2);
+        mControlPanel.setTranslationX(x1);
+        Log.e("test", "Mid: " + mid + "; PanelMid: " + panelMid);
+        Log.e("test", "Panel: " + mControlPanel.getLeft()
+                + "; triangle: " + mTriangleView.getLeft()
+                + "; triangle w: " + mTriangleView.getWidth());
     }
 
     void loadClipInfo() {
@@ -559,7 +600,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     void showController(int timeout) {
         mBtnPlay.setVisibility(View.VISIBLE);
-        //TODO mControlPanel.setVisibility(View.VISIBLE);
+        mControlPanel.setVisibility(View.VISIBLE);
         if (timeout > 0) {
             fadeOutControllers(timeout);
         }

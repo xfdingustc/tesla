@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
@@ -41,11 +40,11 @@ import butterknife.Bind;
 public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener, TabSwitchable {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final int TAB_HOME_TAG = 0;
-    private static final int TAB_LIVE_TAG = 1;
-    private static final int TAB_HIGHLIGHTS_TAG = 2;
-    private static final int TAB_NOTIFICATIONS_TAG = 3;
-    private static final int TAB_ACCOUNT_TAG = 4;
+    private static final int TAB_TAG_BOOKMARK = 0;
+    private static final int TAB_TAG_STORIES = 1;
+    private static final int TAB_TAG_LIVE_VIEW = 2;
+    private static final int TAB_TAG_SOCIAL = 3;
+    private static final int TAB_TAG_SETTINGS = 4;
 
     @Bind(R.id.main_tabs)
     TabLayout mMainTabs;
@@ -58,11 +57,11 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     String apkFile;
 
     private BottomTab mTabList[] = {
-            new BottomTab(R.drawable.ic_live, TAB_LIVE_TAG),
-            new BottomTab(R.drawable.ic_home, TAB_HOME_TAG),
-            new BottomTab(R.drawable.ic_highlights, TAB_HIGHLIGHTS_TAG),
-            new BottomTab(R.drawable.ic_notifications, TAB_NOTIFICATIONS_TAG),
-            new BottomTab(R.drawable.ic_account, TAB_ACCOUNT_TAG)
+            new BottomTab(R.drawable.tab_bookmark, R.drawable.tab_bookmark_active, TAB_TAG_BOOKMARK),
+            new BottomTab(R.drawable.tab_stories, R.drawable.tab_stories_active, TAB_TAG_STORIES),
+            new BottomTab(R.drawable.tab_liveview, R.drawable.tab_liveview_active, TAB_TAG_LIVE_VIEW),
+            new BottomTab(R.drawable.tab_social, R.drawable.tab_social_active, TAB_TAG_SOCIAL),
+            new BottomTab(R.drawable.tab_settings, R.drawable.tab_settings_active, TAB_TAG_SETTINGS)
     };
 
     private Bundle fragmentArgs;
@@ -127,24 +126,34 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
         setContentView(R.layout.activity_main);
         for (int i = 0; i < mTabList.length; i++) {
             TabLayout.Tab tab = mMainTabs.newTab();
-            tab.setIcon(mTabList[i].mIconRes);
-            tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
-                    PorterDuff.Mode.MULTIPLY);
+            tab.setIcon(mTabList[i].normalIconRes);
+            //tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
+            //        PorterDuff.Mode.MULTIPLY);
             mMainTabs.addTab(tab);
         }
 
         mMainTabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
-                        PorterDuff.Mode.MULTIPLY);
-                switchFragment(mTabList[tab.getPosition()].mTabTag);
+                BottomTab bottomTab = mTabList[tab.getPosition()];
+                if (bottomTab.activeIconRes == 0) {
+                    tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
+                            PorterDuff.Mode.MULTIPLY);
+                } else {
+                    tab.setIcon(bottomTab.activeIconRes);
+                }
+                switchFragment(bottomTab.tabTag);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
-                        PorterDuff.Mode.MULTIPLY);
+                BottomTab bottomTab = mTabList[tab.getPosition()];
+                if (bottomTab.activeIconRes == 0) {
+                    tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
+                            PorterDuff.Mode.MULTIPLY);
+                } else {
+                    tab.setIcon(bottomTab.normalIconRes);
+                }
             }
 
             @Override
@@ -153,13 +162,10 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
             }
         });
 
-        switchFragment(TAB_HOME_TAG);
-        TabLayout.Tab tab = mMainTabs.getTabAt(0);
-        tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
-                PorterDuff.Mode.MULTIPLY);
-
         if (!SessionManager.getInstance().isLoggedIn()) {
-            mMainTabs.getTabAt(4).select();
+            mMainTabs.getTabAt(TAB_TAG_SOCIAL).select();
+        } else {
+            mMainTabs.getTabAt(TAB_TAG_LIVE_VIEW).select();
         }
     }
 
@@ -174,22 +180,22 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
         Fragment fragment;
         switch (tag) {
-            case TAB_HOME_TAG:
+            case TAB_TAG_SOCIAL:
                 fragment = new HomeFragment();
                 break;
-            case TAB_LIVE_TAG:
+            case TAB_TAG_BOOKMARK:
                 fragment = new LiveFragment();
                 if (fragmentArgs != null) {
                     fragment.setArguments(fragmentArgs);
                 }
                 break;
-            case TAB_HIGHLIGHTS_TAG:
+            case TAB_TAG_LIVE_VIEW:
                 fragment = new CameraListFragment();
                 break;
-            case TAB_NOTIFICATIONS_TAG:
+            case TAB_TAG_STORIES:
                 fragment = new NotificationFragment();
                 break;
-            case TAB_ACCOUNT_TAG:
+            case TAB_TAG_SETTINGS:
                 fragment = new AccountFragment();
                 break;
             default:
@@ -322,12 +328,14 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     }
 
     static class BottomTab {
-        private int mIconRes;
-        private int mTabTag;
+        int normalIconRes;
+        int activeIconRes;
+        int tabTag;
 
-        public BottomTab(int iconRes, int tabTag) {
-            this.mIconRes = iconRes;
-            this.mTabTag = tabTag;
+        public BottomTab(int normalIconRes, int activeIconRes, int tabTag) {
+            this.normalIconRes = normalIconRes;
+            this.activeIconRes = activeIconRes;
+            this.tabTag = tabTag;
         }
     }
 }
