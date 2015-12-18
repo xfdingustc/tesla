@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import com.waylens.hachi.views.dashboard.models.Element;
-import com.waylens.hachi.views.dashboard.models.ElementProgressImage;
 
 /**
  * Created by Xiaofei on 2015/12/18.
@@ -14,12 +13,15 @@ public class ProgressImageView extends ElementView {
     private float mProgressMax;
     private float mProgress = 0;
 
-    private int mStyle;
+    private static final String PROGRESS_IMAGE_STYLE_RING_STR = "Ring";
+
+    private String mStyle = null;
 
     public ProgressImageView(Context context, Element element) {
         super(context, element);
-        mProgressMax = ((ElementProgressImage) element).getMax();
-        mStyle = ((ElementProgressImage) element).getStyle();
+        mProgressMax = Integer.parseInt(element.getAttribute(Element.ATTRIBUTE_MAX));
+        mStyle = element.getAttribute(Element.ATTRIBUTE_STYLE);
+
     }
 
     public void setProgress(float progress) {
@@ -42,19 +44,13 @@ public class ProgressImageView extends ElementView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        switch (mStyle) {
-            case ElementProgressImage.PROGRESS_IMAGE_STYLE_DEFAULT:
-                onDrawDefaultProgressImage(canvas);
-                break;
-            case ElementProgressImage.PROGRESS_IMAGE_STYLE_RING:
-                onDrawRingProgressImage(canvas);
-                break;
+        if (mStyle == null) {
+            onDrawDefaultProgressImage(canvas);
+        } else if (mStyle.equals(PROGRESS_IMAGE_STYLE_RING_STR)) {
+            onDrawRingProgressImage(canvas);
         }
 
-
-
     }
-
 
 
     private void onDrawDefaultProgressImage(Canvas canvas) {

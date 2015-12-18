@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.views.MapView;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.views.dashboard.models.Element;
 import com.waylens.hachi.views.dashboard.models.Panel;
@@ -20,6 +21,7 @@ import java.util.List;
  * Created by Xiaofei on 2015/11/20.
  */
 public class PanelLayout extends RelativeLayout {
+    private static final String TAG = PanelLayout.class.getSimpleName();
     private Panel mPanel;
     private EventBus mEventBus;
 

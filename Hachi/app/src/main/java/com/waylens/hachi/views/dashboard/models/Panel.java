@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Panel extends Element {
     private static final String TAG = Panel.class.getSimpleName();
-    private static final String TAG_TYPE = "Type";
+
     private static final String TAG_ELEMENTS = "Elements";
 
     protected List<Element> mElementList = new ArrayList<>();
@@ -32,11 +32,9 @@ public class Panel extends Element {
             JSONArray elements = object.getJSONArray(TAG_ELEMENTS);
             for (int i = 0; i < elements.length(); i++) {
                 JSONObject elementObj = elements.getJSONObject(i);
-                String elementType = elementObj.getString(TAG_TYPE);
-                Logger.t(TAG).d("Create one element type: " + elementType);
-                Element element = Element.ElementFractory.createElement(elementType);
-                if (element != null) {
-                    element.parse(elementObj);
+                Element element = new Element();
+                element.parse(elementObj);
+                if (element.mType != ELEMENT_TYPE_UNKNOWN) {
                     mElementList.add(element);
                 } else {
                     Logger.t(TAG).d("Unknown element");

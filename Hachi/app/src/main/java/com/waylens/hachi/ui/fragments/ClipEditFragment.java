@@ -34,7 +34,6 @@ import com.transee.common.GPSRawData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.skin.Panel;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbImageLoader;
