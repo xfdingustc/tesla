@@ -136,6 +136,15 @@ public class CameraControlActivity2 extends BaseActivity {
 
 
     @Override
+    protected void onDestroy() {
+        if (mVdtCamera != null) {
+            mVdtCamera.setOnStateChangeListener(null);
+        }
+        super.onDestroy();
+
+    }
+
+    @Override
     protected void init() {
         super.init();
 
@@ -170,8 +179,8 @@ public class CameraControlActivity2 extends BaseActivity {
         mOverlayUpdateThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (mUpdateThread) {
 
+                while (mUpdateThread) {
                     mDashboard.update(System.currentTimeMillis());
                     try {
                         Thread.sleep(100);
