@@ -49,6 +49,8 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
     private MediaPlayer mPlayer;
     private boolean mDragging;
     private ProgressHandler mHandler;
+    private long mMinValue;
+    private long mMaxValue;
 
     public VideoPlayerProgressBar(Context context) {
         super(context);
@@ -194,6 +196,18 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
         return (int) offset;
     }
 
+    public int setProgress(int currentPosition, int duration) {
+        double offset = (1.0f * currentPosition - mMinValue) / duration * getLength();
+        int cellWidth = getCellUnit();
+        if (cellWidth == 0) {
+            return (int) offset;
+        }
+        int position = (int) offset / cellWidth;
+        int remainder = (int) offset % cellWidth;
+        mLayoutManager.scrollToPositionWithOffset(position + 1, mScreenWidth / 2 - remainder);
+        return (int) offset;
+    }
+
     @Override
     public boolean isInProgress() {
         try {
@@ -202,6 +216,11 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
             Log.e("test", "", e);
             return false;
         }
+    }
+
+    public void setInitRangeValues(long minClipStartTimeMs, long maxClipEndTimeMs) {
+        mMinValue = minClipStartTimeMs;
+        mMaxValue = maxClipEndTimeMs;
     }
 
     @SuppressLint("ViewConstructor")

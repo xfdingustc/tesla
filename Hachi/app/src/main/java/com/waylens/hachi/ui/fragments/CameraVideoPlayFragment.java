@@ -76,6 +76,9 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     GaugeView mObdView;
     MapView mMapView;
 
+    PlaybackUrl mPlaybackUrl;
+    long mInitPosition;
+
     private MarkerOptions mMarkerOptions;
     private PolylineOptions mPolylineOptions;
     private boolean mIsReplay;
@@ -137,36 +140,55 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         super.onDestroyView();
     }
 
+    protected void setProgress(int currentPosition, int duration) {
+        if (mPlaybackUrl.realTimeMs != 0
+                && mInitPosition == 0
+                && currentPosition != 0
+                && Math.abs(mPlaybackUrl.realTimeMs - currentPosition) < 200) {
+            mInitPosition = mPlaybackUrl.realTimeMs;
+            Log.e("test", "setProgress - deviation: " + Math.abs(mPlaybackUrl.realTimeMs - currentPosition));
+        }
+        //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
+        //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
+        int position = currentPosition;
+        if (duration > 0) {
+            //Log.e("test", "setProgress - position: " + position + "; real: "
+            //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
+            if (mInitPosition == 0) {
+                position = currentPosition + (int) mPlaybackUrl.realTimeMs;
+            }
+        }
+
+        displayOverlay(position);
+        if (mProgressListener != null) {
+            mProgressListener.onProgress(position, duration);
+        }
+    }
+
     @Override
     protected void displayOverlay(int position) {
         if (mObdView == null) {
             return;
         }
-        //TODO: On some devices, such as XiaoMi4, MediaPlayer.getCurrentPosition values start from clip.startTimeMs, instead of 0
-        //Should fix it.
-        RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position - (int)mClip.getStartTimeMs());
+        
+        RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
         if (obd != null && obd.object != null) {
             mObdView.setSpeed(((OBDData) obd.object).speed);
             mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
         } else {
             Logger.t(TAG).e("Position: " + position + "; mOBDPosition: " + mTypedPosition
-                .get(RawDataBlock.RAW_DATA_ODB));
+                    .get(RawDataBlock.RAW_DATA_ODB));
         }
 
         RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
         if (gps != null) {
-            if (mIsReplay) {
-                mIsReplay = false;
-                mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
-            }
             GPSRawData gpsRawData = (GPSRawData) gps.object;
-            mMapView.removeAllAnnotations();
+            mMarkerOptions.getMarker().remove();
             LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
             mMarkerOptions.position(point);
-            mPolylineOptions.add(point);
             mMapView.addMarker(mMarkerOptions);
-            mMapView.addPolyline(mPolylineOptions);
             mMapView.setCenterCoordinate(point);
+            mMapView.setDirection(-gpsRawData.track);
         }
     }
 
@@ -176,15 +198,16 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         RawDataItem rawDataItem = null;
         while (pos < raw.dataSize.length) {
             RawDataItem tmp = raw.getRawDataItem(pos);
-            if (raw.timeOffsetMs[pos] == position) {
+            long timeOffsetMs = raw.timeOffsetMs[pos] + raw.header.mRequestedTimeMs;
+            if (timeOffsetMs == position) {
                 rawDataItem = tmp;
-                mTypedPosition.put(RawDataBlock.RAW_DATA_ODB, pos);
+                mTypedPosition.put(dataType, pos);
                 break;
-            } else if (raw.timeOffsetMs[pos] < position) {
+            } else if (timeOffsetMs < position) {
                 rawDataItem = tmp;
-                mTypedPosition.put(RawDataBlock.RAW_DATA_ODB, pos);
+                mTypedPosition.put(dataType, pos);
                 pos++;
-            } else if (raw.timeOffsetMs[pos] > position) {
+            } else if (timeOffsetMs > position) {
                 break;
             }
         }
@@ -279,6 +302,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         mMapView.setStyleUrl(Style.DARK);
         mMapView.setZoomLevel(14);
         mMapView.setLogoVisibility(View.GONE);
+        mMapView.setCompassEnabled(false);
         mMapView.onCreate(null);
         GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataBlock.RAW_DATA_GPS).getRawDataItem(0).object;
         SpriteFactory spriteFactory = new SpriteFactory(mMapView);
@@ -288,11 +312,24 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         mMapView.addMarker(mMarkerOptions);
         mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
         mMapView.setCenterCoordinate(firstPoint);
+        mMapView.setDirection(firstGPS.track);
         mMapView.addPolyline(mPolylineOptions);
 
         int defaultSize = ViewUtils.dp2px(96, getResources());
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
         mVideoContainer.addView(mMapView, params);
+        buildFullPath();
+    }
+
+    void buildFullPath() {
+        RawDataBlock raw = mTypedRawData.get(RawDataBlock.RAW_DATA_GPS);
+        for (int i = 0; i < raw.dataSize.length; i++) {
+            RawDataItem item = raw.getRawDataItem(i);
+            GPSRawData gpsRawData = (GPSRawData) item.object;
+            LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
+            mPolylineOptions.add(point);
+        }
+        mMapView.addPolyline(mPolylineOptions);
     }
 
     void loadPlayURL() {
@@ -308,6 +345,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(mClip.cid, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override
             public void onResponse(PlaybackUrl playbackUrl) {
+                mPlaybackUrl = playbackUrl;
                 setSource(playbackUrl.url);
                 mProgressLoading.setVisibility(View.GONE);
             }

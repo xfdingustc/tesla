@@ -1,8 +1,10 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -12,7 +14,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.annotations.SpriteFactory;
@@ -122,6 +123,29 @@ public class MomentPlayFragment extends VideoPlayFragment {
         mMomentOBD.clear();
         mMomentAcc.clear();
         mRawDataState = RAW_DATA_STATE_UNKNOWN;
+    }
+
+    protected void setProgress(int position, int duration) {
+        Log.e("test", "duration: " + duration + "; position: " + position);
+        if (mProgressBar != null) {
+            if (duration > 0) {
+                // use long to avoid overflow
+                long pos = MAX_PROGRESS * position / duration;
+                mProgressBar.setProgress((int) pos);
+            }
+            //int percent = mMediaPlayer.getBufferPercentage();
+            //mProgress.setSecondaryProgress(percent * 10);
+        }
+        updateVideoTime(position, duration);
+        displayOverlay(position);
+        if (mProgressListener != null) {
+            mProgressListener.onProgress(position, duration);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateVideoTime(int position, int duration) {
+        mVideoTime.setText(DateUtils.formatElapsedTime(position / 1000) + " / " + DateUtils.formatElapsedTime(duration / 1000));
     }
 
     @Override

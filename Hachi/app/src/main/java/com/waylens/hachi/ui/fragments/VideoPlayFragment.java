@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
@@ -12,7 +11,6 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -60,7 +58,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private static final int STATE_PLAYBACK_COMPLETED = 5;
 
     private static final int DEFAULT_TIMEOUT = 3000;
-    private static final long MAX_PROGRESS = 1000L;
+    static final long MAX_PROGRESS = 1000L;
 
     protected static final int RAW_DATA_STATE_UNKNOWN = -1;
     protected static final int RAW_DATA_STATE_READY = 0;
@@ -102,27 +100,29 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     protected OnViewDragListener mDragListener;
 
-    private SurfaceHolder mSurfaceHolder;
+    SurfaceHolder mSurfaceHolder;
 
     private MediaPlayer mMediaPlayer;
 
-    private VideoHandler mHandler;
+    VideoHandler mHandler;
 
-    private String mVideoSource;
+    String mVideoSource;
 
-    private HashMap<String, String> mHeaders;
+    HashMap<String, String> mHeaders;
 
-    private boolean mIsFullScreen;
+    boolean mIsFullScreen;
 
-    private ViewGroup mRootView;
+    ViewGroup mRootView;
 
-    private int mPausePosition;
-    private int mVideoWidth;
-    private int mVideoHeight;
-    private boolean mSurfaceDestroyed;
+    int mPausePosition;
+    int mVideoWidth;
+    int mVideoHeight;
+    boolean mSurfaceDestroyed;
 
     HandlerThread mNonUIThread;
     Handler mNonUIHandler;
+
+    OnProgressListener mProgressListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -339,18 +339,9 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
         }
         showController(DEFAULT_TIMEOUT);
-        int duration = mMediaPlayer.getDuration();
-        int position = mMediaPlayer.getCurrentPosition();
-        updateVideoTime(position, duration);
-
         if (mTargetState == STATE_PLAYING) {
             start();
         }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void updateVideoTime(int position, int duration) {
-        mVideoTime.setText(DateUtils.formatElapsedTime(position / 1000) + " / " + DateUtils.formatElapsedTime(duration / 1000));
     }
 
     @Override
@@ -421,6 +412,11 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mTargetState = STATE_PLAYBACK_COMPLETED;
         mBtnPlay.setImageResource(R.drawable.ic_refresh_white_48dp);
         showController(0);
+
+        int position = mMediaPlayer.getCurrentPosition();
+        int duration = mMediaPlayer.getDuration();
+        setProgress(position, duration);
+
         mHandler.removeMessages(SHOW_PROGRESS);
         onPlayCompletion();
     }
@@ -472,32 +468,23 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     void showProgress() {
-        setProgress();
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-            mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 20);
-        }
-    }
-
-    protected void setProgress() {
         if (mMediaPlayer == null) {
             return;
         }
         int position = mMediaPlayer.getCurrentPosition();
         int duration = mMediaPlayer.getDuration();
-        //Log.e("test", "duration: " + duration + "; position: " + position);
-
-        if (mProgressBar != null) {
-            if (duration > 0) {
-                // use long to avoid overflow
-                long pos = MAX_PROGRESS * position / duration;
-                mProgressBar.setProgress((int) pos);
-            }
-            //int percent = mMediaPlayer.getBufferPercentage();
-            //mProgress.setSecondaryProgress(percent * 10);
+        setProgress(position, duration);
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 20);
         }
-        updateVideoTime(position, duration);
-        displayOverlay(position);
     }
+
+
+    public void setOnProgressListener(OnProgressListener listener) {
+        mProgressListener = listener;
+    }
+
+    protected abstract void setProgress(int position, int duration);
 
     protected abstract void displayOverlay(int position);
 
@@ -522,5 +509,9 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
                     break;
             }
         }
+    }
+
+    public interface OnProgressListener {
+        void onProgress(int position, int duration);
     }
 }

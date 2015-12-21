@@ -24,7 +24,7 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 12/18/15.
  */
-public class EnhancementFragment extends Fragment implements FragmentNavigator {
+public class EnhancementFragment extends Fragment implements FragmentNavigator, VideoPlayFragment.OnProgressListener {
 
     @Bind(R.id.clip_seek_bar)
     VideoPlayerProgressBar mSeekBar;
@@ -36,7 +36,11 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
     ImageView videoCover;
 
     Clip mClip;
+    //long mMinClipStartTimeMs;
+    //long mMaxClipEndTimeMs;
     VdbImageLoader mImageLoader;
+
+    CameraVideoPlayFragment mVideoPlayFragment;
 
 
     public static EnhancementFragment newInstance(Clip clip) {
@@ -44,6 +48,8 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
         fragment.mClip = clip;
+        //fragment.mMinClipStartTimeMs = minClipStartTimeMs;
+        //fragment.mMaxClipEndTimeMs = maxClipEndTimeMs;
         return fragment;
     }
 
@@ -72,6 +78,15 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        if (mVideoPlayFragment != null) {
+            getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
+            mVideoPlayFragment = null;
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         ButterKnife.unbind(this);
         super.onDestroyView();
@@ -79,8 +94,9 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
 
     @OnClick(R.id.btn_play)
     void playVideo() {
-        CameraVideoPlayFragment fragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mClip, null);
-        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, fragment).commit();
+        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mClip, null);
+        mVideoPlayFragment.setOnProgressListener(this);
+        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
         videoCover.setVisibility(View.INVISIBLE);
     }
 
@@ -91,6 +107,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
 
     private void initSeekBar() {
         final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        mSeekBar.setInitRangeValues(mClip.getStartTimeMs(), mClip.getStartTimeMs() + mClip.getStartTimeMs());
         mSeekBar.setClip(mClip, mImageLoader);
         mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
             @Override
@@ -113,7 +130,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
 
     void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
         clipPos.setClipTimeMs(clipTimeMs);
-        //mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
+        mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
     }
 
     void close() {
@@ -122,7 +139,17 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
 
     @Override
     public boolean onInterceptBackPressed() {
+        if (VideoPlayFragment.fullScreenPlayer != null) {
+            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
+            return true;
+        }
         close();
         return true;
+    }
+
+    @Override
+    public void onProgress(int position, int duration) {
+        mSeekBar.setProgress(position, duration);
+
     }
 }
