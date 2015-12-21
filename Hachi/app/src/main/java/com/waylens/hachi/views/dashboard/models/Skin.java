@@ -86,11 +86,9 @@ public class Skin {
         try {
             for (int i = 0; i < fontsArray.length(); i++) {
                 JSONObject fontObj = fontsArray.getJSONObject(i);
-                Logger.t(TAG).d("Adding font");
                 String name = fontObj.getString(TAG_FONT_NAME);
                 Font font = new Font();
                 font.parse(fontObj);
-                Logger.t(TAG).d("Add font: " + name);
                 mFonts.put(name, font);
             }
         } catch (JSONException e) {

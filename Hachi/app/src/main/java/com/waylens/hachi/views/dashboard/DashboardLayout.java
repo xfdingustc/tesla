@@ -151,6 +151,10 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         String date = format.format(pts);
         mEventBus.postEvent(EventConstants.EVENT_TIME, date);
+
+        SimpleDateFormat ampmFormat = new SimpleDateFormat("a");
+        String ampm = ampmFormat.format(pts);
+        mEventBus.postEvent(EventConstants.EVENT_TIME_APMP, ampm);
     }
 
 

@@ -6,21 +6,20 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Handler;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.views.dashboard.models.Element;
 import com.waylens.hachi.views.dashboard.models.Font;
 import com.waylens.hachi.views.dashboard.models.SkinManager;
-
-import java.text.SimpleDateFormat;
 
 /**
  * Created by Xiaofei on 2015/12/21.
  */
 public class StringView extends ElementView {
+    private static final String TAG = StringView.class.getSimpleName();
     private Font mFont;
     private String mValue;
 
     private Handler mHandler;
-
 
 
     public StringView(Context context, Element element) {
@@ -35,11 +34,14 @@ public class StringView extends ElementView {
         int width = 0;
         int height = 0;
 
-        Bitmap numberResource = mFont.getFontResource("0");
-        width = numberResource.getWidth() * 6;
-        width += mElement.getWidth() * 2;
+        if (mValue != null) {
+            width = mFont.getFontWidth() * mValue.length() / mFont.getCharNumber();
+            height = mFont.getFontHeight();
+        }
 
-        height = mElement.getHeight();
+        if (mFont.getCharNumber() != 1) {
+            //Logger.t(TAG).d("width = " + width + "height = " + height);
+        }
         setMeasuredDimension(width, height);
     }
 
@@ -52,18 +54,28 @@ public class StringView extends ElementView {
         }
         int widthOffset = 0;
 
-        for (int i = 0; i < mValue.length(); i++) {
-            char number = mValue.charAt(i);
-            Bitmap resource;
-            Rect dstRect;
+        if (mFont.getCharNumber() == 1) {
+            for (int i = 0; i < mValue.length(); i++) {
+                char number = mValue.charAt(i);
+                Bitmap resource;
+                Rect dstRect;
 
-            resource = mFont.getFontResource(String.valueOf(number));
+                resource = mFont.getFontResource(String.valueOf(number));
+                if (resource != null) {
+
+                    dstRect = new Rect(widthOffset, 0, widthOffset + resource.getWidth(),
+                        resource.getHeight());
+                    canvas.drawBitmap(resource, null, dstRect, null);
+                    widthOffset += resource.getWidth();
+                }
+            }
+        } else {
+            Bitmap resource = mFont.getFontResource(mValue);
             if (resource != null) {
-
-                dstRect = new Rect(widthOffset, 0, widthOffset + resource.getWidth(),
+                Rect dstRect = new Rect(widthOffset, 0, widthOffset + resource.getWidth(),
                     resource.getHeight());
                 canvas.drawBitmap(resource, null, dstRect, null);
-                widthOffset += resource.getWidth();
+
             }
         }
 
@@ -72,7 +84,7 @@ public class StringView extends ElementView {
 
     @Override
     public void onEvent(Object value) {
-        mValue = (String)value;
+        mValue = (String) value;
         mHandler.post(new Runnable() {
             @Override
             public void run() {

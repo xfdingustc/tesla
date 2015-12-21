@@ -272,6 +272,9 @@ public class Element {
     }
 
     public Bitmap getResource() {
+        if (mResourceUrl == null) {
+            return null;
+        }
         if (mBitmap == null) {
             try {
                 Context context = Hachi.getContext();

@@ -167,43 +167,61 @@
       },
       {
         "Font": "38px_white",
-        "Numbers": [
+        "Resources": [
           {
-            "0": "Assets_theme3/numbers/white/38px/number-0.png"
+            "key": "degress",
+            "value": "Assets_theme3/numbers/white/38px/degree.png"
           },
           {
-            "1": "Assets_theme3/numbers/white/38px/number-1.png"
+            "key": ".",
+            "value": "Assets_theme3/numbers/white/38px/dot.png"
           },
           {
-            "2": "Assets_theme3/numbers/white/38px/number-2.png"
+            "key": ":",
+            "value": "Assets_theme3/numbers/white/38px/colon.png"
           },
           {
-            "3": "Assets_theme3/numbers/white/38px/number-3.png"
+            "key": "0",
+            "value": "Assets_theme3/numbers/white/38px/number-0.png"
           },
           {
-            "4": "Assets_theme3/numbers/white/38px/number-4.png"
+            "key": "1",
+            "value": "Assets_theme3/numbers/white/38px/number-1.png"
           },
           {
-            "5": "Assets_theme3/numbers/white/38px/number-5.png"
+            "key": "2",
+            "value": "Assets_theme3/numbers/white/38px/number-2.png"
           },
           {
-            "6": "Assets_theme3/numbers/white/38px/number-6.png"
+            "key": "3",
+            "value": "Assets_theme3/numbers/white/38px/number-3.png"
           },
           {
-            "7": "Assets_theme3/numbers/white/38px/number-7.png"
+            "key": "4",
+            "value": "Assets_theme3/numbers/white/38px/number-4.png"
           },
           {
-            "8": "Assets_theme3/numbers/white/38px/number-8.png"
+            "key": "5",
+            "value": "Assets_theme3/numbers/white/38px/number-5.png"
           },
           {
-            "9": "Assets_theme3/numbers/white/38px/number-9.png"
+            "key": "6",
+            "value": "Assets_theme3/numbers/white/38px/number-6.png"
+          },
+          {
+            "key": "7",
+            "value": "Assets_theme3/numbers/white/38px/number-7.png"
+          },
+          {
+            "key": "8",
+            "value": "Assets_theme3/numbers/white/38px/number-8.png"
+          },
+          {
+            "key": "9",
+            "value": "Assets_theme3/numbers/white/38px/number-9.png"
           }
-        ],
-        "Punctuations": {
-          "degree": "Assets_theme3/numbers/white/38px/degree.png",
-          "dot": "Assets_theme3/numbers/white/38px/dot.png",
-          ":": "Assets_theme3/numbers/white/38px/colon.png"
-        }
+        ]
+
       },
       {
         "Font": "50px_white",
@@ -495,24 +513,31 @@
       },
       {
         "Font": "misc",
-        "Numbers": [
+        "CharNum": "2",
+        "Resources": [
           {
-            "am": "Assets_theme3/timedate_suite/AM.png"
+            "key": "AM",
+            "value": "Assets_theme3/timedate_suite/AM.png"
           },
           {
-            "pm": "Assets_theme3/timedate_suite/PM.png"
+            "key": "PM",
+            "value": "Assets_theme3/timedate_suite/PM.png"
           },
           {
-            "plus": "Assets_theme3/boost_suite/boostdisplayPlus.png"
+            "key": "plus",
+            "value": "Assets_theme3/boost_suite/boostdisplayPlus.png"
           },
           {
-            "minus": "Assets_theme3/boost_suite/boostdisplayMinus.png"
+            "key": "minus",
+            "value": "Assets_theme3/boost_suite/boostdisplayMinus.png"
           },
           {
-            "roll_texture": "Assets_theme3/roll_suite/ROLLdisplayTYI"
+            "key": "roll_texture",
+            "value": "Assets_theme3/roll_suite/ROLLdisplayTYI.png"
           },
           {
-            "roll_separate": "Assets_theme3/roll_suite/ROLLdisplayYs.png"
+            "key": "roll_separate",
+            "value": "Assets_theme3/roll_suite/ROLLdisplayYs.png"
           }
         ]
       },
@@ -693,16 +718,18 @@
             "MarginBottom": "26",
             "MarginLeft": "35",
             "Font": "38px_white",
-            "Subscribe": "CLIP_TIME_AP"
+            "Subscribe": "CLIP_TIME"
           },
           {
             "Name": "am_pm",
-            "Type": "AMPMView",
+            "Type": "StringView",
+            "Width": "28",
+            "Height": "14",
             "Alignment": "Bottom_Left",
             "MarginBottom": "50",
             "MarginLeft": "185",
             "Font": "misc",
-            "Subscribe": "CLIP_TIME_AP"
+            "Subscribe": "CLIP_TIME_AMPM"
           },
           {
             "Name": "month",
