@@ -133,7 +133,7 @@ public class CameraControlActivity2 extends BaseActivity {
             @Override
             public void run() {
                 while(true) {
-                    mDashboard.update(-1);
+                    mDashboard.update(System.currentTimeMillis());
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {

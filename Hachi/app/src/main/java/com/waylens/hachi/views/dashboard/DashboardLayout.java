@@ -22,6 +22,7 @@ import com.waylens.hachi.views.dashboard.models.Skin;
 import com.waylens.hachi.views.dashboard.models.SkinManager;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -107,7 +108,10 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         updateAccData(pts);
         updateGpsData(pts);
         updateObdData(pts);
+        updateCurrentTime(pts);
     }
+
+
 
     private void updateAccData(long pts) {
         if (mAdapter != null) {
@@ -141,6 +145,12 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
                 //setRawData(DashboardView.MPH, obdData.speed);
             }
         }
+    }
+
+    private void updateCurrentTime(long pts) {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        String date = format.format(pts);
+        mEventBus.postEvent(EventConstants.EVENT_TIME, date);
     }
 
 

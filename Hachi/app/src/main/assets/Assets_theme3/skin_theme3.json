@@ -197,14 +197,13 @@
           },
           {
             "9": "Assets_theme3/numbers/white/38px/number-9.png"
-          },
-          {
-            "degree": "Assets_theme3/numbers/white/38px/degree.png"
-          },
-          {
-            "dot": "Assets_theme3/numbers/white/38px/dot.png"
           }
-        ]
+        ],
+        "Punctuations": {
+          "degree": "Assets_theme3/numbers/white/38px/degree.png",
+          "dot": "Assets_theme3/numbers/white/38px/dot.png",
+          ":": "Assets_theme3/numbers/white/38px/colon.png"
+        }
       },
       {
         "Font": "50px_white",
@@ -687,12 +686,13 @@
           },
           {
             "Name": "time",
-            "Type": "TimeView",
+            "Width": "144",
+            "Height": "38",
+            "Type": "StringView",
             "Alignment": "Bottom_Left",
             "MarginBottom": "26",
             "MarginLeft": "35",
             "Font": "38px_white",
-            "Resource": "Assets_theme3/numbers/white/38px/colon.png",
             "Subscribe": "CLIP_TIME_AP"
           },
           {
@@ -814,7 +814,6 @@
             "MarginLeft": "0",
             "Resource": "Assets_theme3/speed_suite/speedbase.png"
           },
-
           {
             "Name": "speed_record1",
             "Type": "ProgressImage",

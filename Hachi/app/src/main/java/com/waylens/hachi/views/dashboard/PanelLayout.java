@@ -13,8 +13,11 @@ import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.models.Element;
 import com.waylens.hachi.views.dashboard.models.Panel;
 import com.waylens.hachi.views.dashboard.subscribers.MapViewEventSubscriber;
+import com.waylens.hachi.views.dashboard.views.ElementView;
+import com.waylens.hachi.views.dashboard.views.NumberView;
 import com.waylens.hachi.views.dashboard.views.ProgressImageView;
 import com.waylens.hachi.views.dashboard.views.RingProgressImageView;
+import com.waylens.hachi.views.dashboard.views.StringView;
 
 import java.util.List;
 
@@ -81,14 +84,23 @@ public class PanelLayout extends RelativeLayout {
                 String style = element.getAttribute(Element.ATTRIBUTE_STYLE);
                 if (style == null) {
                     elementView = new ProgressImageView(getContext(), element);
-                } else if(style.equals(ProgressImageView.PROGRESS_IMAGE_STYLE_RING_STR)){
+                } else if (style.equals(ProgressImageView.PROGRESS_IMAGE_STYLE_RING_STR)) {
                     elementView = new RingProgressImageView(getContext(), element);
                 }
 
-                if (elementView != null && element.getSubscribe() != null) {
-                    mEventBus.register((ProgressImageView)elementView);
-                }
+
                 break;
+            case Element.ELEMENT_TYPE_NUMBER_VIEW:
+                elementView = new NumberView(getContext(), element);
+                break;
+            case Element.ELEMENT_TYPE_STRING:
+                elementView = new StringView(getContext(), element);
+                break;
+        }
+
+        if (elementView != null && element.getSubscribe() != null
+            && (elementView instanceof ElementView)) {
+            mEventBus.register((ElementView) elementView);
         }
 
         if (elementView != null) {

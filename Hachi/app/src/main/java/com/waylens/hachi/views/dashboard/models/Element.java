@@ -23,11 +23,13 @@ public class Element {
     public static final int ElEMENT_TYPE_ROTATE_PROGRESS_IMAGE = 3;
     public static final int ELEMENT_TYPE_NUMBER_VIEW = 4;
     public static final int ELEMENT_TYPE_MAP = 5;
+    public static final int ELEMENT_TYPE_STRING = 6;
 
 
     private static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
     private static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
     private static final String ELEMENT_TYPE_MAP_STR = "Map";
+    private static final String ELEMENT_TYPE_STRING_STR = "StringView";
 
     private static final String TAG_TYPE = "Type";
     private static final String TAG_WIDTH = "Width";
@@ -235,10 +237,12 @@ public class Element {
     private int getElementType(String type) {
         if (type.equals(ELEMENT_TYPE_STATIC_IMAGE_STR)) {
             return ELEMENT_TYPE_STATIC_IMAGE;
-        } else if(type.equals(ELEMENT_TYPE_PROGRESS_IMAGE_STR)) {
+        } else if (type.equals(ELEMENT_TYPE_PROGRESS_IMAGE_STR)) {
             return ELEMENT_TYPE_PROGRESS_IMAGE;
-        } else if(type.equals(ELEMENT_TYPE_MAP_STR)) {
+        } else if (type.equals(ELEMENT_TYPE_MAP_STR)) {
             return ELEMENT_TYPE_MAP;
+        } else if (type.equals(ELEMENT_TYPE_STRING_STR)) {
+            return ELEMENT_TYPE_STRING;
         }
         return 0;
     }

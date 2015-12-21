@@ -22,7 +22,7 @@ public class Skin {
 
     private static final String TAG_DASHBOARD = "Dashboard";
     private static final String TAG_FONTS = "Fonts";
-    private static final String TAG_FONT_NAME = "FontName";
+    private static final String TAG_FONT_NAME = "Font";
     private static final String TAG_PANELS = "Panels";
     private static final String TAG_TYPE = "Type";
 
@@ -86,9 +86,11 @@ public class Skin {
         try {
             for (int i = 0; i < fontsArray.length(); i++) {
                 JSONObject fontObj = fontsArray.getJSONObject(i);
+                Logger.t(TAG).d("Adding font");
                 String name = fontObj.getString(TAG_FONT_NAME);
                 Font font = new Font();
                 font.parse(fontObj);
+                Logger.t(TAG).d("Add font: " + name);
                 mFonts.put(name, font);
             }
         } catch (JSONException e) {

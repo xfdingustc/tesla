@@ -7,4 +7,5 @@ public class EventConstants {
     public static final String EVENT_GPS = "GPS";
     public static final String EVENT_RPM = "RPM";
     public static final String EVENT_MPH = "MPH";
+    public static final String EVENT_TIME = "CLIP_TIME_AP";
 }
