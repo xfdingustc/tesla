@@ -29,21 +29,26 @@ public class StringView extends ElementView {
         mHandler = new Handler();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = 0;
-        int height = 0;
-
-        if (mValue != null) {
-            width = mFont.getFontWidth() * mValue.length() / mFont.getCharNumber();
-            height = mFont.getFontHeight();
-        }
-
-        if (mFont.getCharNumber() != 1) {
-            //Logger.t(TAG).d("width = " + width + "height = " + height);
-        }
-        setMeasuredDimension(width, height);
-    }
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        if (mFont.getCharNumber() != 1) {
+//            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//            return;
+//        } else {
+//            int width = 0;
+//            int height = 0;
+//
+//            if (mValue != null) {
+//                width = mFont.getFontWidth() * mValue.length() / mFont.getCharNumber();
+//                height = mFont.getFontHeight();
+//            }
+//
+//            Logger.t(TAG).d("WWWWWWWWWWWWWWW: " + width + " HHHHHHHHHHHHHHH: " + height);
+//
+//
+//            setMeasuredDimension(width, height);
+//        }
+//    }
 
 
     @Override
@@ -84,7 +89,11 @@ public class StringView extends ElementView {
 
     @Override
     public void onEvent(Object value) {
+        if (mValue != null && mValue.equals(value)) {
+            return;
+        }
         mValue = (String) value;
+
         mHandler.post(new Runnable() {
             @Override
             public void run() {

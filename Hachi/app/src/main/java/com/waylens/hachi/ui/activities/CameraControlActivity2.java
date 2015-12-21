@@ -2,19 +2,17 @@ package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.text.Layout;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -42,6 +40,12 @@ public class CameraControlActivity2 extends BaseActivity {
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
+
+    private int mCurrentOrientation;
+
+    private boolean mUpdateThread = true;
+    private Thread mOverlayUpdateThread;
+    private Object mUpdateThreadFence = new Object();
 
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
@@ -77,6 +81,9 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.btnShowOverlay)
     ImageButton mBtnShowOverlay;
 
+    @Bind(R.id.btnFullscreen)
+    ImageButton mBtnFullScreen;
+
 
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
@@ -95,6 +102,19 @@ public class CameraControlActivity2 extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.btnFullscreen)
+    public void onBtnFullscreenClick() {
+        toggleFullScreen();
+    }
+
+    private void toggleFullScreen() {
+        if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,8 +125,15 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        startUpdateThread();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopUpdateThread();
+    }
+
 
     @Override
     protected void init() {
@@ -116,7 +143,18 @@ public class CameraControlActivity2 extends BaseActivity {
     }
 
     private void initViews() {
+        int mCurrentOrientation = getResources().getConfiguration().orientation;
+        if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        }
         setContentView(R.layout.activity_camera_control2);
+
+        if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mBtnFullScreen.setColorFilter(getResources().getColor(R.color.style_color_primary));
+        } else {
+            mBtnFullScreen.clearColorFilter();
+        }
         setupToolbar();
         initCameraPreview();
 
@@ -125,14 +163,15 @@ public class CameraControlActivity2 extends BaseActivity {
         mRawDataAdapter = new SimulatorRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
 
-        startUpdateThread();
+
     }
 
     private void startUpdateThread() {
-        new Thread(new Runnable() {
+        mOverlayUpdateThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while (mUpdateThread) {
+
                     mDashboard.update(System.currentTimeMillis());
                     try {
                         Thread.sleep(100);
@@ -141,8 +180,25 @@ public class CameraControlActivity2 extends BaseActivity {
                     }
                 }
 
+                synchronized (mUpdateThreadFence) {
+                    mUpdateThreadFence.notify();
+                }
+
             }
-        }).start();
+        });
+        mOverlayUpdateThread.start();
+    }
+
+    private void stopUpdateThread() {
+        mUpdateThread = false;
+        synchronized (mUpdateThreadFence) {
+            try {
+                mUpdateThreadFence.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 
@@ -181,8 +237,8 @@ public class CameraControlActivity2 extends BaseActivity {
     private void initDashboardLayout() {
         int width = mLiveViewLayout.getMeasuredWidth();
         int height = mLiveViewLayout.getMeasuredHeight();
-        float widthScale = (float)width / DashboardLayout.NORMAL_WIDTH;
-        float heightScale = (float)height / DashboardLayout.NORMAL_HEIGHT;
+        float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
+        float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
         mDashboard.setScaleX(widthScale);
         mDashboard.setScaleY(heightScale);
     }

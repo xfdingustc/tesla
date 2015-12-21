@@ -141,8 +141,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
                 OBDData obdData = (OBDData) item.object;
                 mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
                 mEventBus.postEvent(EventConstants.EVENT_MPH, (float) obdData.speed);
-                //setRawData(DashboardView.RPM, (float) obdData.rpm / 1000);
-                //setRawData(DashboardView.MPH, obdData.speed);
+
             }
         }
     }
@@ -155,6 +154,14 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         SimpleDateFormat ampmFormat = new SimpleDateFormat("a");
         String ampm = ampmFormat.format(pts);
         mEventBus.postEvent(EventConstants.EVENT_TIME_APMP, ampm);
+
+        SimpleDateFormat monthFormat = new SimpleDateFormat("mm");
+        String month = monthFormat.format(pts);
+        mEventBus.postEvent(EventConstants.EVENT_MONTH, month);
+
+        SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+        String day = dayFormat.format(pts);
+        mEventBus.postEvent(EventConstants.EVENT_DAY, day);
     }
 
 

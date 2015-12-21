@@ -221,7 +221,6 @@
             "value": "Assets_theme3/numbers/white/38px/number-9.png"
           }
         ]
-
       },
       {
         "Font": "50px_white",
@@ -266,42 +265,54 @@
       },
       {
         "Font": "30px_yellow",
-        "Numbers": [
+        "Resources": [
           {
-            "0": "Assets_theme3/numbers/yellow/30px/number-0.png"
+            "key": "0",
+            "value": "Assets_theme3/numbers/yellow/30px/number-0.png"
           },
           {
-            "1": "Assets_theme3/numbers/yellow/30px/number-1.png"
+            "key": "1",
+            "value": "Assets_theme3/numbers/yellow/30px/number-1.png"
           },
           {
-            "2": "Assets_theme3/numbers/yellow/30px/number-2.png"
+            "key": "2",
+            "value": "Assets_theme3/numbers/yellow/30px/number-2.png"
           },
           {
-            "3": "Assets_theme3/numbers/yellow/30px/number-3.png"
+            "key": "3",
+            "value": "Assets_theme3/numbers/yellow/30px/number-3.png"
           },
           {
-            "4": "Assets_theme3/numbers/yellow/30px/number-4.png"
+            "key": "4",
+            "value": "Assets_theme3/numbers/yellow/30px/number-4.png"
           },
           {
-            "5": "Assets_theme3/numbers/yellow/30px/number-5.png"
+            "key": "5",
+            "value": "Assets_theme3/numbers/yellow/30px/number-5.png"
           },
           {
-            "6": "Assets_theme3/numbers/yellow/30px/number-6.png"
+            "key": "6",
+            "value": "Assets_theme3/numbers/yellow/30px/number-6.png"
           },
           {
-            "7": "Assets_theme3/numbers/yellow/30px/number-7.png"
+            "key": "7",
+            "value": "Assets_theme3/numbers/yellow/30px/number-7.png"
           },
           {
-            "8": "Assets_theme3/numbers/yellow/30px/number-8.png"
+            "key": "8",
+            "value": "Assets_theme3/numbers/yellow/30px/number-8.png"
           },
           {
-            "9": "Assets_theme3/numbers/yellow/30px/number-9.png"
+            "key": "9",
+            "value": "Assets_theme3/numbers/yellow/30px/number-9.png"
           },
           {
-            "degree": "Assets_theme3/numbers/yellow/30px/degree.png"
+            "key": "degree",
+            "value": "Assets_theme3/numbers/yellow/30px/degree.png"
           },
           {
-            "dot": "Assets_theme3/numbers/yellow/30px/dot.png"
+            "key": "dot",
+            "value": "Assets_theme3/numbers/yellow/30px/dot.png"
           }
         ]
       },
@@ -472,42 +483,55 @@
       },
       {
         "Font": "month",
-        "Numbers": [
+        "CharNum": "3",
+        "Resources": [
           {
-            "0": "Assets_theme3/month/JAN.png"
+            "key": "00",
+            "value": "Assets_theme3/month/JAN.png"
           },
           {
-            "1": "Assets_theme3/month/FEB.png"
+            "key": "01",
+            "value": "Assets_theme3/month/FEB.png"
           },
           {
-            "2": "Assets_theme3/month/MAR.png"
+            "key": "02",
+            "value": "Assets_theme3/month/MAR.png"
           },
           {
-            "3": "Assets_theme3/month/APR.png"
+            "key": "03",
+            "value": "Assets_theme3/month/APR.png"
           },
           {
-            "4": "Assets_theme3/month/MAY.png"
+            "key": "04",
+            "value": "Assets_theme3/month/MAY.png"
           },
           {
-            "5": "Assets_theme3/month/JUN.png"
+            "key": "05",
+            "value": "Assets_theme3/month/JUN.png"
           },
           {
-            "6": "Assets_theme3/month/JUL.png"
+            "key": "06",
+            "value": "Assets_theme3/month/JUL.png"
           },
           {
-            "7": "Assets_theme3/month/AUG.png"
+            "key": "07",
+            "value": "Assets_theme3/month/AUG.png"
           },
           {
-            "8": "Assets_theme3/month/SEP.png"
+            "key": "08",
+            "value": "Assets_theme3/month/SEP.png"
           },
           {
-            "9": "Assets_theme3/month/OCT.png"
+            "key": "09",
+            "value": "Assets_theme3/month/OCT.png"
           },
           {
-            "10": "Assets_theme3/month/NOV.png"
+            "key": "10",
+            "value": "Assets_theme3/month/NOV.png"
           },
           {
-            "11": "Assets_theme3/month/DEC.png"
+            "key": "11",
+            "value": "Assets_theme3/month/DEC.png"
           }
         ]
       },
@@ -733,7 +757,9 @@
           },
           {
             "Name": "month",
-            "Type": "MonthView",
+            "Type": "StringView",
+            "Width": "26",
+            "Height": "10",
             "Alignment": "Top_Left",
             "MarginLeft": "275",
             "MarginTop": "30",
@@ -741,13 +767,15 @@
             "Subscribe": "CLIP_MONTH"
           },
           {
-            "Name": "date",
-            "Type": "NumberView",
+            "Name": "day",
+            "Type": "StringView",
+            "Width": "28",
+            "Height": "30",
             "Alignment": "Top_Left",
             "MarginLeft": "275",
             "MarginTop": "50",
             "Font": "30px_yellow",
-            "Subscribe": "CLIP_DATE"
+            "Subscribe": "CLIP_DAY"
           }
         ]
       },
