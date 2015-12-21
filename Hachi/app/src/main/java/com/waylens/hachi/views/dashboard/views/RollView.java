@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.os.Handler;
 
 import com.waylens.hachi.views.dashboard.models.Element;
 import com.waylens.hachi.views.dashboard.models.Font;
@@ -24,6 +25,8 @@ public class RollView extends ElementView {
     private Bitmap mRollSeparator = null;
     private Bitmap mRotatedSeparator = null;
 
+    private Handler mHandler;
+
     public RollView(Context context, Element element) {
         super(context, element);
         String fontName = mElement.getAttribute(Element.ATTRIBUTE_FONT);
@@ -34,6 +37,8 @@ public class RollView extends ElementView {
         matrix.postRotate(180);
         mRotatedSeparator = Bitmap.createBitmap(mRollSeparator, 0, 0, mRollSeparator.getWidth(),
             mRollSeparator.getHeight(), matrix,true);
+
+        mHandler = new Handler();
     }
 
 
@@ -62,7 +67,7 @@ public class RollView extends ElementView {
 
     @Override
     public void onEvent(Object value) {
-        float rotation = (Float)value;
+        int rotation = (int)value;
         setRotation(rotation);
     }
 }

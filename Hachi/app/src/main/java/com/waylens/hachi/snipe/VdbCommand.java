@@ -16,6 +16,7 @@ public class VdbCommand {
     private byte[] mCmdBuffer = new byte[VDB_CMD_SIZE];
     private int mSendIndex = 0;
     private int mCommndCode;
+    private int mAcknowledgeCode = -1;
 
     private VdbCommand() {
 
@@ -40,6 +41,14 @@ public class VdbCommand {
 
     public int getCommandCode() {
         return mCommndCode;
+    }
+
+    public void setAcknowledgeCode(int code) {
+        mAcknowledgeCode = code;
+    }
+
+    public int getAcknowledgeCode() {
+        return mAcknowledgeCode;
     }
 
     private final void writei32(int value) {
@@ -182,6 +191,23 @@ public class VdbCommand {
         public static final int DOWNLOAD_FOR_IMAGE = 1 << 1;
         public static final int DOWNLOAD_FIRST_LOOP = 1 << 2;
 
+        protected static final int MSG_START = 0x1000;
+
+        protected static final int MSG_VdbReady = MSG_START + 0;
+        protected static final int MSG_VdbUnmounted = MSG_START + 1;
+
+        protected static final int MSG_ClipInfo = MSG_START + 2;
+        protected static final int MSG_ClipRemoved = MSG_START + 3;
+
+        protected static final int MSG_BufferSpaceLow = MSG_START + 4;
+        protected static final int MSG_BufferFull = MSG_START + 5;
+        protected static final int MSG_CopyState = MSG_START + 6;
+        protected static final int MSG_RawData = MSG_START + 7;
+        protected static final int MSG_PlaylistCleared = MSG_START + 8;
+        protected static final int VDB_MSG_MarkLiveClipInfo = MSG_START + 32;
+
+        protected static final int MSG_MAGIC = 0xFAFBFCFF;
+
         /*
         CMD_GetUploadUrl
          */
@@ -317,6 +343,22 @@ public class VdbCommand {
                     .writeInt32(0)
                     .writeInt32(0)
                     .build();
+        }
+
+        public static VdbCommand createCmdSetRawDataOption(int dataType) {
+            VdbCommand command = new Builder()
+                .writeCmdCode(CMD_SetRawDataOption, 0)
+                .writeInt32(dataType)
+                .build();
+            command.setAcknowledgeCode(MSG_RawData);
+            return command;
+        }
+
+        public static VdbCommand createDummyGetRawData() {
+            VdbCommand command = new Builder()
+                .build();
+            command.setAcknowledgeCode(MSG_RawData);
+            return command;
         }
     }
 }

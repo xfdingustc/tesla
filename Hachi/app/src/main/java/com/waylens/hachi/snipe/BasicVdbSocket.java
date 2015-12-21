@@ -15,8 +15,13 @@ public class BasicVdbSocket implements VdbSocket {
 
         try {
             sendCmd(vdbRequest);
-            return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getCommandCode(),
-                vdbRequest.getVdbConnection());
+            if (vdbRequest.getVdbCommand().getAcknowledgeCode() != -1) {
+                return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getAcknowledgeCode
+                    (), vdbRequest.getVdbConnection());
+            } else {
+                return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getCommandCode(),
+                    vdbRequest.getVdbConnection());
+            }
         } catch (Exception e) {
             throw new SnipeError();
         }

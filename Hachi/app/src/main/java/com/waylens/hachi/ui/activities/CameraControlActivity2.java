@@ -152,7 +152,7 @@ public class CameraControlActivity2 extends BaseActivity {
     }
 
     private void initViews() {
-        int mCurrentOrientation = getResources().getConfiguration().orientation;
+        mCurrentOrientation = getResources().getConfiguration().orientation;
         if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 

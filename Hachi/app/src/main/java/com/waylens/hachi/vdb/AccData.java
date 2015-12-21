@@ -50,7 +50,8 @@ public class AccData {
 
     @Override
     public String toString() {
-        return String.format("AccX[%d], AccY[%d], AccZ[%d]", accX, accY, accZ);
+        return String.format("AccX[%d], AccY[%d], AccZ[%d], EulerRoll[%d]", accX, accY, accZ,
+            euler_roll);
     }
 
     public static AccData parse(byte[] data) {

@@ -39,7 +39,8 @@ public class VdbAcknowledge {
         this.notModified = notModified;
         this.mVdbConnection = vdbConnection;
         this.mCmdCode = cmdCode;
-        Log.e("test", String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]", statusCode, cmdCode));
+        Logger.t(TAG).d(String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]",
+            statusCode, cmdCode));
         while (true) {
             mReceiveBuffer = mVdbConnection.receivedAck();
             parseAcknowledge();
@@ -121,8 +122,12 @@ public class VdbAcknowledge {
         mMsgIndex += n;
     }
 
+    public byte[] readByteArray() {
+        int size = readi32();
+        return readByteArray(size);
+    }
 
-    public final byte[] readByteArray(int size) {
+    public byte[] readByteArray(int size) {
         byte[] result = new byte[size];
         System.arraycopy(mReceiveBuffer, mMsgIndex, result, 0, size);
         mMsgIndex += size;

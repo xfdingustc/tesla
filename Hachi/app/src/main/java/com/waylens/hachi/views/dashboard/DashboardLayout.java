@@ -118,7 +118,8 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
             RawDataItem item = mAdapter.getAccDataItem(pts);
             if (item != null) {
                 AccData accData = (AccData) item.object;
-                Logger.t(TAG).d("Update gforce left as: " + (float) accData.accX * 5);
+                //Logger.t(TAG).d("Update gforce left as: " + (float) accData.accX * 5);
+                mEventBus.postEvent(EventConstants.EVENT_ROLL, -accData.euler_roll / 1000);
                 //setRawData(DashboardView.GFORCE_LEFT, (float) accData.accX * 5);
                 //setRawData(DashboardView.GFORCE_RIGHT, (float) accData.accY * 5);
             }
