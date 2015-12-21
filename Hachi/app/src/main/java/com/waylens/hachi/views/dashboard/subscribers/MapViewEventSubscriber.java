@@ -8,7 +8,7 @@ import com.mapbox.mapboxsdk.annotations.SpriteFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
-import com.transee.common.GPSRawData;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.R;
 import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.eventbus.EventConstants;
@@ -49,7 +49,8 @@ public class MapViewEventSubscriber implements EventBus.EventSubscriber {
     @Override
     public void onEvent(Object value) {
         GPSRawData gpsRawData = (GPSRawData) value;
-        Logger.t(TAG).d("Lat: " + gpsRawData.coord.lat_orig + " Lng: " + gpsRawData.coord.lng_orig);
+        //Logger.t(TAG).d("Lat: " + gpsRawData.coord.lat_orig + " Lng: " + gpsRawData.coord
+         //   .lng_orig);
         mMapView.removeAllAnnotations();
         LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
 
@@ -59,5 +60,6 @@ public class MapViewEventSubscriber implements EventBus.EventSubscriber {
         mMapView.addMarker(mMarkerOptions);
         mMapView.addPolyline(mPolylineOptions);
         mMapView.setCenterCoordinate(point);
+
     }
 }

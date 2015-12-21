@@ -85,42 +85,54 @@
       },
       {
         "Font": "26px_white",
-        "Numbers": [
+        "Resources": [
           {
-            "0": "Assets_theme3/numbers/white/26px/number-0.png"
+            "key": "0",
+            "value": "Assets_theme3/numbers/white/26px/number-0.png"
           },
           {
-            "1": "Assets_theme3/numbers/white/26px/number-1.png"
+            "key": "1",
+            "value": "Assets_theme3/numbers/white/26px/number-1.png"
           },
           {
-            "2": "Assets_theme3/numbers/white/26px/number-2.png"
+            "key": "2",
+            "value": "Assets_theme3/numbers/white/26px/number-2.png"
           },
           {
-            "3": "Assets_theme3/numbers/white/26px/number-3.png"
+            "key": "3",
+            "value": "Assets_theme3/numbers/white/26px/number-3.png"
           },
           {
-            "4": "Assets_theme3/numbers/white/26px/number-4.png"
+            "key": "4",
+            "value": "Assets_theme3/numbers/white/26px/number-4.png"
           },
           {
-            "5": "Assets_theme3/numbers/white/26px/number-5.png"
+            "key": "5",
+            "value": "Assets_theme3/numbers/white/26px/number-5.png"
           },
           {
-            "6": "Assets_theme3/numbers/white/26px/number-6.png"
+            "key": "6",
+            "value": "Assets_theme3/numbers/white/26px/number-6.png"
           },
           {
-            "7": "Assets_theme3/numbers/white/26px/number-7.png"
+            "key": "7",
+            "value": "Assets_theme3/numbers/white/26px/number-7.png"
           },
           {
-            "8": "Assets_theme3/numbers/white/26px/number-8.png"
+            "key": "8",
+            "value": "Assets_theme3/numbers/white/26px/number-8.png"
           },
           {
-            "9": "Assets_theme3/numbers/white/26px/number-9.png"
+            "key": "9",
+            "value": "Assets_theme3/numbers/white/26px/number-9.png"
           },
           {
-            "degree": "Assets_theme3/numbers/white/26px/degree.png"
+            "key": "degree",
+            "value": "Assets_theme3/numbers/white/26px/degree.png"
           },
           {
-            "dot": "Assets_theme3/numbers/white/26px/dot.png"
+            "key": "dot",
+            "value": "Assets_theme3/numbers/white/26px/dot.png"
           }
         ]
       },
@@ -224,42 +236,54 @@
       },
       {
         "Font": "50px_white",
-        "Numbers": [
+        "Resources": [
           {
-            "0": "Assets_theme3/numbers/white/50px/number-0.png"
+            "key": "0",
+            "value": "Assets_theme3/numbers/white/50px/number-0.png"
           },
           {
-            "1": "Assets_theme3/numbers/white/50px/number-1.png"
+            "key": "1",
+            "value": "Assets_theme3/numbers/white/50px/number-1.png"
           },
           {
-            "2": "Assets_theme3/numbers/white/50px/number-2.png"
+            "key": "2",
+            "value": "Assets_theme3/numbers/white/50px/number-2.png"
           },
           {
-            "3": "Assets_theme3/numbers/white/50px/number-3.png"
+            "key": "3",
+            "value": "Assets_theme3/numbers/white/50px/number-3.png"
           },
           {
-            "4": "Assets_theme3/numbers/white/50px/number-4.png"
+            "key": "4",
+            "value": "Assets_theme3/numbers/white/50px/number-4.png"
           },
           {
-            "5": "Assets_theme3/numbers/white/50px/number-5.png"
+            "key": "5",
+            "value": "Assets_theme3/numbers/white/50px/number-5.png"
           },
           {
-            "6": "Assets_theme3/numbers/white/50px/number-6.png"
+            "key": "6",
+            "value": "Assets_theme3/numbers/white/50px/number-6.png"
           },
           {
-            "7": "Assets_theme3/numbers/white/50px/number-7.png"
+            "key": "7",
+            "value": "Assets_theme3/numbers/white/50px/number-7.png"
           },
           {
-            "8": "Assets_theme3/numbers/white/50px/number-8.png"
+            "key": "8",
+            "value": "Assets_theme3/numbers/white/50px/number-8.png"
           },
           {
-            "9": "Assets_theme3/numbers/white/50px/number-9.png"
+            "key": "9",
+            "value": "Assets_theme3/numbers/white/50px/number-9.png"
           },
           {
-            "degree": "Assets_theme3/numbers/white/50px/degree.png"
+            "key": "degree",
+            "value": "Assets_theme3/numbers/white/50px/degree.png"
           },
           {
-            "dot": "Assets_theme3/numbers/white/50px/dot.png"
+            "key": ".",
+            "value": "Assets_theme3/numbers/white/50px/dot.png"
           }
         ]
       },
@@ -913,12 +937,14 @@
           },
           {
             "Name": "speed_value",
-            "Type": "NumberView",
+            "Type": "StringView",
+            "Width": "72",
+            "Height": "50",
             "Alignment": "Bottom_Left",
             "MarginBottom": "147",
             "MarginLeft": "138",
             "Font": "50px_white",
-            "Subscribe": "MPH"
+            "Subscribe": "MPH_NUMBER"
           }
         ]
       },
@@ -967,12 +993,14 @@
           },
           {
             "Name": "rpm_value",
-            "Type": "FloatNumberView",
+            "Type": "StringView",
+            "Width": "24",
+            "Height": "30",
             "Alignment": "Top_Center",
-            "MarginTop": "104",
+            "MarginTop": "100",
             "Font": "38px_white",
             "FontDecimal": "26px_white",
-            "Subscribe": "RPM"
+            "Subscribe": "RPM_NUMBER"
           }
         ]
       },
@@ -995,6 +1023,8 @@
           {
             "Name": "center_background",
             "Type": "StaticImage",
+            "Width": "92",
+            "Height": "92",
             "Alignment": "Top_Left",
             "MarginTop": "59",
             "MarginLeft": "77",
@@ -1003,6 +1033,8 @@
           {
             "Name": "roll_progress",
             "Type": "RollView",
+            "Width": "176",
+            "Height": "176",
             "Alignment": "Top_Center",
             "MarginTop": "35",
             "StartAngle": "-90",
@@ -1039,12 +1071,14 @@
           {
             "Name": "map_content",
             "Type": "MapView",
+            "Width": "280",
+            "Height": "280",
             "Style": "Ellipse",
-            "Alignment": "Top_Left",
+            "Alignment": "Center",
             "MarginTop": "24",
             "MarginLeft": "0",
             "Radius": "140",
-            "Subscribe": "MAP"
+            "Subscribe": "GPS"
           },
           {
             "Name": "arrow_background",

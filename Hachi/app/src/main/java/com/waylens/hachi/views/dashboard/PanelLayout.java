@@ -17,6 +17,7 @@ import com.waylens.hachi.views.dashboard.views.ElementView;
 import com.waylens.hachi.views.dashboard.views.NumberView;
 import com.waylens.hachi.views.dashboard.views.ProgressImageView;
 import com.waylens.hachi.views.dashboard.views.RingProgressImageView;
+import com.waylens.hachi.views.dashboard.views.RollView;
 import com.waylens.hachi.views.dashboard.views.StringView;
 
 import java.util.List;
@@ -78,6 +79,7 @@ public class PanelLayout extends RelativeLayout {
                     mEventBus.register(mapViewEventSubscriber);
                 }
                 mMapView = (MapView) elementView;
+                //elementView.setClipBounds();
 
                 break;
             case Element.ELEMENT_TYPE_PROGRESS_IMAGE:
@@ -95,6 +97,9 @@ public class PanelLayout extends RelativeLayout {
                 break;
             case Element.ELEMENT_TYPE_STRING:
                 elementView = new StringView(getContext(), element);
+                break;
+            case Element.ELEMENT_TYPE_ROLL:
+                elementView = new RollView(getContext(), element);
                 break;
         }
 

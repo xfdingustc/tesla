@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.transee.common.ByteStream;
 import com.transee.common.GPSPath;
-import com.transee.common.GPSRawData;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.vdb.RemoteVdbClient.BufferSpaceLowInfo;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.waylens.hachi.vdb.Clip;

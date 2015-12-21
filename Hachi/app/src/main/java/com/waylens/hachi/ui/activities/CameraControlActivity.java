@@ -44,7 +44,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.BtState;
 import com.transee.common.DateTime;
-import com.transee.common.GPSRawData;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.common.Timer;
 import com.transee.vdb.PlaylistSet;
 import com.transee.vdb.RemoteVdbClient;

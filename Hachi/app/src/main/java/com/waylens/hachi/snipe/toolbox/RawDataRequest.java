@@ -2,10 +2,9 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
-import com.transee.common.GPSRawData;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.OBDData;
-import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;

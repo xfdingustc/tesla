@@ -54,8 +54,10 @@ public class Font {
 
                     if (resource != null) {
                         mFontResources.put(key, resource);
-                        mWidth = resource.getWidth();
-                        mHeight = resource.getHeight();
+                        if (key.equals("0")) {
+                            mWidth = resource.getWidth();
+                            mHeight = resource.getHeight();
+                        }
                     }
 
                 }

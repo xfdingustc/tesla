@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
-import com.transee.common.GPSRawData;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.common.TcpConnection;
 import com.transee.vdb.Vdb.MarkLiveInfo;
 import com.waylens.hachi.ui.services.download.RemuxerParams;

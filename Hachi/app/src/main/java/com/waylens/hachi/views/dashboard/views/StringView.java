@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Handler;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.views.dashboard.models.Element;
 import com.waylens.hachi.views.dashboard.models.Font;
 import com.waylens.hachi.views.dashboard.models.SkinManager;

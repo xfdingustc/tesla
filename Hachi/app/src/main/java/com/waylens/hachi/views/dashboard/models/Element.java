@@ -24,12 +24,14 @@ public class Element {
     public static final int ELEMENT_TYPE_NUMBER_VIEW = 4;
     public static final int ELEMENT_TYPE_MAP = 5;
     public static final int ELEMENT_TYPE_STRING = 6;
+    public static final int ELEMENT_TYPE_ROLL = 7;
 
 
     private static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
     private static final String ELEMENT_TYPE_PROGRESS_IMAGE_STR = "ProgressImage";
-    private static final String ELEMENT_TYPE_MAP_STR = "Map";
+    private static final String ELEMENT_TYPE_MAP_STR = "MapView";
     private static final String ELEMENT_TYPE_STRING_STR = "StringView";
+    private static final String ELEMENT_TYPE_ROLL_STR = "RollView";
 
     private static final String TAG_TYPE = "Type";
     private static final String TAG_WIDTH = "Width";
@@ -243,6 +245,8 @@ public class Element {
             return ELEMENT_TYPE_MAP;
         } else if (type.equals(ELEMENT_TYPE_STRING_STR)) {
             return ELEMENT_TYPE_STRING;
+        } else if (type.equals(ELEMENT_TYPE_ROLL_STR)) {
+            return ELEMENT_TYPE_ROLL;
         }
         return 0;
     }
