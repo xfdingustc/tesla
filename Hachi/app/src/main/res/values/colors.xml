@@ -43,7 +43,10 @@
     <color name="textColor2">#609216</color>
 
     <!-- Start new UI Design Color -->
+    <color name="edit_toolbar">#FF1A1A1A</color>
     <color name="edit_background">#FF2F2F2F</color>
+    <color name="text_enhance">#9B9B9B</color>
+    <color name="text_enhance_highlight">#FFECECEC</color>
     <!-- END new UI Design Color -->
 
 </resources>

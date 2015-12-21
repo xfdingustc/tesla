@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:background="@color/material_grey_300">
+        android:background="#FF1A1A1A">
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

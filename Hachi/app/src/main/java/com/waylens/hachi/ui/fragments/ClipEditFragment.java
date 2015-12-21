@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.fragments;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,8 +16,8 @@ import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.Surface;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -68,8 +69,8 @@ import butterknife.OnClick;
  * Created by Richard on 12/7/15.
  */
 public class ClipEditFragment extends Fragment implements MediaPlayer.OnPreparedListener,
-        SurfaceHolder.Callback, MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener,
-        MediaPlayer.OnErrorListener {
+        MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener,
+        MediaPlayer.OnErrorListener, TextureView.SurfaceTextureListener {
     private static final String TAG = "ClipEditFragment";
 
     protected static final String REQUEST_TAG = "RETRIEVE_CLIP_DATA";
@@ -110,7 +111,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     ImageView mBtnPlay;
 
     @Bind(R.id.video_surface)
-    SurfaceView mSurfaceView;
+    TextureView mSurfaceView;
 
     @Bind(R.id.progress_loading)
     ProgressBar mProgressLoading;
@@ -124,7 +125,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     @Bind(R.id.drag_container)
     DragLayout mDragLayout;
 
-    SurfaceHolder mSurfaceHolder;
+    //SurfaceHolder mSurfaceHolder;
+    Surface mSurfaceHolder;
 
     Clip mClip;
     Clip mOriginalClip;
@@ -161,6 +163,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     private PolylineOptions mPolylineOptions;
     private boolean mIsReplay;
 
+    private VideoTrimmer.DraggingFlag mTrimmerFlag;
+
     public static ClipEditFragment newInstance(Clip clip, int position, OnActionListener lifecycleListener) {
         Bundle args = new Bundle();
 
@@ -193,7 +197,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         super.onViewCreated(view, savedInstanceState);
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mImageLoader.displayVdbImage(clipPos, videoCover);
-        mSurfaceView.getHolder().addCallback(this);
+        mSurfaceView.setSurfaceTextureListener(this);
         //mControlPanel.setVisibility(View.INVISIBLE);
         mDragLayout.setOnViewDragListener(new OnViewDragListener() {
             @Override
@@ -265,6 +269,27 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         }
     }
 
+    @OnClick(R.id.btn_enhance)
+    void enhanceEdit() {
+        videoCover.setVisibility(View.VISIBLE);
+        getFragmentManager().beginTransaction().replace(R.id.root_container, EnhancementFragment.newInstance(mClip)).commit();
+    }
+
+    @OnClick(R.id.btn_add_to_story)
+    void addToStory() {
+
+    }
+
+    @OnClick(R.id.btn_share)
+    void shareClip() {
+
+    }
+
+    @OnClick(R.id.btn_delete)
+    void deleteClip() {
+
+    }
+
     boolean isRawDataReady() {
         return mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_READY
                 && mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_READY
@@ -329,6 +354,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mVideoTrimmer.setOnChangeListener(new VideoTrimmer.OnTrimmerChangeListener() {
             @Override
             public void onStartTrackingTouch(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag) {
+                mTrimmerFlag = flag;
                 if (mOnActionListener != null) {
                     mOnActionListener.onStartDragging();
                 }
@@ -354,7 +380,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 if (mOnActionListener != null) {
                     mOnActionListener.onStopDragging();
                 }
-                if (mOldClipStartTimeMs != trimmer.getLeftValue() || mOldClipEndTimeMs != trimmer.getRightValue()) {
+                if (mTrimmerFlag == VideoTrimmer.DraggingFlag.LEFT || mTrimmerFlag == VideoTrimmer.DraggingFlag.RIGHT) {
                     mOldClipStartTimeMs = trimmer.getLeftValue();
                     mOldClipEndTimeMs = trimmer.getRightValue();
                     loadClipInfo();
@@ -397,12 +423,12 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             }
             mTriangleView.setTranslationX(x2);
         }
-        Log.e("test", "X: " + x + "; x1: " + x1 + "; x2: " + x2);
+        //Log.e("test", "X: " + x + "; x1: " + x1 + "; x2: " + x2);
         mControlPanel.setTranslationX(x1);
-        Log.e("test", "Mid: " + mid + "; PanelMid: " + panelMid);
-        Log.e("test", "Panel: " + mControlPanel.getLeft()
-                + "; triangle: " + mTriangleView.getLeft()
-                + "; triangle w: " + mTriangleView.getWidth());
+        //Log.e("test", "Mid: " + mid + "; PanelMid: " + panelMid);
+        //Log.e("test", "Panel: " + mControlPanel.getLeft()
+        //        + "; triangle: " + mTriangleView.getLeft()
+        //        + "; triangle w: " + mTriangleView.getWidth());
     }
 
     void loadClipInfo() {
@@ -467,7 +493,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             mMediaPlayer.setOnSeekCompleteListener(this);
             mMediaPlayer.setOnErrorListener(this);
             mMediaPlayer.setDataSource(mVideoSource);
-            mMediaPlayer.setDisplay(mSurfaceHolder);
+            mMediaPlayer.setSurface(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
         } catch (IOException e) {
@@ -483,9 +509,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mProgressLoading.setVisibility(View.INVISIBLE);
         mVideoWidth = mp.getVideoWidth();
         mVideoHeight = mp.getVideoHeight();
-        if (mSurfaceHolder != null && mVideoWidth != 0 && mVideoHeight != 0) {
-            mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
-        }
+        mMediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
         int duration = mMediaPlayer.getDuration();
         int position = mMediaPlayer.getCurrentPosition();
         Log.e("test", "init pos: " + position + "; duration: " + duration);
@@ -538,49 +562,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 mCurrentState != STATE_ERROR &&
                 mCurrentState != STATE_IDLE &&
                 mCurrentState != STATE_PREPARING);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.e("test", "surfaceCreated");
-        mSurfaceHolder = holder;
-        if (!isInPlaybackState()) {
-            openVideo();
-        }
-
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.e("test", "surfaceChanged - w:" + width + "; h:" + height);
-        if (mMediaPlayer == null) {
-            return;
-        }
-
-        mMediaPlayer.setDisplay(holder);
-
-        if (isInPlaybackState() && mSurfaceDestroyed) {
-            mSurfaceDestroyed = false;
-            if (mCurrentState == STATE_PLAYING) {
-                Log.e("test", "surfaceChanged - resume");
-                resumeVideo();
-            } else {
-                Log.e("test", "surfaceChanged - seek");
-                mMediaPlayer.seekTo(mPausePosition);
-                mPausePosition = 0;
-            }
-        }
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.e("test", "surfaceDestroyed");
-        mSurfaceHolder = null;
-        mSurfaceDestroyed = true;
-        if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
-            mPausePosition = mMediaPlayer.getCurrentPosition();
-        }
     }
 
     private void release(boolean clearTargetState) {
@@ -759,7 +740,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @Override
     public void onSeekComplete(MediaPlayer mp) {
-        start();
+        if (mTargetState == STATE_PLAYING) {
+            start();
+        }
     }
 
     void loadRawData() {
@@ -867,6 +850,54 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             mPolylineOptions.add(point);
         }
         mMapView.addPolyline(mPolylineOptions);
+    }
+
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        Log.e("test", "surfaceCreated");
+        mSurfaceHolder = new Surface(surface);
+        if (!isInPlaybackState()) {
+            openVideo();
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        Log.e("test", "surfaceChanged - w:" + width + "; h:" + height);
+        if (mMediaPlayer == null) {
+            return;
+        }
+
+        mMediaPlayer.setSurface(mSurfaceHolder);
+
+        if (isInPlaybackState() && mSurfaceDestroyed) {
+            mSurfaceDestroyed = false;
+            if (mCurrentState == STATE_PLAYING) {
+                Log.e("test", "surfaceChanged - resume");
+                resumeVideo();
+            } else {
+                Log.e("test", "surfaceChanged - seek");
+                mMediaPlayer.seekTo(mPausePosition);
+                mPausePosition = 0;
+            }
+        }
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        Log.e("test", "surfaceDestroyed");
+        mSurfaceHolder = null;
+        mSurfaceDestroyed = true;
+        if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+            mPausePosition = mMediaPlayer.getCurrentPosition();
+        }
+        return true;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
     }
 
     public interface OnActionListener {

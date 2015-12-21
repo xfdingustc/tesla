@@ -302,7 +302,7 @@ public class VideoTrimmerController extends View implements Progressive {
         }
         mStart = value;
         double normalizedValue = value - mRangeValueLeft;
-        mLeftStartPos = (int) (normalizedValue / getRange() * mTotalViewLength);
+        mLeftStartPos = (int) Math.round(normalizedValue / getRange() * mTotalViewLength);
         int height = getHeight();
         mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, height);
         mRectLeftEx.set(0, 0, mLeftStartPos, height);
@@ -319,7 +319,7 @@ public class VideoTrimmerController extends View implements Progressive {
         }
         mEnd = value;
         double normalizedValue = value - mRangeValueLeft;
-        mRightStartPos = (int) (normalizedValue/getRange() * mTotalViewLength) + mProgressBarWidth + mThumbWidth;
+        mRightStartPos = (int) Math.round((normalizedValue / getRange() * mTotalViewLength) + mProgressBarWidth + mThumbWidth);
         int height = getHeight();
         mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, height);
         mRectRightEx.set(mRectRight.right, 0, getWidth(), height);
@@ -377,6 +377,21 @@ public class VideoTrimmerController extends View implements Progressive {
         mStart = (long) ((mRectLeft.right - mThumbWidth) * scale + mRangeValueLeft);
         mEnd = (long) ((mRectRight.left - mProgressBarWidth - mThumbWidth) * scale + mRangeValueLeft);
         mProgress = (long) ((mRectProgress.left - mThumbWidth) * scale + mRangeValueLeft);
+
+        if (mStart < mRangeValueLeft) {
+            mStart = (long) mRangeValueLeft;
+        }
+        if (mEnd > mRangeValueRight) {
+            mEnd = (long) mRangeValueRight;
+        }
+
+        if (mProgress < mRangeValueLeft) {
+            mProgress = (long) mRangeValueLeft;
+        }
+        if (mProgress > mRangeValueRight) {
+            mProgress = (long) mRangeValueRight;
+        }
+
         if (mChangeListener != null) {
             mChangeListener.onProgressChanged(mVideoTrimmer, getFlag(), mStart, mEnd, mProgress);
         }

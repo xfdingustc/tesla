@@ -11,7 +11,7 @@
         android:layout_height="202dp"
         android:layout_marginBottom="64dp">
 
-        <SurfaceView
+        <TextureView
             android:id="@+id/video_surface"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -52,33 +52,40 @@
                 android:gravity="center_vertical"
                 android:background="@color/style_color_primary">
             <ImageView
+                android:id="@+id/btn_enhance"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginLeft="16dp"
                 android:contentDescription="@null"
-                android:src="@drawable/btn_edit_action_video_n"/>
+                android:src="@drawable/btn_edit_action_video_n"
+                android:background="?android:attr/selectableItemBackground"/>
 
             <ImageView
-                android:id="@+id/btn_add"
+                android:id="@+id/btn_add_to_story"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginRight="32dp"
                 android:contentDescription="@null"
-                android:src="@drawable/btn_edit_action_insert_n"/>
+                android:src="@drawable/btn_edit_action_insert_n"
+                android:background="?android:attr/selectableItemBackground"/>
 
             <ImageView
+                android:id="@+id/btn_share"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginRight="32dp"
                 android:contentDescription="@null"
-                android:src="@drawable/btn_edit_action_share_n"/>
+                android:src="@drawable/btn_edit_action_share_n"
+                android:background="?android:attr/selectableItemBackground"/>
             <ImageView
+                android:id="@+id/btn_delete"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginRight="16dp"
                 android:contentDescription="@null"
-                android:src="@drawable/btn_edit_action_delete_n"/>
+                android:src="@drawable/btn_edit_action_delete_n"
+                android:background="?android:attr/selectableItemBackground"/>
             </LinearLayout>
             <com.waylens.hachi.ui.views.TriangleView
                 android:id="@+id/triangle_view"

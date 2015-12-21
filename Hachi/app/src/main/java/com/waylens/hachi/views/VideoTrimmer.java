@@ -135,6 +135,10 @@ public class VideoTrimmer extends FrameLayout {
         if (width % imgWidth != 0) {
             itemCount++;
         }
+        if (itemCount < 2) {
+            Log.e("test", "itemCount is less than 2.");
+            return;
+        }
         long period = (endMs - startMs) / (itemCount - 1);
         List<ClipPos> items = new ArrayList<>();
         for (int i = 0; i < itemCount; i++) {
