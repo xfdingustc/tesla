@@ -367,7 +367,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
                 if (videoCover != null) {
                     videoCover.setVisibility(View.VISIBLE);
-                    ClipPos clipPos = new ClipPos(mClip.getVdbId(), mClip.realCid, mClip.clipDate, progress, ClipPos.TYPE_POSTER, false);
+                    ClipPos clipPos = new ClipPos(mClip.getVdbId(), mClip.cid, mClip.clipDate, progress, ClipPos.TYPE_POSTER, false);
                     mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
                 }
                 mSeekToPosition = progress;
@@ -452,7 +452,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mOldClipStartTimeMs);
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, (int) (mOldClipEndTimeMs - mOldClipStartTimeMs));
 
-        ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mClip.realCid, parameters, new VdbResponse.Listener<PlaybackUrl>() {
+        ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mClip.cid, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override
             public void onResponse(PlaybackUrl playbackUrl) {
                 mPlaybackUrl = playbackUrl;
@@ -654,6 +654,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     RawDataItem getRawData(int dataType, int position) {
         RawDataBlock raw = mTypedRawData.get(dataType);
+        if (raw == null) {
+            return null;
+        }
         int pos = mTypedPosition.get(dataType);
         RawDataItem rawDataItem = null;
         while (pos < raw.dataSize.length) {

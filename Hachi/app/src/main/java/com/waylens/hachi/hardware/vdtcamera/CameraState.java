@@ -67,8 +67,8 @@ public class CameraState {
     public static final int FLAG_LOOP_RECORD = 1 << 2;
     public static final int Rec_Mode_Manual = 0;
     public static final int Rec_Mode_AutoStart = FLAG_AUTO_RECORD;
-    public static final int Rec_Mode_Manual_circle = FLAG_LOOP_RECORD;
-    public static final int Rec_Mode_AutoStart_circle = (FLAG_AUTO_RECORD | FLAG_LOOP_RECORD);
+    public static final int Rec_Mode_Manual_LOOP = FLAG_LOOP_RECORD;
+    public static final int Rec_Mode_AutoStart_LOOP = (FLAG_AUTO_RECORD | FLAG_LOOP_RECORD);
 
     public static final int Color_Mode_Unknown = -1;
     public static final int Color_Mode_NORMAL = 0;
@@ -387,6 +387,10 @@ public class CameraState {
 
     public int getRecordState() {
         return mRecordState;
+    }
+
+    public int getRecordMode() {
+        return mRecordModeIndex;
     }
 
     public int getMicState() {

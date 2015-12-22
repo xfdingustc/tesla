@@ -194,6 +194,9 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     RawDataItem getRawData(int dataType, int position) {
         RawDataBlock raw = mTypedRawData.get(dataType);
+        if (raw == null) {
+            return null;
+        }
         int pos = mTypedPosition.get(dataType);
         RawDataItem rawDataItem = null;
         while (pos < raw.dataSize.length) {

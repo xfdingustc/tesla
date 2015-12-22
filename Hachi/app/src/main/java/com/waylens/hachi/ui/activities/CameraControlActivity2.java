@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -47,6 +48,7 @@ public class CameraControlActivity2 extends BaseActivity {
     private Thread mOverlayUpdateThread;
     private Object mUpdateThreadFence = new Object();
 
+    Handler mHandler = new Handler();
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
         Intent intent = new Intent(startingActivity, CameraControlActivity2.class);
@@ -147,7 +149,6 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-
         initViews();
     }
 
@@ -313,7 +314,7 @@ public class CameraControlActivity2 extends BaseActivity {
                 break;
             case CameraState.STATE_RECORD_STOPPED:
                 mFabBookmark.setEnabled(true);
-                mFabBookmark.setImageResource(R.drawable.ic_album_white_48dp);
+                mFabBookmark.setImageResource(R.drawable.start_record);
                 break;
             case CameraState.STATE_RECORD_STOPPING:
                 mFabBookmark.setEnabled(false);
@@ -323,7 +324,11 @@ public class CameraControlActivity2 extends BaseActivity {
                 break;
             case CameraState.STATE_RECORD_RECORDING:
                 mFabBookmark.setEnabled(true);
-                mFabBookmark.setImageResource(R.drawable.ic_stop_white_48dp);
+                if (state.getRecordMode() == CameraState.Rec_Mode_AutoStart) {
+                    mFabBookmark.setImageResource(R.drawable.ic_bookmark_white_48dp);
+                } else {
+                    mFabBookmark.setImageResource(R.drawable.ic_stop_white_48dp);
+                }
                 break;
             case CameraState.STATE_RECORD_SWITCHING:
                 mFabBookmark.setEnabled(false);
@@ -347,7 +352,18 @@ public class CameraControlActivity2 extends BaseActivity {
     private void handleOnFabClicked() {
         switch (mVdtCamera.getState().getRecordState()) {
             case CameraState.STATE_RECORD_RECORDING:
-                mVdtCamera.stopRecording();
+                if (mVdtCamera.getState().getRecordMode() == CameraState.Rec_Mode_AutoStart) {
+                    mVdtCamera.markLiveVideo();
+                    mTvCameraStatus.setText("New bookmark added!");
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateCameraStatusInfo(mVdtCamera.getState());
+                        }
+                    }, 1000 * 3);
+                } else {
+                    mVdtCamera.stopRecording();
+                }
                 break;
             case CameraState.STATE_RECORD_STOPPED:
                 mVdtCamera.startRecording();

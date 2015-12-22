@@ -97,7 +97,9 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
         mRvCameraVideoList.setLayoutManager(mLinearLayoutManager);
 
         for (VideoTab videoTab : mVideoTabs) {
-            mTabLayout.addTab(mTabLayout.newTab().setText(videoTab.textRes));
+            TabLayout.Tab tab = mTabLayout.newTab().setText(videoTab.textRes);
+
+            mTabLayout.addTab(tab);
         }
 
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
