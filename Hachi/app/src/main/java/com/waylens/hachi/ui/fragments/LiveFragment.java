@@ -106,6 +106,7 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (mVdtCamera != null) {
+                    mClipSetAdapter.setClipSet(null);
                     retrieveVideoList(mVideoTabs[tab.getPosition()].tabTag);
                 }
             }

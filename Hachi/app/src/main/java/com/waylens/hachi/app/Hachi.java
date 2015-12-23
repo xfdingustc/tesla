@@ -56,7 +56,7 @@ public class Hachi extends Application {
         WifiAdminManager.initialize(this);
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
-        VdbImageLoader.init(this, 1024 * 64);
+        VdbImageLoader.getImageLoader(null).init(this, 1024 * 64);
         //FIR.init(this);
 
         Snipe.init();

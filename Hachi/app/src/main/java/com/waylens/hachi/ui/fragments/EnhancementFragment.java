@@ -56,7 +56,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImageLoader = new VdbImageLoader(Snipe.newRequestQueue());
+        mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
     }
 
     @Nullable

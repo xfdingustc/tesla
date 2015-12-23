@@ -139,12 +139,12 @@ public class VideoTrimmer extends FrameLayout {
             Log.e("test", "itemCount is less than 2.");
             return;
         }
-        long period = (endMs - startMs) / (itemCount - 1);
+        long period = (endMs - startMs) / itemCount;
         List<ClipPos> items = new ArrayList<>();
         for (int i = 0; i < itemCount; i++) {
             long posTime = clip.getStartTimeMs() + period * i;
-            if (posTime >= (clip.getStartTimeMs() + clip.getDurationMs())) {
-                posTime = clip.getStartTimeMs() + clip.getDurationMs() - 10; //magic number.
+            if (posTime >= endMs) {
+                posTime = endMs - 10; //magic number.
             }
             items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
         }
@@ -244,7 +244,7 @@ public class VideoTrimmer extends FrameLayout {
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            mImageLoader.displayVdbImage(mItems.get(position), holder.imageView);
+            mImageLoader.displayVdbImage(mItems.get(position), holder.imageView, mItemWidth, mItemHeight);
         }
 
         @Override

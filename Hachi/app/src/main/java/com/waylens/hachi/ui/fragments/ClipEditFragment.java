@@ -180,7 +180,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVdbRequestQueue = Snipe.newRequestQueue();
-        mImageLoader = new VdbImageLoader(mVdbRequestQueue);
+        mImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         mHandler = new VideoHandler(this);
     }
 

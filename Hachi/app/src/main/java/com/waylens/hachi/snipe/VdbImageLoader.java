@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.StatFs;
 import android.util.Log;
@@ -26,39 +27,57 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class VdbImageLoader {
     private static final String TAG = VdbImageLoader.class.getSimpleName();
-    private final VdbRequestQueue mRequestQueue;
+    private VdbRequestQueue mRequestQueue;
     private final int mBatchedResponsesDelayMs = 100;
 
-    private final HashMap<String, BatchedVdbImageRequest> mInFlightRequest = new HashMap<>();
+    final HashMap<String, BatchedVdbImageRequest> mInFlightRequest = new HashMap<>();
 
-    private final ConcurrentHashMap<String, BatchedVdbImageRequest> mBatchedResponses = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<String, BatchedVdbImageRequest> mBatchedResponses = new ConcurrentHashMap<>();
 
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    final Handler mHandler = new Handler(Looper.getMainLooper());
+    final Handler mBackgroundHandler;
+    Runnable mRunnable;
+    MemoryLurCache memoryLurCache;
+    DiskLruCache diskLruCache;
+    boolean mUseCache;
 
-    private Runnable mRunnable;
+    volatile static VdbImageLoader _INSTANCE;
 
-    static MemoryLurCache memoryLurCache;
-
-    static DiskLruCache diskLruCache;
-    private boolean mUseCache;
-
-    public VdbImageLoader(VdbRequestQueue queue) {
-        this.mRequestQueue = queue;
-        if (memoryLurCache == null) {
-            int size = (int) Runtime.getRuntime().maxMemory() / 1024;
-            Log.e(TAG, "size: " + size);
-            memoryLurCache = new MemoryLurCache(size / 8);
+    public static VdbImageLoader getImageLoader(VdbRequestQueue queue) {
+        if (_INSTANCE == null) {
+            synchronized (VdbImageLoader.class) {
+                if (_INSTANCE == null) {
+                    _INSTANCE = new VdbImageLoader();
+                }
+            }
         }
+        if (queue != null) {
+            _INSTANCE.mRequestQueue = queue;
+        }
+        return _INSTANCE;
+    }
+
+    protected VdbImageLoader() {
+        HandlerThread backgroundThread = new HandlerThread("VdbImageLoader");
+        backgroundThread.start();
+        mBackgroundHandler = new Handler(backgroundThread.getLooper());
     }
 
     /**
+     * init
      *
-     * @param context
+     * @param context - context
      * @param maxSize - size in KB;
      */
-    public static void init(Context context, int maxSize) {
+    public void init(Context context, int maxSize) {
+        if (memoryLurCache == null) {
+            int size = (int) Runtime.getRuntime().maxMemory() / 1024;
+            //Log.e(TAG, "size: " + size);
+            memoryLurCache = new MemoryLurCache(size / 8);
+        }
+
         if (diskLruCache != null || !ImageUtils.isExternalStorageReady()) {
-            Log.e("test", "isExternalStorageReady: " + ImageUtils.isExternalStorageReady());
+            //Log.e("test", "isExternalStorageReady: " + ImageUtils.isExternalStorageReady());
             return;
         }
 
@@ -69,6 +88,12 @@ public class VdbImageLoader {
             size = (int) availableBytes / 2;
         }
         diskLruCache = DiskLruCache.getDiskLruCache(context, size);
+        mBackgroundHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                diskLruCache.init();
+            }
+        });
         Log.e("test", "DiskLruCache is initialized.");
     }
 
@@ -77,9 +102,12 @@ public class VdbImageLoader {
             defaultImageResId, final int errorImageResId) {
         return new VdbImageListener() {
             @Override
-            public void onResponse(VdbImageContainer response, boolean isImmediate) {
-                if (response.getBitmap() != null) {
-                    view.setImageBitmap(response.getBitmap());
+            public void onResponse(VdbImageContainer imageContainer, boolean isImmediate) {
+                if (view == null) {
+                    return;
+                }
+                if (imageContainer.getBitmap() != null) {
+                    view.setImageBitmap(imageContainer.getBitmap());
                 } else if (defaultImageResId != 0) {
                     view.setImageResource(defaultImageResId);
                 }
@@ -107,33 +135,56 @@ public class VdbImageLoader {
         displayVdbImage(clipPos, imageView, isIgnorable, true);
     }
 
+    public void displayVdbImage(ClipPos clipPos, ImageView imageView, int maxWidth, int maxHeight) {
+        mUseCache = true;
+        VdbImageListener listener = VdbImageLoader.getImageListener(imageView, 0, 0);
+        get(clipPos, listener, maxWidth, maxHeight, ImageView.ScaleType.CENTER_INSIDE, false);
+    }
+
     public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean isIgnorable, boolean useCache) {
         mUseCache = useCache;
         VdbImageListener listener = VdbImageLoader.getImageListener(imageView, 0, 0);
         get(clipPos, listener, 0, 0, ImageView.ScaleType.CENTER_INSIDE, isIgnorable);
     }
 
-    public VdbImageContainer get(final ClipPos clipPos, final VdbImageListener
-            listener, int maxWidth, int maxHeight, ScaleType scaleType, boolean isIgnorable) {
+    VdbImageContainer get(final ClipPos clipPos,
+                          final VdbImageListener listener,
+                          final int maxWidth,
+                          final int maxHeight,
+                          final ScaleType scaleType,
+                          final boolean isIgnorable) {
+
         throwIfNotOnMainThread();
 
-        final String cacheKey = getCacheKey(clipPos, maxWidth, maxHeight, scaleType);
-        //Log.e("test", "cacheKey: " + cacheKey);
-        VdbImageContainer imageContainer;
-        Bitmap bitmap = loadImageFromCache(cacheKey);
-        if (bitmap != null && !bitmap.isRecycled()) {
-            imageContainer = new VdbImageContainer(bitmap, clipPos, listener);
-            listener.onResponse(imageContainer, true);
-        } else {
-            imageContainer = new VdbImageContainer(null, clipPos, listener);
-            listener.onResponse(imageContainer, true);
-            VdbRequest<Bitmap> newRequest = makeVdbImageRequest(clipPos, maxWidth, maxHeight,
-                    scaleType, cacheKey);
-            newRequest.setIgnorable(isIgnorable);
-            mRequestQueue.add(newRequest);
-            mInFlightRequest.put(cacheKey, new BatchedVdbImageRequest(newRequest, imageContainer));
-        }
-        return imageContainer;
+        mBackgroundHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final String cacheKey = getCacheKey(clipPos, maxWidth, maxHeight, scaleType);
+                Bitmap bitmap = loadImageFromCache(cacheKey);
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    VdbImageContainer imageContainer = new VdbImageContainer(bitmap, clipPos, listener);
+                    showImage(imageContainer);
+                } else {
+                    VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, listener);
+                    showImage(imageContainer);
+                    VdbImageRequest newRequest = makeVdbImageRequest(clipPos, maxWidth, maxHeight,
+                            scaleType, cacheKey);
+                    newRequest.setIgnorable(isIgnorable);
+                    mRequestQueue.add(newRequest);
+                    mInFlightRequest.put(cacheKey, new BatchedVdbImageRequest(newRequest, imageContainer));
+                }
+            }
+        });
+        return null;
+    }
+
+    void showImage(final VdbImageContainer imageContainer) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                imageContainer.mListener.onResponse(imageContainer, true);
+            }
+        });
     }
 
     private Bitmap loadImageFromCache(String cacheKey) {
@@ -156,31 +207,39 @@ public class VdbImageLoader {
         return null;
     }
 
-    private void cacheImages(String cacheKey, Bitmap bitmap) {
+    void cacheImages(final String cacheKey, final Bitmap bitmap) {
         if (mUseCache) {
-            memoryLurCache.put(cacheKey, bitmap);
-            if (diskLruCache != null) {
-                diskLruCache.put(cacheKey, bitmap);
-            }
+            mBackgroundHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    memoryLurCache.put(cacheKey, bitmap);
+                    if (diskLruCache != null) {
+                        diskLruCache.put(cacheKey, bitmap);
+                    }
+                }
+            });
         }
     }
 
 
-    protected VdbRequest<Bitmap> makeVdbImageRequest(ClipPos clipPos, int maxWidth,
-                                                     int maxHeight, ScaleType scaleType,
-                                                     final String cacheKey) {
+    protected VdbImageRequest makeVdbImageRequest(ClipPos clipPos, int maxWidth,
+                                                  int maxHeight, ScaleType scaleType,
+                                                  final String cacheKey) {
 
-        return new VdbImageRequest(clipPos, new VdbResponse.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                onGetImageSuccess(cacheKey, response);
-            }
-        }, maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                onGetImageError(cacheKey, error);
-            }
-        });
+        return new VdbImageRequest(clipPos,
+                new VdbResponse.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        onGetImageSuccess(cacheKey, response);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        onGetImageError(cacheKey, error);
+                    }
+                },
+                maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, cacheKey);
     }
 
 
@@ -193,7 +252,7 @@ public class VdbImageLoader {
     }
 
     protected void onGetImageError(String cacheKey, SnipeError error) {
-        Log.e(TAG, "onGetImageError");
+        Log.e(TAG, "onGetImageError: " + error);
     }
 
 
@@ -215,15 +274,15 @@ public class VdbImageLoader {
     }
 
 
-    private class BatchedVdbImageRequest {
-        private final VdbRequest<?> mRequest;
+    class BatchedVdbImageRequest {
+        private final VdbImageRequest mRequest;
 
         private Bitmap mResponseBitmap;
 
         private final LinkedList<VdbImageContainer> mContainers = new LinkedList<>();
         private SnipeError mError;
 
-        public BatchedVdbImageRequest(VdbRequest<?> request, VdbImageContainer container) {
+        public BatchedVdbImageRequest(VdbImageRequest request, VdbImageContainer container) {
             mRequest = request;
             mContainers.add(container);
         }
@@ -251,8 +310,8 @@ public class VdbImageLoader {
             mRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    for (String key : mBatchedResponses.keySet()) {
-                        BatchedVdbImageRequest bir = mBatchedResponses.get(key);
+                    for (final String key : mBatchedResponses.keySet()) {
+                        final BatchedVdbImageRequest bir = mBatchedResponses.get(key);
                         for (VdbImageContainer container : bir.mContainers) {
                             if (container.mListener == null) {
                                 continue;
@@ -284,32 +343,12 @@ public class VdbImageLoader {
     private static String getCacheKey(ClipPos clipPos, int maxWidth, int maxHeight,
                                       ScaleType scaleType) {
         String clipId = clipPos.vdbId == null ? String.valueOf(clipPos.cid.hashCode()) : clipPos.vdbId;
+        //Log.e("test", String.format("====== clipId[%s],clipTime[%d], w[%d], h[%d], scale[%d]",
+        //        clipId, clipPos.getClipTimeMs(), maxWidth, maxHeight, scaleType.ordinal()));
         return DigitUtils.md5(clipId
                 + "#T" + clipPos.getClipTimeMs()
                 + "#W" + maxWidth
                 + "#H" + maxHeight
                 + "#S" + scaleType.ordinal());
-    }
-
-    public static void setMemoryCache(MemoryLurCache cache) {
-        if (cache == null) {
-            return;
-        }
-
-        if (memoryLurCache != null) {
-            memoryLurCache.evictAll();
-        }
-        memoryLurCache = cache;
-    }
-
-    public static void setDiskLruCache(DiskLruCache cache) {
-        if (cache == null) {
-            return;
-        }
-
-        if (diskLruCache != null) {
-            diskLruCache.evictAll();
-        }
-        diskLruCache = cache;
     }
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.utils.TimeMonitor;
 import com.waylens.hachi.vdb.ClipPos;
 
 import java.util.List;
@@ -38,7 +39,13 @@ public class ClipThumbnailAdapter extends RecyclerView.Adapter<ClipThumbnailAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        mImageLoader.displayVdbImage(mItems.get(position), holder.imageView);
+        mImageLoader.displayVdbImage(mItems.get(position), holder.imageView, mItemWidth, mItemHeight);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        TimeMonitor.reset("ClipThumbnailAdapter");
     }
 
     @Override

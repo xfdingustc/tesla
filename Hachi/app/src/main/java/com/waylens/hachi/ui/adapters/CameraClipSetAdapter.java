@@ -39,7 +39,7 @@ public class CameraClipSetAdapter extends RecyclerView.Adapter<CameraClipSetAdap
 
     public CameraClipSetAdapter(Context context, VdbRequestQueue queue) {
         this.mContext = context;
-        this.mVdbImageLoader = new VdbImageLoader(queue);
+        this.mVdbImageLoader = VdbImageLoader.getImageLoader(queue);
     }
 
     public void setClipSet(ClipSet clipSet) {

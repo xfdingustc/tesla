@@ -41,7 +41,7 @@ public class DigitUtils {
             final StringBuilder sb = new StringBuilder();
             for (byte b : bytes) {
                 int tmp = 0xFF & b;
-                sb.append(hextable[tmp >> 4 & 0xF]).append(hextable[tmp & 0xF]);
+                sb.append(hextable[tmp >>> 4 & 0xF]).append(hextable[tmp & 0xF]);
             }
             return sb.toString().toLowerCase();
         } catch (Exception exc) {

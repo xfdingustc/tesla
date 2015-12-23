@@ -15,6 +15,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.fragments.ClipEditFragment;
+import com.waylens.hachi.utils.TimeMonitor;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -48,10 +49,15 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public OnEditClipListener mOnEditClipListener;
 
     public ClipFilmAdapter() {
-        mImageLoader = new VdbImageLoader(Snipe.newRequestQueue());
+        mImageLoader =VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
     }
 
     public void setClipSet(ClipSet clipSet) {
+        if (clipSet == null) {
+            items.clear();
+            notifyDataSetChanged();
+            return;
+        }
         mClipSet = clipSet;
         processClipSet();
         notifyDataSetChanged();
@@ -113,48 +119,52 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (getItemViewType(position) == ClipFilmItem.TYPE_NORMAL) {
             final Clip clip = item.clip;
             ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
-            int width = holder.clipFilm.getWidth();
-            int height = holder.clipFilm.getHeight();
-
-            Context context = holder.clipFilm.getContext();
-            if (width == 0) {
-                WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-                Display display = wm.getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                if (size.x == 0) {
-                    return;
-                }
-                width = size.x;
-            }
-            if (height == 0) {
-                height = ViewUtils.dp2px(64, holder.clipFilm.getResources());
-            }
-            int imgWidth = height * 16 / 9;
-            int itemCount = width / imgWidth;
-            if (width % imgWidth != 0) {
-                itemCount++;
-            }
-            long period = clip.getDurationMs() / (itemCount - 1);
-            List<ClipPos> items = new ArrayList<>();
-            for (int i = 0; i < itemCount; i++) {
-                long posTime = clip.getStartTimeMs() + period * i;
-                if (posTime >= (clip.getStartTimeMs() + clip.getDurationMs())) {
-                    posTime = clip.getStartTimeMs() + clip.getDurationMs() - 10; //magic number.
-                }
-                items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
-            }
-
-            ClipThumbnailAdapter clipThumbnailAdapter = new ClipThumbnailAdapter(mImageLoader, items, imgWidth, height);
-            ThumbnailLayoutManager layoutManager = new ThumbnailLayoutManager(context);
-            holder.clipFilm.setLayoutManager(layoutManager);
-            holder.clipFilm.setAdapter(clipThumbnailAdapter);
-            layoutManager.scrollToPositionWithOffset(0, - imgWidth / 2);
+            setClipFilm(clip, holder);
         } else {
             SectionViewHolder holder = (SectionViewHolder) viewHolder;
             holder.clipDateView.setText(item.clip.getDateString());
             holder.clipCountView.setText(String.valueOf(item.sectionCount));
         }
+    }
+
+    void setClipFilm(Clip clip, ClipEditViewHolder holder) {
+        int width = holder.clipFilm.getWidth();
+        int height = holder.clipFilm.getHeight();
+        Context context = holder.clipFilm.getContext();
+        if (width == 0) {
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            if (size.x == 0) {
+                return;
+            }
+            width = size.x;
+        }
+        if (height == 0) {
+            height = ViewUtils.dp2px(64, holder.clipFilm.getResources());
+        }
+        int imgWidth = height * 16 / 9;
+        int itemCount = width / imgWidth;
+        if (width % imgWidth != 0) {
+            itemCount++;
+        }
+        long period = clip.getDurationMs() / itemCount;
+        List<ClipPos> items = new ArrayList<>();
+        for (int i = 0; i < itemCount; i++) {
+            long posTime = clip.getStartTimeMs() + period * i;
+            if (posTime >= (clip.getStartTimeMs() + clip.getDurationMs())) {
+                posTime = clip.getStartTimeMs() + clip.getDurationMs() - 10; //magic number.
+            }
+            items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
+        }
+
+        ClipThumbnailAdapter clipThumbnailAdapter = new ClipThumbnailAdapter(mImageLoader, items, imgWidth, height);
+        ThumbnailLayoutManager layoutManager = new ThumbnailLayoutManager(context);
+        holder.clipFilm.setLayoutManager(layoutManager);
+
+        holder.clipFilm.setAdapter(clipThumbnailAdapter);
+        layoutManager.scrollToPositionWithOffset(0, - imgWidth / 2);
     }
 
     @Override
@@ -171,11 +181,12 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         super.onViewAttachedToWindow(viewHolder);
         if (viewHolder instanceof ClipEditViewHolder) {
             final ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
+            final int position = holder.getAdapterPosition();
+            final Clip clip = items.get(position).clip;
+            setClipFilm(clip, holder);
             holder.clipFilm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int position = holder.getAdapterPosition();
-                    Clip clip = items.get(position).clip;
                     if (mOnEditClipListener != null) {
                         mOnEditClipListener.onEditClip(clip, holder, position);
                     }
@@ -195,6 +206,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 holder.clipEditFragment.getFragmentManager().beginTransaction().remove(holder.clipEditFragment).commit();
                 holder.clipEditFragment = null;
             }
+            holder.clipFilm.setAdapter(null);
         }
         super.onViewDetachedFromWindow(viewHolder);
 

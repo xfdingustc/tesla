@@ -99,7 +99,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         super.init();
         mClip = mSharedClip;
         mVdbRequestQueue = Snipe.newRequestQueue(this);
-        mVdbImageLoader = new VdbImageLoader(mVdbRequestQueue);
+        mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
 
 
         initViews();

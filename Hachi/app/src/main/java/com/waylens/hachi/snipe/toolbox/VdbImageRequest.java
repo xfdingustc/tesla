@@ -26,16 +26,23 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     private final int mMaxHeight;
     private final ScaleType mScaleType;
     private final ClipPos mClipPos;
-
-    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, int
-        maxWidth, int maxHeight, ScaleType scaleType, Config decodeConfig, VdbResponse
-                               .ErrorListener errorListener) {
+    String mCacheKey; //
+    public VdbImageRequest(ClipPos clipPos,
+                           VdbResponse.Listener<Bitmap> listener,
+                           VdbResponse.ErrorListener errorListener,
+                           int maxWidth,
+                           int maxHeight,
+                           ScaleType scaleType,
+                           Config decodeConfig,
+                           String cacheKey
+                           ) {
         super(0, listener, errorListener);
         this.mClipPos = clipPos;
         this.mDecoderConfig = decodeConfig;
         this.mMaxWidth = maxWidth;
         this.mMaxHeight = maxHeight;
         this.mScaleType = scaleType;
+        mCacheKey = cacheKey;
     }
 
     @Override
@@ -79,10 +86,12 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
         clipPos.setDuration(clipDuration);
 
         BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
+        decodeOptions.inPreferredConfig = mDecoderConfig;
         Bitmap bitmap = null;
         if (mMaxWidth == 0 && mMaxHeight == 0) {
-            decodeOptions.inPreferredConfig = mDecoderConfig;
             bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+        } else {
+            bitmap = decodeSampledBitmap(data, mMaxWidth, mMaxHeight, decodeOptions);
         }
 
 
@@ -91,6 +100,34 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
         } else {
             return null;
         }
+    }
 
+    public int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    public Bitmap decodeSampledBitmap(byte[] data, int reqWidth, int reqHeight, BitmapFactory.Options options) {
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+    }
+
+    public String getCacheKey() {
+        return mCacheKey;
     }
 }

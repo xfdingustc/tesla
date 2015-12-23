@@ -37,7 +37,7 @@ public class DiskLruCache {
         }
     }
 
-    void init() {
+    public void init() {
         File[] files = cacheDir.listFiles();
         for (File file : files) {
             mFileLruCache.put(file.getName(), (int) file.length() / 1024);
@@ -53,7 +53,6 @@ public class DiskLruCache {
                 }
             }
         }
-        instance.init();
         return instance;
     }
 
