@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +19,6 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.SimpleClipSet;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,7 +62,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return;
         }
 
-        ArrayList<Clip> clips = ((SimpleClipSet) mClipSet).getInternalList();
+        List<Clip> clips = mClipSet.getInternalList();
         Collections.sort(clips, new ClipComparator(false));
         items.clear();
         ClipFilmItem sectionItem = null;

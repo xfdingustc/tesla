@@ -10,7 +10,6 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.vdb.SimpleClipSet;
 
 /**
  * Created by Xiaofei on 2015/8/18.
@@ -75,7 +74,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             return null;
         }
 
-        SimpleClipSet clipSet = new SimpleClipSet(Clip.CAT_REMOTE, response.readi32());
+        ClipSet clipSet = new ClipSet(Clip.CAT_REMOTE, response.readi32());
 
         int totalClips = response.readi32();
 

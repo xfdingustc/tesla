@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.transee.common.BitmapBuffer;
-import com.transee.common.BitmapCanvas;
 import com.transee.common.MjpegDecoder;
 
 import java.net.InetSocketAddress;

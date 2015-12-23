@@ -16,7 +16,7 @@ import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.vdb.SimpleClipSet;
+import com.waylens.hachi.vdb.ClipSet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -117,7 +117,7 @@ public class RemoteVdbClient extends VdbClient {
             return;
         }
 
-        SimpleClipSet clipSet = new SimpleClipSet(Clip.CAT_REMOTE, readi32());
+        ClipSet clipSet = new ClipSet(Clip.CAT_REMOTE, readi32());
 
         int totalClips = readi32();
         readi32(); // TODO - totalLengthMs
@@ -820,8 +820,8 @@ public class RemoteVdbClient extends VdbClient {
             return;
         }
 
-        SimpleClipSet clipSetBuffered = new SimpleClipSet(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED);
-        SimpleClipSet clipSetMarked = new SimpleClipSet(Clip.CAT_REMOTE, RemoteClip.TYPE_MARKED);
+        ClipSet clipSetBuffered = new ClipSet(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED);
+        ClipSet clipSetMarked = new ClipSet(Clip.CAT_REMOTE, RemoteClip.TYPE_MARKED);
         int totalClips = readi32();
 
         // vdb_clip_info_ex_t

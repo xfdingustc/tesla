@@ -3,13 +3,12 @@ package com.transee.vdb;
 import com.transee.common.DateTime;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.SimpleClipSet;
 
 public class Playlist {
 
 	public int plistId; // TODO
 	public int numClips; // equals clipSet.size()
-	public ClipSet clipSet = new SimpleClipSet(Clip.CAT_UNKNOWN, 0);
+	public ClipSet clipSet = new ClipSet(Clip.CAT_UNKNOWN, 0);
 
 	public int mProperties;
 	public int mTotalLengthMs; // TODO

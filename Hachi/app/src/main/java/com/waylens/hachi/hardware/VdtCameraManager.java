@@ -16,7 +16,7 @@ public class VdtCameraManager {
     private static final String TAG = VdtCameraManager.class.getSimpleName();
     private static final String PASSWORD_FILE = "wifipass";
 
-    private static VdtCameraManager mSharedManager = null;
+    private static VdtCameraManager mSharedManager = new VdtCameraManager();
 
     private static Context mContext;
     private PasswordList mPasswordList;
@@ -25,6 +25,14 @@ public class VdtCameraManager {
     private static final int TAG_SHOULD_REMOVE = 0;
     private static final int TAG_SHOULD_KEEP = 1;
     private static final int TAG_ADDED = 2;
+
+    public static VdtCameraManager getManager() {
+        return mSharedManager;
+    }
+
+    public static void initialize(Context context) {
+        mContext = context;
+    }
 
     // note: CameraManager is a global object,
     // we have to track each callback even they are installed by the same activity.
@@ -64,17 +72,7 @@ public class VdtCameraManager {
     }
 
 
-    public static VdtCameraManager getManager() {
-        if (mSharedManager == null) {
-            mSharedManager = new VdtCameraManager();
-        }
 
-        return mSharedManager;
-    }
-
-    public static void initialize(Context context) {
-        mContext = context;
-    }
 
     private VdtCameraManager() {
         mPasswordList = new PasswordList();
