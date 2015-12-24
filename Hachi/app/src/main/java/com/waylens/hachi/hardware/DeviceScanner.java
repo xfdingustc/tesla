@@ -1,5 +1,6 @@
 package com.waylens.hachi.hardware;
 
+import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.support.annotation.Nullable;
 
@@ -32,6 +33,7 @@ public class DeviceScanner extends Thread {
 
     public static final String SERVICE_VIDITCAM = "ViditCam";
     public static final String SERVICE_VIDIT_STUDIO = "Vidit Studio";
+    private final Context mContext;
 
     @Nullable
     private WifiManager mWifiManager;
@@ -53,15 +55,16 @@ public class DeviceScanner extends Thread {
     }
 
 
-    public DeviceScanner() {
+    public DeviceScanner(Context context) {
         super("ServiceDiscovery");
+        this.mContext = context;
+        this.mWifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
     }
 
     // API
-    synchronized public void startWork(WifiManager wifiManager) {
+    synchronized public void startWork() {
         if (!mbRunning) {
             mbRunning = true;
-            mWifiManager = wifiManager;
             start();
         }
     }

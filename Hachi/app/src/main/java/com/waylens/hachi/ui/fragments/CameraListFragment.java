@@ -159,7 +159,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
                     setWifiIcon(R.drawable.btn_wifi_on);
                     String wifiName = wifiAdmin.getCurrSSID();
                     mWifiStatusView.setText(wifiName);
-                    startDiscovery(wifiAdmin);
+                    startDiscovery();
                     break;
             }
         }
@@ -185,9 +185,9 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
     }
 
 
-    private void startDiscovery(WifiAdmin wifiAdmin) {
+    private void startDiscovery() {
         if (mDeviceScanner == null) {
-            mDeviceScanner = new DeviceScanner();
+            mDeviceScanner = new DeviceScanner(getActivity());
             mDeviceScanner.setListener(new DeviceScanner.DeviceScannerListener() {
                 @Override
                 public void onServiceResoledAsync(final DeviceScanner thread, final VdtCamera
@@ -209,7 +209,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
                 }
             });
 
-            mDeviceScanner.startWork(wifiAdmin == null ? null : wifiAdmin.getWifiManager());
+            mDeviceScanner.startWork();
 
             Logger.t(TAG).d("--- start discovery ---");
         }
