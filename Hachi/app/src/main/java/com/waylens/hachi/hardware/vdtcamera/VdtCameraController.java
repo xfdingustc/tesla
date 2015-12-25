@@ -22,36 +22,46 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-abstract class VdtCameraController {
+final class VdtCameraController {
     private static final String TAG = VdtCameraController.class.getSimpleName();
     private static final boolean DEBUG = true;
 
+    public interface Listener {
+        void onConnected();
 
-    abstract public void onConnected();
+        void onDisconnected();
 
-    abstract public void onDisconnected();
+        void onCameraStateChanged();
 
-    abstract public void onCameraStateChanged();
+        void onBtStateChanged();
 
-    abstract public void onBtStateChanged();
+        void onGpsStateChanged();
 
-    abstract public void onGpsStateChanged();
+        void onWifiStateChanged();
 
-    abstract public void onWifiStateChanged();
+        void onStartRecordError(int error);
 
-    abstract public void onStartRecordError(int error);
+        void onHostSSIDFetched(String ssid);
 
-    abstract public void onHostSSIDFetched(String ssid);
+        void onScanBtDone();
 
-    abstract public void onScanBtDone();
+        void onBtDevInfo(int type, String mac, String name);
 
-    abstract public void onBtDevInfo(int type, String mac, String name);
+        void onStillCaptureStarted(boolean bOneShot);
 
-    abstract public void onStillCaptureStarted(boolean bOneShot);
+        void onStillPictureInfo(boolean bCapturing, int numPictures, int burstTicks);
 
-    abstract public void onStillPictureInfo(boolean bCapturing, int numPictures, int burstTicks);
+        void onStillCaptureDone();
+    }
 
-    abstract public void onStillCaptureDone();
+
+    private Listener mListener;
+
+    public void setListener(Listener listener) {
+        mListener = listener;
+    }
+
+
 
     private final CameraState mStates = new CameraState();
     private final BtState mBtStates = new BtState();
@@ -508,7 +518,9 @@ abstract class VdtCameraController {
     }
 
     private void ack_Network_GetHostInfor(String p1, String p2) {
-        onHostSSIDFetched(p1);
+        if (mListener != null) {
+            mListener.onHostSSIDFetched(p1);
+        }
     }
 
     // ========================================================
@@ -554,7 +566,9 @@ abstract class VdtCameraController {
     // ========================================================
     private void ack_Rec_error(String p1, String p2) {
         int error = Integer.parseInt(p1);
-        onStartRecordError(error);
+        if (mListener != null) {
+            mListener.onStartRecordError(error);
+        }
     }
 
     // ========================================================
@@ -689,7 +703,10 @@ abstract class VdtCameraController {
     // p1: name; p2: mac
     private void ack_CAM_BT_getHostInfor(String p1, String p2) {
         int type = p1.indexOf("OBD") >= 0 ? BtState.BT_Type_OBD : BtState.BT_Type_HID;
-        onBtDevInfo(type, p2, p1);
+        if (mListener != null) {
+            mListener.onBtDevInfo(type, p2, p1);
+        }
+
     }
 
     // ========================================================
@@ -703,7 +720,9 @@ abstract class VdtCameraController {
 
     private void ack_CAM_BT_doScan() {
         mBtStates.scanBtDone();
-        onScanBtDone();
+        if (mListener != null) {
+            mListener.onScanBtDone();
+        }
     }
 
     // ========================================================
@@ -958,7 +977,9 @@ abstract class VdtCameraController {
 
     private void ack_Rec_StartStillCapture(String p1, String p2) {
         boolean bOneShot = p1.length() > 0 ? Integer.parseInt(p1) != 0 : false;
-        onStillCaptureStarted(bOneShot);
+        if (mListener != null) {
+            mListener.onStillCaptureStarted(bOneShot);
+        }
     }
 
     // ========================================================
@@ -976,14 +997,18 @@ abstract class VdtCameraController {
         boolean bCapturing = (value_p1 & 1) != 0;
         int numPictures = p2.length() > 0 ? Integer.parseInt(p2) : 0;
         int burstTicks = value_p1 >>> 1;
-        onStillPictureInfo(bCapturing, numPictures, burstTicks);
+        if (mListener != null) {
+            mListener.onStillPictureInfo(bCapturing, numPictures, burstTicks);
+        }
     }
 
     // ========================================================
     // MSG_Rec_StillCaptureDone
     // ========================================================
     private void ack_Rec_StillCaptureDone() {
-        onStillCaptureDone();
+        if (mListener != null) {
+            mListener.onStillCaptureDone();
+        }
     }
 
     /**
@@ -1011,7 +1036,7 @@ abstract class VdtCameraController {
             return;
         }
         postRequest(CMD_Domain_rec, CMD_Rec_Set_Mark_Time,
-                String.valueOf(before), String.valueOf(after));
+            String.valueOf(before), String.valueOf(after));
     }
 
     private void ack_Rec_SetMarkTime(String p1, String p2) {
@@ -1097,16 +1122,24 @@ abstract class VdtCameraController {
             if (cmdResult.request == null) {
                 switch (cmdResult.scheduleType) {
                     case Queue.SCHEDULE_UPDATE:
-                        onCameraStateChanged();
+                        if (mListener != null) {
+                            mListener.onCameraStateChanged();
+                        }
                         break;
                     case Queue.SCHEDULE_BT_UPDATE:
-                        onBtStateChanged();
+                        if (mListener != null) {
+                            mListener.onBtStateChanged();
+                        }
                         break;
                     case Queue.SCHEDULE_GPS_UPDATE:
-                        onGpsStateChanged();
+                        if (mListener != null) {
+                            mListener.onGpsStateChanged();
+                        }
                         break;
                     case Queue.SCHEDULE_WIFI_UPDATE:
-                        onWifiStateChanged();
+                        if (mListener != null) {
+                            mListener.onWifiStateChanged();
+                        }
                         break;
                     case Queue.SCHEDULE_GET_ALL_INFO:
                         cmd_Cam_get_getAllInfor();
@@ -1574,12 +1607,12 @@ abstract class VdtCameraController {
 
         @Override
         public void onConnectedAsync() {
-            VdtCameraController.this.onConnected();
+            mListener.onConnected();
         }
 
         @Override
         public void onConnectErrorAsync() {
-            VdtCameraController.this.onDisconnected();
+            mListener.onDisconnected();
         }
 
         @Override

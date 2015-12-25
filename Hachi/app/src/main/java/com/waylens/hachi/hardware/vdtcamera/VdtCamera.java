@@ -112,7 +112,120 @@ public class VdtCamera {
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
         mHandler = new Handler();
-        mController = new MyCameraClient(serviceInfo.inetAddr, serviceInfo.port);
+        mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
+        mController.setListener(new VdtCameraController.Listener() {
+            @Override
+            public void onConnected() {
+                initCameraState();
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onCameraConnected();
+                    }
+                });
+            }
+
+            @Override
+            public void onDisconnected() {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onCameraDisconnected();
+                    }
+                });
+            }
+
+            @Override
+            public void onCameraStateChanged() {
+                mHandler.post(mSyncStateAction);
+            }
+
+            @Override
+            public void onBtStateChanged() {
+                mHandler.post(mSyncBtStateAction);
+            }
+
+            @Override
+            public void onGpsStateChanged() {
+                mHandler.post(mSyncGpsStateAction);
+            }
+
+            @Override
+            public void onWifiStateChanged() {
+                mHandler.post(mSyncWifiStateAction);
+            }
+
+            @Override
+            public void onStartRecordError(final int error) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VdtCamera.this.onStartRecordError(error);
+                    }
+                });
+            }
+
+            @Override
+            public void onHostSSIDFetched(final String ssid) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VdtCamera.this.onHostSSIDFetched(ssid);
+                    }
+                });
+            }
+
+            @Override
+            public void onScanBtDone() {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VdtCamera.this.onScanBtDone();
+                    }
+                });
+            }
+
+            @Override
+            public void onBtDevInfo(final int type, final String mac, final String name) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VdtCamera.this.onBtDevInfo(type, mac, name);
+                    }
+                });
+            }
+
+            @Override
+            public void onStillCaptureStarted(final boolean bOneShot) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VdtCamera.this.onStillCaptureStarted(bOneShot);
+                    }
+                });
+            }
+
+            @Override
+            public void onStillPictureInfo(final boolean bCapturing, final int numPictures,
+                                           final int burstTicks) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VdtCamera.this.onStillPictureInfo(bCapturing, numPictures, burstTicks);
+                    }
+                });
+            }
+
+            @Override
+            public void onStillCaptureDone() {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VdtCamera.this.onStillCaptureDone();
+                    }
+                });
+            }
+        });
     }
 
     // API
@@ -371,124 +484,6 @@ public class VdtCamera {
         }
     };
 
-    class MyCameraClient extends VdtCameraController {
-
-        public MyCameraClient(InetAddress host, int port) {
-            super(host, port);
-        }
-
-        @Override
-        public void onConnected() {
-            initCameraState();
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onCameraConnected();
-                }
-            });
-        }
-
-        @Override
-        public void onDisconnected() {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onCameraDisconnected();
-                }
-            });
-        }
-
-        @Override
-        public void onCameraStateChanged() {
-            mHandler.post(mSyncStateAction);
-        }
-
-        @Override
-        public void onBtStateChanged() {
-            mHandler.post(mSyncBtStateAction);
-        }
-
-        @Override
-        public void onGpsStateChanged() {
-            mHandler.post(mSyncGpsStateAction);
-        }
-
-        @Override
-        public void onWifiStateChanged() {
-            mHandler.post(mSyncWifiStateAction);
-        }
-
-        @Override
-        public void onStartRecordError(final int error) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    VdtCamera.this.onStartRecordError(error);
-                }
-            });
-        }
-
-        @Override
-        public void onHostSSIDFetched(final String ssid) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    VdtCamera.this.onHostSSIDFetched(ssid);
-                }
-            });
-        }
-
-        @Override
-        public void onScanBtDone() {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    VdtCamera.this.onScanBtDone();
-                }
-            });
-        }
-
-        @Override
-        public void onBtDevInfo(final int type, final String mac, final String name) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    VdtCamera.this.onBtDevInfo(type, mac, name);
-                }
-            });
-        }
-
-        @Override
-        public void onStillCaptureStarted(final boolean bOneShot) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    VdtCamera.this.onStillCaptureStarted(bOneShot);
-                }
-            });
-        }
-
-        @Override
-        public void onStillPictureInfo(final boolean bCapturing, final int numPictures, final int burst_ticks) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    VdtCamera.this.onStillPictureInfo(bCapturing, numPictures, burst_ticks);
-                }
-            });
-        }
-
-        @Override
-        public void onStillCaptureDone() {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    VdtCamera.this.onStillCaptureDone();
-                }
-            });
-        }
-
-    }
 
 
 

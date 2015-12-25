@@ -93,10 +93,6 @@ public class WifiAdmin {
         }
     }
 
-    public WifiManager getWifiManager() {
-        return mWifiManager;
-    }
-
 
     public List<ScanResult> getScanResult() {
         return mScanResult;
@@ -120,36 +116,7 @@ public class WifiAdmin {
         mWifiManager.startScan();
     }
 
-    public void connectTo(String ssid, String password) {
-        cancelConnect();
 
-        mTargetSSID = ssid;
-        mTargetPassword = password;
-
-        mWifiConfig = new WifiConfiguration();
-        mWifiConfig.allowedAuthAlgorithms.clear();
-        mWifiConfig.allowedGroupCiphers.clear();
-        mWifiConfig.allowedKeyManagement.clear();
-        mWifiConfig.allowedPairwiseCiphers.clear();
-        mWifiConfig.allowedProtocols.clear();
-
-        mWifiConfig.SSID = "\"" + mTargetSSID + "\"";
-        mWifiConfig.preSharedKey = "\"" + mTargetPassword + "\"";
-        mWifiConfig.hiddenSSID = true;
-        mWifiConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-        mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-        mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-        mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-        mWifiConfig.status = WifiConfiguration.Status.ENABLED;
-
-
-        Logger.t(TAG).d("=== connecTo(" + ssid + ") ===");
-
-        mState = STATE_CONNECTING;
-        startTargetWifi();
-    }
 
 
     public void cancelConnect() {
@@ -256,7 +223,7 @@ public class WifiAdmin {
         }
     }
 
-    private void onWifiScanResult(Intent intent) {
+    private void onWifiScanResult() {
         mScanResult = mWifiManager.getScanResults();
         if (mListener != null) {
             mListener.wifiScanResult(this);
@@ -308,7 +275,7 @@ public class WifiAdmin {
             if (action.equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
 
                 Logger.t(TAG).d("SCAN_RESULTS_AVAILABLE_ACTION");
-                onWifiScanResult(intent);
+                onWifiScanResult();
                 return;
             }
 
