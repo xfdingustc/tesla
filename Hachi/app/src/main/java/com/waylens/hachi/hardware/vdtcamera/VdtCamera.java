@@ -35,7 +35,7 @@ public class VdtCamera {
     private WifiState mWifiStates = new WifiState();
 
 
-    static public class ServiceInfo {
+    public static class ServiceInfo {
         public String ssid;
         public final InetAddress inetAddr;
         public final int port;
@@ -337,15 +337,15 @@ public class VdtCamera {
 
     private void onCameraDisconnected() {
         // callback may unregister itself; so use a copy
-        ArrayList<Callback> c = createCallbackCopy();
+        List<Callback> c = createCallbackCopy();
         if (mOnConnectionChangeListener != null) {
             mOnConnectionChangeListener.onDisconnected(this);
         }
         mIsConnected = false;
     }
 
-    private ArrayList<Callback> createCallbackCopy() {
-        ArrayList<Callback> c = new ArrayList<Callback>();
+    private List<Callback> createCallbackCopy() {
+        List<Callback> c = new ArrayList<>();
         for (Callback callback : mCallbacks) {
             c.add(callback);
         }
@@ -483,8 +483,6 @@ public class VdtCamera {
             syncWifiState();
         }
     };
-
-
 
 
     // Control APIs

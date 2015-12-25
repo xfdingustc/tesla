@@ -3,6 +3,7 @@ package com.waylens.hachi.hardware.vdtcamera;
 import android.util.Log;
 import android.util.Xml;
 
+import com.orhanobut.logger.Logger;
 import com.transee.ccam.BtState;
 import com.transee.ccam.GpsState;
 import com.transee.ccam.SimpleInputStream;
@@ -24,7 +25,128 @@ import java.util.regex.Pattern;
 
 final class VdtCameraController {
     private static final String TAG = VdtCameraController.class.getSimpleName();
-    private static final boolean DEBUG = true;
+
+    private static final int CMD_DOMAIN_USER = -1;
+    private static final int CMD_DOMAIN_CAM = 0;
+    private static final int CMD_DOMAIN_P2P = 1;
+    private static final int CMD_DOMAIN_REC = 2;
+    private static final int CMD_DOMAIN_DECODE = 3;
+    private static final int CMD_DOMAIN_NETWORK = 4;
+    private static final int CMD_DOMAIN_POWER = 5;
+    private static final int CMD_DOMAIN_STORAGE = 6;
+    private static final int CMD_DOMAIN_STREAM = 7;
+    private static final int CMD_DOMAIN_MOTOR_CONTROL = 8;
+
+    // CMD_DOMAIN_CAM
+    private static final int CMD_CAM_GET_MODE = 0;
+    private static final int CMD_CAM_GET_MODE_RESULT = 1;
+    private static final int CMD_CAM_GET_API_VERSION = 2;
+    private static final int CMD_CAM_IS_API_SUPPORTED = 3;
+    private static final int CMD_CAM_GET_NAME = 4;
+    private static final int CMD_CAM_GET_NAME_RESULT = 5;
+    private static final int CMD_CAM_SET_NAME = 6;
+    private static final int CMD_CAM_SET_NAME_RESULT = 7;
+    private static final int CMD_CAM_GET_STATE = 8;
+    private static final int CMD_CAM_GET_STATE_RESULT = 9;
+    private static final int CMD_CAM_START_REC = 10;
+    private static final int CMD_CAM_STOP_REC = 11;
+    private static final int CMD_CAM_GET_TIME = 12;
+    private static final int CMD_CAM_GET_TIME_RESULT = 13;
+
+    private static final int CMD_CAM_GET_GET_ALL_INFOR = 14;
+    private static final int CMD_CAM_GET_GET_STORAGE_INFOR = 15;
+    private static final int CMD_CAM_MSG_STORAGE_INFOR = 16;
+    private static final int CMD_CAM_MSG_STORAGE_SPACE_INFOR = 17;
+    private static final int CMD_CAM_MSG_BATTERY_INFOR = 18;
+    private static final int CMD_CAM_MSG_POWER_INFOR = 19;
+    private static final int CMD_CAM_MSG_BT_INFOR = 20;
+    private static final int CMD_CAM_MSG_GPS_INFOR = 21;
+    private static final int CMD_CAM_MSG_INTERNET_INFOR = 22;
+    private static final int CMD_CAM_MSG_MIC_INFOR = 23;
+    private static final int CMD_CAM_SET_STREAM_SIZE = 24;
+
+    private static final int CMD_CAM_POWER_OFF = 25;
+    private static final int CMD_CAM_REBOOT = 26;
+
+    private static final int CMD_NETWORK_GET_WLAN_MODE = 27;
+    private static final int CMD_NETWORK_GET_HOST_NUM = 28;
+    private static final int CMD_NETWORK_GET_HOST_INFOR = 29;
+    private static final int CMD_NETWORK_ADD_HOST = 30;
+    private static final int CMD_NETWORK_RMV_HOST = 31;
+    private static final int CMD_NETWORK_CONNECT_HOST = 32;
+
+    private static final int CMD_NETWORK_SYNCTIME = 33;
+    private static final int CMD_NETWORK_GET_DEVICETIME = 34;
+
+    private static final int CMD_REC_ERROR = 35;
+
+    private static final int CMD_AUDIO_SET_MIC = 36;
+    private static final int CMD_AUDIO_GET_MIC_STATE = 37;
+
+    private static final int CMD_FW_GET_VERSION = 38;
+    private static final int CMD_FW_NEW_VERSION = 39;
+    private static final int CMD_FW_DO_UPGRADE = 40;
+
+    // 1.2
+    private static final int CMD_CAM_BT_IS_SUPPORTED = 41;
+    private static final int CMD_CAM_BT_IS_ENABLED = 42;
+    private static final int CMD_CAM_BT_ENABLE = 43;
+    private static final int CMD_CAM_BT_GET_DEV_STATUS = 44;
+    private static final int CMD_CAM_BT_GET_HOST_NUM = 45;
+    private static final int CMD_CAM_BT_GET_HOST_INFOR = 46;
+    private static final int CMD_CAM_BT_DO_SCAN = 47;
+    private static final int CMD_CAM_BT_DO_BIND = 48;
+    private static final int CMD_CAM_BT_DO_UNBIND = 49;
+    private static final int CMD_CAM_BT_SET_OBD_TYPES = 50;
+    private static final int CMD_CAM_BT_RESERVED = 51;
+
+    // oliver
+    private static final int CMD_CAM_WANT_IDLE = 100;
+    private static final int CMD_CAM_WANT_PREVIEW = 101;
+
+    // CMD_DOMAIN_REC
+    private static final int CMD_REC_START = 0;
+    private static final int CMD_REC_STOP = 1;
+    private static final int CMD_REC_LIST_RESOLUTIONS = 2;
+    private static final int CMD_REC_SET_RESOLUTION = 3;
+    private static final int CMD_REC_GET_RESOLUTION = 4;
+    private static final int CMD_REC_LIST_QUALITIES = 5;
+    private static final int CMD_REC_SET_QUALITY = 6;
+    private static final int CMD_REC_GET_QUALITY = 7;
+    private static final int CMD_REC_LIST_REC_MODES = 8;
+    private static final int CMD_REC_SET_REC_MODE = 9;
+    private static final int CMD_REC_GET_REC_MODE = 10;
+    private static final int CMD_REC_LIST_COLOR_MODES = 11;
+    private static final int CMD_REC_SET_COLOR_MODE = 12;
+    private static final int CMD_REC_GET_COLOR_MODE = 13;
+    private static final int CMD_REC_LIST_SEG_LENS = 14;
+    private static final int CMD_REC_SET_SEG_LEN = 15;
+    private static final int CMD_REC_GET_SEG_LEN = 16;
+    private static final int CMD_REC_GET_STATE = 17;
+    private static final int EVT_REC_STATE_CHANGE = 18;
+    private static final int CMD_REC_GET_TIME = 19;
+    private static final int CMD_REC_GET_TIME_RESULT = 20;
+
+    private static final int CMD_REC_SET_DUAL_STREAM = 21;
+    private static final int CMD_REC_GET_DUAL_STREAM_STATE = 22;
+
+    private static final int CMD_REC_SET_OVERLAY = 23;
+    private static final int CMD_REC_GET_OVERLAY_STATE = 24;
+
+    private static final int CMD_REC_MARK_LIVE_VIDEO = 27;
+    private static final int CMD_REC_SET_MARK_TIME = 28;
+    private static final int CMD_REC_GET_MARK_TIME = 29;
+
+    // oliver
+    private static final int CMD_REC_SET_STILL_MODE = 100;
+    private static final int CMD_REC_START_STILL_CAPTURE = 101;
+    private static final int CMD_REC_STOP_STILL_CAPTURE = 102;
+
+    private static final int MSG_REC_STILL_PICTURE_INFO = 103;
+    private static final int MSG_REC_STILL_CAPTURE_DONE = 104;
+
+    static final int UserCmd_GetSetup = 1;
+    static final int UserCmd_ExitThread = 2;
 
     public interface Listener {
         void onConnected();
@@ -62,8 +184,7 @@ final class VdtCameraController {
     }
 
 
-
-    private final CameraState mStates = new CameraState();
+    private CameraState mStates = new CameraState();
     private final BtState mBtStates = new BtState();
     private final GpsState mGpsStates = new GpsState();
     private final WifiState mWifiStates = new WifiState();
@@ -90,124 +211,7 @@ final class VdtCameraController {
     }
 
     // domains
-    private static final int CMD_Domain_user = -1;
-    private static final int CMD_Domain_cam = 0;
-    private static final int CMD_Domain_p2p = 1;
-    private static final int CMD_Domain_rec = 2;
-    private static final int CMD_Domain_decode = 3;
-    private static final int CMD_Domain_network = 4;
-    private static final int CMD_Domain_power = 5;
-    private static final int CMD_Domain_storage = 6;
-    private static final int CMD_Domain_stream = 7;
-    private static final int CMD_Domain_MotorControl = 8;
 
-    // CMD_Domain_cam
-    private static final int CMD_Cam_getMode = 0;
-    private static final int CMD_Cam_getMode_result = 1;
-    private static final int CMD_Cam_getApiVersion = 2;
-    private static final int CMD_Cam_isApiSupported = 3;
-    private static final int CMD_Cam_get_Name = 4;
-    private static final int CMD_Cam_get_Name_result = 5;
-    private static final int CMD_Cam_set_Name = 6;
-    private static final int CMD_Cam_set_Name_result = 7;
-    private static final int CMD_Cam_get_State = 8;
-    private static final int CMD_Cam_get_State_result = 9;
-    private static final int CMD_Cam_start_rec = 10;
-    private static final int CMD_Cam_stop_rec = 11;
-    private static final int CMD_Cam_get_time = 12;
-    private static final int CMD_Cam_get_time_result = 13;
-
-    private static final int CMD_Cam_get_getAllInfor = 14;
-    private static final int CMD_Cam_get_getStorageInfor = 15;
-    private static final int CMD_Cam_msg_Storage_infor = 16;
-    private static final int CMD_Cam_msg_StorageSpace_infor = 17;
-    private static final int CMD_Cam_msg_Battery_infor = 18;
-    private static final int CMD_Cam_msg_power_infor = 19;
-    private static final int CMD_Cam_msg_BT_infor = 20;
-    private static final int CMD_Cam_msg_GPS_infor = 21;
-    private static final int CMD_Cam_msg_Internet_infor = 22;
-    public static final int CMD_Cam_msg_Mic_infor = 23;
-    public static final int CMD_Cam_set_StreamSize = 24;
-
-    public static final int CMD_Cam_PowerOff = 25;
-    public static final int CMD_Cam_Reboot = 26;
-
-    public static final int CMD_Network_GetWLanMode = 27;
-    public static final int CMD_Network_GetHostNum = 28;
-    public static final int CMD_Network_GetHostInfor = 29;
-    public static final int CMD_Network_AddHost = 30;
-    public static final int CMD_Network_RmvHost = 31;
-    public static final int CMD_Network_ConnectHost = 32;
-
-    public static final int CMD_Network_Synctime = 33;
-    public static final int CMD_Network_GetDevicetime = 34;
-
-    public static final int CMD_Rec_error = 35;
-
-    public static final int CMD_audio_setMic = 36;
-    public static final int CMD_audio_getMicState = 37;
-
-    public static final int CMD_fw_getVersion = 38;
-    public static final int CMD_fw_newVersion = 39;
-    public static final int CMD_fw_doUpgrade = 40;
-
-    // 1.2
-    public static final int CMD_CAM_BT_isSupported = 41;
-    public static final int CMD_CAM_BT_isEnabled = 42;
-    public static final int CMD_CAM_BT_Enable = 43;
-    public static final int CMD_CAM_BT_getDEVStatus = 44;
-    public static final int CMD_CAM_BT_getHostNum = 45;
-    public static final int CMD_CAM_BT_getHostInfor = 46;
-    public static final int CMD_CAM_BT_doScan = 47;
-    public static final int CMD_CAM_BT_doBind = 48;
-    public static final int CMD_CAM_BT_doUnBind = 49;
-    public static final int CMD_CAM_BT_setOBDTypes = 50;
-    public static final int CMD_CAM_BT_RESERVED = 51;
-
-    // oliver
-    public static final int CMD_CAM_WantIdle = 100;
-    public static final int CMD_CAM_WantPreview = 101;
-
-    // CMD_Domain_rec
-    public static final int CMD_Rec_Start = 0;
-    public static final int CMD_Rec_Stop = 1;
-    public static final int CMD_Rec_List_Resolutions = 2;
-    public static final int CMD_Rec_Set_Resolution = 3;
-    public static final int CMD_Rec_get_Resolution = 4;
-    public static final int CMD_Rec_List_Qualities = 5;
-    public static final int CMD_Rec_Set_Quality = 6;
-    public static final int CMD_Rec_get_Quality = 7;
-    public static final int CMD_Rec_List_RecModes = 8;
-    public static final int CMD_Rec_Set_RecMode = 9;
-    public static final int CMD_Rec_get_RecMode = 10;
-    public static final int CMD_Rec_List_ColorModes = 11;
-    public static final int CMD_Rec_Set_ColorMode = 12;
-    public static final int CMD_Rec_get_ColorMode = 13;
-    public static final int CMD_Rec_List_SegLens = 14;
-    public static final int CMD_Rec_Set_SegLen = 15;
-    public static final int CMD_Rec_get_SegLen = 16;
-    public static final int CMD_Rec_get_State = 17;
-    public static final int EVT_Rec_state_change = 18;
-    public static final int CMD_Rec_getTime = 19;
-    public static final int CMD_Rec_getTime_result = 20;
-
-    public static final int CMD_Rec_setDualStream = 21;
-    public static final int CMD_Rec_getDualStreamState = 22;
-
-    public static final int CMD_Rec_setOverlay = 23;
-    public static final int CMD_Rec_getOverlayState = 24;
-
-    public static final int CMD_Rec_Mark_Live_Video = 27;
-    public static final int CMD_Rec_Set_Mark_Time = 28;
-    public static final int CMD_Rec_Get_Mark_Time = 29;
-
-    // oliver
-    public static final int CMD_Rec_SetStillMode = 100;
-    public static final int CMD_Rec_StartStillCapture = 101;
-    public static final int CMD_Rec_StopStillCapture = 102;
-
-    public static final int MSG_Rec_StillPictureInfo = 103;
-    public static final int MSG_Rec_StillCaptureDone = 104;
 
     static final class Request {
         final int mDomain;
@@ -234,17 +238,16 @@ final class VdtCameraController {
     private final TcpConnection mConnection;
     private final Queue mQueue = new Queue();
 
-    static final int UserCmd_GetSetup = 1;
-    static final int UserCmd_ExitThread = 2;
+
 
     // all info for setup
     public void userCmd_GetSetup() {
-        Request request = new Request(CMD_Domain_user, UserCmd_GetSetup, "", "");
+        Request request = new Request(CMD_DOMAIN_USER, UserCmd_GetSetup, "", "");
         mQueue.postRequest(request);
     }
 
     public void userCmd_ExitThread() {
-        Request request = new Request(CMD_Domain_user, UserCmd_ExitThread, "", "");
+        Request request = new Request(CMD_DOMAIN_USER, UserCmd_ExitThread, "", "");
         mQueue.postRequest(request);
     }
 
@@ -264,21 +267,21 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_getMode
+    // CMD_CAM_GET_MODE
     // ========================================================
     public void cmd_Cam_getMode() {
-        postRequest(CMD_Domain_cam, CMD_Cam_getMode);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_MODE);
     }
 
     // ========================================================
-    // CMD_Cam_getMode_result
+    // CMD_CAM_GET_MODE_RESULT
     // ========================================================
 
     // ========================================================
-    // CMD_Cam_getApiVersion
+    // CMD_CAM_GET_API_VERSION
     // ========================================================
     public void cmd_Cam_getApiVersion() {
-        postRequest(CMD_Domain_cam, CMD_Cam_getApiVersion);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_API_VERSION);
     }
 
     private void ack_Cam_getApiVersion(String p1) {
@@ -301,43 +304,43 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_isApiSupported
+    // CMD_CAM_IS_API_SUPPORTED
     // ========================================================
 
     // ========================================================
-    // CMD_Cam_get_Name
+    // CMD_CAM_GET_NAME
     // ========================================================
     public void cmd_Cam_get_Name() {
-        postRequest(CMD_Domain_cam, CMD_Cam_get_Name);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME);
     }
 
     // ========================================================
-    // CMD_Cam_get_Name_result
+    // CMD_CAM_GET_NAME_RESULT
     // ========================================================
     private void ack_Cam_get_Name_result(String p1, String p2) {
         mStates.setCameraName(p1);
     }
 
     // ========================================================
-    // CMD_Cam_set_Name
+    // CMD_CAM_SET_NAME
     // ========================================================
     public void cmd_Cam_set_Name(String name) {
-        postRequest(CMD_Domain_cam, CMD_Cam_set_Name, name, "");
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_SET_NAME, name, "");
     }
 
     // ========================================================
-    // CMD_Cam_set_Name_result - not used
+    // CMD_CAM_SET_NAME_RESULT - not used
     // ========================================================
 
     // ========================================================
-    // CMD_Cam_get_State
+    // CMD_CAM_GET_STATE
     // ========================================================
     public void cmd_Cam_get_State() {
-        postRequest(CMD_Domain_cam, CMD_Cam_get_State);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_STATE);
     }
 
     // ========================================================
-    // CMD_Cam_get_State_result
+    // CMD_CAM_GET_STATE_RESULT
     // ========================================================
     private void ack_Cam_get_State_result(String p1, String p2) {
         int state = Integer.parseInt(p1);
@@ -346,28 +349,28 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_start_rec
+    // CMD_CAM_START_REC
     // ========================================================
     public void cmd_Cam_start_rec() {
-        postRequest(CMD_Domain_cam, CMD_Cam_start_rec);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_START_REC);
     }
 
     // ========================================================
-    // CMD_Cam_stop_rec
+    // CMD_CAM_STOP_REC
     // ========================================================
     public void ack_Cam_stop_rec() {
-        postRequest(CMD_Domain_cam, CMD_Cam_stop_rec);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_STOP_REC);
     }
 
     // ========================================================
-    // CMD_Cam_get_time
+    // CMD_CAM_GET_TIME
     // ========================================================
     public void ack_Cam_get_time() {
-        postRequest(CMD_Domain_cam, CMD_Cam_get_time);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_TIME);
     }
 
     // ========================================================
-    // CMD_Cam_get_time_result
+    // CMD_CAM_GET_TIME_RESULT
     // ========================================================
     private void ack_Cam_get_time_result(String p1, String p2) {
         int duration = Integer.parseInt(p1);
@@ -375,22 +378,22 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_get_getAllInfor
+    // CMD_CAM_GET_GET_ALL_INFOR
     // audio, power, storage, gps
     // ========================================================
     public void cmd_Cam_get_getAllInfor() {
-        postRequest(CMD_Domain_cam, CMD_Cam_get_getAllInfor);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_GET_ALL_INFOR);
     }
 
     // ========================================================
-    // CMD_Cam_get_getStorageInfor
+    // CMD_CAM_GET_GET_STORAGE_INFOR
     // ========================================================
     public void cmd_Cam_get_getStorageInfor() {
-        postRequest(CMD_Domain_cam, CMD_Cam_get_getStorageInfor);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_GET_STORAGE_INFOR);
     }
 
     // ========================================================
-    // CMD_Cam_msg_Storage_infor
+    // CMD_CAM_MSG_STORAGE_INFOR
     // ========================================================
     private void ack_Cam_msg_Storage_infor(String p1, String p2) {
         int state = Integer.parseInt(p1);
@@ -398,7 +401,7 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_msg_StorageSpace_infor
+    // CMD_CAM_MSG_STORAGE_SPACE_INFOR
     // ========================================================
     private void ack_Cam_msg_StorageSpace_infor(String p1, String p2) {
         long totalSpace = p1.length() > 0 ? Long.parseLong(p1) : 0;
@@ -407,7 +410,7 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_msg_Battery_infor
+    // CMD_CAM_MSG_BATTERY_INFOR
     // ========================================================
     private void ack_Cam_msg_Battery_infor(String p1, String p2) {
         int vol = Integer.parseInt(p2);
@@ -415,14 +418,12 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_msg_power_infor
+    // CMD_CAM_MSG_POWER_INFOR
     // ========================================================
     private void ack_Cam_msg_power_infor(String p1, String p2) {
         if (p1.length() == 0 || p2.length() == 0) {
             // workaround: request again after 1 s
-            if (DEBUG) {
-                Log.d(TAG, "bad power info, schedule update");
-            }
+            Logger.t(TAG).d("bad power info, schedule update");
             mQueue.scheduleGetAllInfo();
         } else {
             int batteryState = CameraState.STATE_BATTERY_UNKNOWN;
@@ -441,11 +442,11 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_msg_BT_infor
+    // CMD_CAM_MSG_BT_INFOR
     // ========================================================
 
     // ========================================================
-    // CMD_Cam_msg_GPS_infor
+    // CMD_CAM_MSG_GPS_INFOR
     // ========================================================
     private void ack_Cam_msg_GPS_infor(String p1, String p2) {
         int state = Integer.parseInt(p1);
@@ -453,11 +454,11 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_msg_Internet_infor
+    // CMD_CAM_MSG_INTERNET_INFOR
     // ========================================================
 
     // ========================================================
-    // CMD_Cam_msg_Mic_infor
+    // CMD_CAM_MSG_MIC_INFOR
     // ========================================================
     private void ack_Cam_msg_Mic_infor(String p1, String p2) {
         int state = Integer.parseInt(p1);
@@ -466,28 +467,28 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Cam_set_StreamSize
+    // CMD_CAM_SET_STREAM_SIZE
     // ========================================================
 
     // ========================================================
-    // CMD_Cam_PowerOff
+    // CMD_CAM_POWER_OFF
     // ========================================================
     public void cmd_Cam_PowerOff() {
-        postRequest(CMD_Domain_cam, CMD_Cam_PowerOff);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_POWER_OFF);
     }
 
     // ========================================================
-    // CMD_Cam_Reboot
+    // CMD_CAM_REBOOT
     // ========================================================
     public void cmd_Cam_Reboot() {
-        postRequest(CMD_Domain_cam, CMD_Cam_Reboot);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_REBOOT);
     }
 
     // ========================================================
-    // CMD_Network_GetWLanMode
+    // CMD_NETWORK_GET_W_LAN_MODE
     // ========================================================
     public void cmd_Network_GetWLanMode() {
-        postRequest(CMD_Domain_cam, CMD_Network_GetWLanMode);
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_GET_WLAN_MODE);
     }
 
     private void ack_Network_GetWLanMode(String p1, String p2) {
@@ -496,10 +497,10 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Network_GetHostNum
+    // CMD_NETWORK_GET_HOST_NUM
     // ========================================================
     public void cmd_Network_GetHostNum() {
-        postRequest(CMD_Domain_cam, CMD_Network_GetHostNum);
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_NUM);
     }
 
     private void ack_Network_GetHostNum(String p1, String p2) {
@@ -511,10 +512,10 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Network_GetHostInfor
+    // CMD_NETWORK_GET_HOST_INFOR
     // ========================================================
     public void cmd_Network_GetHostInfor(int index) {
-        postRequest(CMD_Domain_cam, CMD_Network_GetHostInfor, index);
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, index);
     }
 
     private void ack_Network_GetHostInfor(String p1, String p2) {
@@ -524,45 +525,45 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Network_AddHost
+    // CMD_NETWORK_ADD_HOST
     // ========================================================
     public void cmd_Network_AddHost(String hostName, String password) {
-        postRequest(CMD_Domain_cam, CMD_Network_AddHost, hostName, password);
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_ADD_HOST, hostName, password);
         cmd_Network_GetHostNum();
     }
 
     // ========================================================
-    // CMD_Network_RmvHost
+    // CMD_NETWORK_RMV_HOST
     // ========================================================
     public void cmd_Network_RmvHost(String hostName) {
-        postRequest(CMD_Domain_cam, CMD_Network_RmvHost, hostName, "");
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_RMV_HOST, hostName, "");
         cmd_Network_GetHostNum();
     }
 
     // ========================================================
-    // CMD_Network_ConnectHost
+    // CMD_NETWORK_CONNECT_HOST
     // ========================================================
     public void cmd_Network_ConnectHost(int mode, String apName) {
         if (apName == null)
             apName = "";
-        postRequest(CMD_Domain_cam, CMD_Network_ConnectHost, Integer.toString(mode), apName);
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECT_HOST, Integer.toString(mode), apName);
     }
 
     // ========================================================
-    // CMD_Network_Synctime
+    // CMD_NETWORK_SYNCTIME
     // ========================================================
     public void cmd_Network_Synctime(long time, int timezone) {
         String p1 = Long.toString(time);
         String p2 = Integer.toString(timezone);
-        postRequest(CMD_Domain_cam, CMD_Network_Synctime, p1, p2);
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_SYNCTIME, p1, p2);
     }
 
     // ========================================================
-    // CMD_Network_GetDevicetime
+    // CMD_NETWORK_GET_DEVICETIME
     // ========================================================
 
     // ========================================================
-    // CMD_Rec_error
+    // CMD_REC_ERROR
     // ========================================================
     private void ack_Rec_error(String p1, String p2) {
         int error = Integer.parseInt(p1);
@@ -572,28 +573,28 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_audio_setMic
+    // CMD_AUDIO_SET_MIC
     // ========================================================
     public void cmd_audio_setMic(int state, int gain) {
         if (state == CameraState.STATE_MIC_ON && gain == 0)
             gain = 5;
         String p1 = Integer.toString(state);
         String p2 = Integer.toString(gain);
-        postRequest(CMD_Domain_cam, CMD_audio_setMic, p1, p2);
+        postRequest(CMD_DOMAIN_CAM, CMD_AUDIO_SET_MIC, p1, p2);
     }
 
     // ========================================================
-    // CMD_audio_getMicState
+    // CMD_AUDIO_GET_MIC_STATE
     // ========================================================
     public void cmd_audio_getMicState() {
-        postRequest(CMD_Domain_cam, CMD_audio_getMicState);
+        postRequest(CMD_DOMAIN_CAM, CMD_AUDIO_GET_MIC_STATE);
     }
 
     // ========================================================
-    // CMD_fw_getVersion
+    // CMD_FW_GET_VERSION
     // ========================================================
     public void cmd_fw_getVersion() {
-        postRequest(CMD_Domain_cam, CMD_fw_getVersion);
+        postRequest(CMD_DOMAIN_CAM, CMD_FW_GET_VERSION);
     }
 
     private void ack_fw_getVersion(String p1, String p2) {
@@ -601,11 +602,11 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_CAM_BT_isSupported
+    // CMD_CAM_BT_IS_SUPPORTED
     // ========================================================
     public void cmd_CAM_BT_isSupported() {
         if (mStates.version12() && mBtStates.mBtSupport == BtState.BT_Support_Unknown) {
-            postRequest(CMD_Domain_cam, CMD_CAM_BT_isSupported);
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_SUPPORTED);
         }
     }
 
@@ -614,11 +615,11 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_CAM_BT_isEnabled
+    // CMD_CAM_BT_IS_ENABLED
     // ========================================================
     public void cmd_CAM_BT_isEnabled() {
         if (mStates.version12()) {
-            postRequest(CMD_Domain_cam, CMD_CAM_BT_isEnabled);
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
         }
     }
 
@@ -632,20 +633,20 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_CAM_BT_Enable
+    // CMD_CAM_BT_ENABLE
     // ========================================================
     public void cmd_CAM_BT_Enable(boolean bEnable) {
         if (mStates.version12()) {
-            postRequest(CMD_Domain_cam, CMD_CAM_BT_Enable, bEnable ? 1 : 0);
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_ENABLE, bEnable ? 1 : 0);
         }
     }
 
     // ========================================================
-    // CMD_CAM_BT_getDEVStatus
+    // CMD_CAM_BT_GET_DEV_STATUS
     // ========================================================
     public void cmd_CAM_BT_getDEVStatus(int type) {
         if (mStates.version12()) {
-            postRequest(CMD_Domain_cam, CMD_CAM_BT_getDEVStatus, type);
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
         }
     }
 
@@ -673,10 +674,10 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_CAM_BT_getHostNum
+    // CMD_CAM_BT_GET_HOST_NUM
     // ========================================================
     public void cmd_CAM_BT_getHostNum() {
-        postRequest(CMD_Domain_cam, CMD_CAM_BT_getHostNum);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_HOST_NUM);
     }
 
     private void ack_CAM_BT_getHostNum(String p1) {
@@ -694,10 +695,10 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_CAM_BT_getHostInfor
+    // CMD_CAM_BT_GET_HOST_INFOR
     // ========================================================
     public void cmd_CAM_BT_getHostInfor(int index) {
-        postRequest(CMD_Domain_cam, CMD_CAM_BT_getHostInfor, index);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_HOST_INFOR, index);
     }
 
     // p1: name; p2: mac
@@ -710,11 +711,11 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_CAM_BT_doScan
+    // CMD_CAM_BT_DO_SCAN
     // ========================================================
     public void cmd_CAM_BT_doScan() {
         if (mStates.version12()) {
-            postRequest(CMD_Domain_cam, CMD_CAM_BT_doScan);
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_SCAN);
         }
     }
 
@@ -726,11 +727,11 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_CAM_BT_doBind
+    // CMD_CAM_BT_DO_BIND
     // ========================================================
     public void cmd_CAM_BT_doBind(int type, String mac) {
         Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
-        postRequest(CMD_Domain_cam, CMD_CAM_BT_doBind, Integer.toString(type), mac);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
     }
 
     private void ack_CAM_BT_doBind(String p1, String p2) {
@@ -738,60 +739,60 @@ final class VdtCameraController {
         int result = Integer.parseInt(p2);
         if (result == 0) {
             if (type == BtState.BT_Type_HID || type == BtState.BT_Type_OBD) {
-                postRequest(CMD_Domain_cam, CMD_CAM_BT_getDEVStatus, type);
+                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
             }
         }
     }
 
     // ========================================================
-    // CMD_CAM_BT_doUnBind
+    // CMD_CAM_BT_DO_UN_BIND
     // ========================================================
     public void cmd_CAM_BT_doUnBind(int type, String mac) {
         Log.d(TAG, "cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
-        postRequest(CMD_Domain_cam, CMD_CAM_BT_doUnBind, Integer.toString(type), mac);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
     }
 
     private void ack_CAM_BT_doUnBind(String p1, String p2) {
         int type = Integer.parseInt(p1);
         if (type == BtState.BT_Type_HID || type == BtState.BT_Type_OBD) {
-            postRequest(CMD_Domain_cam, CMD_CAM_BT_getDEVStatus, type);
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
         }
     }
 
     // ========================================================
-    // CMD_CAM_BT_setOBDTypes
+    // CMD_CAM_BT_SET_OBD_TYPES
     // ========================================================
     public void cmd_CAM_BT_setOBDTypes() {
     }
 
     // ========================================================
-    // CMD_CAM_WantIdle
+    // CMD_CAM_WANT_IDLE
     // ========================================================
     public void cmd_CAM_WantIdle() {
-        postRequest(CMD_Domain_cam, CMD_CAM_WantIdle);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_WANT_IDLE);
     }
 
     // ========================================================
-    // CMD_CAM_WantPreview
+    // CMD_CAM_WANT_PREVIEW
     // ========================================================
     public void cmd_CAM_WantPreview() {
-        postRequest(CMD_Domain_cam, CMD_CAM_WantPreview);
+        postRequest(CMD_DOMAIN_CAM, CMD_CAM_WANT_PREVIEW);
     }
 
     // /////////////////////////////////////////////////////////
 
     // ========================================================
-    // CMD_Rec_Start - not used
+    // CMD_REC_START - not used
     // ========================================================
     // ========================================================
-    // CMD_Rec_Stop - not used
+    // CMD_REC_STOP - not used
     // ========================================================
 
     // ========================================================
-    // CMD_Rec_List_Resolutions
+    // CMD_REC_LIST_RESOLUTIONS
     // ========================================================
     public void cmd_Rec_List_Resolutions() {
-        postRequest(CMD_Domain_rec, CMD_Rec_List_Resolutions);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_RESOLUTIONS);
     }
 
     private void ack_Rec_List_Resolutions(String p1, String p2) {
@@ -800,17 +801,17 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_Set_Resolution
+    // CMD_REC_SET_RESOLUTION
     // ========================================================
     public void cmd_Rec_Set_Resolution(int index) {
-        postRequest(CMD_Domain_rec, CMD_Rec_Set_Resolution, index);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_SET_RESOLUTION, index);
     }
 
     // ========================================================
-    // CMD_Rec_get_Resolution
+    // CMD_REC_GET_RESOLUTION
     // ========================================================
     public void cmd_Rec_get_Resolution() {
-        postRequest(CMD_Domain_rec, CMD_Rec_get_Resolution);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_GET_RESOLUTION);
     }
 
     private void ack_Rec_get_Resolution(String p1, String p2) {
@@ -819,10 +820,10 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_List_Qualities
+    // CMD_REC_LIST_QUALITIES
     // ========================================================
     public void cmd_Rec_List_Qualities() {
-        postRequest(CMD_Domain_rec, CMD_Rec_List_Qualities);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_QUALITIES);
     }
 
     private void ack_Rec_List_Qualities(String p1, String p2) {
@@ -831,17 +832,17 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_Set_Quality
+    // CMD_REC_SET_QUALITY
     // ========================================================
     public void cmd_Rec_Set_Quality(int index) {
-        postRequest(CMD_Domain_rec, CMD_Rec_Set_Quality, index);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_SET_QUALITY, index);
     }
 
     // ========================================================
-    // CMD_Rec_get_Quality
+    // CMD_REC_GET_QUALITY
     // ========================================================
     public void cmd_Rec_get_Quality() {
-        postRequest(CMD_Domain_rec, CMD_Rec_get_Quality);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_GET_QUALITY);
     }
 
     private void ack_Rec_get_Quality(String p1, String p2) {
@@ -850,10 +851,10 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_List_RecModes
+    // CMD_REC_LIST_REC_MODES
     // ========================================================
     public void cmd_Rec_List_RecModes() {
-        postRequest(CMD_Domain_rec, CMD_Rec_List_RecModes);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_REC_MODES);
     }
 
     private void ack_Rec_List_RecModes(String p1, String p2) {
@@ -862,17 +863,17 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_Set_RecMode
+    // CMD_REC_SET_REC_MODE
     // ========================================================
     public void cmd_Rec_Set_RecMode(int index) {
-        postRequest(CMD_Domain_rec, CMD_Rec_Set_RecMode, index);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_SET_REC_MODE, index);
     }
 
     // ========================================================
-    // CMD_Rec_get_RecMode
+    // CMD_REC_GET_REC_MODE
     // ========================================================
     public void cmd_Rec_get_RecMode() {
-        postRequest(CMD_Domain_rec, CMD_Rec_get_RecMode);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_GET_REC_MODE);
     }
 
     private void ack_Rec_get_RecMode(String p1, String p2) {
@@ -881,10 +882,10 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_List_ColorModes
+    // CMD_REC_LIST_COLOR_MODES
     // ========================================================
     public void cmd_Rec_List_ColorModes() {
-        postRequest(CMD_Domain_rec, CMD_Rec_List_ColorModes);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_COLOR_MODES);
     }
 
     private void ack_Rec_List_ColorModes(String p1, String p2) {
@@ -893,17 +894,17 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_Set_ColorMode
+    // CMD_REC_SET_COLOR_MODE
     // ========================================================
     public void cmd_Rec_Set_ColorMode(int index) {
-        postRequest(CMD_Domain_rec, CMD_Rec_Set_ColorMode, index);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_SET_COLOR_MODE, index);
     }
 
     // ========================================================
-    // CMD_Rec_get_ColorMode
+    // CMD_REC_GET_COLOR_MODE
     // ========================================================
     public void cmd_Rec_get_ColorMode() {
-        postRequest(CMD_Domain_rec, CMD_Rec_get_ColorMode);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_GET_COLOR_MODE);
     }
 
     private void ack_Rec_get_ColorMode(String p1, String p2) {
@@ -912,48 +913,48 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_List_SegLens
+    // CMD_REC_LIST_SEG_LENS
     // ========================================================
     // ========================================================
-    // CMD_Rec_Set_SegLen
+    // CMD_REC_SET_SEG_LEN
     // ========================================================
     // ========================================================
-    // CMD_Rec_get_SegLen
-    // ========================================================
-
-    // ========================================================
-    // CMD_Rec_get_State
-    // ========================================================
-    // ========================================================
-    // EVT_Rec_state_change
+    // CMD_REC_GET_SEG_LEN
     // ========================================================
 
     // ========================================================
-    // CMD_Rec_getTime
+    // CMD_REC_GET_STATE
     // ========================================================
     // ========================================================
-    // CMD_Rec_getTime_result
-    // ========================================================
-
-    // ========================================================
-    // CMD_Rec_setDualStream
-    // ========================================================
-    // ========================================================
-    // CMD_Rec_getDualStreamState
+    // EVT_REC_STATE_CHANGE
     // ========================================================
 
     // ========================================================
-    // CMD_Rec_setOverlay
+    // CMD_REC_GET_TIME
+    // ========================================================
+    // ========================================================
+    // CMD_REC_GET_TIME_RESULT
+    // ========================================================
+
+    // ========================================================
+    // CMD_REC_SET_DUAL_STREAM
+    // ========================================================
+    // ========================================================
+    // CMD_REC_GET_DUAL_STREAM_STATE
+    // ========================================================
+
+    // ========================================================
+    // CMD_REC_SET_OVERLAY
     // ========================================================
     public void cmd_Rec_setOverlay(int flags) {
-        postRequest(CMD_Domain_rec, CMD_Rec_setOverlay, flags);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_SET_OVERLAY, flags);
     }
 
     // ========================================================
-    // CMD_Rec_getOverlayState
+    // CMD_REC_GET_OVERLAY_STATE
     // ========================================================
     public void cmd_Rec_getOverlayState() {
-        postRequest(CMD_Domain_rec, CMD_Rec_getOverlayState);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_GET_OVERLAY_STATE);
     }
 
     private void ack_Rec_getOverlayState(String p1, String p2) {
@@ -962,17 +963,17 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_SetStillMode
+    // CMD_REC_SET_STILL_MODE
     // ========================================================
     public void cmd_Rec_SetStillMode(boolean bStillMode) {
-        postRequest(CMD_Domain_rec, CMD_Rec_SetStillMode, bStillMode ? 1 : 0);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_SET_STILL_MODE, bStillMode ? 1 : 0);
     }
 
     // ========================================================
-    // CMD_Rec_StartStillCapture
+    // CMD_REC_START_STILL_CAPTURE
     // ========================================================
     public void cmd_Rec_StartStillCapture(boolean bOneShot) {
-        postRequest(CMD_Domain_rec, CMD_Rec_StartStillCapture, bOneShot ? 1 : 0);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_START_STILL_CAPTURE, bOneShot ? 1 : 0);
     }
 
     private void ack_Rec_StartStillCapture(String p1, String p2) {
@@ -983,14 +984,14 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // CMD_Rec_StopStillCapture
+    // CMD_REC_STOP_STILL_CAPTURE
     // ========================================================
     public void cmd_Rec_StopStillCapture() {
-        postRequest(CMD_Domain_rec, CMD_Rec_StopStillCapture);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_STOP_STILL_CAPTURE);
     }
 
     // ========================================================
-    // MSG_Rec_StillPictureInfo
+    // MSG_REC_STILL_PICTURE_INFO
     // ========================================================
     private void ack_Rec_StillPictureInfo(String p1, String p2) {
         int value_p1 = p1.length() > 0 ? Integer.parseInt(p1) : 0;
@@ -1003,7 +1004,7 @@ final class VdtCameraController {
     }
 
     // ========================================================
-    // MSG_Rec_StillCaptureDone
+    // MSG_REC_STILL_CAPTURE_DONE
     // ========================================================
     private void ack_Rec_StillCaptureDone() {
         if (mListener != null) {
@@ -1015,11 +1016,11 @@ final class VdtCameraController {
      * This cmd does not have response.
      */
     public void cmd_Rec_MarkLiveVideo() {
-        postRequest(CMD_Domain_rec, CMD_Rec_Mark_Live_Video);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_MARK_LIVE_VIDEO);
     }
 
     public void cmd_Rec_GetMarkTime() {
-        postRequest(CMD_Domain_rec, CMD_Rec_Get_Mark_Time);
+        postRequest(CMD_DOMAIN_REC, CMD_REC_GET_MARK_TIME);
     }
 
     private void ack_Rec_GetMarkTime(String p1, String p2) {
@@ -1035,7 +1036,7 @@ final class VdtCameraController {
         if (before < 0 || after < 0) {
             return;
         }
-        postRequest(CMD_Domain_rec, CMD_Rec_Set_Mark_Time,
+        postRequest(CMD_DOMAIN_REC, CMD_REC_SET_MARK_TIME,
             String.valueOf(before), String.valueOf(after));
     }
 
@@ -1101,10 +1102,8 @@ final class VdtCameraController {
                 return false;
 
             default:
-                if (DEBUG) {
-                    Log.d(TAG, "unknown user cmd " + request.mCmd);
-                    break;
-                }
+                Logger.t(TAG).d("unknown user cmd " + request.mCmd);
+                break;
         }
 
         return true;
@@ -1152,7 +1151,7 @@ final class VdtCameraController {
 
             Request request = (Request) cmdResult.request;
 
-            if (request.mDomain == CMD_Domain_user) {
+            if (request.mDomain == CMD_DOMAIN_USER) {
                 if (!createUserCmd(request)) {
                     break;
                 }
@@ -1197,7 +1196,7 @@ final class VdtCameraController {
     }
 
     static private final Pattern mPattern = Pattern.compile("ECMD(\\d+).(\\d+)", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+        | Pattern.MULTILINE);
 
     private void parseCmdTag(XmlPullParser xpp) {
         int count = xpp.getAttributeCount();
@@ -1219,9 +1218,8 @@ final class VdtCameraController {
                 }
             }
 
-            if (DEBUG) {
-                Log.d(TAG, "ack: act=" + act + ", p1=" + p1 + ", p2=" + p2);
-            }
+
+            Logger.t(TAG).d("ack: act=" + act + ", p1=" + p1 + ", p2=" + p2);
 
             // ECMD0.5
             Matcher matcher = mPattern.matcher(act);
@@ -1229,10 +1227,10 @@ final class VdtCameraController {
                 int domain = Integer.parseInt(matcher.group(1));
                 int cmd = Integer.parseInt(matcher.group(2));
                 switch (domain) {
-                    case CMD_Domain_cam:
+                    case CMD_DOMAIN_CAM:
                         camDomainMsg(cmd, p1, p2);
                         break;
-                    case CMD_Domain_rec:
+                    case CMD_DOMAIN_REC:
                         recDomainMsg(cmd, p1, p2);
                         break;
                     default:
@@ -1309,292 +1307,288 @@ final class VdtCameraController {
             }
 
         } catch (XmlPullParserException e) {
-            if (DEBUG) {
-                Log.d(TAG, "XmlPullParserException: length=" + length + ", appended=" + appended);
-                e.printStackTrace();
-            }
+
+            Logger.t(TAG).d("XmlPullParserException: length=" + length + ", appended=" +
+                appended);
+            e.printStackTrace();
             throw new IOException("XmlPullParserException");
         }
     }
 
     private void ackNotHandled(String name, String p1, String p2) {
-        if (DEBUG) {
-            Log.d(TAG, "not handled: " + name + ", p1=" + p1 + ",p2=" + p2);
-        }
+
+        Logger.t(TAG).d("not handled: " + name + ", p1=" + p1 + ",p2=" + p2);
+
     }
 
     private void camDomainMsg(int cmd, String p1, String p2) {
         switch (cmd) {
-            case CMD_Cam_getMode:
-                ackNotHandled("CMD_Cam_getMode", p1, p2);
+            case CMD_CAM_GET_MODE:
+                ackNotHandled("CMD_CAM_GET_MODE", p1, p2);
                 break;
-            case CMD_Cam_getMode_result:
-                ackNotHandled("CMD_Cam_getMode_result", p1, p2);
+            case CMD_CAM_GET_MODE_RESULT:
+                ackNotHandled("CMD_CAM_GET_MODE_RESULT", p1, p2);
                 break;
-            case CMD_Cam_getApiVersion:
+            case CMD_CAM_GET_API_VERSION:
                 ack_Cam_getApiVersion(p1);
                 break;
-            case CMD_Cam_isApiSupported:
-                ackNotHandled("CMD_Cam_isApiSupported", p1, p2);
+            case CMD_CAM_IS_API_SUPPORTED:
+                ackNotHandled("CMD_CAM_IS_API_SUPPORTED", p1, p2);
                 break;
-            case CMD_Cam_get_Name:
-                ackNotHandled("CMD_Cam_get_Name", p1, p2);
+            case CMD_CAM_GET_NAME:
+                ackNotHandled("CMD_CAM_GET_NAME", p1, p2);
                 break;
-            case CMD_Cam_get_Name_result:
+            case CMD_CAM_GET_NAME_RESULT:
                 ack_Cam_get_Name_result(p1, p2);
                 break;
-            case CMD_Cam_set_Name:
-                ackNotHandled("CMD_Cam_set_Name", p1, p2);
+            case CMD_CAM_SET_NAME:
+                ackNotHandled("CMD_CAM_SET_NAME", p1, p2);
                 break;
-            case CMD_Cam_set_Name_result:
-                ackNotHandled("CMD_Cam_set_Name_result", p1, p2);
+            case CMD_CAM_SET_NAME_RESULT:
+                ackNotHandled("CMD_CAM_SET_NAME_RESULT", p1, p2);
                 break;
-            case CMD_Cam_get_State:
-                ackNotHandled("CMD_Cam_get_State", p1, p2);
+            case CMD_CAM_GET_STATE:
+                ackNotHandled("CMD_CAM_GET_STATE", p1, p2);
                 break;
-            case CMD_Cam_get_State_result:
+            case CMD_CAM_GET_STATE_RESULT:
                 ack_Cam_get_State_result(p1, p2);
                 break;
-            case CMD_Cam_start_rec:
-                ackNotHandled("CMD_Cam_start_rec", p1, p2);
+            case CMD_CAM_START_REC:
+                ackNotHandled("CMD_CAM_START_REC", p1, p2);
                 break;
-            case CMD_Cam_stop_rec:
-                ackNotHandled("CMD_Cam_stop_rec", p1, p2);
+            case CMD_CAM_STOP_REC:
+                ackNotHandled("CMD_CAM_STOP_REC", p1, p2);
                 break;
-            case CMD_Cam_get_time:
-                ackNotHandled("CMD_Cam_get_time", p1, p2);
+            case CMD_CAM_GET_TIME:
+                ackNotHandled("CMD_CAM_GET_TIME", p1, p2);
                 break;
-            case CMD_Cam_get_time_result:
+            case CMD_CAM_GET_TIME_RESULT:
                 ack_Cam_get_time_result(p1, p2);
                 break;
-            case CMD_Cam_get_getAllInfor:
-                ackNotHandled("CMD_Cam_get_getAllInfor", p1, p2);
+            case CMD_CAM_GET_GET_ALL_INFOR:
+                ackNotHandled("CMD_CAM_GET_GET_ALL_INFOR", p1, p2);
                 break;
-            case CMD_Cam_get_getStorageInfor:
-                ackNotHandled("CMD_Cam_get_getStorageInfor", p1, p2);
+            case CMD_CAM_GET_GET_STORAGE_INFOR:
+                ackNotHandled("CMD_CAM_GET_GET_STORAGE_INFOR", p1, p2);
                 break;
-            case CMD_Cam_msg_Storage_infor:
+            case CMD_CAM_MSG_STORAGE_INFOR:
                 ack_Cam_msg_Storage_infor(p1, p2);
                 break;
-            case CMD_Cam_msg_StorageSpace_infor:
+            case CMD_CAM_MSG_STORAGE_SPACE_INFOR:
                 ack_Cam_msg_StorageSpace_infor(p1, p2);
                 break;
-            case CMD_Cam_msg_Battery_infor:
+            case CMD_CAM_MSG_BATTERY_INFOR:
                 ack_Cam_msg_Battery_infor(p1, p2);
                 break;
-            case CMD_Cam_msg_power_infor:
+            case CMD_CAM_MSG_POWER_INFOR:
                 ack_Cam_msg_power_infor(p1, p2);
                 break;
-            case CMD_Cam_msg_BT_infor:
-                ackNotHandled("CMD_Cam_msg_BT_infor", p1, p2);
+            case CMD_CAM_MSG_BT_INFOR:
+                ackNotHandled("CMD_CAM_MSG_BT_INFOR", p1, p2);
                 break;
-            case CMD_Cam_msg_GPS_infor:
+            case CMD_CAM_MSG_GPS_INFOR:
                 ack_Cam_msg_GPS_infor(p1, p2);
                 break;
-            case CMD_Cam_msg_Internet_infor:
-                ackNotHandled("CMD_Cam_msg_Internet_infor", p1, p2);
+            case CMD_CAM_MSG_INTERNET_INFOR:
+                ackNotHandled("CMD_CAM_MSG_INTERNET_INFOR", p1, p2);
                 break;
-            case CMD_Cam_msg_Mic_infor:
+            case CMD_CAM_MSG_MIC_INFOR:
                 ack_Cam_msg_Mic_infor(p1, p2);
                 break;
-            case CMD_Cam_set_StreamSize:
-                ackNotHandled("CMD_Cam_set_StreamSize", p1, p2);
+            case CMD_CAM_SET_STREAM_SIZE:
+                ackNotHandled("CMD_CAM_SET_STREAM_SIZE", p1, p2);
                 break;
-            case CMD_Cam_PowerOff:
-                ackNotHandled("CMD_Cam_PowerOff", p1, p2);
+            case CMD_CAM_POWER_OFF:
+                ackNotHandled("CMD_CAM_POWER_OFF", p1, p2);
                 break;
-            case CMD_Cam_Reboot:
-                ackNotHandled("CMD_Cam_Reboot", p1, p2);
+            case CMD_CAM_REBOOT:
+                ackNotHandled("CMD_CAM_REBOOT", p1, p2);
                 break;
-            case CMD_Network_GetWLanMode:
+            case CMD_NETWORK_GET_WLAN_MODE:
                 ack_Network_GetWLanMode(p1, p2);
                 break;
-            case CMD_Network_GetHostNum:
+            case CMD_NETWORK_GET_HOST_NUM:
                 ack_Network_GetHostNum(p1, p2);
                 break;
-            case CMD_Network_GetHostInfor:
+            case CMD_NETWORK_GET_HOST_INFOR:
                 ack_Network_GetHostInfor(p1, p2);
                 break;
-            case CMD_Network_AddHost:
-                ackNotHandled("CMD_Network_AddHost", p1, p2);
+            case CMD_NETWORK_ADD_HOST:
+                ackNotHandled("CMD_NETWORK_ADD_HOST", p1, p2);
                 break;
-            case CMD_Network_RmvHost:
-                ackNotHandled("CMD_Network_RmvHost", p1, p2);
+            case CMD_NETWORK_RMV_HOST:
+                ackNotHandled("CMD_NETWORK_RMV_HOST", p1, p2);
                 break;
-            case CMD_Network_ConnectHost:
-                ackNotHandled("CMD_Network_ConnectHost", p1, p2);
+            case CMD_NETWORK_CONNECT_HOST:
+                ackNotHandled("CMD_NETWORK_CONNECT_HOST", p1, p2);
                 break;
-            case CMD_Network_Synctime:
-                ackNotHandled("CMD_Network_Synctime", p1, p2);
+            case CMD_NETWORK_SYNCTIME:
+                ackNotHandled("CMD_NETWORK_SYNCTIME", p1, p2);
                 break;
-            case CMD_Network_GetDevicetime:
-                ackNotHandled("CMD_Network_GetDevicetime", p1, p2);
+            case CMD_NETWORK_GET_DEVICETIME:
+                ackNotHandled("CMD_NETWORK_GET_DEVICETIME", p1, p2);
                 break;
-            case CMD_Rec_error:
+            case CMD_REC_ERROR:
                 ack_Rec_error(p1, p2);
                 break;
-            case CMD_audio_setMic:
-                ackNotHandled("CMD_audio_setMic", p1, p2);
+            case CMD_AUDIO_SET_MIC:
+                ackNotHandled("CMD_AUDIO_SET_MIC", p1, p2);
                 break;
-            case CMD_audio_getMicState:
-                ackNotHandled("CMD_audio_getMicState", p1, p2);
+            case CMD_AUDIO_GET_MIC_STATE:
+                ackNotHandled("CMD_AUDIO_GET_MIC_STATE", p1, p2);
                 break;
-            case CMD_fw_getVersion:
+            case CMD_FW_GET_VERSION:
                 ack_fw_getVersion(p1, p2);
                 break;
-            case CMD_fw_newVersion:
-                ackNotHandled("CMD_fw_newVersion", p1, p2);
+            case CMD_FW_NEW_VERSION:
+                ackNotHandled("CMD_FW_NEW_VERSION", p1, p2);
                 break;
-            case CMD_fw_doUpgrade:
-                ackNotHandled("CMD_fw_doUpgrade", p1, p2);
+            case CMD_FW_DO_UPGRADE:
+                ackNotHandled("CMD_FW_DO_UPGRADE", p1, p2);
                 break;
-            case CMD_CAM_BT_isSupported:
+            case CMD_CAM_BT_IS_SUPPORTED:
                 ack_CAM_BT_isSupported(p1);
                 break;
-            case CMD_CAM_BT_isEnabled:
+            case CMD_CAM_BT_IS_ENABLED:
                 ack_CAM_BT_isEnabled(p1);
                 break;
-            case CMD_CAM_BT_Enable:
-                ackNotHandled("CMD_CAM_BT_Enable", p1, p2);
+            case CMD_CAM_BT_ENABLE:
+                ackNotHandled("CMD_CAM_BT_ENABLE", p1, p2);
                 break;
-            case CMD_CAM_BT_getDEVStatus:
+            case CMD_CAM_BT_GET_DEV_STATUS:
                 ack_CAM_BT_getDEVStatus(p1, p2);
                 break;
-            case CMD_CAM_BT_getHostNum:
+            case CMD_CAM_BT_GET_HOST_NUM:
                 ack_CAM_BT_getHostNum(p1);
                 break;
-            case CMD_CAM_BT_getHostInfor:
+            case CMD_CAM_BT_GET_HOST_INFOR:
                 ack_CAM_BT_getHostInfor(p1, p2);
                 break;
-            case CMD_CAM_BT_doScan:
+            case CMD_CAM_BT_DO_SCAN:
                 ack_CAM_BT_doScan();
                 break;
-            case CMD_CAM_BT_doBind:
+            case CMD_CAM_BT_DO_BIND:
                 ack_CAM_BT_doBind(p1, p2);
                 break;
-            case CMD_CAM_BT_doUnBind:
+            case CMD_CAM_BT_DO_UNBIND:
                 ack_CAM_BT_doUnBind(p1, p2);
                 break;
-            case CMD_CAM_BT_setOBDTypes:
-                ackNotHandled("CMD_CAM_BT_setOBDTypes", p1, p2);
+            case CMD_CAM_BT_SET_OBD_TYPES:
+                ackNotHandled("CMD_CAM_BT_SET_OBD_TYPES", p1, p2);
                 break;
-            case CMD_CAM_WantIdle:
+            case CMD_CAM_WANT_IDLE:
                 // not used
                 break;
-            case CMD_CAM_WantPreview:
+            case CMD_CAM_WANT_PREVIEW:
                 // not used
                 break;
             default:
-                if (DEBUG) {
-                    Log.d(TAG, "ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
-                }
+                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
         }
     }
 
     private void recDomainMsg(int cmd, String p1, String p2) {
         switch (cmd) {
-            case CMD_Rec_Start:
-                ackNotHandled("CMD_Rec_Start", p1, p2);
+            case CMD_REC_START:
+                ackNotHandled("CMD_REC_START", p1, p2);
                 break;
-            case CMD_Rec_Stop:
-                ackNotHandled("CMD_Rec_Stop", p1, p2);
+            case CMD_REC_STOP:
+                ackNotHandled("CMD_REC_STOP", p1, p2);
                 break;
-            case CMD_Rec_List_Resolutions:
+            case CMD_REC_LIST_RESOLUTIONS:
                 ack_Rec_List_Resolutions(p1, p2);
                 break;
-            case CMD_Rec_Set_Resolution:
-                ackNotHandled("CMD_Rec_Set_Resolution", p1, p2);
+            case CMD_REC_SET_RESOLUTION:
+                ackNotHandled("CMD_REC_SET_RESOLUTION", p1, p2);
                 break;
-            case CMD_Rec_get_Resolution:
+            case CMD_REC_GET_RESOLUTION:
                 ack_Rec_get_Resolution(p1, p2);
                 break;
-            case CMD_Rec_List_Qualities:
+            case CMD_REC_LIST_QUALITIES:
                 ack_Rec_List_Qualities(p1, p2);
                 break;
-            case CMD_Rec_Set_Quality:
-                ackNotHandled("CMD_Rec_Set_Quality", p1, p2);
+            case CMD_REC_SET_QUALITY:
+                ackNotHandled("CMD_REC_SET_QUALITY", p1, p2);
                 break;
-            case CMD_Rec_get_Quality:
+            case CMD_REC_GET_QUALITY:
                 ack_Rec_get_Quality(p1, p2);
                 break;
-            case CMD_Rec_List_RecModes:
+            case CMD_REC_LIST_REC_MODES:
                 ack_Rec_List_RecModes(p1, p2);
                 break;
-            case CMD_Rec_Set_RecMode:
-                ackNotHandled("CMD_Rec_Set_RecMode", p1, p2);
+            case CMD_REC_SET_REC_MODE:
+                ackNotHandled("CMD_REC_SET_REC_MODE", p1, p2);
                 break;
-            case CMD_Rec_get_RecMode:
+            case CMD_REC_GET_REC_MODE:
                 ack_Rec_get_RecMode(p1, p2);
                 break;
-            case CMD_Rec_List_ColorModes:
+            case CMD_REC_LIST_COLOR_MODES:
                 ack_Rec_List_ColorModes(p1, p2);
                 break;
-            case CMD_Rec_Set_ColorMode:
-                ackNotHandled("CMD_Rec_Set_ColorMode", p1, p2);
+            case CMD_REC_SET_COLOR_MODE:
+                ackNotHandled("CMD_REC_SET_COLOR_MODE", p1, p2);
                 break;
-            case CMD_Rec_get_ColorMode:
+            case CMD_REC_GET_COLOR_MODE:
                 ack_Rec_get_ColorMode(p1, p2);
                 break;
-            case CMD_Rec_List_SegLens:
-                ackNotHandled("CMD_Rec_List_SegLens", p1, p2);
+            case CMD_REC_LIST_SEG_LENS:
+                ackNotHandled("CMD_REC_LIST_SEG_LENS", p1, p2);
                 break;
-            case CMD_Rec_Set_SegLen:
-                ackNotHandled("CMD_Rec_Set_SegLen", p1, p2);
+            case CMD_REC_SET_SEG_LEN:
+                ackNotHandled("CMD_REC_SET_SEG_LEN", p1, p2);
                 break;
-            case CMD_Rec_get_SegLen:
-                ackNotHandled("CMD_Rec_get_SegLen", p1, p2);
+            case CMD_REC_GET_SEG_LEN:
+                ackNotHandled("CMD_REC_GET_SEG_LEN", p1, p2);
                 break;
-            case CMD_Rec_get_State:
-                ackNotHandled("CMD_Rec_get_State", p1, p2);
+            case CMD_REC_GET_STATE:
+                ackNotHandled("CMD_REC_GET_STATE", p1, p2);
                 break;
-            case EVT_Rec_state_change:
-                ackNotHandled("EVT_Rec_state_change", p1, p2);
+            case EVT_REC_STATE_CHANGE:
+                ackNotHandled("EVT_REC_STATE_CHANGE", p1, p2);
                 break;
-            case CMD_Rec_getTime:
-                ackNotHandled("CMD_Rec_getTime", p1, p2);
+            case CMD_REC_GET_TIME:
+                ackNotHandled("CMD_REC_GET_TIME", p1, p2);
                 break;
-            case CMD_Rec_getTime_result:
-                ackNotHandled("CMD_Rec_getTime_result", p1, p2);
+            case CMD_REC_GET_TIME_RESULT:
+                ackNotHandled("CMD_REC_GET_TIME_RESULT", p1, p2);
                 break;
-            case CMD_Rec_setDualStream:
-                ackNotHandled("CMD_Rec_setDualStream", p1, p2);
+            case CMD_REC_SET_DUAL_STREAM:
+                ackNotHandled("CMD_REC_SET_DUAL_STREAM", p1, p2);
                 break;
-            case CMD_Rec_getDualStreamState:
-                ackNotHandled("CMD_Rec_getDualStreamState", p1, p2);
+            case CMD_REC_GET_DUAL_STREAM_STATE:
+                ackNotHandled("CMD_REC_GET_DUAL_STREAM_STATE", p1, p2);
                 break;
-            case CMD_Rec_setOverlay:
-                ackNotHandled("CMD_Rec_setOverlay", p1, p2);
+            case CMD_REC_SET_OVERLAY:
+                ackNotHandled("CMD_REC_SET_OVERLAY", p1, p2);
                 break;
-            case CMD_Rec_getOverlayState:
+            case CMD_REC_GET_OVERLAY_STATE:
                 ack_Rec_getOverlayState(p1, p2);
                 break;
-            case CMD_Rec_SetStillMode:
-                ackNotHandled("CMD_Rec_SetStillMode", p1, p2);
+            case CMD_REC_SET_STILL_MODE:
+                ackNotHandled("CMD_REC_SET_STILL_MODE", p1, p2);
                 break;
-            case CMD_Rec_StartStillCapture:
+            case CMD_REC_START_STILL_CAPTURE:
                 ack_Rec_StartStillCapture(p1, p2);
                 break;
-            case CMD_Rec_StopStillCapture:
-                ackNotHandled("CMD_Rec_StopStillCapture", p1, p2);
+            case CMD_REC_STOP_STILL_CAPTURE:
+                ackNotHandled("CMD_REC_STOP_STILL_CAPTURE", p1, p2);
                 break;
-            case MSG_Rec_StillPictureInfo:
+            case MSG_REC_STILL_PICTURE_INFO:
                 ack_Rec_StillPictureInfo(p1, p2);
                 break;
-            case MSG_Rec_StillCaptureDone:
+            case MSG_REC_STILL_CAPTURE_DONE:
                 ack_Rec_StillCaptureDone();
                 break;
-            case CMD_Rec_Get_Mark_Time:
+            case CMD_REC_GET_MARK_TIME:
                 ack_Rec_GetMarkTime(p1, p2);
                 break;
-            case CMD_Rec_Set_Mark_Time:
+            case CMD_REC_SET_MARK_TIME:
                 ack_Rec_SetMarkTime(p1, p2);
                 break;
 
             default:
-                if (DEBUG) {
-                    Log.d(TAG, "ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
-                }
+                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
         }
     }
