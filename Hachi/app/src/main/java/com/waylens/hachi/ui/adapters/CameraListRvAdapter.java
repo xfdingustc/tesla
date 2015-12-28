@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.VdtCameraManager;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

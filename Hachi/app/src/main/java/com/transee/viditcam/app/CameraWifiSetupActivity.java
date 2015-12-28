@@ -14,8 +14,7 @@ import com.transee.viditcam.actions.GetWifiAP;
 import com.transee.viditcam.actions.RemoveWifiAP;
 import com.transee.viditcam.actions.SelectWifiAp;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.WifiAdmin;
-import com.waylens.hachi.hardware.WifiAdminManager;
+
 
 import java.util.List;
 
@@ -42,8 +41,9 @@ public class CameraWifiSetupActivity extends BaseActivity {
         mListAdapter = new WifiListAdapter(this, mListView) {
             @Override
             public List<ScanResult> getScanResult() {
-                WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
-                return wifiAdmin == null ? null : wifiAdmin.getScanResult();
+//                WifiAdmin wifiAdmin = WifiAdminManager.getManager().getWifiAdmin();
+//                return wifiAdmin == null ? null : wifiAdmin.getScanResult();
+                return null;
             }
 
             @Override
@@ -80,13 +80,13 @@ public class CameraWifiSetupActivity extends BaseActivity {
         mVdtCamera.getNetworkHostHum();
 
         mListAdapter.clear();
-        WifiAdmin wifiAdmin = WifiAdminManager.getManager().attachWifiAdmin(mWifiCallback);
-        onScanWifiDone(wifiAdmin);
+//        WifiAdmin wifiAdmin = WifiAdminManager.getManager().attachWifiAdmin(mWifiCallback);
+//        onScanWifiDone(wifiAdmin);
     }
 
     @Override
     protected void onStopActivity() {
-        WifiAdminManager.getManager().detachWifiAdmin(mWifiCallback, false);
+//        WifiAdminManager.getManager().detachWifiAdmin(mWifiCallback, false);
         removeCamera();
     }
 
@@ -175,8 +175,8 @@ public class CameraWifiSetupActivity extends BaseActivity {
         finish();
     }
 
-    private void onScanWifiDone(WifiAdmin wifiAdmin) {
-        mListAdapter.filterScanList(wifiAdmin.getScanResult());
+    private void onScanWifiDone(/*WifiAdmin wifiAdmin*/) {
+//        mListAdapter.filterScanList(wifiAdmin.getScanResult());
     }
 
     private void onHostSSIDFetched(String ssid) {
@@ -259,24 +259,24 @@ public class CameraWifiSetupActivity extends BaseActivity {
 
     }; */
 
-    private final WifiAdminManager.WifiCallback mWifiCallback = new WifiAdminManager.WifiCallback() {
-
-        @Override
-        public void networkStateChanged(WifiAdmin wifiAdmin) {
-        }
-
-        @Override
-        public void wifiScanResult(WifiAdmin wifiAdmin) {
-            onScanWifiDone(wifiAdmin);
-        }
-
-        @Override
-        public void onConnectError(WifiAdmin wifiAdmin) {
-        }
-
-        @Override
-        public void onConnectDone(WifiAdmin wifiAdmin) {
-        }
-
-    };
+//    private final WifiAdminManager.WifiCallback mWifiCallback = new WifiAdminManager.WifiCallback() {
+//
+//        @Override
+//        public void networkStateChanged(WifiAdmin wifiAdmin) {
+//        }
+//
+//        @Override
+//        public void wifiScanResult(WifiAdmin wifiAdmin) {
+//            onScanWifiDone(wifiAdmin);
+//        }
+//
+//        @Override
+//        public void onConnectError(WifiAdmin wifiAdmin) {
+//        }
+//
+//        @Override
+//        public void onConnectDone(WifiAdmin wifiAdmin) {
+//        }
+//
+//    };
 }

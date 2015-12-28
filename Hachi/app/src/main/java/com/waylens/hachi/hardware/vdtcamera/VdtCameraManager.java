@@ -1,4 +1,4 @@
-package com.waylens.hachi.hardware;
+package com.waylens.hachi.hardware.vdtcamera;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
@@ -6,7 +6,6 @@ import android.net.wifi.ScanResult;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.PasswordList;
 import com.transee.common.Utils;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
 import java.net.InetAddress;
 import java.util.ArrayList;

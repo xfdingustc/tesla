@@ -8,8 +8,7 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.VdtCameraManager;
-import com.waylens.hachi.hardware.WifiAdminManager;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.views.dashboard.models.SkinManager;
 import com.waylens.hachi.snipe.Snipe;
@@ -53,7 +52,6 @@ public class Hachi extends Application {
 
         initCameraManager();
 
-        WifiAdminManager.initialize(this);
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
         VdbImageLoader.getImageLoader(null).init(this, 1024 * 64);
