@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -17,6 +18,17 @@ import android.widget.TextView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
+import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
 import com.waylens.hachi.views.dashboard.adapters.SimulatorRawDataAdapter;
@@ -34,6 +46,7 @@ import butterknife.OnClick;
 
 public class CameraControlActivity2 extends BaseActivity {
     private static final String TAG = CameraControlActivity2.class.getSimpleName();
+    private static final String TAG_GET_BOOKMARK_COUNT = "get.bookmark.count";
 
     private VdtCamera mVdtCamera;
     private SimulatorRawDataAdapter mRawDataAdapter;
@@ -43,12 +56,9 @@ public class CameraControlActivity2 extends BaseActivity {
     private static final String HOST_STRING = "hostString";
 
     private int mCurrentOrientation;
-
-    private boolean mUpdateThread = true;
-    private Thread mOverlayUpdateThread;
-    private Object mUpdateThreadFence = new Object();
-
     Handler mHandler = new Handler();
+    VdbRequestQueue mVdbRequestQueue;
+    int mBookmarkCount;
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
         Intent intent = new Intent(startingActivity, CameraControlActivity2.class);
@@ -67,6 +77,9 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.tvCameraStatus)
     TextView mTvCameraStatus;
 
+    @Bind(R.id.tv_status_additional)
+    TextView mTvStatusAdditional;
+
     @Bind(R.id.btnMicControl)
     ImageButton mBtnMicControl;
 
@@ -76,7 +89,6 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.dashboard)
     DashboardLayout mDashboard;
 
-
     @Bind(R.id.liveViewLayout)
     FixedAspectRatioFrameLayout mLiveViewLayout;
 
@@ -85,7 +97,6 @@ public class CameraControlActivity2 extends BaseActivity {
 
     @Bind(R.id.btnFullscreen)
     ImageButton mBtnFullScreen;
-
 
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
@@ -97,10 +108,12 @@ public class CameraControlActivity2 extends BaseActivity {
         if (mDashboard.getVisibility() == View.VISIBLE) {
             mDashboard.setVisibility(View.INVISIBLE);
             mBtnShowOverlay.clearColorFilter();
+            closeLiveRawData();
         } else {
             mDashboard.setVisibility(View.VISIBLE);
             initDashboardLayout();
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
+            requestLiveRawData();
         }
     }
 
@@ -127,13 +140,12 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startUpdateThread();
+        getBookmarkCount();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        stopUpdateThread();
     }
 
 
@@ -149,6 +161,7 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+        mVdbRequestQueue = Snipe.newRequestQueue();
         initViews();
     }
 
@@ -172,45 +185,7 @@ public class CameraControlActivity2 extends BaseActivity {
         updateMicControlButton();
         mRawDataAdapter = new SimulatorRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
-
-
     }
-
-    private void startUpdateThread() {
-        mOverlayUpdateThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                while (mUpdateThread) {
-                    mDashboard.update(System.currentTimeMillis());
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                synchronized (mUpdateThreadFence) {
-                    mUpdateThreadFence.notify();
-                }
-
-            }
-        });
-        mOverlayUpdateThread.start();
-    }
-
-    private void stopUpdateThread() {
-        mUpdateThread = false;
-        synchronized (mUpdateThreadFence) {
-            try {
-                mUpdateThreadFence.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
 
     @Override
     protected void setupToolbar() {
@@ -283,7 +258,8 @@ public class CameraControlActivity2 extends BaseActivity {
     };
 
     private void updateCameraStatusInfo(CameraState state) {
-        switch (state.getRecordState()) {
+        int recState = state.getRecordState();
+        switch (recState) {
             case CameraState.STATE_RECORD_UNKNOWN:
                 mTvCameraStatus.setText(R.string.record_unknown);
                 break;
@@ -297,8 +273,16 @@ public class CameraControlActivity2 extends BaseActivity {
                 mTvCameraStatus.setText(R.string.record_starting);
                 break;
             case CameraState.STATE_RECORD_RECORDING:
-                //int recordMode = mVdtCamera.getRecordRecMode();
-                mTvCameraStatus.setText(R.string.record_recording);
+                if (isInCarMode(state)) {
+                    mTvCameraStatus.setText(R.string.continuous_recording);
+                    if (mBookmarkCount != 0) {
+                        mTvStatusAdditional.setText(
+                                getResources().getQuantityString(R.plurals.number_of_bookmarks, mBookmarkCount, mBookmarkCount));
+                        mTvStatusAdditional.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mTvCameraStatus.setText(R.string.record_recording);
+                }
                 break;
             case CameraState.STATE_RECORD_SWITCHING:
                 mTvCameraStatus.setText(R.string.record_switching);
@@ -306,6 +290,13 @@ public class CameraControlActivity2 extends BaseActivity {
             default:
                 break;
         }
+        if (recState != CameraState.STATE_RECORD_RECORDING) {
+            mTvStatusAdditional.setVisibility(View.GONE);
+        }
+    }
+
+    boolean isInCarMode(CameraState state) {
+        return state != null && state.getRecordMode() == CameraState.Rec_Mode_AutoStart;
     }
 
     private void updateFloatActionButton(CameraState state) {
@@ -324,7 +315,7 @@ public class CameraControlActivity2 extends BaseActivity {
                 break;
             case CameraState.STATE_RECORD_RECORDING:
                 mFabBookmark.setEnabled(true);
-                if (state.getRecordMode() == CameraState.Rec_Mode_AutoStart) {
+                if (isInCarMode(state)) {
                     mFabBookmark.setImageResource(R.drawable.ic_bookmark_white_48dp);
                 } else {
                     mFabBookmark.setImageResource(R.drawable.ic_stop_white_48dp);
@@ -352,25 +343,110 @@ public class CameraControlActivity2 extends BaseActivity {
     private void handleOnFabClicked() {
         switch (mVdtCamera.getState().getRecordState()) {
             case CameraState.STATE_RECORD_RECORDING:
-                if (mVdtCamera.getState().getRecordMode() == CameraState.Rec_Mode_AutoStart) {
+                if (isInCarMode(mVdtCamera.getState())) {
                     mVdtCamera.markLiveVideo();
-                    mTvCameraStatus.setText("New bookmark added!");
+                    showMessage(R.string.confirm_bookmark_add);
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            updateCameraStatusInfo(mVdtCamera.getState());
+                            hideMessage();
                         }
                     }, 1000 * 3);
+                    getBookmarkCount();
                 } else {
                     mVdtCamera.stopRecording();
                 }
                 break;
             case CameraState.STATE_RECORD_STOPPED:
                 mVdtCamera.startRecording();
+                getBookmarkCount();
                 break;
         }
     }
 
+    void hideMessage() {
+        //TODO
+    }
+
+    void showMessage(int msgResId) {
+        //TODO
+    }
+
+    void getBookmarkCount() {
+        Bundle parameter = new Bundle();
+        parameter.putInt(ClipSetRequest.PARAMETER_TYPE, RemoteClip.TYPE_MARKED);
+        parameter.putInt(ClipSetRequest.PARAMETER_FLAG, ClipSetRequest.FLAG_CLIP_EXTRA);
+        mVdbRequestQueue.add(new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
+                new VdbResponse.Listener<ClipSet>() {
+                    @Override
+                    public void onResponse(ClipSet clipSet) {
+                        if (clipSet != null) {
+                            mBookmarkCount = clipSet.getCount();
+                            Log.e("test", "Current bookmarks: " + mBookmarkCount);
+                            if (mVdtCamera != null) {
+                                updateCameraStatusInfo(mVdtCamera.getState());
+                            }
+                        }
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "ClipSetRequest: " + error);
+                    }
+                }).setTag(TAG_GET_BOOKMARK_COUNT));
+    }
+
+    void registerMessageHandler() {
+        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
+            @Override
+            public void onResponse(RawDataItem response) {
+                Log.e("test", "RawDataMsgHandler" + response);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e("test", "RawDataMsgHandler ERROR", error);
+            }
+        });
+        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
+    }
+
+    void requestLiveRawData() {
+        registerMessageHandler();
+        LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
+                RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
+                VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        Log.e("test", "LiveRawDataResponse: " + response);
+                        //mDashboard.updateLive(response);
+                    }
+                }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e("test", "LiveRawDataResponse ERROR", error);
+            }
+        });
+        mVdbRequestQueue.add(request);
+    }
+
+    void closeLiveRawData() {
+        LiveRawDataRequest request = new LiveRawDataRequest(0, new
+                VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        Log.e("test", "LiveRawDataResponse: " + response);
+                        //mDashboard.updateLive(response);
+                    }
+                }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e("test", "LiveRawDataResponse ERROR", error);
+            }
+        });
+        mVdbRequestQueue.add(request);
+    }
 
     class CameraLiveViewCallback implements CameraLiveView.Callback {
 

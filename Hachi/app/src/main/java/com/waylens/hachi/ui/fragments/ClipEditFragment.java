@@ -129,7 +129,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     Surface mSurfaceHolder;
 
     Clip mClip;
-    Clip mOriginalClip;
+    Clip mBufferedClip;
+    long mMinExtensibleValue;
+    long mMaxExtensibleValue;
 
     VdbImageLoader mImageLoader;
 
@@ -150,8 +152,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     PlaybackUrl mPlaybackUrl;
     ClipExtent mClipExtent;
 
-    long mOldClipStartTimeMs;
-    long mOldClipEndTimeMs;
+    long mSelectedClipStartTimeMs;
+    long mSelectedClipEndTimeMs;
 
     SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
     SparseIntArray mTypedState = new SparseIntArray();
@@ -164,6 +166,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     private boolean mIsReplay;
 
     private VideoTrimmer.DraggingFlag mTrimmerFlag;
+
 
     public static ClipEditFragment newInstance(Clip clip, int position, OnActionListener lifecycleListener) {
         Bundle args = new Bundle();
@@ -312,12 +315,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             @Override
             public void onResponse(ClipExtent clipExtent) {
                 if (clipExtent != null) {
-                    mClipExtent = clipExtent;
-                    mOriginalClip = new RemoteClip(mClipExtent.originalCid.type,
-                            mClipExtent.originalCid.subType,
-                            mClipExtent.originalCid.extra,
-                            mClip.clipDate,
-                            (int) (mClipExtent.maxClipEndTimeMs - mClipExtent.minClipStartTimeMs));
+                    calculateExtension(clipExtent);
                     initVideoTrimmer();
                 }
             }
@@ -329,24 +327,42 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         }));
     }
 
+    void calculateExtension(ClipExtent clipExtent) {
+        mClipExtent = clipExtent;
+        if (mClipExtent.bufferedCid != null) {
+            mBufferedClip = new RemoteClip(mClipExtent.bufferedCid.type,
+                    mClipExtent.bufferedCid.subType,
+                    mClipExtent.bufferedCid.extra,
+                    mClip.clipDate,
+                    (int) (mClipExtent.maxClipEndTimeMs - mClipExtent.minClipStartTimeMs));
+            mMinExtensibleValue = mClipExtent.clipStartTimeMs - MAX_EXTENSION;
+            if (mMinExtensibleValue < mClipExtent.minClipStartTimeMs) {
+                mMinExtensibleValue = mClipExtent.minClipStartTimeMs;
+            }
+            mMaxExtensibleValue = mClipExtent.clipEndTimeMs + MAX_EXTENSION;
+            if (mMaxExtensibleValue > mClipExtent.maxClipEndTimeMs) {
+                mMaxExtensibleValue = mClipExtent.maxClipEndTimeMs;
+            }
+        } else {
+            mMinExtensibleValue = mClipExtent.clipStartTimeMs;
+            mMaxExtensibleValue = mClipExtent.clipEndTimeMs;
+        }
+    }
+
     void initVideoTrimmer() {
         if (mVideoTrimmer == null) {
             return;
         }
-        long minValue = mClipExtent.clipStartTimeMs - MAX_EXTENSION;
-        if (minValue < mClipExtent.minClipStartTimeMs) {
-            minValue = mClipExtent.minClipStartTimeMs;
-        }
-        long maxValue = mClipExtent.clipEndTimeMs + MAX_EXTENSION;
-        if (maxValue > mClipExtent.maxClipEndTimeMs) {
-            maxValue = mClipExtent.maxClipEndTimeMs;
+        int defaultHeight = ViewUtils.dp2px(64, getResources());
+        if (mBufferedClip != null) {
+            mVideoTrimmer.setBackgroundClip(mImageLoader, mBufferedClip, mMinExtensibleValue, mMaxExtensibleValue, defaultHeight);
+        } else {
+            mVideoTrimmer.setBackgroundClip(mImageLoader, mClip, defaultHeight);
         }
 
-        mVideoTrimmer.setBackgroundClip(mImageLoader, mClip, minValue, maxValue, ViewUtils.dp2px(64, getResources()));
-        mVideoTrimmer.setInitRangeValues(minValue, maxValue);
-
-        mOldClipStartTimeMs = mClipExtent.clipStartTimeMs;
-        mOldClipEndTimeMs = mClipExtent.clipEndTimeMs;
+        mVideoTrimmer.setInitRangeValues(mMinExtensibleValue, mMaxExtensibleValue);
+        mSelectedClipStartTimeMs = mClipExtent.clipStartTimeMs;
+        mSelectedClipEndTimeMs = mClipExtent.clipEndTimeMs;
 
         mVideoTrimmer.setLeftValue(mClipExtent.clipStartTimeMs);
         mVideoTrimmer.setRightValue(mClipExtent.clipEndTimeMs);
@@ -367,7 +383,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
                 if (videoCover != null) {
                     videoCover.setVisibility(View.VISIBLE);
-                    ClipPos clipPos = new ClipPos(mClip.getVdbId(), mClip.cid, mClip.clipDate, progress, ClipPos.TYPE_POSTER, false);
+                    Clip.ID cid = getWorkableCid();
+                    ClipPos clipPos = new ClipPos(mClip.getVdbId(), cid, mClip.clipDate, progress, ClipPos.TYPE_POSTER, false);
                     mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
                 }
                 mSeekToPosition = progress;
@@ -381,8 +398,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                     mOnActionListener.onStopDragging();
                 }
                 if (mTrimmerFlag == VideoTrimmer.DraggingFlag.LEFT || mTrimmerFlag == VideoTrimmer.DraggingFlag.RIGHT) {
-                    mOldClipStartTimeMs = trimmer.getLeftValue();
-                    mOldClipEndTimeMs = trimmer.getRightValue();
+                    mSelectedClipStartTimeMs = trimmer.getLeftValue();
+                    mSelectedClipEndTimeMs = trimmer.getRightValue();
                     loadClipInfo();
                     return;
                 }
@@ -398,7 +415,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     void calculateMidOfTrimmer(long start, long end) {
-        if (mOldClipStartTimeMs == start && mOldClipEndTimeMs == end) {
+        if (mSelectedClipStartTimeMs == start && mSelectedClipEndTimeMs == end) {
             return;
         }
         double range = mVideoTrimmer.getRange();
@@ -449,10 +466,10 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mOldClipStartTimeMs);
-        parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, (int) (mOldClipEndTimeMs - mOldClipStartTimeMs));
-
-        ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mClip.cid, parameters, new VdbResponse.Listener<PlaybackUrl>() {
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mSelectedClipStartTimeMs);
+        parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, (int) (mSelectedClipEndTimeMs - mSelectedClipStartTimeMs));
+        Clip.ID cid = getWorkableCid();
+        ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(cid, parameters, new VdbResponse.Listener<PlaybackUrl>() {
             @Override
             public void onResponse(PlaybackUrl playbackUrl) {
                 mPlaybackUrl = playbackUrl;
@@ -468,6 +485,16 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         });
 
         mVdbRequestQueue.add(request.setTag(REQUEST_TAG));
+    }
+
+    Clip.ID getWorkableCid() {
+        Clip.ID cid;
+        if (mBufferedClip != null) {
+            cid = mBufferedClip.cid;
+        } else {
+            cid = mClip.cid;
+        }
+        return cid;
     }
 
     protected void setSource(String source) {
@@ -779,7 +806,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, (long) mVideoTrimmer.getMinValue());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, (int) mVideoTrimmer.getMaxValue());
 
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(mClip.cid, params,
+        Clip.ID cid = getWorkableCid();
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(cid, params,
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
                     public void onResponse(RawDataBlock response) {

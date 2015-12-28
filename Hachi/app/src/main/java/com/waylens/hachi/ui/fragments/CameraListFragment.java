@@ -23,6 +23,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.VdtCameraManager;
 import com.waylens.hachi.hardware.WifiAdmin;
 import com.waylens.hachi.hardware.WifiAdminManager;
+import com.waylens.hachi.ui.activities.CameraControlActivity;
 import com.waylens.hachi.ui.activities.CameraControlActivity2;
 import com.waylens.hachi.ui.activities.TabSwitchable;
 import com.waylens.hachi.ui.adapters.CameraListRvAdapter;
@@ -274,7 +275,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
 
     @Override
     public void onPreview(VdtCamera camera) {
-//        CameraControlActivity.launch(getActivity(), camera);
+        //CameraControlActivity.launch(getActivity(), camera);
         CameraControlActivity2.launch(getActivity(), camera);
     }
 

@@ -4,7 +4,7 @@ import com.waylens.hachi.vdb.Clip;
 
 public class RemoteClip extends Clip {
 
-	public static final int TYPE_UNKNOWN = -1;
+	public static final int TYPE_REAL = -1;
 	public static final int TYPE_BUFFERED = 0;
 	public static final int TYPE_MARKED = 1;
 

@@ -39,15 +39,21 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
         int clipType = response.readi32();
         int clipId = response.readi32();
         int realClipId = response.readi32(); // use this with CLIP_TYPE_REAL to get index picture
-        int reserved = response.readi32();
+        int bufferedClipId = response.readi32();
+        Clip.ID bufferedCid = null;
+        if (bufferedClipId != 0) {
+            bufferedCid = new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED, bufferedClipId, null);
+        }
 
         long minClipStartTimeMs = response.readi64();
         long maxClipEndTimeMs = response.readi64();
         long clipStartTimeMs = response.readi64();
         long clipEndTimeMs = response.readi64();
 
-        ClipExtent clipExtent = new ClipExtent(new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null),
-                new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED, realClipId, null));
+        ClipExtent clipExtent = new ClipExtent(
+                new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null),
+                new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_REAL, realClipId, null),
+                bufferedCid);
         clipExtent.minClipStartTimeMs = minClipStartTimeMs;
         clipExtent.maxClipEndTimeMs = maxClipEndTimeMs;
         clipExtent.clipStartTimeMs = clipStartTimeMs;

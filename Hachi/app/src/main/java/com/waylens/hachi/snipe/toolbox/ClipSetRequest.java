@@ -120,10 +120,10 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             }
             clipSet.addClip(clip);
         }
-        return VdbResponse.success((ClipSet) clipSet);
+        return VdbResponse.success(clipSet);
     }
 
-    private final void readStreamInfo(RemoteClip clip, int index, VdbAcknowledge response) {
+    private void readStreamInfo(RemoteClip clip, int index, VdbAcknowledge response) {
         Clip.StreamInfo info = clip.streams[index];
         info.version = response.readi32();
         info.video_coding = response.readi8();

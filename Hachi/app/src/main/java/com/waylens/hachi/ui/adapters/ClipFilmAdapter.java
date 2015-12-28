@@ -15,7 +15,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.fragments.ClipEditFragment;
-import com.waylens.hachi.utils.TimeMonitor;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -119,7 +118,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (getItemViewType(position) == ClipFilmItem.TYPE_NORMAL) {
             final Clip clip = item.clip;
             ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
-            setClipFilm(clip, holder);
+            setupClipFilm(clip, holder);
         } else {
             SectionViewHolder holder = (SectionViewHolder) viewHolder;
             holder.clipDateView.setText(item.clip.getDateString());
@@ -127,7 +126,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    void setClipFilm(Clip clip, ClipEditViewHolder holder) {
+    void setupClipFilm(Clip clip, ClipEditViewHolder holder) {
         int width = holder.clipFilm.getWidth();
         int height = holder.clipFilm.getHeight();
         Context context = holder.clipFilm.getContext();
@@ -183,7 +182,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             final ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
             final int position = holder.getAdapterPosition();
             final Clip clip = items.get(position).clip;
-            setClipFilm(clip, holder);
+            //setupClipFilm(clip, holder);
             holder.clipFilm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -206,7 +205,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 holder.clipEditFragment.getFragmentManager().beginTransaction().remove(holder.clipEditFragment).commit();
                 holder.clipEditFragment = null;
             }
-            holder.clipFilm.setAdapter(null);
+            //holder.clipFilm.setAdapter(null);
         }
         super.onViewDetachedFromWindow(viewHolder);
 

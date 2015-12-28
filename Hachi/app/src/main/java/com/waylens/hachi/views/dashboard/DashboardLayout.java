@@ -12,7 +12,9 @@ import android.widget.RelativeLayout;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.vdb.AccData;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
+import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.adapters.IRawDataAdapter;
 import com.waylens.hachi.views.dashboard.eventbus.EventBus;
@@ -111,6 +113,26 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         updateCurrentTime(pts);
     }
 
+    public void updateLive(RawDataItem item) {
+        switch (item.dataType) {
+            case RawDataBlock.RAW_DATA_GPS:
+                GPSRawData gpsRawData = (GPSRawData) item.object;
+                mEventBus.postEvent(EventConstants.EVENT_GPS, gpsRawData);
+                break;
+            case RawDataBlock.RAW_DATA_ACC:
+                AccData accData = (AccData) item.object;
+                mEventBus.postEvent(EventConstants.EVENT_ROLL, -accData.euler_roll / 1000);
+                break;
+            case RawDataBlock.RAW_DATA_ODB:
+                OBDData obdData = (OBDData) item.object;
+                mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
+                int rpm = obdData.rpm / 1000;
+                mEventBus.postEvent(EventConstants.EVENT_RPM_NUMBER, String.valueOf(rpm));
+                mEventBus.postEvent(EventConstants.EVENT_MPH, (float) obdData.speed);
+                int mph = (int) obdData.speed;
+                mEventBus.postEvent(EventConstants.EVENT_MPH_NUMBER, String.valueOf(mph));
+        }
+    }
 
 
     private void updateAccData(long pts) {
@@ -144,7 +166,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
                 int rpm = obdData.rpm / 1000;
                 mEventBus.postEvent(EventConstants.EVENT_RPM_NUMBER, String.valueOf(rpm));
                 mEventBus.postEvent(EventConstants.EVENT_MPH, (float) obdData.speed);
-                int mph = (int)obdData.speed;
+                int mph = (int) obdData.speed;
                 mEventBus.postEvent(EventConstants.EVENT_MPH_NUMBER, String.valueOf(mph));
 
             }

@@ -20,6 +20,7 @@ public class VdbDispatcher extends Thread {
 
     public VdbDispatcher(BlockingQueue<VdbRequest<?>> queue, VdbSocket vdbSocket,
                          ResponseDelivery delivery) {
+        super("VdbDispatcher");
         this.mQueue = queue;
         this.mVdbSocket = vdbSocket;
         this.mDelivery = delivery;
@@ -56,22 +57,8 @@ public class VdbDispatcher extends Thread {
                     vdbRequest.finish("vdb-discard-cancelled", true);
                     continue;
                 }
-
                 // Perform the network request
-                VdbAcknowledge vdbAcknowledge = mVdbSocket.performRequest(vdbRequest);
-                vdbRequest.addMarker("vdb-complete");
-
-                if (vdbAcknowledge.notModified && vdbRequest.hasHadResponseDelivered()) {
-                    vdbRequest.finish("not-modified", true);
-                    continue;
-                }
-
-                VdbResponse<?> vdbResponse = vdbRequest.parseVdbResponse(vdbAcknowledge);
-                vdbRequest.addMarker("vdb-parse-complete");
-
-                vdbRequest.markDelivered();
-                mDelivery.postResponse(vdbRequest, vdbResponse);
-
+                mVdbSocket.performRequest(vdbRequest);
             } catch (SnipeError snipeError) {
                 snipeError.printStackTrace();
                 parseAndDeliverVdbError(vdbRequest, snipeError);

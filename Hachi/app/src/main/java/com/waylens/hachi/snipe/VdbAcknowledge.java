@@ -14,7 +14,6 @@ public class VdbAcknowledge {
     private static final String TAG = VdbAcknowledge.class.getSimpleName();
     public final int statusCode;
     public final boolean notModified;
-    private final int mCmdCode;
     public byte[] mReceiveBuffer;
     public byte[] mMsgBuffer;
     private final VdbConnection mVdbConnection;
@@ -33,21 +32,12 @@ public class VdbAcknowledge {
 
     private static final int MAX_VALID_SIZE = 1024 * 1024 * 10;
 
-    public VdbAcknowledge(int statusCode, boolean notModified, int cmdCode, VdbConnection
-            vdbConnection) throws IOException {
+    public VdbAcknowledge(int statusCode, VdbConnection vdbConnection) throws IOException {
         this.statusCode = statusCode;
-        this.notModified = notModified;
+        this.notModified = false;
         this.mVdbConnection = vdbConnection;
-        this.mCmdCode = cmdCode;
-        Logger.t(TAG).d(String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]",
-            statusCode, cmdCode));
-        while (true) {
-            mReceiveBuffer = mVdbConnection.receivedAck();
-            parseAcknowledge();
-            if (mCmdCode == mMsgCode) {
-                break;
-            }
-        }
+        mReceiveBuffer = mVdbConnection.receivedAck();
+        parseAcknowledge();
     }
 
     private void parseAcknowledge() throws IOException {
@@ -61,8 +51,11 @@ public class VdbAcknowledge {
         mMsgCode = readi16(); // cmd->cmd_code
         mMsgFlags = readi16(); // cmd->cmd_flags
         mCmdTag = readi32(); // cmd->cmd_tag
-
         mCmdRetCode = readi32();
+
+        Logger.t(TAG).d(String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]",
+                statusCode, mMsgCode));
+
         int extra_bytes = readi32();
         if (extra_bytes > 0) {
             int size = VDB_ACK_SIZE + extra_bytes;
@@ -84,6 +77,15 @@ public class VdbAcknowledge {
 
     public int getMsgCode() {
         return mMsgCode;
+    }
+
+    public int getUser1() {
+        return mUser1;
+    }
+
+    public boolean isMessageAck() {
+        return (mMsgCode >= VdbCommand.Factory.MSG_VdbReady)
+                && (mMsgCode <= VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
     }
 
     public int readi32() {

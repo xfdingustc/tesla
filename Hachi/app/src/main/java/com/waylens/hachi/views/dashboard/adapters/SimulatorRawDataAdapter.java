@@ -24,11 +24,12 @@ public class SimulatorRawDataAdapter implements IRawDataAdapter {
 
     public SimulatorRawDataAdapter() {
         this.mVdbRequestQueue = Snipe.newRequestQueue();
-        mVdbRequestQueue.start();
+        //mVdbRequestQueue.start();
     }
 
     @Override
     public RawDataItem getAccDataItem(long pts) {
+        /*
         LiveRawDataRequest request = new LiveRawDataRequest(0, RawDataBlock.F_RAW_DATA_GPS +
             RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
             VdbResponse.Listener<RawDataItem>() {
@@ -48,6 +49,8 @@ public class SimulatorRawDataAdapter implements IRawDataAdapter {
         });
         mVdbRequestQueue.add(request);
         return mLatestAccRawData;
+        */
+        return null;
     }
 
     @Override

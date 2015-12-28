@@ -8,6 +8,8 @@ public class ClipExtent {
 
     public final Clip.ID originalCid;
 
+    public final Clip.ID bufferedCid;
+
     public long minClipStartTimeMs;
 
     public long maxClipEndTimeMs;
@@ -16,8 +18,9 @@ public class ClipExtent {
 
     public long clipEndTimeMs;
 
-    public ClipExtent(Clip.ID cid, Clip.ID originalCid) {
+    public ClipExtent(Clip.ID cid, Clip.ID originalCid, Clip.ID bufferedCid) {
         this.cid = cid;
         this.originalCid = originalCid;
+        this.bufferedCid = bufferedCid;
     }
 }

@@ -3,8 +3,8 @@ package com.waylens.hachi.snipe;
 import android.os.Handler;
 import android.os.Looper;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.ref.WeakReference;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,10 +19,10 @@ public class VdbRequestQueue {
 
     private static final int MAX_PENDING_REQUEST_COUNT = 4;
 
+    //private final Set<VdbRequest<?>> mCurrentVdbRequests = new HashSet<VdbRequest<?>>();
+    final ConcurrentHashMap<Integer, VdbRequest<?>> mCurrentVdbRequests = new ConcurrentHashMap<>();
 
-    private AtomicInteger mSequenceGenerator = new AtomicInteger();
-
-    private final Set<VdbRequest<?>> mCurrentVdbRequests = new HashSet<VdbRequest<?>>();
+    final ConcurrentHashMap<Integer, WeakReference<VdbMessageHandler<?>>> mMessageHandlers = new ConcurrentHashMap<>();
 
     private final PriorityBlockingQueue<VdbRequest<?>> mVideoDatabaseQueue = new
             PriorityBlockingQueue<VdbRequest<?>>();
@@ -35,6 +35,7 @@ public class VdbRequestQueue {
     private final ResponseDelivery mDelivery;
 
     private VdbDispatcher[] mVdbDispatchers;
+    private VdbResponseDispatcher[] mVdbResponseDispatchers;
 
     public VdbRequestQueue(VdbSocket vdbSocket) {
         this(vdbSocket, DEFAULT_NETWORK_THREAD_POOL_SIZE);
@@ -47,10 +48,10 @@ public class VdbRequestQueue {
 
     public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, ResponseDelivery
             delivery) {
-        this.mVdbSocket = vdbSocket;
-        this.mVdbDispatchers = new VdbDispatcher[threadPoolSize];
-        this.mDelivery = delivery;
-
+        mVdbSocket = vdbSocket;
+        mVdbDispatchers = new VdbDispatcher[threadPoolSize];
+        mVdbResponseDispatchers = new VdbResponseDispatcher[threadPoolSize];
+        mDelivery = delivery;
     }
 
 
@@ -61,6 +62,10 @@ public class VdbRequestQueue {
             VdbDispatcher vdbDispatcher = new VdbDispatcher(mVideoDatabaseQueue, mVdbSocket, mDelivery);
             mVdbDispatchers[i] = vdbDispatcher;
             vdbDispatcher.start();
+            VdbResponseDispatcher responseDispatcher = new VdbResponseDispatcher(
+                    mCurrentVdbRequests, mMessageHandlers, mVdbSocket, mDelivery);
+            mVdbResponseDispatchers[i] = responseDispatcher;
+            responseDispatcher.start();
         }
     }
 
@@ -76,9 +81,9 @@ public class VdbRequestQueue {
         } */
     }
 
-
-    public int getSequenceNumber() {
-        return mSequenceGenerator.incrementAndGet();
+    public <T> void registerMessageHandler(VdbMessageHandler<T> messageHandler) {
+        mMessageHandlers.put(messageHandler.getMessageCode(),
+                new WeakReference<VdbMessageHandler<?>>(messageHandler));
     }
 
     public <T> VdbRequest<T> add(VdbRequest<T> vdbRequest) {
@@ -99,21 +104,14 @@ public class VdbRequestQueue {
         }
 
         vdbRequest.setRequestQueue(this);
-        synchronized (mCurrentVdbRequests) {
-            mCurrentVdbRequests.add(vdbRequest);
-        }
-
-        vdbRequest.setSequence(getSequenceNumber());
+        mCurrentVdbRequests.put(vdbRequest.getSequence(), vdbRequest);
         vdbRequest.addMarker("add-to-queue");
-
         mVideoDatabaseQueue.add(vdbRequest);
         return vdbRequest;
     }
 
     <T> void finish(VdbRequest<T> vdbRequest) {
-        synchronized (mCurrentVdbRequests) {
-            mCurrentVdbRequests.remove(vdbRequest);
-        }
+        mCurrentVdbRequests.remove(vdbRequest.getSequence());
 
         if (vdbRequest.isIgnorable()) {
             int count = mPendingRequestCount.decrementAndGet();
@@ -141,16 +139,15 @@ public class VdbRequestQueue {
     }
 
     public void cancelAll(RequestFilter filter) {
-        synchronized (mCurrentVdbRequests) {
-            for (VdbRequest<?> request : mCurrentVdbRequests) {
-                if (filter.apply(request)) {
-                    request.cancel();
-                }
+        for (VdbRequest<?> request : mCurrentVdbRequests.values()) {
+            if (filter.apply(request)) {
+                request.cancel();
             }
         }
+
     }
 
     public interface RequestFilter {
-        public boolean apply(VdbRequest<?> request);
+        boolean apply(VdbRequest<?> request);
     }
 }

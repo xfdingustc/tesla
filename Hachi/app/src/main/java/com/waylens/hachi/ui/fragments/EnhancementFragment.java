@@ -112,18 +112,18 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(VideoPlayerProgressBar progressBar) {
-                Log.e("test", "Start dragging....");
+                //Log.e("test", "Start dragging....");
             }
 
             @Override
             public void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser) {
-                Log.e("test", "Progress: " + progress);
+                //Log.e("test", "Progress: " + progress);
                 refreshThumbnail(mClip.getStartTimeMs() + progress, clipPos);
             }
 
             @Override
             public void onStopTrackingTouch(VideoPlayerProgressBar progressBar) {
-                Log.e("test", "Stop dragging....");
+                //Log.e("test", "Stop dragging....");
             }
         });
     }

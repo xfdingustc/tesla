@@ -1,6 +1,7 @@
 package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
+import com.transee.vdb.Vdb;
 
 import java.io.IOException;
 
@@ -11,29 +12,18 @@ public class BasicVdbSocket implements VdbSocket {
     private final static String TAG = BasicVdbSocket.class.getSimpleName();
 
     @Override
-    public VdbAcknowledge performRequest(VdbRequest<?> vdbRequest) throws SnipeError {
-
+    public void performRequest(VdbRequest<?> vdbRequest) throws SnipeError {
         try {
-            sendCmd(vdbRequest);
-            if (vdbRequest.getVdbCommand().getAcknowledgeCode() != -1) {
-                return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getAcknowledgeCode
-                    (), vdbRequest.getVdbConnection());
-            } else {
-                return new VdbAcknowledge(0, false, vdbRequest.getVdbCommand().getCommandCode(),
-                    vdbRequest.getVdbConnection());
-            }
+            VdbCommand vdbCommand = vdbRequest.createVdbCommand();
+            vdbCommand.setSequence(vdbRequest.getSequence());
+            Snipe.getVdbConnect().sendCommnd(vdbCommand);
         } catch (Exception e) {
             throw new SnipeError();
         }
     }
 
-    private void sendCmd(VdbRequest<?> vdbRequest) throws IOException {
-        VdbConnection connection = vdbRequest.getVdbConnection();
-        VdbCommand vdbCommand = vdbRequest.createVdbCommand();
-
-        connection.sendCommnd(vdbCommand);
-        //mConnection.sendByteArray(mCmdBuffer);
+    @Override
+    public VdbAcknowledge retrieveAcknowledge() throws IOException {
+        return new VdbAcknowledge(0, Snipe.getVdbConnect());
     }
-
-    //private
 }

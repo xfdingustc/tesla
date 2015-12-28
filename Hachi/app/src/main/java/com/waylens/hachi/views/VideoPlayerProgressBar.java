@@ -27,6 +27,9 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
@@ -137,7 +140,13 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
 
     public void setClip(Clip clip, VdbImageLoader imageLoader) {
         mVideoLength = clip.getDurationMs();
-        RecyclerListAdapter adapter = new RecyclerListAdapter(imageLoader, clip, mScreenWidth);
+        int itemHeight = mRecyclerView.getHeight();
+        if (mRecyclerView.getHeight() == 0) {
+            itemHeight = ViewUtils.dp2px(64, getResources());
+        }
+        int itemWidth = (int) (itemHeight * 16.0f / 9);
+
+        RecyclerListAdapter adapter = new RecyclerListAdapter(imageLoader, clip, mScreenWidth, itemWidth, itemHeight);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -254,34 +263,44 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
         private static final int TYPE_NORMAL = 0;
         private static final int TYPE_HEADER_TAIL = 1;
 
-        private static final int DEFAULT_PERIOD_MS = 1000 * 4;
-        private static final int MIN_PERIOD_MS = 1000;
+        private static final int DEFAULT_PERIOD_MS = 1000 * 10;
 
         VdbImageLoader mImageLoader;
         int mScreenWidth;
-        int mSize;
-        ClipPos mClipPos;
-        long mStartTime;
-        int mPeriod;
         Clip mClip;
+        int mItemWidth;
+        int mItemHeight;
+        ArrayList<ClipPos> mItems = new ArrayList<>();
 
-        public RecyclerListAdapter(VdbImageLoader imageLoader, Clip clip, int screenWidth) {
+        public RecyclerListAdapter(VdbImageLoader imageLoader, Clip clip, int screenWidth, int itemWidth, int itemHeight) {
             mImageLoader = imageLoader;
             mScreenWidth = screenWidth;
             mClip = clip;
-            mStartTime = clip.getStartTimeMs();
-            mClipPos = new ClipPos(clip, mStartTime, ClipPos.TYPE_POSTER, false);
-            if (clip.getDurationMs() > 60 * MIN_PERIOD_MS) {
-                mPeriod = DEFAULT_PERIOD_MS;
-            } else {
-                mPeriod = MIN_PERIOD_MS;
+            mItemWidth = itemWidth;
+            mItemHeight = itemHeight;
+            generateClipPosList();
+        }
+
+        void generateClipPosList() {
+            int itemCount = mClip.getDurationMs() / DEFAULT_PERIOD_MS;
+            if (mClip.getDurationMs() % DEFAULT_PERIOD_MS != 0) {
+                itemCount ++;
             }
-            mSize = clip.getDurationMs() / mPeriod;
+
+            long endMs = mClip.getStartTimeMs() + mClip.getDurationMs();
+            mItems.clear();
+            for (int i = 0; i < itemCount; i++) {
+                long posTime = mClip.getStartTimeMs() + DEFAULT_PERIOD_MS * i;
+                if (posTime >= endMs) {
+                    posTime = endMs - 10; //magic number.
+                }
+                mItems.add(new ClipPos(mClip, posTime, ClipPos.TYPE_POSTER, false));
+            }
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position == 0 || position == (mSize + 1)) {
+            if (position == 0 || position == (mItems.size() + 1)) {
                 return TYPE_HEADER_TAIL;
             } else {
                 return TYPE_NORMAL;
@@ -293,8 +312,7 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
             View view;
             if (viewType == TYPE_NORMAL) {
                 view = new ImageView(parent.getContext());
-                int width = parent.getHeight() * 16 / 9;
-                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, parent.getHeight());
+                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mItemWidth, mItemHeight);
                 view.setLayoutParams(params);
             } else {
                 view = new ImageView(parent.getContext());
@@ -307,18 +325,13 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
             if (getItemViewType(position) == TYPE_NORMAL) {
-                long clipTime = (position - 1) * mPeriod;
-                if (clipTime > mClip.getDurationMs()) {
-                    clipTime = mClip.getDurationMs();
-                }
-                mClipPos.setClipTimeMs(mStartTime + clipTime);
-                mImageLoader.displayVdbImage(mClipPos, holder.imageView);
+                mImageLoader.displayVdbImage(mItems.get(position - 1), holder.imageView, mItemWidth, mItemHeight);
             }
         }
 
         @Override
         public int getItemCount() {
-            return mSize + 2;
+            return mItems.size() + 2;
         }
     }
 

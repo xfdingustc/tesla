@@ -7,4 +7,6 @@
     <string name="record_recording">Recording</string>
     <string name="record_loop_recording">Loop Recording</string>
     <string name="record_switching">Record Switching</string>
+    <string name="continuous_recording">Continuous Recording</string>
+    <string name="confirm_bookmark_add">Bookmark successfully</string>
 </resources>

@@ -1,12 +1,15 @@
 package com.waylens.hachi.snipe;
 
 
-import com.transee.vdb.Vdb;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Xiaofei on 2015/8/17.
  */
 public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
+
+    private static AtomicInteger mSequenceGenerator = new AtomicInteger(1111);
+
     protected int mMethod;
     private VdbResponse.Listener<T> mListener;
 
@@ -19,36 +22,18 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     private VdbRequestQueue mVdbRequestQueue;
 
-    private static final int REQUEST_TYPE_NULL = 0;
-    private static final int REQUEST_TYPE_GETVERSIONINFO = 1;
-    private static final int REQUEST_TYPE_GETCLIPSETINFO = 2;
-    private static final int REQUEST_TYPE_GETINDEXPIC = 3;
-    private static final int REQUEST_TYPE_GETPLAYBACKURL = 4;
-    // private static final int CMD_GetDownloadUrl = 5; // obsolete
-    private static final int REQUEST_TYPE_MARKCLIP = 6;
-    // private static final int CMD_GetCopyState = 7; // obsolete
-    private static final int REQUEST_TYPE_DELETECLIP = 8;
-    private static final int REQUEST_TYPE_GETRAWDATA = 9;
-    private static final int REQUEST_TYPE_SETRAWDATAOPTION = 10;
-    private static final int REQUEST_TYPE_GETRAWDATABLOCK = 11;
-    private static final int REQUEST_TYPE_GETDOWNLOADURLEX = 12;
-
-    private static final int REQUEST_TYPE_GETALLPLAYLISTS = 13;
-    private static final int REQUEST_TYPE_GETPLAYLISTINDEXPIC = 14;
-    private static final int REQUEST_TYPE_CLEARPLAYLIST = 15;
-    private static final int REQUEST_TYPE_INSERTCLIP = 16;
-    private static final int REQUEST_TYPE_MOVECLIP = 17;
-    private static final int REQUEST_TYPE_GETPLAYLISTPLAYBACKURL = 18;
     protected VdbCommand mVdbCommand;
 
     private boolean mIsIgnorable;
 
     private Object mTag;
+    private boolean mIsMessageHandler;
 
     public VdbRequest(int method, VdbResponse.Listener<T> listener, VdbResponse.ErrorListener errorListener) {
         this.mMethod = method;
         this.mListener = listener;
         this.mErrorListener = errorListener;
+        mSequence = mSequenceGenerator.incrementAndGet();
     }
 
     public enum Priority {
@@ -84,11 +69,11 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     }
 
 
-    void finish(final String tag, boolean shouldClean) {
+    protected void finish(final String tag, boolean shouldClean) {
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.finish(this);
         }
-        if (shouldClean) {
+        if (shouldClean  && !mIsMessageHandler) {
             clean();
         }
     }
@@ -98,18 +83,14 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         return this;
     }
 
-    public VdbConnection getVdbConnection() {
-        return Snipe.getVdbConnect();
+    public Integer getSequence() {
+        return mSequence;
     }
-
-    public final VdbRequest<?> setSequence(int sequence) {
-        mSequence = sequence;
-        return this;
-    }
-
 
     public void markDelivered() {
-        mResponseDelivered = true;
+        if (!mIsMessageHandler) {
+            mResponseDelivered = true;
+        }
     }
 
     public boolean hasHadResponseDelivered() {
@@ -134,15 +115,19 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         if (mListener != null) {
             mListener.onResponse(response);
         }
-        clean();
+        if (!mIsMessageHandler) {
+            clean();
+        }
     }
 
 
-    protected void deliverError(SnipeError error) {
+    final protected void deliverError(SnipeError error) {
         if (mErrorListener != null) {
             mErrorListener.onErrorResponse(error);
         }
-        clean();
+        if (!mIsMessageHandler) {
+            clean();
+        }
     }
 
     @Override
@@ -153,6 +138,14 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         return left == right ? this.mSequence - another.mSequence : right.ordinal() - left
                 .ordinal();
 
+    }
+
+    public boolean isMessageHandler() {
+        return mIsMessageHandler;
+    }
+
+    public void setIsMessageHandler(boolean isMessageHandler) {
+        mIsMessageHandler = isMessageHandler;
     }
 
     public boolean isIgnorable() {

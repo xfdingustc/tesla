@@ -279,4 +279,9 @@
     <string name="live_view">LIVE VIEW</string>
     <string name="enhance">Enhance</string>
 
+    <plurals name="number_of_bookmarks">
+        <item quantity="one">%d Bookmarks</item>
+        <item quantity="other">%d Bookmarks</item>
+    </plurals>
+
 </resources>

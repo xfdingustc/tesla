@@ -1,7 +1,6 @@
 package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
@@ -15,18 +14,18 @@ public class VdbCommand {
     private static final int VDB_CMD_SIZE = 160;
     private byte[] mCmdBuffer = new byte[VDB_CMD_SIZE];
     private int mSendIndex = 0;
-    private int mCommndCode;
+    private int mCommandCode;
     private int mAcknowledgeCode = -1;
 
     private VdbCommand() {
 
     }
 
-    private final void writeCmdCode(int code, int tag) {
+    private void writeCmdCode(int code, int tag) {
         writeCmdCode(code, tag, 0, 0);
     }
 
-    private final void writeCmdCode(int code, int tag, int user1, int user2) {
+    private void writeCmdCode(int code, int tag, int user1, int user2) {
         mSendIndex = 0;
         writei32(code);
         writei32(tag);
@@ -40,7 +39,7 @@ public class VdbCommand {
     }
 
     public int getCommandCode() {
-        return mCommndCode;
+        return mCommandCode;
     }
 
     public void setAcknowledgeCode(int code) {
@@ -51,7 +50,7 @@ public class VdbCommand {
         return mAcknowledgeCode;
     }
 
-    private final void writei32(int value) {
+    private void writei32(int value) {
         mCmdBuffer[mSendIndex] = (byte) (value);
         mSendIndex++;
         mCmdBuffer[mSendIndex] = (byte) (value >> 8);
@@ -62,12 +61,12 @@ public class VdbCommand {
         mSendIndex++;
     }
 
-    private final void writei64(long value) {
+    private void writei64(long value) {
         writei32((int) value);
         writei32((int) (value >> 32));
     }
 
-    private final void writeVdbId(String vdbId) {
+    private void writeVdbId(String vdbId) {
         if (vdbId == null) {
             return;
         }
@@ -93,6 +92,13 @@ public class VdbCommand {
         }
     }
 
+    public void setSequence(int sequence) {
+        mCmdBuffer[8] = (byte) (sequence);
+        mCmdBuffer[9] = (byte) (sequence >> 8);
+        mCmdBuffer[10] = (byte) (sequence >> 16);
+        mCmdBuffer[11] = (byte) (sequence >> 24);
+    }
+
 
     private static class Builder {
         private VdbCommand mVdbCommand;
@@ -103,13 +109,13 @@ public class VdbCommand {
 
         private Builder writeCmdCode(int code, int tag) {
             mVdbCommand.writeCmdCode(code, tag);
-            mVdbCommand.mCommndCode = code;
+            mVdbCommand.mCommandCode = code;
             return this;
         }
 
         private Builder writeCmdCode(int code, int tag, int user1, int user2) {
             mVdbCommand.writeCmdCode(code, tag, user1, user2);
-            mVdbCommand.mCommndCode = code;
+            mVdbCommand.mCommandCode = code;
             return this;
         }
 
@@ -193,18 +199,18 @@ public class VdbCommand {
 
         protected static final int MSG_START = 0x1000;
 
-        protected static final int MSG_VdbReady = MSG_START + 0;
-        protected static final int MSG_VdbUnmounted = MSG_START + 1;
+        public static final int MSG_VdbReady = MSG_START + 0;
+        public static final int MSG_VdbUnmounted = MSG_START + 1;
 
-        protected static final int MSG_ClipInfo = MSG_START + 2;
-        protected static final int MSG_ClipRemoved = MSG_START + 3;
+        public static final int MSG_ClipInfo = MSG_START + 2;
+        public static final int MSG_ClipRemoved = MSG_START + 3;
 
-        protected static final int MSG_BufferSpaceLow = MSG_START + 4;
-        protected static final int MSG_BufferFull = MSG_START + 5;
-        protected static final int MSG_CopyState = MSG_START + 6;
-        protected static final int MSG_RawData = MSG_START + 7;
-        protected static final int MSG_PlaylistCleared = MSG_START + 8;
-        protected static final int VDB_MSG_MarkLiveClipInfo = MSG_START + 32;
+        public static final int MSG_BufferSpaceLow = MSG_START + 4;
+        public static final int MSG_BufferFull = MSG_START + 5;
+        public static final int MSG_CopyState = MSG_START + 6;
+        public static final int MSG_RawData = MSG_START + 7;
+        public static final int MSG_PlaylistCleared = MSG_START + 8;
+        public static final int VDB_MSG_MarkLiveClipInfo = MSG_START + 32;
 
         protected static final int MSG_MAGIC = 0xFAFBFCFF;
 

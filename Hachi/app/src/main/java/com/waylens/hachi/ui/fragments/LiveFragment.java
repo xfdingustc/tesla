@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -166,7 +167,7 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
                 new VdbResponse.ErrorListener() {
                     @Override
                     public void onErrorResponse(SnipeError error) {
-
+                        Log.e("test", "ClipSetRequest: " + error);
                     }
                 }).setTag(TAG_CLIP_SET));
     }

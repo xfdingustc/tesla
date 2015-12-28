@@ -142,7 +142,7 @@ public class VideoTrimmer extends FrameLayout {
         long period = (endMs - startMs) / itemCount;
         List<ClipPos> items = new ArrayList<>();
         for (int i = 0; i < itemCount; i++) {
-            long posTime = clip.getStartTimeMs() + period * i;
+            long posTime = startMs + period * i;
             if (posTime >= endMs) {
                 posTime = endMs - 10; //magic number.
             }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
@@ -15,45 +16,62 @@
             android:id="@+id/btn_info"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_gravity="center_vertical|start"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/ic_info_white_36dp"
-            android:layout_gravity="center_vertical|start"/>
+            android:src="@drawable/ic_info_white_36dp"/>
 
         <TextView
             android:id="@+id/title"
+            style="@style/Base.TextAppearance.AppCompat.Subhead.Inverse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Base.TextAppearance.AppCompat.Subhead.Inverse"
             android:layout_gravity="center"
-            android:textAllCaps="true"
-            android:text="Live View"/>
+            android:text="Live View"
+            android:textAllCaps="true"/>
+
         <ImageView
             android:id="@+id/btn_mode"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_gravity="center_vertical|end"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/ic_switch_video_white_36dp"
-            android:layout_gravity="center_vertical|end"/>
+            android:src="@drawable/ic_switch_video_white_36dp"/>
     </FrameLayout>
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp">
-        <TextView
-            android:id="@+id/tvCameraStatus"
-            android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"/>
-    </RelativeLayout>
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/tvCameraStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                tools:text="Continuous Recording"/>
+
+            <TextView
+                android:id="@+id/tv_status_additional"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_enhance"
+                android:textSize="12sp"
+                tools:text="300 bookmarks remain"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:id="@+id/liveViewLayout"
@@ -73,7 +91,8 @@
             android:layout_width="1920px"
             android:layout_height="1080px"
             android:layout_gravity="center"
-            android:visibility="invisible">
+            android:visibility="invisible"
+            tools:visibility="gone">
         </com.waylens.hachi.views.dashboard.DashboardLayout>
 
 
