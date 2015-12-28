@@ -21,4 +21,11 @@ public abstract class VdbMessageHandler<T> extends VdbRequest<T> {
     public int getMessageCode() {
         return mMessageCode;
     }
+
+    public void unregister() {
+        VdbRequestQueue requestQueue = getRequestQueue();
+        if (requestQueue != null) {
+            requestQueue.unregisterMessageHandler(mMessageCode);
+        }
+    }
 }

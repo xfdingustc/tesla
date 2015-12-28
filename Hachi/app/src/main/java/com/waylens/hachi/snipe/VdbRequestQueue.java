@@ -22,7 +22,7 @@ public class VdbRequestQueue {
     //private final Set<VdbRequest<?>> mCurrentVdbRequests = new HashSet<VdbRequest<?>>();
     final ConcurrentHashMap<Integer, VdbRequest<?>> mCurrentVdbRequests = new ConcurrentHashMap<>();
 
-    final ConcurrentHashMap<Integer, WeakReference<VdbMessageHandler<?>>> mMessageHandlers = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<Integer, VdbMessageHandler<?>> mMessageHandlers = new ConcurrentHashMap<>();
 
     private final PriorityBlockingQueue<VdbRequest<?>> mVideoDatabaseQueue = new
             PriorityBlockingQueue<VdbRequest<?>>();
@@ -82,8 +82,12 @@ public class VdbRequestQueue {
     }
 
     public <T> void registerMessageHandler(VdbMessageHandler<T> messageHandler) {
-        mMessageHandlers.put(messageHandler.getMessageCode(),
-                new WeakReference<VdbMessageHandler<?>>(messageHandler));
+        messageHandler.setRequestQueue(this);
+        mMessageHandlers.put(messageHandler.getMessageCode(), messageHandler);
+    }
+
+    public VdbMessageHandler<?> unregisterMessageHandler(int msgCode) {
+        return mMessageHandlers.remove(msgCode);
     }
 
     public <T> VdbRequest<T> add(VdbRequest<T> vdbRequest) {

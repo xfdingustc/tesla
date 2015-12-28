@@ -83,6 +83,10 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         return this;
     }
 
+    public VdbRequestQueue getRequestQueue() {
+        return mVdbRequestQueue;
+    }
+
     public Integer getSequence() {
         return mSequence;
     }

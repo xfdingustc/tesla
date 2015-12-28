@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +49,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public OnEditClipListener mOnEditClipListener;
 
     public ClipFilmAdapter() {
-        mImageLoader =VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
+        mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
     }
 
     public void setClipSet(ClipSet clipSet) {
@@ -118,6 +119,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (getItemViewType(position) == ClipFilmItem.TYPE_NORMAL) {
             final Clip clip = item.clip;
             ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
+            holder.durationView.setText(DateUtils.formatElapsedTime(clip.getDurationMs() / 1000l));
             setupClipFilm(clip, holder);
         } else {
             SectionViewHolder holder = (SectionViewHolder) viewHolder;
@@ -163,7 +165,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.clipFilm.setLayoutManager(layoutManager);
 
         holder.clipFilm.setAdapter(clipThumbnailAdapter);
-        layoutManager.scrollToPositionWithOffset(0, - imgWidth / 2);
+        layoutManager.scrollToPositionWithOffset(0, -imgWidth / 2);
     }
 
     @Override
@@ -200,6 +202,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             final ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
             holder.editorView.setVisibility(View.GONE);
             holder.clipFilm.setVisibility(View.VISIBLE);
+            holder.durationView.setVisibility(View.VISIBLE);
             holder.clipFilm.setOnClickListener(null);
             if (holder.clipEditFragment != null) {
                 holder.clipEditFragment.getFragmentManager().beginTransaction().remove(holder.clipEditFragment).commit();
@@ -241,6 +244,9 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @Bind(R.id.video_editor)
         public View editorView;
+
+        @Bind(R.id.video_duration)
+        public TextView durationView;
 
         public ClipEditFragment clipEditFragment;
 

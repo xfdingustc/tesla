@@ -5,11 +5,11 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.transee.vdb.RemoteVdbClient.BufferSpaceLowInfo;
-import com.transee.vdb.Vdb.MarkLiveInfo;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipActionInfo;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -38,8 +38,6 @@ abstract public class VdbClient {
 
     public static final int STREAM_MAIN = 0;
     public static final int STREAM_SUB_1 = 1;
-
-
 
 
     public static final int DOWNLOAD_OPT_MAIN_STREAM = (1 << 0);
@@ -114,7 +112,7 @@ abstract public class VdbClient {
 
         void onClipInfoAsync(int action, boolean isLive, Clip clip);
 
-        void onMarkLiveClipInfo(int action, Clip clip, MarkLiveInfo info);
+        void onMarkLiveClipInfo(int action, Clip clip, ClipActionInfo.MarkLiveInfo info);
 
         void onClipRemovedAsync(Clip.ID cid);
 
@@ -391,7 +389,7 @@ abstract public class VdbClient {
         request.mClipTimeMs = startMs;
         request.mClipLengthMs = lengthMs;
         request.mDownloadOpt = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_SUB_STREAM_1 | DOWNLOAD_OPT_INDEX_PICT
-            | DOWNLOAD_OPT_PLAYLIST;
+                | DOWNLOAD_OPT_PLAYLIST;
         if (bMuteAudio) {
             request.mDownloadOpt |= DOWNLOAD_OPT_MUTE_AUDIO;
         }
@@ -692,7 +690,7 @@ abstract public class VdbClient {
             if (mAnimState != ANIM_STATE_WAIT_URL || sessionCounter != mAnimCounter) {
                 if (DEBUG) {
                     Log.d(TAG, "startRemuxer() should cancel, state: " + mAnimState + ", counter: " + sessionCounter
-                        + "," + mAnimCounter);
+                            + "," + mAnimCounter);
                 }
                 return false;
             }
@@ -710,7 +708,7 @@ abstract public class VdbClient {
             if (mAnimState != ANIM_STATE_REMUXING || sessionCounter != mAnimCounter) {
                 if (DEBUG) {
                     Log.d(TAG, "startDecode() should cancel, state: " + mAnimState + ", counter: " + sessionCounter
-                        + "," + mAnimCounter);
+                            + "," + mAnimCounter);
                 }
                 return false;
             }
@@ -728,7 +726,7 @@ abstract public class VdbClient {
             if (mAnimState != ANIM_STATE_DECODING || counter != mAnimCounter) {
                 if (DEBUG) {
                     Log.d(TAG, "endDecode() should cancel, state: " + mAnimState + ", counter: " + counter + ","
-                        + mAnimCounter);
+                            + mAnimCounter);
                 }
                 return null;
             }
@@ -745,7 +743,7 @@ abstract public class VdbClient {
             if (mAnimState != ANIM_STATE_DECODING || counter != mAnimCounter) {
                 if (DEBUG) {
                     Log.d(TAG, "endDecode2() should cancel, state: " + mAnimState + ", counter: " + counter + ","
-                        + mAnimCounter);
+                            + mAnimCounter);
                 }
                 return false;
             }

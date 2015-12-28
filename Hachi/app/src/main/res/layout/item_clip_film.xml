@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
     android:animateLayoutChanges="false"
@@ -11,6 +12,16 @@
         android:id="@+id/clip_film_view"
         android:layout_width="match_parent"
         android:layout_height="64dp"/>
+
+    <TextView
+        android:id="@+id/video_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:layout_margin="16dp"
+        android:textColor="@color/text_enhance"
+        android:background="@drawable/round_rectangle_background"
+        tools:text="01:08"/>
 
     <FrameLayout
         android:id="@+id/video_editor"

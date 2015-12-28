@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.transee.common.ByteStream;
 import com.transee.common.GPSPath;
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.vdb.RemoteVdbClient.BufferSpaceLowInfo;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
@@ -97,13 +98,6 @@ abstract public class Vdb {
     protected int mVersion = VERSION_1_0;
     protected final Handler mHandler;
     protected final Callback mCallback;
-
-    public static class MarkLiveInfo {
-        int flags;
-        int delay_ms;
-        int before_live_ms;
-        int after_live_ms;
-    }
 
     // will run on caller's thread
     public Vdb(Callback callback) {
@@ -532,7 +526,7 @@ abstract public class Vdb {
         }
 
         @Override
-        public void onMarkLiveClipInfo(int action, Clip clip, MarkLiveInfo info) {
+        public void onMarkLiveClipInfo(int action, Clip clip, ClipActionInfo.MarkLiveInfo info) {
             onClipInfoAsync(action, false, clip);
         }
 

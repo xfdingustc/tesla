@@ -219,12 +219,14 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
             }
             mHolder.editorView.setVisibility(View.GONE);
             mHolder.clipFilm.setVisibility(View.VISIBLE);
+            mHolder.durationView.setVisibility(View.VISIBLE);
         }
 
         mRvCameraVideoList.setLayoutFrozen(false);
         mHolder = holder;
         holder.editorView.setVisibility(View.VISIBLE);
         mHolder.clipFilm.setVisibility(View.GONE);
+        mHolder.durationView.setVisibility(View.INVISIBLE);
         ClipEditFragment fragment = ClipEditFragment.newInstance(clip, position, this);
         getFragmentManager().beginTransaction().replace(holder.editorView.getId(), fragment).commit();
         mHolder.clipEditFragment = fragment;
@@ -241,6 +243,7 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
             }
             holder.editorView.setVisibility(View.GONE);
             holder.clipFilm.setVisibility(View.VISIBLE);
+            holder.durationView.setVisibility(View.VISIBLE);
         }
     }
 

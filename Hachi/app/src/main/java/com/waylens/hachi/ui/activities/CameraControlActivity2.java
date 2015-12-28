@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
@@ -20,11 +22,15 @@ import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
+import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
@@ -58,7 +64,8 @@ public class CameraControlActivity2 extends BaseActivity {
     private int mCurrentOrientation;
     Handler mHandler = new Handler();
     VdbRequestQueue mVdbRequestQueue;
-    int mBookmarkCount;
+    int mBookmarkCount = -1;
+    int mBookmarkClickCount;
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
         Intent intent = new Intent(startingActivity, CameraControlActivity2.class);
@@ -81,7 +88,7 @@ public class CameraControlActivity2 extends BaseActivity {
     TextView mTvStatusAdditional;
 
     @Bind(R.id.btnMicControl)
-    ImageButton mBtnMicControl;
+    ImageView mBtnMicControl;
 
     @Bind(R.id.fabBookmark)
     FloatingActionButton mFabBookmark;
@@ -98,6 +105,21 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.btnFullscreen)
     ImageButton mBtnFullScreen;
 
+    @Bind(R.id.btnWaterLine)
+    ImageButton mBtnWaterLine;
+
+    @Bind(R.id.sharp_view)
+    View mSharpView;
+
+    @Bind(R.id.bookmark_message_view)
+    View mBookmarkMsgView;
+
+    @Bind(R.id.progress_space)
+    ProgressBar mProgressSpace;
+
+    @Bind(R.id.info_panel)
+    View mInfoView;
+
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
         handleOnFabClicked();
@@ -106,15 +128,21 @@ public class CameraControlActivity2 extends BaseActivity {
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
         if (mDashboard.getVisibility() == View.VISIBLE) {
-            mDashboard.setVisibility(View.INVISIBLE);
-            mBtnShowOverlay.clearColorFilter();
-            closeLiveRawData();
+            hideOverlay();
         } else {
             mDashboard.setVisibility(View.VISIBLE);
             initDashboardLayout();
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
             requestLiveRawData();
+            mSharpView.setVisibility(View.INVISIBLE);
+            mBtnWaterLine.clearColorFilter();
         }
+    }
+
+    void hideOverlay() {
+        mDashboard.setVisibility(View.INVISIBLE);
+        mBtnShowOverlay.clearColorFilter();
+        closeLiveRawData();
     }
 
     @OnClick(R.id.btnFullscreen)
@@ -130,6 +158,23 @@ public class CameraControlActivity2 extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.btnWaterLine)
+    void toggleSharpView() {
+        if (mSharpView.getVisibility() == View.VISIBLE) {
+            mSharpView.setVisibility(View.INVISIBLE);
+            mBtnWaterLine.clearColorFilter();
+        } else {
+            mSharpView.setVisibility(View.VISIBLE);
+            mBtnWaterLine.setColorFilter(getResources().getColor(R.color.style_color_primary));
+            hideOverlay();
+        }
+    }
+
+    @OnClick(R.id.btn_info)
+    void toggleInfoView() {
+        int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+        mInfoView.setVisibility(visibility);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +191,7 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        hideOverlay();
     }
 
 
@@ -185,6 +231,10 @@ public class CameraControlActivity2 extends BaseActivity {
         updateMicControlButton();
         mRawDataAdapter = new SimulatorRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
+
+        mProgressSpace.setMax(100);
+        mProgressSpace.setProgress(25);
+        mProgressSpace.setSecondaryProgress(75);
     }
 
     @Override
@@ -281,9 +331,11 @@ public class CameraControlActivity2 extends BaseActivity {
             case CameraState.STATE_RECORD_RECORDING:
                 if (isInCarMode(state)) {
                     mTvCameraStatus.setText(R.string.continuous_recording);
-                    if (mBookmarkCount != 0) {
+                    if (mBookmarkCount != -1) {
                         mTvStatusAdditional.setText(
-                                getResources().getQuantityString(R.plurals.number_of_bookmarks, mBookmarkCount, mBookmarkCount));
+                                getResources().getQuantityString(R.plurals.number_of_bookmarks,
+                                        mBookmarkCount + mBookmarkClickCount,
+                                        mBookmarkCount + mBookmarkClickCount));
                         mTvStatusAdditional.setVisibility(View.VISIBLE);
                     }
                 } else {
@@ -351,31 +403,31 @@ public class CameraControlActivity2 extends BaseActivity {
             case CameraState.STATE_RECORD_RECORDING:
                 if (isInCarMode(mVdtCamera.getState())) {
                     mVdtCamera.markLiveVideo();
-                    showMessage(R.string.confirm_bookmark_add);
+                    mBookmarkClickCount ++;
+                    showMessage();
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            updateCameraStatusInfo(mVdtCamera.getState());
                             hideMessage();
                         }
                     }, 1000 * 3);
-                    getBookmarkCount();
                 } else {
                     mVdtCamera.stopRecording();
                 }
                 break;
             case CameraState.STATE_RECORD_STOPPED:
                 mVdtCamera.startRecording();
-                getBookmarkCount();
                 break;
         }
     }
 
     void hideMessage() {
-        //TODO
+        mBookmarkMsgView.setVisibility(View.GONE);
     }
 
-    void showMessage(int msgResId) {
-        //TODO
+    void showMessage() {
+        mBookmarkMsgView.setVisibility(View.VISIBLE);
     }
 
     void getBookmarkCount() {
@@ -388,6 +440,7 @@ public class CameraControlActivity2 extends BaseActivity {
                     public void onResponse(ClipSet clipSet) {
                         if (clipSet != null) {
                             mBookmarkCount = clipSet.getCount();
+                            mBookmarkClickCount = 0;
                             Log.e("test", "Current bookmarks: " + mBookmarkCount);
                             if (mVdtCamera != null) {
                                 updateCameraStatusInfo(mVdtCamera.getState());
@@ -407,7 +460,10 @@ public class CameraControlActivity2 extends BaseActivity {
         RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
             @Override
             public void onResponse(RawDataItem response) {
-                Log.e("test", "RawDataMsgHandler" + response);
+                //Log.e("test", String.format("RawDataMsgHandler: Type[%d]:[%s]", response.dataType, response.object));
+                if (mDashboard != null) {
+                    mDashboard.updateLive(response);
+                }
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -416,17 +472,45 @@ public class CameraControlActivity2 extends BaseActivity {
             }
         });
         mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
+
+        ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
+                new VdbResponse.Listener<ClipActionInfo>() {
+                    @Override
+                    public void onResponse(ClipActionInfo response) {
+                        Log.e("test", response.toString());
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "ClipInfoMsgHandler ERROR", error);
+                    }
+                });
+        mVdbRequestQueue.registerMessageHandler(clipInfoMsgHandler);
+
+        MarkLiveMsgHandler markLiveMsgHandler = new MarkLiveMsgHandler(
+                new VdbResponse.Listener<ClipActionInfo>() {
+                    @Override
+                    public void onResponse(ClipActionInfo response) {
+                        Log.e("test", response.toString());
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "MarkLiveMsgHandler ERROR", error);
+                    }
+                });
+        mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
     }
 
     void requestLiveRawData() {
-        registerMessageHandler();
         LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
                 RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
                 VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
                         Log.e("test", "LiveRawDataResponse: " + response);
-                        //mDashboard.updateLive(response);
                     }
                 }, new VdbResponse.ErrorListener() {
             @Override
@@ -435,6 +519,7 @@ public class CameraControlActivity2 extends BaseActivity {
             }
         });
         mVdbRequestQueue.add(request);
+        registerMessageHandler();
     }
 
     void closeLiveRawData() {
@@ -443,7 +528,6 @@ public class CameraControlActivity2 extends BaseActivity {
                     @Override
                     public void onResponse(Integer response) {
                         Log.e("test", "LiveRawDataResponse: " + response);
-                        //mDashboard.updateLive(response);
                     }
                 }, new VdbResponse.ErrorListener() {
             @Override
@@ -452,6 +536,9 @@ public class CameraControlActivity2 extends BaseActivity {
             }
         });
         mVdbRequestQueue.add(request);
+        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
+        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_ClipInfo);
+        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
     }
 
     class CameraLiveViewCallback implements CameraLiveView.Callback {

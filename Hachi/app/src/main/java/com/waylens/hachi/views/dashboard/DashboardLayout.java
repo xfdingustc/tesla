@@ -114,6 +114,9 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     }
 
     public void updateLive(RawDataItem item) {
+        if (item == null || item.object == null) {
+            return;
+        }
         switch (item.dataType) {
             case RawDataBlock.RAW_DATA_GPS:
                 GPSRawData gpsRawData = (GPSRawData) item.object;

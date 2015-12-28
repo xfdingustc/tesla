@@ -11,13 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VdbResponseDispatcher extends Thread {
 
     private final ConcurrentHashMap<Integer, VdbRequest<?>> mVdbRequestQueue;
-    private final ConcurrentHashMap<Integer, WeakReference<VdbMessageHandler<?>>> mMessageHandlers;
+    private final ConcurrentHashMap<Integer, VdbMessageHandler<?>> mMessageHandlers;
     private final VdbSocket mVdbSocket;
     private final ResponseDelivery mDelivery;
     private volatile boolean mQuit = false;
 
     public VdbResponseDispatcher(ConcurrentHashMap<Integer, VdbRequest<?>> vdbRequestQueue,
-                                 ConcurrentHashMap<Integer, WeakReference<VdbMessageHandler<?>>> messageHandlers,
+                                 ConcurrentHashMap<Integer, VdbMessageHandler<?>> messageHandlers,
                                  VdbSocket socket, ResponseDelivery delivery) {
         super("VdbResponseDispatcher");
         mVdbRequestQueue = vdbRequestQueue;
@@ -49,8 +49,7 @@ public class VdbResponseDispatcher extends Thread {
 
             VdbRequest<?> vdbRequest;
             if (vdbAcknowledge.isMessageAck()) {
-                WeakReference<VdbMessageHandler<?>> reference = mMessageHandlers.get(vdbAcknowledge.getMsgCode());
-                if (reference == null || (vdbRequest = reference.get()) == null) {
+                if ((vdbRequest = mMessageHandlers.get(vdbAcknowledge.getMsgCode())) == null) {
                     Log.e("richard", "MessageCode: " + vdbAcknowledge.getMsgCode());
                     continue;
                 }

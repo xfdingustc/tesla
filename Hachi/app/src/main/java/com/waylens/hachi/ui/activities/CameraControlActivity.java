@@ -44,6 +44,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.transee.ccam.BtState;
 import com.transee.common.DateTime;
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.common.Timer;
 import com.transee.vdb.PlaylistSet;
@@ -362,7 +363,7 @@ public class CameraControlActivity extends com.transee.viditcam.app.BaseActivity
             }
 
             @Override
-            public void onMarkLiveClipInfo(int action, Clip clip, Vdb.MarkLiveInfo info) {
+            public void onMarkLiveClipInfo(int action, Clip clip, ClipActionInfo.MarkLiveInfo info) {
                 Log.e(TAG, "onMarkLiveClipInfo");
             }
 

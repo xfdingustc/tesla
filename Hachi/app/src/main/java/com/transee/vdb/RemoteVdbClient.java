@@ -4,9 +4,9 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.common.TcpConnection;
-import com.transee.vdb.Vdb.MarkLiveInfo;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -921,7 +921,7 @@ public class RemoteVdbClient extends VdbClient {
         }
 
         // mark live clip info
-        MarkLiveInfo info = new MarkLiveInfo();
+        ClipActionInfo.MarkLiveInfo info = new ClipActionInfo.MarkLiveInfo();
         info.flags = readi32(); // flags, not used
         info.delay_ms = readi32();
         info.before_live_ms = readi32();
