@@ -1219,7 +1219,7 @@ final class VdtCameraController {
             }
 
 
-            Logger.t(TAG).d("ack: act=" + act + ", p1=" + p1 + ", p2=" + p2);
+//            Logger.t(TAG).d("ack: act=" + act + ", p1=" + p1 + ", p2=" + p2);
 
             // ECMD0.5
             Matcher matcher = mPattern.matcher(act);

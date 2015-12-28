@@ -13,6 +13,7 @@ import java.net.Socket;
 // this class uses 2 threads,
 // one for sending, and one for receiving
 abstract public class TcpConnection {
+    private static final String TAG = TcpConnection.class.getSimpleName();
     static final int CONNECT_TIMEOUT = 1000 * 30;
 
     abstract public void onConnectedAsync();
@@ -30,9 +31,6 @@ abstract public class TcpConnection {
     CmdThread mThread;
     boolean mbConnectError;
 
-    private String TAG() {
-        return Thread.currentThread().getName();
-    }
 
     public TcpConnection(String name, InetSocketAddress address) {
         mName = name;
@@ -58,11 +56,11 @@ abstract public class TcpConnection {
             mThread = null;
         }
         if (mSocket != null) {
-            Logger.t(TAG()).d("close socket");
+            Logger.t(TAG).d("close socket");
             try {
                 mSocket.close();
             } catch (Exception e) {
-                Logger.t(TAG()).e(e, "close socket");
+                Logger.t(TAG).e(e, "close socket");
             }
             mSocket = null;
         }
@@ -103,7 +101,7 @@ abstract public class TcpConnection {
 
     synchronized private void connectError() {
         if (!mbConnectError) {
-            Logger.t(TAG()).d("connectError");
+            Logger.t(TAG).d("connectError");
             mbConnectError = true;
             onConnectErrorAsync();
         }
@@ -114,12 +112,12 @@ abstract public class TcpConnection {
             mSocket = new Socket();
         }
         mSocket.setReceiveBufferSize(8192);
-        Logger.t(TAG()).d("Connecting to: " + mAddress.getHostName() + ": " + mAddress.getPort());
+        Logger.t(TAG).d("Connecting to: " + mAddress.getHostName() + ": " + mAddress.getPort());
         mSocket.connect(mAddress, CONNECT_TIMEOUT);
-        Logger.t(TAG()).d("Connected: " + mAddress.getHostName());
+        Logger.t(TAG).d("Connected: " + mAddress.getHostName());
 
         TcpConnection.this.onConnectedAsync();
-        Logger.t(TAG()).d("connected to " + mAddress.toString());
+        Logger.t(TAG).d("connected to " + mAddress.toString());
     }
 
     class CmdThread extends Thread {
@@ -137,7 +135,7 @@ abstract public class TcpConnection {
                 msgThread.start();
                 cmdLoop(this);
             } catch (Exception e) {
-                Logger.t(TAG()).e(e, "");
+                e.printStackTrace();
             }
 
             if (msgThread != null) {
@@ -145,9 +143,9 @@ abstract public class TcpConnection {
             }
 
             if (isInterrupted()) {
-                Logger.t(TAG()).d("cmd thread interrupted");
+                Logger.t(TAG).d("cmd thread interrupted");
             } else {
-                Logger.t(TAG()).d("cmd thread error");
+                Logger.t(TAG).d("cmd thread error");
                 TcpConnection.this.connectError();
             }
         }
@@ -164,13 +162,13 @@ abstract public class TcpConnection {
             try {
                 msgLoop(this);
             } catch (Exception e) {
-                Logger.t(TAG()).e(e, "");
+                Logger.t(TAG).e(e, "");
             }
 
             if (isInterrupted()) {
-                Logger.t(TAG()).d("msg thread interrupted");
+                Logger.t(TAG).d("msg thread interrupted");
             } else {
-                Logger.t(TAG()).d("msg thread error");
+                Logger.t(TAG).d("msg thread error");
                 TcpConnection.this.connectError();
             }
         }

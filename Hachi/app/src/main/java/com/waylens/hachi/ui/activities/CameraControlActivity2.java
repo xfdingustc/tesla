@@ -229,9 +229,15 @@ public class CameraControlActivity2 extends BaseActivity {
     }
 
 
-    private void updateCameraState(CameraState state) {
-        updateCameraStatusInfo(state);
-        updateFloatActionButton(state);
+    private void updateCameraState(final CameraState state) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateCameraStatusInfo(state);
+                updateFloatActionButton(state);
+            }
+        });
+
     }
 
 

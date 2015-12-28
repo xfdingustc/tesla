@@ -40,17 +40,15 @@ public class DeviceScanner extends Thread {
     private WifiManager mWifiManager;
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private List<InetAddress> mAddress = new ArrayList<>();
-    private List<JmDNS> mdns = new ArrayList<>();
+    private List<JmDNS> mDns = new ArrayList<>();
     private WifiManager.MulticastLock mLock;
     private boolean mbRunning;
-
-
 
 
     public DeviceScanner(Context context) {
         super("ServiceDiscovery");
         this.mContext = context;
-        this.mWifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        this.mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
     // API
@@ -70,10 +68,6 @@ public class DeviceScanner extends Thread {
         }
     }
 
-    // API
-    synchronized public boolean isRunning() {
-        return mbRunning;
-    }
 
     @Override
     public void run() {
@@ -91,7 +85,7 @@ public class DeviceScanner extends Thread {
             }
 
         } catch (Exception e) {
-            Logger.t(TAG).e("Error", e);
+            e.printStackTrace();
         }
 
         if (mWifiManager != null) {
@@ -101,22 +95,14 @@ public class DeviceScanner extends Thread {
         try {
             for (InetAddress addr : mAddress) {
                 JmDNS dns = JmDNS.create(addr, SERVICE_VIDITCAM);
-                mdns.add(dns);
-            }
-            for (InetAddress addr : mAddress) {
-                JmDNS dns = JmDNS.create(addr, SERVICE_VIDIT_STUDIO);
-                mdns.add(dns);
-            }
-
-
-
-            for (JmDNS dns : mdns) {
+                mDns.add(dns);
                 dns.addServiceListener(SERVICE_TYPE, mServiceListener);
             }
 
+
             threadLoop();
 
-            for (JmDNS dns : mdns) {
+            for (JmDNS dns : mDns) {
                 dns.close();
             }
 
@@ -143,12 +129,6 @@ public class DeviceScanner extends Thread {
             }
 
 
-            if (mdns != null) {
-                for (JmDNS dns : mdns) {
-                    dns.removeServiceListener(SERVICE_TYPE, mServiceListener);
-                    dns.addServiceListener(SERVICE_TYPE, mServiceListener);
-                }
-            }
         }
     }
 
@@ -157,12 +137,9 @@ public class DeviceScanner extends Thread {
         public void serviceAdded(ServiceEvent event) {
             Logger.t(TAG).d("serviceAdded: " + event.getName() + ", " + event.getType());
             Logger.t(TAG).d(event.getInfo().toString());
-            if (isRunning()) {
-                // Vidit Camera, _ccam._tcp.local.
-                event.getDNS().requestServiceInfo(event.getType(), event.getName(), 1);
-            } else {
-                Logger.t(TAG).d("serviceAdded: not running");
-            }
+            // Vidit Camera, _ccam._tcp.local.
+            event.getDNS().requestServiceInfo(event.getType(), event.getName(), 1);
+
         }
 
         @Override
@@ -173,30 +150,26 @@ public class DeviceScanner extends Thread {
 
         @Override
         public void serviceResolved(ServiceEvent event) {
-//            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
+            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
             Logger.t(TAG).d(event.getInfo().toString());
-            if (isRunning()) {
-                ServiceInfo info = event.getInfo();
-                Inet4Address[] addresses = info.getInet4Addresses();
-                if (addresses.length > 0) {
 
-//                    Logger.t(TAG).d("address: " + addresses[0].toString());
-                    String name = event.getName();
-                    boolean bIsPcServer = name.equals(SERVICE_VIDIT_STUDIO);
-                    String serverName = info.getServer();
-                    int index = serverName.indexOf(".local.");
-                    if (index >= 0) {
-                        serverName = serverName.substring(0, index);
-                    }
-                    VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(addresses[0], info
-                            .getPort(), serverName,
-                            name, bIsPcServer);
-                    mVdtCameraManager.connectCamera(serviceInfo);
-
+            ServiceInfo info = event.getInfo();
+            Inet4Address[] addresses = info.getInet4Addresses();
+            if (addresses.length > 0) {
+                String name = event.getName();
+                boolean bIsPcServer = name.equals(SERVICE_VIDIT_STUDIO);
+                String serverName = info.getServer();
+                int index = serverName.indexOf(".local.");
+                if (index >= 0) {
+                    serverName = serverName.substring(0, index);
                 }
-            } else {
-                Logger.t(TAG).d("serviceResolved: not running");
+                VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(addresses[0], info
+                    .getPort(), serverName,
+                    name, bIsPcServer);
+                mVdtCameraManager.connectCamera(serviceInfo);
+
             }
+
         }
     };
 
