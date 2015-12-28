@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 
 import java.io.IOException;
 import java.net.Inet4Address;
@@ -37,22 +38,13 @@ public class DeviceScanner extends Thread {
 
     @Nullable
     private WifiManager mWifiManager;
+    private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private List<InetAddress> mAddress = new ArrayList<>();
     private List<JmDNS> mdns = new ArrayList<>();
     private WifiManager.MulticastLock mLock;
     private boolean mbRunning;
 
-    private DeviceScannerListener mListener = null;
 
-    public interface DeviceScannerListener {
-        void onServiceResoledAsync(DeviceScanner thread, VdtCamera.ServiceInfo serviceInfo);
-
-        void onRescanAsync(DeviceScanner thread);
-    }
-
-    public void setListener(DeviceScannerListener listener) {
-        mListener = listener;
-    }
 
 
     public DeviceScanner(Context context) {
@@ -150,11 +142,7 @@ public class DeviceScanner extends Thread {
                 break;
             }
 
-            // TODO - sometimes, the service cannot be found
-            // this is a workaround to find the service
-            if (mListener != null) {
-                mListener.onRescanAsync(this);
-            }
+
             if (mdns != null) {
                 for (JmDNS dns : mdns) {
                     dns.removeServiceListener(SERVICE_TYPE, mServiceListener);
@@ -185,14 +173,14 @@ public class DeviceScanner extends Thread {
 
         @Override
         public void serviceResolved(ServiceEvent event) {
-            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
+//            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
             Logger.t(TAG).d(event.getInfo().toString());
             if (isRunning()) {
                 ServiceInfo info = event.getInfo();
                 Inet4Address[] addresses = info.getInet4Addresses();
                 if (addresses.length > 0) {
 
-                    Logger.t(TAG).d("address: " + addresses[0].toString());
+//                    Logger.t(TAG).d("address: " + addresses[0].toString());
                     String name = event.getName();
                     boolean bIsPcServer = name.equals(SERVICE_VIDIT_STUDIO);
                     String serverName = info.getServer();
@@ -203,9 +191,8 @@ public class DeviceScanner extends Thread {
                     VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(addresses[0], info
                             .getPort(), serverName,
                             name, bIsPcServer);
-                    if (mListener != null) {
-                        mListener.onServiceResoledAsync(DeviceScanner.this, serviceInfo);
-                    }
+                    mVdtCameraManager.connectCamera(serviceInfo);
+
                 }
             } else {
                 Logger.t(TAG).d("serviceResolved: not running");

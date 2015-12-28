@@ -67,26 +67,50 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
             @Override
             public void onCameraConnected(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("on Camera Connected");
-                mCameraListAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCameraListAdapter.notifyDataSetChanged();
+                    }
+                });
+
             }
 
             @Override
             public void onCameraVdbConnected(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("camera vdb connected");
-                mCameraListAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCameraListAdapter.notifyDataSetChanged();
+                    }
+                });
+
 
             }
 
             @Override
             public void onCameraDisconnected(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("onCameraDisconnected");
-                mCameraListAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCameraListAdapter.notifyDataSetChanged();
+                    }
+                });
+
             }
 
             @Override
             public void onCameraStateChanged(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("onCameraStateChanged");
-                mCameraListAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCameraListAdapter.notifyDataSetChanged();
+                    }
+                });
+
             }
 
             @Override
@@ -114,7 +138,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
 //        if (mWifiAdmin != null) {
 //            updateWifiState(mWifiAdmin);
 //        }
-        startDiscovery();
+
     }
 
     @Override
@@ -181,44 +205,6 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         }
     }
 
-
-    private void startDiscovery() {
-        if (mDeviceScanner == null) {
-            mDeviceScanner = new DeviceScanner(getActivity());
-            mDeviceScanner.setListener(new DeviceScanner.DeviceScannerListener() {
-                @Override
-                public void onServiceResoledAsync(final DeviceScanner thread, final VdtCamera
-                    .ServiceInfo serviceInfo) {
-                    Log.d(TAG, "onServiceResolved: " + serviceInfo.inetAddr.toString() + ", " + serviceInfo.serviceName);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (thread == mDeviceScanner) {
-                                CameraListFragment.this.onServiceResolved(serviceInfo);
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onRescanAsync(DeviceScanner thread) {
-
-                }
-            });
-
-            mDeviceScanner.startWork();
-
-            Logger.t(TAG).d("--- start discovery ---");
-        }
-    }
-
-    void stopDiscovery() {
-        if (mDeviceScanner != null) {
-            mDeviceScanner.stopWork();
-            mDeviceScanner = null;
-            Logger.t(TAG).d("=== stop discovery ===");
-        }
-    }
 
     private void onServiceResolved(VdtCamera.ServiceInfo serviceInfo) {
         //serviceInfo.ssid = mWifiAdmin == null ? null : mWifiAdmin.getCurrSSID();

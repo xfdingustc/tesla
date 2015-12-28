@@ -215,7 +215,7 @@ public class VdtCameraManager {
     }
 
     // API
-    public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
+    synchronized public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
 
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectedVdtCameras)) {
             // already connected

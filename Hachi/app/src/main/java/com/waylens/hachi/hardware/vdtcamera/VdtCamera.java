@@ -23,7 +23,6 @@ public class VdtCamera {
     private boolean mIsVdbConnected = false;
 
     private List<Callback> mCallbacks = new ArrayList<>();
-    private final Handler mHandler;
     private final ServiceInfo mServiceInfo;
     private final VdtCameraController mController;
 
@@ -111,119 +110,79 @@ public class VdtCamera {
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
-        mHandler = new Handler();
         mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
         mController.setListener(new VdtCameraController.Listener() {
             @Override
             public void onConnected() {
                 initCameraState();
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onCameraConnected();
-                    }
-                });
+                onCameraConnected();
+
             }
 
             @Override
             public void onDisconnected() {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onCameraDisconnected();
-                    }
-                });
+                onCameraDisconnected();
+
             }
 
             @Override
             public void onCameraStateChanged() {
-                mHandler.post(mSyncStateAction);
+                syncCameraState();
+
             }
 
             @Override
             public void onBtStateChanged() {
-                mHandler.post(mSyncBtStateAction);
+                syncBtState();
+
             }
 
             @Override
             public void onGpsStateChanged() {
-                mHandler.post(mSyncGpsStateAction);
+                syncGpsState();
+
             }
 
             @Override
             public void onWifiStateChanged() {
-                mHandler.post(mSyncWifiStateAction);
+                syncWifiState();
+
             }
 
             @Override
             public void onStartRecordError(final int error) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        VdtCamera.this.onStartRecordError(error);
-                    }
-                });
+                VdtCamera.this.onStartRecordError(error);
             }
 
             @Override
             public void onHostSSIDFetched(final String ssid) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        VdtCamera.this.onHostSSIDFetched(ssid);
-                    }
-                });
+                VdtCamera.this.onHostSSIDFetched(ssid);
             }
 
             @Override
             public void onScanBtDone() {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        VdtCamera.this.onScanBtDone();
-                    }
-                });
+                VdtCamera.this.onScanBtDone();
             }
 
             @Override
             public void onBtDevInfo(final int type, final String mac, final String name) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        VdtCamera.this.onBtDevInfo(type, mac, name);
-                    }
-                });
+                VdtCamera.this.onBtDevInfo(type, mac, name);
             }
 
             @Override
             public void onStillCaptureStarted(final boolean bOneShot) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        VdtCamera.this.onStillCaptureStarted(bOneShot);
-                    }
-                });
+                VdtCamera.this.onStillCaptureStarted(bOneShot);
             }
 
             @Override
             public void onStillPictureInfo(final boolean bCapturing, final int numPictures,
                                            final int burstTicks) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        VdtCamera.this.onStillPictureInfo(bCapturing, numPictures, burstTicks);
-                    }
-                });
+                VdtCamera.this.onStillPictureInfo(bCapturing, numPictures, burstTicks);
             }
 
             @Override
             public void onStillCaptureDone() {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        VdtCamera.this.onStillCaptureDone();
-                    }
-                });
+                VdtCamera.this.onStillCaptureDone();
             }
         });
     }
@@ -317,12 +276,7 @@ public class VdtCamera {
                 try {
                     mVdbConnection.connect();
                     mIsVdbConnected = true;
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
-                        }
-                    });
+                    mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -450,7 +404,7 @@ public class VdtCamera {
             if (DEBUG) {
                 Log.d(TAG, "onCameraStateChanged");
             }
-            syncCameraState();
+
         }
     };
 
@@ -460,7 +414,7 @@ public class VdtCamera {
             if (DEBUG) {
                 Log.d(TAG, "onBtStateChanged");
             }
-            syncBtState();
+
         }
     };
 
@@ -470,7 +424,7 @@ public class VdtCamera {
             if (DEBUG) {
                 Log.d(TAG, "onGpsStateChanged");
             }
-            syncGpsState();
+
         }
     };
 
@@ -480,7 +434,7 @@ public class VdtCamera {
             if (DEBUG) {
                 Log.d(TAG, "onWifiStateChanged");
             }
-            syncWifiState();
+
         }
     };
 

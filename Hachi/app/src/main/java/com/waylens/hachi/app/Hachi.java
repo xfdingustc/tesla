@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.views.dashboard.models.SkinManager;
@@ -28,10 +29,18 @@ public class Hachi extends Application {
 
     private static Context mSharedContext = null;
 
+    private DeviceScanner mScanner;
+
     @Override
     public void onCreate() {
         super.onCreate();
         init();
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        mScanner.stopWork();
     }
 
     @Override
@@ -61,6 +70,9 @@ public class Hachi extends Application {
 
         SkinManager.initialize(this);
         SkinManager.getManager().load();
+
+        mScanner = new DeviceScanner(this);
+        mScanner.startWork();
     }
 
     private void initCameraManager() {
