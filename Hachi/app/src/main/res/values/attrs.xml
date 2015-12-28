@@ -65,5 +65,12 @@
         <attr name="rightThumb" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="PercentageView">
+        <attr name="defaultColor" format="color"/>
+        <attr name="categoryOneColor" format="color"/>
+        <attr name="categoryTwoColor" format="color"/>
+        <attr name="categoryThreeColor" format="color"/>
+    </declare-styleable>
+
 
 </resources>

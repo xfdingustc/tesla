@@ -53,8 +53,9 @@ public class VdbAcknowledge {
         mCmdTag = readi32(); // cmd->cmd_tag
         mCmdRetCode = readi32();
 
-        Logger.t(TAG).d(String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]",
-                statusCode, mMsgCode));
+
+//        Logger.t(TAG).v(String.format("VdbAcknowledge: StatusCode[%d], CmdCode[%d]",
+//                statusCode, mMsgCode));
 
         int extra_bytes = readi32();
         if (extra_bytes > 0) {

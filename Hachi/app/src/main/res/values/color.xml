@@ -24,6 +24,10 @@
     <color name="album_list_feeditem_nor">#fffafafa</color>
     <color name="custom_alertdialog_transparent">#00ffffff</color>
 
+    <color name="storage_used">#FFFD5000</color>
+    <color name="storage_unused">#FFD7D7D7</color>
+
+
 
     <color name="btn_unable_color">#d7d7d7</color>
     <color name="trip_name_color">#b2ebf2</color>

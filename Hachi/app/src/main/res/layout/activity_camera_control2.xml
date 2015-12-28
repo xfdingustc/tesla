@@ -147,6 +147,17 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@color/edit_toolbar"/>
+    
+    
+    <com.waylens.hachi.ui.views.PercentageView
+        android:id="@+id/storageView"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_margin="16dp"
+        app:defaultColor="@color/btn_unable_color"
+        app:categoryOneColor="@color/storage_used"
+        app:categoryTwoColor="@color/storage_unused"/>
+
 
     <FrameLayout
         android:layout_width="match_parent"
