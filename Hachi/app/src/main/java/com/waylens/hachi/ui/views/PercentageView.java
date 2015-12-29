@@ -22,6 +22,9 @@ public class PercentageView extends View {
 
     private Paint mBackgroundPaint = new Paint();
 
+    private boolean mFolded;
+    private int mFoldedHeight;
+
 
     private int mCategoryOne = 0;
     private int mCategoryTwo = 0;
@@ -35,6 +38,8 @@ public class PercentageView extends View {
         super(context, attrs);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PercentageView);
+        mFolded = a.getBoolean(R.styleable.PercentageView_folded, false);
+        mFoldedHeight = a.getDimensionPixelSize(R.styleable.PercentageView_foldedHeight, 12);
         mDefaultColor = a.getColor(R.styleable.PercentageView_defaultColor, 0xD7D7D7);
         mCategoryOneColor = a.getColor(R.styleable.PercentageView_categoryOneColor, 0xFF000000);
         mCategoryTwoColor = a.getColor(R.styleable.PercentageView_categoryTwoColor, 0xFF000000);
@@ -43,6 +48,20 @@ public class PercentageView extends View {
         mBackgroundPaint.setColor(mDefaultColor);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (mFolded) {
+//            int newHeight = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+            setMeasuredDimension(width, height);
+        } else {
+            setMeasuredDimension(width, mFoldedHeight);
+        }
+
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -52,11 +71,14 @@ public class PercentageView extends View {
         Paint paint = new Paint();
         Rect rect = canvas.getClipBounds();
 
-        int width1 =  (mCategoryOne * rect.width()) / (mCategoryOne + mCategoryTwo +
-            mCategoryThree);
-        Rect rect1 = new Rect(rect.left, rect.top, rect.left + width1, rect.bottom);
-        paint.setColor(mCategoryOneColor);
-        canvas.drawRect(rect1, paint);
+
+        if (mCategoryOne != 0) {
+            int width1 = (mCategoryOne * rect.width()) / (mCategoryOne + mCategoryTwo +
+                mCategoryThree);
+            Rect rect1 = new Rect(rect.left, rect.top, rect.left + width1, rect.bottom);
+            paint.setColor(mCategoryOneColor);
+            canvas.drawRect(rect1, paint);
+        }
 
 
     }

@@ -179,8 +179,10 @@
     <com.waylens.hachi.ui.views.PercentageView
         android:id="@+id/storageView"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="24dp"
         android:layout_margin="16dp"
+        app:folded="true"
+        app:foldedHeight="4dp"
         app:defaultColor="@color/btn_unable_color"
         app:categoryOneColor="@color/storage_used"
         app:categoryTwoColor="@color/storage_unused"/>

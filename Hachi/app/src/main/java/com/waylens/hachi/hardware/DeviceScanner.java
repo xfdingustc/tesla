@@ -128,7 +128,12 @@ public class DeviceScanner extends Thread {
                 break;
             }
 
-
+            if (mDns != null) {
+                for (JmDNS dns : mDns) {
+                    dns.removeServiceListener(SERVICE_TYPE, mServiceListener);
+                    dns.addServiceListener(SERVICE_TYPE, mServiceListener);
+                }
+            }
         }
     }
 

@@ -66,6 +66,8 @@
     </declare-styleable>
 
     <declare-styleable name="PercentageView">
+        <attr name="folded" format="boolean"/>
+        <attr name="foldedHeight" format="dimension"/>
         <attr name="defaultColor" format="color"/>
         <attr name="categoryOneColor" format="color"/>
         <attr name="categoryTwoColor" format="color"/>
