@@ -398,45 +398,7 @@ public class VdtCamera {
         }
     }
 
-    private Runnable mSyncStateAction = new Runnable() {
-        @Override
-        public void run() {
-            if (DEBUG) {
-                Log.d(TAG, "onCameraStateChanged");
-            }
 
-        }
-    };
-
-    private Runnable mSyncBtStateAction = new Runnable() {
-        @Override
-        public void run() {
-            if (DEBUG) {
-                Log.d(TAG, "onBtStateChanged");
-            }
-
-        }
-    };
-
-    private Runnable mSyncGpsStateAction = new Runnable() {
-        @Override
-        public void run() {
-            if (DEBUG) {
-                Log.d(TAG, "onGpsStateChanged");
-            }
-
-        }
-    };
-
-    private Runnable mSyncWifiStateAction = new Runnable() {
-        @Override
-        public void run() {
-            if (DEBUG) {
-                Log.d(TAG, "onWifiStateChanged");
-            }
-
-        }
-    };
 
 
     // Control APIs
@@ -588,4 +550,17 @@ public class VdtCamera {
         int micState = mState.getMicState();
         return micState == CameraState.STATE_MIC_ON;
     }
+
+    public static class StorageInfo {
+        public int totalSpace;
+        public int freeSpace;
+    }
+
+    public StorageInfo getStorageInfo() {
+        StorageInfo storageInfo = new StorageInfo();
+        storageInfo.totalSpace = (int)(mState.mStorageTotalSpace / 1024);
+        storageInfo.freeSpace = (int)(mState.mStorageFreeSpace / 1024);
+        return storageInfo;
+    }
+
 }

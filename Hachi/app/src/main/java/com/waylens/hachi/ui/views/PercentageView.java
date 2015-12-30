@@ -7,18 +7,24 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ProgressBar;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 
 /**
  * Created by Xiaofei on 2015/12/28.
  */
 public class PercentageView extends View {
+    private static final String TAG = PercentageView.class.getSimpleName();
 
     private int mDefaultColor;
     private int mCategoryOneColor;
     private int mCategoryTwoColor;
     private int mCategoryThreeColor;
+
+    private int mProgress;
+    private int mMax;
 
     private Paint mBackgroundPaint = new Paint();
 
@@ -26,9 +32,6 @@ public class PercentageView extends View {
     private int mFoldedHeight;
 
 
-    private int mCategoryOne = 0;
-    private int mCategoryTwo = 0;
-    private int mCategoryThree = 0;
 
     public PercentageView(Context context) {
         this(context, null);
@@ -36,6 +39,7 @@ public class PercentageView extends View {
 
     public PercentageView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PercentageView);
         mFolded = a.getBoolean(R.styleable.PercentageView_folded, false);
@@ -46,6 +50,8 @@ public class PercentageView extends View {
         mCategoryThreeColor = a.getColor(R.styleable.PercentageView_categoryThreeColor, 0xFF000000);
 
         mBackgroundPaint.setColor(mDefaultColor);
+
+        a.recycle();
     }
 
     @Override
@@ -55,10 +61,9 @@ public class PercentageView extends View {
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
         if (mFolded) {
-//            int newHeight = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-            setMeasuredDimension(width, height);
-        } else {
             setMeasuredDimension(width, mFoldedHeight);
+        } else {
+            setMeasuredDimension(width, height);
         }
 
     }
@@ -71,15 +76,33 @@ public class PercentageView extends View {
         Paint paint = new Paint();
         Rect rect = canvas.getClipBounds();
 
-
-        if (mCategoryOne != 0) {
-            int width1 = (mCategoryOne * rect.width()) / (mCategoryOne + mCategoryTwo +
-                mCategoryThree);
+        if (mMax != 0) {
+//            Logger.t(TAG).d("Progress: " + mProgress + " Max: " + mMax);
+            int width1 = (int)(((float)mProgress /mMax) * rect.width());
             Rect rect1 = new Rect(rect.left, rect.top, rect.left + width1, rect.bottom);
+//            Logger.t(TAG).d("Rect: " + rect1.toString());
             paint.setColor(mCategoryOneColor);
             canvas.drawRect(rect1, paint);
         }
 
+
+    }
+
+
+    public void setFolded(boolean folded) {
+        mFolded = folded;
+        requestLayout();
+    }
+
+
+
+    public synchronized void setProgress(int progress) {
+        mProgress = progress;
+        invalidate();
+    }
+
+    public synchronized void setMax(int max) {
+        mMax = max;
 
     }
 }
