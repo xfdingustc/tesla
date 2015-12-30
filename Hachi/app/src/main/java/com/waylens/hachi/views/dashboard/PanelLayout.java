@@ -1,13 +1,17 @@
 package com.waylens.hachi.views.dashboard;
 
 import android.content.Context;
+import android.graphics.Outline;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.views.MapView;
+import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.models.Element;
@@ -60,6 +64,7 @@ public class PanelLayout extends RelativeLayout {
         }
     }
 
+
     private void addElementView(Element element) {
         View elementView = null;
         switch (element.getType()) {
@@ -79,7 +84,16 @@ public class PanelLayout extends RelativeLayout {
                     mEventBus.register(mapViewEventSubscriber);
                 }
                 mMapView = (MapView) elementView;
-                //elementView.setClipBounds();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mMapView.setClipToOutline(true);
+                    mMapView.setOutlineProvider(new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                        }
+                    });
+                }
+
 
                 break;
             case Element.ELEMENT_TYPE_PROGRESS_IMAGE:

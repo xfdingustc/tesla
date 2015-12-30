@@ -562,13 +562,13 @@ public class CameraControlActivity2 extends BaseActivity {
 
 
     private void updateCameraStorageInfo() {
-//        mVdtCamera.
         VdtCamera.StorageInfo storageInfo = mVdtCamera.getStorageInfo();
 
         Logger.t(TAG).d("Total Space: " + storageInfo.totalSpace + " Free space: " + storageInfo
                 .freeSpace);
         mStorageView.setMax(storageInfo.totalSpace);
         mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
+
     }
 
 }
