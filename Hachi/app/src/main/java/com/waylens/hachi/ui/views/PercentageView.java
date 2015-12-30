@@ -25,13 +25,12 @@ public class PercentageView extends View {
 
     private int mProgress;
     private int mMax;
-
-    private Paint mBackgroundPaint = new Paint();
+    Paint mPaint = new Paint();
 
     private boolean mFolded;
     private int mFoldedHeight;
 
-
+    Rect mRect;
 
     public PercentageView(Context context) {
         this(context, null);
@@ -39,8 +38,6 @@ public class PercentageView extends View {
 
     public PercentageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PercentageView);
         mFolded = a.getBoolean(R.styleable.PercentageView_folded, false);
         mFoldedHeight = a.getDimensionPixelSize(R.styleable.PercentageView_foldedHeight, 12);
@@ -48,10 +45,9 @@ public class PercentageView extends View {
         mCategoryOneColor = a.getColor(R.styleable.PercentageView_categoryOneColor, 0xFF000000);
         mCategoryTwoColor = a.getColor(R.styleable.PercentageView_categoryTwoColor, 0xFF000000);
         mCategoryThreeColor = a.getColor(R.styleable.PercentageView_categoryThreeColor, 0xFF000000);
-
-        mBackgroundPaint.setColor(mDefaultColor);
-
         a.recycle();
+        mPaint.setColor(mCategoryOneColor);
+        mRect = new Rect();
     }
 
     @Override
@@ -72,17 +68,14 @@ public class PercentageView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(mDefaultColor);
-
-        Paint paint = new Paint();
-        Rect rect = canvas.getClipBounds();
-
         if (mMax != 0) {
 //            Logger.t(TAG).d("Progress: " + mProgress + " Max: " + mMax);
-            int width1 = (int)(((float)mProgress /mMax) * rect.width());
-            Rect rect1 = new Rect(rect.left, rect.top, rect.left + width1, rect.bottom);
+            int width = getWidth();
+            int height = getHeight();
+            int width1 = (int) (((float) mProgress / mMax) * width);
+            mRect.set(0, 0, width1, height);
 //            Logger.t(TAG).d("Rect: " + rect1.toString());
-            paint.setColor(mCategoryOneColor);
-            canvas.drawRect(rect1, paint);
+            canvas.drawRect(mRect, mPaint);
         }
 
 
@@ -93,7 +86,6 @@ public class PercentageView extends View {
         mFolded = folded;
         requestLayout();
     }
-
 
 
     public synchronized void setProgress(int progress) {

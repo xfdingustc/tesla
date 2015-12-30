@@ -369,6 +369,7 @@ public class VdtCamera {
     }
 
     private void onScanBtDone() {
+        mController.syncBtState(mBtStates);
         for (Callback callback : mCallbacks) {
             callback.onScanBtDone(this);
         }
@@ -416,6 +417,10 @@ public class VdtCamera {
 
     public void doBtUnbind(int type, String mac) {
         mController.cmd_CAM_BT_doUnBind(type, mac);
+    }
+
+    public void doBind(int type, String mac) {
+        mController.cmd_CAM_BT_doBind(type, mac);
     }
 
     public void setRecordOverlay(int flags) {

@@ -135,7 +135,7 @@ abstract public class TcpConnection {
                 msgThread.start();
                 cmdLoop(this);
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.t(TAG).e("cmd thread error");
             }
 
             if (msgThread != null) {

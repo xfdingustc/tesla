@@ -3,6 +3,7 @@ package com.transee.viditcam.app;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +60,7 @@ public class CameraBtSetupActivity extends BaseActivity {
     private int mColorHighlight;
     private int mColorDisabled;
 
+    Handler mHandler;
 
     @Override
     protected void requestContentView() {
@@ -126,6 +128,7 @@ public class CameraBtSetupActivity extends BaseActivity {
         mLineDevListView.setVisibility(View.GONE);
 
         mListStartIndex = mBtDevListView.getChildCount();
+        mHandler = new Handler();
     }
 
     @Override
@@ -136,7 +139,36 @@ public class CameraBtSetupActivity extends BaseActivity {
             return;
         }
 
-        //mVdtCamera.addCallback(mCameraCallback);
+        mVdtCamera.addCallback(mCameraCallback);
+
+        mVdtCamera.setOnStateChangeListener(new VdtCamera.OnStateChangeListener() {
+            @Override
+            public void onStateChanged(VdtCamera vdtCamera) {
+                Log.e("test", "onStateChanged");
+            }
+
+            @Override
+            public void onBtStateChanged(VdtCamera vdtCamera) {
+                Log.e("test", "onBtStateChanged");
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateBtEnabled();
+                    }
+                });
+            }
+
+            @Override
+            public void onGpsStateChanged(VdtCamera vdtCamera) {
+
+            }
+
+            @Override
+            public void onWifiStateChanged(VdtCamera vdtCamera) {
+
+            }
+        });
+
         updateBtState();
     }
 
@@ -149,11 +181,9 @@ public class CameraBtSetupActivity extends BaseActivity {
         if (mVdtCamera != null) {
             BtState states = mVdtCamera.getBtStates();
             if (states.canEnableBt()) {
+                mProgressBar1.setVisibility(View.VISIBLE);
                 boolean bEnable = states.mBtState == BtState.BT_State_Disabled;
                 mVdtCamera.setBtEnable(bEnable);
-                // force refresh
-                states.enableBt(bEnable);
-                updateBtEnabled();
             }
         }
     }
@@ -211,10 +241,12 @@ public class CameraBtSetupActivity extends BaseActivity {
         BtState states = mVdtCamera.getBtStates();
         boolean bEnabled = states.mBtState == BtState.BT_State_Enabled;
         mCBEnableBt.setChecked(bEnabled);
-        mProgressBar1.setVisibility(states.mbBtEnabling ? View.VISIBLE : View.GONE);
-        mBtViews.setVisibility(bEnabled ? View.VISIBLE : View.GONE);
-        if (!bEnabled) {
+        mProgressBar1.setVisibility(View.GONE);
+        if (bEnabled) {
+            mBtViews.setVisibility(View.VISIBLE);
+        } else {
             clearAllDevices();
+            mBtViews.setVisibility(View.GONE);
         }
     }
 
@@ -282,7 +314,7 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     final private void bindBtDevice(BtItem item) {
         if (mVdtCamera != null) {
-            mVdtCamera.doBtUnbind(item.type, item.mac);
+            mVdtCamera.doBind(item.type, item.mac);
         }
     }
 
@@ -359,23 +391,29 @@ public class CameraBtSetupActivity extends BaseActivity {
         mLineDevListView.setVisibility(View.GONE);
     }
 
-    private void onBtDevInfo(int type, String mac, String name) {
-        int count = mBtDevListView.getChildCount();
-        for (int index = mListStartIndex; index < count; index++) {
-            View view = mBtDevListView.getChildAt(index);
-            BtItem item = (BtItem) view.getTag();
-            if (item.mac.equals(mac)) {
-                // TODO
-                return;
+    private void updateBtDevInfo(final int type, final String mac, final String name) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                int count = mBtDevListView.getChildCount();
+                for (int index = mListStartIndex; index < count; index++) {
+                    View view = mBtDevListView.getChildAt(index);
+                    BtItem item = (BtItem) view.getTag();
+                    if (item.mac.equals(mac)) {
+                        // TODO
+                        return;
+                    }
+                }
+                BtItem item = new BtItem(type, mac, name);
+                addDevice(item);
             }
-        }
-        BtItem item = new BtItem(type, mac, name);
-        addDevice(item);
+        });
+
     }
 
     private void removeCamera() {
         if (mVdtCamera != null) {
-            //mVdtCamera.removeCallback(mCameraCallback);
+            mVdtCamera.removeCallback(mCameraCallback);
             mVdtCamera = null;
         }
     }
@@ -396,82 +434,52 @@ public class CameraBtSetupActivity extends BaseActivity {
         finish();
     }
 
-    /*
-
     private final VdtCamera.Callback mCameraCallback = new VdtCamera.Callback() {
-
-        @Override
-        public void onBtStateChanged(VdtCamera vdtCamera) {
-            if (vdtCamera == mVdtCamera) {
-                updateBtState();
-            }
-        }
-
-        @Override
-        public void onGpsStateChanged(VdtCamera vdtCamera) {
-
-        }
-
-        @Override
-        public void onWifiStateChanged(VdtCamera vdtCamera) {
-
-        }
-
         @Override
         public void onStartRecordError(VdtCamera vdtCamera, int error) {
-
+            //
         }
 
         @Override
         public void onHostSSIDFetched(VdtCamera vdtCamera, String ssid) {
-
+            //
         }
 
         @Override
         public void onScanBtDone(VdtCamera vdtCamera) {
+            Log.e("test", "onScanBtDone");
             if (vdtCamera == mVdtCamera) {
                 fetchScanResult();
             }
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    updateBtScanning();
+                }
+            });
         }
 
         @Override
         public void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name) {
+            Log.e("test", "onBtDevInfo");
             if (vdtCamera == mVdtCamera) {
-                CameraBtSetupActivity.this.onBtDevInfo(type, mac, name);
+                updateBtDevInfo(type, mac, name);
             }
         }
 
         @Override
         public void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot) {
-
+            //
         }
 
         @Override
         public void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks) {
-
+            //
         }
 
         @Override
         public void onStillCaptureDone(VdtCamera vdtCamera) {
-
+            //
         }
-
-        @Override
-        public void onConnected(VdtCamera vdtCamera) {
-
-        }
-
-        @Override
-        public void onDisconnected(VdtCamera vdtCamera) {
-            if (vdtCamera == mVdtCamera) {
-                removeCamera();
-                noCamera();
-            }
-        }
-
-        @Override
-        public void onStateChanged(VdtCamera vdtCamera) {
-
-        }
-    }; */
+    };
 }

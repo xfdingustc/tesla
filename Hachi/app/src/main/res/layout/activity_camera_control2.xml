@@ -175,22 +175,20 @@
         android:layout_height="1px"
         android:background="@color/edit_toolbar"/>
 
-
     <LinearLayout
+        android:id="@+id/infoPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/infoPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
 
             <View
                 android:layout_width="24dp"
@@ -250,13 +248,12 @@
         <com.waylens.hachi.ui.views.PercentageView
             android:id="@+id/storageView"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="20dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             app:categoryOneColor="@color/storage_used"
             app:categoryTwoColor="@color/storage_unused"
             app:defaultColor="@color/btn_unable_color"
-            app:folded="true"
             app:foldedHeight="4dp"/>
 
         <LinearLayout
@@ -266,8 +263,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
 
             <View
                 android:layout_width="18dp"

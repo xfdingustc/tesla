@@ -285,7 +285,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @OnClick(R.id.btn_share)
     void shareClip() {
-
+        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mClip)).commit();
     }
 
     @OnClick(R.id.btn_delete)

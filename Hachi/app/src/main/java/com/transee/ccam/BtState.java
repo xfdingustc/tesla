@@ -122,6 +122,7 @@ public class BtState {
 		if (DEBUG) {
 			Log.d(TAG, "scanBtDone");
 		}
+		mbBtScanning = false;
 		stateChanged();
 	}
 

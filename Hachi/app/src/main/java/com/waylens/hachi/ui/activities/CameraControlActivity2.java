@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.common.Utils;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -177,7 +176,6 @@ public class CameraControlActivity2 extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateCameraStorageInfo();
         getBookmarkCount();
     }
 
@@ -222,11 +220,10 @@ public class CameraControlActivity2 extends BaseActivity {
         setupToolbar();
         initCameraPreview();
 
-
         updateMicControlButton();
         mRawDataAdapter = new SimulatorRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
-
+        mInfoView.setVisibility(View.GONE);
     }
 
     @Override
@@ -270,7 +267,6 @@ public class CameraControlActivity2 extends BaseActivity {
         mDashboard.setScaleY(heightScale);
     }
 
-
     private void updateCameraState(final CameraState state) {
         runOnUiThread(new Runnable() {
             @Override
@@ -279,9 +275,7 @@ public class CameraControlActivity2 extends BaseActivity {
                 updateFloatActionButton(state);
             }
         });
-
     }
-
 
     private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
         @Override
@@ -561,9 +555,9 @@ public class CameraControlActivity2 extends BaseActivity {
     private void toggleInfoView() {
         int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
         mInfoView.setVisibility(visibility);
-        mLegendLayout.setVisibility(visibility);
-        boolean folded = visibility == View.VISIBLE ? false : true;
-        mStorageView.setFolded(folded);
+        if (visibility == View.VISIBLE) {
+            updateCameraStorageInfo();
+        }
     }
 
 
@@ -572,10 +566,9 @@ public class CameraControlActivity2 extends BaseActivity {
         VdtCamera.StorageInfo storageInfo = mVdtCamera.getStorageInfo();
 
         Logger.t(TAG).d("Total Space: " + storageInfo.totalSpace + " Free space: " + storageInfo
-            .freeSpace);
-
+                .freeSpace);
         mStorageView.setMax(storageInfo.totalSpace);
-        mStorageView.setProgress(storageInfo.freeSpace);
+        mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
     }
 
 }
