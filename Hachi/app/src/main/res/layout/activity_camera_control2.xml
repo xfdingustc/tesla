@@ -96,79 +96,10 @@
         </FrameLayout>
     </FrameLayout>
 
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:id="@+id/liveViewLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clipChildren="false"
-        app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp">
-
-        <com.waylens.hachi.views.camerapreview.CameraLiveView
-            android:id="@+id/cameraPreview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <com.waylens.hachi.views.dashboard.DashboardLayout
-            android:id="@+id/dashboard"
-            android:layout_width="1920px"
-            android:layout_height="1080px"
-            android:layout_gravity="center"
-            android:visibility="invisible"
-            tools:visibility="gone"/>
-
-        <com.waylens.hachi.ui.views.SharpView
-            android:id="@+id/sharp_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible"/>
-
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+    <include layout="@layout/activity_camera_control_preview"/>
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp">
-
-        <ImageButton
-            android:id="@+id/btnMicControl"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_mic_white_24dp"/>
-
-
-        <ImageButton
-            android:id="@+id/btnFullscreen"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_fullscreen_white_24dp"/>
-
-        <ImageButton
-            android:id="@+id/btnWaterLine"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/btnFullscreen"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_border_all_white_24dp"/>
-
-
-        <ImageButton
-            android:id="@+id/btnShowOverlay"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/btnWaterLine"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_av_timer_white_24dp"/>
-
-
-    </RelativeLayout>
+    <include layout="@layout/activity_camera_control_info_panel"/>
 
     <View
         android:layout_width="match_parent"

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="48dp">
+    <ImageButton
+        android:id="@+id/btnMicControl"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/btn_mic_on"/>
+
+
+    <ImageButton
+        android:id="@+id/btnFullscreen"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/screen_full"/>
+
+    <ImageButton
+        android:id="@+id/btnWaterLine"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/btnFullscreen"
+        android:background="@android:color/transparent"
+        android:src="@drawable/btn_grid_n"/>
+
+
+    <ImageButton
+        android:id="@+id/btnShowOverlay"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/btnWaterLine"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_av_timer_white_24dp"/>
+</RelativeLayout>

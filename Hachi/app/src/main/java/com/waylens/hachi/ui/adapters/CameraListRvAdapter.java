@@ -50,14 +50,16 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             //Logger.t(TAG).d("Server name: " + camera.getServerName() + " SSID: " + camera
             //   .getSSID());
             if (camera.isConnected()) {
-                viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_active);
+                viewHolder.mIvCameraIcon.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
+                //viewHolder.mIvCameraIcon.setImageResource(R.drawable.ca);
                 viewHolder.mBtnClips.setEnabled(true);
                 viewHolder.mBtnPreview.setEnabled(true);
                 viewHolder.mBtnClips.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
                 viewHolder.mBtnPreview.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
                 viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.style_color_primary));
             } else {
-                viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_inactive);
+//                viewHolder.mIvCameraIcon.setImageResource(R.drawable.camera_inactive);
+                viewHolder.mIvCameraIcon.clearColorFilter();
                 viewHolder.mBtnClips.setEnabled(false);
                 viewHolder.mBtnPreview.setEnabled(false);
                 viewHolder.mBtnClips.clearColorFilter();

@@ -111,13 +111,16 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.btnWaterLine)
     ImageButton mBtnWaterLine;
 
+    @Nullable
     @Bind(R.id.sharp_view)
     View mSharpView;
 
+    @Nullable
     @Bind(R.id.bookmark_message_view)
     View mBookmarkMsgView;
 
 
+    @Nullable
     @Bind(R.id.infoPanel)
     LinearLayout mInfoView;
 
@@ -161,6 +164,7 @@ public class CameraControlActivity2 extends BaseActivity {
     }
 
 
+    @Nullable
     @OnClick(R.id.btn_info)
     public void onBtnInfoViewClicked() {
         toggleInfoView();
@@ -178,7 +182,6 @@ public class CameraControlActivity2 extends BaseActivity {
         super.onResume();
         getBookmarkCount();
     }
-
 
 
     @Override
@@ -213,9 +216,9 @@ public class CameraControlActivity2 extends BaseActivity {
         setContentView(R.layout.activity_camera_control2);
 
         if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mBtnFullScreen.setColorFilter(getResources().getColor(R.color.style_color_primary));
+            mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
         } else {
-            mBtnFullScreen.clearColorFilter();
+            mBtnFullScreen.setImageResource(R.drawable.screen_full);
         }
         setupToolbar();
         initCameraPreview();
@@ -223,7 +226,9 @@ public class CameraControlActivity2 extends BaseActivity {
         updateMicControlButton();
         mRawDataAdapter = new SimulatorRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
-        mInfoView.setVisibility(View.GONE);
+        if (mInfoView != null) {
+            mInfoView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -318,11 +323,10 @@ public class CameraControlActivity2 extends BaseActivity {
                 if (isInCarMode(state)) {
                     mTvCameraStatus.setText(R.string.continuous_recording);
                     if (mBookmarkCount != -1) {
-                        mTvStatusAdditional.setText(
-                            getResources().getQuantityString(R.plurals.number_of_bookmarks,
-                                mBookmarkCount + mBookmarkClickCount,
-                                mBookmarkCount + mBookmarkClickCount));
-                        mTvStatusAdditional.setVisibility(View.VISIBLE);
+                        updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
+                            mBookmarkCount + mBookmarkClickCount,
+                            mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
+
                     }
                 } else {
                     mTvCameraStatus.setText(R.string.record_recording);
@@ -335,9 +339,12 @@ public class CameraControlActivity2 extends BaseActivity {
                 break;
         }
         if (recState != CameraState.STATE_RECORD_RECORDING) {
-            mTvStatusAdditional.setVisibility(View.GONE);
+            if (mTvStatusAdditional != null) {
+                mTvStatusAdditional.setVisibility(View.GONE);
+            }
         }
     }
+
 
     boolean isInCarMode(CameraState state) {
         return state != null && state.getRecordMode() == CameraState.Rec_Mode_AutoStart;
@@ -553,10 +560,12 @@ public class CameraControlActivity2 extends BaseActivity {
     }
 
     private void toggleInfoView() {
-        int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-        mInfoView.setVisibility(visibility);
-        if (visibility == View.VISIBLE) {
-            updateCameraStorageInfo();
+        if (mInfoView != null) {
+            int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+            mInfoView.setVisibility(visibility);
+            if (visibility == View.VISIBLE) {
+                updateCameraStorageInfo();
+            }
         }
     }
 
@@ -565,10 +574,18 @@ public class CameraControlActivity2 extends BaseActivity {
         VdtCamera.StorageInfo storageInfo = mVdtCamera.getStorageInfo();
 
         Logger.t(TAG).d("Total Space: " + storageInfo.totalSpace + " Free space: " + storageInfo
-                .freeSpace);
+            .freeSpace);
         mStorageView.setMax(storageInfo.totalSpace);
         mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
 
     }
+
+    private void updateTvStatusAdditional(String text, int visible) {
+        if (mTvStatusAdditional != null) {
+            mTvStatusAdditional.setText(text);
+            mTvStatusAdditional.setVisibility(visible);
+        }
+    }
+
 
 }
