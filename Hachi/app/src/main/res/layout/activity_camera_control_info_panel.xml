@@ -27,7 +27,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/btnFullscreen"
         android:background="@android:color/transparent"
-        android:src="@drawable/btn_grid_n"/>
+        android:src="@drawable/camera_control_grid"/>
 
 
     <ImageButton
@@ -37,5 +37,5 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/btnWaterLine"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_av_timer_white_24dp"/>
+        android:src="@drawable/camera_control_gauge_overlay"/>
 </RelativeLayout>

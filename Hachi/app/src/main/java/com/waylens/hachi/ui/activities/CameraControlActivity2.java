@@ -83,6 +83,7 @@ public class CameraControlActivity2 extends BaseActivity {
     @Bind(R.id.cameraPreview)
     CameraLiveView mLiveView;
 
+    @Nullable
     @Bind(R.id.tvCameraStatus)
     TextView mTvCameraStatus;
 
@@ -94,7 +95,7 @@ public class CameraControlActivity2 extends BaseActivity {
     ImageView mBtnMicControl;
 
     @Bind(R.id.fabBookmark)
-    FloatingActionButton mFabBookmark;
+    ImageButton mFabBookmark;
 
     @Bind(R.id.dashboard)
     DashboardLayout mDashboard;
@@ -321,12 +322,14 @@ public class CameraControlActivity2 extends BaseActivity {
                 break;
             case CameraState.STATE_RECORD_RECORDING:
                 if (isInCarMode(state)) {
-                    mTvCameraStatus.setText(R.string.continuous_recording);
-                    if (mBookmarkCount != -1) {
-                        updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
-                            mBookmarkCount + mBookmarkClickCount,
-                            mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
+                    if (mTvCameraStatus != null) {
+                        mTvCameraStatus.setText(R.string.continuous_recording);
+                        if (mBookmarkCount != -1) {
+                            updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
+                                mBookmarkCount + mBookmarkClickCount,
+                                mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
 
+                        }
                     }
                 } else {
                     mTvCameraStatus.setText(R.string.record_recording);
@@ -356,7 +359,7 @@ public class CameraControlActivity2 extends BaseActivity {
                 break;
             case CameraState.STATE_RECORD_STOPPED:
                 mFabBookmark.setEnabled(true);
-                mFabBookmark.setImageResource(R.drawable.start_record);
+                mFabBookmark.setBackground(getResources().getDrawable(R.drawable.camera_control_start));
                 break;
             case CameraState.STATE_RECORD_STOPPING:
                 mFabBookmark.setEnabled(false);
@@ -367,9 +370,10 @@ public class CameraControlActivity2 extends BaseActivity {
             case CameraState.STATE_RECORD_RECORDING:
                 mFabBookmark.setEnabled(true);
                 if (isInCarMode(state)) {
-                    mFabBookmark.setImageResource(R.drawable.ic_bookmark_white_48dp);
+                    mFabBookmark.setBackground(getResources().getDrawable(R.drawable
+                        .camera_control_bookmark));
                 } else {
-                    mFabBookmark.setImageResource(R.drawable.ic_stop_white_48dp);
+                    mFabBookmark.setBackground(getResources().getDrawable(R.drawable.camera_control_stop));
                 }
                 break;
             case CameraState.STATE_RECORD_SWITCHING:

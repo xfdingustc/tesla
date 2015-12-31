@@ -225,18 +225,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabBookmark"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_gravity="bottom|center"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_bookmark_white_48dp"/>
-    </FrameLayout>
+    <include layout="@layout/activity_camera_control_bookmark_btn"/>
 
 </LinearLayout>
