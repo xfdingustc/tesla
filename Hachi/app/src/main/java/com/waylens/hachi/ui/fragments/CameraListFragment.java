@@ -136,7 +136,7 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context
             .WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        Logger.t(TAG).d("WifiInfo: " + wifiInfo.toString());
+//        Logger.t(TAG).d("WifiInfo: " + wifiInfo.toString());
         mWifiStatusView.setText(wifiInfo.getSSID());
     }
 

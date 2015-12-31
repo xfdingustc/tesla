@@ -1,4 +1,4 @@
-{
+  {
   "Dashboard": {
     "Fonts": [
       {
@@ -1025,9 +1025,8 @@
             "Type": "StaticImage",
             "Width": "92",
             "Height": "92",
-            "Alignment": "Top_Left",
-            "MarginTop": "59",
-            "MarginLeft": "77",
+            "Alignment": "Top_Center",
+            "MarginTop": "77",
             "Resource": "Assets_theme3/roll_suite/ROLLbasedisplayD.png"
           },
           {
@@ -1071,12 +1070,11 @@
           {
             "Name": "map_content",
             "Type": "MapView",
-            "Width": "280",
-            "Height": "280",
+            "Width": "260",
+            "Height": "260",
             "Style": "Ellipse",
-            "Alignment": "Center",
-            "MarginTop": "24",
-            "MarginLeft": "0",
+            "Alignment": "Top_Center",
+            "MarginTop": "56",
             "Radius": "140",
             "Subscribe": "GPS"
           },
