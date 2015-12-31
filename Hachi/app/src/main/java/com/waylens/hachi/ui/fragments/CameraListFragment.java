@@ -1,6 +1,9 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -127,6 +130,15 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context
+            .WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        Logger.t(TAG).d("WifiInfo: " + wifiInfo.toString());
+        mWifiStatusView.setText(wifiInfo.getSSID());
+    }
 
     @Override
     public void onSetup(VdtCamera camera) {
