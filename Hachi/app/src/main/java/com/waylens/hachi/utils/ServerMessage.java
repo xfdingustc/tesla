@@ -1,5 +1,6 @@
 package com.waylens.hachi.utils;
 
+import android.util.Log;
 import android.util.SparseIntArray;
 
 import com.android.volley.VolleyError;
@@ -74,6 +75,7 @@ public class ServerMessage {
         if (error.networkResponse != null && error.networkResponse.data != null) {
             String errorMessageJson = new String(error.networkResponse.data);
             try {
+                Log.e("test", "Server msg: " + errorMessageJson);
                 JSONObject errorJson = new JSONObject(errorMessageJson);
                 Logger.t(TAG).json(errorJson.toString());
                 int errorCode = errorJson.getInt("code");
@@ -82,6 +84,10 @@ public class ServerMessage {
             } catch (JSONException e) {
                 Logger.t(TAG).e("", e);
             }
+        } else {
+            Log.e("test", "Server responses nothing.", error);
+            new Exception("parseServerError").printStackTrace();
+
         }
         return errorMsg;
     }

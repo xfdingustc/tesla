@@ -374,6 +374,7 @@ public class SignInFragment extends BaseFragment {
 
         @Override
         public void onError(FacebookException e) {
+            Log.e("test", "facebook login", e);
             showMessage(R.string.login_error_facebook);
         }
     }

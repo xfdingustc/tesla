@@ -61,6 +61,10 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
             @Override
             public void onCameraConnected(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("on Camera Connected");
+                if (getActivity() == null) {
+                    return;
+                }
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -73,6 +77,10 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
             @Override
             public void onCameraVdbConnected(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("camera vdb connected");
+                if (getActivity() == null) {
+                    return;
+                }
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -86,6 +94,10 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
             @Override
             public void onCameraDisconnected(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("onCameraDisconnected");
+                if (getActivity() == null) {
+                    return;
+                }
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -98,6 +110,10 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
             @Override
             public void onCameraStateChanged(VdtCamera vdtCamera) {
                 Logger.t(TAG).d("onCameraStateChanged");
+                if (getActivity() == null) {
+                    return;
+                }
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -110,6 +126,10 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
             @Override
             public void onWifiListChanged() {
                 Logger.t(TAG).d("onWifiListChanged");
+                if (getActivity() == null) {
+                    return;
+                }
+
                 mCameraListAdapter.notifyDataSetChanged();
             }
         });
