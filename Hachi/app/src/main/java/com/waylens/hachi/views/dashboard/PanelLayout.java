@@ -19,6 +19,7 @@ import com.waylens.hachi.views.dashboard.models.Panel;
 import com.waylens.hachi.views.dashboard.subscribers.MapViewEventSubscriber;
 import com.waylens.hachi.views.dashboard.views.ElementView;
 import com.waylens.hachi.views.dashboard.views.NumberView;
+import com.waylens.hachi.views.dashboard.views.PitchView;
 import com.waylens.hachi.views.dashboard.views.ProgressImageView;
 import com.waylens.hachi.views.dashboard.views.RingProgressImageView;
 import com.waylens.hachi.views.dashboard.views.RollView;
@@ -114,6 +115,9 @@ public class PanelLayout extends RelativeLayout {
                 break;
             case Element.ELEMENT_TYPE_ROLL:
                 elementView = new RollView(getContext(), element);
+                break;
+            case Element.ELEMENT_TYPE_PITCH:
+                elementView = new PitchView(getContext(), element);
                 break;
         }
 

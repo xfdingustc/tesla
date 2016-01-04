@@ -586,6 +586,14 @@
           {
             "key": "roll_separate",
             "value": "Assets_theme3/roll_suite/ROLLdisplayYs.png"
+          },
+          {
+            "key": "pitch_texture",
+            "value": "Assets_theme3/pitch_suite/pitchdisplayYT.png"
+          },
+          {
+            "key": "pitch_separator",
+            "value": "Assets_theme3/pitch_suite/pitchdisplayYs.png"
           }
         ]
       },
@@ -1143,11 +1151,13 @@
           },
           {
             "Name": "pitch_progress",
-            "Type": "ProgressImage",
+            "Type": "PitchView",
+            "Color": "FFFF15",
             "Style": "Pitch",
-            "Alignment": "Bottom_Left",
-            "MarginBottom": "17",
-            "MarginLeft": "17",
+            "Width": "176",
+            "Height": "176",
+            "Alignment": "Top_Center",
+            "MarginTop": "35",
             "StartAngle": "-180",
             "EndAngle": "180",
             "Font": "misc",

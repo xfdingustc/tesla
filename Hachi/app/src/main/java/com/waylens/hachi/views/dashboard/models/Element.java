@@ -25,6 +25,7 @@ public class Element {
     public static final int ELEMENT_TYPE_MAP = 5;
     public static final int ELEMENT_TYPE_STRING = 6;
     public static final int ELEMENT_TYPE_ROLL = 7;
+    public static final int ELEMENT_TYPE_PITCH = 8;
 
 
     private static final String ELEMENT_TYPE_STATIC_IMAGE_STR = "StaticImage";
@@ -32,6 +33,7 @@ public class Element {
     private static final String ELEMENT_TYPE_MAP_STR = "MapView";
     private static final String ELEMENT_TYPE_STRING_STR = "StringView";
     private static final String ELEMENT_TYPE_ROLL_STR = "RollView";
+    private static final String ELEMENT_TYPE_PITCH_STR = "PitchView";
 
     private static final String TAG_TYPE = "Type";
     private static final String TAG_WIDTH = "Width";
@@ -55,6 +57,7 @@ public class Element {
     public static final String ATTRIBUTE_FONT = "Font";
     public static final String ATTRIBUTE_START_ANGLE = "StartAngle";
     public static final String ATTRIBUTE_END_ANGLE = "EndAngle";
+    public static final String ATTRIBUTE_COLOR = "Color";
 
     private Bitmap mBitmap = null;
 
@@ -66,7 +69,8 @@ public class Element {
         ATTRIBUTE_END_RADIUS,
         ATTRIBUTE_FONT,
         ATTRIBUTE_START_ANGLE,
-        ATTRIBUTE_END_ANGLE
+        ATTRIBUTE_END_ANGLE,
+        ATTRIBUTE_COLOR
     };
 
     public static final String MATCH_PARENT = "MatchParent";
@@ -247,6 +251,8 @@ public class Element {
             return ELEMENT_TYPE_STRING;
         } else if (type.equals(ELEMENT_TYPE_ROLL_STR)) {
             return ELEMENT_TYPE_ROLL;
+        } else if (type.equals(ELEMENT_TYPE_PITCH_STR)) {
+            return ELEMENT_TYPE_PITCH;
         }
         return 0;
     }
