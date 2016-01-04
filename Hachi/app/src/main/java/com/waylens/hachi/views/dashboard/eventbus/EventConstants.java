@@ -15,4 +15,6 @@ public class EventConstants {
     public static final String EVENT_DAY = "CLIP_DAY";
     public static final String EVENT_ROLL = "ROLL";
     public static final String EVENT_ROLL_NUM = "ROLL_NUM";
+    public static final String EVENT_PITCH = "PITCH";
+    public static final String EVENT_PITCH_NUM = "PITCH_NUM";
 }
