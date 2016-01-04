@@ -6,7 +6,7 @@ import com.waylens.hachi.vdb.RawDataItem;
 /**
  * Created by Xiaofei on 2015/12/18.
  */
-public class BlockAdapter implements IRawDataAdapter {
+public class BlockAdapter extends RawDataAdapter {
     private RawDataBlock mAccDataBlock;
     private RawDataBlock mObdDataBlock;
     private RawDataBlock mGpsDataBlock;

@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -39,7 +38,7 @@ import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
-import com.waylens.hachi.views.dashboard.adapters.SimulatorRawDataAdapter;
+import com.waylens.hachi.views.dashboard.adapters.LiveRawDataAdapter;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.net.InetSocketAddress;
@@ -57,7 +56,7 @@ public class CameraControlActivity2 extends BaseActivity {
     private static final String TAG_GET_BOOKMARK_COUNT = "get.bookmark.count";
 
     private VdtCamera mVdtCamera;
-    private SimulatorRawDataAdapter mRawDataAdapter;
+    private LiveRawDataAdapter mRawDataAdapter;
 
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
@@ -225,7 +224,7 @@ public class CameraControlActivity2 extends BaseActivity {
         initCameraPreview();
 
         updateMicControlButton();
-        mRawDataAdapter = new SimulatorRawDataAdapter();
+        mRawDataAdapter = new LiveRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
         if (mInfoView != null) {
             mInfoView.setVisibility(View.GONE);
@@ -460,21 +459,6 @@ public class CameraControlActivity2 extends BaseActivity {
     }
 
     void registerMessageHandler() {
-        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
-            @Override
-            public void onResponse(RawDataItem response) {
-                //Log.e("test", String.format("RawDataMsgHandler: Type[%d]:[%s]", response.dataType, response.object));
-                if (mDashboard != null) {
-                    mDashboard.updateLive(response);
-                }
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Log.e("test", "RawDataMsgHandler ERROR", error);
-            }
-        });
-        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
 
         ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
             new VdbResponse.Listener<ClipActionInfo>() {
@@ -508,20 +492,7 @@ public class CameraControlActivity2 extends BaseActivity {
     }
 
     void requestLiveRawData() {
-        LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
-            RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
-            VdbResponse.Listener<Integer>() {
-                @Override
-                public void onResponse(Integer response) {
-                    Log.e("test", "LiveRawDataResponse: " + response);
-                }
-            }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Log.e("test", "LiveRawDataResponse ERROR", error);
-            }
-        });
-        mVdbRequestQueue.add(request);
+
         registerMessageHandler();
     }
 

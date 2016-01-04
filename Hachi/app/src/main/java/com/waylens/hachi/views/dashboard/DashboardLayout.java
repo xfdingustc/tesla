@@ -16,7 +16,7 @@ import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.views.dashboard.adapters.IRawDataAdapter;
+import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
 import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.eventbus.EventConstants;
 import com.waylens.hachi.views.dashboard.models.Panel;
@@ -33,11 +33,13 @@ import java.util.List;
 public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     private static final String TAG = DashboardLayout.class.getSimpleName();
 
+    private final DashboardLayoutDataOberserver mDataObserver = new  DashboardLayoutDataOberserver();
+
     public static final int NORMAL_WIDTH = 1920;
     public static final int NORMAL_HEIGHT = 1080;
 
     private Skin mSkin = SkinManager.getManager().getSkin();
-    private IRawDataAdapter mAdapter;
+    private RawDataAdapter mAdapter;
 
     private EventBus mEventBus = new EventBus();
 
@@ -86,8 +88,9 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         addPanels();
     }
 
-    public void setAdapter(IRawDataAdapter adapter) {
+    public void setAdapter(RawDataAdapter adapter) {
         mAdapter = adapter;
+        mAdapter.registerAdapterDataObserver(mDataObserver);
     }
 
     private MapView mMapView;
@@ -192,6 +195,13 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
         String day = dayFormat.format(pts);
         mEventBus.postEvent(EventConstants.EVENT_DAY, day);
+    }
+
+    private class DashboardLayoutDataOberserver extends RawDataAdapter.AdapterDataObserver {
+        @Override
+        public void onDataChanged(RawDataItem dataItem) {
+            updateLive(dataItem);
+        }
     }
 
 
