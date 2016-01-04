@@ -33,7 +33,7 @@ import java.util.List;
 public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     private static final String TAG = DashboardLayout.class.getSimpleName();
 
-    private final DashboardLayoutDataOberserver mDataObserver = new  DashboardLayoutDataOberserver();
+    private final DashboardLayoutDataOberserver mDataObserver = new DashboardLayoutDataOberserver();
 
     public static final int NORMAL_WIDTH = 1920;
     public static final int NORMAL_HEIGHT = 1080;
@@ -120,6 +120,10 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         if (item == null || item.object == null) {
             return;
         }
+
+
+        updateCurrentTime(System.currentTimeMillis());
+
         switch (item.dataType) {
             case RawDataBlock.RAW_DATA_GPS:
                 GPSRawData gpsRawData = (GPSRawData) item.object;
@@ -128,6 +132,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
             case RawDataBlock.RAW_DATA_ACC:
                 AccData accData = (AccData) item.object;
                 mEventBus.postEvent(EventConstants.EVENT_ROLL, -accData.euler_roll / 1000);
+                mEventBus.postEvent(EventConstants.EVENT_ROLL_NUM, String.valueOf(-accData.euler_roll / 1000));
                 break;
             case RawDataBlock.RAW_DATA_ODB:
                 OBDData obdData = (OBDData) item.object;

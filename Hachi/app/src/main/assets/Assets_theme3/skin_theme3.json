@@ -1043,11 +1043,11 @@
           },
           {
             "Name": "roll_value",
-            "Type": "NumberView",
+            "Type": "StringView",
             "Alignment": "Top_Center",
             "MarginTop": "104",
             "Font": "38px_white",
-            "Subscribe": "ROLL"
+            "Subscribe": "ROLL_NUM"
           }
         ]
       },

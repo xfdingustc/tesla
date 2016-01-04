@@ -59,6 +59,20 @@ public class StringView extends ElementView {
         int widthOffset = 0;
 
         if (mFont.getCharNumber() == 1) {
+            // First calculate the left offset
+            int stringWidth = 0;
+            for (int i = 0; i < mValue.length(); i++) {
+                char number = mValue.charAt(i);
+                Bitmap resource;
+
+                resource = mFont.getFontResource(String.valueOf(number));
+                if (resource != null) {
+                    stringWidth += resource.getWidth();
+                }
+            }
+
+            widthOffset = (getMeasuredWidth() - stringWidth) / 2;
+
             for (int i = 0; i < mValue.length(); i++) {
                 char number = mValue.charAt(i);
                 Bitmap resource;
