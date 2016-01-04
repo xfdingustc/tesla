@@ -109,7 +109,9 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     }
 
     void loadFeed(int cursor, final boolean isRefresh) {
-        String url = Constants.API_MOMENTS + String.format(Constants.API_QS_MOMENTS, Constants.PARAM_SORT_UPLOAD_TIME, cursor, DEFAULT_COUNT);
+        String url = Constants.API_MOMENTS
+                + String.format(Constants.API_QS_MOMENTS, Constants.PARAM_SORT_UPLOAD_TIME, cursor, DEFAULT_COUNT)
+                + "&filter=featured";
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override

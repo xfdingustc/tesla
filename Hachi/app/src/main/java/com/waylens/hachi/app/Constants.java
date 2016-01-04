@@ -10,9 +10,9 @@ public class Constants {
 
     public static final String API_WEATHER = "http://api.worldweatheronline.com/free/v2/weather.ashx?format=json&num_of_days=1&tp=12&key=e081e88edf6ffe4bcd0d12f34b26e&q=%s";
 
-    //public static final String HOST_URL = "http://ws.waylens.com:9000/";
+    public static final String HOST_URL = "http://ws.waylens.com:9000/";
 
-    public static final String HOST_URL = "http://192.168.20.112:9000/";
+    //public static final String HOST_URL = "http://192.168.20.112:9000/";
 
     public static final String API_SIGN_UP = HOST_URL + "api/users/signup";
 
