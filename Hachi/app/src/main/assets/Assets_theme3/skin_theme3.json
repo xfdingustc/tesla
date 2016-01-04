@@ -1,4 +1,4 @@
-  {
+{
   "Dashboard": {
     "Fonts": [
       {
@@ -938,11 +938,8 @@
           {
             "Name": "speed_value",
             "Type": "StringView",
-            "Width": "72",
-            "Height": "50",
-            "Alignment": "Bottom_Left",
-            "MarginBottom": "147",
-            "MarginLeft": "138",
+            "Alignment": "Top_Center",
+            "MarginTop": "147",
             "Font": "50px_white",
             "Subscribe": "MPH_NUMBER"
           }
@@ -994,10 +991,9 @@
           {
             "Name": "rpm_value",
             "Type": "StringView",
-            "Width": "24",
-            "Height": "30",
             "Alignment": "Top_Center",
             "MarginTop": "100",
+            "MarginRight": "18",
             "Font": "38px_white",
             "FontDecimal": "26px_white",
             "Subscribe": "RPM_NUMBER"
@@ -1009,7 +1005,7 @@
         "Width": "210",
         "Height": "228",
         "Alignment": "Bottom_Right",
-        "MarginRight": "450",
+        "MarginRight": "354",
         "MarginBottom": "10",
         "Elements": [
           {
@@ -1048,6 +1044,131 @@
             "MarginTop": "104",
             "Font": "38px_white",
             "Subscribe": "ROLL_NUM"
+          }
+        ]
+      },
+      {
+        "Name": "gforce",
+        "Width": "324",
+        "Height": "348",
+        "Alignment": "Bottom_Right",
+        "MarginRight": "10",
+        "MarginBottom": "10",
+        "Elements": [
+          {
+            "Name": "gforce_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/gforce_suite/gforcebase-r.png"
+          },
+          {
+            "Name": "gforce_acc_range",
+            "Type": "ProgressImage",
+            "Style": "Ring",
+            "Direction": "CenterMoving",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "24",
+            "MarginLeft": "24",
+            "StartRadius": "66",
+            "EndRadius": "138",
+            "Max": "1000",
+            "Min": "0",
+            "Resource": "Assets_theme3/gforce_suite/gforcedisplayY.png",
+            "Subscribe": "ACC"
+          },
+          {
+            "Name": "gforce_center_background",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "96",
+            "MarginLeft": "96",
+            "Resource": "Assets_theme3/gforce_suite/gforcedisplayD.png"
+          },
+          {
+            "Name": "gforce_x",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "168",
+            "MarginLeft": "122",
+            "Resource": "Assets_theme3/gforce_suite/gforcedisplayX.png"
+          },
+          {
+            "Name": "gforce_y",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "118",
+            "MarginLeft": "122",
+            "Resource": "Assets_theme3/gforce_suite/gforcedisplayYy.png"
+          },
+          {
+            "Name": "gforce_x_value",
+            "Type": "FloatNumberView",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "168",
+            "MarginLeft": "140",
+            "Font": "38px_white",
+            "FontDecimal": "26px_white",
+            "Subscribe": "ACC_X"
+          },
+          {
+            "Name": "gforce_y_value",
+            "Type": "FloatNumberView",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "118",
+            "MarginLeft": "140",
+            "Font": "38px_white",
+            "FontDecimal": "26px_white",
+            "Subscribe": "ACC_Z"
+          }
+        ]
+      },
+
+      {
+        "Name": "pitch",
+        "Width": "210",
+        "Height": "228",
+        "Alignment": "Bottom_Right",
+        "MarginRight": "584",
+        "MarginBottom": "10",
+        "Elements": [
+          {
+            "Name": "pitch_background",
+            "Type": "StaticImage",
+            "Alignment": "Top_Left",
+            "MarginTop": "0",
+            "MarginLeft": "0",
+            "Resource": "Assets_theme3/pitch_suite/pitchbase.png"
+          },
+          {
+            "Name": "pitch_progress",
+            "Type": "ProgressImage",
+            "Style": "Pitch",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "17",
+            "MarginLeft": "17",
+            "StartAngle": "-180",
+            "EndAngle": "180",
+            "Font": "misc",
+            "Subscribe": "PITCH"
+          },
+          {
+            "Name": "pitch_center_background",
+            "Type": "StaticImage",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "59",
+            "MarginLeft": "59",
+            "Resource": "Assets_theme3/pitch_suite/pitchdisplayD.png"
+          },
+          {
+            "Name": "pitch_value",
+            "Type": "NumberView",
+            "Alignment": "Bottom_Left",
+            "MarginBottom": "86",
+            "MarginLeft": "70",
+            "Font": "38px_white",
+            "Subscribe": "PITCH"
           }
         ]
       },

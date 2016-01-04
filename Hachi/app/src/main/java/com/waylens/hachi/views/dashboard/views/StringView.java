@@ -54,7 +54,7 @@ public class StringView extends ElementView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mValue == null) {
-            return;
+            mValue = "0";
         }
         int widthOffset = 0;
 
@@ -80,7 +80,6 @@ public class StringView extends ElementView {
 
                 resource = mFont.getFontResource(String.valueOf(number));
                 if (resource != null) {
-
                     dstRect = new Rect(widthOffset, 0, widthOffset + resource.getWidth(),
                         resource.getHeight());
                     canvas.drawBitmap(resource, null, dstRect, null);
