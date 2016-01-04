@@ -152,7 +152,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
     protected void displayOverlay(int position) {
         if (mMomentOBD.size() > 0) {
             MomentOBD obd = getODB(position);
-            if (obd != null) {
+            if (obd != null && mObdView != null) {
                 mObdView.setSpeed(obd.speed);
                 mObdView.setTargetValue(obd.rpm / 1000.0f);
             } else {
@@ -166,7 +166,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
             }
             MomentGPS gps = getGPS(position);
-            if (gps != null) {
+            if (gps != null && mMapView != null) {
                 mMapView.removeAllAnnotations();
                 LatLng point = new LatLng(gps.latitude, gps.longitude);
                 mMarkerOptions.position(point);

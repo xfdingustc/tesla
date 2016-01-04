@@ -167,12 +167,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     @Override
     protected void displayOverlay(int position) {
-        if (mObdView == null) {
-            return;
-        }
-        
         RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
-        if (obd != null && obd.object != null) {
+        if (mObdView != null && obd != null && obd.object != null) {
             mObdView.setSpeed(((OBDData) obd.object).speed);
             mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
         } else {
@@ -181,7 +177,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         }
 
         RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
-        if (gps != null) {
+        if (mMapView != null && gps != null) {
             GPSRawData gpsRawData = (GPSRawData) gps.object;
             mMarkerOptions.getMarker().remove();
             LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
