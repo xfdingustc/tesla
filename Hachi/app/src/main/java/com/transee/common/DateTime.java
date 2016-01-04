@@ -12,8 +12,8 @@ public class DateTime {
 	private static final DateFormat mTimeFormat;
 	private static final SimpleDateFormat mDayFormat;
 	static {
-		mDateFormat = DateFormat.getDateInstance();
-		mTimeFormat = DateFormat.getTimeInstance();
+		mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+		mTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 		mDayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
 	}
 	private static int mTimezone = TimeZone.getDefault().getRawOffset();

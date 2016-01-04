@@ -412,10 +412,9 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mTargetState = STATE_PLAYBACK_COMPLETED;
         mBtnPlay.setImageResource(R.drawable.ic_refresh_white_48dp);
         showController(0);
-
-        int position = mMediaPlayer.getCurrentPosition();
+        
         int duration = mMediaPlayer.getDuration();
-        setProgress(position, duration);
+        setProgress(duration, duration);
 
         mHandler.removeMessages(SHOW_PROGRESS);
         onPlayCompletion();

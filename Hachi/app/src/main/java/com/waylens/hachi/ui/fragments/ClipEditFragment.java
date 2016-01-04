@@ -1,8 +1,10 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -20,6 +22,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -115,12 +118,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @Bind(R.id.progress_loading)
     ProgressBar mProgressLoading;
-
-    @Bind(R.id.control_panel)
-    View mControlPanel;
-
-    @Bind(R.id.triangle_view)
-    TriangleView mTriangleView;
 
     @Bind(R.id.drag_container)
     DragLayout mDragLayout;
@@ -264,7 +261,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @OnClick(R.id.btn_play)
     public void playVideo() {
-        mControlPanel.setTranslationX(0);
         if (isInPlaybackState() && !mMediaPlayer.isPlaying()) {
             resumeVideo();
         } else {
@@ -389,7 +385,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 }
                 mSeekToPosition = progress;
                 mTypedPosition.clear();
-                calculateMidOfTrimmer(start, end);
             }
 
             @Override
@@ -412,40 +407,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             }
         });
 
-    }
-
-    void calculateMidOfTrimmer(long start, long end) {
-        if (mSelectedClipStartTimeMs == start && mSelectedClipEndTimeMs == end) {
-            return;
-        }
-        double range = mVideoTrimmer.getRange();
-        int panelMid = mControlPanel.getLeft() + (mTriangleView.getLeft() + mTriangleView.getWidth() / 2);
-        int screenWidth = mVideoTrimmer.getWidth();
-        int mid = (int) (((end + start) / 2 - mVideoTrimmer.getMinValue()) / range * screenWidth);
-        int x = mid - panelMid;
-        int x1 = x;
-        int x2 = 0;
-        if (x < -mControlPanel.getLeft()) {
-            x1 = -mControlPanel.getLeft();
-            x2 = x - x1;
-            if (x2 < -mTriangleView.getLeft()) {
-                x2 = -mTriangleView.getLeft();
-            }
-            mTriangleView.setTranslationX(x2);
-        } else if (x > (screenWidth - mControlPanel.getRight())) {
-            x1 = screenWidth - mControlPanel.getRight();
-            x2 = x - x1;
-            if (x2 > mControlPanel.getWidth() - mTriangleView.getRight()) {
-                x2 = mControlPanel.getWidth() - mTriangleView.getRight();
-            }
-            mTriangleView.setTranslationX(x2);
-        }
-        //Log.e("test", "X: " + x + "; x1: " + x1 + "; x2: " + x2);
-        mControlPanel.setTranslationX(x1);
-        //Log.e("test", "Mid: " + mid + "; PanelMid: " + panelMid);
-        //Log.e("test", "Panel: " + mControlPanel.getLeft()
-        //        + "; triangle: " + mTriangleView.getLeft()
-        //        + "; triangle w: " + mTriangleView.getWidth());
     }
 
     void loadClipInfo() {
@@ -607,7 +568,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     void showController(int timeout) {
         mBtnPlay.setVisibility(View.VISIBLE);
-        mControlPanel.setVisibility(View.VISIBLE);
         if (timeout > 0) {
             fadeOutControllers(timeout);
         }
@@ -619,7 +579,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     void hideControllers() {
-        mControlPanel.setVisibility(View.INVISIBLE);
         mBtnPlay.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 && mCurrentState == STATE_PLAYING) {
@@ -852,6 +811,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     private void initMapView() {
         mMapView = new MapView(getActivity(), Constants.MAP_BOX_ACCESS_TOKEN);
+        setOvalOutline();
         mMapView.setStyleUrl(Style.DARK);
         mMapView.setZoomLevel(14);
         mMapView.setLogoVisibility(View.GONE);
@@ -870,6 +830,19 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
         mDragLayout.addView(mMapView, params);
         buildFullPath();
+    }
+
+    void setOvalOutline() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMapView.setClipToOutline(true);
+            mMapView.setOutlineProvider(new ViewOutlineProvider() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                }
+            });
+        }
     }
 
     void buildFullPath() {

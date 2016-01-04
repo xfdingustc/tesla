@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -25,9 +27,11 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
+import com.waylens.hachi.ui.adapters.MomentViewHolder;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.APIFilter;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -47,7 +51,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Refreshable {
+public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Refreshable,
+        MomentsRecyclerAdapter.OnMomentActionListener,OnViewDragListener {
     static final int DEFAULT_COUNT = 10;
 
     @Bind(R.id.btnAvatar)
@@ -86,6 +91,8 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
 
     int mProfileStyle = 0; // 0 - list, 1 - grid
 
+    Fragment mVideoFragment;
+
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +102,7 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
+        mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
 
@@ -269,5 +277,54 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
         if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(enabled);
         }
+    }
+
+    @Override
+    public void onLikeMoment(Moment moment, boolean isCancel) {
+
+    }
+
+    @Override
+    public void onCommentMoment(Moment moment, int position) {
+
+    }
+
+    @Override
+    public void onUserAvatarClicked(Moment moment, int position) {
+
+    }
+
+    @Override
+    public void onRequestVideoPlay(MomentViewHolder vh, Moment moment, int position) {
+        FragmentManager mFragmentManager = getFragmentManager();
+        if (mVideoFragment != null) {
+            mFragmentManager.beginTransaction().remove(mVideoFragment).commit();
+            mVideoFragment = null;
+        }
+
+        if (moment.type == Moment.TYPE_YOUTUBE) {
+            YouTubeFragment youTubeFragment = YouTubeFragment.newInstance();
+            youTubeFragment.setVideoId(moment.videoID);
+            vh.videoFragment = youTubeFragment;
+            mVideoFragment = youTubeFragment;
+            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
+        } else {
+            MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment, this);
+            vh.videoFragment = videoPlayFragment;
+            mVideoFragment = videoPlayFragment;
+            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
+        }
+    }
+
+    @Override
+    public void onStartDragging() {
+        mVideoListView.setLayoutFrozen(true);
+        mRefreshLayout.setEnabled(false);
+    }
+
+    @Override
+    public void onStopDragging() {
+        mVideoListView.setLayoutFrozen(false);
+        mRefreshLayout.setEnabled(true);
     }
 }

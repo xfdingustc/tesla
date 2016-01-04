@@ -86,9 +86,9 @@ public class DataUploader {
         uploadImpl();
     }
 
-    public void uploadStream(InputStream inputStream, int contentLength, int dataType, String token, String guid) {
+    public boolean uploadStream(InputStream inputStream, int contentLength, int dataType, String token, String guid) {
         if (inputStream == null) {
-            return;
+            return false;
         }
         totalCount = contentLength;
         mDataType = (byte) dataType;
@@ -96,13 +96,13 @@ public class DataUploader {
         mTotalSHA1 = null;
         mGuid = guid;
         mInputStream = inputStream;
-        uploadImpl();
+        return uploadImpl();
     }
 
-    public void uploadFile(File file, int dataType, String token, String guid, byte[] header, byte[] tail) {
+    public boolean uploadFile(File file, int dataType, String token, String guid, byte[] header, byte[] tail) {
         if (file == null || !file.exists()) {
             Log.i(TAG, "File does not exist.");
-            return;
+            return false;
         }
 
         totalCount = file.length();
@@ -119,22 +119,24 @@ public class DataUploader {
             mInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             logError(e);
-            return;
+            return false;
         }
-        uploadImpl();
+        return uploadImpl();
     }
 
-    private void uploadImpl() {
+    private boolean uploadImpl() {
         try {
             init();
             login();
             if (!startUpload()) {
-                return;
+                return true;
             }
             doUpload();
             stopUpload();
+            return true;
         } catch (Exception e) {
             logError(e);
+            return false;
         } finally {
             release();
         }

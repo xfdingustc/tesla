@@ -248,10 +248,10 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
     }
 
     public void onFragmentStart(int position) {
-        if (mLinearLayoutManager.findLastVisibleItemPosition() != mClipSetAdapter.getItemCount() - 1) {
+        //if (mLinearLayoutManager.findLastVisibleItemPosition() != mClipSetAdapter.getItemCount() - 1) {
             mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
             mRvCameraVideoList.requestLayout();
-        }
+        //}
     }
 
     static class VideoTab {

@@ -193,5 +193,27 @@
                 android:textColor="@android:color/white"
                 android:textSize="20sp"/>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_error_outline_white_48dp"/>
+
+            <TextView
+                android:id="@+id/error_msg_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share_video_retrieve_error"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"/>
+        </LinearLayout>
     </ViewAnimator>
 </android.support.v4.widget.NestedScrollView>

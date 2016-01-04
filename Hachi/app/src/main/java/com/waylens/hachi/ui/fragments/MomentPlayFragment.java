@@ -126,7 +126,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
     }
 
     protected void setProgress(int position, int duration) {
-        Log.e("test", "duration: " + duration + "; position: " + position);
+        //Log.e("test", "duration: " + duration + "; position: " + position);
         if (mProgressBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
@@ -326,52 +326,60 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     boolean parseRawData(JSONObject response) {
         try {
-            JSONObject obd = response.getJSONObject("obd");
-            JSONArray captureTime = obd.getJSONArray("captureTime");
-            JSONArray speed = obd.getJSONArray("speed");
-            JSONArray rpm = obd.getJSONArray("rpm");
-            JSONArray temperature = obd.getJSONArray("temperature");
-            JSONArray tp = obd.getJSONArray("tp");
-            JSONArray imp = obd.getJSONArray("imp");
-            JSONArray bp = obd.getJSONArray("bp");
-            JSONArray bhp = obd.getJSONArray("bhp");
-            for (int i = 0; i < captureTime.length(); i++) {
-                mMomentOBD.add(new MomentOBD(
-                        captureTime.getLong(i),
-                        speed.getInt(i),
-                        rpm.getInt(i),
-                        temperature.getInt(i),
-                        tp.getInt(i),
-                        imp.getInt(i),
-                        bp.getInt(i),
-                        bhp.getInt(i)
-                ));
+            JSONObject obd = response.optJSONObject("obd");
+            if (obd != null) {
+                JSONArray captureTime = obd.getJSONArray("captureTime");
+                JSONArray speed = obd.getJSONArray("speed");
+                JSONArray rpm = obd.getJSONArray("rpm");
+                JSONArray temperature = obd.getJSONArray("temperature");
+                JSONArray tp = obd.getJSONArray("tp");
+                JSONArray imp = obd.getJSONArray("imp");
+                JSONArray bp = obd.getJSONArray("bp");
+                JSONArray bhp = obd.getJSONArray("bhp");
+                for (int i = 0; i < captureTime.length(); i++) {
+                    mMomentOBD.add(new MomentOBD(
+                            captureTime.getLong(i),
+                            speed.getInt(i),
+                            rpm.getInt(i),
+                            temperature.getInt(i),
+                            tp.getInt(i),
+                            imp.getInt(i),
+                            bp.getInt(i),
+                            bhp.getInt(i)
+                    ));
+                }
             }
-            JSONObject acc = response.getJSONObject("acc");
-            captureTime = acc.getJSONArray("captureTime");
-            JSONArray acceleration = acc.getJSONArray("acceleration");
-            for (int i = 0; i < captureTime.length(); i++) {
-                JSONObject accObj = acceleration.getJSONObject(i);
-                mMomentAcc.add(new MomentAcc(
-                        captureTime.getLong(i),
-                        accObj.getInt("x"),
-                        accObj.getInt("y"),
-                        accObj.getInt("z")
-                ));
+            JSONObject acc = response.optJSONObject("acc");
+            if (acc != null) {
+                JSONArray captureTime = acc.getJSONArray("captureTime");
+                JSONArray acceleration = acc.getJSONArray("acceleration");
+                for (int i = 0; i < captureTime.length(); i++) {
+                    JSONObject accObj = acceleration.getJSONObject(i);
+                    mMomentAcc.add(new MomentAcc(
+                            captureTime.getLong(i),
+                            accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
+                            accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
+                            accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
+                            accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
+                            accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
+                            accObj.getInt("pressure")
+                    ));
+                }
             }
+            JSONObject gps = response.optJSONObject("gps");
+            if (gps != null) {
+                JSONArray captureTime = gps.getJSONArray("captureTime");
+                JSONArray coordinates = gps.getJSONObject("coordinate").getJSONArray("coordinates");
 
-            JSONObject gps = response.getJSONObject("gps");
-            captureTime = gps.getJSONArray("captureTime");
-            JSONArray coordinates = gps.getJSONObject("coordinate").getJSONArray("coordinates");
-
-            for (int i = 0; i < captureTime.length(); i++) {
-                JSONArray coordinateObj = coordinates.getJSONArray(i);
-                mMomentGPS.add(new MomentGPS(
-                        captureTime.getLong(i),
-                        coordinateObj.getDouble(0),
-                        coordinateObj.getDouble(1),
-                        coordinateObj.getDouble(2)
-                ));
+                for (int i = 0; i < captureTime.length(); i++) {
+                    JSONArray coordinateObj = coordinates.getJSONArray(i);
+                    mMomentGPS.add(new MomentGPS(
+                            captureTime.getLong(i),
+                            coordinateObj.getDouble(0),
+                            coordinateObj.getDouble(1),
+                            coordinateObj.getDouble(2)
+                    ));
+                }
             }
 
             return true;

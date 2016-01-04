@@ -1,6 +1,9 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.annotation.TargetApi;
 import android.graphics.Color;
+import android.graphics.Outline;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -8,6 +11,7 @@ import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.FrameLayout;
 
 import com.android.volley.Request;
@@ -303,6 +307,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         mMapView.setLogoVisibility(View.GONE);
         mMapView.setCompassEnabled(false);
         mMapView.onCreate(null);
+        setOvalOutline();
         GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataBlock.RAW_DATA_GPS).getRawDataItem(0).object;
         SpriteFactory spriteFactory = new SpriteFactory(mMapView);
         LatLng firstPoint = new LatLng(firstGPS.coord.lat_orig, firstGPS.coord.lng_orig);
@@ -318,6 +323,19 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
         mVideoContainer.addView(mMapView, params);
         buildFullPath();
+    }
+
+    void setOvalOutline() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMapView.setClipToOutline(true);
+            mMapView.setOutlineProvider(new ViewOutlineProvider() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                }
+            });
+        }
     }
 
     void buildFullPath() {

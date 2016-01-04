@@ -283,6 +283,10 @@
     <string name="resolution">High Resolution</string>
     <string name="social_channel_prompt">Also Share This Video On</string>
     <string name="share_successfully">Share Successfully!</string>
+    <string name="share_video_retrieve_error">Error to retrieve video from camera.</string>
+    <string name="share_raw_retrieve_error">Error to retrieve driving data from camera.</string>
+    <string name="share_upload_error">Error to upload moment data.</string>
+    <string name="create_moment_error">Error to create new moment.</string>
 
     <plurals name="number_of_bookmarks">
         <item quantity="one">%d Bookmarks</item>

@@ -125,6 +125,7 @@ public class Moment {
         } else {
             moment.thumbnail = jsonMoment.optString("thumbnail");
             moment.type = TYPE_WAYLENS;
+            moment.videoURL = jsonMoment.optString("videoUrl");
         }
 
 
