@@ -19,7 +19,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -28,9 +27,9 @@ import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.MomentViewHolder;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.APIFilter;
+import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ImageUtils;
@@ -52,7 +51,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Xiaofei on 2015/8/4.
  */
 public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Refreshable,
-        MomentsRecyclerAdapter.OnMomentActionListener,OnViewDragListener {
+        MomentsRecyclerAdapter.OnMomentActionListener, OnViewDragListener, FragmentNavigator {
     static final int DEFAULT_COUNT = 10;
 
     @Bind(R.id.btnAvatar)
@@ -326,5 +325,11 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
     public void onStopDragging() {
         mVideoListView.setLayoutFrozen(false);
         mRefreshLayout.setEnabled(true);
+    }
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SettingsFragment()).commit();
+        return true;
     }
 }

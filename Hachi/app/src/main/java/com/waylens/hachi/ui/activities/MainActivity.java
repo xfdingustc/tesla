@@ -29,6 +29,8 @@ import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.NotificationFragment;
 import com.waylens.hachi.ui.fragments.Refreshable;
+import com.waylens.hachi.ui.fragments.SettingsFragment;
+import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -193,10 +195,11 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
                 fragment = new CameraListFragment();
                 break;
             case TAB_TAG_STORIES:
-                fragment = new NotificationFragment();
+                fragment = new StoriesFragment();
                 break;
             case TAB_TAG_SETTINGS:
-                fragment = new AccountFragment();
+                //fragment = new AccountFragment();
+                fragment = new SettingsFragment();
                 break;
             default:
                 fragment = new HomeFragment();

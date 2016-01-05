@@ -287,6 +287,12 @@
     <string name="share_raw_retrieve_error">Error to retrieve driving data from camera.</string>
     <string name="share_upload_error">Error to upload moment data.</string>
     <string name="create_moment_error">Error to create new moment.</string>
+    <string name="settings_general">General</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_waylens_cloud">Waylens Cloud</string>
+    <string name="settings_camera">Camera</string>
+    <string name="settings_add_new_camera">Add New Camera</string>
+    <string name="settings_help">Help</string>
 
     <plurals name="number_of_bookmarks">
         <item quantity="one">%d Bookmarks</item>

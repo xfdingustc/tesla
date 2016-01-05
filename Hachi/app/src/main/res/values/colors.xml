@@ -47,6 +47,12 @@
     <color name="edit_background">#FF2F2F2F</color>
     <color name="text_enhance">#9B9B9B</color>
     <color name="text_enhance_highlight">#FFECECEC</color>
+    
+    <color name="bg_toolbar">#FF141618</color>
+    <color name="bg_content">#FF1D1F23</color>
+    <color name="settings_item_bg_normal">#FF222428</color>
+    <color name="settings_item_bg_pressed">#FF17191C</color>
+    <color name="settings_line_separator">#FF35373B</color>
     <!-- END new UI Design Color -->
 
 </resources>
