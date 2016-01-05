@@ -31,7 +31,7 @@ import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.VolleyUtil;
-import com.waylens.hachi.views.GaugeView;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +55,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
     ArrayList<MomentAcc> mMomentAcc = new ArrayList<>();
     ArrayList<MomentGPS> mMomentGPS = new ArrayList<>();
 
-    GaugeView mObdView;
+
     MapView mMapView;
 
     int mOBDPosition;
@@ -71,16 +71,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
         fragment.setArguments(args);
         fragment.mMomentID = moment.id;
         fragment.setSource(moment.videoURL);
-        //fragment.setSource("http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8");
-        //fragment.setSource("http://monitor.vidit.com.cn:8083/waylens/hls/s2.m3u8");
-        /*
-        HashMap<String, String> headers = new HashMap<>();
-        String cookie = "CloudFront-Policy=eyJTdGF0ZW1lbnQiOiBbeyJSZXNvdXJjZSI6Imh0dHBzOi8vZDE1eWo3dGs3ajA0N3UuY2xvdWRmcm9udC5uZXQvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTQ0ODQ5MDAwMH0sIklwQWRkcmVzcyI6eyJBV1M6U291cmNlSXAiOiIwLjAuMC4wLzAifSwiRGF0ZUdyZWF0ZXJUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE0NDgzNDY3MTZ9fX1dfQ__; Path=/; Domain=cloudfront.net; Secure; HTTPOnly;"
-                + "CloudFront-Signature=K6z6ZN5EFVOLkIpbG2jVEq8gdi62qX7JL--rpgSCQ00f-LfWLyTnOrohqB~ItulFax1TYoaqFi4HFch0yoHqhInloGwL9NVAYxiFCd2e-1nBHDSXi80OwT9qY-KQ9efB8W8y8QRC-g0y38UDIy2xuG2sSoSE~Pyb-1p9QMZpaFvXTXuYIQTfZRSDPw-dELWjUaG8hX4X~9As1aCrPriDTqJqtEDijwgXzaRjQDcEsgus7-d~OT0yoDgDS-uUbkeshSdCQJvtHrNgVXu2ep5bHxD7~lWhJa1pdnMx~~XA20azpzJdwmpCrkPRjW9Gt8noL1B~Mf2mcit9GzXBZsKV1g__; Path=/; Domain=cloudfront.net; Secure; HTTPOnly;"
-                + "CloudFront-Key-Pair-Id=APKAIZCLN7KQEMMEJXJQ; Path=/; Domain=cloudfront.net; Secure; HTTPOnly";
-        headers.put("Cookie", cookie);
-        */
-        //fragment.setSource("https://d2o7nk9c8hjp89.cloudfront.net/public/8119898bbc8c44f09ad1910a5f6bfaa3/195/play_6.m3u8", null);
+
         fragment.mDragListener = listener;
         return fragment;
     }
@@ -152,12 +143,12 @@ public class MomentPlayFragment extends VideoPlayFragment {
     protected void displayOverlay(int position) {
         if (mMomentOBD.size() > 0) {
             MomentOBD obd = getODB(position);
-            if (obd != null && mObdView != null) {
-                mObdView.setSpeed(obd.speed);
-                mObdView.setTargetValue(obd.rpm / 1000.0f);
-            } else {
-                Log.e("test", "Position: " + position + "; mOBDPosition: " + mOBDPosition);
-            }
+//            if (obd != null && mObdView != null) {
+//                mObdView.setSpeed(obd.speed);
+//                mObdView.setTargetValue(obd.rpm / 1000.0f);
+//            } else {
+//                Log.e("test", "Position: " + position + "; mOBDPosition: " + mOBDPosition);
+//            }
         }
 
         if (mMomentGPS.size() > 0) {
@@ -220,13 +211,13 @@ public class MomentPlayFragment extends VideoPlayFragment {
     }
 
     void onLoadRawDataSuccessfully() {
-        if (mMomentOBD.size() > 0 && mObdView == null) {
-            mObdView = new GaugeView(getActivity());
-            int defaultSize = ViewUtils.dp2px(64, getResources());
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
-            params.gravity = Gravity.BOTTOM | Gravity.END;
-            mVideoContainer.addView(mObdView, params);
-        }
+//        if (mMomentOBD.size() > 0 && mObdView == null) {
+//            mObdView = new GaugeView(getActivity());
+//            int defaultSize = ViewUtils.dp2px(64, getResources());
+//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
+//            params.gravity = Gravity.BOTTOM | Gravity.END;
+//            mVideoContainer.addView(mObdView, params);
+//        }
 
 
         if (mMomentGPS.size() > 0 && mMapView == null) {

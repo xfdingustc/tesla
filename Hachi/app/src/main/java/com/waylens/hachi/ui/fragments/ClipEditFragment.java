@@ -34,7 +34,6 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
@@ -48,18 +47,17 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.views.OnViewDragListener;
-import com.waylens.hachi.ui.views.TriangleView;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.DragLayout;
-import com.waylens.hachi.views.GaugeView;
 import com.waylens.hachi.views.VideoTrimmer;
 
 import java.io.IOException;
@@ -72,8 +70,8 @@ import butterknife.OnClick;
  * Created by Richard on 12/7/15.
  */
 public class ClipEditFragment extends Fragment implements MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener,
-        MediaPlayer.OnErrorListener, TextureView.SurfaceTextureListener {
+    MediaPlayer.OnCompletionListener, MediaPlayer.OnSeekCompleteListener,
+    MediaPlayer.OnErrorListener, TextureView.SurfaceTextureListener {
     private static final String TAG = "ClipEditFragment";
 
     protected static final String REQUEST_TAG = "RETRIEVE_CLIP_DATA";
@@ -155,7 +153,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
     SparseIntArray mTypedState = new SparseIntArray();
     SparseIntArray mTypedPosition = new SparseIntArray();
-    GaugeView mObdView;
     MapView mMapView;
 
     private MarkerOptions mMarkerOptions;
@@ -291,8 +288,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     boolean isRawDataReady() {
         return mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_READY
-                && mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_READY
-                && mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
+            && mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
     }
 
     @OnClick(R.id.video_surface)
@@ -327,10 +324,10 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mClipExtent = clipExtent;
         if (mClipExtent.bufferedCid != null) {
             mBufferedClip = new RemoteClip(mClipExtent.bufferedCid.type,
-                    mClipExtent.bufferedCid.subType,
-                    mClipExtent.bufferedCid.extra,
-                    mClip.clipDate,
-                    (int) (mClipExtent.maxClipEndTimeMs - mClipExtent.minClipStartTimeMs));
+                mClipExtent.bufferedCid.subType,
+                mClipExtent.bufferedCid.extra,
+                mClip.clipDate,
+                (int) (mClipExtent.maxClipEndTimeMs - mClipExtent.minClipStartTimeMs));
             mMinExtensibleValue = mClipExtent.clipStartTimeMs - MAX_EXTENSION;
             if (mMinExtensibleValue < mClipExtent.minClipStartTimeMs) {
                 mMinExtensibleValue = mClipExtent.minClipStartTimeMs;
@@ -467,9 +464,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     protected void openVideo() {
         if (mVideoSource == null
-                || mSurfaceView == null
-                || mSurfaceHolder == null
-                || mRawDataState == RAW_DATA_STATE_UNKNOWN) {
+            || mSurfaceView == null
+            || mSurfaceHolder == null
+            || mRawDataState == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
         mProgressLoading.setVisibility(View.VISIBLE);
@@ -547,9 +544,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     private boolean isInPlaybackState() {
         return (mMediaPlayer != null &&
-                mCurrentState != STATE_ERROR &&
-                mCurrentState != STATE_IDLE &&
-                mCurrentState != STATE_PREPARING);
+            mCurrentState != STATE_ERROR &&
+            mCurrentState != STATE_IDLE &&
+            mCurrentState != STATE_PREPARING);
     }
 
     private void release(boolean clearTargetState) {
@@ -581,7 +578,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     void hideControllers() {
         mBtnPlay.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                && mCurrentState == STATE_PLAYING) {
+            && mCurrentState == STATE_PLAYING) {
             hideSystemUI();
         }
     }
@@ -613,18 +610,18 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     protected void displayOverlay(int position) {
-        if (mObdView == null) {
-            return;
-        }
+//        if (mObdView == null) {
+//            return;
+//        }
 
         RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
-        if (obd != null && obd.object != null) {
-            mObdView.setSpeed(((OBDData) obd.object).speed);
-            mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
-        } else {
-            Logger.t(TAG).e("Position: " + position + "; mOBDPosition: " + mTypedPosition
-                    .get(RawDataBlock.RAW_DATA_ODB));
-        }
+//        if (obd != null && obd.object != null) {
+//            mObdView.setSpeed(((OBDData) obd.object).speed);
+//            mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
+//        } else {
+//            Logger.t(TAG).e("Position: " + position + "; mOBDPosition: " + mTypedPosition
+//                .get(RawDataBlock.RAW_DATA_ODB));
+//        }
 
         RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
         if (gps != null) {
@@ -702,9 +699,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         int position = mMediaPlayer.getCurrentPosition();
         int duration = mMediaPlayer.getDuration();
         if (mPlaybackUrl.realTimeMs != 0
-                && mInitPosition == 0
-                && position != 0
-                && Math.abs(mPlaybackUrl.realTimeMs - position) < 200) {
+            && mInitPosition == 0
+            && position != 0
+            && Math.abs(mPlaybackUrl.realTimeMs - position) < 200) {
             mInitPosition = mPlaybackUrl.realTimeMs;
             Log.e("test", "setProgress - deviation: " + Math.abs(mPlaybackUrl.realTimeMs - position));
         }
@@ -767,42 +764,42 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
         Clip.ID cid = getWorkableCid();
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(cid, params,
-                new VdbResponse.Listener<RawDataBlock>() {
-                    @Override
-                    public void onResponse(RawDataBlock response) {
-                        Logger.t(TAG).d("resoponse datatype: " + dataType);
-                        mTypedRawData.put(dataType, response);
-                        mTypedState.put(dataType, RAW_DATA_STATE_READY);
-                        onLoadRawDataFinished();
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
-                        onLoadRawDataFinished();
-                        Logger.t(TAG).d("error response:");
-                    }
-                });
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    Logger.t(TAG).d("resoponse datatype: " + dataType);
+                    mTypedRawData.put(dataType, response);
+                    mTypedState.put(dataType, RAW_DATA_STATE_READY);
+                    onLoadRawDataFinished();
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
+                    onLoadRawDataFinished();
+                    Logger.t(TAG).d("error response:");
+                }
+            });
         mVdbRequestQueue.add(obdRequest.setTag(REQUEST_TAG));
     }
 
     void onLoadRawDataFinished() {
         if (mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_UNKNOWN
-                || mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
-                || mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
+            || mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
         mRawDataState = RAW_DATA_STATE_READY;
         loadPlayURL();
 
-        if (mTypedRawData.get(RawDataBlock.RAW_DATA_ODB) != null && mObdView == null) {
-            mObdView = new GaugeView(getActivity());
-            int defaultSize = ViewUtils.dp2px(64, getResources());
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
-            params.gravity = Gravity.BOTTOM | Gravity.END;
-            mDragLayout.addView(mObdView, params);
-        }
+//        if (mTypedRawData.get(RawDataBlock.RAW_DATA_ODB) != null && mObdView == null) {
+//            mObdView = new GaugeView(getActivity());
+//            int defaultSize = ViewUtils.dp2px(64, getResources());
+//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
+//            params.gravity = Gravity.BOTTOM | Gravity.END;
+//            mDragLayout.addView(mObdView, params);
+//        }
 
         if (mTypedRawData.get(RawDataBlock.RAW_DATA_GPS) != null && mMapView == null) {
             initMapView();
@@ -821,7 +818,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         SpriteFactory spriteFactory = new SpriteFactory(mMapView);
         LatLng firstPoint = new LatLng(firstGPS.coord.lat_orig, firstGPS.coord.lng_orig);
         mMarkerOptions = new MarkerOptions().position(firstPoint)
-                .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
+            .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
         mMapView.addMarker(mMarkerOptions);
         mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
         mMapView.setCenterCoordinate(firstPoint);

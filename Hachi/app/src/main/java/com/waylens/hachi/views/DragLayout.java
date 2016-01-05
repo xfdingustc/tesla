@@ -53,9 +53,10 @@ public class DragLayout extends FrameLayout {
             return false;
         }
         View toCapture = mDragHelper.findTopChildUnder((int) ev.getX(), (int)ev.getY());
-        return toCapture instanceof GaugeView
-                || toCapture instanceof MapView
-                || mDragHelper.shouldInterceptTouchEvent(ev);
+//        return toCapture instanceof GaugeView
+//                || toCapture instanceof MapView
+//                || mDragHelper.shouldInterceptTouchEvent(ev);
+        return false;
     }
 
     @Override
@@ -76,7 +77,8 @@ public class DragLayout extends FrameLayout {
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
             mDragView = child;
-            return child instanceof GaugeView || child instanceof MapView;
+            //return child instanceof GaugeView || child instanceof MapView;
+            return false;
         }
 
         @Override
