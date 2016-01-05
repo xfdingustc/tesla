@@ -18,6 +18,9 @@ public class ProgressImageView extends ElementView  {
     protected float mProgress = 0;
 
     public static final String PROGRESS_IMAGE_STYLE_RING_STR = "Ring";
+    public static final String PROGRESS_IMAGE_STYLE_OVAL_STR = "Oval";
+
+
 
     private Handler mHandler;
 

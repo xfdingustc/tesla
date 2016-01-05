@@ -1074,9 +1074,10 @@
           {
             "Name": "gforce_acc_range",
             "Type": "ProgressImage",
-            "Style": "Ring",
+            "Style": "Oval",
             "Direction": "CenterMoving",
             "Alignment": "Bottom_Left",
+            "Color": "FFFFFF15",
             "MarginBottom": "24",
             "MarginLeft": "24",
             "StartRadius": "66",

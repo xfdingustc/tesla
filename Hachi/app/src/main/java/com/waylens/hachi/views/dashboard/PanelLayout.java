@@ -19,6 +19,7 @@ import com.waylens.hachi.views.dashboard.models.Panel;
 import com.waylens.hachi.views.dashboard.subscribers.MapViewEventSubscriber;
 import com.waylens.hachi.views.dashboard.views.ElementView;
 import com.waylens.hachi.views.dashboard.views.NumberView;
+import com.waylens.hachi.views.dashboard.views.OvalProgressImageView;
 import com.waylens.hachi.views.dashboard.views.PitchView;
 import com.waylens.hachi.views.dashboard.views.ProgressImageView;
 import com.waylens.hachi.views.dashboard.views.RingProgressImageView;
@@ -103,6 +104,8 @@ public class PanelLayout extends RelativeLayout {
                     elementView = new ProgressImageView(getContext(), element);
                 } else if (style.equals(ProgressImageView.PROGRESS_IMAGE_STYLE_RING_STR)) {
                     elementView = new RingProgressImageView(getContext(), element);
+                } else if (style.equals(ProgressImageView.PROGRESS_IMAGE_STYLE_OVAL_STR)) {
+                    elementView = new OvalProgressImageView(getContext(), element);
                 }
 
 
