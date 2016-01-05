@@ -250,16 +250,15 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     @Override
     public void onGlobalLayout() {
-
-        int width = mRootContainer.getMeasuredWidth();
-        int height = mRootContainer.getMeasuredHeight();
-        Logger.t(TAG).d("width: " + width + " height: " + height);
-        float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
-        float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
-        Logger.t(TAG).d("widthScale: " + widthScale + " heightScale: " + heightScale);
-        mDashboardLayout.setScaleX(widthScale);
-        mDashboardLayout.setScaleY(heightScale);
-        mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        if (mRootContainer != null) {
+            int width = mRootContainer.getMeasuredWidth();
+            int height = mRootContainer.getMeasuredHeight();
+            float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
+            float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
+            mDashboardLayout.setScaleX(widthScale);
+            mDashboardLayout.setScaleY(heightScale);
+            mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        }
     }
 
     private void hideSystemUI() {

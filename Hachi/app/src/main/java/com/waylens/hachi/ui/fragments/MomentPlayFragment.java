@@ -20,6 +20,7 @@ import com.mapbox.mapboxsdk.annotations.SpriteFactory;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -31,6 +32,12 @@ import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.VolleyUtil;
+import com.waylens.hachi.vdb.AccData;
+import com.waylens.hachi.vdb.GPSRawData;
+import com.waylens.hachi.vdb.OBDData;
+import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
 
 
 import org.json.JSONArray;
@@ -38,6 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Play Moment video
@@ -51,12 +59,13 @@ public class MomentPlayFragment extends VideoPlayFragment {
     RequestQueue mRequestQueue;
     JSONArray mRawDataUrls;
 
-    ArrayList<MomentOBD> mMomentOBD = new ArrayList<>();
-    ArrayList<MomentAcc> mMomentAcc = new ArrayList<>();
-    ArrayList<MomentGPS> mMomentGPS = new ArrayList<>();
 
 
-    MapView mMapView;
+
+
+//    MapView mMapView;
+
+    private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
 
     int mOBDPosition;
     private MarkerOptions mMarkerOptions;
@@ -89,16 +98,11 @@ public class MomentPlayFragment extends VideoPlayFragment {
         if (mRawDataState != RAW_DATA_STATE_READY) {
             readRawURL();
         }
-        if (mMapView != null) {
-            mMapView.onStart();
-        }
     }
 
     @Override
     public void onStop() {
-        if (mMapView != null) {
-            mMapView.onStop();
-        }
+        mRawDataAdapter.reset();
         super.onStop();
     }
 
@@ -111,8 +115,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMomentOBD.clear();
-        mMomentAcc.clear();
         mRawDataState = RAW_DATA_STATE_UNKNOWN;
     }
 
@@ -141,50 +143,51 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     @Override
     protected void displayOverlay(int position) {
-        if (mMomentOBD.size() > 0) {
-            MomentOBD obd = getODB(position);
+        mRawDataAdapter.updateCurrentTime(position);
+//        if (mMomentOBD.size() > 0) {
+//            MomentOBD obd = getODB(position);
 //            if (obd != null && mObdView != null) {
 //                mObdView.setSpeed(obd.speed);
 //                mObdView.setTargetValue(obd.rpm / 1000.0f);
 //            } else {
 //                Log.e("test", "Position: " + position + "; mOBDPosition: " + mOBDPosition);
 //            }
-        }
-
-        if (mMomentGPS.size() > 0) {
-            if (mIsReplay) {
-                mIsReplay = false;
-                mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
-            }
-            MomentGPS gps = getGPS(position);
-            if (gps != null && mMapView != null) {
-                mMapView.removeAllAnnotations();
-                LatLng point = new LatLng(gps.latitude, gps.longitude);
-                mMarkerOptions.position(point);
-                mPolylineOptions.add(point);
-                mMapView.addMarker(mMarkerOptions);
-                mMapView.addPolyline(mPolylineOptions);
-                mMapView.setCenterCoordinate(point);
-            }
-        }
+//        }
+//
+//        if (mMomentGPS.size() > 0) {
+//            if (mIsReplay) {
+//                mIsReplay = false;
+//                mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
+//            }
+//            MomentGPS gps = getGPS(position);
+//            if (gps != null && mMapView != null) {
+//                mMapView.removeAllAnnotations();
+//                LatLng point = new LatLng(gps.latitude, gps.longitude);
+//                mMarkerOptions.position(point);
+//                mPolylineOptions.add(point);
+//                mMapView.addMarker(mMarkerOptions);
+//                mMapView.addPolyline(mPolylineOptions);
+//                mMapView.setCenterCoordinate(point);
+//            }
+//        }
     }
 
-    private MomentGPS getGPS(int position) {
-        MomentGPS gps = null;
-        while (mGPSPosition < mMomentGPS.size()) {
-            MomentGPS tmp = mMomentGPS.get(mGPSPosition);
-            if (tmp.captureTime == position) {
-                gps = tmp;
-                break;
-            } else if (tmp.captureTime < position) {
-                gps = tmp;
-                mGPSPosition++;
-            } else if (tmp.captureTime > position) {
-                break;
-            }
-        }
-        return gps;
-    }
+//    private MomentGPS getGPS(int position) {
+//        MomentGPS gps = null;
+//        while (mGPSPosition < mMomentGPS.size()) {
+//            MomentGPS tmp = mMomentGPS.get(mGPSPosition);
+//            if (tmp.captureTime == position) {
+//                gps = tmp;
+//                break;
+//            } else if (tmp.captureTime < position) {
+//                gps = tmp;
+//                mGPSPosition++;
+//            } else if (tmp.captureTime > position) {
+//                break;
+//            }
+//        }
+//        return gps;
+//    }
 
     @Override
     protected void onPlayCompletion() {
@@ -193,22 +196,22 @@ public class MomentPlayFragment extends VideoPlayFragment {
         mIsReplay = true;
     }
 
-    MomentOBD getODB(int position) {
-        MomentOBD obd = null;
-        while (mOBDPosition < mMomentOBD.size()) {
-            MomentOBD tmp = mMomentOBD.get(mOBDPosition);
-            if (tmp.captureTime == position) {
-                obd = tmp;
-                break;
-            } else if (tmp.captureTime < position) {
-                obd = tmp;
-                mOBDPosition++;
-            } else if (tmp.captureTime > position) {
-                break;
-            }
-        }
-        return obd;
-    }
+//    MomentOBD getODB(int position) {
+//        MomentOBD obd = null;
+//        while (mOBDPosition < mMomentOBD.size()) {
+//            MomentOBD tmp = mMomentOBD.get(mOBDPosition);
+//            if (tmp.captureTime == position) {
+//                obd = tmp;
+//                break;
+//            } else if (tmp.captureTime < position) {
+//                obd = tmp;
+//                mOBDPosition++;
+//            } else if (tmp.captureTime > position) {
+//                break;
+//            }
+//        }
+//        return obd;
+//    }
 
     void onLoadRawDataSuccessfully() {
 //        if (mMomentOBD.size() > 0 && mObdView == null) {
@@ -220,34 +223,35 @@ public class MomentPlayFragment extends VideoPlayFragment {
 //        }
 
 
-        if (mMomentGPS.size() > 0 && mMapView == null) {
-            initMapView();
-        }
+//        if (mMomentGPS.size() > 0 && mMapView == null) {
+//            initMapView();
+//        }
 
         mRawDataState = RAW_DATA_STATE_READY;
         mProgressLoading.setVisibility(View.GONE);
+        mDashboardLayout.setAdapter(mRawDataAdapter);
         openVideo();
     }
 
     private void initMapView() {
-        mMapView = new MapView(getActivity(), Constants.MAP_BOX_ACCESS_TOKEN);
-        mMapView.setStyleUrl(Style.DARK);
-        mMapView.setZoomLevel(14);
-        mMapView.setLogoVisibility(View.GONE);
-        mMapView.onCreate(null);
-        MomentGPS firstGPS = mMomentGPS.get(0);
-        SpriteFactory spriteFactory = new SpriteFactory(mMapView);
-        LatLng firstPoint = new LatLng(firstGPS.latitude, firstGPS.longitude);
-        mMarkerOptions = new MarkerOptions().position(firstPoint)
-                .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
-        mMapView.addMarker(mMarkerOptions);
-        mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
-        mMapView.setCenterCoordinate(firstPoint);
-        mMapView.addPolyline(mPolylineOptions);
-
-        int defaultSize = ViewUtils.dp2px(96, getResources());
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
-        mVideoContainer.addView(mMapView, params);
+//        mMapView = new MapView(getActivity(), Constants.MAP_BOX_ACCESS_TOKEN);
+//        mMapView.setStyleUrl(Style.DARK);
+//        mMapView.setZoomLevel(14);
+//        mMapView.setLogoVisibility(View.GONE);
+//        mMapView.onCreate(null);
+//        MomentGPS firstGPS = mMomentGPS.get(0);
+//        SpriteFactory spriteFactory = new SpriteFactory(mMapView);
+//        LatLng firstPoint = new LatLng(firstGPS.latitude, firstGPS.longitude);
+//        mMarkerOptions = new MarkerOptions().position(firstPoint)
+//                .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
+//        mMapView.addMarker(mMarkerOptions);
+//        mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
+//        mMapView.setCenterCoordinate(firstPoint);
+//        mMapView.addPolyline(mPolylineOptions);
+//
+//        int defaultSize = ViewUtils.dp2px(96, getResources());
+//        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
+//        mVideoContainer.addView(mMapView, params);
     }
 
     void onLoadRawDataError(String msg) {
@@ -328,16 +332,16 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 JSONArray bp = obd.getJSONArray("bp");
                 JSONArray bhp = obd.getJSONArray("bhp");
                 for (int i = 0; i < captureTime.length(); i++) {
-                    mMomentOBD.add(new MomentOBD(
-                            captureTime.getLong(i),
-                            speed.getInt(i),
-                            rpm.getInt(i),
-                            temperature.getInt(i),
-                            tp.getInt(i),
-                            imp.getInt(i),
-                            bp.getInt(i),
-                            bhp.getInt(i)
-                    ));
+                    mRawDataAdapter.addObdData(
+                        captureTime.getLong(i),
+                        speed.getInt(i),
+                        rpm.getInt(i),
+                        temperature.getInt(i),
+                        tp.getInt(i),
+                        imp.getInt(i),
+                        bp.getInt(i),
+                        bhp.getInt(i));
+
                 }
             }
             JSONObject acc = response.optJSONObject("acc");
@@ -346,7 +350,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 JSONArray acceleration = acc.getJSONArray("acceleration");
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONObject accObj = acceleration.getJSONObject(i);
-                    mMomentAcc.add(new MomentAcc(
+                    mRawDataAdapter.addAccData(
                             captureTime.getLong(i),
                             accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
                             accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
@@ -354,7 +358,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                             accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
                             accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
                             accObj.getInt("pressure")
-                    ));
+                    );
                 }
             }
             JSONObject gps = response.optJSONObject("gps");
@@ -364,12 +368,12 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONArray coordinateObj = coordinates.getJSONArray(i);
-                    mMomentGPS.add(new MomentGPS(
+                    mRawDataAdapter.addGpsData(
                             captureTime.getLong(i),
                             coordinateObj.getDouble(0),
                             coordinateObj.getDouble(1),
                             coordinateObj.getDouble(2)
-                    ));
+                    );
                 }
             }
 
@@ -377,6 +381,113 @@ public class MomentPlayFragment extends VideoPlayFragment {
         } catch (JSONException e) {
             Log.e("test", "", e);
             return false;
+        }
+    }
+
+
+    private static class MomentRawDataAdapter extends RawDataAdapter {
+        private static final String TAG = MomentRawDataAdapter.class.getSimpleName();
+        List<RawDataItem> mOBDData = new ArrayList<>();
+        List<RawDataItem> mAccData = new ArrayList<>();
+        List<RawDataItem> mGPSData = new ArrayList<>();
+
+        private int mObdDataIndex = 0;
+        private int mAccDataIndex = 0;
+        private int mGpsDataIndex = 0;
+
+        public void reset() {
+            mObdDataIndex = 0;
+            mAccDataIndex = 0;
+            mGpsDataIndex = 0;
+        }
+
+
+        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
+            RawDataItem item = new RawDataItem();
+            item.dataType = RawDataBlock.RAW_DATA_ODB;
+            item.clipTimeMs = captureTime;
+            OBDData data = new OBDData(speed, temperature, rpm);
+            item.object = data;
+            mOBDData.add(item);
+        }
+
+        public void addAccData(long captureTime, int accX, int accY, int accZ,
+                               int gyroX, int gyroY, int gyroZ,
+                               int magnX, int magnY, int magnZ,
+                               int eulerHeading, int eulerRoll, int eulerPitch,
+                               int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
+                               int pressure) {
+            RawDataItem item = new RawDataItem();
+            item.dataType = RawDataBlock.RAW_DATA_ACC;
+            item.clipTimeMs = captureTime;
+            AccData data = new AccData();
+
+            data.accX = accX;
+            data.accY = accY;
+            data.accZ = accZ;
+            data.euler_roll = eulerRoll;
+            data.euler_pitch = eulerPitch;
+
+            item.object = data;
+            mAccData.add(item);
+        }
+
+        public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
+            RawDataItem item = new RawDataItem();
+            item.dataType = RawDataBlock.RAW_DATA_GPS;
+            item.clipTimeMs = captureTime;
+            GPSRawData data = new GPSRawData();
+            data.coord.lat = latitude;
+            data.coord.lat_orig = latitude;
+            data.coord.lng = longitude;
+            data.coord.lng_orig = longitude;
+            data.altitude = altitude;
+            item.object = data;
+
+            mGPSData.add(item);
+        }
+
+        public void updateCurrentTime(int currentTime) {
+            if (checkIfUpdated(mAccData, mAccDataIndex, currentTime)) {
+                mAccDataIndex++;
+            }
+            if (checkIfUpdated(mGPSData, mGpsDataIndex, currentTime)) {
+                mGpsDataIndex++;
+            }
+            if (checkIfUpdated(mOBDData, mObdDataIndex, currentTime)) {
+                mObdDataIndex++;
+            }
+        }
+
+        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
+            int index = fromPosition;
+            if (index > list.size()) {
+                return false;
+            }
+
+            RawDataItem item = list.get(index);
+            if (item.clipTimeMs < currentTime) {
+                fromPosition++;
+                notifyDataSetChanged(item);
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public RawDataItem getAccDataItem(long pts) {
+            return null;
+        }
+
+        @Override
+        public RawDataItem getObdDataItem(long pts) {
+            return null;
+        }
+
+        @Override
+        public RawDataItem getGpsDataItem(long pts) {
+            return null;
         }
     }
 }
