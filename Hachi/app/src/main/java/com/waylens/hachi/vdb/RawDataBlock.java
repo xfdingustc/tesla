@@ -7,6 +7,12 @@ import java.util.List;
  * Created by Xiaofei on 2015/9/11.
  */
 public class RawDataBlock {
+    public static class RawDataItem {
+        public int dataType;
+        public long clipTimeMs;
+        public Object object; // GPSRawData for RAW_DATA_GPS
+    }
+
     public static final int RAW_DATA_NULL = 0;
     public static final int RAW_DATA_GPS = 1;
     public static final int RAW_DATA_ACC = 2;

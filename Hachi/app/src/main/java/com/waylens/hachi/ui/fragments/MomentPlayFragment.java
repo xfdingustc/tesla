@@ -1,14 +1,11 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -16,29 +13,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
-import com.mapbox.mapboxsdk.annotations.SpriteFactory;
-import com.mapbox.mapboxsdk.constants.Style;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.views.MapView;
-import com.orhanobut.logger.Logger;
-import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.MomentAcc;
-import com.waylens.hachi.ui.entities.MomentGPS;
-import com.waylens.hachi.ui.entities.MomentOBD;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,9 +43,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
     long mMomentID = Moment.INVALID_MOMENT_ID;
     RequestQueue mRequestQueue;
     JSONArray mRawDataUrls;
-
-
-
 
 
 //    MapView mMapView;
@@ -292,28 +274,28 @@ public class MomentPlayFragment extends VideoPlayFragment {
             JSONObject jsonObject = mRawDataUrls.getJSONObject(index);
             String url = jsonObject.getString("url");
             mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            if (parseRawData(response)) {
-                                int nextIndex = index + 1;
-                                if (nextIndex < mRawDataUrls.length()) {
-                                    loadRawData(nextIndex);
-                                } else {
-                                    onLoadRawDataSuccessfully();
-                                }
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (parseRawData(response)) {
+                            int nextIndex = index + 1;
+                            if (nextIndex < mRawDataUrls.length()) {
+                                loadRawData(nextIndex);
                             } else {
-                                onLoadRawDataError("Load Raw data error");
+                                onLoadRawDataSuccessfully();
                             }
+                        } else {
+                            onLoadRawDataError("Load Raw data error");
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                            onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
-                        }
-                    }).setTag(REQUEST_TAG));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                        onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
+                    }
+                }).setTag(REQUEST_TAG));
         } catch (JSONException e) {
             Log.e("test", "", e);
         }
@@ -351,13 +333,13 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONObject accObj = acceleration.getJSONObject(i);
                     mRawDataAdapter.addAccData(
-                            captureTime.getLong(i),
-                            accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
-                            accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
-                            accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
-                            accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
-                            accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
-                            accObj.getInt("pressure")
+                        captureTime.getLong(i),
+                        accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
+                        accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
+                        accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
+                        accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
+                        accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
+                        accObj.getInt("pressure")
                     );
                 }
             }
@@ -369,10 +351,10 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONArray coordinateObj = coordinates.getJSONArray(i);
                     mRawDataAdapter.addGpsData(
-                            captureTime.getLong(i),
-                            coordinateObj.getDouble(0),
-                            coordinateObj.getDouble(1),
-                            coordinateObj.getDouble(2)
+                        captureTime.getLong(i),
+                        coordinateObj.getDouble(0),
+                        coordinateObj.getDouble(1),
+                        coordinateObj.getDouble(2)
                     );
                 }
             }
@@ -387,9 +369,9 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     private static class MomentRawDataAdapter extends RawDataAdapter {
         private static final String TAG = MomentRawDataAdapter.class.getSimpleName();
-        List<RawDataItem> mOBDData = new ArrayList<>();
-        List<RawDataItem> mAccData = new ArrayList<>();
-        List<RawDataItem> mGPSData = new ArrayList<>();
+        List<RawDataBlock.RawDataItem> mOBDData = new ArrayList<>();
+        List<RawDataBlock.RawDataItem> mAccData = new ArrayList<>();
+        List<RawDataBlock.RawDataItem> mGPSData = new ArrayList<>();
 
         private int mObdDataIndex = 0;
         private int mAccDataIndex = 0;
@@ -403,7 +385,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
 
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
-            RawDataItem item = new RawDataItem();
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
             item.dataType = RawDataBlock.RAW_DATA_ODB;
             item.clipTimeMs = captureTime;
             OBDData data = new OBDData(speed, temperature, rpm);
@@ -417,7 +399,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                                int eulerHeading, int eulerRoll, int eulerPitch,
                                int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
                                int pressure) {
-            RawDataItem item = new RawDataItem();
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
             item.dataType = RawDataBlock.RAW_DATA_ACC;
             item.clipTimeMs = captureTime;
             AccData data = new AccData();
@@ -433,7 +415,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
         }
 
         public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
-            RawDataItem item = new RawDataItem();
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
             item.dataType = RawDataBlock.RAW_DATA_GPS;
             item.clipTimeMs = captureTime;
             GPSRawData data = new GPSRawData();
@@ -459,13 +441,13 @@ public class MomentPlayFragment extends VideoPlayFragment {
             }
         }
 
-        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
+        private boolean checkIfUpdated(List<RawDataBlock.RawDataItem> list, int fromPosition, int currentTime) {
             int index = fromPosition;
-            if (index > list.size()) {
+            if (index >= list.size()) {
                 return false;
             }
 
-            RawDataItem item = list.get(index);
+            RawDataBlock.RawDataItem item = list.get(index);
             if (item.clipTimeMs < currentTime) {
                 fromPosition++;
                 notifyDataSetChanged(item);
@@ -476,17 +458,17 @@ public class MomentPlayFragment extends VideoPlayFragment {
         }
 
         @Override
-        public RawDataItem getAccDataItem(long pts) {
+        public RawDataBlock.RawDataItem getAccDataItem(long pts) {
             return null;
         }
 
         @Override
-        public RawDataItem getObdDataItem(long pts) {
+        public RawDataBlock.RawDataItem getObdDataItem(long pts) {
             return null;
         }
 
         @Override
-        public RawDataItem getGpsDataItem(long pts) {
+        public RawDataBlock.RawDataItem getGpsDataItem(long pts) {
             return null;
         }
     }

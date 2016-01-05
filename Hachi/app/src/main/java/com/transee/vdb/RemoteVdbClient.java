@@ -14,7 +14,6 @@ import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.vdb.ClipSet;
 
@@ -347,7 +346,7 @@ public class RemoteVdbClient extends VdbClient {
             int size = readi32();
 
             if (size > 0) {
-                RawDataItem item = new RawDataItem();
+                RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
                 item.dataType = dataType;
                 item.clipTimeMs = clipTimeMs;
 

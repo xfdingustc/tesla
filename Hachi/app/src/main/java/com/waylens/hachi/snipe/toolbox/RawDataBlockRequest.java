@@ -3,16 +3,15 @@ package com.waylens.hachi.snipe.toolbox;
 import android.os.Bundle;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 
 /**
  * Created by Xiaofei on 2015/9/11.
@@ -75,7 +74,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
 
         for (int i = 0; i < numItems; i++) {
-            RawDataItem item = new RawDataItem();
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
             item.dataType = header.mDataType;
             item.clipTimeMs = block.timeOffsetMs[i] + header.mRequestedTimeMs;
             byte[] data = response.readByteArray(block.dataSize[i]);

@@ -15,7 +15,6 @@ import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
 import com.waylens.hachi.views.dashboard.eventbus.EventBus;
 import com.waylens.hachi.views.dashboard.eventbus.EventConstants;
@@ -117,7 +116,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         updateCurrentTime(pts);
     }
 
-    public void updateLive(RawDataItem item) {
+    public void updateLive(RawDataBlock.RawDataItem item) {
         if (item == null || item.object == null) {
             return;
         }
@@ -157,7 +156,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
     private void updateAccData(long pts) {
         if (mAdapter != null) {
-            RawDataItem item = mAdapter.getAccDataItem(pts);
+            RawDataBlock.RawDataItem item = mAdapter.getAccDataItem(pts);
             if (item != null) {
                 AccData accData = (AccData) item.object;
                 //Logger.t(TAG).d("Update gforce left as: " + (float) accData.accX * 5);
@@ -170,7 +169,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
     private void updateGpsData(long pts) {
         if (mAdapter != null) {
-            RawDataItem item = mAdapter.getGpsDataItem(pts);
+            RawDataBlock.RawDataItem item = mAdapter.getGpsDataItem(pts);
             if (item != null) {
                 mEventBus.postEvent(EventConstants.EVENT_GPS, item.object);
             }
@@ -179,7 +178,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
     private void updateObdData(long pts) {
         if (mAdapter != null) {
-            RawDataItem item = mAdapter.getObdDataItem(pts);
+            RawDataBlock.RawDataItem item = mAdapter.getObdDataItem(pts);
             if (item != null) {
                 OBDData obdData = (OBDData) item.object;
                 mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
@@ -213,7 +212,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
     private class DashboardLayoutDataOberserver extends RawDataAdapter.AdapterDataObserver {
         @Override
-        public void onDataChanged(RawDataItem dataItem) {
+        public void onDataChanged(RawDataBlock.RawDataItem dataItem) {
             updateLive(dataItem);
         }
     }

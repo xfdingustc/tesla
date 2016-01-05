@@ -12,7 +12,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+
 
 /**
  * Created by Xiaofei on 2015/9/11.
@@ -60,7 +60,7 @@ public class RawDataRequest extends VdbRequest<RawData> {
             int size = response.readi32();
 
             if (size > 0) {
-                RawDataItem item = new RawDataItem();
+                RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
                 item.dataType = dataType;
                 item.clipTimeMs = clipTimeMs;
 

@@ -16,7 +16,6 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -52,10 +51,8 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.GPSRawData;
-import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.VideoTrimmer;
@@ -614,7 +611,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 //            return;
 //        }
 
-        RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
+        RawDataBlock.RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
 //        if (obd != null && obd.object != null) {
 //            mObdView.setSpeed(((OBDData) obd.object).speed);
 //            mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
@@ -623,7 +620,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 //                .get(RawDataBlock.RAW_DATA_ODB));
 //        }
 
-        RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
+        RawDataBlock.RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
         if (gps != null) {
             GPSRawData gpsRawData = (GPSRawData) gps.object;
             mMarkerOptions.getMarker().remove();
@@ -635,15 +632,15 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         }
     }
 
-    RawDataItem getRawData(int dataType, int position) {
+    RawDataBlock.RawDataItem getRawData(int dataType, int position) {
         RawDataBlock raw = mTypedRawData.get(dataType);
         if (raw == null) {
             return null;
         }
         int pos = mTypedPosition.get(dataType);
-        RawDataItem rawDataItem = null;
+        RawDataBlock.RawDataItem rawDataItem = null;
         while (pos < raw.dataSize.length) {
-            RawDataItem tmp = raw.getRawDataItem(pos);
+            RawDataBlock.RawDataItem tmp = raw.getRawDataItem(pos);
             long timeOffsetMs = raw.timeOffsetMs[pos] + raw.header.mRequestedTimeMs;
             if (timeOffsetMs == position) {
                 rawDataItem = tmp;
@@ -845,7 +842,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     void buildFullPath() {
         RawDataBlock raw = mTypedRawData.get(RawDataBlock.RAW_DATA_GPS);
         for (int i = 0; i < raw.dataSize.length; i++) {
-            RawDataItem item = raw.getRawDataItem(i);
+            RawDataBlock.RawDataItem item = raw.getRawDataItem(i);
             GPSRawData gpsRawData = (GPSRawData) item.object;
             LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
             mPolylineOptions.add(point);

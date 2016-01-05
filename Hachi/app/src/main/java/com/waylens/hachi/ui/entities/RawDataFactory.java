@@ -13,7 +13,6 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
 
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class RawDataFactory {
         return mTypedState[dataType];
     }
 
-    public RawDataItem getRawDataAt(int dataType, int position) {
+    public RawDataBlock.RawDataItem getRawDataAt(int dataType, int position) {
         RawDataBlock dataBlock = getNextBlock(dataType, position);
         if (dataBlock == null) {
             return null;
@@ -72,9 +71,9 @@ public class RawDataFactory {
 
         long requestTimeMs = dataBlock.header.mRequestedTimeMs;
         int pos = mTypedPosition[dataType];
-        RawDataItem rawDataItem = null;
+        RawDataBlock.RawDataItem rawDataItem = null;
         while (pos < dataBlock.dataSize.length) {
-            RawDataItem tmp = dataBlock.getRawDataItem(pos);
+            RawDataBlock.RawDataItem tmp = dataBlock.getRawDataItem(pos);
             long timeOffsetMs =  dataBlock.timeOffsetMs[pos] + requestTimeMs;
             if (timeOffsetMs == position) {
                 rawDataItem = tmp;

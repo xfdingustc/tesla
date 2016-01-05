@@ -8,25 +8,25 @@ import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+
 
 /**
  * Created by Richard on 12/28/15.
  */
-public class RawDataMsgHandler extends VdbMessageHandler<RawDataItem> {
-    public RawDataMsgHandler(VdbResponse.Listener<RawDataItem> listener,
+public class RawDataMsgHandler extends VdbMessageHandler<RawDataBlock.RawDataItem> {
+    public RawDataMsgHandler(VdbResponse.Listener<RawDataBlock.RawDataItem> listener,
                              VdbResponse.ErrorListener errorListener) {
         super(VdbCommand.Factory.MSG_RawData, listener, errorListener);
     }
 
     @Override
-    protected VdbResponse<RawDataItem> parseVdbResponse(VdbAcknowledge response) {
+    protected VdbResponse<RawDataBlock.RawDataItem> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
             return null;
         }
         int dataType = response.readi32();
         byte[] data = response.readByteArray();
-        RawDataItem rawDataItem = new RawDataItem();
+        RawDataBlock.RawDataItem rawDataItem = new RawDataBlock.RawDataItem();
         rawDataItem.dataType = dataType;
         switch (dataType) {
             case RawDataBlock.RAW_DATA_ODB:

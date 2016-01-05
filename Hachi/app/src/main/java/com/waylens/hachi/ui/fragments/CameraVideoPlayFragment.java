@@ -45,7 +45,6 @@ import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.UploadUrl;
 
 import org.json.JSONArray;
@@ -168,7 +167,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     @Override
     protected void displayOverlay(int position) {
-        RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
+        RawDataBlock.RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
 //        if (mObdView != null && obd != null && obd.object != null) {
 //            mObdView.setSpeed(((OBDData) obd.object).speed);
 //            mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
@@ -177,7 +176,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 //                    .get(RawDataBlock.RAW_DATA_ODB));
 //        }
 
-        RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
+        RawDataBlock.RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
         if (mMapView != null && gps != null) {
             GPSRawData gpsRawData = (GPSRawData) gps.object;
             mMarkerOptions.getMarker().remove();
@@ -189,15 +188,15 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         }
     }
 
-    RawDataItem getRawData(int dataType, int position) {
+    RawDataBlock.RawDataItem getRawData(int dataType, int position) {
         RawDataBlock raw = mTypedRawData.get(dataType);
         if (raw == null) {
             return null;
         }
         int pos = mTypedPosition.get(dataType);
-        RawDataItem rawDataItem = null;
+        RawDataBlock.RawDataItem rawDataItem = null;
         while (pos < raw.dataSize.length) {
-            RawDataItem tmp = raw.getRawDataItem(pos);
+            RawDataBlock.RawDataItem tmp = raw.getRawDataItem(pos);
             long timeOffsetMs = raw.timeOffsetMs[pos] + raw.header.mRequestedTimeMs;
             if (timeOffsetMs == position) {
                 rawDataItem = tmp;
@@ -338,7 +337,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     void buildFullPath() {
         RawDataBlock raw = mTypedRawData.get(RawDataBlock.RAW_DATA_GPS);
         for (int i = 0; i < raw.dataSize.length; i++) {
-            RawDataItem item = raw.getRawDataItem(i);
+            RawDataBlock.RawDataItem item = raw.getRawDataItem(i);
             GPSRawData gpsRawData = (GPSRawData) item.object;
             LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
             mPolylineOptions.add(point);

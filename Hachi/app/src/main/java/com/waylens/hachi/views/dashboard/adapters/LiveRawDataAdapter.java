@@ -12,7 +12,7 @@ import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+
 
 /**
  * Created by Xiaofei on 2015/12/18.
@@ -21,7 +21,7 @@ public class LiveRawDataAdapter extends RawDataAdapter {
     private static final String TAG = LiveRawDataAdapter.class.getSimpleName();
 
     private final VdbRequestQueue mVdbRequestQueue;
-    private RawDataItem mLatestAccRawData = null;
+    private RawDataBlock.RawDataItem mLatestAccRawData = null;
 
     public LiveRawDataAdapter() {
         this.mVdbRequestQueue = Snipe.newRequestQueue();
@@ -44,9 +44,9 @@ public class LiveRawDataAdapter extends RawDataAdapter {
         });
 
         mVdbRequestQueue.add(request);
-        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
+        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataBlock.RawDataItem>() {
             @Override
-            public void onResponse(RawDataItem response) {
+            public void onResponse(RawDataBlock.RawDataItem response) {
 //                Logger.t(TAG).d(String.format("RawDataMsgHandler: Type[%d]:[%s]", response
 //                    .dataType, response.object));
 
@@ -62,7 +62,7 @@ public class LiveRawDataAdapter extends RawDataAdapter {
     }
 
     @Override
-    public RawDataItem getAccDataItem(long pts) {
+    public RawDataBlock.RawDataItem getAccDataItem(long pts) {
         /*
         LiveRawDataRequest request = new LiveRawDataRequest(0, RawDataBlock.F_RAW_DATA_GPS +
             RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
@@ -88,8 +88,8 @@ public class LiveRawDataAdapter extends RawDataAdapter {
     }
 
     @Override
-    public RawDataItem getObdDataItem(long pts) {
-        RawDataItem item = new RawDataItem();
+    public RawDataBlock.RawDataItem getObdDataItem(long pts) {
+        RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
         item.dataType = RawDataBlock.RAW_DATA_ODB;
         item.clipTimeMs = -1;
         int speed = (int) (Math.random() * 200);
@@ -101,9 +101,9 @@ public class LiveRawDataAdapter extends RawDataAdapter {
     }
 
     @Override
-    public RawDataItem getGpsDataItem(long pts) {
+    public RawDataBlock.RawDataItem getGpsDataItem(long pts) {
 
-        RawDataItem item = new RawDataItem();
+        RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
         item.dataType = RawDataBlock.RAW_DATA_GPS;
         item.clipTimeMs = -1;
 
