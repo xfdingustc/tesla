@@ -14,27 +14,33 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout
+<com.xfdingustc.far.FixedAspectRatioFrameLayout
     android:id="@+id/root_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="202dp"
-    xmlns:mapbox="http://schemas.android.com/apk/res-auto">
+    android:layout_height="0dp"
+    android:clipChildren="false"
+    app:farfl_xratio="16dp"
+    app:farfl_yratio="9dp">
 
     <com.waylens.hachi.views.DragLayout
         android:id="@+id/waylens_video_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <SurfaceView
             android:id="@+id/video_surface"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:visibility="gone"/>
+
         <FrameLayout
             android:id="@+id/video_controllers"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,12 +61,12 @@
 
                 <TextView
                     android:id="@+id/text_video_time"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
                     tools:text="00:15 / 00:42"
-                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
                     />
             </LinearLayout>
 
@@ -73,15 +79,8 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_pause_circle_outline_white_48dp"/>
         </FrameLayout>
-        <!--
-        <com.mapbox.mapboxsdk.views.MapView
-            android:id="@+id/mapboxMapView"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            mapbox:mapid="liangyx.mp66kbb8"
-            mapbox:accessToken="sk.eyJ1IjoibGlhbmd5eCIsImEiOiJjaWduYjFmajIwMGEyNjFtMzAyZ2xkNTN6In0.k1oa9ynRfAHp_3ka68JJ_w"
-            />
-            -->
+
+
         <ProgressBar
             android:id="@+id/progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -91,6 +90,7 @@
             android:layout_marginBottom="-6dp"
             android:layout_marginTop="-6dp"
             android:minHeight="16dp"/>
+
         <ProgressBar
             android:id="@+id/progress_loading"
             android:layout_width="wrap_content"
@@ -99,5 +99,14 @@
             android:visibility="gone"/>
     </com.waylens.hachi.views.DragLayout>
 
-</FrameLayout>
+
+    <com.waylens.hachi.views.dashboard.DashboardLayout
+        android:id="@+id/overlayLayout"
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:layout_gravity="center">
+
+    </com.waylens.hachi.views.dashboard.DashboardLayout>
+
+</com.xfdingustc.far.FixedAspectRatioFrameLayout>
 

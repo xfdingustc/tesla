@@ -17,15 +17,19 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.views.DragLayout;
+import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,9 +43,9 @@ import butterknife.ButterKnife;
  */
 public abstract class VideoPlayFragment extends Fragment implements View.OnClickListener,
         MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener {
+        MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
 
-    private static final String TAG = "VideoPlayFragment";
+    private static final String TAG = VideoPlayFragment.class.getSimpleName();
 
     protected static final String REQUEST_TAG = "RETRIEVE_RAW_DATA";
 
@@ -72,10 +76,13 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     public static VideoPlayFragment fullScreenPlayer;
 
     @Bind(R.id.root_container)
-    FrameLayout mRootContainer;
+    FixedAspectRatioFrameLayout mRootContainer;
 
     @Bind(R.id.waylens_video_container)
     DragLayout mVideoContainer;
+
+    @Bind(R.id.overlayLayout)
+    DashboardLayout mDashboardLayout;
 
     @Bind(R.id.video_controllers)
     FrameLayout mVideoController;
@@ -131,6 +138,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mNonUIThread = new HandlerThread("ReleaseMediaPlayer");
         mNonUIThread.start();
         mNonUIHandler = new Handler(mNonUIThread.getLooper());
+
+
     }
 
     @Override
@@ -155,6 +164,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         return view;
     }
 
+
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -167,6 +178,18 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         if (mDragListener != null) {
             mVideoContainer.setOnViewDragListener(mDragListener);
         }
+
+
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mDashboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(this);
+
+
     }
 
     @Override
@@ -223,6 +246,20 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             fullScreenPlayer = null;
         }
         mIsFullScreen = fullScreen;
+    }
+
+    @Override
+    public void onGlobalLayout() {
+
+        int width = mRootContainer.getMeasuredWidth();
+        int height = mRootContainer.getMeasuredHeight();
+        Logger.t(TAG).d("width: " + width + " height: " + height);
+        float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
+        float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
+        Logger.t(TAG).d("widthScale: " + widthScale + " heightScale: " + heightScale);
+        mDashboardLayout.setScaleX(widthScale);
+        mDashboardLayout.setScaleY(heightScale);
+        mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
     private void hideSystemUI() {

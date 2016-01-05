@@ -19,8 +19,8 @@ public class OvalProgressImageView extends ElementView {
     private Bitmap mTexture = null;
 
     private Paint mTexturePaint = null;
-    private float mAccX = 0.5f;
-    private float mAccY = 0.5f;
+    private float mAccX = 0.0f;
+    private float mAccY = 0.0f;
 
     private int mStartRadius = 0;
     private int mEndRadius = 0;
