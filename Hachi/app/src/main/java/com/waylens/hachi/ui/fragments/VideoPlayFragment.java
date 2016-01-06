@@ -236,6 +236,12 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRootView.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
+
+            mRootContainer.removeView(mDashboardLayout);
+            //FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(ViewGroup
+//                .LayoutParams.MATCH_PARENT, 1080);
+            mRootView.addView(mDashboardLayout, params);
+            calculateDashboardScaling(mRootView, true);
             fullScreenPlayer = this;
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -244,6 +250,10 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mRootContainer.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_white_36dp);
             fullScreenPlayer = null;
+
+            mRootView.removeView(mDashboardLayout);
+            mRootContainer.addView(mDashboardLayout, params);
+            calculateDashboardScaling(mRootContainer, false);
         }
         mIsFullScreen = fullScreen;
     }
@@ -251,15 +261,26 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     @Override
     public void onGlobalLayout() {
         if (mRootContainer != null) {
-            int width = mRootContainer.getMeasuredWidth();
-            int height = mRootContainer.getMeasuredHeight();
-            float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
-            float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
-            mDashboardLayout.setScaleX(widthScale);
-            mDashboardLayout.setScaleY(heightScale);
-            mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            calculateDashboardScaling(mRootContainer, false);
+
         }
     }
+
+    private void calculateDashboardScaling(View parent, boolean landScape) {
+        int width = parent.getMeasuredWidth();
+        int height = parent.getMeasuredHeight();
+        if (landScape) {
+            int temp = width;
+            width = height;
+            height = temp;
+        }
+        float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
+        float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
+        mDashboardLayout.setScaleX(widthScale);
+        mDashboardLayout.setScaleY(heightScale);
+        mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+    }
+
 
     private void hideSystemUI() {
         int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
