@@ -231,6 +231,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     private FrameLayout.LayoutParams mPortraitParams;
+    private FrameLayout.LayoutParams mPortraitInfoPanelParems;
 
     public void setFullScreen(boolean fullScreen) {
         int orientation = getActivity().getRequestedOrientation();
@@ -241,6 +242,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             mPortraitParams = (FrameLayout.LayoutParams)mDashboardLayout.getLayoutParams();
+            mPortraitInfoPanelParems = (FrameLayout.LayoutParams)mInfoPanel.getLayoutParams();
 
             mRootContainer.removeView(mVideoContainer);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -250,6 +252,10 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mRootContainer.removeView(mDashboardLayout);
             mRootView.addView(mDashboardLayout, params);
             calculateDashboardScaling(mRootView, true);
+
+            mRootContainer.removeView(mInfoPanel);
+            mRootView.addView(mInfoPanel, mPortraitInfoPanelParems);
+
             fullScreenPlayer = this;
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -263,6 +269,9 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mRootView.removeView(mDashboardLayout);
             mRootContainer.addView(mDashboardLayout, mPortraitParams);
             calculateDashboardScaling(mRootContainer, false);
+
+            mRootView.removeView(mInfoPanel);
+            mRootContainer.addView(mInfoPanel, mPortraitInfoPanelParems);
         }
         mIsFullScreen = fullScreen;
     }
@@ -291,7 +300,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             scale = mWidthScale;
         }
 
-        Logger.t(TAG).d("Set scale as: " + scale);
+//        Logger.t(TAG).d("Set scale as: " + scale);
         mDashboardLayout.setScaleX(scale);
         mDashboardLayout.setScaleY(scale);
         mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -354,6 +363,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mPausePosition = mMediaPlayer.getCurrentPosition();
         mCurrentState = STATE_PAUSED;
         mTargetState = STATE_PAUSED;
+        mBtnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
