@@ -518,7 +518,7 @@ public class ClipEditActivity extends BaseActivity {
 
     private void requestDownloadRawData() {
         Bundle params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_ACC);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RawDataItem.RAW_DATA_ACC);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mSelectedClipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mSelectedClipFragment.getDurationMs());
 
@@ -539,7 +539,7 @@ public class ClipEditActivity extends BaseActivity {
         mVdbRequestQueue.add(accRequest);
 
         params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_GPS);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RawDataItem.RAW_DATA_GPS);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mSelectedClipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mSelectedClipFragment.getDurationMs());
         RawDataBlockRequest gpsRequest = new RawDataBlockRequest(mSelectedClipFragment.getClip().cid,
@@ -558,7 +558,7 @@ public class ClipEditActivity extends BaseActivity {
         mVdbRequestQueue.add(gpsRequest);
 
         params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_ODB);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RawDataItem.RAW_DATA_ODB);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mSelectedClipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mSelectedClipFragment.getDurationMs());
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(mSelectedClipFragment.getClip().cid, params,

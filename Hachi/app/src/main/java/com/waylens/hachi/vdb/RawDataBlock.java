@@ -8,21 +8,32 @@ import java.util.List;
  */
 public class RawDataBlock {
     public static class RawDataItem {
-        public int dataType;
-        public long clipTimeMs;
+        public static final int RAW_DATA_NULL = 0;
+        public static final int RAW_DATA_GPS = 1;
+        public static final int RAW_DATA_ACC = 2;
+        public static final int RAW_DATA_ODB = 3;
+
+        private final int mType;
+        private final long mPtsMs;
         public Object object; // GPSRawData for RAW_DATA_GPS
+
+        public RawDataItem(int type, long ptsMs) {
+            this.mType = type;
+            this.mPtsMs = ptsMs;
+        }
+
+        public int getType() {
+            return mType;
+        }
+
+        public long getPtsMs() {
+            return mPtsMs;
+        }
     }
 
-    public static final int RAW_DATA_NULL = 0;
-    public static final int RAW_DATA_GPS = 1;
-    public static final int RAW_DATA_ACC = 2;
-    public static final int RAW_DATA_ODB = 3;
-
-
-
-    public static final byte F_RAW_DATA_GPS = (1 << RAW_DATA_GPS);
-    public static final byte F_RAW_DATA_ACC = (1 << RAW_DATA_ACC);
-    public static final byte F_RAW_DATA_ODB = (1 << RAW_DATA_ODB);
+    public static final byte F_RAW_DATA_GPS = (1 << RawDataItem.RAW_DATA_GPS);
+    public static final byte F_RAW_DATA_ACC = (1 << RawDataItem.RAW_DATA_ACC);
+    public static final byte F_RAW_DATA_ODB = (1 << RawDataItem.RAW_DATA_ODB);
 
     public static class RawDataBlockHeader {
         public final Clip.ID cid;

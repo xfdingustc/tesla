@@ -26,16 +26,15 @@ public class RawDataMsgHandler extends VdbMessageHandler<RawDataBlock.RawDataIte
         }
         int dataType = response.readi32();
         byte[] data = response.readByteArray();
-        RawDataBlock.RawDataItem rawDataItem = new RawDataBlock.RawDataItem();
-        rawDataItem.dataType = dataType;
+        RawDataBlock.RawDataItem rawDataItem = new RawDataBlock.RawDataItem(dataType, 0);
         switch (dataType) {
-            case RawDataBlock.RAW_DATA_ODB:
+            case RawDataBlock.RawDataItem.RAW_DATA_ODB:
                 rawDataItem.object = OBDData.parse(data);
                 break;
-            case RawDataBlock.RAW_DATA_ACC:
+            case RawDataBlock.RawDataItem.RAW_DATA_ACC:
                 rawDataItem.object = AccData.parse(data);
                 break;
-            case RawDataBlock.RAW_DATA_GPS:
+            case RawDataBlock.RawDataItem.RAW_DATA_GPS:
                 rawDataItem.object = GPSRawData.translate(data);
                 break;
             default:

@@ -284,9 +284,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     boolean isRawDataReady() {
-        return mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_READY
-            && mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_READY
-            && mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
+        return mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ODB) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ACC) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
     }
 
     @OnClick(R.id.video_surface)
@@ -611,7 +611,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 //            return;
 //        }
 
-        RawDataBlock.RawDataItem obd = getRawData(RawDataBlock.RAW_DATA_ODB, position);
+        RawDataBlock.RawDataItem obd = getRawData(RawDataBlock.RawDataItem.RAW_DATA_ODB, position);
 //        if (obd != null && obd.object != null) {
 //            mObdView.setSpeed(((OBDData) obd.object).speed);
 //            mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
@@ -620,7 +620,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 //                .get(RawDataBlock.RAW_DATA_ODB));
 //        }
 
-        RawDataBlock.RawDataItem gps = getRawData(RawDataBlock.RAW_DATA_GPS, position);
+        RawDataBlock.RawDataItem gps = getRawData(RawDataBlock.RawDataItem.RAW_DATA_GPS, position);
         if (gps != null) {
             GPSRawData gpsRawData = (GPSRawData) gps.object;
             mMarkerOptions.getMarker().remove();
@@ -734,15 +734,15 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mTypedState.clear();
         mTypedPosition.clear();
 
-        if (mTypedState.get(RawDataBlock.RAW_DATA_ODB) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataBlock.RAW_DATA_ODB);
+        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ODB) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ODB);
         }
 
-        if (mTypedState.get(RawDataBlock.RAW_DATA_ACC) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataBlock.RAW_DATA_ACC);
+        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ACC) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ACC);
         }
-        if (mTypedState.get(RawDataBlock.RAW_DATA_GPS) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataBlock.RAW_DATA_GPS);
+        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_GPS);
         }
     }
 
@@ -782,9 +782,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     void onLoadRawDataFinished() {
-        if (mTypedState.get(RawDataBlock.RAW_DATA_ODB) == RAW_DATA_STATE_UNKNOWN
-            || mTypedState.get(RawDataBlock.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
-            || mTypedState.get(RawDataBlock.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
+        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ODB) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
         mRawDataState = RAW_DATA_STATE_READY;
@@ -798,7 +798,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 //            mDragLayout.addView(mObdView, params);
 //        }
 
-        if (mTypedRawData.get(RawDataBlock.RAW_DATA_GPS) != null && mMapView == null) {
+        if (mTypedRawData.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) != null && mMapView == null) {
             initMapView();
         }
     }
@@ -811,7 +811,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mMapView.setLogoVisibility(View.GONE);
         mMapView.setCompassEnabled(false);
         mMapView.onCreate(null);
-        GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataBlock.RAW_DATA_GPS).getRawDataItem(0).object;
+        GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataBlock.RawDataItem.RAW_DATA_GPS).getRawDataItem(0).object;
         SpriteFactory spriteFactory = new SpriteFactory(mMapView);
         LatLng firstPoint = new LatLng(firstGPS.coord.lat_orig, firstGPS.coord.lng_orig);
         mMarkerOptions = new MarkerOptions().position(firstPoint)
@@ -840,7 +840,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     void buildFullPath() {
-        RawDataBlock raw = mTypedRawData.get(RawDataBlock.RAW_DATA_GPS);
+        RawDataBlock raw = mTypedRawData.get(RawDataBlock.RawDataItem.RAW_DATA_GPS);
         for (int i = 0; i < raw.dataSize.length; i++) {
             RawDataBlock.RawDataItem item = raw.getRawDataItem(i);
             GPSRawData gpsRawData = (GPSRawData) item.object;

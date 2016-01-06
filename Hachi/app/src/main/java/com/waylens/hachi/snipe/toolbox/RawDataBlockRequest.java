@@ -32,7 +32,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
                                VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         this.mCid = cid;
-        this.mDataType = params.getInt(PARAM_DATA_TYPE, RawDataBlock.RAW_DATA_NULL);
+        this.mDataType = params.getInt(PARAM_DATA_TYPE, RawDataBlock.RawDataItem.RAW_DATA_NULL);
         mClipTimeMs = params.getLong(PARAM_CLIP_TIME, 0);
         mDuration = params.getInt(PARAM_CLIP_LENGTH, 0);
     }
@@ -74,15 +74,14 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
 
         for (int i = 0; i < numItems; i++) {
-            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
-            item.dataType = header.mDataType;
-            item.clipTimeMs = block.timeOffsetMs[i] + header.mRequestedTimeMs;
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(header.mDataType, block.timeOffsetMs[i] + header.mRequestedTimeMs);
+
             byte[] data = response.readByteArray(block.dataSize[i]);
-            if (header.mDataType == RawDataBlock.RAW_DATA_ODB) {
+            if (header.mDataType == RawDataBlock.RawDataItem.RAW_DATA_ODB) {
                 item.object = OBDData.parse(data);
-            } else if (header.mDataType == RawDataBlock.RAW_DATA_ACC) {
+            } else if (header.mDataType == RawDataBlock.RawDataItem.RAW_DATA_ACC) {
                 item.object = AccData.parse(data);
-            } else if (header.mDataType == RawDataBlock.RAW_DATA_GPS) {
+            } else if (header.mDataType == RawDataBlock.RawDataItem.RAW_DATA_GPS) {
                 item.object = GPSRawData.translate(data);
             }
 

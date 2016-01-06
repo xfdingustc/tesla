@@ -121,13 +121,13 @@ public class RawDataFactory {
             return RAW_DATA_STATE_FINISHED;
         }
         if ((options & RawDataBlock.F_RAW_DATA_GPS) == RawDataBlock.F_RAW_DATA_GPS) {
-            loadRawData(RawDataBlock.RAW_DATA_GPS);
+            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_GPS);
         }
         if ((options & RawDataBlock.F_RAW_DATA_ACC) == RawDataBlock.F_RAW_DATA_ACC) {
-            loadRawData(RawDataBlock.RAW_DATA_ACC);
+            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ACC);
         }
         if ((options & RawDataBlock.F_RAW_DATA_ODB) == RawDataBlock.F_RAW_DATA_ODB) {
-            loadRawData(RawDataBlock.RAW_DATA_ODB);
+            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ODB);
         }
         mStartTimeMs += mDuration;
         return RAW_DATA_STATE_READY;

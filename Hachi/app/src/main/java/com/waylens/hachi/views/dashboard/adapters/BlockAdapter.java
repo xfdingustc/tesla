@@ -46,7 +46,7 @@ public class BlockAdapter extends RawDataAdapter {
 
         for (int i = 0; i < datablock.header.mNumItems; i++) {
             RawDataBlock.RawDataItem item = datablock.getRawDataItem(i);
-            if (item.clipTimeMs > pts) {
+            if (item.getPtsMs() > pts) {
                 return item;
             }
         }

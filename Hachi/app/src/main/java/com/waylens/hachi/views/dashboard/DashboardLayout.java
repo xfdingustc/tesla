@@ -124,12 +124,12 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
         updateCurrentTime(System.currentTimeMillis());
 
-        switch (item.dataType) {
-            case RawDataBlock.RAW_DATA_GPS:
+        switch (item.getType()) {
+            case RawDataBlock.RawDataItem.RAW_DATA_GPS:
                 GPSRawData gpsRawData = (GPSRawData) item.object;
                 mEventBus.postEvent(EventConstants.EVENT_GPS, gpsRawData);
                 break;
-            case RawDataBlock.RAW_DATA_ACC:
+            case RawDataBlock.RawDataItem.RAW_DATA_ACC:
                 AccData accData = (AccData) item.object;
                 mEventBus.postEvent(EventConstants.EVENT_ROLL, -accData.euler_roll / 1000);
                 mEventBus.postEvent(EventConstants.EVENT_ROLL_NUM, String.valueOf(-accData.euler_roll / 1000));
@@ -142,7 +142,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
                 mEventBus.postEvent(EventConstants.EVENT_ACC_X, String.valueOf(format.format(accX)));
                 mEventBus.postEvent(EventConstants.EVENT_ACC_Z, String.valueOf(format.format(accZ)));
                 break;
-            case RawDataBlock.RAW_DATA_ODB:
+            case RawDataBlock.RawDataItem.RAW_DATA_ODB:
                 OBDData obdData = (OBDData) item.object;
                 mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
                 int rpm = obdData.rpm / 1000;

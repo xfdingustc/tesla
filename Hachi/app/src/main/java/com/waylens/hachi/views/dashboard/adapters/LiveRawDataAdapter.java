@@ -89,9 +89,9 @@ public class LiveRawDataAdapter extends RawDataAdapter {
 
     @Override
     public RawDataBlock.RawDataItem getObdDataItem(long pts) {
-        RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
-        item.dataType = RawDataBlock.RAW_DATA_ODB;
-        item.clipTimeMs = -1;
+        RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
+            .RAW_DATA_ODB, -1);
+
         int speed = (int) (Math.random() * 200);
         int temperater = (int) (Math.random() * 100);
         int rpm = (int) (Math.random() * 12000);
@@ -103,9 +103,8 @@ public class LiveRawDataAdapter extends RawDataAdapter {
     @Override
     public RawDataBlock.RawDataItem getGpsDataItem(long pts) {
 
-        RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
-        item.dataType = RawDataBlock.RAW_DATA_GPS;
-        item.clipTimeMs = -1;
+        RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
+            .RAW_DATA_GPS, -1);
 
         GPSRawData data = new GPSRawData();
         data.speed = 0;

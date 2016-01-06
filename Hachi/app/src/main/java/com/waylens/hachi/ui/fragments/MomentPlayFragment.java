@@ -284,9 +284,9 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
 
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
-            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
-            item.dataType = RawDataBlock.RAW_DATA_ODB;
-            item.clipTimeMs = captureTime;
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
+                .RAW_DATA_ODB, captureTime);
+
             OBDData data = new OBDData(speed, temperature, rpm);
             item.object = data;
             mOBDData.add(item);
@@ -298,9 +298,8 @@ public class MomentPlayFragment extends VideoPlayFragment {
                                int eulerHeading, int eulerRoll, int eulerPitch,
                                int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
                                int pressure) {
-            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
-            item.dataType = RawDataBlock.RAW_DATA_ACC;
-            item.clipTimeMs = captureTime;
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
+                .RAW_DATA_ACC, captureTime);
             AccData data = new AccData();
 
             data.accX = accX;
@@ -314,9 +313,8 @@ public class MomentPlayFragment extends VideoPlayFragment {
         }
 
         public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
-            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
-            item.dataType = RawDataBlock.RAW_DATA_GPS;
-            item.clipTimeMs = captureTime;
+            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
+                .RAW_DATA_GPS, captureTime);
             GPSRawData data = new GPSRawData();
             data.coord.lat = latitude;
             data.coord.lat_orig = latitude;
@@ -347,7 +345,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
             }
 
             RawDataBlock.RawDataItem item = list.get(index);
-            if (item.clipTimeMs < currentTime) {
+            if (item.getPtsMs() < currentTime) {
                 fromPosition++;
                 notifyDataSetChanged(item);
                 return true;

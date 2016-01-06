@@ -60,16 +60,14 @@ public class RawDataRequest extends VdbRequest<RawData> {
             int size = response.readi32();
 
             if (size > 0) {
-                RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem();
-                item.dataType = dataType;
-                item.clipTimeMs = clipTimeMs;
+                RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(dataType, clipTimeMs);
 
                 byte[] data = response.readByteArray(size);
-                if (dataType == RawDataBlock.RAW_DATA_GPS) {
+                if (dataType == RawDataBlock.RawDataItem.RAW_DATA_GPS) {
                     item.object = GPSRawData.translate(data);
-                } else if (dataType == RawDataBlock.RAW_DATA_ACC) {
+                } else if (dataType == RawDataBlock.RawDataItem.RAW_DATA_ACC) {
                     item.object = AccData.parse(data);
-                } else if (dataType == RawDataBlock.RAW_DATA_ODB) {
+                } else if (dataType == RawDataBlock.RawDataItem.RAW_DATA_ODB) {
                     item.object = OBDData.parse(data);
                 }
 
