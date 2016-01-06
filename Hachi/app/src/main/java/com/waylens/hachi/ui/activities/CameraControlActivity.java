@@ -48,8 +48,8 @@ import butterknife.OnClick;
  */
 
 
-public class CameraControlActivity2 extends BaseActivity {
-    private static final String TAG = CameraControlActivity2.class.getSimpleName();
+public class CameraControlActivity extends BaseActivity {
+    private static final String TAG = CameraControlActivity.class.getSimpleName();
     private static final String TAG_GET_BOOKMARK_COUNT = "get.bookmark.count";
 
     private VdtCamera mVdtCamera;
@@ -66,7 +66,7 @@ public class CameraControlActivity2 extends BaseActivity {
     int mBookmarkClickCount;
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
-        Intent intent = new Intent(startingActivity, CameraControlActivity2.class);
+        Intent intent = new Intent(startingActivity, CameraControlActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
         bundle.putString(SSID, camera.getSSID());
@@ -210,7 +210,7 @@ public class CameraControlActivity2 extends BaseActivity {
             this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         }
-        setContentView(R.layout.activity_camera_control2);
+        setContentView(R.layout.activity_camera_control);
 
         if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             mBtnFullScreen.setImageResource(R.drawable.screen_narrow);

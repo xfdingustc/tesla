@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.FullScreenPlayActivity;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
@@ -228,34 +229,36 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     public void setFullScreen(boolean fullScreen) {
         int orientation = getActivity().getRequestedOrientation();
-        if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
-            hideSystemUI();
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            mRootContainer.removeView(mVideoContainer);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            mRootView.addView(mVideoContainer, params);
-            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
 
-            mRootContainer.removeView(mDashboardLayout);
-            //FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(ViewGroup
-//                .LayoutParams.MATCH_PARENT, 1080);
-            mRootView.addView(mDashboardLayout, params);
-            calculateDashboardScaling(mRootView, true);
-            fullScreenPlayer = this;
-        } else {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mRootView.removeView(mVideoContainer);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            mRootContainer.addView(mVideoContainer, params);
-            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_white_36dp);
-            fullScreenPlayer = null;
+        FullScreenPlayActivity.launch(getActivity());
+        return;
 
-            mRootView.removeView(mDashboardLayout);
-            mRootContainer.addView(mDashboardLayout, params);
-            calculateDashboardScaling(mRootContainer, false);
-        }
-        mIsFullScreen = fullScreen;
+//        if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+//            hideSystemUI();
+//            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//            mRootContainer.removeView(mVideoContainer);
+//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//            mRootView.addView(mVideoContainer, params);
+//            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
+//
+//            mRootContainer.removeView(mDashboardLayout);
+//            mRootView.addView(mDashboardLayout, params);
+//            calculateDashboardScaling(mRootView, true);
+//            fullScreenPlayer = this;
+//        } else {
+//            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//            mRootView.removeView(mVideoContainer);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//            mRootContainer.addView(mVideoContainer, params);
+//            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_white_36dp);
+//            fullScreenPlayer = null;
+//
+//            mRootView.removeView(mDashboardLayout);
+//            mRootContainer.addView(mDashboardLayout, params);
+//            calculateDashboardScaling(mRootContainer, false);
+//        }
+//        mIsFullScreen = fullScreen;
     }
 
     @Override
@@ -277,7 +280,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
         float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
         mDashboardLayout.setScaleX(widthScale);
-        mDashboardLayout.setScaleY(heightScale);
+        mDashboardLayout.setScaleY(widthScale);
         mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 

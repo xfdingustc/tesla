@@ -60,7 +60,6 @@
             android:theme="@style/AppTheme.NoBackground">
         </activity>
 
-        <activity android:name=".ui.activities.CameraControlActivity2"/>
         <activity
             android:name="com.transee.viditcam.app.AddCameraActivity"
             android:label="@string/title_activity_add_camera">
@@ -86,6 +85,10 @@
             android:name="com.transee.viditcam.app.AppSetupActivity"
             android:label="@string/title_activity_app_setup">
         </activity>
+
+        <activity android:name=".ui.activities.FullScreenPlayActivity"
+                  android:screenOrientation="landscape"
+            />
         <!-- END COPY Vidit App -->
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
