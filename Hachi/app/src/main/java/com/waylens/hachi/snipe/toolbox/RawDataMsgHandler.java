@@ -8,33 +8,34 @@ import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 
 
 /**
  * Created by Richard on 12/28/15.
  */
-public class RawDataMsgHandler extends VdbMessageHandler<RawDataBlock.RawDataItem> {
-    public RawDataMsgHandler(VdbResponse.Listener<RawDataBlock.RawDataItem> listener,
+public class RawDataMsgHandler extends VdbMessageHandler<RawDataItem> {
+    public RawDataMsgHandler(VdbResponse.Listener<RawDataItem> listener,
                              VdbResponse.ErrorListener errorListener) {
         super(VdbCommand.Factory.MSG_RawData, listener, errorListener);
     }
 
     @Override
-    protected VdbResponse<RawDataBlock.RawDataItem> parseVdbResponse(VdbAcknowledge response) {
+    protected VdbResponse<RawDataItem> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
             return null;
         }
         int dataType = response.readi32();
         byte[] data = response.readByteArray();
-        RawDataBlock.RawDataItem rawDataItem = new RawDataBlock.RawDataItem(dataType, 0);
+        RawDataItem rawDataItem = new RawDataItem(dataType, 0);
         switch (dataType) {
-            case RawDataBlock.RawDataItem.RAW_DATA_ODB:
+            case RawDataItem.RAW_DATA_ODB:
                 rawDataItem.object = OBDData.parse(data);
                 break;
-            case RawDataBlock.RawDataItem.RAW_DATA_ACC:
+            case RawDataItem.RAW_DATA_ACC:
                 rawDataItem.object = AccData.parse(data);
                 break;
-            case RawDataBlock.RawDataItem.RAW_DATA_GPS:
+            case RawDataItem.RAW_DATA_GPS:
                 rawDataItem.object = GPSRawData.translate(data);
                 break;
             default:

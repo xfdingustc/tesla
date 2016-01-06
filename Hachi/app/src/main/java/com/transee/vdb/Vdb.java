@@ -17,6 +17,7 @@ import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 
 abstract public class Vdb {
 
@@ -570,7 +571,7 @@ abstract public class Vdb {
 
         @Override
         public void onRawDataBlockAsync(final RawDataBlock block) {
-            if (block.header.mDataType == RawDataBlock.RawDataItem.RAW_DATA_GPS) {
+            if (block.header.mDataType == RawDataItem.RAW_DATA_GPS) {
                 handleGPSDataBlock(block);
             } else {
                 mHandler.post(new Runnable() {

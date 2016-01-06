@@ -11,8 +11,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
@@ -23,6 +21,7 @@ import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
 
 import org.json.JSONArray;
@@ -118,7 +117,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
     }
 
 
-
     @Override
     protected void onPlayCompletion() {
 
@@ -132,7 +130,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
         mDashboardLayout.setAdapter(mRawDataAdapter);
         openVideo();
     }
-
 
 
     void onLoadRawDataError(String msg) {
@@ -268,9 +265,9 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     private static class MomentRawDataAdapter extends RawDataAdapter {
         private static final String TAG = MomentRawDataAdapter.class.getSimpleName();
-        List<RawDataBlock.RawDataItem> mOBDData = new ArrayList<>();
-        List<RawDataBlock.RawDataItem> mAccData = new ArrayList<>();
-        List<RawDataBlock.RawDataItem> mGPSData = new ArrayList<>();
+        List<RawDataItem> mOBDData = new ArrayList<>();
+        List<RawDataItem> mAccData = new ArrayList<>();
+        List<RawDataItem> mGPSData = new ArrayList<>();
 
         private int mObdDataIndex = 0;
         private int mAccDataIndex = 0;
@@ -284,8 +281,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
 
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
-            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
-                .RAW_DATA_ODB, captureTime);
+            RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_ODB, captureTime);
 
             OBDData data = new OBDData(speed, temperature, rpm);
             item.object = data;
@@ -298,8 +294,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                                int eulerHeading, int eulerRoll, int eulerPitch,
                                int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
                                int pressure) {
-            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
-                .RAW_DATA_ACC, captureTime);
+            RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_ACC, captureTime);
             AccData data = new AccData();
 
             data.accX = accX;
@@ -313,8 +308,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
         }
 
         public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
-            RawDataBlock.RawDataItem item = new RawDataBlock.RawDataItem(RawDataBlock.RawDataItem
-                .RAW_DATA_GPS, captureTime);
+            RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_GPS, captureTime);
             GPSRawData data = new GPSRawData();
             data.coord.lat = latitude;
             data.coord.lat_orig = latitude;
@@ -338,13 +332,13 @@ public class MomentPlayFragment extends VideoPlayFragment {
             }
         }
 
-        private boolean checkIfUpdated(List<RawDataBlock.RawDataItem> list, int fromPosition, int currentTime) {
+        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
             int index = fromPosition;
             if (index >= list.size()) {
                 return false;
             }
 
-            RawDataBlock.RawDataItem item = list.get(index);
+            RawDataItem item = list.get(index);
             if (item.getPtsMs() < currentTime) {
                 fromPosition++;
                 notifyDataSetChanged(item);
@@ -355,17 +349,17 @@ public class MomentPlayFragment extends VideoPlayFragment {
         }
 
         @Override
-        public RawDataBlock.RawDataItem getAccDataItem(long pts) {
+        public RawDataItem getAccDataItem(long pts) {
             return null;
         }
 
         @Override
-        public RawDataBlock.RawDataItem getObdDataItem(long pts) {
+        public RawDataItem getObdDataItem(long pts) {
             return null;
         }
 
         @Override
-        public RawDataBlock.RawDataItem getGpsDataItem(long pts) {
+        public RawDataItem getGpsDataItem(long pts) {
             return null;
         }
     }

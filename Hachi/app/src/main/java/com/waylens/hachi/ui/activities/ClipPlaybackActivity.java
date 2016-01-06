@@ -27,6 +27,7 @@ import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
 import com.waylens.hachi.views.dashboard.adapters.BlockAdapter;
 
@@ -121,7 +122,7 @@ public class ClipPlaybackActivity extends BaseActivity {
 
         ClipFragment clipFragment = new ClipFragment(mClip);
         Bundle params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RawDataItem.RAW_DATA_ACC);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.RAW_DATA_ACC);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
 
@@ -141,7 +142,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         mVdbRequestQueue.add(accRequest);
 
         params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RawDataItem.RAW_DATA_GPS);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.RAW_DATA_GPS);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
 
@@ -160,7 +161,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         mVdbRequestQueue.add(gpsRequest);
 
         params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataBlock.RawDataItem.RAW_DATA_ODB);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.RAW_DATA_ODB);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,

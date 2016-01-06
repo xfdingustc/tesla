@@ -13,6 +13,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class RawDataFactory {
         return mTypedState[dataType];
     }
 
-    public RawDataBlock.RawDataItem getRawDataAt(int dataType, int position) {
+    public RawDataItem getRawDataAt(int dataType, int position) {
         RawDataBlock dataBlock = getNextBlock(dataType, position);
         if (dataBlock == null) {
             return null;
@@ -71,9 +72,9 @@ public class RawDataFactory {
 
         long requestTimeMs = dataBlock.header.mRequestedTimeMs;
         int pos = mTypedPosition[dataType];
-        RawDataBlock.RawDataItem rawDataItem = null;
+        RawDataItem rawDataItem = null;
         while (pos < dataBlock.dataSize.length) {
-            RawDataBlock.RawDataItem tmp = dataBlock.getRawDataItem(pos);
+            RawDataItem tmp = dataBlock.getRawDataItem(pos);
             long timeOffsetMs =  dataBlock.timeOffsetMs[pos] + requestTimeMs;
             if (timeOffsetMs == position) {
                 rawDataItem = tmp;
@@ -121,13 +122,13 @@ public class RawDataFactory {
             return RAW_DATA_STATE_FINISHED;
         }
         if ((options & RawDataBlock.F_RAW_DATA_GPS) == RawDataBlock.F_RAW_DATA_GPS) {
-            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_GPS);
+            loadRawData(RawDataItem.RAW_DATA_GPS);
         }
         if ((options & RawDataBlock.F_RAW_DATA_ACC) == RawDataBlock.F_RAW_DATA_ACC) {
-            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ACC);
+            loadRawData(RawDataItem.RAW_DATA_ACC);
         }
         if ((options & RawDataBlock.F_RAW_DATA_ODB) == RawDataBlock.F_RAW_DATA_ODB) {
-            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ODB);
+            loadRawData(RawDataItem.RAW_DATA_ODB);
         }
         mStartTimeMs += mDuration;
         return RAW_DATA_STATE_READY;

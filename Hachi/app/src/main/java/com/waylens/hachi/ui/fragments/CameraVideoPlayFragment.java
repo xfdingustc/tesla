@@ -45,6 +45,7 @@ import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.UploadUrl;
 
 import org.json.JSONArray;
@@ -93,9 +94,9 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.setArguments(args);
         fragment.mVdbRequestQueue = vdbRequestQueue;
         fragment.mClip = clip;
-        fragment.mTypedState.put(RawDataBlock.RawDataItem.RAW_DATA_ODB, RAW_DATA_STATE_UNKNOWN);
-        fragment.mTypedState.put(RawDataBlock.RawDataItem.RAW_DATA_ACC, RAW_DATA_STATE_UNKNOWN);
-        fragment.mTypedState.put(RawDataBlock.RawDataItem.RAW_DATA_GPS, RAW_DATA_STATE_UNKNOWN);
+        fragment.mTypedState.put(RawDataItem.RAW_DATA_ODB, RAW_DATA_STATE_UNKNOWN);
+        fragment.mTypedState.put(RawDataItem.RAW_DATA_ACC, RAW_DATA_STATE_UNKNOWN);
+        fragment.mTypedState.put(RawDataItem.RAW_DATA_GPS, RAW_DATA_STATE_UNKNOWN);
         fragment.mDragListener = listener;
         return fragment;
     }
@@ -167,7 +168,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     @Override
     protected void displayOverlay(int position) {
-        RawDataBlock.RawDataItem obd = getRawData(RawDataBlock.RawDataItem.RAW_DATA_ODB, position);
+        RawDataItem obd = getRawData(RawDataItem.RAW_DATA_ODB, position);
 //        if (mObdView != null && obd != null && obd.object != null) {
 //            mObdView.setSpeed(((OBDData) obd.object).speed);
 //            mObdView.setTargetValue(((OBDData) obd.object).rpm / 1000.0f);
@@ -176,7 +177,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 //                    .get(RawDataBlock.RAW_DATA_ODB));
 //        }
 
-        RawDataBlock.RawDataItem gps = getRawData(RawDataBlock.RawDataItem.RAW_DATA_GPS, position);
+        RawDataItem gps = getRawData(RawDataItem.RAW_DATA_GPS, position);
         if (mMapView != null && gps != null) {
             GPSRawData gpsRawData = (GPSRawData) gps.object;
             mMarkerOptions.getMarker().remove();
@@ -188,15 +189,15 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         }
     }
 
-    RawDataBlock.RawDataItem getRawData(int dataType, int position) {
+    RawDataItem getRawData(int dataType, int position) {
         RawDataBlock raw = mTypedRawData.get(dataType);
         if (raw == null) {
             return null;
         }
         int pos = mTypedPosition.get(dataType);
-        RawDataBlock.RawDataItem rawDataItem = null;
+        RawDataItem rawDataItem = null;
         while (pos < raw.dataSize.length) {
-            RawDataBlock.RawDataItem tmp = raw.getRawDataItem(pos);
+            RawDataItem tmp = raw.getRawDataItem(pos);
             long timeOffsetMs = raw.timeOffsetMs[pos] + raw.header.mRequestedTimeMs;
             if (timeOffsetMs == position) {
                 rawDataItem = tmp;
@@ -220,22 +221,22 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     boolean isRawDataReady() {
-        return mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ODB) == RAW_DATA_STATE_READY
-            && mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ACC) == RAW_DATA_STATE_READY
-            && mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
+        return mTypedState.get(RawDataItem.RAW_DATA_ODB) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataItem.RAW_DATA_ACC) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataItem.RAW_DATA_GPS) == RAW_DATA_STATE_READY;
     }
 
     void loadRawData() {
         mProgressLoading.setVisibility(View.VISIBLE);
-        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ODB) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ODB);
+        if (mTypedState.get(RawDataItem.RAW_DATA_ODB) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataItem.RAW_DATA_ODB);
         }
 
-        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ACC) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_ACC);
+        if (mTypedState.get(RawDataItem.RAW_DATA_ACC) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataItem.RAW_DATA_ACC);
         }
-        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataBlock.RawDataItem.RAW_DATA_GPS);
+        if (mTypedState.get(RawDataItem.RAW_DATA_GPS) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataItem.RAW_DATA_GPS);
         }
     }
 
@@ -275,9 +276,9 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     void onLoadRawDataFinished() {
-        if (mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ODB) == RAW_DATA_STATE_UNKNOWN
-            || mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
-            || mTypedState.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
+        if (mTypedState.get(RawDataItem.RAW_DATA_ODB) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataItem.RAW_DATA_ACC) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataItem.RAW_DATA_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
         mRawDataState = RAW_DATA_STATE_READY;
@@ -291,7 +292,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 //            mVideoContainer.addView(mObdView, params);
 //        }
 
-        if (mTypedRawData.get(RawDataBlock.RawDataItem.RAW_DATA_GPS) != null && mMapView == null) {
+        if (mTypedRawData.get(RawDataItem.RAW_DATA_GPS) != null && mMapView == null) {
             initMapView();
         }
     }
@@ -304,7 +305,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         mMapView.setCompassEnabled(false);
         mMapView.onCreate(null);
         setOvalOutline();
-        GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataBlock.RawDataItem.RAW_DATA_GPS).getRawDataItem(0).object;
+        GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataItem.RAW_DATA_GPS).getRawDataItem(0).object;
         SpriteFactory spriteFactory = new SpriteFactory(mMapView);
         LatLng firstPoint = new LatLng(firstGPS.coord.lat_orig, firstGPS.coord.lng_orig);
         mMarkerOptions = new MarkerOptions().position(firstPoint)
@@ -335,9 +336,9 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     void buildFullPath() {
-        RawDataBlock raw = mTypedRawData.get(RawDataBlock.RawDataItem.RAW_DATA_GPS);
+        RawDataBlock raw = mTypedRawData.get(RawDataItem.RAW_DATA_GPS);
         for (int i = 0; i < raw.dataSize.length; i++) {
-            RawDataBlock.RawDataItem item = raw.getRawDataItem(i);
+            RawDataItem item = raw.getRawDataItem(i);
             GPSRawData gpsRawData = (GPSRawData) item.object;
             LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
             mPolylineOptions.add(point);

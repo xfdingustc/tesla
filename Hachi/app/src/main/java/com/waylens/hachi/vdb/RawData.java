@@ -10,7 +10,7 @@ public class RawData {
 
     public final Clip.ID cid;
     public int clipDate;
-    public List<RawDataBlock.RawDataItem> items = new ArrayList<>();
+    public List<RawDataItem> items = new ArrayList<>();
 
     public RawData(Clip.ID cid) {
         this.cid = cid;
