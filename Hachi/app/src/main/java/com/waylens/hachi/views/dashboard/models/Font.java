@@ -47,7 +47,7 @@ public class Font {
                     JSONObject fontElement = resourceArray.getJSONObject(i);
                     String key = fontElement.getString(TAG_KEY);
                     String value = fontElement.getString(TAG_VALUE);
-                    Logger.t(TAG).d("Add Font element: key = " + key + " value = " + value);
+//                    Logger.t(TAG).d("Add Font element: key = " + key + " value = " + value);
                     InputStream in = context.getAssets().open(value);
                     Bitmap resource = BitmapFactory.decodeStream(in);
 

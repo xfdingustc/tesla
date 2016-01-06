@@ -106,6 +106,9 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     @Bind(R.id.text_video_time)
     TextView mVideoTime;
 
+    @Bind(R.id.infoPanel)
+    LinearLayout mInfoPanel;
+
     protected OnViewDragListener mDragListener;
 
     SurfaceHolder mSurfaceHolder;
@@ -227,38 +230,41 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         openVideo();
     }
 
+    private FrameLayout.LayoutParams mPortraitParams;
+
     public void setFullScreen(boolean fullScreen) {
         int orientation = getActivity().getRequestedOrientation();
 
-        FullScreenPlayActivity.launch(getActivity());
-        return;
 
-//        if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-//                || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
-//            hideSystemUI();
-//            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//            mRootContainer.removeView(mVideoContainer);
-//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//            mRootView.addView(mVideoContainer, params);
-//            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
-//
-//            mRootContainer.removeView(mDashboardLayout);
-//            mRootView.addView(mDashboardLayout, params);
-//            calculateDashboardScaling(mRootView, true);
-//            fullScreenPlayer = this;
-//        } else {
-//            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            mRootView.removeView(mVideoContainer);
-//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//            mRootContainer.addView(mVideoContainer, params);
-//            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_white_36dp);
-//            fullScreenPlayer = null;
-//
-//            mRootView.removeView(mDashboardLayout);
-//            mRootContainer.addView(mDashboardLayout, params);
-//            calculateDashboardScaling(mRootContainer, false);
-//        }
-//        mIsFullScreen = fullScreen;
+        if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+            hideSystemUI();
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            mPortraitParams = (FrameLayout.LayoutParams)mDashboardLayout.getLayoutParams();
+
+            mRootContainer.removeView(mVideoContainer);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mRootView.addView(mVideoContainer, params);
+            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
+
+            mRootContainer.removeView(mDashboardLayout);
+            mRootView.addView(mDashboardLayout, params);
+            calculateDashboardScaling(mRootView, true);
+            fullScreenPlayer = this;
+        } else {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mRootView.removeView(mVideoContainer);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mRootContainer.addView(mVideoContainer, params);
+            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_white_36dp);
+            fullScreenPlayer = null;
+
+
+            mRootView.removeView(mDashboardLayout);
+            mRootContainer.addView(mDashboardLayout, mPortraitParams);
+            calculateDashboardScaling(mRootContainer, false);
+        }
+        mIsFullScreen = fullScreen;
     }
 
     @Override
@@ -269,18 +275,25 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         }
     }
 
+    private float mWidthScale = 0;
+
     private void calculateDashboardScaling(View parent, boolean landScape) {
-        int width = parent.getMeasuredWidth();
-        int height = parent.getMeasuredHeight();
-        if (landScape) {
-            int temp = width;
-            width = height;
-            height = temp;
+        float scale = 1.0f;
+        if (!landScape) {
+            int width = parent.getMeasuredWidth();
+            int height = parent.getMeasuredHeight();
+
+            if (mWidthScale == 0) {
+                mWidthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
+
+            }
+
+            scale = mWidthScale;
         }
-        float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
-        float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
-        mDashboardLayout.setScaleX(widthScale);
-        mDashboardLayout.setScaleY(widthScale);
+
+        Logger.t(TAG).d("Set scale as: " + scale);
+        mDashboardLayout.setScaleX(scale);
+        mDashboardLayout.setScaleY(scale);
         mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
@@ -504,6 +517,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             return;
         }
         mVideoController.setVisibility(mVideoController.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+        mInfoPanel.setVisibility(mInfoPanel.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
     }
 
     void showController(int timeout) {

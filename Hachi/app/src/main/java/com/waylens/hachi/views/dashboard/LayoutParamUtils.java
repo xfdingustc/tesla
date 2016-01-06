@@ -14,8 +14,8 @@ public class LayoutParamUtils {
     private static final String TAG = LayoutParamUtils.class.getSimpleName();
 
     public static RelativeLayout.LayoutParams createLayoutParam(Element element) {
-        Logger.t(TAG).d("Element alignment: " + element.getAlignment() + " size: " + element
-            .getWidth() + " X " + element.getHeight() + " type: " + element.getType());
+//        Logger.t(TAG).d("Element alignment: " + element.getAlignment() + " size: " + element
+//            .getWidth() + " X " + element.getHeight() + " type: " + element.getType());
 
 
 
