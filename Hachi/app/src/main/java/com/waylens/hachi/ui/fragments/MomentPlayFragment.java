@@ -38,22 +38,13 @@ import java.util.List;
  */
 public class MomentPlayFragment extends VideoPlayFragment {
 
-    public static final int ODB_DELAY = 100;
-
     long mMomentID = Moment.INVALID_MOMENT_ID;
     RequestQueue mRequestQueue;
     JSONArray mRawDataUrls;
 
-
-//    MapView mMapView;
-
     private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
 
-    int mOBDPosition;
-    private MarkerOptions mMarkerOptions;
-    private PolylineOptions mPolylineOptions;
 
-    private int mGPSPosition;
     private boolean mIsReplay;
 
     public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
@@ -101,15 +92,12 @@ public class MomentPlayFragment extends VideoPlayFragment {
     }
 
     protected void setProgress(int position, int duration) {
-        //Log.e("test", "duration: " + duration + "; position: " + position);
         if (mProgressBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
                 long pos = MAX_PROGRESS * position / duration;
                 mProgressBar.setProgress((int) pos);
             }
-            //int percent = mMediaPlayer.getBufferPercentage();
-            //mProgress.setSecondaryProgress(percent * 10);
         }
         updateVideoTime(position, duration);
         displayOverlay(position);
@@ -126,115 +114,26 @@ public class MomentPlayFragment extends VideoPlayFragment {
     @Override
     protected void displayOverlay(int position) {
         mRawDataAdapter.updateCurrentTime(position);
-//        if (mMomentOBD.size() > 0) {
-//            MomentOBD obd = getODB(position);
-//            if (obd != null && mObdView != null) {
-//                mObdView.setSpeed(obd.speed);
-//                mObdView.setTargetValue(obd.rpm / 1000.0f);
-//            } else {
-//                Log.e("test", "Position: " + position + "; mOBDPosition: " + mOBDPosition);
-//            }
-//        }
-//
-//        if (mMomentGPS.size() > 0) {
-//            if (mIsReplay) {
-//                mIsReplay = false;
-//                mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3);
-//            }
-//            MomentGPS gps = getGPS(position);
-//            if (gps != null && mMapView != null) {
-//                mMapView.removeAllAnnotations();
-//                LatLng point = new LatLng(gps.latitude, gps.longitude);
-//                mMarkerOptions.position(point);
-//                mPolylineOptions.add(point);
-//                mMapView.addMarker(mMarkerOptions);
-//                mMapView.addPolyline(mPolylineOptions);
-//                mMapView.setCenterCoordinate(point);
-//            }
-//        }
+
     }
 
-//    private MomentGPS getGPS(int position) {
-//        MomentGPS gps = null;
-//        while (mGPSPosition < mMomentGPS.size()) {
-//            MomentGPS tmp = mMomentGPS.get(mGPSPosition);
-//            if (tmp.captureTime == position) {
-//                gps = tmp;
-//                break;
-//            } else if (tmp.captureTime < position) {
-//                gps = tmp;
-//                mGPSPosition++;
-//            } else if (tmp.captureTime > position) {
-//                break;
-//            }
-//        }
-//        return gps;
-//    }
+
 
     @Override
     protected void onPlayCompletion() {
-        mOBDPosition = 0;
-        mGPSPosition = 0;
+
         mIsReplay = true;
     }
 
-//    MomentOBD getODB(int position) {
-//        MomentOBD obd = null;
-//        while (mOBDPosition < mMomentOBD.size()) {
-//            MomentOBD tmp = mMomentOBD.get(mOBDPosition);
-//            if (tmp.captureTime == position) {
-//                obd = tmp;
-//                break;
-//            } else if (tmp.captureTime < position) {
-//                obd = tmp;
-//                mOBDPosition++;
-//            } else if (tmp.captureTime > position) {
-//                break;
-//            }
-//        }
-//        return obd;
-//    }
 
     void onLoadRawDataSuccessfully() {
-//        if (mMomentOBD.size() > 0 && mObdView == null) {
-//            mObdView = new GaugeView(getActivity());
-//            int defaultSize = ViewUtils.dp2px(64, getResources());
-//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
-//            params.gravity = Gravity.BOTTOM | Gravity.END;
-//            mVideoContainer.addView(mObdView, params);
-//        }
-
-
-//        if (mMomentGPS.size() > 0 && mMapView == null) {
-//            initMapView();
-//        }
-
         mRawDataState = RAW_DATA_STATE_READY;
         mProgressLoading.setVisibility(View.GONE);
         mDashboardLayout.setAdapter(mRawDataAdapter);
         openVideo();
     }
 
-    private void initMapView() {
-//        mMapView = new MapView(getActivity(), Constants.MAP_BOX_ACCESS_TOKEN);
-//        mMapView.setStyleUrl(Style.DARK);
-//        mMapView.setZoomLevel(14);
-//        mMapView.setLogoVisibility(View.GONE);
-//        mMapView.onCreate(null);
-//        MomentGPS firstGPS = mMomentGPS.get(0);
-//        SpriteFactory spriteFactory = new SpriteFactory(mMapView);
-//        LatLng firstPoint = new LatLng(firstGPS.latitude, firstGPS.longitude);
-//        mMarkerOptions = new MarkerOptions().position(firstPoint)
-//                .icon(spriteFactory.fromResource(R.drawable.map_car_inner_red_triangle));
-//        mMapView.addMarker(mMarkerOptions);
-//        mPolylineOptions = new PolylineOptions().color(Color.rgb(252, 219, 12)).width(3).add(firstPoint);
-//        mMapView.setCenterCoordinate(firstPoint);
-//        mMapView.addPolyline(mPolylineOptions);
-//
-//        int defaultSize = ViewUtils.dp2px(96, getResources());
-//        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
-//        mVideoContainer.addView(mMapView, params);
-    }
+
 
     void onLoadRawDataError(String msg) {
         Log.e("test", "msg: " + msg);
