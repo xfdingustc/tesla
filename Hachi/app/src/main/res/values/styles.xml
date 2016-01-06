@@ -4,8 +4,8 @@
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/style_color_primary</item>
-        <item name="colorPrimaryDark">@color/style_color_primary_dark</item>
-        <item name="colorAccent">@color/style_color_accent</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@color/style_color_primary</item>
 
     </style>
 
