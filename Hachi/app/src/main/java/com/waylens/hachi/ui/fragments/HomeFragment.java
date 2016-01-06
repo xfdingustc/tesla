@@ -153,9 +153,10 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
             mViewAnimator.setDisplayedChild(1);
         }
 
+        /*TODO disable it? Richard
         for (int i = 0; i < momentList.size(); i++) {
             loadComment(momentList.get(i).id, i);
-        }
+        }*/
     }
 
     void onLoadFeedFailed(VolleyError error) {

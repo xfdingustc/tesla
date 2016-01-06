@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
@@ -34,6 +35,9 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
 
     @Bind(R.id.video_cover)
     ImageView videoCover;
+
+    @Bind(R.id.enhance_root_view)
+    LinearLayout mEnhanceRootView;
 
     Clip mClip;
     //long mMinClipStartTimeMs;
@@ -70,6 +74,8 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
+
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mImageLoader.displayVdbImage(clipPos, videoCover);
 
@@ -103,6 +109,16 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @OnClick(R.id.btn_cancel)
     void onCancel() {
         close();
+    }
+
+    @OnClick(R.id.btn_ok)
+    void onClickDone() {
+        close();
+    }
+
+    @OnClick(R.id.btn_share)
+    void onClickShare() {
+
     }
 
     private void initSeekBar() {

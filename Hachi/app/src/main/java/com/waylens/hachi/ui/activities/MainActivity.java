@@ -14,11 +14,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
@@ -53,6 +56,9 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
     @Bind(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
+
+    @Bind(R.id.root_container)
+    CoordinatorLayout mRootView;
 
     private DownloadManager downloadManager;
 
@@ -232,7 +238,8 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            DashboardActivity.launch(this);
+            String version = "Version: " + BuildConfig.VERSION_NAME;
+            Snackbar.make(mRootView, version, Snackbar.LENGTH_SHORT).show();
             return true;
         }
 

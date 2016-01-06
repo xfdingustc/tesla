@@ -30,17 +30,8 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.user_car)
     TextView userCar;
 
-    @Bind(R.id.like_container)
-    View likeContainer;
-
-    @Bind(R.id.like_count)
-    TextView likeCount;
-
-    @Bind(R.id.comment_icon)
-    View commentIcon;
-
-    @Bind(R.id.comment_count)
-    TextView commentCountView;
+    @Bind(R.id.moment_desc_view)
+    TextView descView;
 
     @Bind(R.id.video_time)
     TextView videoTime;
@@ -55,16 +46,13 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     public View videoControl;
 
     @Bind(R.id.btn_like)
-    ImageView btnLike;
+    View btnLike;
+
+    @Bind(R.id.btn_like_tv)
+    TextView btnLikeTextView;
 
     @Bind(R.id.btn_comment)
-    ImageView btnComment;
-
-    @Bind(R.id.comment_container)
-    View commentContainer;
-
-    @Bind(R.id.moment_comment)
-    TextView commentView;
+    View btnComment;
 
     @Bind(R.id.video_fragment_container)
     public FrameLayout fragmentContainer;

@@ -242,7 +242,8 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (hasUpdates && fragment != null && fragment instanceof HomeFragment) {
             HomeFragment fg = (HomeFragment) fragment;
-            fg.loadComment(mMomentID, mPosition);
+            // TODO disable it? Richard
+            //fg.loadComment(mMomentID, mPosition);
         }
 
         View view = getActivity().getCurrentFocus();

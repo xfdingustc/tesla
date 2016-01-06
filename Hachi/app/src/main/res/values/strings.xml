@@ -241,7 +241,9 @@
     <string name="no_sdcard">No SDCard.</string>
     <string name="zero_likes">Be the first to like</string>
     <string name="failed">Failed</string>
+    <string name="comment">Comment</string>
     <string name="comments">Comments</string>
+    <string name="like">Like</string>
     <string name="likes">Likes</string>
     <string name="add_a_comment">Add a comment</string>
     <plurals name="number_of_likes">
@@ -293,6 +295,7 @@
     <string name="settings_camera">Camera</string>
     <string name="settings_add_new_camera">Add New Camera</string>
     <string name="settings_help">Help</string>
+    <string name="enhance_done">Done</string>
 
     <plurals name="number_of_bookmarks">
         <item quantity="one">%d Bookmarks</item>

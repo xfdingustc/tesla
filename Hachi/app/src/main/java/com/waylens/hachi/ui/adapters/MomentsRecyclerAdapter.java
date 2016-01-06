@@ -84,9 +84,9 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         ImageLoader.getInstance().displayImage(moment.owner.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
         holder.userName.setText(moment.owner.userName);
         holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+        holder.descView.setText(moment.description);
         ImageLoader.getInstance().displayImage(moment.thumbnail, holder.videoCover, ImageUtils.getVideoOptions());
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
-
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +97,6 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         });
 
         updateLikeState(holder, moment);
-        updateLikeCount(holder, moment);
 
         holder.btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +111,6 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
                 } else {
                     moment.likesCount--;
                 }
-                updateLikeCount(holder, moment);
             }
         });
 
@@ -133,45 +131,17 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
                 }
             }
         });
-
-        updateCommentCount(holder, moment);
-        if (moment.comments != null) {
-            holder.commentView.setText(moment.comments);
-            holder.commentContainer.setVisibility(View.VISIBLE);
-        } else {
-            holder.commentContainer.setVisibility(View.GONE);
-        }
     }
 
     void updateLikeState(MomentViewHolder vh, Moment moment) {
         if (moment.isLiked) {
-            vh.btnLike.setImageResource(R.drawable.feed_button_like_active);
+            //vh.btnLike.setImageResource(R.drawable.social_like_click);
+            vh.btnLikeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.social_like_click, 0, 0, 0);
         } else {
-            vh.btnLike.setImageResource(R.drawable.feed_button_like);
+            vh.btnLikeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.social_like, 0, 0, 0);
         }
     }
 
-    void updateLikeCount(MomentViewHolder vh, Moment moment) {
-        if (moment.likesCount == 0) {
-            vh.likeCount.setText(mResources.getString(R.string.zero_likes));
-        } else {
-            vh.likeCount.setText(mResources.getQuantityString(R.plurals.number_of_likes,
-                    moment.likesCount,
-                    moment.likesCount));
-        }
-    }
-
-    void updateCommentCount(MomentViewHolder vh, Moment moment) {
-        if (moment.commentsCount == 0) {
-            vh.commentIcon.setVisibility(View.GONE);
-            vh.commentCountView.setVisibility(View.GONE);
-        } else {
-            vh.commentIcon.setVisibility(View.VISIBLE);
-            vh.commentCountView.setVisibility(View.VISIBLE);
-            vh.commentCountView.setText(mResources.getQuantityString(
-                    R.plurals.number_of_comments, moment.commentsCount, moment.commentsCount));
-        }
-    }
 
     @Override
     public void onViewAttachedToWindow(MomentViewHolder holder) {
