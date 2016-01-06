@@ -2,7 +2,7 @@ package com.transee.common;
 
 import android.os.SystemClock;
 
-// a synchronous Q with only one IRecyclable object
+// a synchronous Q with only one IRecyclable data
 public class SimpleQueue<T extends IRecyclable> {
 
 	private T mObject = null;

@@ -33,7 +33,7 @@ public class VdtCameraManager {
         mContext = context;
     }
 
-    // note: CameraManager is a global object,
+    // note: CameraManager is a global data,
     // we have to track each callback even they are installed by the same activity.
     private List<Callback> mCallbackList = new ArrayList<>();
 

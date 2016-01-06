@@ -277,10 +277,10 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
 
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
-            RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_ODB, captureTime);
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_ODB, captureTime);
 
             RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperature, rpm);
-            item.object = data;
+            item.data = data;
             mOBDData.add(item);
         }
 
@@ -290,7 +290,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                                int eulerHeading, int eulerRoll, int eulerPitch,
                                int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
                                int pressure) {
-            RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_ACC, captureTime);
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_ACC, captureTime);
             RawDataItem.AccData data = new RawDataItem.AccData();
 
             data.accX = accX;
@@ -299,19 +299,19 @@ public class MomentPlayFragment extends VideoPlayFragment {
             data.euler_roll = eulerRoll;
             data.euler_pitch = eulerPitch;
 
-            item.object = data;
+            item.data = data;
             mAccData.add(item);
         }
 
         public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
-            RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_GPS, captureTime);
-            RawDataItem.GPSRawData data = new RawDataItem.GPSRawData();
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_GPS, captureTime);
+            RawDataItem.GpsData data = new RawDataItem.GpsData();
             data.coord.lat = latitude;
             data.coord.lat_orig = latitude;
             data.coord.lng = longitude;
             data.coord.lng_orig = longitude;
             data.altitude = altitude;
-            item.object = data;
+            item.data = data;
 
             mGPSData.add(item);
         }
@@ -344,19 +344,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
             return false;
         }
 
-        @Override
-        public RawDataItem getAccDataItem(long pts) {
-            return null;
-        }
 
-        @Override
-        public RawDataItem getObdDataItem(long pts) {
-            return null;
-        }
-
-        @Override
-        public RawDataItem getGpsDataItem(long pts) {
-            return null;
-        }
     }
 }

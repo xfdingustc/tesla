@@ -46,11 +46,11 @@ public class MapViewEventSubscriber implements EventBus.EventSubscriber {
 
     @Override
     public void onEvent(Object value) {
-        RawDataItem.GPSRawData gpsRawData = (RawDataItem.GPSRawData) value;
+        RawDataItem.GpsData gpsData = (RawDataItem.GpsData) value;
         //Logger.t(TAG).d("Lat: " + gpsRawData.coord.lat_orig + " Lng: " + gpsRawData.coord
         //   .lng_orig);
         mMapView.removeAllAnnotations();
-        LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
+        LatLng point = new LatLng(gpsData.coord.lat_orig, gpsData.coord.lng_orig);
 
 
         mMarkerOptions.position(point);

@@ -9,14 +9,14 @@ import com.transee.common.Utils;
  * Created by Xiaofei on 2016/1/6.
  */
 public class RawDataItem {
-    public static final int RAW_DATA_NULL = 0;
-    public static final int RAW_DATA_GPS = 1;
-    public static final int RAW_DATA_ACC = 2;
-    public static final int RAW_DATA_ODB = 3;
+    public static final int DATA_TYPE_UNKNOWN = 0;
+    public static final int DATA_TYPE_GPS = 1;
+    public static final int DATA_TYPE_ACC = 2;
+    public static final int DATA_TYPE_ODB = 3;
 
     private final int mType;
     private final long mPtsMs;
-    public Object object; // GPSRawData for RAW_DATA_GPS
+    public Object data;
 
     public RawDataItem(int type, long ptsMs) {
         this.mType = type;
@@ -31,7 +31,7 @@ public class RawDataItem {
         return mPtsMs;
     }
 
-    public static class GPSRawData {
+    public static class GpsData {
 
         public static final int GPS_F_LATLON = (1 << 0);
         public static final int GPS_F_ALTITUDE = (1 << 1);
@@ -83,8 +83,8 @@ public class RawDataItem {
             return (flags & GPS_F_TRACK) != 0;
         }
 
-        static public GPSRawData translate(byte[] data) {
-            GPSRawData result = new GPSRawData();
+        static public GpsData fromBinary(byte[] data) {
+            GpsData result = new GpsData();
 
             result.flags = ByteStream.readI32(data, 0);
             result.speed = ByteStream.readFloat(data, 4);
@@ -148,7 +148,7 @@ public class RawDataItem {
         }
 
         // coord.lat, lng -> new lat, lng
-        static public void GMS84ToGCJ02(Coord coord) {
+        public static void GMS84ToGCJ02(Coord coord) {
             double lat = coord.lat;
             double lng = coord.lng;
 
@@ -237,7 +237,7 @@ public class RawDataItem {
         }
 
 
-        public static OBDData parse(byte[] data) {
+        public static OBDData fromBinary(byte[] data) {
             if (data == null) {
                 Log.e("OBDData", "Invalid OBD data.");
                 return null;
@@ -366,7 +366,7 @@ public class RawDataItem {
                 euler_roll);
         }
 
-        public static AccData parse(byte[] data) {
+        public static AccData fromBinary(byte[] data) {
             AccData accData = new AccData();
             accData.parseData(data);
             return accData;

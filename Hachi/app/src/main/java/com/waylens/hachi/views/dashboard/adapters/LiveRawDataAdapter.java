@@ -47,7 +47,7 @@ public class LiveRawDataAdapter extends RawDataAdapter {
             @Override
             public void onResponse(RawDataItem response) {
 //                Logger.t(TAG).d(String.format("RawDataMsgHandler: Type[%d]:[%s]", response
-//                    .dataType, response.object));
+//                    .dataType, response.data));
 
                 notifyDataSetChanged(response);
             }
@@ -60,56 +60,7 @@ public class LiveRawDataAdapter extends RawDataAdapter {
         mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
     }
 
-    @Override
-    public RawDataItem getAccDataItem(long pts) {
-        /*
-        LiveRawDataRequest request = new LiveRawDataRequest(0, RawDataBlock.F_RAW_DATA_GPS +
-            RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
-            VdbResponse.Listener<RawDataItem>() {
-            @Override
-            public void onResponse(RawDataItem response) {
-                if (response.dataType == RawDataBlock.RAW_DATA_ACC) {
-                    AccData accData = (AccData)response.object;
-                    Logger.t(TAG).d("accData: " + accData.toString());
-                    mLatestAccRawData = response;
-                }
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
 
-            }
-        });
-        mVdbRequestQueue.add(request);
-        return mLatestAccRawData;
-        */
-        return null;
-    }
 
-    @Override
-    public RawDataItem getObdDataItem(long pts) {
-        RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_ODB, -1);
 
-        int speed = (int) (Math.random() * 200);
-        int temperater = (int) (Math.random() * 100);
-        int rpm = (int) (Math.random() * 12000);
-        RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperater, rpm);
-        item.object = data;
-        return item;
-    }
-
-    @Override
-    public RawDataItem getGpsDataItem(long pts) {
-
-        RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_GPS, -1);
-
-        RawDataItem.GPSRawData data = new RawDataItem.GPSRawData();
-        data.speed = 0;
-        data.coord.lat = data.coord.lat_orig = 31.191016;
-        data.coord.lng = data.coord.lng_orig = 121.601435;
-
-        item.object = data;
-
-        return item;
-    }
 }

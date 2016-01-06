@@ -122,7 +122,7 @@ public class ClipPlaybackActivity extends BaseActivity {
 
         ClipFragment clipFragment = new ClipFragment(mClip);
         Bundle params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.RAW_DATA_ACC);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_ACC);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
 
@@ -142,7 +142,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         mVdbRequestQueue.add(accRequest);
 
         params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.RAW_DATA_GPS);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_GPS);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
 
@@ -161,7 +161,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         mVdbRequestQueue.add(gpsRequest);
 
         params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.RAW_DATA_ODB);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_ODB);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,

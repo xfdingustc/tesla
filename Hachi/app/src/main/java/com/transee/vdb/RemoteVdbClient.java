@@ -349,8 +349,8 @@ public class RemoteVdbClient extends VdbClient {
                 RawDataItem item = new RawDataItem(dataType, clipTimeMs);
 
                 byte[] data = readByteArray(size);
-                if (dataType == RawDataItem.RAW_DATA_GPS) {
-                    item.object = RawDataItem.GPSRawData.translate(data);
+                if (dataType == RawDataItem.DATA_TYPE_GPS) {
+                    item.data = RawDataItem.GpsData.fromBinary(data);
                 }
 
                 if (result.items == null) {

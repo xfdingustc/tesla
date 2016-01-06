@@ -30,7 +30,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
                                VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         this.mCid = cid;
-        this.mDataType = params.getInt(PARAM_DATA_TYPE, RawDataItem.RAW_DATA_NULL);
+        this.mDataType = params.getInt(PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_UNKNOWN);
         mClipTimeMs = params.getLong(PARAM_CLIP_TIME, 0);
         mDuration = params.getInt(PARAM_CLIP_LENGTH, 0);
     }
@@ -75,12 +75,12 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
             RawDataItem item = new RawDataItem(header.mDataType, block.timeOffsetMs[i] + header.mRequestedTimeMs);
 
             byte[] data = response.readByteArray(block.dataSize[i]);
-            if (header.mDataType == RawDataItem.RAW_DATA_ODB) {
-                item.object = RawDataItem.OBDData.parse(data);
-            } else if (header.mDataType == RawDataItem.RAW_DATA_ACC) {
-                item.object = RawDataItem.AccData.parse(data);
-            } else if (header.mDataType == RawDataItem.RAW_DATA_GPS) {
-                item.object = RawDataItem.GPSRawData.translate(data);
+            if (header.mDataType == RawDataItem.DATA_TYPE_ODB) {
+                item.data = RawDataItem.OBDData.fromBinary(data);
+            } else if (header.mDataType == RawDataItem.DATA_TYPE_ACC) {
+                item.data = RawDataItem.AccData.fromBinary(data);
+            } else if (header.mDataType == RawDataItem.DATA_TYPE_GPS) {
+                item.data = RawDataItem.GpsData.fromBinary(data);
             }
 
             block.addRawDataItem(item);

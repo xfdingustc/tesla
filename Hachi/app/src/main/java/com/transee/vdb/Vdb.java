@@ -261,7 +261,7 @@ abstract public class Vdb {
             return;
         }
 
-        RawDataItem.GPSRawData.Coord coord = new RawDataItem.GPSRawData.Coord();
+        RawDataItem.GpsData.Coord coord = new RawDataItem.GpsData.Coord();
         int n = header.mNumItems;
         byte[] data = block.data;
 
@@ -275,7 +275,7 @@ abstract public class Vdb {
             coord.lat = coord.lat_orig = ByteStream.readDouble(data, offset + 8);
             coord.lng = coord.lng_orig = ByteStream.readDouble(data, offset + 16);
 
-            RawDataItem.GPSRawData.GMS84ToGCJ02(coord);
+            RawDataItem.GpsData.GMS84ToGCJ02(coord);
 
             latArray[i] = coord.lat;
             lngArray[i] = coord.lng;
@@ -570,7 +570,7 @@ abstract public class Vdb {
 
         @Override
         public void onRawDataBlockAsync(final RawDataBlock block) {
-            if (block.header.mDataType == RawDataItem.RAW_DATA_GPS) {
+            if (block.header.mDataType == RawDataItem.DATA_TYPE_GPS) {
                 handleGPSDataBlock(block);
             } else {
                 mHandler.post(new Runnable() {

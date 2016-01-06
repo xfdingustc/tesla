@@ -107,14 +107,14 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
 
 
     public void update(long pts) {
-        updateAccData(pts);
-        updateGpsData(pts);
-        updateObdData(pts);
+//        updateAccData(pts);
+//        updateGpsData(pts);
+//        updateObdData(pts);
         updateCurrentTime(pts);
     }
 
     public void updateLive(RawDataItem item) {
-        if (item == null || item.object == null) {
+        if (item == null || item.data == null) {
             return;
         }
 
@@ -122,12 +122,12 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
         updateCurrentTime(System.currentTimeMillis());
 
         switch (item.getType()) {
-            case RawDataItem.RAW_DATA_GPS:
-                RawDataItem.GPSRawData gpsRawData = (RawDataItem.GPSRawData) item.object;
-                mEventBus.postEvent(EventConstants.EVENT_GPS, gpsRawData);
+            case RawDataItem.DATA_TYPE_GPS:
+                RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                mEventBus.postEvent(EventConstants.EVENT_GPS, gpsData);
                 break;
-            case RawDataItem.RAW_DATA_ACC:
-                RawDataItem.AccData accData = (RawDataItem.AccData) item.object;
+            case RawDataItem.DATA_TYPE_ACC:
+                RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
                 mEventBus.postEvent(EventConstants.EVENT_ROLL, -accData.euler_roll / 1000);
                 mEventBus.postEvent(EventConstants.EVENT_ROLL_NUM, String.valueOf(-accData.euler_roll / 1000));
                 mEventBus.postEvent(EventConstants.EVENT_PITCH, -accData.euler_pitch / 1000);
@@ -139,8 +139,8 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
                 mEventBus.postEvent(EventConstants.EVENT_ACC_X, String.valueOf(format.format(accX)));
                 mEventBus.postEvent(EventConstants.EVENT_ACC_Z, String.valueOf(format.format(accZ)));
                 break;
-            case RawDataItem.RAW_DATA_ODB:
-                RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.object;
+            case RawDataItem.DATA_TYPE_ODB:
+                RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
                 mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
                 int rpm = obdData.rpm / 1000;
                 mEventBus.postEvent(EventConstants.EVENT_RPM_NUMBER, String.valueOf(rpm));
@@ -151,43 +151,43 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     }
 
 
-    private void updateAccData(long pts) {
-        if (mAdapter != null) {
-            RawDataItem item = mAdapter.getAccDataItem(pts);
-            if (item != null) {
-                RawDataItem.AccData accData = (RawDataItem.AccData) item.object;
-                //Logger.t(TAG).d("Update gforce left as: " + (float) accData.accX * 5);
-                mEventBus.postEvent(EventConstants.EVENT_ROLL, -accData.euler_roll / 1000);
-                //setRawData(DashboardView.GFORCE_LEFT, (float) accData.accX * 5);
-                //setRawData(DashboardView.GFORCE_RIGHT, (float) accData.accY * 5);
-            }
-        }
-    }
-
-    private void updateGpsData(long pts) {
-        if (mAdapter != null) {
-            RawDataItem item = mAdapter.getGpsDataItem(pts);
-            if (item != null) {
-                mEventBus.postEvent(EventConstants.EVENT_GPS, item.object);
-            }
-        }
-    }
-
-    private void updateObdData(long pts) {
-        if (mAdapter != null) {
-            RawDataItem item = mAdapter.getObdDataItem(pts);
-            if (item != null) {
-                RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.object;
-                mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
-                int rpm = obdData.rpm / 1000;
-                mEventBus.postEvent(EventConstants.EVENT_RPM_NUMBER, String.valueOf(rpm));
-                mEventBus.postEvent(EventConstants.EVENT_MPH, (float) obdData.speed);
-                int mph = (int) obdData.speed;
-                mEventBus.postEvent(EventConstants.EVENT_MPH_NUMBER, String.valueOf(mph));
-
-            }
-        }
-    }
+//    private void updateAccData(long pts) {
+//        if (mAdapter != null) {
+//            RawDataItem item = mAdapter.getAccDataItem(pts);
+//            if (item != null) {
+//                RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
+//                //Logger.t(TAG).d("Update gforce left as: " + (float) accData.accX * 5);
+//                mEventBus.postEvent(EventConstants.EVENT_ROLL, -accData.euler_roll / 1000);
+//                //setRawData(DashboardView.GFORCE_LEFT, (float) accData.accX * 5);
+//                //setRawData(DashboardView.GFORCE_RIGHT, (float) accData.accY * 5);
+//            }
+//        }
+//    }
+//
+//    private void updateGpsData(long pts) {
+//        if (mAdapter != null) {
+//            RawDataItem item = mAdapter.getGpsDataItem(pts);
+//            if (item != null) {
+//                mEventBus.postEvent(EventConstants.EVENT_GPS, item.data);
+//            }
+//        }
+//    }
+//
+//    private void updateObdData(long pts) {
+//        if (mAdapter != null) {
+//            RawDataItem item = mAdapter.getObdDataItem(pts);
+//            if (item != null) {
+//                RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+//                mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
+//                int rpm = obdData.rpm / 1000;
+//                mEventBus.postEvent(EventConstants.EVENT_RPM_NUMBER, String.valueOf(rpm));
+//                mEventBus.postEvent(EventConstants.EVENT_MPH, (float) obdData.speed);
+//                int mph = (int) obdData.speed;
+//                mEventBus.postEvent(EventConstants.EVENT_MPH_NUMBER, String.valueOf(mph));
+//
+//            }
+//        }
+//    }
 
     private void updateCurrentTime(long pts) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");

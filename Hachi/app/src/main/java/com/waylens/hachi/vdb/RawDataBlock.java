@@ -8,9 +8,9 @@ import java.util.List;
  */
 public class RawDataBlock {
 
-    public static final byte F_RAW_DATA_GPS = (1 << RawDataItem.RAW_DATA_GPS);
-    public static final byte F_RAW_DATA_ACC = (1 << RawDataItem.RAW_DATA_ACC);
-    public static final byte F_RAW_DATA_ODB = (1 << RawDataItem.RAW_DATA_ODB);
+    public static final byte F_RAW_DATA_GPS = (1 << RawDataItem.DATA_TYPE_GPS);
+    public static final byte F_RAW_DATA_ACC = (1 << RawDataItem.DATA_TYPE_ACC);
+    public static final byte F_RAW_DATA_ODB = (1 << RawDataItem.DATA_TYPE_ODB);
 
     public static class RawDataBlockHeader {
         public final Clip.ID cid;

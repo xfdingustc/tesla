@@ -12,11 +12,6 @@ import com.waylens.hachi.vdb.RawDataItem;
 public abstract class RawDataAdapter {
     private final AdapterDataObservable mObservable = new AdapterDataObservable();
 
-    public abstract RawDataItem getAccDataItem(long pts);
-
-    public abstract RawDataItem getObdDataItem(long pts);
-
-    public abstract RawDataItem getGpsDataItem(long pts);
 
     public static abstract class AdapterDataObserver {
         public void onDataChanged(RawDataItem dataItem) {

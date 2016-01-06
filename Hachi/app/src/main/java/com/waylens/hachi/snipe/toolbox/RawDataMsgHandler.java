@@ -25,14 +25,14 @@ public class RawDataMsgHandler extends VdbMessageHandler<RawDataItem> {
         byte[] data = response.readByteArray();
         RawDataItem rawDataItem = new RawDataItem(dataType, 0);
         switch (dataType) {
-            case RawDataItem.RAW_DATA_ODB:
-                rawDataItem.object = RawDataItem.OBDData.parse(data);
+            case RawDataItem.DATA_TYPE_ODB:
+                rawDataItem.data = RawDataItem.OBDData.fromBinary(data);
                 break;
-            case RawDataItem.RAW_DATA_ACC:
-                rawDataItem.object = RawDataItem.AccData.parse(data);
+            case RawDataItem.DATA_TYPE_ACC:
+                rawDataItem.data = RawDataItem.AccData.fromBinary(data);
                 break;
-            case RawDataItem.RAW_DATA_GPS:
-                rawDataItem.object = RawDataItem.GPSRawData.translate(data);
+            case RawDataItem.DATA_TYPE_GPS:
+                rawDataItem.data = RawDataItem.GpsData.fromBinary(data);
                 break;
             default:
                 return null;

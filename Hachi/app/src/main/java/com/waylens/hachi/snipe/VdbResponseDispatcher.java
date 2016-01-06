@@ -70,7 +70,7 @@ public class VdbResponseDispatcher extends Thread {
             }
 
             VdbResponse<?> vdbResponse = vdbRequest.parseVdbResponse(vdbAcknowledge);
-            vdbRequest.addMarker("vdb-parse-complete");
+            vdbRequest.addMarker("vdb-fromBinary-complete");
 
             vdbRequest.markDelivered();
             mDelivery.postResponse(vdbRequest, vdbResponse);

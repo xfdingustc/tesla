@@ -24,20 +24,7 @@ public class BlockAdapter extends RawDataAdapter {
         this.mGpsDataBlock = gpsDataBlock;
     }
 
-    @Override
-    public RawDataItem getAccDataItem(long pts) {
-        return getRawDataItem(mAccDataBlock, pts);
-    }
 
-    @Override
-    public RawDataItem getObdDataItem(long pts) {
-        return getRawDataItem(mObdDataBlock, pts);
-    }
-
-    @Override
-    public RawDataItem getGpsDataItem(long pts) {
-        return getRawDataItem(mGpsDataBlock, pts);
-    }
 
     // TODO: We need refine this algorithm:
     private RawDataItem getRawDataItem(RawDataBlock datablock, long pts) {
