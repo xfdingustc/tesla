@@ -4,19 +4,18 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
-import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.common.TcpConnection;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.vdb.ClipSet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -351,7 +350,7 @@ public class RemoteVdbClient extends VdbClient {
 
                 byte[] data = readByteArray(size);
                 if (dataType == RawDataItem.RAW_DATA_GPS) {
-                    item.object = GPSRawData.translate(data);
+                    item.object = RawDataItem.GPSRawData.translate(data);
                 }
 
                 if (result.items == null) {

@@ -9,8 +9,6 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
-import com.waylens.hachi.vdb.GPSRawData;
-import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 
@@ -95,7 +93,7 @@ public class LiveRawDataAdapter extends RawDataAdapter {
         int speed = (int) (Math.random() * 200);
         int temperater = (int) (Math.random() * 100);
         int rpm = (int) (Math.random() * 12000);
-        OBDData data = new OBDData(speed, temperater, rpm);
+        RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperater, rpm);
         item.object = data;
         return item;
     }
@@ -105,7 +103,7 @@ public class LiveRawDataAdapter extends RawDataAdapter {
 
         RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_GPS, -1);
 
-        GPSRawData data = new GPSRawData();
+        RawDataItem.GPSRawData data = new RawDataItem.GPSRawData();
         data.speed = 0;
         data.coord.lat = data.coord.lat_orig = 31.191016;
         data.coord.lng = data.coord.lng_orig = 121.601435;

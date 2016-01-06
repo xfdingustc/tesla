@@ -7,10 +7,7 @@ import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.AccData;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.GPSRawData;
-import com.waylens.hachi.vdb.OBDData;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 
@@ -79,11 +76,11 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
             byte[] data = response.readByteArray(block.dataSize[i]);
             if (header.mDataType == RawDataItem.RAW_DATA_ODB) {
-                item.object = OBDData.parse(data);
+                item.object = RawDataItem.OBDData.parse(data);
             } else if (header.mDataType == RawDataItem.RAW_DATA_ACC) {
-                item.object = AccData.parse(data);
+                item.object = RawDataItem.AccData.parse(data);
             } else if (header.mDataType == RawDataItem.RAW_DATA_GPS) {
-                item.object = GPSRawData.translate(data);
+                item.object = RawDataItem.GPSRawData.translate(data);
             }
 
             block.addRawDataItem(item);

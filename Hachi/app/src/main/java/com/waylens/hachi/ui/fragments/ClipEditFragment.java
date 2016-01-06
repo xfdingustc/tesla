@@ -50,7 +50,6 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.GPSRawData;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
@@ -623,7 +622,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
         RawDataItem gps = getRawData(RawDataItem.RAW_DATA_GPS, position);
         if (gps != null) {
-            GPSRawData gpsRawData = (GPSRawData) gps.object;
+            RawDataItem.GPSRawData gpsRawData = (RawDataItem.GPSRawData) gps.object;
             mMarkerOptions.getMarker().remove();
             LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
             mMarkerOptions.position(point);
@@ -812,7 +811,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mMapView.setLogoVisibility(View.GONE);
         mMapView.setCompassEnabled(false);
         mMapView.onCreate(null);
-        GPSRawData firstGPS = (GPSRawData) mTypedRawData.get(RawDataItem.RAW_DATA_GPS).getRawDataItem(0).object;
+        RawDataItem.GPSRawData firstGPS = (RawDataItem.GPSRawData) mTypedRawData.get(RawDataItem.RAW_DATA_GPS).getRawDataItem(0).object;
         SpriteFactory spriteFactory = new SpriteFactory(mMapView);
         LatLng firstPoint = new LatLng(firstGPS.coord.lat_orig, firstGPS.coord.lng_orig);
         mMarkerOptions = new MarkerOptions().position(firstPoint)
@@ -844,7 +843,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         RawDataBlock raw = mTypedRawData.get(RawDataItem.RAW_DATA_GPS);
         for (int i = 0; i < raw.dataSize.length; i++) {
             RawDataItem item = raw.getRawDataItem(i);
-            GPSRawData gpsRawData = (GPSRawData) item.object;
+            RawDataItem.GPSRawData gpsRawData = (RawDataItem.GPSRawData) item.object;
             LatLng point = new LatLng(gpsRawData.coord.lat_orig, gpsRawData.coord.lng_orig);
             mPolylineOptions.add(point);
         }

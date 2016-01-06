@@ -7,7 +7,6 @@ import android.util.Log;
 import com.transee.common.ByteStream;
 import com.transee.common.GPSPath;
 import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.GPSRawData;
 import com.transee.vdb.RemoteVdbClient.BufferSpaceLowInfo;
 import com.transee.vdb.VdbClient.PlaylistPlaybackUrl;
 import com.waylens.hachi.vdb.Clip;
@@ -262,7 +261,7 @@ abstract public class Vdb {
             return;
         }
 
-        GPSRawData.Coord coord = new GPSRawData.Coord();
+        RawDataItem.GPSRawData.Coord coord = new RawDataItem.GPSRawData.Coord();
         int n = header.mNumItems;
         byte[] data = block.data;
 
@@ -276,7 +275,7 @@ abstract public class Vdb {
             coord.lat = coord.lat_orig = ByteStream.readDouble(data, offset + 8);
             coord.lng = coord.lng_orig = ByteStream.readDouble(data, offset + 16);
 
-            GPSRawData.GMS84ToGCJ02(coord);
+            RawDataItem.GPSRawData.GMS84ToGCJ02(coord);
 
             latArray[i] = coord.lat;
             lngArray[i] = coord.lng;

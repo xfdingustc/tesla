@@ -6,8 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
-import com.orhanobut.logger.Logger;
-import com.waylens.hachi.vdb.AccData;
+
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.models.Element;
 
 /**
@@ -76,7 +76,7 @@ public class OvalProgressImageView extends ElementView {
 
     @Override
     public void onEvent(Object value) {
-        AccData data = (AccData)value;
+        RawDataItem.AccData data = (RawDataItem.AccData)value;
         mAccX = (float)data.accX / 1000;
         mAccY = (float)data.accZ/ 1000;
 

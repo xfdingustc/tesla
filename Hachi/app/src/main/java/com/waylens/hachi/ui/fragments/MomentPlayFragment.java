@@ -17,10 +17,6 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
-import com.waylens.hachi.vdb.AccData;
-import com.waylens.hachi.vdb.GPSRawData;
-import com.waylens.hachi.vdb.OBDData;
-import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
 
@@ -283,7 +279,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
             RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_ODB, captureTime);
 
-            OBDData data = new OBDData(speed, temperature, rpm);
+            RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperature, rpm);
             item.object = data;
             mOBDData.add(item);
         }
@@ -295,7 +291,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
                                int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
                                int pressure) {
             RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_ACC, captureTime);
-            AccData data = new AccData();
+            RawDataItem.AccData data = new RawDataItem.AccData();
 
             data.accX = accX;
             data.accY = accY;
@@ -309,7 +305,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
         public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
             RawDataItem item = new RawDataItem(RawDataItem.RAW_DATA_GPS, captureTime);
-            GPSRawData data = new GPSRawData();
+            RawDataItem.GPSRawData data = new RawDataItem.GPSRawData();
             data.coord.lat = latitude;
             data.coord.lat_orig = latitude;
             data.coord.lng = longitude;
