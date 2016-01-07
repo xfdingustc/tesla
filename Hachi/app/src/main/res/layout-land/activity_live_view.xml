@@ -68,7 +68,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="8dp"
                     android:layout_toLeftOf="@id/tvCameraStatus"
-                    android:background="@drawable/record_dot"/>
+                    android:background="@drawable/record_dot_anim"/>
 
             </RelativeLayout>
 

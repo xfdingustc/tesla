@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -110,7 +111,6 @@ public class LiveViewActivity extends BaseActivity {
     @Bind(R.id.sharp_view)
     View mSharpView;
 
-    @Nullable
     @Bind(R.id.bookmark_message_view)
     View mBookmarkMsgView;
 
@@ -220,9 +220,10 @@ public class LiveViewActivity extends BaseActivity {
         updateMicControlButton();
         mRawDataAdapter = new LiveRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
-        if (mInfoView != null) {
-            mInfoView.setVisibility(View.GONE);
-        }
+
+
+        AnimationDrawable animationDrawable = (AnimationDrawable)mRecordDot.getBackground();
+        animationDrawable.start();
     }
 
     @Override
@@ -280,6 +281,7 @@ public class LiveViewActivity extends BaseActivity {
             public void run() {
                 updateCameraStatusInfo(state);
                 updateFloatActionButton(state);
+                toggleRecordDot(state);
             }
         });
     }
@@ -395,6 +397,15 @@ public class LiveViewActivity extends BaseActivity {
         } else {
             mBtnMicControl.clearColorFilter();
         }
+    }
+
+    private void toggleRecordDot(CameraState state) {
+        if (state.getRecordState() == CameraState.STATE_RECORD_RECORDING) {
+            mRecordDot.setVisibility(View.VISIBLE);
+        } else {
+            mRecordDot.setVisibility(View.GONE);
+        }
+
     }
 
 
