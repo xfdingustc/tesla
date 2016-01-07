@@ -25,12 +25,10 @@ import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.fragments.AccountFragment;
-import com.waylens.hachi.ui.fragments.CameraListFragment;
+import com.waylens.hachi.ui.fragments.CameraConnectFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
-import com.waylens.hachi.ui.fragments.NotificationFragment;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
@@ -198,7 +196,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
                 }
                 break;
             case TAB_TAG_LIVE_VIEW:
-                fragment = new CameraListFragment();
+                fragment = new CameraConnectFragment();
                 break;
             case TAB_TAG_STORIES:
                 fragment = new StoriesFragment();

@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -30,8 +31,8 @@ import butterknife.OnClick;
  * List available Cameras
  * Created by Richard on 9/9/15.
  */
-public class CameraListFragment extends BaseFragment implements CameraListRvAdapter.OnCameraActionListener {
-    private static final String TAG = CameraListFragment.class.getSimpleName();
+public class CameraConnectFragment extends BaseFragment implements CameraListRvAdapter.OnCameraActionListener {
+    private static final String TAG = CameraConnectFragment.class.getSimpleName();
 
     @Bind(R.id.wifi_status)
     TextView mWifiStatusView;
@@ -41,6 +42,9 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
 
     @Bind(R.id.rvCameraList)
     RecyclerView mCameraListView;
+
+    @Bind(R.id.connectIndicator)
+    ImageView mIvConnectIdicator;
 
 
     private VdtCameraManager mVdtCameraManager;
@@ -52,6 +56,8 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         super.onCreate(savedInstanceState);
         mVdtCameraManager = VdtCameraManager.getManager();
         mCameraListAdapter = new CameraListRvAdapter(getActivity(), mVdtCameraManager, this);
+
+
         mVdtCameraManager.addCallback(new VdtCameraManager.Callback() {
             @Override
             public void onCameraConnecting(VdtCamera vdtCamera) {
@@ -80,6 +86,8 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
                 if (getActivity() == null) {
                     return;
                 }
+
+                LiveViewActivity.launch(getActivity(), vdtCamera);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -135,10 +143,18 @@ public class CameraListFragment extends BaseFragment implements CameraListRvAdap
         });
     }
 
+    private void initViews() {
+        // Start connect indicator animation
+        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+        AnimationDrawable animationDrawable = (AnimationDrawable)mIvConnectIdicator.getBackground();
+        animationDrawable.start();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_camera_list, savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_camera_connect, savedInstanceState);
+        initViews();
         mCameraListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mCameraListView.setAdapter(mCameraListAdapter);
 
