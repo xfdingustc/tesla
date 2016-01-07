@@ -56,7 +56,6 @@
             android:name=".ui.activities.CameraControlActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_camera_preview"
-            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoBackground">
         </activity>
 
