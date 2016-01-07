@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/settings_item_bg_normal"
     android:orientation="vertical">
 
@@ -75,10 +76,12 @@
         android:textSize="14sp"
         tools:text="Like the weather! Hope you were here too!"/>
 
-    <FrameLayout
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:id="@+id/video_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="202dp">
+        android:layout_height="202dp"
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp">
 
         <ImageView
             android:id="@+id/video_cover"
@@ -105,7 +108,7 @@
             android:textColor="#A4A6A6"
             android:background="@drawable/round_rectangle_background"
             tools:text="01:08"/>
-    </FrameLayout>
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

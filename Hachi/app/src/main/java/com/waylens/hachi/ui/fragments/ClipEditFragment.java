@@ -45,7 +45,6 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
@@ -54,7 +53,6 @@ import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.views.DragLayout;
 import com.waylens.hachi.views.VideoTrimmer;
 
 import java.io.IOException;
@@ -113,9 +111,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @Bind(R.id.progress_loading)
     ProgressBar mProgressLoading;
-
-    @Bind(R.id.drag_container)
-    DragLayout mDragLayout;
 
     //SurfaceHolder mSurfaceHolder;
     Surface mSurfaceHolder;
@@ -193,6 +188,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mImageLoader.displayVdbImage(clipPos, videoCover);
         mSurfaceView.setSurfaceTextureListener(this);
         //mControlPanel.setVisibility(View.INVISIBLE);
+        /* TODO: impl Drag/Drop later
         mDragLayout.setOnViewDragListener(new OnViewDragListener() {
             @Override
             public void onStartDragging() {
@@ -208,6 +204,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
                 }
             }
         });
+        */
     }
 
     @Override
@@ -822,7 +819,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mMapView.setDirection(firstGPS.track);
         int defaultSize = ViewUtils.dp2px(96, getResources());
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);
-        mDragLayout.addView(mMapView, params);
+        //mDragLayout.addView(mMapView, params);
         buildFullPath();
     }
 
