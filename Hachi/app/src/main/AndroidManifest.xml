@@ -53,10 +53,7 @@
 
 
         <activity
-            android:name=".ui.activities.CameraControlActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_camera_preview"
-            android:theme="@style/AppTheme.NoBackground">
+            android:name=".ui.activities.CameraControlActivity">
         </activity>
 
         <activity
@@ -85,8 +82,9 @@
             android:label="@string/title_activity_app_setup">
         </activity>
 
-        <activity android:name=".ui.activities.FullScreenPlayActivity"
-                  android:screenOrientation="landscape"
+        <activity
+            android:name=".ui.activities.FullScreenPlayActivity"
+            android:screenOrientation="landscape"
             />
         <!-- END COPY Vidit App -->
 
