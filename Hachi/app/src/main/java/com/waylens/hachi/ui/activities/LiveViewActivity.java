@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -32,14 +31,12 @@ import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
-import com.waylens.hachi.ui.views.PercentageView;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.views.dashboard.DashboardLayout;
 import com.waylens.hachi.views.dashboard.adapters.LiveRawDataAdapter;
-import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.net.InetSocketAddress;
 
@@ -275,20 +272,11 @@ public class LiveViewActivity extends BaseActivity {
 
     private void hideSystemUI() {
         int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
-        int newUiOptions = uiOptions;
-        if (Build.VERSION.SDK_INT >= 14) {
-            newUiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
-        if (Build.VERSION.SDK_INT >= 16) {
-            newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
-        /*
-        if (Build.VERSION.SDK_INT >= 18) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }*/
+        int newUiOptions = uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
         getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
     }
+
     private void updateCameraState(final CameraState state) {
         runOnUiThread(new Runnable() {
             @Override
@@ -375,7 +363,7 @@ public class LiveViewActivity extends BaseActivity {
                 break;
             case CameraState.STATE_RECORD_STOPPED:
                 mFabBookmark.setEnabled(true);
-                mFabBookmark.setBackground(getResources().getDrawable(R.drawable.camera_control_start));
+                mFabBookmark.setImageResource(R.drawable.camera_control_start);
                 break;
             case CameraState.STATE_RECORD_STOPPING:
                 mFabBookmark.setEnabled(false);
@@ -386,10 +374,9 @@ public class LiveViewActivity extends BaseActivity {
             case CameraState.STATE_RECORD_RECORDING:
                 mFabBookmark.setEnabled(true);
                 if (isInCarMode(state)) {
-                    mFabBookmark.setBackground(getResources().getDrawable(R.drawable
-                        .camera_control_bookmark));
+                    mFabBookmark.setImageResource(R.drawable.camera_control_bookmark);
                 } else {
-                    mFabBookmark.setBackground(getResources().getDrawable(R.drawable.camera_control_stop));
+                    mFabBookmark.setImageResource(R.drawable.camera_control_stop);
                 }
                 break;
             case CameraState.STATE_RECORD_SWITCHING:
@@ -460,7 +447,7 @@ public class LiveViewActivity extends BaseActivity {
                     if (clipSet != null) {
                         mBookmarkCount = clipSet.getCount();
                         mBookmarkClickCount = 0;
-                        Log.e("test", "Current bookmarks: " + mBookmarkCount);
+                        Logger.t(TAG).e("Current bookmarks: " + mBookmarkCount);
                         if (mVdtCamera != null) {
                             updateCameraStatusInfo(mVdtCamera.getState());
                         }
@@ -470,7 +457,7 @@ public class LiveViewActivity extends BaseActivity {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "ClipSetRequest: " + error);
+                    Logger.t(TAG).e("ClipSetRequest: " + error);
                 }
             }).setTag(TAG_GET_BOOKMARK_COUNT));
     }
@@ -481,13 +468,13 @@ public class LiveViewActivity extends BaseActivity {
             new VdbResponse.Listener<ClipActionInfo>() {
                 @Override
                 public void onResponse(ClipActionInfo response) {
-                    Log.e("test", response.toString());
+                    Logger.t(TAG).e(response.toString());
                 }
             },
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "ClipInfoMsgHandler ERROR", error);
+                    Logger.t(TAG).e("ClipInfoMsgHandler ERROR", error);
                 }
             });
         mVdbRequestQueue.registerMessageHandler(clipInfoMsgHandler);
@@ -496,13 +483,13 @@ public class LiveViewActivity extends BaseActivity {
             new VdbResponse.Listener<ClipActionInfo>() {
                 @Override
                 public void onResponse(ClipActionInfo response) {
-                    Log.e("test", response.toString());
+                    Logger.t(TAG).e(response.toString());
                 }
             },
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "MarkLiveMsgHandler ERROR", error);
+                    Logger.t(TAG).e("MarkLiveMsgHandler ERROR", error);
                 }
             });
         mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);

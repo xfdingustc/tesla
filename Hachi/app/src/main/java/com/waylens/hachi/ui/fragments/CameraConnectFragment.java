@@ -99,7 +99,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        toggleCameraConnected(true);
+                        toggleCameraConnected(true, false);
                     }
                 });
 
@@ -165,7 +165,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         boolean conected =  VdtCameraManager.getManager().getConnectedCameras().size() > 0 ? true :
             false;
 
-        toggleCameraConnected(conected);
+        toggleCameraConnected(conected, true);
 
     }
 
@@ -219,7 +219,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     }
 
 
-    private void toggleCameraConnected(boolean connected) {
+    private void toggleCameraConnected(boolean connected, boolean showPreviewBtn) {
         if (!connected) {
             mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
             AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
@@ -227,7 +227,9 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         } else {
             mIvConnectIdicator.setImageResource(R.drawable.camera_connecting_connection);
             mIvConnectIdicator.setBackgroundResource(android.R.color.transparent);
-            mBtnEnterPreview.setVisibility(View.VISIBLE);
+            if (showPreviewBtn) {
+                mBtnEnterPreview.setVisibility(View.VISIBLE);
+            }
         }
     }
 
