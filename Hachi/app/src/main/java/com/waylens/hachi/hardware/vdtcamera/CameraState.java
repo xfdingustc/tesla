@@ -63,12 +63,12 @@ public class CameraState {
     public static final int Video_Quality_Num = 4;
 
     public static final int REC_MODE_UNKNOWN = -1;
-    public static final int FLAG_AUTO_RECORD = 1 << 1;
-    public static final int FLAG_LOOP_RECORD = 1 << 2;
+    public static final int FLAG_AUTO_RECORD = 1 << 0;
+    public static final int FLAG_LOOP_RECORD = 1 << 1;
     public static final int Rec_Mode_Manual = 0;
-    public static final int Rec_Mode_AutoStart = FLAG_AUTO_RECORD;
+    public static final int REC_MODE_AUTOSTART = FLAG_AUTO_RECORD;
     public static final int Rec_Mode_Manual_LOOP = FLAG_LOOP_RECORD;
-    public static final int Rec_Mode_AutoStart_LOOP = (FLAG_AUTO_RECORD | FLAG_LOOP_RECORD);
+    public static final int REC_MODE_AUTOSTART_LOOP = (FLAG_AUTO_RECORD | FLAG_LOOP_RECORD);
 
     public static final int Color_Mode_Unknown = -1;
     public static final int Color_Mode_NORMAL = 0;

@@ -79,11 +79,9 @@ public class LiveViewActivity extends BaseActivity {
     @Bind(R.id.cameraPreview)
     CameraLiveView mLiveView;
 
-    @Nullable
     @Bind(R.id.tvCameraStatus)
     TextView mTvCameraStatus;
 
-    @Nullable
     @Bind(R.id.tv_status_additional)
     TextView mTvStatusAdditional;
 
@@ -125,9 +123,8 @@ public class LiveViewActivity extends BaseActivity {
     @Bind(R.id.storageView)
     ProgressBar mStorageView;
 
-    @Nullable
-    @Bind(R.id.legend)
-    LinearLayout mLegendLayout;
+    @Bind(R.id.recordDot)
+    View mRecordDot;
 
 
     @OnClick(R.id.fabBookmark)
@@ -326,17 +323,17 @@ public class LiveViewActivity extends BaseActivity {
                 break;
             case CameraState.STATE_RECORD_RECORDING:
                 if (isInCarMode(state)) {
-                    if (mTvCameraStatus != null) {
-                        mTvCameraStatus.setText(R.string.continuous_recording);
-                        if (mBookmarkCount != -1) {
-                            updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
-                                mBookmarkCount + mBookmarkClickCount,
-                                mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
+                    mTvCameraStatus.setText(R.string.continuous_recording);
+                    if (mBookmarkCount != -1) {
+                        updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
+                            mBookmarkCount + mBookmarkClickCount,
+                            mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
+                        mTvStatusAdditional.setVisibility(View.VISIBLE);
 
-                        }
                     }
                 } else {
                     mTvCameraStatus.setText(R.string.record_recording);
+                    mTvStatusAdditional.setVisibility(View.GONE);
                 }
                 break;
             case CameraState.STATE_RECORD_SWITCHING:
@@ -346,15 +343,18 @@ public class LiveViewActivity extends BaseActivity {
                 break;
         }
         if (recState != CameraState.STATE_RECORD_RECORDING) {
-            if (mTvStatusAdditional != null) {
-                mTvStatusAdditional.setVisibility(View.GONE);
-            }
+            mTvStatusAdditional.setVisibility(View.GONE);
         }
     }
 
 
     boolean isInCarMode(CameraState state) {
-        return state != null && state.getRecordMode() == CameraState.Rec_Mode_AutoStart;
+        if (state != null) {
+            boolean isInCarMode = (state.getRecordMode() == CameraState.REC_MODE_AUTOSTART_LOOP);
+            return isInCarMode;
+        }
+
+        return false;
     }
 
     private void updateFloatActionButton(CameraState state) {
@@ -447,7 +447,7 @@ public class LiveViewActivity extends BaseActivity {
                     if (clipSet != null) {
                         mBookmarkCount = clipSet.getCount();
                         mBookmarkClickCount = 0;
-                        Logger.t(TAG).e("Current bookmarks: " + mBookmarkCount);
+                        Logger.t(TAG).d("Current bookmarks: " + mBookmarkCount);
                         if (mVdtCamera != null) {
                             updateCameraStatusInfo(mVdtCamera.getState());
                         }
