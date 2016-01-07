@@ -87,6 +87,15 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                     return;
                 }
 
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIvConnectIdicator.setImageResource(R.drawable.camera_connecting_connection);
+                        mIvConnectIdicator.setBackgroundResource(android.R.color.transparent);
+                    }
+                });
+
+
                 LiveViewActivity.launch(getActivity(), vdtCamera);
 
                 getActivity().runOnUiThread(new Runnable() {
