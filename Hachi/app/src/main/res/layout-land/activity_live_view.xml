@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#222428"
+                android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@android:color/transparent">
+
+
+        <TextView
+            android:id="@+id/tvCameraStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"/>
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/liveViewLayout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false">
+
+        <com.waylens.hachi.views.camerapreview.CameraLiveView
+            android:id="@+id/cameraPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.waylens.hachi.views.dashboard.DashboardLayout
+            android:id="@+id/dashboard"
+            android:layout_width="1920px"
+            android:layout_height="1080px"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            tools:visibility="gone"/>
+
+        <com.waylens.hachi.ui.views.SharpView
+            android:id="@+id/sharp_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"/>
+
+    </FrameLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:alpha="0.8"
+                    android:background="#222428">
+
+        <ImageButton
+            android:id="@+id/btnMicControl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_mic_on"/>
+
+
+        <ImageButton
+            android:id="@+id/btnFullscreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/screen_full"/>
+
+        <ImageButton
+            android:id="@+id/btnWaterLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@id/btnFullscreen"
+            android:background="@android:color/transparent"
+            android:src="@drawable/camera_control_grid"/>
+
+
+        <ImageButton
+            android:id="@+id/btnShowOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@id/btnWaterLine"
+            android:background="@android:color/transparent"
+            android:src="@drawable/camera_control_gauge_overlay"/>
+    </RelativeLayout>
+
+
+    <ImageButton
+        android:id="@+id/fabBookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/camera_control_bookmark"
+        />
+
+
+</RelativeLayout>

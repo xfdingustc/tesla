@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,8 +50,8 @@ import butterknife.OnClick;
  */
 
 
-public class CameraControlActivity extends BaseActivity {
-    private static final String TAG = CameraControlActivity.class.getSimpleName();
+public class LiveViewActivity extends BaseActivity {
+    private static final String TAG = LiveViewActivity.class.getSimpleName();
     private static final String TAG_GET_BOOKMARK_COUNT = "get.bookmark.count";
 
     private VdtCamera mVdtCamera;
@@ -66,7 +68,7 @@ public class CameraControlActivity extends BaseActivity {
     int mBookmarkClickCount;
 
     public static void launch(Activity startingActivity, VdtCamera camera) {
-        Intent intent = new Intent(startingActivity, CameraControlActivity.class);
+        Intent intent = new Intent(startingActivity, LiveViewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
         bundle.putString(SSID, camera.getSSID());
@@ -97,7 +99,7 @@ public class CameraControlActivity extends BaseActivity {
     DashboardLayout mDashboard;
 
     @Bind(R.id.liveViewLayout)
-    FixedAspectRatioFrameLayout mLiveViewLayout;
+    FrameLayout mLiveViewLayout;
 
     @Bind(R.id.btnShowOverlay)
     ImageButton mBtnShowOverlay;
@@ -208,9 +210,9 @@ public class CameraControlActivity extends BaseActivity {
         mCurrentOrientation = getResources().getConfiguration().orientation;
         if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+            hideSystemUI();
         }
-        setContentView(R.layout.activity_camera_control);
+        setContentView(R.layout.activity_live_view);
 
         if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
@@ -269,6 +271,23 @@ public class CameraControlActivity extends BaseActivity {
         mDashboard.setScaleY(heightScale);
     }
 
+
+    private void hideSystemUI() {
+        int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        if (Build.VERSION.SDK_INT >= 14) {
+            newUiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+        /*
+        if (Build.VERSION.SDK_INT >= 18) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }*/
+
+        getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+    }
     private void updateCameraState(final CameraState state) {
         runOnUiThread(new Runnable() {
             @Override

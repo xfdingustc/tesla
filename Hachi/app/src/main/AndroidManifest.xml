@@ -53,7 +53,7 @@
 
 
         <activity
-            android:name=".ui.activities.CameraControlActivity">
+            android:name=".ui.activities.LiveViewActivity">
         </activity>
 
         <activity

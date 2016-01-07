@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="48dp">
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:alpha="0.8"
+                android:background="#222428">
+
     <ImageButton
         android:id="@+id/btnMicControl"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp"
         android:background="@android:color/transparent"
         android:src="@drawable/btn_mic_on"/>
 
@@ -17,6 +21,7 @@
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginRight="32dp"
         android:background="@android:color/transparent"
         android:src="@drawable/screen_full"/>
 
@@ -25,6 +30,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_centerVertical="true"
+        android:layout_marginRight="24dp"
         android:layout_toLeftOf="@id/btnFullscreen"
         android:background="@android:color/transparent"
         android:src="@drawable/camera_control_grid"/>
@@ -35,6 +41,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_centerVertical="true"
+        android:layout_marginRight="24dp"
         android:layout_toLeftOf="@id/btnWaterLine"
         android:background="@android:color/transparent"
         android:src="@drawable/camera_control_gauge_overlay"/>
