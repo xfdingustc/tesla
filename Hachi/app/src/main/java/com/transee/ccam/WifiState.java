@@ -7,15 +7,15 @@ public class WifiState {
 	public static final boolean DEBUG = false;
 	public static final String TAG = "WifiState";
 
-	public static final int WIFI_Mode_Unknown = -1;
-	public static final int WIFI_Mode_AP = 0;
-	public static final int WIFI_Mode_Client = 1;
+	public static final int WIFI_MODE_UNKNOWN = -1;
+	public static final int WIFI_MODE_AP = 0;
+	public static final int WIFI_MODE_CLIENT = 1;
 	public static final int WIFI_Mode_Off = 2; //
 
 	public int mStateSN = 0;
 	public boolean mbSchedule = false;
 
-	public int mWifiMode = WIFI_Mode_Unknown;
+	public int mWifiMode = WIFI_MODE_UNKNOWN;
 	public int mNumWifiAP = 0;
 
 	// default states when not available

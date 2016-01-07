@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
+import com.transee.ccam.WifiState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -126,6 +127,22 @@ public class LiveViewActivity extends BaseActivity {
     @Bind(R.id.recordDot)
     View mRecordDot;
 
+    @Nullable
+    @Bind(R.id.wifiMode)
+    ImageView mWifiMode;
+
+    @Nullable
+    @Bind(R.id.ivBatterStatus)
+    ImageView mIvBatterStatus;
+
+    @Nullable
+    @Bind(R.id.ivIsChanging)
+    ImageView mIsCharging;
+
+    @Nullable
+    @Bind(R.id.tvBatteryVol)
+    TextView mTvBatteryVol;
+
 
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
@@ -222,7 +239,7 @@ public class LiveViewActivity extends BaseActivity {
         mDashboard.setAdapter(mRawDataAdapter);
 
 
-        AnimationDrawable animationDrawable = (AnimationDrawable)mRecordDot.getBackground();
+        AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
     }
 
@@ -554,21 +571,54 @@ public class LiveViewActivity extends BaseActivity {
             int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
             mInfoView.setVisibility(visibility);
             if (visibility == View.VISIBLE) {
-                updateCameraStorageInfo();
+                updateCameraInfoPanel();
             }
         }
     }
 
+    private void updateCameraInfoPanel() {
+        if (mInfoView == null) {
+            return;
+        }
 
-    private void updateCameraStorageInfo() {
+        // update battery info:
+        int batteryStatus = mVdtCamera.getState().mBatteryState;
+        if (batteryStatus != CameraState.STATE_BATTERY_CHARGING) {
+            mIsCharging.setVisibility(View.INVISIBLE);
+        } else {
+            mIsCharging.setVisibility(View.VISIBLE);
+        }
+
+        int batterVol = mVdtCamera.getState().mBatteryVol;
+        if (batterVol < 25) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_4);
+        } else if (batterVol < 50) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_3);
+        } else if (batterVol < 75) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_2);
+        } else if (batterVol < 100) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_1);
+        }
+
+        String batterVolString = "" + batterVol + "%";
+        mTvBatteryVol.setText(batterVolString);
+
+        // update Wifi info:
+        WifiState wifiState = mVdtCamera.getWifiStates();
+        Logger.t(TAG).d("WifiMode: " + wifiState.mWifiMode);
+        if (wifiState.mWifiMode == WifiState.WIFI_MODE_AP) {
+            mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_ap);
+        } else if (wifiState.mWifiMode == WifiState.WIFI_MODE_CLIENT){
+            mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_client);
+        }
+
+        // update storage info;
         VdtCamera.StorageInfo storageInfo = mVdtCamera.getStorageInfo();
 
-        Logger.t(TAG).d("Total Space: " + storageInfo.totalSpace + " Free space: " + storageInfo
-            .freeSpace);
         mStorageView.setMax(storageInfo.totalSpace);
         mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
-
     }
+
 
     private void updateTvStatusAdditional(String text, int visible) {
         if (mTvStatusAdditional != null) {

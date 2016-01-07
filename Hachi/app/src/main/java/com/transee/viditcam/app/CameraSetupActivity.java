@@ -546,14 +546,14 @@ public class CameraSetupActivity extends BaseActivity {
         WifiState states = mVdtCamera.getWifiStates();
         switch (states.mWifiMode) {
             default:
-            case WifiState.WIFI_Mode_Unknown:
+            case WifiState.WIFI_MODE_UNKNOWN:
                 mTextWifiMode.setVisibility(View.GONE);
                 break;
-            case WifiState.WIFI_Mode_AP:
+            case WifiState.WIFI_MODE_AP:
                 mTextWifiMode.setText(R.string.lable_wifi_ap_mode);
                 mTextWifiMode.setVisibility(View.VISIBLE);
                 break;
-            case WifiState.WIFI_Mode_Client:
+            case WifiState.WIFI_MODE_CLIENT:
                 mTextWifiMode.setText(R.string.lable_wifi_client_mode);
                 mTextWifiMode.setVisibility(View.VISIBLE);
         }
