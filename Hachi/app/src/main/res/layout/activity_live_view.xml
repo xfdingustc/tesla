@@ -1,231 +1,320 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/background_color"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_color">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/edit_toolbar">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/btn_info"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical|start"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_info_white_36dp"/>
-
-        <TextView
-            android:id="@+id/title"
-            style="@style/Base.TextAppearance.AppCompat.Subhead.Inverse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Live View"
-            android:textAllCaps="true"/>
-
-        <ImageView
-            android:id="@+id/btn_mode"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_switch_video_white_36dp"/>
-    </FrameLayout>
-
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp">
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:background="@color/edit_toolbar">
+
+            <ImageView
+                android:id="@+id/btn_info"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@null"
+                android:src="@drawable/nav_bar_info"/>
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/Base.TextAppearance.AppCompat.Subhead.Inverse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Live View"
+                android:textAllCaps="true"/>
+
+            <ImageView
+                android:id="@+id/btn_mode"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_switch_video_white_36dp"/>
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvCameraStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        tools:text="Continuous Recording"/>
+
+                    <TextView
+                        android:id="@+id/tv_status_additional"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_enhance"
+                        android:textSize="12sp"
+                        tools:text="300 bookmarks remain"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/bookmark_message_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFE5000"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/confirm_bookmark_add"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"/>
+            </FrameLayout>
+        </FrameLayout>
+
+        <com.xfdingustc.far.FixedAspectRatioFrameLayout
+            android:id="@+id/liveViewLayout"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipChildren="false"
+            app:farfl_xratio="16dp"
+            app:farfl_yratio="9dp">
+
+            <com.waylens.hachi.views.camerapreview.CameraLiveView
+                android:id="@+id/cameraPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <com.waylens.hachi.views.dashboard.DashboardLayout
+                android:id="@+id/dashboard"
+                android:layout_width="1920px"
+                android:layout_height="1080px"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+                tools:visibility="gone"/>
+
+            <com.waylens.hachi.ui.views.SharpView
+                android:id="@+id/sharp_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
+
+        </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:alpha="0.8"
+                        android:background="#222428">
+
+            <ImageButton
+                android:id="@+id/btnMicControl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/btn_mic_on"/>
+
+
+            <ImageButton
+                android:id="@+id/btnFullscreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/screen_full"/>
+
+            <ImageButton
+                android:id="@+id/btnWaterLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@id/btnFullscreen"
+                android:background="@android:color/transparent"
+                android:src="@drawable/camera_control_grid"/>
+
+
+            <ImageButton
+                android:id="@+id/btnShowOverlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@id/btnWaterLine"
+                android:background="@android:color/transparent"
+                android:src="@drawable/camera_control_gauge_overlay"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/edit_toolbar"/>
+
+        <LinearLayout
+            android:id="@+id/infoPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@drawable/ic_battery_charging_90_black_36dp"
+                    android:rotation="90"/>
 
                 <TextView
-                    android:id="@+id/tvCameraStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    tools:text="Continuous Recording"/>
-
-                <TextView
-                    android:id="@+id/tv_status_additional"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="90%"
                     android:textColor="@color/text_enhance"
-                    android:textSize="12sp"
-                    tools:text="300 bookmarks remain"/>
+                    android:textSize="16sp"/>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:src="@drawable/access_point_black"/>
+
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@drawable/remote_control"
+                    android:rotation="90"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="OFF"
+                    android:textColor="@color/text_enhance"
+                    android:textSize="16sp"/>
+
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@drawable/engine_outline"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="OFF"
+                    android:textColor="@color/text_enhance"
+                    android:textSize="16sp"/>
+
             </LinearLayout>
-        </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/bookmark_message_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFE5000"
-            android:visibility="gone">
+            <com.waylens.hachi.ui.views.PercentageView
+                android:id="@+id/storageView"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                app:categoryOneColor="@color/storage_used"
+                app:categoryTwoColor="@color/storage_unused"
+                app:defaultColor="@color/btn_unable_color"
+                app:foldedHeight="4dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/legend"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/confirm_bookmark_add"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"/>
-        </FrameLayout>
-    </FrameLayout>
-
-    <include layout="@layout/activity_camera_control_preview"/>
-
-
-    <include layout="@layout/activity_camera_control_info_panel"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@color/edit_toolbar"/>
-
-    <LinearLayout
-        android:id="@+id/infoPanel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <View
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="4dp"
-                android:background="@drawable/ic_battery_charging_90_black_36dp"
-                android:rotation="90"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
-                android:text="90%"
-                android:textColor="@color/text_enhance"
-                android:textSize="16sp"/>
+                android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:src="@drawable/access_point_black"/>
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginRight="8dp"
+                    android:background="#FFFE5000"/>
 
-            <View
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="4dp"
-                android:background="@drawable/remote_control"
-                android:rotation="90"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Used Space"
+                    android:textColor="@color/text_enhance"
+                    android:textSize="14sp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="OFF"
-                android:textColor="@color/text_enhance"
-                android:textSize="16sp"/>
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="#FFD8D8D8"/>
 
-            <View
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="4dp"
-                android:background="@drawable/engine_outline"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="OFF"
-                android:textColor="@color/text_enhance"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <com.waylens.hachi.ui.views.PercentageView
-            android:id="@+id/storageView"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            app:categoryOneColor="@color/storage_used"
-            app:categoryTwoColor="@color/storage_unused"
-            app:defaultColor="@color/btn_unable_color"
-            app:foldedHeight="4dp"/>
-
-        <LinearLayout
-            android:id="@+id/legend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <View
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginRight="8dp"
-                android:background="#FFFE5000"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Used Space"
-                android:textColor="@color/text_enhance"
-                android:textSize="14sp"/>
-
-            <View
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="#FFD8D8D8"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Free Spaces"
-                android:textColor="@color/text_enhance"
-                android:textSize="14sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Free Spaces"
+                    android:textColor="@color/text_enhance"
+                    android:textSize="14sp"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
 
-    <include layout="@layout/activity_camera_control_bookmark_btn"/>
+    <ImageButton
+        android:id="@+id/fabBookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="24dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/camera_control_bookmark"/>
 
-</LinearLayout>
+</RelativeLayout>
