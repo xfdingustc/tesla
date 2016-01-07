@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,6 +46,14 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
 
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
+
+    @Bind(R.id.btnEnterPreview)
+    Button mBtnEnterPreview;
+
+    @OnClick(R.id.btnEnterPreview)
+    public void onBtnEnterPreviewClicked() {
+        LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
+    }
 
 
     private VdtCameraManager mVdtCameraManager;
@@ -90,8 +99,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mIvConnectIdicator.setImageResource(R.drawable.camera_connecting_connection);
-                        mIvConnectIdicator.setBackgroundResource(android.R.color.transparent);
+                        toggleCameraConnected(true);
                     }
                 });
 
@@ -154,10 +162,14 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
 
     private void initViews() {
         // Start connect indicator animation
-        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
-        AnimationDrawable animationDrawable = (AnimationDrawable)mIvConnectIdicator.getBackground();
-        animationDrawable.start();
+        boolean conected =  VdtCameraManager.getManager().getConnectedCameras().size() > 0 ? true :
+            false;
+
+        toggleCameraConnected(conected);
+
     }
+
+
 
     @Nullable
     @Override
@@ -206,5 +218,17 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         LiveViewActivity.launch(getActivity(), camera);
     }
 
+
+    private void toggleCameraConnected(boolean connected) {
+        if (!connected) {
+            mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+            AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+            animationDrawable.start();
+        } else {
+            mIvConnectIdicator.setImageResource(R.drawable.camera_connecting_connection);
+            mIvConnectIdicator.setBackgroundResource(android.R.color.transparent);
+            mBtnEnterPreview.setVisibility(View.VISIBLE);
+        }
+    }
 
 }

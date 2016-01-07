@@ -8,13 +8,13 @@
 
 
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_margin="30dp">
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/connectingLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -22,7 +22,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                >
                 
                 <ImageView
                     android:id="@+id/connectIndicator"
@@ -50,16 +50,30 @@
                     android:src="@drawable/camera_connecting_camera"
                     android:background="@android:color/transparent"/>
 
+                <Button
+                    android:id="@+id/btnEnterPreview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Preview"
+                    android:layout_marginTop="56dp"
+                    android:layout_below="@id/connectIndicator"
+                    android:visibility="gone"
+                    />
+
             </RelativeLayout>
 
 
 
 
-        </FrameLayout>
 
 
 
-    </LinearLayout>
+        </RelativeLayout>
+
+
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/wifi_status_container"
