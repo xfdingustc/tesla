@@ -53,73 +53,147 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvCameraStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            tools:text="Continuous Recording"/>
+
+                        <TextView
+                            android:id="@+id/tv_status_additional"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_enhance"
+                            android:textSize="12sp"
+                            tools:text="300 bookmarks remain"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/bookmark_message_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFFE5000"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/confirm_bookmark_add"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"/>
+                </FrameLayout>
+            </FrameLayout>
+
             <LinearLayout
                 android:id="@+id/infoPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:alpha="0.9"
+                android:background="#141618"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_height="2dp"
+                    android:alpha="0.9"
+                    android:background="#404245">
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="2dp"
+                        android:gravity="center_vertical"
+                        android:src="@drawable/rec_info_battery_1"                        />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/rec_info_battery_charge"
+                        android:gravity="center_vertical"/>
+
+                    <TextView
+                        android:id="@+id/tvBattery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginRight="16dp"
+                        android:text="100%"
+                        android:textColor="@color/text_camera_info"
+                        android:textSize="14sp"/>
+
+                    <ImageView
+                        android:id="@+id/wifiMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:src="@drawable/rec_info_camera_mode_client"/>
+
+
                     <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginRight="4dp"
-                        android:background="@drawable/ic_battery_charging_90_black_36dp"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"></View>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="2dp"
+                        android:src="@drawable/rec_info_remote_control_on"
                         android:rotation="90"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:text="90%"
-                        android:textColor="@color/text_enhance"
-                        android:textSize="16sp"/>
+                        android:text="ON"
+                        android:textColor="@color/text_camera_info"
+                        android:textSize="14sp"/>
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:src="@drawable/access_point_black"/>
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="8dp"
                         android:layout_marginRight="4dp"
-                        android:background="@drawable/remote_control"
-                        android:rotation="90"/>
+                        android:background="@drawable/rec_info_obd_on"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:text="OFF"
-                        android:textColor="@color/text_enhance"
-                        android:textSize="16sp"/>
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="4dp"
-                        android:background="@drawable/engine_outline"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:text="OFF"
-                        android:textColor="@color/text_enhance"
-                        android:textSize="16sp"/>
+                        android:text="ON"
+                        android:textColor="@color/text_camera_info"
+                        android:textSize="14sp"/>
 
                 </LinearLayout>
 
@@ -171,60 +245,7 @@
                         android:textSize="14sp"/>
                 </LinearLayout>
             </LinearLayout>
-
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tvCameraStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/white"
-                            android:textSize="14sp"
-                            tools:text="Continuous Recording"/>
-
-                        <TextView
-                            android:id="@+id/tv_status_additional"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_enhance"
-                            android:textSize="12sp"
-                            tools:text="300 bookmarks remain"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <FrameLayout
-                    android:id="@+id/bookmark_message_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FFFE5000"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/confirm_bookmark_add"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"/>
-                </FrameLayout>
-            </FrameLayout>
         </FrameLayout>
-
 
 
         <com.xfdingustc.far.FixedAspectRatioFrameLayout
