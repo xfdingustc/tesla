@@ -147,6 +147,13 @@ public class LiveViewActivity extends BaseActivity {
     @Bind(R.id.tvBatteryVol)
     TextView mTvBatteryVol;
 
+    @Nullable
+    @OnClick(R.id.btnSetting)
+    public void onBtnSettingClicked() {
+        LiveViewSettingActivity.launch(this, mVdtCamera);
+    }
+
+
 
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
@@ -544,12 +551,12 @@ public class LiveViewActivity extends BaseActivity {
             VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    Log.e("test", "LiveRawDataResponse: " + response);
+                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-                Log.e("test", "LiveRawDataResponse ERROR", error);
+                Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
             }
         });
         mVdbRequestQueue.add(request);

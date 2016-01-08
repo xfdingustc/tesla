@@ -86,7 +86,7 @@
             android:name=".ui.activities.FullScreenPlayActivity"
             android:screenOrientation="landscape"
             />
-        <!-- END COPY Vidit App -->
+        <activity android:name=".ui.activities.LiveViewSettingActivity"/>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity

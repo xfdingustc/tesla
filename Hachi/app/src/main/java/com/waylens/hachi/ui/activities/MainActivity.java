@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     protected void onResume() {
         super.onResume();
         mAppBarLayout.addOnOffsetChangedListener(this);
-        
+
     }
 
     @Override
