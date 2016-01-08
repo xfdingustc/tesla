@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -22,6 +23,14 @@ public class LiveViewSettingActivity extends BaseActivity {
 
     private static VdtCamera mSharedCamera;
     private static VdtCamera mCamera;
+
+    private int mOriginRecordMode;
+    private int mOriginVideoResolution;
+    private int mOriginVideoFramerate;
+
+    private int mChangedRecordMode;
+    private int mChangedVideoResolution;
+    private int mChangedVideoFramerate;
 
 
 
@@ -56,14 +65,56 @@ public class LiveViewSettingActivity extends BaseActivity {
     @Bind(R.id.btn120fps)
     RadioButton mBtn120fps;
 
+    @Bind(R.id.btnOk)
+    Button mBtnOk;
+
     @OnClick(R.id.btnContinuous)
     public void onBtnContinuousClicked() {
         mTvRecordModeInfo.setText(getText(R.string.continuous_info));
+        mChangedRecordMode |= CameraState.FLAG_LOOP_RECORD;
+        checkIfChanged();
     }
 
     @OnClick(R.id.btnManual)
     public void onBtnManualClicked() {
         mTvRecordModeInfo.setText(getText(R.string.manual_info));
+        mChangedRecordMode &= ~CameraState.FLAG_LOOP_RECORD;
+        checkIfChanged();
+    }
+
+    @OnClick(R.id.btn720p)
+    public void onBtn720pClicked() {
+        mChangedVideoResolution = CameraState.VIDEO_RESOLUTION_720P;
+        checkIfChanged();
+    }
+
+    @OnClick(R.id.btn1080p)
+    public void onBtn1080pClicked() {
+        mChangedVideoResolution = CameraState.VIDEO_RESOLUTION_1080P;
+        checkIfChanged();
+    }
+
+    @OnClick(R.id.btn30fps)
+    public void onBtn30fpsClicked() {
+        mChangedVideoFramerate = CameraState.VIDEO_FRAMERATE_30FPS;
+        checkIfChanged();
+    }
+
+    @OnClick(R.id.btn60fps)
+    public void onBtn60fpsClicked() {
+        mChangedVideoFramerate = CameraState.VIDEO_FRAMERATE_60FPS;
+        checkIfChanged();
+    }
+
+    @OnClick(R.id.btn120fps)
+    public void onBtn120fpsClicked() {
+        mChangedVideoFramerate = CameraState.VIDEO_FRAMERATE_120FPS;
+        checkIfChanged();
+    }
+
+    @OnClick(R.id.btnCancel)
+    public void onBtnCancelClicked() {
+        finish();
     }
 
 
@@ -77,6 +128,10 @@ public class LiveViewSettingActivity extends BaseActivity {
     protected void init() {
         super.init();
         mCamera = mSharedCamera;
+        mOriginRecordMode = mCamera.getState().getRecordMode();
+        mOriginVideoResolution = mCamera.getState().getVideoResolution();
+        mOriginVideoFramerate = mCamera.getState().getVideoFramerate();
+        mChangedRecordMode = mOriginRecordMode;
         initViews();
     }
 
@@ -118,5 +173,20 @@ public class LiveViewSettingActivity extends BaseActivity {
             mBtn120fps.setChecked(true);
         }
 
+    }
+
+    private void checkIfChanged() {
+        boolean changed = false;
+        if (mOriginVideoFramerate != mChangedVideoFramerate
+            || mOriginVideoResolution != mChangedVideoResolution
+            || mOriginRecordMode != mChangedRecordMode) {
+            changed = true;
+        }
+
+        if (changed) {
+            mBtnOk.setEnabled(true);
+        } else {
+            mBtnOk.setEnabled(false);
+        }
     }
 }

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/background_color"
+              android:background="@android:color/black"
               android:orientation="vertical">
 
     <TextView
@@ -164,5 +164,41 @@
             android:textSize="16sp"
             style="@style/MyRadioButton" />
     </info.hoang8f.android.segmented.SegmentedGroup>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/background_color">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/background_color"
+            android:text="@android:string/cancel"
+            android:textColor="@color/material_grey_700"
+            android:textSize="28sp"/>
+
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/background_color"
+            android:text="@android:string/ok"
+            android:textColor="@color/material_grey_700"
+            android:enabled="false"
+            android:textSize="28sp"/>
+    </LinearLayout>
 
 </LinearLayout>
