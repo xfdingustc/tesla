@@ -1,23 +1,15 @@
 package com.waylens.hachi.ui.activities;
 
 
-import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -32,10 +24,7 @@ import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
-import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
-
-import java.io.File;
 
 import butterknife.Bind;
 
@@ -59,11 +48,11 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     CoordinatorLayout mRootView;
 
     private BottomTab mTabList[] = {
-            new BottomTab(R.drawable.tab_bookmark, R.drawable.tab_bookmark_active, TAB_TAG_BOOKMARK),
-            new BottomTab(R.drawable.tab_stories, R.drawable.tab_stories_active, TAB_TAG_STORIES),
-            new BottomTab(R.drawable.tab_liveview, R.drawable.tab_liveview_active, TAB_TAG_LIVE_VIEW),
-            new BottomTab(R.drawable.tab_social, R.drawable.tab_social_active, TAB_TAG_SOCIAL),
-            new BottomTab(R.drawable.tab_settings, R.drawable.tab_settings_active, TAB_TAG_SETTINGS)
+        new BottomTab(R.drawable.tab_bookmark, R.drawable.tab_bookmark_active, TAB_TAG_BOOKMARK),
+        new BottomTab(R.drawable.tab_stories, R.drawable.tab_stories_active, TAB_TAG_STORIES),
+        new BottomTab(R.drawable.tab_liveview, R.drawable.tab_liveview_active, TAB_TAG_LIVE_VIEW),
+        new BottomTab(R.drawable.tab_social, R.drawable.tab_social_active, TAB_TAG_SOCIAL),
+        new BottomTab(R.drawable.tab_settings, R.drawable.tab_settings_active, TAB_TAG_SETTINGS)
     };
 
     private Bundle fragmentArgs;
@@ -78,6 +67,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     protected void onResume() {
         super.onResume();
         mAppBarLayout.addOnOffsetChangedListener(this);
+        
     }
 
     @Override
@@ -114,7 +104,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
                 BottomTab bottomTab = mTabList[tab.getPosition()];
                 if (bottomTab.activeIconRes == 0) {
                     tab.getIcon().setColorFilter(getResources().getColor(R.color.style_color_primary),
-                            PorterDuff.Mode.MULTIPLY);
+                        PorterDuff.Mode.MULTIPLY);
                 } else {
                     tab.setIcon(bottomTab.activeIconRes);
                 }
@@ -126,7 +116,7 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
                 BottomTab bottomTab = mTabList[tab.getPosition()];
                 if (bottomTab.activeIconRes == 0) {
                     tab.getIcon().setColorFilter(getResources().getColor(R.color.material_grey_500),
-                            PorterDuff.Mode.MULTIPLY);
+                        PorterDuff.Mode.MULTIPLY);
                 } else {
                     tab.setIcon(bottomTab.normalIconRes);
                 }
@@ -218,17 +208,18 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     public void onBackPressed() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
         super.onBackPressed();
     }
+
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int i) {

@@ -22,6 +22,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.activities.TabSwitchable;
 import com.waylens.hachi.ui.adapters.CameraListRvAdapter;
 
@@ -47,13 +48,15 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
-    @Bind(R.id.btnEnterPreview)
-    Button mBtnEnterPreview;
+    private static boolean mFirstEnter = true;
 
-    @OnClick(R.id.btnEnterPreview)
-    public void onBtnEnterPreviewClicked() {
-        LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
-    }
+//    @Bind(R.id.btnEnterPreview)
+//    Button mBtnEnterPreview;
+//
+//    @OnClick(R.id.btnEnterPreview)
+//    public void onBtnEnterPreviewClicked() {
+//        LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
+//    }
 
 
     private VdtCameraManager mVdtCameraManager;
@@ -99,7 +102,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        toggleCameraConnected(true, false);
+                        toggleCameraConnected(true);
                     }
                 });
 
@@ -162,10 +165,8 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
 
     private void initViews() {
         // Start connect indicator animation
-        boolean conected =  VdtCameraManager.getManager().getConnectedCameras().size() > 0 ? true :
-            false;
 
-        toggleCameraConnected(conected, true);
+        toggleCameraConnected(isConnected());
 
     }
 
@@ -195,6 +196,23 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 //        Logger.t(TAG).d("WifiInfo: " + wifiInfo.toString());
         mWifiStatusView.setText(wifiInfo.getSSID());
+
+
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (isConnected()) {
+            LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((MainActivity)getActivity()).switchTab(3, null);
     }
 
     @Override
@@ -218,8 +236,14 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         LiveViewActivity.launch(getActivity(), camera);
     }
 
+    private boolean isConnected() {
+        if (mVdtCameraManager.getConnectedCameras().size() > 0) {
+            return true;
+        }
+        return false;
+    }
 
-    private void toggleCameraConnected(boolean connected, boolean showPreviewBtn) {
+    private void toggleCameraConnected(boolean connected) {
         if (!connected) {
             mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
             AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
@@ -227,9 +251,9 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         } else {
             mIvConnectIdicator.setImageResource(R.drawable.camera_connecting_connection);
             mIvConnectIdicator.setBackgroundResource(android.R.color.transparent);
-            if (showPreviewBtn) {
-                mBtnEnterPreview.setVisibility(View.VISIBLE);
-            }
+//            if (showPreviewBtn) {
+//                mBtnEnterPreview.setVisibility(View.VISIBLE);
+//            }
         }
     }
 
