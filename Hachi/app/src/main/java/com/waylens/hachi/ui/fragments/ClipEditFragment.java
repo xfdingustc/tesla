@@ -149,7 +149,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     private MarkerOptions mMarkerOptions;
     private PolylineOptions mPolylineOptions;
-    private boolean mIsReplay;
 
     private VideoTrimmer.DraggingFlag mTrimmerFlag;
 
@@ -426,7 +425,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             public void onResponse(PlaybackUrl playbackUrl) {
                 mPlaybackUrl = playbackUrl;
                 setSource(playbackUrl.url);
-                mProgressLoading.setVisibility(View.INVISIBLE);
+                //mProgressLoading.setVisibility(View.INVISIBLE);
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -485,13 +484,9 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     @Override
     public void onPrepared(MediaPlayer mp) {
         mCurrentState = STATE_PREPARED;
-        mProgressLoading.setVisibility(View.INVISIBLE);
         mVideoWidth = mp.getVideoWidth();
         mVideoHeight = mp.getVideoHeight();
         mMediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
-        int duration = mMediaPlayer.getDuration();
-        int position = mMediaPlayer.getCurrentPosition();
-        Log.e("test", "init pos: " + position + "; duration: " + duration);
         int seekToPosition = (int) mSeekToPosition;
         if (mSeekToPosition != 0) {
             seekTo(seekToPosition);
@@ -506,6 +501,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             videoCover.setVisibility(View.INVISIBLE);
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
+            mProgressLoading.setVisibility(View.INVISIBLE);
         }
         mTargetState = STATE_PLAYING;
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
@@ -598,6 +594,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
         showController(0);
+        int duration = mMediaPlayer.getDuration();
+        mVideoTrimmer.setProgress(duration);
         mHandler.removeMessages(SHOW_PROGRESS);
         onPlayCompletion();
         release(true);
@@ -656,7 +654,6 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     protected void onPlayCompletion() {
         mTypedPosition.clear();
-        mIsReplay = true;
     }
 
     @Override
@@ -692,6 +689,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         }
         int position = mMediaPlayer.getCurrentPosition();
         int duration = mMediaPlayer.getDuration();
+        Log.e("test", "Pos: " + position + "; duration: " + duration);
         if (mPlaybackUrl.realTimeMs != 0
             && mInitPosition == 0
             && position != 0

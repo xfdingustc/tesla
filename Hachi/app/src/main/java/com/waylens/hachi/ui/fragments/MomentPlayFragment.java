@@ -39,9 +39,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
 
-
-    private boolean mIsReplay;
-
     public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
         Bundle args = new Bundle();
         MomentPlayFragment fragment = new MomentPlayFragment();
@@ -115,8 +112,6 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     @Override
     protected void onPlayCompletion() {
-
-        mIsReplay = true;
     }
 
 

@@ -341,6 +341,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     private void playVideo() {
         if (!isInPlaybackState()) {
+            mTargetState = STATE_PLAYING;
+            openVideo();
             return;
         }
         if (mMediaPlayer.isPlaying()) {
@@ -371,6 +373,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         if (isInPlaybackState()) {
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
+            mProgressLoading.setVisibility(View.GONE);
         }
         mTargetState = STATE_PLAYING;
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
@@ -414,8 +417,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     @Override
     public void onPrepared(MediaPlayer mp) {
         mCurrentState = STATE_PREPARED;
-
-        mProgressLoading.setVisibility(View.GONE);
         mVideoWidth = mp.getVideoWidth();
         mVideoHeight = mp.getVideoHeight();
         if (mSurfaceHolder != null && mVideoWidth != 0 && mVideoHeight != 0) {
@@ -447,7 +448,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mMediaPlayer.setDisplay(holder);
 
         if (isInPlaybackState() && mSurfaceDestroyed) {
-            mSurfaceDestroyed = false;
             if (mCurrentState == STATE_PLAYING) {
                 Log.e("test", "surfaceChanged - resume");
                 resumeVideo();
@@ -471,20 +471,22 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     private void release(final boolean clearTargetState) {
+        final MediaPlayer mediaPlayer = mMediaPlayer;
+        mMediaPlayer = null;
+        mCurrentState = STATE_IDLE;
+        if (clearTargetState) {
+            mTargetState = STATE_IDLE;
+        }
+        mVideoWidth = 0;
+        mVideoHeight = 0;
+
         mNonUIHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.reset();
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                    mCurrentState = STATE_IDLE;
-                    if (clearTargetState) {
-                        mTargetState = STATE_IDLE;
-                    }
+                if (mediaPlayer != null) {
+                    mediaPlayer.reset();
+                    mediaPlayer.release();
                 }
-                mVideoWidth = 0;
-                mVideoHeight = 0;
             }
         });
     }
@@ -493,14 +495,13 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     public void onCompletion(MediaPlayer mp) {
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
-        mBtnPlay.setImageResource(R.drawable.ic_refresh_white_48dp);
+        mBtnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
         showController(0);
-        
-        int duration = mMediaPlayer.getDuration();
+        int duration = mp.getDuration();
         setProgress(duration, duration);
-
         mHandler.removeMessages(SHOW_PROGRESS);
         onPlayCompletion();
+        release(true);
     }
 
     @Override
@@ -531,6 +532,9 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     void showController(int timeout) {
+        if (mVideoController == null) {
+            return;
+        }
         mVideoController.setVisibility(View.VISIBLE);
         if (timeout > 0) {
             fadeOutControllers(timeout);
