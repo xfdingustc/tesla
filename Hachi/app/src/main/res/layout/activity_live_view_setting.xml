@@ -75,7 +75,7 @@
         android:textSize="16sp"
         android:layout_margin="24dp"
         android:textColor="@color/text_enhance"
-        android:text="@string/recording_mode"/>
+        android:text="@string/recording_quality"/>
 
     <info.hoang8f.android.segmented.SegmentedGroup
         xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
@@ -90,7 +90,7 @@
         segmentedgroup:sc_tint_color="@color/text_enhance">
 
         <RadioButton
-            android:id="@+id/q720p"
+            android:id="@+id/btn720p"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
@@ -102,7 +102,7 @@
             style="@style/MyRadioButton" />
 
         <RadioButton
-            android:id="@+id/q1080p"
+            android:id="@+id/btn1080p"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
@@ -129,7 +129,7 @@
         segmentedgroup:sc_tint_color="@color/text_enhance">
 
         <RadioButton
-            android:id="@+id/f30fps"
+            android:id="@+id/btn30fps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
@@ -141,7 +141,7 @@
             style="@style/MyRadioButton" />
 
         <RadioButton
-            android:id="@+id/f60fps"
+            android:id="@+id/btn60fps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
@@ -153,7 +153,7 @@
             style="@style/MyRadioButton" />
 
         <RadioButton
-            android:id="@+id/f120fps"
+            android:id="@+id/btn120fps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"

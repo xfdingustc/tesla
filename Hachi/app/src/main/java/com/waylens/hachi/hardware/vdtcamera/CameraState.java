@@ -44,16 +44,23 @@ public class CameraState {
 
     public static final int VIDEO_RESOLUTION_UNKNOWN = -1;
     public static final int VIDEO_RESOLUTION_1080P30 = 0;
-    public static final int VIDEO_RESOLUTION_1080_P_60 = 1;
-    public static final int VIDEO_RESOLUTION_720_P_30 = 2;
-    public static final int VIDEO_RESOLUTION_720_P_60 = 3;
-    public static final int VIDEO_RESOLUTION_4_KP_30 = 4;
-    public static final int VIDEO_RESOLUTION_4_KP_60 = 5;
-    public static final int VIDEO_RESOLUTION_480_P_30 = 6;
-    public static final int VIDEO_RESOLUTION_480_P_60 = 7;
-    public static final int VIDEO_RESOLUTION_720_P_120 = 8;
+    public static final int VIDEO_RESOLUTION_1080P60 = 1;
+    public static final int VIDEO_RESOLUTION_720P30 = 2;
+    public static final int VIDEO_RESOLUTION_720P60 = 3;
+    public static final int VIDEO_RESOLUTION_4KP30 = 4;
+    public static final int VIDEO_RESOLUTION_4KP60 = 5;
+    public static final int VIDEO_RESOLUTION_480P30 = 6;
+    public static final int VIDEO_RESOLUTION_480P60 = 7;
+    public static final int VIDEO_RESOLUTION_720P120 = 8;
     public static final int VIDEO_RESOLUTION_STILL = 9;
     public static final int Video_Resolution_Num = 10;
+
+    public static final int VIDEO_RESOLUTION_720P = 0;
+    public static final int VIDEO_RESOLUTION_1080P = 1;
+
+    public static final int VIDEO_FRAMERATE_30FPS = 0;
+    public static final int VIDEO_FRAMERATE_60FPS = 1;
+    public static final int VIDEO_FRAMERATE_120FPS = 2;
 
     public static final int VIDEO_QUALITY_UNKNOWN = -1;
     public static final int Video_Quality_Supper = 0;
@@ -318,6 +325,40 @@ public class CameraState {
             Logger.t(TAG).d("setVideoResolution: " + index);
             mVideoResolutionIndex = index;
             stateChanged();
+        }
+    }
+
+    public int getVideoResolution() {
+        switch (mVideoQualityIndex) {
+            case VIDEO_RESOLUTION_1080P30:
+            case VIDEO_RESOLUTION_1080P60:
+
+                return VIDEO_RESOLUTION_1080P;
+            default:
+                return VIDEO_RESOLUTION_720P;
+        }
+    }
+
+    public int getVideoFramerate() {
+        switch (mVideoQualityIndex) {
+            case VIDEO_RESOLUTION_1080P30:
+            case VIDEO_RESOLUTION_4KP30:
+            case VIDEO_RESOLUTION_480P30:
+            case VIDEO_RESOLUTION_720P30:
+                return VIDEO_FRAMERATE_30FPS;
+
+            case VIDEO_RESOLUTION_1080P60:
+            case VIDEO_RESOLUTION_720P60:
+            case VIDEO_RESOLUTION_4KP60:
+            case VIDEO_RESOLUTION_480P60:
+                return VIDEO_FRAMERATE_60FPS;
+
+
+            case VIDEO_RESOLUTION_720P120:
+                return VIDEO_FRAMERATE_120FPS;
+            default:
+                return VIDEO_FRAMERATE_30FPS;
+
         }
     }
 

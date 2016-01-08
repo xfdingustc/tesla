@@ -23,6 +23,8 @@ public class LiveViewSettingActivity extends BaseActivity {
     private static VdtCamera mSharedCamera;
     private static VdtCamera mCamera;
 
+
+
     public static void launch(Activity startActivity, VdtCamera camera) {
         Intent intent = new Intent(startActivity, LiveViewSettingActivity.class);
         mSharedCamera = camera;
@@ -38,6 +40,21 @@ public class LiveViewSettingActivity extends BaseActivity {
 
     @Bind(R.id.tvRecordModeInfo)
     TextView mTvRecordModeInfo;
+
+    @Bind(R.id.btn720p)
+    RadioButton mBtn720p;
+
+    @Bind(R.id.btn1080p)
+    RadioButton mBtn1080p;
+
+    @Bind(R.id.btn30fps)
+    RadioButton mBtn30fps;
+
+    @Bind(R.id.btn60fps)
+    RadioButton mBtn60fps;
+
+    @Bind(R.id.btn120fps)
+    RadioButton mBtn120fps;
 
     @OnClick(R.id.btnContinuous)
     public void onBtnContinuousClicked() {
@@ -66,8 +83,12 @@ public class LiveViewSettingActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_live_view_setting);
         updateRecordMode();
+        updateRecordQuality();
+
 
     }
+
+
 
     private void updateRecordMode() {
         int recordMode = mCamera.getState().getRecordMode();
@@ -78,5 +99,24 @@ public class LiveViewSettingActivity extends BaseActivity {
             mBtnManual.setChecked(true);
             mTvRecordModeInfo.setText(getText(R.string.manual_info));
         }
+    }
+
+    private void updateRecordQuality() {
+        int quality = mCamera.getState().getVideoResolution();
+        if (quality == CameraState.VIDEO_RESOLUTION_1080P) {
+            mBtn1080p.setChecked(true);
+        } else {
+            mBtn720p.setChecked(true);
+        }
+
+        int fps = mCamera.getState().getVideoFramerate();
+        if (fps == CameraState.VIDEO_FRAMERATE_30FPS) {
+            mBtn30fps.setChecked(true);
+        } else if (fps == CameraState.VIDEO_FRAMERATE_60FPS) {
+            mBtn60fps.setChecked(true);
+        } else {
+            mBtn120fps.setChecked(true);
+        }
+
     }
 }
