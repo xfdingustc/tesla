@@ -262,8 +262,8 @@ public class CameraSetupActivity extends BaseActivity {
             @Override
             public void onCameraNameChanged(String value) {
                 if (mVdtCamera != null) {
-                    mVdtCamera.setCameraName(value);
-                    mVdtCamera.getCameraName();
+                    mVdtCamera.setName(value);
+                    mVdtCamera.getName();
                     // TODO - update UI now?
                 }
             }

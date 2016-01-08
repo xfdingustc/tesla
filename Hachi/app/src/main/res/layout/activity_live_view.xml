@@ -29,13 +29,12 @@
                 android:src="@drawable/nav_bar_info"/>
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/tvTitle"
                 style="@style/Base.TextAppearance.AppCompat.Subhead.Inverse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Live View"
-                android:textAllCaps="true"/>
+                android:text="Live View"/>
 
             <!--<ImageView-->
             <!--android:id="@+id/btn_mode"-->
@@ -131,10 +130,10 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:layout_marginRight="4dp"
                         android:layout_toLeftOf="@id/tvBookmarkHint"
                         android:background="@android:color/transparent"
-                        android:layout_centerVertical="true"
                         android:src="@drawable/bookmark_successfully"/>
                 </RelativeLayout>
             </FrameLayout>

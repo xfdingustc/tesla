@@ -109,6 +109,10 @@ public class LiveViewActivity extends BaseActivity {
     ImageButton mBtnWaterLine;
 
     @Nullable
+    @Bind(R.id.tvTitle)
+    TextView mTvTitle;
+
+    @Nullable
     @Bind(R.id.sharp_view)
     View mSharpView;
 
@@ -235,12 +239,19 @@ public class LiveViewActivity extends BaseActivity {
         initCameraPreview();
 
         updateMicControlButton();
+
+        // Setup rawdata adapter;
         mRawDataAdapter = new LiveRawDataAdapter();
         mDashboard.setAdapter(mRawDataAdapter);
 
-
+        // Start record red dot indicator animation
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
+
+        // show camera name;
+        if (mTvTitle != null) {
+            mTvTitle.setText(mVdtCamera.getName());
+        }
     }
 
     @Override

@@ -435,12 +435,13 @@ public class VdtCamera {
         mController.cmd_Rec_SetMarkTime(markBeforeTime, newMarkTime);
     }
 
-    public void setCameraName(String name) {
+    public void setName(String name) {
         mController.cmd_Cam_set_Name(name);
     }
 
-    public void getCameraName() {
+    public String getName() {
         mController.cmd_Cam_get_Name();
+        return mState.mCameraName;
     }
 
     public void setRecordResolution(int resolutionIndex) {
