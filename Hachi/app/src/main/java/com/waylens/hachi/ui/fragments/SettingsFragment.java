@@ -25,4 +25,9 @@ public class SettingsFragment extends BaseFragment {
     void clickAccount() {
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, new AccountFragment()).commit();
     }
+
+    @OnClick(R.id.settings_help)
+    void clickHelp() {
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new VersionCheckFragment()).commit();
+    }
 }

@@ -19,6 +19,8 @@ import com.waylens.hachi.utils.PreferenceUtils;
 
 import java.io.File;
 
+import im.fir.sdk.FIR;
+
 
 /**
  * Created by Xiaofei on 2015/8/4.
@@ -64,7 +66,7 @@ public class Hachi extends Application {
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
         VdbImageLoader.getImageLoader(null).init(this, 1024 * 64);
-        //FIR.init(this);
+        FIR.init(this);
 
         Snipe.init();
 

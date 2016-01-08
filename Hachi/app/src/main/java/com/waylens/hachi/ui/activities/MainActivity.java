@@ -58,10 +58,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     @Bind(R.id.root_container)
     CoordinatorLayout mRootView;
 
-    private DownloadManager downloadManager;
-
-    String apkFile;
-
     private BottomTab mTabList[] = {
             new BottomTab(R.drawable.tab_bookmark, R.drawable.tab_bookmark_active, TAB_TAG_BOOKMARK),
             new BottomTab(R.drawable.tab_stories, R.drawable.tab_stories_active, TAB_TAG_STORIES),
@@ -81,7 +77,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         mAppBarLayout.addOnOffsetChangedListener(this);
     }
 
@@ -89,7 +84,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     protected void onPause() {
         super.onPause();
         mAppBarLayout.removeOnOffsetChangedListener(this);
-        unregisterReceiver(receiver);
 
     }
 
@@ -97,30 +91,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
     protected void init() {
         super.init();
         initViews();
-        downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-
-        /*
-
-        FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
-            @Override
-            public void onSuccess(AppVersion appVersion, boolean result) {
-                Log.e("FIR", "onSuccess: thisCode: " + BuildConfig.VERSION_CODE + "; result: " + result);
-                if (appVersion.getVersionCode() > BuildConfig.VERSION_CODE) {
-                    downloadUpdateAPK(appVersion.getUpdateUrl(), appVersion.getVersionName());
-                }
-            }
-
-            @Override
-            public void onStart() {
-                Log.e("FIR", "onStart");
-            }
-
-            @Override
-            public void onFinish() {
-                Log.e("FIR", "onFinish");
-            }
-        }); */
-
         if (SessionManager.getInstance().isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
@@ -258,66 +228,6 @@ public class MainActivity extends BaseActivity implements AppBarLayout.OnOffsetC
             return;
         }
         super.onBackPressed();
-    }
-
-    void downloadUpdateAPK(String url, String versionName) {
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-        request.setAllowedOverRoaming(false);
-        request.setMimeType("application/vnd.android.package-archive");
-        request.setVisibleInDownloadsUi(true);
-        apkFile = "waylens-v" + versionName + ".apk";
-        request.setDestinationInExternalPublicDir("/download/", apkFile);
-        request.setTitle(getString(R.string.app_name) + " v" + versionName);
-        long id = downloadManager.enqueue(request);
-
-        PreferenceUtils.putLong("download_id", id);
-    }
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            queryDownloadStatus();
-        }
-    };
-
-    void queryDownloadStatus() {
-        DownloadManager.Query query = new DownloadManager.Query();
-        long downloadId = PreferenceUtils.getLong("download_id", 0);
-        query.setFilterById(downloadId);
-        Cursor c = downloadManager.query(query);
-        if (c.moveToFirst()) {
-            int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
-            switch (status) {
-                case DownloadManager.STATUS_PAUSED:
-                    Log.v(TAG, "STATUS_PAUSED");
-                case DownloadManager.STATUS_PENDING:
-                    Log.v(TAG, "STATUS_PENDING");
-                case DownloadManager.STATUS_RUNNING:
-                    Log.v(TAG, "STATUS_RUNNING");
-                    break;
-                case DownloadManager.STATUS_SUCCESSFUL:
-                    Log.v(TAG, "File is downloaded.");
-                    File file = new File(Environment.getExternalStoragePublicDirectory("download"), apkFile);
-                    if (file.exists()) {
-                        installAPK(file);
-                    }
-                    PreferenceUtils.remove("download_id");
-                    break;
-                case DownloadManager.STATUS_FAILED:
-                    Log.v(TAG, "STATUS_FAILED");
-                    downloadManager.remove(downloadId);
-                    PreferenceUtils.remove("download_id");
-                    break;
-            }
-        }
-    }
-
-    void installAPK(File file) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     @Override
