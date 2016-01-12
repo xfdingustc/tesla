@@ -182,7 +182,7 @@ public class CameraBtSetupActivity extends BaseActivity {
             BtState states = mVdtCamera.getBtStates();
             if (states.canEnableBt()) {
                 mProgressBar1.setVisibility(View.VISIBLE);
-                boolean bEnable = states.mBtState == BtState.BT_State_Disabled;
+                boolean bEnable = states.mBtState == BtState.BT_STATE_DISABLED;
                 mVdtCamera.setBtEnable(bEnable);
             }
         }
@@ -190,12 +190,12 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     private void onClickRemoteController() {
         BtState states = mVdtCamera.getBtStates();
-        unbindDevice(states, BtState.BT_Type_HID, states.mHidState);
+        unbindDevice(states, BtState.BT_TYPE_HID, states.mHidState);
     }
 
     private void onClickObdDevice() {
         BtState states = mVdtCamera.getBtStates();
-        unbindDevice(states, BtState.BT_Type_OBD, states.mObdState);
+        unbindDevice(states, BtState.BT_TYPE_OBD, states.mObdState);
     }
 
     private void unbindDevice(BtState states, final int type, final BtState.BtDevState devState) {
@@ -222,7 +222,7 @@ public class CameraBtSetupActivity extends BaseActivity {
         if (mVdtCamera != null) {
             BtState states = mVdtCamera.getBtStates();
             if (states.canOperate()) {
-                if (states.mBtState == BtState.BT_State_Disabled) {
+                if (states.mBtState == BtState.BT_STATE_DISABLED) {
                     DialogBuilder action = new DialogBuilder(this);
                     action.setMsg(R.string.msg_hint_enable_bt);
                     action.setButtons(DialogBuilder.DLG_OK);
@@ -239,7 +239,7 @@ public class CameraBtSetupActivity extends BaseActivity {
 
     private void updateBtEnabled() {
         BtState states = mVdtCamera.getBtStates();
-        boolean bEnabled = states.mBtState == BtState.BT_State_Enabled;
+        boolean bEnabled = states.mBtState == BtState.BT_STATE_ENABLED;
         mCBEnableBt.setChecked(bEnabled);
         mProgressBar1.setVisibility(View.GONE);
         if (bEnabled) {
@@ -263,19 +263,19 @@ public class CameraBtSetupActivity extends BaseActivity {
     private void updateDeviceState(BtState.BtDevState devState, BtDevice device) {
         switch (devState.mState) {
             default:
-            case BtState.BTDEV_State_Off:
+            case BtState.BTDEV_STATE_OFF:
                 setTextAndColor(device.mTextName, R.string.lable_bt_unbound, mColorDisabled);
                 setTextAndColor(device.mTextState, "", mColorDisabled);
                 device.mTextMac.setVisibility(View.GONE);
                 break;
-            case BtState.BTDEV_State_On:
+            case BtState.BTDEV_STATE_ON:
                 setTextAndColor(device.mTextName, devState.mName, mColorHighlight);
                 setTextAndColor(device.mTextState, R.string.lable_bt_connected, mColorHighlight);
                 setTextAndColor(device.mTextMac, devState.mMac, mColorDisabled);
                 device.mTextMac.setVisibility(View.VISIBLE);
                 break;
-            case BtState.BTDEV_State_Busy:
-            case BtState.BTDEV_State_Wait:
+            case BtState.BTDEV_STATE_BUSY:
+            case BtState.BTDEV_STATE_WAIT:
                 setTextAndColor(device.mTextName, devState.mName, mColorHighlight);
                 setTextAndColor(device.mTextState, R.string.lable_bt_disconnected, mColorDisabled);
                 setTextAndColor(device.mTextMac, devState.mMac, mColorDisabled);
@@ -335,7 +335,7 @@ public class CameraBtSetupActivity extends BaseActivity {
             } else {
                 // should unbind first
                 String msg;
-                if (item.type == BtState.BT_Type_HID)
+                if (item.type == BtState.BT_TYPE_HID)
                     msg = states.mHidState.mName + "\r\n" + states.mHidState.mMac;
                 else
                     msg = states.mObdState.mName + "\r\n" + states.mObdState.mMac;

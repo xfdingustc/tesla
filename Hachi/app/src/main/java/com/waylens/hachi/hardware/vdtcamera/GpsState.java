@@ -7,15 +7,15 @@ public class GpsState {
 	public static final boolean DEBUG = false;
 	public static final String TAG = "GpsState";
 
-	public static final int State_GPS_Unknown = -1;
-	public static final int State_GPS_on = 0;
-	public static final int State_GPS_ready = 1;
-	public static final int State_GPS_off = 2;
+	public static final int STATE_GPS_UNKNOWN = -1;
+	public static final int STATE_GPS_ON = 0;
+	public static final int STATE_GPS_READY = 1;
+	public static final int STATE_GPS_OFF = 2;
 
 	public int mStateSN = 0;
 	public boolean mbSchedule = false;
 
-	public int mGpsState = State_GPS_Unknown;
+	public int mGpsState = STATE_GPS_UNKNOWN;
 
 	// default states when not available
 	public static final GpsState nullState = new GpsState();

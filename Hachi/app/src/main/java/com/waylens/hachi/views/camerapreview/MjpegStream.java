@@ -2,10 +2,7 @@ package com.waylens.hachi.views.camerapreview;
 
 import android.util.Log;
 
-import com.transee.common.BitmapBuffer;
 import com.transee.common.ByteArrayBuffer;
-import com.transee.common.MjpegDecoder;
-import com.transee.common.MjpegReceiver;
 import com.transee.common.SimpleQueue;
 
 import java.net.InetSocketAddress;

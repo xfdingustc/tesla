@@ -379,7 +379,7 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void onClickBluetooth() {
-        if (mVdtCamera.getBtStates().mBtSupport == BtState.BT_Support_Yes) {
+        if (mVdtCamera.getBtStates().mBtSupport == BtState.BT_SUPPORT_YES) {
             super.startCameraActivity(mVdtCamera, CameraBtSetupActivity.class);
         }
     }
@@ -567,22 +567,22 @@ public class CameraSetupActivity extends BaseActivity {
         BtState btStates = mVdtCamera.getBtStates();
         switch (btStates.mBtSupport) {
             default:
-            case BtState.BT_Support_Unknown:
+            case BtState.BT_SUPPORT_UNKNOWN:
                 break;
-            case BtState.BT_Support_No:
+            case BtState.BT_SUPPORT_NO:
                 bVisible = true;
                 textId = R.string.lable_bt_support_no;
                 break;
-            case BtState.BT_Support_Yes:
+            case BtState.BT_SUPPORT_YES:
                 switch (btStates.mBtState) {
                     default:
-                    case BtState.BT_State_Unknown:
+                    case BtState.BT_STATE_UNKNOWN:
                         break;
-                    case BtState.BT_State_Disabled:
+                    case BtState.BT_STATE_DISABLED:
                         bVisible = true;
                         textId = R.string.lable_bt_disabled;
                         break;
-                    case BtState.BT_State_Enabled:
+                    case BtState.BT_STATE_ENABLED:
                         bVisible = true;
                         bHighlight = true;
                         textId = R.string.lable_bt_enabled;

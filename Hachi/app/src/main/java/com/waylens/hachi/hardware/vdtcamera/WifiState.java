@@ -8,8 +8,9 @@ public class WifiState {
 	public static final String TAG = "WifiState";
 
 	public static final int WIFI_MODE_UNKNOWN = -1;
+	public static final int WIFI_MODE_AP = 0;
 	public static final int WIFI_MODE_CLIENT = 1;
-	public static final int WIFI_Mode_Off = 2; //
+	public static final int WIFI_MODE_OFF = 2; //
 
 	public int mStateSN = 0;
 	public boolean mbSchedule = false;

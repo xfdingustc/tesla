@@ -4,8 +4,6 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.SimpleInputStream;
-import com.transee.ccam.SimpleOutputStream;
 import com.transee.common.CmdQueue;
 import com.transee.common.TcpConnection;
 
@@ -142,8 +140,8 @@ final class VdtCameraController {
     private static final int MSG_REC_STILL_PICTURE_INFO = 103;
     private static final int MSG_REC_STILL_CAPTURE_DONE = 104;
 
-    static final int UserCmd_GetSetup = 1;
-    static final int UserCmd_ExitThread = 2;
+    private static final int USER_CMD_GET_SETUP = 1;
+    private static final int USER_CMD_EXIT_THREAD = 2;
 
     public interface Listener {
         void onConnected();
@@ -239,12 +237,12 @@ final class VdtCameraController {
 
     // all info for setup
     public void userCmd_GetSetup() {
-        Request request = new Request(CMD_DOMAIN_USER, UserCmd_GetSetup, "", "");
+        Request request = new Request(CMD_DOMAIN_USER, USER_CMD_GET_SETUP, "", "");
         mQueue.postRequest(request);
     }
 
     public void userCmd_ExitThread() {
-        Request request = new Request(CMD_DOMAIN_USER, UserCmd_ExitThread, "", "");
+        Request request = new Request(CMD_DOMAIN_USER, USER_CMD_EXIT_THREAD, "", "");
         mQueue.postRequest(request);
     }
 
@@ -602,7 +600,7 @@ final class VdtCameraController {
     // CMD_CAM_BT_IS_SUPPORTED
     // ========================================================
     public void cmd_CAM_BT_isSupported() {
-        if (mStates.version12() && mBtStates.mBtSupport == BtState.BT_Support_Unknown) {
+        if (mStates.version12() && mBtStates.mBtSupport == BtState.BT_SUPPORT_UNKNOWN) {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_SUPPORTED);
         }
     }
@@ -623,9 +621,9 @@ final class VdtCameraController {
     private void ack_CAM_BT_isEnabled(String p1) {
         int enabled = Integer.parseInt(p1);
         mBtStates.setIsBTEnabled(enabled);
-        if (enabled == BtState.BT_State_Enabled) {
-            cmd_CAM_BT_getDEVStatus(BtState.BT_Type_HID);
-            cmd_CAM_BT_getDEVStatus(BtState.BT_Type_OBD);
+        if (enabled == BtState.BT_STATE_ENABLED) {
+            cmd_CAM_BT_getDEVStatus(BtState.BT_TYPE_HID);
+            cmd_CAM_BT_getDEVStatus(BtState.BT_TYPE_OBD);
         }
     }
 
@@ -663,7 +661,7 @@ final class VdtCameraController {
         if (mac.equals("NA")) {
             //cmd_CAM_BT_getDEVStatus(dev_type);
             //return;
-            dev_state = BtState.BTDEV_State_Off;
+            dev_state = BtState.BTDEV_STATE_OFF;
             mac = "";
             name = "";
         }
@@ -683,8 +681,8 @@ final class VdtCameraController {
             numDevs = 0;
         }
         mBtStates.setNumDevs(numDevs);
-        //onBtDevInfo(BtState.BT_Type_HID, "11:D6:00:BB:71:58", "Smart Shutter");
-        //onBtDevInfo(BtState.BT_Type_OBD, "11:D6:00:BB:71:59", "OBD device");
+        //onBtDevInfo(BtState.BT_TYPE_HID, "11:D6:00:BB:71:58", "Smart Shutter");
+        //onBtDevInfo(BtState.BT_TYPE_OBD, "11:D6:00:BB:71:59", "OBD device");
         //onBtDevInfo(-1, "11:D6:00:BB:71:60", "Smart Shutter 3");
         for (int i = 0; i < numDevs; i++) {
             cmd_CAM_BT_getHostInfor(i);
@@ -700,7 +698,7 @@ final class VdtCameraController {
 
     // p1: name; p2: mac
     private void ack_CAM_BT_getHostInfor(String p1, String p2) {
-        int type = p1.indexOf("OBD") >= 0 ? BtState.BT_Type_OBD : BtState.BT_Type_HID;
+        int type = p1.indexOf("OBD") >= 0 ? BtState.BT_TYPE_OBD : BtState.BT_TYPE_HID;
         if (mListener != null) {
             mListener.onBtDevInfo(type, p2, p1);
         }
@@ -735,7 +733,7 @@ final class VdtCameraController {
         int type = Integer.parseInt(p1);
         int result = Integer.parseInt(p2);
         if (result == 0) {
-            if (type == BtState.BT_Type_HID || type == BtState.BT_Type_OBD) {
+            if (type == BtState.BT_TYPE_HID || type == BtState.BT_TYPE_OBD) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
             }
         }
@@ -751,7 +749,7 @@ final class VdtCameraController {
 
     private void ack_CAM_BT_doUnBind(String p1, String p2) {
         int type = Integer.parseInt(p1);
-        if (type == BtState.BT_Type_HID || type == BtState.BT_Type_OBD) {
+        if (type == BtState.BT_TYPE_HID || type == BtState.BT_TYPE_OBD) {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
         }
     }
@@ -1070,7 +1068,7 @@ final class VdtCameraController {
 
     private boolean createUserCmd(Request request) {
         switch (request.mCmd) {
-            case UserCmd_GetSetup:
+            case USER_CMD_GET_SETUP:
 
                 this.cmd_Cam_get_getAllInfor();
 
@@ -1095,7 +1093,7 @@ final class VdtCameraController {
                 this.cmd_Rec_GetMarkTime();
                 break;
 
-            case UserCmd_ExitThread:
+            case USER_CMD_EXIT_THREAD:
                 return false;
 
             default:

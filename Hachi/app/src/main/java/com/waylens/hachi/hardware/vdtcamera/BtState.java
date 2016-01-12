@@ -8,38 +8,38 @@ public class BtState {
 	public static final String TAG = "BtState";
 
 	// is bt supported
-	public static final int BT_Support_Unknown = -1;
-	public static final int BT_Support_No = 0;
-	public static final int BT_Support_Yes = 1;
+	public static final int BT_SUPPORT_UNKNOWN = -1;
+	public static final int BT_SUPPORT_NO = 0;
+	public static final int BT_SUPPORT_YES = 1;
 
 	// is bt enabled
-	public static final int BT_State_Unknown = -1;
-	public static final int BT_State_Disabled = 0;
-	public static final int BT_State_Enabled = 1;
+	public static final int BT_STATE_UNKNOWN = -1;
+	public static final int BT_STATE_DISABLED = 0;
+	public static final int BT_STATE_ENABLED = 1;
 
 	// bt types
-	public static final int BT_Type_OBD = 0;
-	public static final int BT_Type_HID = 1;
+	public static final int BT_TYPE_OBD = 0;
+	public static final int BT_TYPE_HID = 1;
 
 	// bt device state
-	public static final int BTDEV_State_Unknown = -1;
-	public static final int BTDEV_State_Off = 0;
-	public static final int BTDEV_State_On = 1;
-	public static final int BTDEV_State_Busy = 2;
-	public static final int BTDEV_State_Wait = 3;
+	public static final int BTDEV_STATE_UNKNOWN = -1;
+	public static final int BTDEV_STATE_OFF = 0;
+	public static final int BTDEV_STATE_ON = 1;
+	public static final int BTDEV_STATE_BUSY = 2;
+	public static final int BTDEV_STATE_WAIT = 3;
 
 	public int mStateSN = 0;
 	public boolean mbSchedule = false;
 
-	public int mBtSupport = BT_Support_Unknown;
-	public int mBtState = BT_State_Unknown;
+	public int mBtSupport = BT_SUPPORT_UNKNOWN;
+	public int mBtState = BT_STATE_UNKNOWN;
 	public boolean mbBtEnabling = false;
 	public boolean mbBtScanning = false;
 
 	public int mNumDevs = 0;
 
 	static public class BtDevState {
-		public int mState = BTDEV_State_Unknown;
+		public int mState = BTDEV_STATE_UNKNOWN;
 		public String mMac = "";
 		public String mName = "";
 
@@ -58,8 +58,8 @@ public class BtState {
 		}
 	}
 
-	public BtDevState mObdState = new BtDevState(BT_Type_OBD, "OBD");
-	public BtDevState mHidState = new BtDevState(BT_Type_HID, "HID");
+	public BtDevState mObdState = new BtDevState(BT_TYPE_OBD, "OBD");
+	public BtDevState mHidState = new BtDevState(BT_TYPE_HID, "HID");
 
 	// default states when not available
 	public static final BtState nullState = new BtState();
@@ -128,13 +128,13 @@ public class BtState {
 
 	// called from UI thread
 	public void enableBt(boolean bEnable) {
-		mBtState = bEnable ? BT_State_Enabled : BT_State_Disabled;
+		mBtState = bEnable ? BT_STATE_ENABLED : BT_STATE_DISABLED;
 		mbBtEnabling = true;
 	}
 
 	// called from UI thread
 	public boolean canEnableBt() {
-		return mBtState != BT_State_Unknown && !mbBtEnabling && !mbBtScanning;
+		return mBtState != BT_STATE_UNKNOWN && !mbBtEnabling && !mbBtScanning;
 	}
 
 	// called from UI thread
@@ -144,7 +144,7 @@ public class BtState {
 
 	// called from UI thread
 	public boolean canOperate() {
-		return mBtState != BT_State_Unknown && !mbBtEnabling && !mbBtScanning;
+		return mBtState != BT_STATE_UNKNOWN && !mbBtEnabling && !mbBtScanning;
 	}
 
 	synchronized public void setNumDevs(int numDevs) {
@@ -179,7 +179,7 @@ public class BtState {
 	}
 
 	final static private boolean isBoundState(int state) {
-		return state == BTDEV_State_On || state == BTDEV_State_Busy || state == BTDEV_State_Wait;
+		return state == BTDEV_STATE_ON || state == BTDEV_STATE_BUSY || state == BTDEV_STATE_WAIT;
 	}
 
 	public boolean isDeviceBound(int type) {

@@ -89,22 +89,22 @@ public class CameraState {
     public static final int ERROR_START_RECORD_CARD_FULL = 2;
     public static final int ERROR_START_RECORD_CARD_ERROR = 3;
 
-    public int mStateSN = 0;
+    private int mStateSN = 0;
     public boolean mbSchedule = false;
 
-    public String mCameraName = "";
-    public String mFirmwareVersion = "";
+    public String mCameraName = new String();
+    public String mFirmwareVersion = new String();
     public int mApiVersion = 0;
-    public String mBuild = "";
+    public String mBuild = new String();
 
-    private int mRecordState = STATE_RECORD_UNKNOWN;
+    public int mRecordState = STATE_RECORD_UNKNOWN;
 
     public boolean mbIsStill = false;
-    public int mRecordDuration = -1;
+    private int mRecordDuration = -1;
     public boolean mbRecordDurationUpdated; //
     public long mRecordTimeFetchedTime;
 
-    private int mMicState = STATE_MIC_UNKNOWN;
+    public int mMicState = STATE_MIC_UNKNOWN;
     public int mMicVol = -1; // TODO
 
     public int mBatteryState = STATE_BATTERY_UNKNOWN;
@@ -219,6 +219,10 @@ public class CameraState {
             mCameraName = name;
             stateChanged();
         }
+    }
+
+    public String getName() {
+        return mCameraName;
     }
 
     synchronized public void setFirmwareVersion(String version) {

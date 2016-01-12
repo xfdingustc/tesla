@@ -11,7 +11,6 @@ import java.util.List;
 
 public class VdtCamera {
     private static final String TAG = VdtCamera.class.getSimpleName();
-    private static final boolean DEBUG = false;
 
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
@@ -435,7 +434,7 @@ public class VdtCamera {
 
     public String getName() {
         mController.cmd_Cam_get_Name();
-        return mState.mCameraName;
+        return mState.getName();
     }
 
     public void setRecordResolution(int resolutionIndex) {
