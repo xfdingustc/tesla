@@ -12,7 +12,7 @@ import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.transee.ccam.BtState;
+import com.waylens.hachi.hardware.vdtcamera.BtState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.transee.viditcam.actions.DialogBuilder;
 import com.waylens.hachi.R;

@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.transee.ccam.BtState;
+import com.waylens.hachi.hardware.vdtcamera.BtState;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
-import com.transee.ccam.WifiState;
+import com.waylens.hachi.hardware.vdtcamera.WifiState;
 import com.transee.common.Utils;
 import com.transee.viditcam.actions.GetCameraName;
 import com.transee.viditcam.actions.SelectColorMode;

@@ -53,7 +53,7 @@ public class CameraState {
     public static final int VIDEO_RESOLUTION_480P60 = 7;
     public static final int VIDEO_RESOLUTION_720P120 = 8;
     public static final int VIDEO_RESOLUTION_STILL = 9;
-    public static final int Video_Resolution_Num = 10;
+    public static final int VIDEO_RESOLUTION_NUM = 10;
 
     public static final int VIDEO_RESOLUTION_720P = 0;
     public static final int VIDEO_RESOLUTION_1080P = 1;
@@ -72,22 +72,22 @@ public class CameraState {
     public static final int REC_MODE_UNKNOWN = -1;
     public static final int FLAG_AUTO_RECORD = 1 << 0;
     public static final int FLAG_LOOP_RECORD = 1 << 1;
-    public static final int Rec_Mode_Manual = 0;
+    public static final int REC_MODE_MANUAL = 0;
     public static final int REC_MODE_AUTOSTART = FLAG_AUTO_RECORD;
-    public static final int Rec_Mode_Manual_LOOP = FLAG_LOOP_RECORD;
+    public static final int REC_MODE_MANUAL_LOOP = FLAG_LOOP_RECORD;
     public static final int REC_MODE_AUTOSTART_LOOP = (FLAG_AUTO_RECORD | FLAG_LOOP_RECORD);
 
-    public static final int Color_Mode_Unknown = -1;
-    public static final int Color_Mode_NORMAL = 0;
-    public static final int Color_Mode_SPORT = 1;
-    public static final int Color_Mode_CARDV = 2;
-    public static final int Color_Mode_SCENE = 3;
-    public static final int Color_Mode_Num = 4;
+    public static final int COLOR_MODE_UNKNOWN = -1;
+    public static final int COLOR_MODE_NORMAL = 0;
+    public static final int COLOR_MODE_SPORT = 1;
+    public static final int COLOR_MODE_CARDV = 2;
+    public static final int COLOR_MODE_SCENE = 3;
+    public static final int COLOR_MODE_NUM = 4;
 
-    public static final int Error_StartRecord_OK = 0;
-    public static final int Error_StartRecord_NoCard = 1;
-    public static final int Error_StartRecord_CardFull = 2;
-    public static final int Error_StartRecord_CardError = 3;
+    public static final int ERROR_START_RECORD_OK = 0;
+    public static final int ERROR_START_RECORD_NO_CARD = 1;
+    public static final int ERROR_START_RECORD_CARD_FULL = 2;
+    public static final int ERROR_START_RECORD_CARD_ERROR = 3;
 
     public int mStateSN = 0;
     public boolean mbSchedule = false;
@@ -127,7 +127,7 @@ public class CameraState {
     public int mRecordModeIndex = REC_MODE_UNKNOWN;
 
     public int mColorModeList = 0; // TODO
-    public int mColorModeIndex = Color_Mode_Unknown;
+    public int mColorModeIndex = COLOR_MODE_UNKNOWN;
 
     public int mMarkBeforeTime = -1;
     public int mMarkAfterTime = -1;

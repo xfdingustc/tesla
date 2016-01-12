@@ -4,11 +4,8 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.BtState;
-import com.transee.ccam.GpsState;
 import com.transee.ccam.SimpleInputStream;
 import com.transee.ccam.SimpleOutputStream;
-import com.transee.ccam.WifiState;
 import com.transee.common.CmdQueue;
 import com.transee.common.TcpConnection;
 

@@ -9,7 +9,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -20,7 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.WifiState;
+import com.waylens.hachi.hardware.vdtcamera.WifiState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;

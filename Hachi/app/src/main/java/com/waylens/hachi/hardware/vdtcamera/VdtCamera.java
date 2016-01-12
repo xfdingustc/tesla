@@ -1,11 +1,5 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
-import android.os.Handler;
-import android.util.Log;
-
-import com.transee.ccam.BtState;
-import com.transee.ccam.GpsState;
-import com.transee.ccam.WifiState;
 import com.waylens.hachi.snipe.VdbConnection;
 
 import java.io.IOException;
