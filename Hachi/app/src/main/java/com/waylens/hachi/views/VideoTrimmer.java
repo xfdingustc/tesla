@@ -9,12 +9,14 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -48,6 +50,8 @@ public class VideoTrimmer extends FrameLayout {
     private int mThumbWidth;
     private int mBorderWidth;
     private int mProgressBarWidth;
+
+    boolean mIsEditing;
 
     public VideoTrimmer(Context context) {
         super(context);
@@ -97,10 +101,23 @@ public class VideoTrimmer extends FrameLayout {
         LinearLayoutManager layoutManager = new TrimmerLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(layoutManager);
-        Log.e("test", "mRecyclerView.w: " + mRecyclerView.getWidth());
         mVideoTrimmerController = new VideoTrimmerController(getContext(), mThumbWidth, mBorderWidth, mProgressBarWidth);
         layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         addView(mVideoTrimmerController, layoutParams);
+        showController();
+    }
+
+    private void showController() {
+        if (mIsEditing) {
+            mVideoTrimmerController.setVisibility(VISIBLE);
+        } else {
+            mVideoTrimmerController.setVisibility(INVISIBLE);
+        }
+    }
+
+    public void setEditing(boolean isEditing) {
+        mIsEditing = isEditing;
+        showController();
     }
 
     public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, int defaultHeight) {
@@ -128,8 +145,12 @@ public class VideoTrimmer extends FrameLayout {
                 return;
             }
             width = size.x;
-            height = size.y;
         }
+
+        if (height == 0) {
+            height = defaultHeight;
+        }
+
         int imgWidth = height * 16 / 9;
         int itemCount = width / imgWidth;
         if (width % imgWidth != 0) {
@@ -199,6 +220,24 @@ public class VideoTrimmer extends FrameLayout {
 
     public void setMediaPlayer(MediaPlayer player) {
         mVideoTrimmerController.setMediaPlayer(player);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return !mIsEditing || super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        if (!mIsEditing) {
+            final int action = MotionEventCompat.getActionMasked(e);
+            if (action == MotionEvent.ACTION_UP) {
+                Log.e("test", "Click VideoTrimmer");
+                performClick();
+                return true;
+            }
+        }
+        return super.onTouchEvent(e);
     }
 
     public interface OnTrimmerChangeListener {
