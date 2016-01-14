@@ -103,7 +103,7 @@ public class VdtCamera {
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
-        mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
+        mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port, mState);
         mController.setListener(new VdtCameraController.Listener() {
             @Override
             public void onConnected() {
@@ -120,7 +120,9 @@ public class VdtCamera {
 
             @Override
             public void onCameraStateChanged() {
-                syncCameraState();
+                if (mOnStateChangeListener != null) {
+                    mOnStateChangeListener.onStateChanged(VdtCamera.this);
+                }
 
             }
 
@@ -315,15 +317,6 @@ public class VdtCamera {
 
     }
 
-    // client told us camera state has changed,
-    // so synchronize our state with it (on main thread)
-    private void syncCameraState() {
-        if (mController.syncState(mState)) {
-            if (mOnStateChangeListener != null) {
-                mOnStateChangeListener.onStateChanged(this);
-            }
-        }
-    }
 
     private void syncBtState() {
         if (mController.syncBtState(mBtStates)) {

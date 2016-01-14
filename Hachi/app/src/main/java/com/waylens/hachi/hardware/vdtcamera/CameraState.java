@@ -133,58 +133,7 @@ public class CameraState {
     public int mMarkAfterTime = -1;
 
 
-    // sync our states to users
-    synchronized public boolean syncStates(CameraState user) {
-        if (mStateSN == user.mStateSN) {
-            Logger.t(TAG).d("-- syncStates: no change ---");
-            return false;
-        } else {
-            Logger.t(TAG).d("-- syncStates ---");
-        }
 
-        user.mStateSN = mStateSN;
-
-        user.mCameraName = mCameraName;
-        user.mFirmwareVersion = mFirmwareVersion;
-        user.mApiVersion = mApiVersion;
-        user.mBuild = mBuild;
-
-        user.mRecordState = mRecordState;
-        user.mbIsStill = mbIsStill;
-        user.mRecordDuration = mRecordDuration;
-        user.mbRecordDurationUpdated = mbRecordDurationUpdated;
-        user.mRecordTimeFetchedTime = mRecordTimeFetchedTime;
-
-        user.mMicState = mMicState;
-        user.mMicVol = mMicVol;
-
-        user.mBatteryState = mBatteryState;
-        user.mPowerState = mPowerState;
-        user.mBatteryVol = mBatteryVol;
-
-        user.mStorageState = mStorageState;
-        user.mStorageTotalSpace = mStorageTotalSpace;
-        user.mStorageFreeSpace = mStorageFreeSpace;
-
-        user.mOverlayFlags = mOverlayFlags;
-
-        user.mVideoResolutionList = mVideoResolutionList;
-        user.mVideoResolutionIndex = mVideoResolutionIndex;
-
-        user.mVideoQualityList = mVideoQualityList;
-        user.mVideoQualityIndex = mVideoQualityIndex;
-
-        user.mRecordModeList = mRecordModeList;
-        user.mRecordModeIndex = mRecordModeIndex;
-
-        user.mColorModeList = mColorModeList;
-        user.mColorModeIndex = mColorModeIndex;
-
-        user.mMarkBeforeTime = mMarkBeforeTime;
-        user.mMarkAfterTime = mMarkAfterTime;
-
-        return true;
-    }
 
     private final void stateChanged() {
         mStateSN++;

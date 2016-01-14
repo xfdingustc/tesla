@@ -179,15 +179,18 @@ final class VdtCameraController {
     }
 
 
-    private CameraState mStates = new CameraState();
+    private final CameraState mStates;
     private final BtState mBtStates = new BtState();
     private final GpsState mGpsStates = new GpsState();
     private final WifiState mWifiStates = new WifiState();
 
 
-    public boolean syncState(CameraState user) {
-        return mStates.syncStates(user);
+    public VdtCameraController(InetAddress host, int port, CameraState state) {
+        InetSocketAddress address = new InetSocketAddress(host, port);
+        mConnection = new MyTcpConnection("ccam", address);
+        this.mStates = state;
     }
+
 
     public boolean syncBtState(BtState user) {
         return mBtStates.syncStates(user);
@@ -232,7 +235,6 @@ final class VdtCameraController {
 
     private final TcpConnection mConnection;
     private final Queue mQueue = new Queue();
-
 
 
     // all info for setup
@@ -1047,10 +1049,6 @@ final class VdtCameraController {
 
     // ========================================================
 
-    public VdtCameraController(InetAddress host, int port) {
-        InetSocketAddress address = new InetSocketAddress(host, port);
-        mConnection = new MyTcpConnection("ccam", address);
-    }
 
     public void start() {
         mConnection.start(null);
@@ -1312,7 +1310,7 @@ final class VdtCameraController {
 
     private void ackNotHandled(String name, String p1, String p2) {
 
-        Logger.t(TAG).d("not handled: " + name + ", p1=" + p1 + ",p2=" + p2);
+        //Logger.t(TAG).d("not handled: " + name + ", p1=" + p1 + ",p2=" + p2);
 
     }
 
