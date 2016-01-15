@@ -23,6 +23,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.activities.MainActivity2;
 import com.waylens.hachi.ui.activities.TabSwitchable;
 import com.waylens.hachi.ui.adapters.CameraListRvAdapter;
 
@@ -212,7 +213,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     @Override
     public void onPause() {
         super.onPause();
-        //((MainActivity)getActivity()).switchTab(3, null);
+        ((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
     }
 
     @Override

@@ -33,11 +33,11 @@ public class MainActivity2 extends BaseActivity {
 
     private Bundle fragmentArgs;
 
-    private static final int TAB_TAG_BOOKMARK = 0;
-    private static final int TAB_TAG_STORIES = 1;
-    private static final int TAB_TAG_LIVE_VIEW = 2;
-    private static final int TAB_TAG_SOCIAL = 3;
-    private static final int TAB_TAG_SETTINGS = 4;
+    public static final int TAB_TAG_BOOKMARK = 0;
+    public static final int TAB_TAG_STORIES = 1;
+    public static final int TAB_TAG_LIVE_VIEW = 2;
+    public static final int TAB_TAG_SOCIAL = 3;
+    public static final int TAB_TAG_SETTINGS = 4;
 
     private int mCurrentNavMenuId;
 
@@ -89,7 +89,7 @@ public class MainActivity2 extends BaseActivity {
 
 
 
-    private void switchFragment(int tag) {
+    public void switchFragment(int tag) {
 
         Fragment fragment;
         switch (tag) {
