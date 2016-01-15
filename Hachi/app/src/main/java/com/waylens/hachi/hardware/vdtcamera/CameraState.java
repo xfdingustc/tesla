@@ -63,11 +63,11 @@ public class CameraState {
     public static final int VIDEO_FRAMERATE_120FPS = 2;
 
     public static final int VIDEO_QUALITY_UNKNOWN = -1;
-    public static final int Video_Quality_Supper = 0;
-    public static final int Video_Quality_HI = 1;
-    public static final int Video_Quality_Mid = 2;
-    public static final int Video_Quality_LOW = 3;
-    public static final int Video_Quality_Num = 4;
+    public static final int VIDEO_QUALITY_SUPPER = 0;
+    public static final int VIDEO_QUALITY_HI = 1;
+    public static final int VIDEO_QUALITY_MID = 2;
+    public static final int VIDEO_QUALITY_LOW = 3;
+    public static final int VIDEO_QUALITY_NUM = 4;
 
     public static final int REC_MODE_UNKNOWN = -1;
     public static final int FLAG_AUTO_RECORD = 1 << 0;

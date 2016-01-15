@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item android:id="@+id/liveView" android:title="@string/live_view"
+              android:icon="@drawable/liveview_tab"/>
+
+        <item android:id="@+id/bookmark" android:title="@string/bookmark"
+              android:icon="@drawable/tab_bookmark"/>
+
+        <item android:id="@+id/stories" android:title="@string/stories"
+              android:icon="@drawable/tab_stories"/>
+
+        <item android:id="@+id/social" android:title="@string/social"
+              android:icon="@drawable/tab_social"/>
+    </group>
+
+    <group>
+        <item android:id="@+id/setting" android:title="@string/settings"
+              android:icon="@drawable/tab_settings"/>
+
+    </group>
+</menu>

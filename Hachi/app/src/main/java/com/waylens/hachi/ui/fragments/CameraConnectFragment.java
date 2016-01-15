@@ -212,7 +212,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     @Override
     public void onPause() {
         super.onPause();
-        ((MainActivity)getActivity()).switchTab(3, null);
+        //((MainActivity)getActivity()).switchTab(3, null);
     }
 
     @Override

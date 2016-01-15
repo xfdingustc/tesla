@@ -155,8 +155,8 @@ public class DeviceScanner extends Thread {
 
         @Override
         public void serviceResolved(ServiceEvent event) {
-            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
-            Logger.t(TAG).d(event.getInfo().toString());
+//            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
+//            Logger.t(TAG).d(event.getInfo().toString());
 
             ServiceInfo info = event.getInfo();
             Inet4Address[] addresses = info.getInet4Addresses();

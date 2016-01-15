@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Waylens</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
     <string name="dummy_text">PlaceHolderText</string>
     <string name="unkown_text">Unknown</string>
     <string name="empty_text"></string>
@@ -278,7 +279,11 @@
     <string name="following">Following</string>
     <string name="add_follow">+ FOLLOW</string>
 
-    <string name="live_view">LIVE VIEW</string>
+    <string name="live_view">Live View</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="stories">Stories</string>
+    <string name="social">Social</string>
+    <string name="moments">Moments</string>
     <string name="enhance">Enhance</string>
     <string name="gauge">Gauge</string>
     <string name="story_hint">Write your story…</string>
