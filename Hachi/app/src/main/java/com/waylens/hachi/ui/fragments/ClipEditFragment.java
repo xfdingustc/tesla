@@ -345,7 +345,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         } else {
             mVideoTrimmer.setBackgroundClip(mImageLoader, mClip, defaultHeight);
         }
-
+        mVideoTrimmer.setEditing(true);
         mVideoTrimmer.setInitRangeValues(mMinExtensibleValue, mMaxExtensibleValue);
         mSelectedClipStartTimeMs = mClipExtent.clipStartTimeMs;
         mSelectedClipEndTimeMs = mClipExtent.clipEndTimeMs;

@@ -25,6 +25,9 @@ public class ProtocolConstMsg {
     public static final int RES_STATE_INVALID_HTTP_REQUEST = -0x0007;
     public static final int RES_CRS_DEVICE_ID_INVALID = -0x0008;
     public static final int RES_STATE_MULTI_DEVICE_UPLOADING = -0x0009;
+    public static final int RES_STATE_TOO_MUCH_UNFINSIH_MOMENT  = -0x000A;
+    public static final int RES_STATE_INVALID_MOMENT_ID         = -0x000B;
+    public static final int RES_STATE_INVALID_RESOLUTION        = -0x000C;
 
 
     //VIDT_DATA_TYPE

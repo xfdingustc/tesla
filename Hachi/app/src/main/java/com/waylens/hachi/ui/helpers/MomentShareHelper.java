@@ -18,6 +18,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
 import com.waylens.hachi.utils.DataUploader;
+import com.waylens.hachi.utils.DataUploaderV2;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.UploadUrl;
@@ -30,8 +31,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.CountDownLatch;
 
 import crs_svr.ProtocolConstMsg;
+import crs_svr.v2.CrsCommand;
 
 /**
  * Created by Richard on 1/5/16.
@@ -49,6 +52,8 @@ public class MomentShareHelper {
 
     volatile boolean isCancelled;
 
+    String tmpDataURL;
+
     public MomentShareHelper(Context context, Clip clip, OnShareMomentListener listener) {
         mVdbRequestQueue = Snipe.newRequestQueue();
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(context);
@@ -61,57 +66,16 @@ public class MomentShareHelper {
     }
 
     public void shareMoment() {
-        getUploadUrlVideo();
+        createMoment();
     }
-
-    void getUploadUrlVideo() {
-        Bundle parameters = new Bundle();
-        parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
-        parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, mClip.getStartTimeMs());
-        parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, mClip.getDurationMs());
-        parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, VdbCommand.Factory.UPLOAD_GET_V1);
-
-        ClipUploadUrlRequest request = new ClipUploadUrlRequest(mClip, parameters,
-                new VdbResponse.Listener<UploadUrl>() {
-                    @Override
-                    public void onResponse(UploadUrl response) {
-                        mUploadUrlVideo = response;
-                        if (!isCancelled) {
-                            getUploadUrlRaw();
-                        } else {
-                            mShareListener.onCancelShare();
-                        }
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        mShareListener.onError(100, R.string.share_video_retrieve_error);
-                        Log.e("test", "", error);
-                    }
-                });
-
-        mVdbRequestQueue.add(request);
-    }
-
     void createMoment() {
         JSONObject params = new JSONObject();
         try {
-            params.put("title", "Moment from Android");
-            JSONObject raw = new JSONObject();
-            raw.put("guid", mClip.getVdbId());
-            JSONArray rawArray = new JSONArray();
-            rawArray.put(raw);
-            params.put("rawData", rawArray);
-            JSONObject fragment = new JSONObject();
-            fragment.put("guid", mClip.getVdbId());
-            fragment.put("clipCaptureTime", mClip.getDateTimeString());
-            fragment.put("beginTime", mClip.getStartTimeMs());
-            fragment.put("offset", mUploadUrlVideo.realTimeMs - mClip.getStartTimeMs());
-            fragment.put("duration", mUploadUrlVideo.lengthMs);
-            JSONArray fragments = new JSONArray();
-            fragments.put(fragment);
-            params.put("fragments", fragments);
+            params.put("title", "Richard's Moment for testing");
+            JSONArray hashTags = new JSONArray();
+            hashTags.put("Shanghai");
+            params.put("hashTags", hashTags);
+            params.put("accessLevel", "PUBLIC");
             Log.e("test", "params: " + params);
         } catch (JSONException e) {
             Log.e("test", "", e);
@@ -124,7 +88,7 @@ public class MomentShareHelper {
                         Log.e("test", "response: " + response);
                         mMomentInfo = response;
                         if (!isCancelled) {
-                            uploadData();
+                            uploadDataTask();
                         } else {
                             mShareListener.onCancelShare();
                         }
@@ -139,15 +103,11 @@ public class MomentShareHelper {
                 }));
     }
 
-    void uploadData() {
+    void uploadDataTask() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean done = uploadData(mUploadUrlVideo.url, "video", ProtocolConstMsg.VIDIT_VIDEO_DATA_LOW);
-                if (!done) {
-                    return;
-                }
-                done = uploadData(mUploadUrlRaw.url, "raw", ProtocolConstMsg.VIDIT_RAW_DATA);
+                boolean done = uploadData();
                 if (done) {
                     mShareListener.onShareSuccessful();
                 }
@@ -156,74 +116,25 @@ public class MomentShareHelper {
 
     }
 
-    boolean uploadData(String urlString, String type, int option) {
-        InputStream inputStream = null;
+    boolean uploadData() {
         try {
-            URL url = new URL(urlString);
-            URLConnection conn = url.openConnection();
-            inputStream = conn.getInputStream();
-            Log.e("test", String.format("type[%s], ContentLength[%d]", type, conn.getContentLength()));
+            //mMomentInfo = new JSONObject("{\"momentID\":1033,\"uploadServer\":{\"privateKey\":\"qwertyuiopasdfgh\",\"port\":35020,\"ip\":\"192.168.20.160\"}}");
             JSONObject uploadServer = mMomentInfo.optJSONObject("uploadServer");
             String ip = uploadServer.optString("ip");
             int port = uploadServer.optInt("port");
             String privateKey = uploadServer.optString("privateKey");
-            String[] tokenAndGuid = findTokenAndGuid(mMomentInfo, type);
-            DataUploader uploader = new DataUploader(ip, port, privateKey);
-            return uploader.uploadStream(inputStream, conn.getContentLength(), option, tokenAndGuid[0], tokenAndGuid[1]);
+            long momentID = mMomentInfo.optLong("momentID");
+            DataUploaderV2 uploaderV2 = new DataUploaderV2(ip, port, privateKey);
+            int dataType = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
+            uploaderV2.test(mVdbRequestQueue, momentID, mClip, dataType);
+            return true;
         } catch (Exception e) {
             mShareListener.onError(103, R.string.share_upload_error);
+            Log.e("test", "", e);
             return false;
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    Log.e("test", "", e);
-                }
-            }
         }
     }
 
-    String[] findTokenAndGuid(JSONObject momentInfo, String type) {
-        JSONArray jsonArray = momentInfo.optJSONArray("uploadData");
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.optJSONObject(i);
-            if (type.equals(jsonObject.optString("dataType"))) {
-                return new String[]{jsonObject.optString("uploadToken"), jsonObject.optString("guid")};
-            }
-        }
-        return null;
-    }
-
-    void getUploadUrlRaw() {
-        Bundle parameters = new Bundle();
-        parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
-        parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, mClip.getStartTimeMs());
-        parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, mClip.getDurationMs());
-        parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, VdbCommand.Factory.UPLOAD_GET_RAW);
-
-        ClipUploadUrlRequest request = new ClipUploadUrlRequest(mClip, parameters,
-                new VdbResponse.Listener<UploadUrl>() {
-                    @Override
-                    public void onResponse(UploadUrl response) {
-                        mUploadUrlRaw = response;
-                        if (!isCancelled) {
-                            createMoment();
-                        } else {
-                            mShareListener.onCancelShare();
-                        }
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        Log.e("test", "", error);
-                        mShareListener.onError(102, R.string.share_raw_retrieve_error);
-                    }
-                });
-
-        mVdbRequestQueue.add(request);
-    }
 
     public interface OnShareMomentListener {
         void onShareSuccessful();

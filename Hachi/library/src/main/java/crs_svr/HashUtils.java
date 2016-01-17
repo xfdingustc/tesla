@@ -1,4 +1,4 @@
-package com.waylens.hachi.utils;
+package crs_svr;
 
 import android.util.Log;
 
@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ *
  * Created by Xiaofei on 2015/3/18.
  */
 public class HashUtils {
@@ -16,7 +17,7 @@ public class HashUtils {
     private static MessageDigest sha1Inst;
     private static MessageDigest md5Inst;
 
-    public final static byte[] MD5(String s) {
+    public static byte[] MD5(String s) {
 
         try {
             byte[] btInput = s.getBytes();
@@ -36,11 +37,11 @@ public class HashUtils {
         }
     }
 
-    public final static String MD5String(String s) {
+    public static String MD5String(String s) {
         return getStringFromDigest(MD5(s));
     }
 
-    private final static String getStringFromDigest(byte[] digest) {
+    private static String getStringFromDigest(byte[] digest) {
         byte[] md = digest;
         char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
         // 把密文转换成十六进制的字符串形式
@@ -101,7 +102,7 @@ public class HashUtils {
         }
     }
 
-    public final static String SHA1String(File file) {
+    public static String SHA1String(File file) {
         return getStringFromDigest(SHA1(file));
     }
 

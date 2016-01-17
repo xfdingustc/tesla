@@ -20,6 +20,7 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
+import com.waylens.hachi.utils.DataUploaderV2;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -122,7 +123,7 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     void performShare() {
         mViewAnimator.setDisplayedChild(1);
         MomentShareHelper helper = new MomentShareHelper(getActivity(), mClip, this);
-
+        helper.shareMoment();
     }
 
     @Override

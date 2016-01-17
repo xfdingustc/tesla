@@ -1,7 +1,5 @@
 package crs_svr;
 
-import crs_svr.PTUntil;
-
 public class EncodeCommHead {
     public short size;
     public short encode_type; //enum CRE_ENCODE_TYPE; only support aes now

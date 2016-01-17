@@ -1,5 +1,7 @@
 package crs_svr;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.File;
@@ -331,31 +333,15 @@ public class PTUntil {
 
     public static byte[] encrypt(byte[] content, int iOffset, int len, String password) throws IOException {
         try {
-           /*
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-	        kgen.init(128, new SecureRandom(password.getBytes()));  
-	        SecretKey secretKey = kgen.generateKey();  
-	        byte[] enCodeFormat = secretKey.getEncoded();  
-	        SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");  
-	        */
-
-            //KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            //keyGen.init(256, new SecureRandom(password.getBytes("UTF-8")) );
-            //Key key = keyGen.generateKey();
-
             SecretKeySpec key = new SecretKeySpec(password.getBytes("UTF-8"), "AES");
-
-            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");// ����������
-            // byte[] byteContent = content.getBytes("utf-8");
-            cipher.init(Cipher.ENCRYPT_MODE, key);// ��ʼ��
-
-
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
             int inputLen = len;
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             int offSet = iOffset;
             byte[] cache = null;
             int i = 0;
-            // ����ݷֶν���
+
             while (inputLen - offSet > 0) {
                 if (inputLen - offSet >= MAX_ENCRYPT_BLOCK) {
                     cache = cipher.doFinal(content, offSet, MAX_ENCRYPT_BLOCK);
@@ -370,24 +356,11 @@ public class PTUntil {
             }
             byte[] decryptedData = out.toByteArray();
             out.close();
-
-
-            //byte[] result = cipher.doFinal(byteContent);
-            return decryptedData; // ����
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
+            return decryptedData;
+        } catch (Exception e) {
+            Log.e("PTUntil", "", e);
+            return null;
         }
-        return null;
     }
 
 

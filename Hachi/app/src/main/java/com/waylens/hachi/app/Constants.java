@@ -25,7 +25,7 @@ public class Constants {
      */
     public static final String API_LINK_ACCOUNT = HOST_URL + "api/users/link_waylens";
 
-    public static final String API_CHECK_EMAIL = HOST_URL + "api/users/che  ck_id?key=email&id=";
+    public static final String API_CHECK_EMAIL = HOST_URL + "api/users/check_id?key=email&id=";
 
     public static final String API_CHECK_USER_NAME = HOST_URL + "api/users/check_id?key=username&id=";
 
