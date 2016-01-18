@@ -229,7 +229,7 @@ public class VideoTrimmerController extends View implements Progressive {
         }
     }
 
-    private VideoTrimmer.DraggingFlag getFlag() {
+    VideoTrimmer.DraggingFlag getFlag() {
         VideoTrimmer.DraggingFlag flag;
         if (isDraggingLeft) {
             flag = VideoTrimmer.DraggingFlag.LEFT;

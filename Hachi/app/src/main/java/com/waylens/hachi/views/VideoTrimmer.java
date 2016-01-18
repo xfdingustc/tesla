@@ -240,6 +240,10 @@ public class VideoTrimmer extends FrameLayout {
         return super.onTouchEvent(e);
     }
 
+    public DraggingFlag getDraggingFlag() {
+        return mVideoTrimmerController.getFlag();
+    }
+
     public interface OnTrimmerChangeListener {
         void onStartTrackingTouch(VideoTrimmer trimmer, DraggingFlag flag);
 

@@ -266,7 +266,7 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
 
     @Override
     public void onEditClip(final SharableClip sharableClip, final ClipFilmAdapter.ClipEditViewHolder holder, final int position) {
-        if (mHolder == holder) {
+        if (mHolder == holder && holder.videoTrimmer.isInEditMode()) {
             return;
         }
 
@@ -289,17 +289,6 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
         mHolder = holder;
         mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
         mRvCameraVideoList.requestLayout();
-    }
-
-    //@Override
-    public void onStopEditing(int position) {
-        ClipFilmAdapter.ClipEditViewHolder holder = (ClipFilmAdapter.ClipEditViewHolder)
-                mRvCameraVideoList.findViewHolderForAdapterPosition(position);
-        if (holder != null) {
-            holder.cameraVideoView.setVisibility(View.GONE);
-            holder.videoTrimmer.setEditing(false);
-            holder.durationView.setVisibility(View.VISIBLE);
-        }
     }
 
     static class VideoTab {

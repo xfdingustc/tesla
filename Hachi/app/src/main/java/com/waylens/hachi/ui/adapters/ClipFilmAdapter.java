@@ -1,9 +1,8 @@
 package com.waylens.hachi.ui.adapters;
 
-import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.views.CameraVideoView;
+import com.waylens.hachi.ui.views.VideoPlayView;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -30,6 +30,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * ClipFilmAdapter
  * Created by Richard on 11/26/15.
  */
 public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -119,7 +120,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ClipFilmItem item = items.get(position);
         final SharableClip sharableClip = item.sharableClip;
         if (getItemViewType(position) == ClipFilmItem.TYPE_NORMAL) {
-            ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
+            final ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
             holder.durationView.setText(DateUtils.formatElapsedTime(sharableClip.clip.getDurationMs() / 1000l));
             holder.videoTrimmer.setBackgroundClip(mImageLoader,
                     sharableClip.clip,
@@ -139,6 +140,13 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (mOnEditClipListener != null) {
                         mOnEditClipListener.onShareClip(sharableClip);
                     }
+                }
+            });
+            holder.cameraVideoView.setOnProgressListener(new VideoPlayView.OnProgressListener() {
+                @Override
+                public void onProgress(int position, int duration) {
+                    //Log.e("test", String.format("position[%d], duration[%d]", position, duration));
+                    holder.videoTrimmer.setProgress(position);
                 }
             });
         } else {
@@ -178,6 +186,9 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (mOnEditClipListener != null) {
                         mOnEditClipListener.onStartDragging();
                     }
+                    if (holder.cameraVideoView.isPlaying()) {
+                        holder.cameraVideoView.pause();
+                    }
                 }
 
                 @Override
@@ -197,19 +208,41 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (mOnEditClipListener != null) {
                         mOnEditClipListener.onStopDragging();
                     }
+
+                    if (trimmer.getDraggingFlag() == VideoTrimmer.DraggingFlag.LEFT
+                            || trimmer.getDraggingFlag() == VideoTrimmer.DraggingFlag.RIGHT) {
+                        //mSelectedClipStartTimeMs = trimmer.getLeftValue();
+                        //mSelectedClipEndTimeMs = trimmer.getRightValue();
+                        //loadClipInfo();
+                        return;
+                    }
+
+                    holder.cameraVideoView.seekTo((int) trimmer.getProgress() - (int)trimmer.getLeftValue());
+
+                    //Log.e("test", String.format("Progress[%d],start[%d], end[%d] ", trimmer.getProgress(), trimmer.getLeftValue(), trimmer.getRightValue()));
+                }
+            });
+            holder.cameraVideoView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    stopEditing(holder);
                 }
             });
         }
+    }
+
+    void stopEditing(final ClipEditViewHolder holder) {
+        holder.cameraVideoView.setVisibility(View.GONE);
+        holder.controlPanel.setVisibility(View.GONE);
+        holder.videoTrimmer.setEditing(false);
+        holder.durationView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder viewHolder) {
         if (viewHolder instanceof ClipEditViewHolder) {
             final ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
-            holder.cameraVideoView.setVisibility(View.GONE);
-            holder.controlPanel.setVisibility(View.GONE);
-            holder.videoTrimmer.setEditing(false);
-            holder.durationView.setVisibility(View.VISIBLE);
+            stopEditing(holder);
             holder.videoTrimmer.setOnClickListener(null);
         }
         super.onViewDetachedFromWindow(viewHolder);
@@ -232,19 +265,6 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void onStartDragging();
 
         void onStopDragging();
-    }
-
-    static class ThumbnailLayoutManager extends LinearLayoutManager {
-
-        public ThumbnailLayoutManager(Context context) {
-            super(context);
-            setOrientation(LinearLayoutManager.HORIZONTAL);
-        }
-
-        @Override
-        public boolean canScrollHorizontally() {
-            return false;
-        }
     }
 
     public static class ClipEditViewHolder extends RecyclerView.ViewHolder {

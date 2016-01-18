@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -57,11 +58,13 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
 
     HandlerThread mNonUIThread;
     Handler mNonUIHandler;
-    Handler mUIHandler;
 
     View mBtnPlay;
     View mLoadingIcon;
     public ImageView videoCover;
+
+    OnProgressListener mOnProgressListener;
+    VideoHandler mUIHandler;
 
     public VideoPlayView(Context context) {
         this(context, null, 0);
@@ -87,7 +90,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         mBtnPlay.setOnClickListener(this);
         mLoadingIcon = findViewById(R.id.progress_loading);
         videoCover = (ImageView) findViewById(R.id.video_cover);
-        mUIHandler = new Handler(Looper.getMainLooper());
+        mUIHandler = new VideoHandler(this);
         mNonUIThread = new HandlerThread(TAG);
         mNonUIThread.start();
         mNonUIHandler = new Handler(mNonUIThread.getLooper());
@@ -104,12 +107,11 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
 
     public void setSource(String source, int targetState) {
         mVideoPath = source;
-        mSeekWhenPrepared = 0;
         switch (targetState) {
             case STATE_IDLE:
-                showController(0);
                 mTargetState = STATE_IDLE;
                 mCurrentState = STATE_IDLE;
+                mUIHandler.sendEmptyMessage(SHOW_CONTROLLERS);
                 break;
             case STATE_PREPARED:
             case STATE_PLAYING:
@@ -126,13 +128,21 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
                 onClickPlayButton();
                 break;
             case R.id.video_surface:
-                pause();
+                onClickSurface();
                 break;
         }
     }
 
     protected void onClickPlayButton() {
         playVideo();
+    }
+
+    void onClickSurface() {
+        if (isPlaying()) {
+            pause();
+        } else {
+            callOnClick();
+        }
     }
 
     void playVideo() {
@@ -206,20 +216,19 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
             mCurrentState = STATE_PLAYING;
         }
         mTargetState = STATE_PLAYING;
+        mUIHandler.sendEmptyMessage(SHOW_PROGRESS);
     }
 
-    void pause() {
-        if (isInPlaybackState()) {
-            if (mMediaPlayer.isPlaying()) {
+    public void pause() {
+        if (isPlaying()) {
                 mMediaPlayer.pause();
                 mCurrentState = STATE_PAUSED;
-            }
         }
         mTargetState = STATE_PAUSED;
-        showController(0);
+        mUIHandler.sendEmptyMessage(SHOW_CONTROLLERS);
     }
 
-    void seekTo(int msec) {
+    public void seekTo(int msec) {
         if (isInPlaybackState()) {
             mMediaPlayer.seekTo(msec);
             mSeekWhenPrepared = 0;
@@ -228,7 +237,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         }
     }
 
-    boolean isInPlaybackState() {
+    public boolean isInPlaybackState() {
         return (mMediaPlayer != null &&
                 mCurrentState != STATE_ERROR &&
                 mCurrentState != STATE_IDLE &&
@@ -263,7 +272,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
                 start();
             } else {
                 Log.e(TAG, "surfaceChanged - 2");
-                showController(0);
+                mUIHandler.sendEmptyMessage(SHOW_CONTROLLERS);
             }
         }
     }
@@ -302,7 +311,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
                 if (mTargetState == STATE_PLAYING) {
                     start();
                 } else if (!isPlaying()) {
-                    showController(0);
+                    mUIHandler.sendEmptyMessage(SHOW_CONTROLLERS);
                 }
             }
         } else {
@@ -316,12 +325,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         if (mBtnPlay == null) {
             return;
         }
-        mUIHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mBtnPlay.setVisibility(VISIBLE);
-            }
-        });
+        mBtnPlay.setVisibility(VISIBLE);
     }
 
     int getCurrentPosition() {
@@ -331,15 +335,19 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         return 0;
     }
 
-    boolean isPlaying() {
+    public boolean isPlaying() {
         return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
     //MediaPlayer.OnCompletionListener
     @Override
     public void onCompletion(MediaPlayer mp) {
+        int duration = mMediaPlayer.getDuration();
+        if (mOnProgressListener != null) {
+            mOnProgressListener.onProgress(duration, duration);
+        }
         release(true);
-        showController(0);
+        mUIHandler.sendEmptyMessage(SHOW_CONTROLLERS);
     }
 
     // MediaPlayer.OnInfoListener
@@ -377,8 +385,59 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     //MediaPlayer.OnSeekCompleteListener
     @Override
     public void onSeekComplete(MediaPlayer mp) {
-
+        Log.e(TAG, "onSeekComplete");
     }
 
+    void hideControllers() {
+        //
+    }
 
+    void showProgress() {
+        if (!isInPlaybackState()) {
+            return;
+        }
+        if (mOnProgressListener != null) {
+            int position = mMediaPlayer.getCurrentPosition();
+            int duration = mMediaPlayer.getDuration();
+            mOnProgressListener.onProgress(position, duration);
+        }
+        if (isPlaying()) {
+            mUIHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 20);
+        }
+    }
+
+    public void setOnProgressListener(OnProgressListener listener) {
+        mOnProgressListener = listener;
+    }
+
+    static final int FADE_OUT = 1;
+    static final int SHOW_PROGRESS = 2;
+    static final int SHOW_CONTROLLERS = 3;
+
+    static class VideoHandler extends Handler {
+        VideoPlayView mVideoPlayView;
+
+        VideoHandler(VideoPlayView videoPlayView) {
+            super();
+            mVideoPlayView = videoPlayView;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case FADE_OUT:
+                    mVideoPlayView.hideControllers();
+                    break;
+                case SHOW_PROGRESS:
+                    mVideoPlayView.showProgress();
+                    break;
+                case SHOW_CONTROLLERS:
+                    mVideoPlayView.showController(0);
+            }
+        }
+    }
+
+    public interface OnProgressListener {
+        void onProgress(int position, int duration);
+    }
 }
