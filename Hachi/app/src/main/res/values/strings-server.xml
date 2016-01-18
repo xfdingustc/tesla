@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="error_no_connection">Cannot connect to Waylens cloud.</string>
     <string name="server_msg_unknown_error">Unknown error</string>
     <string name="server_msg_invalid_json_format">Server Error, Invalid data format</string>
     <string name="server_msg_user_pass_error">User and password don\'t match.</string>

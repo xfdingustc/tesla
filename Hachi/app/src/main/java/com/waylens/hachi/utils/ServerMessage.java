@@ -3,6 +3,7 @@ package com.waylens.hachi.utils;
 import android.util.Log;
 import android.util.SparseIntArray;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -16,6 +17,8 @@ import org.json.JSONObject;
 public class ServerMessage {
 
     private static final String TAG = "ServerError";
+
+    public static final int ERROR_NO_CONNECTION = -2;
 
     public static final int UNKNOWN_ERROR = -1;
 
@@ -40,6 +43,7 @@ public class ServerMessage {
 
     static {
         if (msgResourceIDs.size() == 0) {
+            msgResourceIDs.put(ERROR_NO_CONNECTION, R.string.error_no_connection);
             msgResourceIDs.put(UNKNOWN_ERROR, R.string.server_msg_unknown_error);
             msgResourceIDs.put(INVALID_JSON_FORMAT, R.string.server_msg_invalid_json_format);
             msgResourceIDs.put(USER_NAME_PASSWORD_NOT_MATCHED, R.string.server_msg_user_pass_error);
@@ -84,10 +88,11 @@ public class ServerMessage {
             } catch (JSONException e) {
                 Logger.t(TAG).e("", e);
             }
+        } else if (error instanceof NoConnectionError) {
+            errorMsg.errorCode = ERROR_NO_CONNECTION;
+            errorMsg.msgResID = getErrorMessage(ERROR_NO_CONNECTION);
         } else {
-            Log.e("test", "Server responses nothing.", error);
-            new Exception("parseServerError").printStackTrace();
-
+            Logger.t(TAG).e("", error);
         }
         return errorMsg;
     }
