@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.waylens.hachi.R;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
@@ -60,7 +61,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
 
     View mBtnPlay;
     View mLoadingIcon;
-    View mVideoCover;
+    public ImageView videoCover;
 
     public VideoPlayView(Context context) {
         this(context, null, 0);
@@ -85,7 +86,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         mBtnPlay = findViewById(R.id.btn_play);
         mBtnPlay.setOnClickListener(this);
         mLoadingIcon = findViewById(R.id.progress_loading);
-        mVideoCover = findViewById(R.id.video_cover);
+        videoCover = (ImageView) findViewById(R.id.video_cover);
         mUIHandler = new Handler(Looper.getMainLooper());
         mNonUIThread = new HandlerThread(TAG);
         mNonUIThread.start();
@@ -118,15 +119,11 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         }
     }
 
-    public void setVideoThumbnail(String thumbnail) {
-
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_play:
-                playVideo();
+                onClickPlayButton();
                 break;
             case R.id.video_surface:
                 pause();
@@ -134,9 +131,13 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         }
     }
 
+    protected void onClickPlayButton() {
+        playVideo();
+    }
+
     void playVideo() {
         mBtnPlay.setVisibility(INVISIBLE);
-        mVideoCover.setVisibility(INVISIBLE);
+        videoCover.setVisibility(INVISIBLE);
         if (mCurrentState == STATE_IDLE) {
             mTargetState = STATE_PLAYING;
             openVideo();
@@ -200,7 +201,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     void start() {
         if (isInPlaybackState()) {
             mBtnPlay.setVisibility(INVISIBLE);
-            mVideoCover.setVisibility(INVISIBLE);
+            videoCover.setVisibility(INVISIBLE);
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
         }

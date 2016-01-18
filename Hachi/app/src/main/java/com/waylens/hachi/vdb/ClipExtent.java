@@ -6,7 +6,7 @@ package com.waylens.hachi.vdb;
 public class ClipExtent {
     public final Clip.ID cid;
 
-    public final Clip.ID originalCid;
+    public final Clip.ID realCid;
 
     public final Clip.ID bufferedCid;
 
@@ -20,7 +20,7 @@ public class ClipExtent {
 
     public ClipExtent(Clip.ID cid, Clip.ID originalCid, Clip.ID bufferedCid) {
         this.cid = cid;
-        this.originalCid = originalCid;
+        this.realCid = originalCid;
         this.bufferedCid = bufferedCid;
     }
 }
