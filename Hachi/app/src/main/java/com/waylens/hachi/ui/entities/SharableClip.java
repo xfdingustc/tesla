@@ -8,6 +8,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.RemoteClip;
 
 import java.util.concurrent.CountDownLatch;
@@ -22,7 +23,9 @@ public class SharableClip {
     public long minExtensibleValue;
     public long maxExtensibleValue;
     public final Clip clip;
-    long offset;
+    public long selectedStartValue;
+    public long selectedEndValue;
+    public long currentPosition;
 
     VdbRequestQueue mVdbRequestQueue;
 
@@ -47,6 +50,11 @@ public class SharableClip {
             bufferedCid = clip.cid;
             realCid = clip.cid;
         }
+    }
+
+    public ClipPos getThumbnailClipPos(long timeMs) {
+        return new ClipPos(clip.getVdbId(),
+                realCid, clip.clipDate, timeMs, ClipPos.TYPE_POSTER, false);
     }
 
     void getClipExtent() {

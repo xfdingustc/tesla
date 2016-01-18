@@ -19,6 +19,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.DataUploaderV2;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -51,22 +52,18 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     @Bind(R.id.error_msg_view)
     TextView mErrorMsgView;
 
-    Clip mClip;
-    //long mMinClipStartTimeMs;
-    //long mMaxClipEndTimeMs;
+    SharableClip mSharableClip;
     VdbImageLoader mImageLoader;
     CameraVideoPlayFragment mVideoPlayFragment;
 
     Handler mHandler;
 
 
-    public static ShareFragment newInstance(Clip clip) {
+    public static ShareFragment newInstance(SharableClip sharableClip) {
         Bundle args = new Bundle();
         ShareFragment fragment = new ShareFragment();
         fragment.setArguments(args);
-        fragment.mClip = clip;
-        //fragment.mMinClipStartTimeMs = minClipStartTimeMs;
-        //fragment.mMaxClipEndTimeMs = maxClipEndTimeMs;
+        fragment.mSharableClip = sharableClip;
         return fragment;
     }
 
@@ -89,7 +86,7 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        ClipPos clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
         mImageLoader.displayVdbImage(clipPos, videoCover);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -114,7 +111,7 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
 
     @OnClick(R.id.btn_play)
     void playVideo() {
-        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mClip, null);
+        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
         getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
         videoCover.setVisibility(View.INVISIBLE);
     }
@@ -122,7 +119,7 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     @OnClick(R.id.btn_ok)
     void performShare() {
         mViewAnimator.setDisplayedChild(1);
-        MomentShareHelper helper = new MomentShareHelper(getActivity(), mClip, this);
+        MomentShareHelper helper = new MomentShareHelper(getActivity(), mSharableClip.clip, this);
         helper.shareMoment();
     }
 

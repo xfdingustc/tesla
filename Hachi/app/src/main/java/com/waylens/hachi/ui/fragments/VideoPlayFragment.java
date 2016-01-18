@@ -76,7 +76,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     public static VideoPlayFragment fullScreenPlayer;
 
-    @Bind(R.id.root_container)
+    @Bind(R.id.video_root_container)
     FixedAspectRatioFrameLayout mRootContainer;
 
     @Bind(R.id.waylens_video_container)

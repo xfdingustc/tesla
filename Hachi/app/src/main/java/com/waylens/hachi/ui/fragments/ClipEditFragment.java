@@ -261,7 +261,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     @OnClick(R.id.btn_enhance)
     void enhanceEdit() {
         videoCover.setVisibility(View.VISIBLE);
-        getFragmentManager().beginTransaction().add(R.id.root_container, EnhancementFragment.newInstance(mClip)).commit();
+        //getFragmentManager().beginTransaction().add(R.id.root_container, EnhancementFragment.newInstance(mClip)).commit();
     }
 
     @OnClick(R.id.btn_add_to_story)
@@ -271,7 +271,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 
     @OnClick(R.id.btn_share)
     void shareClip() {
-        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mClip)).commit();
+        //
     }
 
     @OnClick(R.id.btn_delete)

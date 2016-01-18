@@ -16,6 +16,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.CameraConnectFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
@@ -44,12 +45,11 @@ public class MainActivity2 extends BaseActivity {
     @Bind(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.rootContainer)
+    @Bind(R.id.root_container)
     CoordinatorLayout mRootView;
 
     @Bind(R.id.navView)
     NavigationView mNavView;
-
 
 
     @Override
@@ -85,8 +85,6 @@ public class MainActivity2 extends BaseActivity {
             mCurrentNavMenuId = R.id.liveView;
         }
     }
-
-
 
 
     public void switchFragment(int tag) {
@@ -160,9 +158,25 @@ public class MainActivity2 extends BaseActivity {
 
     private void setupActionBarToggle() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-            .drawer_open, R.string.drawer_close);
+                .drawer_open, R.string.drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
+        if (fragment instanceof FragmentNavigator
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            return;
+        }
+
+        fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
+        if (fragment instanceof FragmentNavigator
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
     }
 }

@@ -156,6 +156,7 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
     }
 
     void retrieveSharableClips(final int clipType) {
+        mViewAnimator.setDisplayedChild(0);
         mBgHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -251,6 +252,16 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
     @Override
     public void onStopDragging() {
         mRvCameraVideoList.setLayoutFrozen(false);
+    }
+
+    @Override
+    public void onEnhanceClip(SharableClip sharableClip) {
+        getFragmentManager().beginTransaction().add(R.id.root_container, EnhancementFragment.newInstance(sharableClip)).commit();
+    }
+
+    @Override
+    public void onShareClip(SharableClip sharableClip) {
+        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(sharableClip)).commit();
     }
 
     @Override

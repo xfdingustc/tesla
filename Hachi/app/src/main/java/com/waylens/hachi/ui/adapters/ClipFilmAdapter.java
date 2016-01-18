@@ -117,22 +117,35 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int position) {
         ClipFilmItem item = items.get(position);
+        final SharableClip sharableClip = item.sharableClip;
         if (getItemViewType(position) == ClipFilmItem.TYPE_NORMAL) {
             ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
-            holder.durationView.setText(DateUtils.formatElapsedTime(item.sharableClip.clip.getDurationMs() / 1000l));
-            setupClipFilm(item.sharableClip, holder);
+            holder.durationView.setText(DateUtils.formatElapsedTime(sharableClip.clip.getDurationMs() / 1000l));
+            holder.videoTrimmer.setBackgroundClip(mImageLoader,
+                    sharableClip.clip,
+                    ViewUtils.dp2px(64, holder.videoTrimmer.getResources()));
+            holder.cameraVideoView.initVideoPlay(mVdbRequestQueue, sharableClip);
+            holder.btnEnhance.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnEditClipListener != null) {
+                        mOnEditClipListener.onEnhanceClip(sharableClip);
+                    }
+                }
+            });
+            holder.btnShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnEditClipListener != null) {
+                        mOnEditClipListener.onShareClip(sharableClip);
+                    }
+                }
+            });
         } else {
             SectionViewHolder holder = (SectionViewHolder) viewHolder;
-            holder.clipDateView.setText(item.sharableClip.clip.getDateString());
+            holder.clipDateView.setText(sharableClip.clip.getDateString());
             holder.clipCountView.setText(String.valueOf(item.sectionCount));
         }
-    }
-
-    void setupClipFilm(SharableClip sharableClip, ClipEditViewHolder holder) {
-        holder.videoTrimmer.setBackgroundClip(mImageLoader,
-                sharableClip.clip,
-                ViewUtils.dp2px(64, holder.videoTrimmer.getResources()));
-        holder.cameraVideoView.initVideoPlay(mVdbRequestQueue, sharableClip);
     }
 
     @Override
@@ -174,6 +187,9 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 sharableClip.realCid, sharableClip.clip.clipDate, progress, ClipPos.TYPE_POSTER, false);
                         holder.cameraVideoView.updateThumbnail(clipPos);
                     }
+                    sharableClip.selectedStartValue = start;
+                    sharableClip.selectedEndValue = end;
+                    sharableClip.currentPosition = progress;
                 }
 
                 @Override
@@ -209,6 +225,10 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public interface OnEditClipListener {
         void onEditClip(SharableClip sharableClip, ClipEditViewHolder holder, int position);
 
+        void onEnhanceClip(SharableClip sharableClip);
+
+        void onShareClip(SharableClip sharableClip);
+
         void onStartDragging();
 
         void onStopDragging();
@@ -239,6 +259,12 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @Bind(R.id.control_panel)
         public View controlPanel;
+
+        @Bind(R.id.btn_enhance)
+        View btnEnhance;
+
+        @Bind(R.id.btn_share)
+        View btnShare;
 
         public ClipEditViewHolder(View itemView) {
             super(itemView);

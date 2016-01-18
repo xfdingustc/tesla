@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.views.VideoPlayerProgressBar;
 
@@ -39,21 +38,17 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Bind(R.id.enhance_root_view)
     LinearLayout mEnhanceRootView;
 
-    Clip mClip;
-    //long mMinClipStartTimeMs;
-    //long mMaxClipEndTimeMs;
+    SharableClip mSharableClip;
     VdbImageLoader mImageLoader;
 
     CameraVideoPlayFragment mVideoPlayFragment;
 
 
-    public static EnhancementFragment newInstance(Clip clip) {
+    public static EnhancementFragment newInstance(SharableClip sharableClip) {
         Bundle args = new Bundle();
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
-        fragment.mClip = clip;
-        //fragment.mMinClipStartTimeMs = minClipStartTimeMs;
-        //fragment.mMaxClipEndTimeMs = maxClipEndTimeMs;
+        fragment.mSharableClip = sharableClip;
         return fragment;
     }
 
@@ -75,12 +70,11 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
-
-        ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        ClipPos clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
         mImageLoader.displayVdbImage(clipPos, videoCover);
 
         initSeekBar();
-        mClipDateView.setText(mClip.getDateTimeString());
+        mClipDateView.setText(mSharableClip.clip.getDateTimeString());
     }
 
     @Override
@@ -100,7 +94,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
 
     @OnClick(R.id.btn_play)
     void playVideo() {
-        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mClip, null);
+        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
         mVideoPlayFragment.setOnProgressListener(this);
         getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
         videoCover.setVisibility(View.INVISIBLE);
@@ -122,9 +116,9 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     }
 
     private void initSeekBar() {
-        final ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-        mSeekBar.setInitRangeValues(mClip.getStartTimeMs(), mClip.getStartTimeMs() + mClip.getStartTimeMs());
-        mSeekBar.setClip(mClip, mImageLoader);
+        final ClipPos clipPos = new ClipPos(mSharableClip.clip, mSharableClip.clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        mSeekBar.setInitRangeValues(mSharableClip.clip.getStartTimeMs(), mSharableClip.clip.getStartTimeMs() + mSharableClip.clip.getStartTimeMs());
+        mSeekBar.setClip(mSharableClip.clip, mImageLoader);
         mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(VideoPlayerProgressBar progressBar) {
@@ -134,7 +128,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             @Override
             public void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser) {
                 //Log.e("test", "Progress: " + progress);
-                refreshThumbnail(mClip.getStartTimeMs() + progress, clipPos);
+                refreshThumbnail(mSharableClip.clip.getStartTimeMs() + progress, clipPos);
             }
 
             @Override
