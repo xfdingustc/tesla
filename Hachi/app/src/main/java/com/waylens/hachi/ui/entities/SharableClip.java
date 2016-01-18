@@ -14,6 +14,7 @@ import com.waylens.hachi.vdb.RemoteClip;
 import java.util.concurrent.CountDownLatch;
 
 /**
+ * SharableClip
  * Created by Richard on 1/17/16.
  */
 public class SharableClip {
@@ -55,6 +56,10 @@ public class SharableClip {
     public ClipPos getThumbnailClipPos(long timeMs) {
         return new ClipPos(clip.getVdbId(),
                 realCid, clip.clipDate, timeMs, ClipPos.TYPE_POSTER, false);
+    }
+
+    public int getSelectedLength() {
+        return (int) (selectedEndValue - selectedStartValue);
     }
 
     void getClipExtent() {

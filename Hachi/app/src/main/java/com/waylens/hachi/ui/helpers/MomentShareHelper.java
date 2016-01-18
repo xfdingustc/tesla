@@ -2,6 +2,8 @@ package com.waylens.hachi.ui.helpers;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -17,6 +19,7 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
+import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.utils.DataUploader;
 import com.waylens.hachi.utils.DataUploaderV2;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -40,42 +43,51 @@ import crs_svr.v2.CrsCommand;
  * Created by Richard on 1/5/16.
  */
 public class MomentShareHelper {
-
-    UploadUrl mUploadUrlVideo;
-    UploadUrl mUploadUrlRaw;
-    JSONObject mMomentInfo;
     VdbRequestQueue mVdbRequestQueue;
     RequestQueue mRequestQueue;
-    Clip mClip;
-
     OnShareMomentListener mShareListener;
+
+    Thread mUploadThread;
+    volatile DataUploaderV2 uploaderV2;
 
     volatile boolean isCancelled;
 
-    String tmpDataURL;
+    Handler mHandler;
 
-    public MomentShareHelper(Context context, Clip clip, OnShareMomentListener listener) {
+    public MomentShareHelper(Context context, OnShareMomentListener listener) {
         mVdbRequestQueue = Snipe.newRequestQueue();
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(context);
-        mClip = clip;
         mShareListener = listener;
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
-    public void cancel() {
+    public void cancel(boolean cleanListener) {
         isCancelled = true;
+        if (mUploadThread != null && mUploadThread.isAlive() && uploaderV2 != null) {
+            uploaderV2.cancel();
+        }
+        if (cleanListener) {
+            mShareListener = null;
+        }
     }
 
-    public void shareMoment() {
-        createMoment();
+    public void shareMoment(SharableClip sharableClip, String title, String[] tags, String accessLevel) {
+        uploadDataTask(sharableClip, title, tags, accessLevel);
     }
-    void createMoment() {
+
+    JSONObject createMoment(String title, String[] tags, String accessLevel) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final JSONObject[] results = new JSONObject[]{null};
+
         JSONObject params = new JSONObject();
         try {
-            params.put("title", "Richard's Moment for testing");
+            params.put("title", title);
             JSONArray hashTags = new JSONArray();
-            hashTags.put("Shanghai");
+            for (String tag : tags) {
+                hashTags.put(tag);
+            }
             params.put("hashTags", hashTags);
-            params.put("accessLevel", "PUBLIC");
+            params.put("accessLevel", accessLevel);
             Log.e("test", "params: " + params);
         } catch (JSONException e) {
             Log.e("test", "", e);
@@ -85,53 +97,76 @@ public class MomentShareHelper {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("test", "response: " + response);
-                        mMomentInfo = response;
-                        if (!isCancelled) {
-                            uploadDataTask();
-                        } else {
-                            mShareListener.onCancelShare();
-                        }
+                        results[0] = response;
+                        latch.countDown();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mShareListener.onError(101, R.string.create_moment_error);
                         Log.e("test", "", error);
+                        latch.countDown();
                     }
                 }));
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Log.e("test", "", e);
+        }
+        return results[0];
     }
 
-    void uploadDataTask() {
-        new Thread(new Runnable() {
+    void uploadDataTask(final SharableClip sharableClip, final String title, final String[] tags, final String accessLevel) {
+        mUploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean done = uploadData();
-                if (done) {
-                    mShareListener.onShareSuccessful();
+                int result = uploadData(sharableClip, title, tags, accessLevel);
+                uploaderV2 = null;
+                mUploadThread = null;
+                if (mShareListener != null) {
+                    processResult(result);
                 }
             }
-        }).start();
-
+        });
+        mUploadThread.start();
     }
 
-    boolean uploadData() {
+    void processResult(final int result) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (result == CrsCommand.RES_STATE_OK) {
+                    mShareListener.onShareSuccessful();
+                } else if (result == CrsCommand.RES_STATE_FAIL) {
+                    mShareListener.onError(result, 0);
+                } else {
+                    mShareListener.onCancelShare();
+                }
+            }
+        });
+    }
+
+    int uploadData(SharableClip sharableClip, String title, String[] tags, String accessLevel) {
         try {
-            //mMomentInfo = new JSONObject("{\"momentID\":1033,\"uploadServer\":{\"privateKey\":\"qwertyuiopasdfgh\",\"port\":35020,\"ip\":\"192.168.20.160\"}}");
-            JSONObject uploadServer = mMomentInfo.optJSONObject("uploadServer");
+            if (isCancelled) {
+                return CrsCommand.RES_STATE_CANCELLED;
+            }
+            JSONObject momentInfo = createMoment(title, tags, accessLevel);
+            if (isCancelled) {
+                return CrsCommand.RES_STATE_CANCELLED;
+            }
+            JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
             String ip = uploadServer.optString("ip");
             int port = uploadServer.optInt("port");
             String privateKey = uploadServer.optString("privateKey");
-            long momentID = mMomentInfo.optLong("momentID");
-            DataUploaderV2 uploaderV2 = new DataUploaderV2(ip, port, privateKey);
+            long momentID = momentInfo.optLong("momentID");
+            uploaderV2 = new DataUploaderV2(ip, port, privateKey);
             int dataType = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
-            uploaderV2.test(mVdbRequestQueue, momentID, mClip, dataType);
-            return true;
+            return uploaderV2.upload(mVdbRequestQueue, momentID, sharableClip, dataType);
         } catch (Exception e) {
-            mShareListener.onError(103, R.string.share_upload_error);
             Log.e("test", "", e);
-            return false;
+            return CrsCommand.RES_STATE_FAIL;
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,20 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
-import com.waylens.hachi.utils.DataUploaderV2;
-import com.waylens.hachi.utils.VolleyUtil;
-import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.UploadUrl;
-
-import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,7 +49,7 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     VdbImageLoader mImageLoader;
     CameraVideoPlayFragment mVideoPlayFragment;
 
-    Handler mHandler;
+    private MomentShareHelper mShareHelper;
 
 
     public static ShareFragment newInstance(SharableClip sharableClip) {
@@ -71,8 +64,6 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
-        mHandler = new Handler();
-
     }
 
     @Nullable
@@ -101,6 +92,10 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
             getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
             mVideoPlayFragment = null;
         }
+
+        if (mShareHelper != null) {
+            mShareHelper.cancel(true);
+        }
     }
 
     @Override
@@ -119,37 +114,31 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     @OnClick(R.id.btn_ok)
     void performShare() {
         mViewAnimator.setDisplayedChild(1);
-        MomentShareHelper helper = new MomentShareHelper(getActivity(), mSharableClip.clip, this);
-        helper.shareMoment();
+        mShareHelper = new MomentShareHelper(getActivity(), this);
+        String title = "";
+        String[] tags = new String[]{"Shanghai", "car"};
+        mShareHelper.shareMoment(mSharableClip, title, tags, "PUBLIC");
     }
 
     @Override
     public void onShareSuccessful() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mViewAnimator.setDisplayedChild(2);
-            }
-        });
+        mViewAnimator.setDisplayedChild(2);
     }
 
     @Override
     public void onCancelShare() {
-        mViewAnimator.setDisplayedChild(0);
+        View view = getView();
+        if (view != null) {
+            Snackbar.make(view, R.string.share_is_cancelled, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onError(int errorCode, final int errorResId) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (errorResId != 0) {
-                    mErrorMsgView.setText(errorResId);
-                }
-                mViewAnimator.setDisplayedChild(3);
-            }
-        });
-
+        if (errorResId != 0) {
+            mErrorMsgView.setText(errorResId);
+        }
+        mViewAnimator.setDisplayedChild(3);
     }
 
     @OnClick(R.id.btn_cancel)
@@ -165,6 +154,11 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     public boolean onInterceptBackPressed() {
         if (VideoPlayFragment.fullScreenPlayer != null) {
             VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
+            return true;
+        }
+        if (mViewAnimator.getDisplayedChild() == 1 && mShareHelper != null) {
+            mShareHelper.cancel(false);
+            mViewAnimator.setDisplayedChild(0);
             return true;
         }
         close();

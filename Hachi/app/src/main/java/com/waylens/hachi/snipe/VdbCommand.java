@@ -333,7 +333,7 @@ public class VdbCommand {
                     .build();
         }
 
-        public static VdbCommand createCmdGetUploadUrl(Clip clip,
+        public static VdbCommand createCmdGetUploadUrl(Clip.ID cid,
                                                        boolean isPlayList,
                                                        long clipTimeMs,
                                                        int lengthMs,
@@ -342,7 +342,7 @@ public class VdbCommand {
             return new Builder()
                     .writeCmdCode(CMD_GetUploadUrl, 0)
                     .writeInt32(playListValue)
-                    .writeClipId(clip.cid)
+                    .writeClipId(cid)
                     .writeInt64(clipTimeMs)
                     .writeInt32(lengthMs)
                     .writeInt32(uploadOpt)

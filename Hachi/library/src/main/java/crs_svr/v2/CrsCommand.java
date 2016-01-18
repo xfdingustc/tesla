@@ -69,6 +69,7 @@ public abstract class CrsCommand {
 
     public static final int RES_SLICE_TRANS_COMPLETE = 0x0001;
     public static final int RES_FILE_TRANS_COMPLETE = 0x0002;
+    public static final int RES_STATE_CANCELLED = 0x0003;
 
     public static final int RES_STATE_OK = 0x0000;    //OK
     public static final int RES_STATE_FAIL = -0x0001;    //failed

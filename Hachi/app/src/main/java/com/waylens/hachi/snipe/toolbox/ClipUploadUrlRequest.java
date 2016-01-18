@@ -22,14 +22,14 @@ public class ClipUploadUrlRequest extends VdbRequest<UploadUrl> {
 
     private static final String TAG = "ClipUploadUrlRequest";
 
-    private Clip mClip;
+    private Clip.ID mCid;
     private Bundle mParams;
 
-    public ClipUploadUrlRequest(Clip clip, Bundle params,
+    public ClipUploadUrlRequest(Clip.ID cid, Bundle params,
                                 VdbResponse.Listener<UploadUrl> listener,
                                 VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
-        mClip = clip;
+        mCid = cid;
         mParams = params;
     }
 
@@ -39,7 +39,7 @@ public class ClipUploadUrlRequest extends VdbRequest<UploadUrl> {
         long clipTimeMs = mParams.getLong(PARAM_CLIP_TIME_MS);
         int clipLengthMs = mParams.getInt(PARAM_CLIP_LENGTH_MS);
         int uploadOpt = mParams.getInt(PARAM_UPLOAD_OPT);
-        mVdbCommand = VdbCommand.Factory.createCmdGetUploadUrl(mClip, isPlayList, clipTimeMs, clipLengthMs, uploadOpt);
+        mVdbCommand = VdbCommand.Factory.createCmdGetUploadUrl(mCid, isPlayList, clipTimeMs, clipLengthMs, uploadOpt);
         return mVdbCommand;
     }
 

@@ -319,6 +319,7 @@
 
     <string name="manual_info">Start/stop recording by manually, every video clip saved as
         bookmark format</string>
+    <string name="share_is_cancelled">Share is cancelled.</string>
 
     <plurals name="number_of_bookmarks">
         <item quantity="one">%d Bookmarks</item>
