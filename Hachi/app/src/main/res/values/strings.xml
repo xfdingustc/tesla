@@ -60,6 +60,7 @@
     <string name="info_stop_recording">Stop Recording&#8230;</string>
     <string name="info_empty_list">Empty</string>
     <string name="info_num_clips">Clips:&#160;</string>
+    <string name="click_2_login">Click to login</string>
     <string name="sel_marked_list">Marked Video List </string>
     <string name="sel_playlist">Playlist&#160;</string>
     <string name="sel_google_map">Google Map</string>

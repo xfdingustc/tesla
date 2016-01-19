@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.activities;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.PackageInstaller;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -11,7 +12,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
@@ -24,6 +28,7 @@ import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PushUtils;
 
 import butterknife.Bind;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/1/15.
@@ -42,6 +47,8 @@ public class MainActivity2 extends BaseActivity {
 
     private int mCurrentNavMenuId;
 
+    private SessionManager mSessionManager = SessionManager.getInstance();
+
     @Bind(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
 
@@ -50,6 +57,11 @@ public class MainActivity2 extends BaseActivity {
 
     @Bind(R.id.navView)
     NavigationView mNavView;
+
+    CircleImageView mUserAvatar;
+    TextView mUsername;
+    TextView mEmail;
+
 
 
     @Override
@@ -62,7 +74,7 @@ public class MainActivity2 extends BaseActivity {
     protected void init() {
         super.init();
         initViews();
-        if (SessionManager.getInstance().isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
+        if (mSessionManager.isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
@@ -77,12 +89,22 @@ public class MainActivity2 extends BaseActivity {
         setupActionBarToggle();
         setupNavigationView();
 
-        if (!SessionManager.getInstance().isLoggedIn()) {
+
+
+        if (!mSessionManager.isLoggedIn()) {
             switchFragment(TAB_TAG_SOCIAL);
             mCurrentNavMenuId = R.id.social;
         } else {
             switchFragment(TAB_TAG_LIVE_VIEW);
             mCurrentNavMenuId = R.id.liveView;
+        }
+
+        // update user profile;
+        if (mSessionManager.isLoggedIn()) {
+            Logger.t(TAG).d("mUserAvatar: " + mUserAvatar + " url: " + mSessionManager.getAvatarUrl());
+            ImageLoader.getInstance().displayImage(mSessionManager.getAvatarUrl(), mUserAvatar);
+            mUsername.setText(mSessionManager.getUserName());
+            
         }
     }
 
@@ -121,6 +143,9 @@ public class MainActivity2 extends BaseActivity {
 
 
     private void setupNavigationView() {
+        mUserAvatar = (CircleImageView)mNavView.getHeaderView(0).findViewById(R.id.civUserAvatar);
+        mUsername = (TextView)mNavView.getHeaderView(0).findViewById(R.id.tvUserName);
+        mEmail = (TextView)mNavView.getHeaderView(0).findViewById(R.id.tvEmail);
         mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
