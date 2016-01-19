@@ -280,7 +280,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     boolean isRawDataReady() {
-        return mTypedState.get(RawDataItem.DATA_TYPE_ODB) == RAW_DATA_STATE_READY
+        return mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_READY
             && mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_READY
             && mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_READY;
     }
@@ -606,13 +606,13 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
 //            return;
 //        }
 
-        RawDataItem obd = getRawData(RawDataItem.DATA_TYPE_ODB, position);
+        RawDataItem obd = getRawData(RawDataItem.DATA_TYPE_OBD, position);
 //        if (obd != null && obd.data != null) {
 //            mObdView.setSpeed(((OBDData) obd.data).speed);
 //            mObdView.setTargetValue(((OBDData) obd.data).rpm / 1000.0f);
 //        } else {
 //            Logger.t(TAG).e("Position: " + position + "; mOBDPosition: " + mTypedPosition
-//                .get(RawDataBlock.DATA_TYPE_ODB));
+//                .get(RawDataBlock.DATA_TYPE_OBD));
 //        }
 
         RawDataItem gps = getRawData(RawDataItem.DATA_TYPE_GPS, position);
@@ -729,8 +729,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mTypedState.clear();
         mTypedPosition.clear();
 
-        if (mTypedState.get(RawDataItem.DATA_TYPE_ODB) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataItem.DATA_TYPE_ODB);
+        if (mTypedState.get(RawDataItem.DATA_TYPE_OBD) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataItem.DATA_TYPE_OBD);
         }
 
         if (mTypedState.get(RawDataItem.DATA_TYPE_ACC) != RAW_DATA_STATE_READY) {
@@ -777,7 +777,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     }
 
     void onLoadRawDataFinished() {
-        if (mTypedState.get(RawDataItem.DATA_TYPE_ODB) == RAW_DATA_STATE_UNKNOWN
+        if (mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_UNKNOWN
             || mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_UNKNOWN
             || mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;
@@ -785,7 +785,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
         mRawDataState = RAW_DATA_STATE_READY;
         loadPlayURL();
 
-//        if (mTypedRawData.get(RawDataBlock.DATA_TYPE_ODB) != null && mObdView == null) {
+//        if (mTypedRawData.get(RawDataBlock.DATA_TYPE_OBD) != null && mObdView == null) {
 //            mObdView = new GaugeView(getActivity());
 //            int defaultSize = ViewUtils.dp2px(64, getResources());
 //            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(defaultSize, defaultSize);

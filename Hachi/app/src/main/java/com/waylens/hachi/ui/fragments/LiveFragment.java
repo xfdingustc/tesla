@@ -280,8 +280,8 @@ public class LiveFragment extends BaseFragment implements FragmentNavigator,
         mRvCameraVideoList.setLayoutFrozen(false);
         holder.cameraVideoView.setVisibility(View.VISIBLE);
         holder.videoTrimmer.setInitRangeValues(sharableClip.minExtensibleValue, sharableClip.maxExtensibleValue);
-        holder.videoTrimmer.setLeftValue(sharableClip.clip.getStartTimeMs());
-        holder.videoTrimmer.setRightValue(sharableClip.clip.getStartTimeMs() + sharableClip.clip.getDurationMs());
+        holder.videoTrimmer.setLeftValue(sharableClip.selectedStartValue);
+        holder.videoTrimmer.setRightValue(sharableClip.selectedEndValue);
         holder.videoTrimmer.setEditing(true);
         holder.controlPanel.setVisibility(View.VISIBLE);
 

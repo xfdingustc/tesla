@@ -49,6 +49,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public OnEditClipListener mOnEditClipListener;
 
+    VideoTrimmer.DraggingFlag mDraggingFlag;
 
     public ClipFilmAdapter() {
         mVdbRequestQueue = Snipe.newRequestQueue();
@@ -201,6 +202,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     sharableClip.selectedStartValue = start;
                     sharableClip.selectedEndValue = end;
                     sharableClip.currentPosition = progress;
+                    mDraggingFlag = flag;
                 }
 
                 @Override
@@ -209,16 +211,14 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         mOnEditClipListener.onStopDragging();
                     }
 
-                    if (trimmer.getDraggingFlag() == VideoTrimmer.DraggingFlag.LEFT
-                            || trimmer.getDraggingFlag() == VideoTrimmer.DraggingFlag.RIGHT) {
-                        //mSelectedClipStartTimeMs = trimmer.getLeftValue();
-                        //mSelectedClipEndTimeMs = trimmer.getRightValue();
-                        //loadClipInfo();
-                        return;
+                    int seekToPos = (int) (trimmer.getProgress() - trimmer.getLeftValue());
+                    if (mDraggingFlag == VideoTrimmer.DraggingFlag.LEFT
+                            || mDraggingFlag == VideoTrimmer.DraggingFlag.RIGHT) {
+                        sharableClip.selectedStartValue = trimmer.getLeftValue();
+                        sharableClip.selectedEndValue = trimmer.getRightValue();
+                        holder.cameraVideoView.updateSharableClip(sharableClip, seekToPos);
                     }
-
-                    holder.cameraVideoView.seekTo((int) trimmer.getProgress() - (int)trimmer.getLeftValue());
-
+                    holder.cameraVideoView.seekTo(seekToPos);
                     //Log.e("test", String.format("Progress[%d],start[%d], end[%d] ", trimmer.getProgress(), trimmer.getLeftValue(), trimmer.getRightValue()));
                 }
             });

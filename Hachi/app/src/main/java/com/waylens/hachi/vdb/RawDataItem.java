@@ -12,7 +12,7 @@ public class RawDataItem {
     public static final int DATA_TYPE_UNKNOWN = 0;
     public static final int DATA_TYPE_GPS = 1;
     public static final int DATA_TYPE_ACC = 2;
-    public static final int DATA_TYPE_ODB = 3;
+    public static final int DATA_TYPE_OBD = 3;
 
     private final int mType;
     private final long mPtsMs;

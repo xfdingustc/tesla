@@ -25,7 +25,7 @@ public class RawDataMsgHandler extends VdbMessageHandler<RawDataItem> {
         byte[] data = response.readByteArray();
         RawDataItem rawDataItem = new RawDataItem(dataType, 0);
         switch (dataType) {
-            case RawDataItem.DATA_TYPE_ODB:
+            case RawDataItem.DATA_TYPE_OBD:
                 rawDataItem.data = RawDataItem.OBDData.fromBinary(data);
                 break;
             case RawDataItem.DATA_TYPE_ACC:

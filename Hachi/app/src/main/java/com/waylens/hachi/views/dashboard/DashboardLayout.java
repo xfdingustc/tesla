@@ -139,7 +139,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
                 mEventBus.postEvent(EventConstants.EVENT_ACC_X, String.valueOf(format.format(accX)));
                 mEventBus.postEvent(EventConstants.EVENT_ACC_Z, String.valueOf(format.format(accZ)));
                 break;
-            case RawDataItem.DATA_TYPE_ODB:
+            case RawDataItem.DATA_TYPE_OBD:
                 RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
                 mEventBus.postEvent(EventConstants.EVENT_RPM, (float) obdData.rpm);
                 int rpm = obdData.rpm / 1000;

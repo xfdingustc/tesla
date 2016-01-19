@@ -75,7 +75,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
             RawDataItem item = new RawDataItem(header.mDataType, block.timeOffsetMs[i] + header.mRequestedTimeMs);
 
             byte[] data = response.readByteArray(block.dataSize[i]);
-            if (header.mDataType == RawDataItem.DATA_TYPE_ODB) {
+            if (header.mDataType == RawDataItem.DATA_TYPE_OBD) {
                 item.data = RawDataItem.OBDData.fromBinary(data);
             } else if (header.mDataType == RawDataItem.DATA_TYPE_ACC) {
                 item.data = RawDataItem.AccData.fromBinary(data);

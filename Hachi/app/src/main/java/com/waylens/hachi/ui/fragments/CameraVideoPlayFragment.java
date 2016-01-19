@@ -46,7 +46,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.setArguments(args);
         fragment.mVdbRequestQueue = vdbRequestQueue;
         fragment.mClip = clip;
-        fragment.mTypedState.put(RawDataItem.DATA_TYPE_ODB, RAW_DATA_STATE_UNKNOWN);
+        fragment.mTypedState.put(RawDataItem.DATA_TYPE_OBD, RAW_DATA_STATE_UNKNOWN);
         fragment.mTypedState.put(RawDataItem.DATA_TYPE_ACC, RAW_DATA_STATE_UNKNOWN);
         fragment.mTypedState.put(RawDataItem.DATA_TYPE_GPS, RAW_DATA_STATE_UNKNOWN);
         fragment.mDragListener = listener;
@@ -141,15 +141,15 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     boolean isRawDataReady() {
-        return mTypedState.get(RawDataItem.DATA_TYPE_ODB) == RAW_DATA_STATE_READY
+        return mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_READY
                 && mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_READY
                 && mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_READY;
     }
 
     void loadRawData() {
         mProgressLoading.setVisibility(View.VISIBLE);
-        if (mTypedState.get(RawDataItem.DATA_TYPE_ODB) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataItem.DATA_TYPE_ODB);
+        if (mTypedState.get(RawDataItem.DATA_TYPE_OBD) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataItem.DATA_TYPE_OBD);
         }
 
         if (mTypedState.get(RawDataItem.DATA_TYPE_ACC) != RAW_DATA_STATE_READY) {
@@ -196,7 +196,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     void onLoadRawDataFinished() {
-        if (mTypedState.get(RawDataItem.DATA_TYPE_ODB) == RAW_DATA_STATE_UNKNOWN
+        if (mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_UNKNOWN
                 || mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_UNKNOWN
                 || mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;

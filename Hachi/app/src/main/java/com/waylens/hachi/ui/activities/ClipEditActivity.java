@@ -559,7 +559,7 @@ public class ClipEditActivity extends BaseActivity {
         mVdbRequestQueue.add(gpsRequest);
 
         params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_ODB);
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_OBD);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, mSelectedClipFragment.getStartTimeMs());
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, mSelectedClipFragment.getDurationMs());
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(mSelectedClipFragment.getClip().cid, params,

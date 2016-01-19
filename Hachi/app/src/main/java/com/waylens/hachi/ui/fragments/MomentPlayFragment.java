@@ -272,7 +272,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
 
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
-            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_ODB, captureTime);
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
 
             RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperature, rpm);
             item.data = data;

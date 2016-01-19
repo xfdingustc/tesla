@@ -64,7 +64,7 @@ public class RawDataRequest extends VdbRequest<RawData> {
                     item.data = RawDataItem.GpsData.fromBinary(data);
                 } else if (dataType == RawDataItem.DATA_TYPE_ACC) {
                     item.data = RawDataItem.AccData.fromBinary(data);
-                } else if (dataType == RawDataItem.DATA_TYPE_ODB) {
+                } else if (dataType == RawDataItem.DATA_TYPE_OBD) {
                     item.data = RawDataItem.OBDData.fromBinary(data);
                 }
 

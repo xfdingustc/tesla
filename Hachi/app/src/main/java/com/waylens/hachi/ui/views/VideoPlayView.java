@@ -5,7 +5,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.views.dashboard.DashboardLayout;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 /**
@@ -42,6 +42,12 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     private static final int STATE_PAUSED = 4;
     private static final int STATE_PLAYBACK_COMPLETED = 5;
 
+    //Raw data states
+    protected static final int RAW_DATA_STATE_READY = 0;
+    protected static final int RAW_DATA_STATE_UNKNOWN = -1;
+    protected static final int RAW_DATA_STATE_ERROR = -2;
+
+    protected int mRawDataState = RAW_DATA_STATE_UNKNOWN;
 
     int mCurrentState = STATE_IDLE;
     int mTargetState = STATE_IDLE;
@@ -63,8 +69,10 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     View mLoadingIcon;
     public ImageView videoCover;
 
+    protected DashboardLayout mOverlayLayout;
+
     OnProgressListener mOnProgressListener;
-    VideoHandler mUIHandler;
+    protected VideoHandler mUIHandler;
 
     public VideoPlayView(Context context) {
         this(context, null, 0);
@@ -90,6 +98,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         mBtnPlay.setOnClickListener(this);
         mLoadingIcon = findViewById(R.id.progress_loading);
         videoCover = (ImageView) findViewById(R.id.video_cover);
+        mOverlayLayout = (DashboardLayout) findViewById(R.id.overlayLayout);
         mUIHandler = new VideoHandler(this);
         mNonUIThread = new HandlerThread(TAG);
         mNonUIThread.start();
@@ -141,8 +150,13 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         if (isPlaying()) {
             pause();
         } else {
+            cleanup();
             callOnClick();
         }
+    }
+
+    protected void cleanup() {
+        //
     }
 
     void playVideo() {
@@ -392,15 +406,20 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         //
     }
 
+    protected void updateInternalProgress(int position, int duration) {
+        //
+    }
+
     void showProgress() {
         if (!isInPlaybackState()) {
             return;
-        }
+        };
+        int position = mMediaPlayer.getCurrentPosition();
+        int duration = mMediaPlayer.getDuration();
         if (mOnProgressListener != null) {
-            int position = mMediaPlayer.getCurrentPosition();
-            int duration = mMediaPlayer.getDuration();
             mOnProgressListener.onProgress(position, duration);
         }
+        updateInternalProgress(position, duration);
         if (isPlaying()) {
             mUIHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 20);
         }

@@ -128,7 +128,7 @@ public class RawDataFactory {
             loadRawData(RawDataItem.DATA_TYPE_ACC);
         }
         if ((options & RawDataBlock.F_RAW_DATA_ODB) == RawDataBlock.F_RAW_DATA_ODB) {
-            loadRawData(RawDataItem.DATA_TYPE_ODB);
+            loadRawData(RawDataItem.DATA_TYPE_OBD);
         }
         mStartTimeMs += mDuration;
         return RAW_DATA_STATE_READY;

@@ -48,6 +48,8 @@ public class SharableClip {
         } else {
             minExtensibleValue = clip.getStartTimeMs();
             maxExtensibleValue = clip.getStartTimeMs() + clip.getDurationMs();
+            selectedStartValue = minExtensibleValue;
+            selectedEndValue = maxExtensibleValue;
             bufferedCid = clip.cid;
             realCid = clip.cid;
         }
@@ -97,11 +99,17 @@ public class SharableClip {
             if (maxExtensibleValue > clipExtent.maxClipEndTimeMs) {
                 maxExtensibleValue = clipExtent.maxClipEndTimeMs;
             }
+            selectedStartValue = clipExtent.clipStartTimeMs;
+            selectedEndValue = clipExtent.clipEndTimeMs;
+
             bufferedCid = clipExtent.bufferedCid;
             realCid = clipExtent.realCid;
+
         } else {
             minExtensibleValue = clipExtent.clipStartTimeMs;
             maxExtensibleValue = clipExtent.clipEndTimeMs;
+            selectedStartValue = minExtensibleValue;
+            selectedEndValue = maxExtensibleValue;
             bufferedCid = clipExtent.cid;
             realCid = clipExtent.cid;
         }
