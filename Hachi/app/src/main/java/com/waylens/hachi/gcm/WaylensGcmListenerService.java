@@ -28,7 +28,8 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.activities.MainActivity2;
+
 
 public class WaylensGcmListenerService extends GcmListenerService {
 
@@ -77,7 +78,7 @@ public class WaylensGcmListenerService extends GcmListenerService {
      * @param message GCM message received.
      */
     private void sendNotification(String message) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivity2.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);

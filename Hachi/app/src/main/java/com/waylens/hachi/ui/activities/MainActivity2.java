@@ -104,7 +104,7 @@ public class MainActivity2 extends BaseActivity {
             Logger.t(TAG).d("mUserAvatar: " + mUserAvatar + " url: " + mSessionManager.getAvatarUrl());
             ImageLoader.getInstance().displayImage(mSessionManager.getAvatarUrl(), mUserAvatar);
             mUsername.setText(mSessionManager.getUserName());
-            
+
         }
     }
 
