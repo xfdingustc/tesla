@@ -88,6 +88,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     }
 
     private void initViews(Context context) {
+        setClipChildren(false);
         View.inflate(context, R.layout.video_play_view, this);
         mVideoWidth = 0;
         mVideoHeight = 0;

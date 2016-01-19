@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
+import android.view.View;
 
 import com.transee.vdb.VdbClient;
 import com.waylens.hachi.snipe.SnipeError;
@@ -20,6 +21,7 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.views.dashboard.DashboardLayout;
 import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
 
 import java.util.concurrent.CountDownLatch;
@@ -80,7 +82,9 @@ public class CameraVideoView extends VideoPlayView {
         //clean exist clip info
         mPlaybackUrl = null;
         mTypedRawData.clear();
-
+        if (mRawDataBlockAdapter != null) {
+            mRawDataBlockAdapter.setRawDataBlock(null);
+        }
         mSharableClip = sharableClip;
         ClipPos clipPos = sharableClip.getThumbnailClipPos(mSharableClip.clip.getStartTimeMs());
         mVdbImageLoader.displayVdbImage(clipPos, videoCover);
@@ -113,6 +117,14 @@ public class CameraVideoView extends VideoPlayView {
     protected void updateInternalProgress(int position, int duration) {
         if (mRawDataBlockAdapter != null) {
             mRawDataBlockAdapter.refresh(position);
+        }
+    }
+
+    @Override
+    public void seekTo(int msec) {
+        super.seekTo(msec);
+        if (mRawDataBlockAdapter != null) {
+            mRawDataBlockAdapter.resetPosition();
         }
     }
 
@@ -190,8 +202,17 @@ public class CameraVideoView extends VideoPlayView {
         if (mTypedRawData.size() > 0) {
             mRawDataBlockAdapter.setRawDataBlock(mTypedRawData);
             mOverlayLayout.setAdapter(mRawDataBlockAdapter);
+            calculateDashboardScaling();
             mOverlayLayout.setVisibility(VISIBLE);
         }
+    }
+
+    private void calculateDashboardScaling() {
+        float scale = 1.0f;
+        int width = getWidth();
+        scale = (float) width / DashboardLayout.NORMAL_WIDTH;
+        mOverlayLayout.setScaleX(scale);
+        mOverlayLayout.setScaleY(scale);
     }
 
     void loadRawData(final int dataType, final CountDownLatch latch) {
@@ -231,11 +252,13 @@ public class CameraVideoView extends VideoPlayView {
 
         public void setRawDataBlock(SparseArray<RawDataBlock> rawData) {
             mRawData = rawData;
-        }
-
-        public void reset() {
             mPositions.clear();
         }
+
+        public void resetPosition() {
+            mPositions.clear();
+        }
+
 
         public void refresh(int position) {
             RawDataItem gps = getRawData(RawDataItem.DATA_TYPE_GPS, position);
