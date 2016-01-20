@@ -50,13 +50,13 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
 
     private static boolean mFirstEnter = true;
 
-//    @Bind(R.id.btnEnterPreview)
-//    Button mBtnEnterPreview;
-//
-//    @OnClick(R.id.btnEnterPreview)
-//    public void onBtnEnterPreviewClicked() {
-//        LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
-//    }
+    @Bind(R.id.btnEnterPreview)
+    Button mBtnEnterPreview;
+
+    @OnClick(R.id.btnEnterPreview)
+    public void onBtnEnterPreviewClicked() {
+        LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
+    }
 
 
     private VdtCameraManager mVdtCameraManager;
@@ -212,8 +212,10 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     @Override
     public void onPause() {
         super.onPause();
-        ((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
+        //((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
     }
+
+
 
     @Override
     public void onSetup(VdtCamera camera) {

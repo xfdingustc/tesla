@@ -14,6 +14,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -26,6 +28,9 @@ import com.waylens.hachi.ui.fragments.LiveFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PushUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -46,6 +51,10 @@ public class MainActivity2 extends BaseActivity {
     public static final int TAB_TAG_SETTINGS = 4;
 
     private int mCurrentNavMenuId;
+
+
+    private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
+
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
@@ -73,6 +82,13 @@ public class MainActivity2 extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+
+        mMenuId2Tab.put(R.id.social, TAB_TAG_SOCIAL);
+        mMenuId2Tab.put(R.id.setting, TAB_TAG_SETTINGS);
+        mMenuId2Tab.put(R.id.bookmark, TAB_TAG_BOOKMARK);
+        mMenuId2Tab.put(R.id.stories, TAB_TAG_STORIES);
+        mMenuId2Tab.put(R.id.liveView, TAB_TAG_LIVE_VIEW);
+
         initViews();
         if (mSessionManager.isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
             Intent intent = new Intent(this, RegistrationIntentService.class);
@@ -90,14 +106,13 @@ public class MainActivity2 extends BaseActivity {
         setupNavigationView();
 
 
-
         if (!mSessionManager.isLoggedIn()) {
             switchFragment(TAB_TAG_SOCIAL);
-            mCurrentNavMenuId = R.id.social;
         } else {
             switchFragment(TAB_TAG_LIVE_VIEW);
-            mCurrentNavMenuId = R.id.liveView;
+
         }
+
 
         // update user profile;
         if (mSessionManager.isLoggedIn()) {
@@ -110,6 +125,17 @@ public class MainActivity2 extends BaseActivity {
 
 
     public void switchFragment(int tag) {
+        int menuId = mMenuId2Tab.inverse().get(tag);
+
+        // When init current menu id is 0. so here must check if MenuItem is null
+        MenuItem item = mNavView.getMenu().findItem(mCurrentNavMenuId);
+        if (item != null) {
+            item.setChecked(false);
+        }
+
+        mCurrentNavMenuId = menuId;
+        mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
+
 
         Fragment fragment;
         switch (tag) {
@@ -142,6 +168,8 @@ public class MainActivity2 extends BaseActivity {
     }
 
 
+
+
     private void setupNavigationView() {
         mUserAvatar = (CircleImageView)mNavView.getHeaderView(0).findViewById(R.id.civUserAvatar);
         mUsername = (TextView)mNavView.getHeaderView(0).findViewById(R.id.tvUserName);
@@ -154,27 +182,9 @@ public class MainActivity2 extends BaseActivity {
                     return true;
                 }
 
-                mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(false);
-                item.setChecked(true);
-                mCurrentNavMenuId = item.getItemId();
+                int tab = mMenuId2Tab.get(item.getItemId());
+                switchFragment(tab);
 
-                switch (item.getItemId()) {
-                    case R.id.setting:
-                        switchFragment(TAB_TAG_SETTINGS);
-                        break;
-                    case R.id.social:
-                        switchFragment(TAB_TAG_SOCIAL);
-                        break;
-                    case R.id.bookmark:
-                        switchFragment(TAB_TAG_BOOKMARK);
-                        break;
-                    case R.id.stories:
-                        switchFragment(TAB_TAG_STORIES);
-                        break;
-                    case R.id.liveView:
-                        switchFragment(TAB_TAG_LIVE_VIEW);
-                        break;
-                }
                 return true;
             }
         });

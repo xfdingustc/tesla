@@ -221,6 +221,7 @@ public class LiveViewActivity extends BaseActivity {
 
     }
 
+
     @Override
     protected void init() {
         super.init();
