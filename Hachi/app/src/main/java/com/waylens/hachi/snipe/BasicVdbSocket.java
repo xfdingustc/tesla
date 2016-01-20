@@ -1,8 +1,5 @@
 package com.waylens.hachi.snipe;
 
-import com.orhanobut.logger.Logger;
-import com.transee.vdb.Vdb;
-
 import java.io.IOException;
 
 /**

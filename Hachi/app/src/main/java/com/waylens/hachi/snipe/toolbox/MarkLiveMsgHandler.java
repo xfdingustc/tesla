@@ -1,6 +1,6 @@
 package com.waylens.hachi.snipe.toolbox;
 
-import com.transee.vdb.Vdb;
+
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbResponse;
