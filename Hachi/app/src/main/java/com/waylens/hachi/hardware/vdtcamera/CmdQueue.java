@@ -4,14 +4,14 @@ import android.os.SystemClock;
 
 import java.util.LinkedList;
 
-public class CmdQueue<CmdType> {
+class CmdQueue<CmdType> {
 
 	public static class CmdResult {
 		public Object request;
 		public int scheduleType;
 	}
 
-	private final LinkedList<CmdType> mRequestQueue = new LinkedList<CmdType>();
+	private final LinkedList<CmdType> mRequestQueue = new LinkedList<>();
 	private boolean mbThreadWaiting = false;
 
 	private final int mMaxScheduler;
