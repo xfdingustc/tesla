@@ -1004,10 +1004,7 @@ public class RemoteVdbClient extends VdbClient {
         mConnection = new MyTcpConnection("vdb", null);
     }
 
-    @Override
-    public void stopImageDecoder() {
-        stopDecoder();
-    }
+
 
     // API
     public void start(String host) {

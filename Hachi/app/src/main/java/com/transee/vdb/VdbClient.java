@@ -74,7 +74,7 @@ abstract public class VdbClient {
 
     // implemented by Vdb
     // asynchronous
-    public static interface Callback {
+    public interface Callback {
 
         void onConnectionErrorAsync();
 
@@ -118,13 +118,7 @@ abstract public class VdbClient {
 
         void onPlaylistClearedAsync(int playlistId);
 
-        void onDownloadFinished(int id, String outputFile);
 
-        void onDownloadStarted(int id);
-
-        void onDownloadError(int id);
-
-        void onDownloadProgress(int id, int progress);
 
         void onRawDataResultAsync(RawData rawDataResult);
 
@@ -195,26 +189,8 @@ abstract public class VdbClient {
         return false;
     }
 
-    public void stopImageDecoder() {
-    }
 
-    public void requestClipSetInfo(int type) {
-        if (DEBUG) {
-            Log.d(TAG, "requestClipSetInfo");
-        }
-        mQueue.addRequest(CMD_GetClipSetInfo, type);
-    }
 
-    public void requestAllClipSetInfo(PlaylistSet playlistSet) {
-        if (DEBUG) {
-            Log.d(TAG, "requestAllClipSetInfo");
-        }
-        for (Playlist playlist : playlistSet.mPlaylists) {
-            if (playlist != null) {
-                mQueue.addRequest(CMD_GetClipSetInfo, playlist.plistId);
-            }
-        }
-    }
 
     public static class GetClipImageRequest {
         public Clip clip;
@@ -250,15 +226,6 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestClipPlaybackUrl(int urlType, Clip clip, int stream, boolean bMuteAudio, long clipTimeMs,
-                                       int clipLengthMs) {
-        PlaybackUrlRequest request = new PlaybackUrlRequest(clip);
-        request.mStream = stream;
-        request.mUrlType = bMuteAudio ? urlType | URL_MUTE_AUDIO : urlType;
-        request.mClipTimeMs = clipTimeMs;
-        request.mClipLengthMs = clipLengthMs;
-        mQueue.addRequest(CMD_GetPlaybackUrl, request);
-    }
 
     public static class MarkClipRequest {
         public final String vdbId;
@@ -272,12 +239,7 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestMarkClip(Clip clip, long startTimeMs, long endTimeMs) {
-        MarkClipRequest request = new MarkClipRequest(clip);
-        request.mStartTimeMs = startTimeMs;
-        request.mEndTimeMs = endTimeMs;
-        mQueue.addRequest(CMD_MarkClip, request);
-    }
+
 
     public static class DeleteClipRequest {
         public final String vdbId;
@@ -289,10 +251,7 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestDeleteClip(Clip clip) {
-        DeleteClipRequest request = new DeleteClipRequest(clip);
-        mQueue.addRequest(CMD_DeleteClip, request);
-    }
+
 
     public static class RawDataRequest {
         public String vdbId;
@@ -315,13 +274,7 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestRawData(Clip clip, long clipTimeMs, int types) {
-        mQueue.addRawDataRequest(clip, clipTimeMs, types);
-    }
 
-    public void requestSetDrawDataOption(int rawDataTypes) {
-        mQueue.addRequest(CMD_SetRawDataOption, rawDataTypes);
-    }
 
     public static class RawDataBlockRequest {
         public final String vdbId;
@@ -338,14 +291,6 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestRawDataBlock(String vdbId, Clip.ID cid, long clipTimeMs, int lengthMs, int dataType,
-                                    boolean bForDownload) {
-        RawDataBlockRequest request = new RawDataBlockRequest(vdbId, cid, bForDownload);
-        request.mClipTimeMs = clipTimeMs;
-        request.mLengthMs = lengthMs;
-        request.mDataType = dataType;
-        mQueue.addRequest(CMD_GetRawDataBlock, request);
-    }
 
     public static class DownloadUrlExRequest {
         public final String vdbId;
@@ -364,37 +309,9 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestClipDownloadUrlForPoster(Clip clip, long startTimeMs) {
-        DownloadUrlExRequest request = new DownloadUrlExRequest(clip.getVdbId(), clip.cid, false);
-        request.mClipTimeMs = startTimeMs;
-        request.mClipLengthMs = 10;
-        request.mDownloadOpt = DOWNLOAD_OPT_MAIN_STREAM;
-        request.mbForPoster = true;
-        mQueue.addRequest(CMD_GetDownloadUrlEx, request);
-    }
 
-    public void requestClipDownloadUrl(Clip clip, long startTimeMs, int lengthMs, boolean bFirst) {
-        DownloadUrlExRequest request = new DownloadUrlExRequest(clip.getVdbId(), clip.cid, bFirst);
-        request.mClipTimeMs = startTimeMs;
-        request.mClipLengthMs = lengthMs;
-        request.mDownloadOpt = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_SUB_STREAM_1 | DOWNLOAD_OPT_INDEX_PICT;
-        request.mbForPoster = false;
-        mQueue.addRequest(CMD_GetDownloadUrlEx, request);
-    }
 
-    public void requestPlaylistDownloadUrl(String vdbId, int plistId, int startMs, int lengthMs, boolean bMuteAudio,
-                                           boolean bFirst) {
-        Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, plistId, 0, vdbId); // TODO
-        DownloadUrlExRequest request = new DownloadUrlExRequest(null, cid, bFirst);
-        request.mClipTimeMs = startMs;
-        request.mClipLengthMs = lengthMs;
-        request.mDownloadOpt = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_SUB_STREAM_1 | DOWNLOAD_OPT_INDEX_PICT
-                | DOWNLOAD_OPT_PLAYLIST;
-        if (bMuteAudio) {
-            request.mDownloadOpt |= DOWNLOAD_OPT_MUTE_AUDIO;
-        }
-        mQueue.addRequest(CMD_GetDownloadUrlEx, request);
-    }
+
 
     public static class GetPlaylistSetInfo {
         public int mFlags;
@@ -404,13 +321,7 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestPlaylistSetInfo(int flags) {
-        if (DEBUG) {
-            Log.d(TAG, "requestPlaylistSetInfo");
-        }
-        GetPlaylistSetInfo request = new GetPlaylistSetInfo(flags);
-        mQueue.addRequest(CMD_GetAllPlaylists, request);
-    }
+
 
     public static class GetPlaylistImageRequest {
         public int mListType;
@@ -422,23 +333,13 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestPlaylistIndexImage(int listType, int flags) {
-        if (DEBUG) {
-            Log.d(TAG, "requestPlaylistImage");
-        }
-        GetPlaylistImageRequest request = new GetPlaylistImageRequest(listType, flags);
-        mQueue.addRequest(CMD_GetPlaylistIndexPicture, request);
-    }
+
 
     public static class ClearPlaylistRequest {
         public int mListType;
     }
 
-    public void requestClearPlaylist(int listType) {
-        ClearPlaylistRequest request = new ClearPlaylistRequest();
-        request.mListType = listType;
-        mQueue.addRequest(CMD_ClearPlaylist, request);
-    }
+
 
     public static class InsertClipRequest {
         public final Clip.ID cid;
@@ -452,14 +353,6 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestInsertClip(Clip.ID cid, long startTimeMs, long endTimeMs, int listType, int listPos) {
-        InsertClipRequest request = new InsertClipRequest(cid);
-        request.mStartTimeMs = startTimeMs;
-        request.mEndTimeMs = endTimeMs;
-        request.mListType = listType;
-        request.mListPos = listPos;
-        mQueue.addRequest(CMD_InsertClip, request);
-    }
 
     public static class MoveClipRequest {
         public final Clip.ID cid;
@@ -470,11 +363,6 @@ abstract public class VdbClient {
         }
     }
 
-    public void requestMoveClip(Clip.ID cid, int newClipPos) {
-        MoveClipRequest request = new MoveClipRequest(cid);
-        request.mNewClipPos = newClipPos;
-        mQueue.addRequest(CMD_MoveClip, request);
-    }
 
     public static class GetPlaylistPlaybackUrlRequest {
         public int mListType;
@@ -483,19 +371,7 @@ abstract public class VdbClient {
         public int mUrlType;
     }
 
-    public void requestPlaylistPlaybackUrl(int urlType, int listType, int playlistStartMs, int stream,
-                                           boolean bMuteAudio) {
-        GetPlaylistPlaybackUrlRequest request = new GetPlaylistPlaybackUrlRequest();
-        request.mListType = listType;
-        request.mPlaylistStartMs = playlistStartMs;
-        request.mStream = stream;
-        request.mUrlType = bMuteAudio ? urlType | URL_MUTE_AUDIO : urlType;
-        mQueue.addRequest(CMD_GetPlaylistPlaybackUrl, request);
-    }
 
-    public void requestAllClipSetInfo() {
-        mQueue.addRequest(VDB_CMD_GetAllClipSetInfo, null);
-    }
 
     // ----------------------------------------------------------------------------
 
@@ -647,15 +523,7 @@ abstract public class VdbClient {
             }
         }
 
-        synchronized public void addRawDataRequest(Clip clip, long clipTimeMs, int types) {
-            if (mRawDataRequest == null) {
-                mRawDataRequest = new RawDataRequest(clip, clipTimeMs, types);
-                notifyClient();
-            } else {
-                mRawDataRequest.set(clip, clipTimeMs, types);
-                // client was already notified
-            }
-        }
+
 
         synchronized public void animationDataReceived() {
             if (mNumPendingAnimation > 0 && --mNumPendingAnimation < kNumPendingAnimation) {
