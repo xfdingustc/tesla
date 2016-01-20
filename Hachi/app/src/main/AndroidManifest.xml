@@ -76,10 +76,7 @@
             android:name="com.transee.viditcam.app.CameraBtSetupActivity"
             android:label="@string/title_activity_camera_bt_setup">
         </activity>
-        <activity
-            android:name="com.transee.viditcam.app.AppSetupActivity"
-            android:label="@string/title_activity_app_setup">
-        </activity>
+
 
         <activity
             android:name=".ui.activities.FullScreenPlayActivity"

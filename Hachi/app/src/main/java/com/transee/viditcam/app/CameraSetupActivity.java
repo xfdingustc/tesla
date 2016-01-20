@@ -373,9 +373,7 @@ public class CameraSetupActivity extends BaseActivity {
     }
 
     private void onClickVideoOverlay() {
-        if (mVdtCamera != null) {
-            super.startCameraActivity(mVdtCamera, CameraOverlaySetupActivity.class);
-        }
+
     }
 
     private void onClickBluetooth() {
