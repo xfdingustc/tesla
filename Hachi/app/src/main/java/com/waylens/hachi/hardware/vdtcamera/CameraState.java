@@ -89,6 +89,16 @@ public class CameraState {
     public static final int ERROR_START_RECORD_CARD_FULL = 2;
     public static final int ERROR_START_RECORD_CARD_ERROR = 3;
 
+    public interface OnStateChangeListener {
+        void onStateChange();
+    }
+
+    public void setOnStateChangeListener(OnStateChangeListener listener) {
+        this.mListener = listener;
+    }
+
+    private OnStateChangeListener mListener = null;
+
     private int mStateSN = 0;
     public boolean mbSchedule = false;
 
@@ -138,6 +148,9 @@ public class CameraState {
     private final void stateChanged() {
         mStateSN++;
         mbSchedule = true;
+        if (mListener != null) {
+            mListener.onStateChange();
+        }
     }
 
     public boolean canDoStillCapture() {

@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -184,8 +183,6 @@ final class VdtCameraController {
             put(CMD_CAM_GET_TIME_RESULT, "CMD_CAM_GET_TIME_RESULT");
 
 
-
-
             put(CMD_CAM_GET_GET_ALL_INFOR, "CMD_CAM_GET_GET_ALL_INFOR");
             put(CMD_CAM_GET_GET_STORAGE_INFOR, "CMD_CAM_GET_GET_STORAGE_INFOR");
             put(CMD_CAM_MSG_STORAGE_INFOR, "CMD_CAM_MSG_STORAGE_INFOR");
@@ -236,7 +233,7 @@ final class VdtCameraController {
     };
 
 
-    private static Map<Integer, String> CMD_REC_TO_STRING = new HashMap<Integer, String>(){
+    private static Map<Integer, String> CMD_REC_TO_STRING = new HashMap<Integer, String>() {
         {
 
             put(CMD_REC_START, "CMD_REC_START");
@@ -273,7 +270,6 @@ final class VdtCameraController {
             put(MSG_REC_STILL_CAPTURE_DONE, "MSG_REC_STILL_CAPTURE_DONE");
 
 
-
         }
     };
 
@@ -282,7 +278,6 @@ final class VdtCameraController {
 
         void onDisconnected();
 
-        void onCameraStateChanged();
 
         void onBtStateChanged();
 
@@ -477,6 +472,7 @@ final class VdtCameraController {
         int state = Integer.parseInt(p1);
         boolean is_still = p2.length() > 0 ? Integer.parseInt(p2) != 0 : false;
         mStates.setRecordState(state, is_still);
+
     }
 
     // ========================================================
@@ -1204,7 +1200,7 @@ final class VdtCameraController {
     }
 
 
-    private void writeRequest(Request request) throws IOException, InterruptedException{
+    private void writeRequest(Request request) throws IOException, InterruptedException {
         SimpleOutputStream sos = new SimpleOutputStream(1024);
         XmlSerializer xml = Xml.newSerializer();
 
@@ -1253,50 +1249,49 @@ final class VdtCameraController {
             mQueue.getRequest(cmdResult);
 
 
-            if (cmdResult.request == null) {
-                switch (cmdResult.scheduleType) {
-                    case Queue.SCHEDULE_UPDATE:
-                        if (mListener != null) {
-                            mListener.onCameraStateChanged();
-                        }
-                        break;
-                    case Queue.SCHEDULE_BT_UPDATE:
-                        if (mListener != null) {
-                            mListener.onBtStateChanged();
-                        }
-                        break;
-                    case Queue.SCHEDULE_GPS_UPDATE:
-                        if (mListener != null) {
-                            mListener.onGpsStateChanged();
-                        }
-                        break;
-                    case Queue.SCHEDULE_WIFI_UPDATE:
-                        if (mListener != null) {
-                            mListener.onWifiStateChanged();
-                        }
-                        break;
-                    case Queue.SCHEDULE_GET_ALL_INFO:
-                        cmd_Cam_get_getAllInfor();
-                        break;
-                    default:
-                        break;
-                }
-                continue;
-            }
+//            if (cmdResult.request == null) {
+//                switch (cmdResult.scheduleType) {
+//                    case Queue.SCHEDULE_UPDATE:
+//                        if (mListener != null) {
+//                            mListener.onCameraStateChanged();
+//                        }
+//                        break;
+//                    case Queue.SCHEDULE_BT_UPDATE:
+//                        if (mListener != null) {
+//                            mListener.onBtStateChanged();
+//                        }
+//                        break;
+//                    case Queue.SCHEDULE_GPS_UPDATE:
+//                        if (mListener != null) {
+//                            mListener.onGpsStateChanged();
+//                        }
+//                        break;
+//                    case Queue.SCHEDULE_WIFI_UPDATE:
+//                        if (mListener != null) {
+//                            mListener.onWifiStateChanged();
+//                        }
+//                        break;
+//                    case Queue.SCHEDULE_GET_ALL_INFO:
+//                        cmd_Cam_get_getAllInfor();
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                continue;
+//            }
 
-            Request request = (Request) cmdResult.request;
+//            Request request = (Request) cmdResult.request;
 
 
-
-//            Request newRequest = mCameraRequestQueue.take();
-            if (request.mDomain == CMD_DOMAIN_USER) {
-                if (!createUserCmd(request)) {
+            Request newRequest = mCameraRequestQueue.take();
+            if (newRequest.mDomain == CMD_DOMAIN_USER) {
+                if (!createUserCmd(newRequest)) {
                     break;
                 }
                 continue;
             }
 
-            writeRequest(request);
+            writeRequest(newRequest);
 
         }
     }
@@ -1325,8 +1320,6 @@ final class VdtCameraController {
             }
 
 
-
-
             // ECMD0.5
             Matcher matcher = mPattern.matcher(act);
             if (matcher.find() && matcher.groupCount() == 2) {
@@ -1335,13 +1328,13 @@ final class VdtCameraController {
 
                 switch (domain) {
                     case CMD_DOMAIN_CAM:
-                        Logger.t(TAG).d("Domain" + DOMAIN_TO_STRING.get(domain)
-                            + " cmd=" +  CMD_CAM_TO_STRING.get(cmd));
+                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
+                            + " cmd = " + CMD_CAM_TO_STRING.get(cmd));
                         camDomainMsg(cmd, p1, p2);
                         break;
                     case CMD_DOMAIN_REC:
-                        Logger.t(TAG).d("Domain" + DOMAIN_TO_STRING.get(domain)
-                                + " cmd=" +  CMD_REC_TO_STRING.get(cmd));
+                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
+                            + " cmd =" + CMD_REC_TO_STRING.get(cmd));
                         recDomainMsg(cmd, p1, p2);
                         break;
                     default:

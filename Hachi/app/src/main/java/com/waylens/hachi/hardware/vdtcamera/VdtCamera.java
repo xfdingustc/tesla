@@ -103,6 +103,14 @@ public class VdtCamera {
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
+        mState.setOnStateChangeListener(new CameraState.OnStateChangeListener() {
+            @Override
+            public void onStateChange() {
+                if (mOnStateChangeListener != null) {
+                    mOnStateChangeListener.onStateChanged(VdtCamera.this);
+                }
+            }
+        });
         mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port, mState);
         mController.setListener(new VdtCameraController.Listener() {
             @Override
@@ -118,13 +126,7 @@ public class VdtCamera {
 
             }
 
-            @Override
-            public void onCameraStateChanged() {
-                if (mOnStateChangeListener != null) {
-                    mOnStateChangeListener.onStateChanged(VdtCamera.this);
-                }
 
-            }
 
             @Override
             public void onBtStateChanged() {
