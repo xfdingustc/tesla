@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.transee.vdb.RemoteVdbClient.BufferSpaceLowInfo;
+
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
@@ -128,7 +128,6 @@ abstract public class VdbClient {
 
         void onDownloadRawDataBlockAsync(RawDataBlock.DownloadRawDataBlock block);
 
-        void onBufferSpaceLowAsync(BufferSpaceLowInfo info);
 
         void onBufferFullAsync();
     }
