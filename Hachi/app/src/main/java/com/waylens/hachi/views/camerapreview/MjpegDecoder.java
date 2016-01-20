@@ -4,9 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.transee.common.ByteArrayBuffer;
-import com.transee.common.SimpleQueue;
-
 abstract public class MjpegDecoder extends Thread {
 
 	protected static final boolean DEBUG = false;

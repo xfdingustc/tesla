@@ -7,12 +7,7 @@
         <attr name="noBackground" format="boolean" />
         <attr name="showText" />
     </declare-styleable>
-    <declare-styleable name="OverlayImageView">
-        <attr name="overlayDrawable" format="reference" />
-        <attr name="overlayAlpha" format="integer" />
-        <attr name="overlayEnabled" format="boolean" />
-        <attr name="overlayVisible" format="boolean" />
-    </declare-styleable>
+
 
     <declare-styleable name="GaugeView">
         <attr name="showOuterShadow" format="boolean" />

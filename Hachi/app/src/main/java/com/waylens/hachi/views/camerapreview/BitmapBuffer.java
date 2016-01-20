@@ -2,8 +2,6 @@ package com.waylens.hachi.views.camerapreview;
 
 import android.graphics.Bitmap;
 
-import com.transee.common.IRecyclable;
-
 public class BitmapBuffer implements IRecyclable {
 
 	protected Manager mManager;

@@ -2,9 +2,6 @@ package com.waylens.hachi.views.camerapreview;
 
 import android.util.Log;
 
-import com.transee.common.ByteArrayBuffer;
-import com.transee.common.SimpleQueue;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;

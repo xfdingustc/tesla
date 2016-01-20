@@ -2,9 +2,6 @@ package com.waylens.hachi.views.camerapreview;
 
 import android.util.Log;
 
-import com.transee.common.ByteArrayBuffer;
-import com.transee.common.SimpleQueue;
-
 import java.net.InetSocketAddress;
 
 abstract public class MjpegStream {

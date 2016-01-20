@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.transee.common.DateTime;
+import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;

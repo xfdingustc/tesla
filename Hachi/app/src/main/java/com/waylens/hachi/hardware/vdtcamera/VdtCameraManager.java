@@ -4,8 +4,7 @@ import android.content.Context;
 import android.net.wifi.ScanResult;
 
 import com.orhanobut.logger.Logger;
-import com.transee.ccam.PasswordList;
-import com.transee.common.Utils;
+import com.waylens.hachi.utils.Utils;
 
 import java.net.InetAddress;
 import java.util.ArrayList;

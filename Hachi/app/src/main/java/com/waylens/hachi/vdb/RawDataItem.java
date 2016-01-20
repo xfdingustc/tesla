@@ -2,8 +2,7 @@ package com.waylens.hachi.vdb;
 
 import android.util.Log;
 
-import com.transee.common.ByteStream;
-import com.transee.common.Utils;
+import com.waylens.hachi.utils.Utils;
 
 /**
  * Created by Xiaofei on 2016/1/6.

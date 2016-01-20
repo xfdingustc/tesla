@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.transee.common.DateTime;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;

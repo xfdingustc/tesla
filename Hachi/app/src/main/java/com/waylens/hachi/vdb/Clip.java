@@ -1,11 +1,6 @@
 package com.waylens.hachi.vdb;
 
-import android.net.Uri;
-
-import com.transee.common.DateTime;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.waylens.hachi.utils.DateTime;
 
 public class Clip {
     // clip categories: one vdb provoides one category

@@ -4,8 +4,6 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
-import com.transee.common.CmdQueue;
-import com.transee.common.TcpConnection;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

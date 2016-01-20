@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Scroller;
 
-import com.transee.common.Utils;
+import com.waylens.hachi.utils.Utils;
 
 abstract public class BitmapCanvas {
 
