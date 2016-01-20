@@ -253,9 +253,9 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         } else {
             mIvConnectIdicator.setImageResource(R.drawable.camera_connecting_connection);
             mIvConnectIdicator.setBackgroundResource(android.R.color.transparent);
-//            if (showPreviewBtn) {
-//                mBtnEnterPreview.setVisibility(View.VISIBLE);
-//            }
+            if (connected) {
+                mBtnEnterPreview.setVisibility(View.VISIBLE);
+            }
         }
     }
 
