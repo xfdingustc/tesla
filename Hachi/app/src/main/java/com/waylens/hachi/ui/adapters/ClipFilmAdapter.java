@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import com.waylens.hachi.ui.views.VideoPlayView;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.views.VideoTrimmer;
+import com.waylens.hachi.ui.views.VideoTrimmer;
 
 import java.util.ArrayList;
 import java.util.Calendar;

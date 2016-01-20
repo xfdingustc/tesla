@@ -24,12 +24,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.FullScreenPlayActivity;
 import com.waylens.hachi.ui.views.OnViewDragListener;
-import com.waylens.hachi.views.DragLayout;
-import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.waylens.hachi.ui.views.DragLayout;
+import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.io.IOException;

@@ -20,8 +20,8 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.views.dashboard.DashboardLayout;
-import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
+import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
+import com.waylens.hachi.ui.views.dashboard.adapters.RawDataAdapter;
 
 import java.util.concurrent.CountDownLatch;
 

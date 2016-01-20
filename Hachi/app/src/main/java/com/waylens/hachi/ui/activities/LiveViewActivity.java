@@ -35,9 +35,9 @@ import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.views.camerapreview.CameraLiveView;
-import com.waylens.hachi.views.dashboard.DashboardLayout;
-import com.waylens.hachi.views.dashboard.adapters.LiveRawDataAdapter;
+import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
+import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
+import com.waylens.hachi.ui.views.dashboard.adapters.LiveRawDataAdapter;
 
 import java.net.InetSocketAddress;
 

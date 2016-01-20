@@ -18,7 +18,7 @@ import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.views.dashboard.adapters.RawDataAdapter;
+import com.waylens.hachi.ui.views.dashboard.adapters.RawDataAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;

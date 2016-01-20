@@ -51,10 +51,10 @@ import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.views.VideoPlayerProgressBar;
-import com.waylens.hachi.views.VideoTrimmer;
-import com.waylens.hachi.views.dashboard.DashboardLayout;
-import com.waylens.hachi.views.dashboard.adapters.BlockAdapter;
+import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
+import com.waylens.hachi.ui.views.VideoTrimmer;
+import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
+import com.waylens.hachi.ui.views.dashboard.adapters.BlockAdapter;
 import com.waylens.mediatranscoder.MediaTranscoder;
 import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 

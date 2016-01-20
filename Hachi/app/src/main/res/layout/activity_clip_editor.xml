@@ -37,7 +37,7 @@
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-    <com.waylens.hachi.views.VideoPlayerProgressBar
+    <com.waylens.hachi.ui.views.VideoPlayerProgressBar
         android:id="@+id/video_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="36dp"
@@ -63,7 +63,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.waylens.hachi.views.VideoTrimmer
+        <com.waylens.hachi.ui.views.VideoTrimmer
             android:id="@+id/video_trimmer"
             android:layout_width="0dp"
             android:layout_height="36dp"
@@ -111,11 +111,11 @@
         android:layout_gravity="center_horizontal"
         android:progress="0" />
 
-    <com.waylens.hachi.views.dashboard.DashboardLayout
+    <com.waylens.hachi.ui.views.dashboard.DashboardLayout
         android:id="@+id/dashboardLayout"
         android:layout_width="1920px"
         android:layout_height="1080px"
         android:visibility="visible">
 
-    </com.waylens.hachi.views.dashboard.DashboardLayout>
+    </com.waylens.hachi.ui.views.dashboard.DashboardLayout>
 </LinearLayout>

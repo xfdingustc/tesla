@@ -1,7 +1,5 @@
 package com.waylens.hachi.vdb;
 
-import com.waylens.hachi.views.dashboard.views.StringView;
-
 /**
  * Created by Richard on 12/28/15.
  */

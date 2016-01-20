@@ -157,7 +157,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@color/text_enhance"/>
 
-            <com.waylens.hachi.views.VideoPlayerProgressBar
+            <com.waylens.hachi.ui.views.VideoPlayerProgressBar
                 android:id="@+id/clip_seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"/>

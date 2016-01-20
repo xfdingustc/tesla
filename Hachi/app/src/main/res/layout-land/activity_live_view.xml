@@ -15,12 +15,12 @@
         android:layout_height="match_parent"
         android:clipChildren="false">
 
-        <com.waylens.hachi.views.camerapreview.CameraLiveView
+        <com.waylens.hachi.ui.views.camerapreview.CameraLiveView
             android:id="@+id/cameraPreview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <com.waylens.hachi.views.dashboard.DashboardLayout
+        <com.waylens.hachi.ui.views.dashboard.DashboardLayout
             android:id="@+id/dashboard"
             android:layout_width="1920px"
             android:layout_height="1080px"

@@ -42,7 +42,7 @@
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-    <com.waylens.hachi.views.VideoTrimmer
+    <com.waylens.hachi.ui.views.VideoTrimmer
         android:id="@+id/video_trimmer"
         android:layout_width="match_parent"
         android:layout_height="64dp"/>

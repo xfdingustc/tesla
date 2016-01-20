@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
 
 import butterknife.Bind;
 

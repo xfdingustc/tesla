@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.views.dashboard.DashboardLayout;
+import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 /**

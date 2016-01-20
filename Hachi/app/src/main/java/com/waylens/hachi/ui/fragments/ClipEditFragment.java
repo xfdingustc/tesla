@@ -53,7 +53,7 @@ import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.RemoteClip;
-import com.waylens.hachi.views.VideoTrimmer;
+import com.waylens.hachi.ui.views.VideoTrimmer;
 
 import java.io.IOException;
 

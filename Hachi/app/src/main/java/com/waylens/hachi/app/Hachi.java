@@ -11,7 +11,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.views.dashboard.models.SkinManager;
+import com.waylens.hachi.ui.views.dashboard.models.SkinManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ImageUtils;

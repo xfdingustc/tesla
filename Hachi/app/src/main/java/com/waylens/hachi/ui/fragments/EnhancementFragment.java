@@ -19,7 +19,7 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.views.VideoPlayerProgressBar;
+import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

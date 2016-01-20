@@ -12,7 +12,7 @@
     app:farfl_yratio="9dp">
 
 
-    <com.waylens.hachi.views.DragLayout
+    <com.waylens.hachi.ui.views.DragLayout
         android:id="@+id/waylens_video_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -56,15 +56,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"/>
-    </com.waylens.hachi.views.DragLayout>
+    </com.waylens.hachi.ui.views.DragLayout>
 
-    <com.waylens.hachi.views.dashboard.DashboardLayout
+    <com.waylens.hachi.ui.views.dashboard.DashboardLayout
         android:id="@+id/overlayLayout"
         android:layout_width="1920px"
         android:layout_height="1080px"
         android:layout_gravity="center">
 
-    </com.waylens.hachi.views.dashboard.DashboardLayout>
+    </com.waylens.hachi.ui.views.dashboard.DashboardLayout>
 
 
     <LinearLayout
