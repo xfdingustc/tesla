@@ -89,45 +89,8 @@ public class BaseActivity extends AppCompatActivity {
     static final private String SSID = "ssid";
     static final private String HOST_STRING = "hostString";
 
-    protected void startCameraActivity(VdtCamera vdtCamera, Class<?> cls, int requestCode) {
-        Intent intent = new Intent(this, cls);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(IS_LOCAL, false);
-        bundle.putBoolean(IS_PC_SERVER, vdtCamera.isPcServer());
-        bundle.putString(SSID, vdtCamera.getSSID());
-        bundle.putString(HOST_STRING, vdtCamera.getHostString());
-        if (requestCode < 0) {
-            intent.putExtras(bundle);
-            startActivity(intent);
-        } else {
-            bundle.putBoolean("requested", true);
-            intent.putExtras(bundle);
-            startActivityForResult(intent, requestCode);
-        }
-    }
-
-    // API
-    protected void startCameraActivity(VdtCamera vdtCamera, Class<?> cls) {
-        startCameraActivity(vdtCamera, cls, -1);
-    }
 
 
-    protected void startLocalActivity(Class<?> cls) {
-        Intent intent = new Intent(this, cls);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(IS_LOCAL, true);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
-
-
-    protected String getCameraName(CameraState states) {
-        if (states.mCameraName.length() == 0) {
-            return getResources().getString(R.string.lable_camera_noname);
-        } else {
-            return states.mCameraName;
-        }
-    }
 
 
     // API
@@ -156,59 +119,12 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    protected boolean mbRotating;
-    public final boolean isRotating() {
-        return mbRotating;
-    }
 
-    protected int mOrientation;
-    // API
-    public final boolean isLandscape() {
-        return mOrientation == Configuration.ORIENTATION_LANDSCAPE;
-    }
 
-    // API
-    public final boolean isPortrait() {
-        return mOrientation == Configuration.ORIENTATION_PORTRAIT;
-    }
 
-    protected PopupWindow mPopupWindow;
-    public void setPopupWindow(PopupWindow popupWindow, boolean bHookDismiss) {
-        if (mPopupWindow != null) {
-            mPopupWindow.dismiss();
-        }
-        mPopupWindow = popupWindow;
-        if (bHookDismiss) {
-            mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                @Override
-                public void onDismiss() {
-                    mPopupWindow = null;
-                }
-            });
-        }
-    }
 
-    public PopupWindow createPopupWindow(View layout) {
-        Drawable background = getResources().getDrawable(R.drawable.new_menu_bg);
-        Rect prect = new Rect();
-        background.getPadding(prect);
 
-        int width = layout.getMeasuredWidth() + prect.left + prect.right;
-        int height = layout.getMeasuredHeight() + prect.top + prect.bottom;
 
-        PopupWindow window = new PopupWindow(layout, width, height, true);
 
-        // window.setWindowLayoutMode(LayoutParams.WRAP_CONTENT,
-        // LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawable(background);
-        window.setOutsideTouchable(true);
-        // window.setFocusable(true);
-        window.setAnimationStyle(android.R.style.Animation_Dialog);
-        window.update();
-
-        setPopupWindow(window, true);
-
-        return window;
-    }
 
 }
