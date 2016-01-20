@@ -205,7 +205,9 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     public void onStart() {
         super.onStart();
         if (isConnected()) {
-            LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
+            //LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get
+            // (0));
+            //getActivity().getActionBar().setVisibility(View.GONE);
         }
     }
 
