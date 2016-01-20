@@ -6,9 +6,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-import android.view.View;
 
-import com.transee.vdb.VdbClient;
+import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -130,8 +129,8 @@ public class CameraVideoView extends VideoPlayView {
 
     void loadPlayURL(final CountDownLatch latch) {
         Bundle parameters = new Bundle();
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, Vdb.URL_TYPE_HLS);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, Vdb.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mSharableClip.selectedStartValue);
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, mSharableClip.getSelectedLength());

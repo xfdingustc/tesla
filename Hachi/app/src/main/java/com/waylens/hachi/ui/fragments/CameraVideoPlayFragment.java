@@ -8,7 +8,7 @@ import android.util.SparseIntArray;
 import android.view.View;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.VdbClient;
+import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -210,8 +210,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             mProgressLoading.setVisibility(View.VISIBLE);
         }
         Bundle parameters = new Bundle();
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, Vdb.URL_TYPE_HLS);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, Vdb.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mClip.getStartTimeMs());
 

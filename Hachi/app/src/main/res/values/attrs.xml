@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ViewfinderView">
-        <attr name="borderColor" format="color" />
-        <attr name="borderSizeX" format="dimension" />
-        <attr name="borderSizeY" format="dimension" />
-    </declare-styleable>
+
     <declare-styleable name="ViditImageView">
         <attr name="image" format="reference" />
         <attr name="pressedImage" format="reference" />

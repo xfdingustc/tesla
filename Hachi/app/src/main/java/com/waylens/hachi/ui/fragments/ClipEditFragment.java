@@ -33,7 +33,7 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.VdbClient;
+import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.snipe.Snipe;
@@ -414,8 +414,8 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
             mProgressLoading.setVisibility(View.VISIBLE);
         }
         Bundle parameters = new Bundle();
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, VdbClient.URL_TYPE_HLS);
-        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, VdbClient.STREAM_SUB_1);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, Vdb.URL_TYPE_HLS);
+        parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, Vdb.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
         parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, mSelectedClipStartTimeMs);
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, (int) (mSelectedClipEndTimeMs - mSelectedClipStartTimeMs));
