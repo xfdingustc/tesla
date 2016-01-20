@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.waylens.hachi.ui.views.BarrierLinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/enhance_root_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/edit_toolbar"
@@ -45,93 +46,134 @@
         </LinearLayout>
     </FrameLayout>
 
-    <LinearLayout
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:id="@+id/enhance_fragment_content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/edit_background"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_height="202dp"
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp">
 
-        <com.xfdingustc.far.FixedAspectRatioFrameLayout
-            android:id="@+id/enhance_fragment_content"
+        <ImageView
+            android:id="@+id/video_cover"
             android:layout_width="match_parent"
-            android:layout_height="202dp">
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"/>
 
-            <ImageView
-                android:id="@+id/video_cover"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"/>
-
-            <ImageView
-                android:id="@+id/btn_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_play_circle_outline_white_48dp"/>
-        </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="36dp">
-
-            <ImageView
-                android:id="@+id/btn_redo"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="16dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_redo_white_24dp"/>
-
-            <ImageView
-                android:id="@+id/btn_undo"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="8dp"
-                android:layout_toLeftOf="@id/btn_redo"
-                android:layout_centerVertical="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_undo_white_24dp"
-                />
-
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tv_clip_date"
+        <ImageView
+            android:id="@+id/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Today, 05:38:09"
-            android:textColor="@color/text_enhance"/>
+            android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_play_circle_outline_white_48dp"/>
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-        <View
-            android:layout_width="2dp"
-            android:layout_height="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/text_enhance"/>
+    <ViewAnimator
+        android:id="@+id/view_animator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <com.waylens.hachi.views.VideoPlayerProgressBar
-            android:id="@+id/clip_seek_bar"
+        <LinearLayout
+            android:id="@+id/enhance_action_content"
             android:layout_width="match_parent"
-            android:layout_height="64dp"/>
+            android:layout_height="match_parent"
 
-        <View
-            android:layout_width="2dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/text_enhance"/>
-    </LinearLayout>
+            android:background="@color/edit_background"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="36dp">
+
+                <ImageView
+                    android:id="@+id/btn_add_clip"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_enhance_add_clip"/>
+
+                <ImageView
+                    android:id="@+id/btn_bg_music"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_toRightOf="@id/btn_add_clip"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_enhance_bg_music"/>
+
+
+                <ImageView
+                    android:id="@+id/btn_redo"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_redo_white_24dp"/>
+
+                <ImageView
+                    android:id="@+id/btn_undo"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@id/btn_redo"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_undo_white_24dp"
+                    />
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_clip_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Today, 05:38:09"
+                android:textColor="@color/text_enhance"/>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/text_enhance"/>
+
+            <com.waylens.hachi.views.VideoPlayerProgressBar
+                android:id="@+id/clip_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"/>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/text_enhance"/>
+        </LinearLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </ViewAnimator>
 
     <LinearLayout
         android:layout_width="wrap_content"

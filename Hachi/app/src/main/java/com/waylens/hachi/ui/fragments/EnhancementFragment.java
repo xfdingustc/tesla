@@ -3,12 +3,16 @@ package com.waylens.hachi.ui.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
@@ -38,11 +42,17 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Bind(R.id.enhance_root_view)
     LinearLayout mEnhanceRootView;
 
+    @Bind(R.id.view_pager)
+    ViewPager mViewPager;
+
+    @Bind(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
     SharableClip mSharableClip;
     VdbImageLoader mImageLoader;
 
     CameraVideoPlayFragment mVideoPlayFragment;
-
+    SimplePagerAdapter mPagerAdapter;
 
     public static EnhancementFragment newInstance(SharableClip sharableClip) {
         Bundle args = new Bundle();
@@ -56,6 +66,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
+        mPagerAdapter = new SimplePagerAdapter();
     }
 
     @Nullable
@@ -72,9 +83,9 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
         ClipPos clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
         mImageLoader.displayVdbImage(clipPos, videoCover);
-
         initSeekBar();
         mClipDateView.setText(mSharableClip.clip.getDateTimeString());
+        mViewPager.setAdapter(mPagerAdapter);
     }
 
     @Override
@@ -113,6 +124,11 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @OnClick(R.id.btn_share)
     void onClickShare() {
 
+    }
+
+    @OnClick(R.id.btn_gauge)
+    void showGauge() {
+        mViewAnimator.setDisplayedChild(1);
     }
 
     private void initSeekBar() {
@@ -161,5 +177,36 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     public void onProgress(int position, int duration) {
         mSeekBar.setProgress(position, duration);
 
+    }
+
+    static class SimplePagerAdapter extends PagerAdapter {
+
+        static int[] view_layouts = new int[]{
+                R.layout.layout_gauge_one,
+                R.layout.layout_gauge_two,
+        };
+
+        @Override
+        public int getCount() {
+            return view_layouts.length;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View view = LayoutInflater.from(container.getContext()).inflate(view_layouts[position], container, false);
+            container.addView(view);
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+            Log.e("test", "destroyItem");
+        }
     }
 }
