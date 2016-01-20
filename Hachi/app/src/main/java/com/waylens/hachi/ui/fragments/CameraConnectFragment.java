@@ -17,12 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.transee.viditcam.app.CameraSetupActivity;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
-import com.waylens.hachi.ui.activities.MainActivity2;
 import com.waylens.hachi.ui.activities.TabSwitchable;
 import com.waylens.hachi.ui.adapters.CameraListRvAdapter;
 
@@ -222,7 +220,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     @Override
     public void onSetup(VdtCamera camera) {
 
-        CameraSetupActivity.launch(getActivity(), camera);
+//        CameraSetupActivity.launch(getActivity(), camera);
     }
 
     @Override

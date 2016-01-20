@@ -60,25 +60,6 @@
 
 
         <activity
-            android:name="com.transee.viditcam.app.CameraSetupActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_camera_setup">
-        </activity>
-        <activity
-            android:name="com.transee.viditcam.app.CameraOverlaySetupActivity"
-            android:label="@string/title_activity_camera_overlay_setup">
-        </activity>
-        <activity
-            android:name="com.transee.viditcam.app.CameraWifiSetupActivity"
-            android:label="@string/title_activity_camera_wifi_setup">
-        </activity>
-        <activity
-            android:name="com.transee.viditcam.app.CameraBtSetupActivity"
-            android:label="@string/title_activity_camera_bt_setup">
-        </activity>
-
-
-        <activity
             android:name=".ui.activities.FullScreenPlayActivity"
             android:screenOrientation="landscape"
             />
