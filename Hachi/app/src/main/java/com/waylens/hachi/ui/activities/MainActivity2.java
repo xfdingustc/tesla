@@ -47,13 +47,14 @@ public class MainActivity2 extends BaseActivity {
     public static final int TAB_TAG_BOOKMARK = 0;
     public static final int TAB_TAG_STORIES = 1;
     public static final int TAB_TAG_LIVE_VIEW = 2;
-    public static final int TAB_TAG_SOCIAL = 3;
+    public static final int TAB_TAG_MOMENTS = 3;
     public static final int TAB_TAG_SETTINGS = 4;
 
     private int mCurrentNavMenuId;
 
 
     private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
+
 
 
     private SessionManager mSessionManager = SessionManager.getInstance();
@@ -83,7 +84,7 @@ public class MainActivity2 extends BaseActivity {
     protected void init() {
         super.init();
 
-        mMenuId2Tab.put(R.id.social, TAB_TAG_SOCIAL);
+        mMenuId2Tab.put(R.id.moments, TAB_TAG_MOMENTS);
         mMenuId2Tab.put(R.id.setting, TAB_TAG_SETTINGS);
         mMenuId2Tab.put(R.id.bookmark, TAB_TAG_BOOKMARK);
         mMenuId2Tab.put(R.id.stories, TAB_TAG_STORIES);
@@ -107,7 +108,7 @@ public class MainActivity2 extends BaseActivity {
 
 
         if (!mSessionManager.isLoggedIn()) {
-            switchFragment(TAB_TAG_SOCIAL);
+            switchFragment(TAB_TAG_MOMENTS);
         } else {
             switchFragment(TAB_TAG_LIVE_VIEW);
 
@@ -139,7 +140,7 @@ public class MainActivity2 extends BaseActivity {
 
         Fragment fragment;
         switch (tag) {
-            case TAB_TAG_SOCIAL:
+            case TAB_TAG_MOMENTS:
                 fragment = new HomeFragment();
                 break;
             case TAB_TAG_BOOKMARK:

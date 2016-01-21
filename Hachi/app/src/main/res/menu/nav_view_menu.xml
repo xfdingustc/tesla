@@ -6,13 +6,13 @@
               android:icon="@drawable/liveview_tab"/>
 
         <item android:id="@+id/bookmark" android:title="@string/bookmark"
-              android:icon="@drawable/tab_bookmark"/>
+              android:icon="@drawable/bookmark_tab"/>
 
         <item android:id="@+id/stories" android:title="@string/stories"
-              android:icon="@drawable/tab_stories"/>
+              android:icon="@drawable/stories_tab"/>
 
-        <item android:id="@+id/social" android:title="@string/social"
-              android:icon="@drawable/tab_social"/>
+        <item android:id="@+id/moments" android:title="@string/social"
+              android:icon="@drawable/moments_tab"/>
     </group>
 
 
