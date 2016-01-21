@@ -199,6 +199,14 @@ public class VdtCamera {
         return mServiceInfo.serverName;
     }
 
+    public int getBatteryState() {
+        return mState.getBatteryState();
+    }
+
+    public int getBatterVolume() {
+        return mState.getBatteryVolume();
+    }
+
     public InetAddress getAddress() {
         return mServiceInfo.inetAddr;
     }
@@ -552,8 +560,8 @@ public class VdtCamera {
 
     public StorageInfo getStorageInfo() {
         StorageInfo storageInfo = new StorageInfo();
-        storageInfo.totalSpace = (int)(mState.mStorageTotalSpace / 1024);
-        storageInfo.freeSpace = (int)(mState.mStorageFreeSpace / 1024);
+        storageInfo.totalSpace = (int)(mState.getStorageTotalSpace() / 1024);
+        storageInfo.freeSpace = (int)(mState.getStorageFreeSpace() / 1024);
         return storageInfo;
     }
 

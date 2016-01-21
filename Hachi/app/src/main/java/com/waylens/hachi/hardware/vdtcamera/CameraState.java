@@ -100,45 +100,45 @@ public class CameraState {
     private OnStateChangeListener mListener = null;
 
 
-    public String mCameraName = new String();
-    public String mFirmwareVersion = new String();
-    public int mApiVersion = 0;
-    public String mBuild = new String();
+    private String mCameraName = new String();
+    private String mFirmwareVersion = new String();
+    private int mApiVersion = 0;
+    private String mBuild = new String();
 
-    public int mRecordState = STATE_RECORD_UNKNOWN;
+    private int mRecordState = STATE_RECORD_UNKNOWN;
 
-    public boolean mbIsStill = false;
+    private boolean mbIsStill = false;
     private int mRecordDuration = -1;
-    public boolean mbRecordDurationUpdated; //
-    public long mRecordTimeFetchedTime;
+    private boolean mbRecordDurationUpdated; //
+    private long mRecordTimeFetchedTime;
 
-    public int mMicState = STATE_MIC_UNKNOWN;
-    public int mMicVol = -1; // TODO
+    private int mMicState = STATE_MIC_UNKNOWN;
+    private int mMicVol = -1;
 
-    public int mBatteryState = STATE_BATTERY_UNKNOWN;
-    public int mPowerState = STATE_POWER_UNKNOWN;
-    public int mBatteryVol = -1; // TODO
+    private int mBatteryState = STATE_BATTERY_UNKNOWN;
+    private int mPowerState = STATE_POWER_UNKNOWN;
+    private int mBatteryVol = -1;
 
-    public int mStorageState = STATE_STORAGE_UNKNOWN;
-    public long mStorageTotalSpace = 0;
-    public long mStorageFreeSpace = 0;
+    private int mStorageState = STATE_STORAGE_UNKNOWN;
+    private long mStorageTotalSpace = 0;
+    private long mStorageFreeSpace = 0;
 
-    public int mOverlayFlags = -1; // TODO
+    private int mOverlayFlags = -1;
 
-    public int mVideoResolutionList = 0; // TODO
-    public int mVideoResolutionIndex = VIDEO_RESOLUTION_UNKNOWN;
+    private int mVideoResolutionList = 0;
+    private int mVideoResolutionIndex = VIDEO_RESOLUTION_UNKNOWN;
 
-    public int mVideoQualityList = 0; // TODO
-    public int mVideoQualityIndex = VIDEO_QUALITY_UNKNOWN;
+    private int mVideoQualityList = 0;
+    private int mVideoQualityIndex = VIDEO_QUALITY_UNKNOWN;
 
-    public int mRecordModeList = 0; // TODO
-    public int mRecordModeIndex = REC_MODE_UNKNOWN;
+    private int mRecordModeList = 0;
+    private int mRecordModeIndex = REC_MODE_UNKNOWN;
 
-    public int mColorModeList = 0; // TODO
-    public int mColorModeIndex = COLOR_MODE_UNKNOWN;
+    private int mColorModeList = 0;
+    private int mColorModeIndex = COLOR_MODE_UNKNOWN;
 
-    public int mMarkBeforeTime = -1;
-    public int mMarkAfterTime = -1;
+    private int mMarkBeforeTime = -1;
+    private int mMarkAfterTime = -1;
 
 
 
@@ -181,6 +181,26 @@ public class CameraState {
 
     public String getName() {
         return mCameraName;
+    }
+
+    public int getBatteryState() {
+        return mBatteryState;
+    }
+
+    public int getBatteryVolume() {
+        return mBatteryVol;
+    }
+
+    public int getStorageState() {
+        return mStorageState;
+    }
+
+    public long getStorageTotalSpace() {
+        return mStorageTotalSpace;
+    }
+
+    public long getStorageFreeSpace() {
+        return mStorageFreeSpace;
     }
 
     synchronized public void setFirmwareVersion(String version) {

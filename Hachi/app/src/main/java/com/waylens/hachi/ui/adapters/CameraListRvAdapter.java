@@ -68,11 +68,10 @@ public class CameraListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolder.mBtnPreview.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
                 viewHolder.mBtnSettings.setColorFilter(mContext.getResources().getColor(R.color.material_grey_600));
             }
-            CameraState state = camera.getState();
-            if (TextUtils.isEmpty(state.mCameraName)) {
+            if (TextUtils.isEmpty(camera.getName())) {
                 viewHolder.mCameraName.setText(camera.getSSID());
             } else {
-                viewHolder.mCameraName.setText(state.mCameraName);
+                viewHolder.mCameraName.setText(camera.getName());
             }
 
         }

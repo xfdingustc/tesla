@@ -600,14 +600,14 @@ public class LiveViewActivity extends BaseActivity {
         }
 
         // update battery info:
-        int batteryStatus = mVdtCamera.getState().mBatteryState;
+        int batteryStatus = mVdtCamera.getBatteryState();
         if (batteryStatus != CameraState.STATE_BATTERY_CHARGING) {
             mIsCharging.setVisibility(View.INVISIBLE);
         } else {
             mIsCharging.setVisibility(View.VISIBLE);
         }
 
-        int batterVol = mVdtCamera.getState().mBatteryVol;
+        int batterVol = mVdtCamera.getBatterVolume();
         if (batterVol < 25) {
             mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_4);
         } else if (batterVol < 50) {
