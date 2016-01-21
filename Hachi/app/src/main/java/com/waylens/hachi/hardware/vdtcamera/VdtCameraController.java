@@ -20,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-final class VdtCameraController {
+class VdtCameraController {
     private static final String TAG = VdtCameraController.class.getSimpleName();
 
     private static final int CMD_DOMAIN_USER = -1;
@@ -278,7 +278,6 @@ final class VdtCameraController {
 
         void onDisconnected();
 
-
         void onBtStateChanged();
 
         void onGpsStateChanged();
@@ -353,12 +352,6 @@ final class VdtCameraController {
             mP2 = p2;
         }
 
-        Request(Request request) {
-            this.mDomain = request.mDomain;
-            this.mCmd = request.mCmd;
-            this.mP1 = request.mP1;
-            this.mP2 = request.mP2;
-        }
 
     }
 
@@ -371,7 +364,7 @@ final class VdtCameraController {
     static final String XML_P2 = "p2";
 
     private final TcpConnection mConnection;
-    private final Queue mQueue = new Queue();
+
     private final BlockingQueue<Request> mCameraRequestQueue = new LinkedBlockingQueue<>();
 
     private void postRequest(int domain, int cmd) {
@@ -389,8 +382,7 @@ final class VdtCameraController {
     }
 
     private void postRequest(Request request) {
-//        mQueue.postRequest(request);
-        mCameraRequestQueue.add(new Request(request));
+        mCameraRequestQueue.add(request);
     }
 
     // all info for setup
@@ -551,7 +543,7 @@ final class VdtCameraController {
         if (p1.length() == 0 || p2.length() == 0) {
             // workaround: request again after 1 s
             Logger.t(TAG).d("bad power info, schedule update");
-            mQueue.scheduleGetAllInfo();
+//            mQueue.scheduleGetAllInfo();
         } else {
             int batteryState = CameraState.STATE_BATTERY_UNKNOWN;
             if (p1.equals("Full")) {
@@ -1238,48 +1230,7 @@ final class VdtCameraController {
     }
 
     private void cmdLoop(Thread thread) throws IOException, InterruptedException {
-
-
-        Queue.CmdResult cmdResult = new Queue.CmdResult();
-
         while (!thread.isInterrupted()) {
-//            mQueue.getRequest(cmdResult);
-
-
-//            if (cmdResult.request == null) {
-//                switch (cmdResult.scheduleType) {
-//                    case Queue.SCHEDULE_UPDATE:
-//                        if (mListener != null) {
-////                            mListener.onCameraStateChanged();
-//                        }
-//                        break;
-//                    case Queue.SCHEDULE_BT_UPDATE:
-//                        if (mListener != null) {
-//                            mListener.onBtStateChanged();
-//                        }
-//                        break;
-//                    case Queue.SCHEDULE_GPS_UPDATE:
-//                        if (mListener != null) {
-//                            mListener.onGpsStateChanged();
-//                        }
-//                        break;
-//                    case Queue.SCHEDULE_WIFI_UPDATE:
-//                        if (mListener != null) {
-//                            mListener.onWifiStateChanged();
-//                        }
-//                        break;
-//                    case Queue.SCHEDULE_GET_ALL_INFO:
-//                        cmd_Cam_get_getAllInfor();
-//                        break;
-//                    default:
-//                        break;
-//                }
-//                continue;
-//            }
-
-//            Request request = (Request) cmdResult.request;
-
-
             Request request = mCameraRequestQueue.take();
             if (request.mDomain == CMD_DOMAIN_USER) {
                 if (!createUserCmd(request)) {
@@ -1360,7 +1311,6 @@ final class VdtCameraController {
 
             while (!thread.isInterrupted()) {
 
-                mStates.mbSchedule = false;
                 mGpsStates.mbSchedule = false;
                 mWifiStates.mbSchedule = false;
                 mBtStates.mbSchedule = false;
@@ -1394,24 +1344,19 @@ final class VdtCameraController {
                     eventType = xpp.next();
                 }
 
-                if (mStates.mbSchedule) {
-                    mStates.mbSchedule = false;
-                    mQueue.scheduleUpdate(Queue.SCHEDULE_UPDATE);
-                }
-
                 if (mGpsStates.mbSchedule) {
                     mGpsStates.mbSchedule = false;
-                    mQueue.scheduleUpdate(Queue.SCHEDULE_GPS_UPDATE);
+//                    mQueue.scheduleUpdate(Queue.SCHEDULE_GPS_UPDATE);
                 }
 
                 if (mWifiStates.mbSchedule) {
                     mWifiStates.mbSchedule = false;
-                    mQueue.scheduleUpdate(Queue.SCHEDULE_WIFI_UPDATE);
+//                    mQueue.scheduleUpdate(Queue.SCHEDULE_WIFI_UPDATE);
                 }
 
                 if (mBtStates.mbSchedule) {
                     mBtStates.mbSchedule = false;
-                    mQueue.scheduleUpdate(Queue.SCHEDULE_BT_UPDATE);
+//                    mQueue.scheduleUpdate(Queue.SCHEDULE_BT_UPDATE);
                 }
             }
 
@@ -1729,30 +1674,5 @@ final class VdtCameraController {
         }
     }
 
-    static class Queue extends CmdQueue<Request> {
-
-        static final int SCHEDULE_NULL = -1;
-        static final int SCHEDULE_UPDATE = 0;
-        static final int SCHEDULE_BT_UPDATE = 1;
-        static final int SCHEDULE_GPS_UPDATE = 2;
-        static final int SCHEDULE_WIFI_UPDATE = 3;
-        static final int SCHEDULE_GET_ALL_INFO = 4;
-        static final int SCHEDULE_NUM = 5;
-
-        static final int SCHEDULE_UPDATE_DELAY = 100;
-        static final int SCHEDULE_GET_ALL_INFO_DELAY = 1000;
-
-        public Queue() {
-            super(SCHEDULE_NUM);
-        }
-
-        public void scheduleUpdate(int type) {
-            schedule(type, SCHEDULE_UPDATE_DELAY);
-        }
-
-        public void scheduleGetAllInfo() {
-            schedule(SCHEDULE_GET_ALL_INFO, SCHEDULE_GET_ALL_INFO_DELAY);
-        }
-    }
 
 }

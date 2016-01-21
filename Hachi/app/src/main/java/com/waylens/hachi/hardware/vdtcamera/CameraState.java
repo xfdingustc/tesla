@@ -99,8 +99,6 @@ public class CameraState {
 
     private OnStateChangeListener mListener = null;
 
-    private int mStateSN = 0;
-    public boolean mbSchedule = false;
 
     public String mCameraName = new String();
     public String mFirmwareVersion = new String();
@@ -145,9 +143,7 @@ public class CameraState {
 
 
 
-    private final void stateChanged() {
-//        mStateSN++;
-//        mbSchedule = true;
+    private void notifyStateChanged() {
         if (mListener != null) {
             mListener.onStateChange();
         }
@@ -179,7 +175,7 @@ public class CameraState {
         if (!mCameraName.equals(name)) {
             Logger.t(TAG).d("setCameraName: " + name);
             mCameraName = name;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -192,7 +188,7 @@ public class CameraState {
             Logger.t(TAG).d("setFirmwareVersion: " + version);
 
             mFirmwareVersion = version;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -202,7 +198,7 @@ public class CameraState {
             Logger.t(TAG).d("setApiVersion: " + version);
             mApiVersion = version;
             mBuild = build;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -211,7 +207,7 @@ public class CameraState {
             Logger.t(TAG).d("setRecordState: " + state + ", is_still: " + is_still);
             mRecordState = state;
             mbIsStill = is_still;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -222,7 +218,7 @@ public class CameraState {
             mRecordTimeFetchedTime = SystemClock.uptimeMillis();
             mbRecordDurationUpdated = true;
         }
-        stateChanged();
+        notifyStateChanged();
     }
 
     synchronized public void setMicState(int state, int vol) {
@@ -230,7 +226,7 @@ public class CameraState {
             Logger.t(TAG).d("setMicState: " + state + ", " + vol);
             mMicState = state;
             mMicVol = vol;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -239,7 +235,7 @@ public class CameraState {
             Logger.t(TAG).d("setPowerState: " + batteryState + "," + powerState);
             mBatteryState = batteryState;
             mPowerState = powerState;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -247,7 +243,7 @@ public class CameraState {
         if (mBatteryVol != vol) {
             Logger.t(TAG).d("setBatteryVol: " + vol);
             mBatteryVol = vol;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -255,7 +251,7 @@ public class CameraState {
         if (mStorageState != state) {
             Logger.t(TAG).d("setStorageState: " + state);
             mStorageState = state;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -264,7 +260,7 @@ public class CameraState {
             Logger.t(TAG).d("setStorageSpace: " + totalSpace + ", " + freeSpace);
             mStorageTotalSpace = totalSpace;
             mStorageFreeSpace = freeSpace;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -273,7 +269,7 @@ public class CameraState {
 
             Logger.t(TAG).d("setOverlayFlags: " + Integer.toHexString(flags));
             mOverlayFlags = flags;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -282,7 +278,7 @@ public class CameraState {
 
             Logger.t(TAG).d("setVideoResolutionList: " + Integer.toHexString(list));
             mVideoResolutionList = list;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -290,7 +286,7 @@ public class CameraState {
         if (mVideoResolutionIndex != index) {
             Logger.t(TAG).d("setVideoResolution: " + index);
             mVideoResolutionIndex = index;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -334,7 +330,7 @@ public class CameraState {
             Logger.t(TAG).d("setVideoQualityList: " + Integer.toHexString(list));
 
             mVideoQualityList = list;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -344,7 +340,7 @@ public class CameraState {
             Logger.t(TAG).d("setVideoQuality: " + index);
 
             mVideoQualityIndex = index;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -353,7 +349,7 @@ public class CameraState {
 
             Logger.t(TAG).d("setRecordModeList: " + Integer.toHexString(list));
             mRecordModeList = list;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -362,7 +358,7 @@ public class CameraState {
 
             Logger.t(TAG).d("setRecordMode: " + index);
             mRecordModeIndex = index;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -371,7 +367,7 @@ public class CameraState {
 
             Logger.t(TAG).d("setColorModeList: " + Integer.toHexString(list));
             mColorModeList = list;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -380,7 +376,7 @@ public class CameraState {
 
             Logger.t(TAG).d("setColorMode: " + index);
             mColorModeIndex = index;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
@@ -388,7 +384,7 @@ public class CameraState {
         if (mMarkBeforeTime != before || mMarkAfterTime != after) {
             mMarkBeforeTime = before;
             mMarkAfterTime = after;
-            stateChanged();
+            notifyStateChanged();
         }
     }
 
