@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.activities;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -173,17 +174,38 @@ public class MainActivity extends BaseActivity {
         mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                mDrawerLayout.closeDrawers();
-                if (item.getItemId() == mCurrentNavMenuId) {
-                    return true;
+                switch(item.getItemId()) {
+                    case R.id.changeTheme:
+                        toggleAppTheme();
+                        break;
+                    default:
+                        mDrawerLayout.closeDrawers();
+                        if (item.getItemId() == mCurrentNavMenuId) {
+                            return true;
+                        }
+                        int tab = mMenuId2Tab.get(item.getItemId());
+                        switchFragment(tab);
                 }
-
-                int tab = mMenuId2Tab.get(item.getItemId());
-                switchFragment(tab);
 
                 return true;
             }
         });
+    }
+
+    private boolean mIsDarkTheme = true;
+    private void toggleAppTheme() {
+
+        if (mIsDarkTheme) {
+            Logger.t(TAG).d("Set Light Theme");
+            getApplication().setTheme(R.style.LightTheme);
+
+        } else {
+            Logger.t(TAG).d("Set Dark Theme");
+            getApplication().setTheme(R.style.DarkTheme);
+        }
+
+        mIsDarkTheme = !mIsDarkTheme;
+
     }
 
 

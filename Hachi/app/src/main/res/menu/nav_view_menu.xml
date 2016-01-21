@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group>
+    <group android:checkableBehavior="single">
         <item android:id="@+id/liveView" android:title="@string/live_view"
               android:icon="@drawable/liveview_tab"/>
 
@@ -11,15 +11,22 @@
         <item android:id="@+id/stories" android:title="@string/stories"
               android:icon="@drawable/stories_tab"/>
 
-        <item android:id="@+id/moments" android:title="@string/social"
+        <item android:id="@+id/moments" android:title="@string/moments"
               android:icon="@drawable/moments_tab"/>
+
     </group>
 
 
 
-    <group>
+
+
+    <group android:id="@+id/others">
+
+        <item android:id="@+id/changeTheme" android:title="@string/change_theme"
+            android:icon="@drawable/ic_settings_input_svideo_grey600_24dp"/>
+
         <item android:id="@+id/setting" android:title="@string/settings"
-              android:icon="@drawable/tab_settings"/>
+              android:icon="@drawable/settings_tab"/>
 
     </group>
 </menu>

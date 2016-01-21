@@ -98,23 +98,5 @@ public class Hachi extends Application {
     }
 
 
-    public final void test() {
-        // /data/data/com.transee.viditcam/files
-        Context context = this.getApplicationContext();
-        File tt = context.getFilesDir();
-        Log.d(TAG, "files dir: " + tt.getPath());
-        // /mnt/sdcard/Android/data/com.transee.viditcam/files
-        tt = context.getExternalFilesDir(null);
-        Log.d(TAG, "ext files dir: " + tt.getPath());
-    }
-
-
-    // API
-    static public final void addToMediaStore(Context context, String filename) {
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(Uri.fromFile(new File(filename)));
-        context.sendBroadcast(intent);
-    }
-
 
 }
