@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.activities;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.pm.PackageInstaller;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -29,17 +28,14 @@ import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PushUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import butterknife.Bind;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/1/15.
  */
-public class MainActivity2 extends BaseActivity {
-    private static final String TAG = MainActivity2.class.getSimpleName();
+public class MainActivity extends BaseActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
     private ActionBarDrawerToggle mDrawerToggle;
 
     private Bundle fragmentArgs;
@@ -98,7 +94,7 @@ public class MainActivity2 extends BaseActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
