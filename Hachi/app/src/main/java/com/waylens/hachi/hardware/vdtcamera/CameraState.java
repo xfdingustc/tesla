@@ -203,7 +203,7 @@ public class CameraState {
         return mStorageFreeSpace;
     }
 
-    synchronized public void setFirmwareVersion(String version) {
+    public void setFirmwareVersion(String version) {
         if (!mFirmwareVersion.equals(version)) {
             Logger.t(TAG).d("setFirmwareVersion: " + version);
 
@@ -212,7 +212,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setApiVersion(int main, int sub, String build) {
+    public void setApiVersion(int main, int sub, String build) {
         int version = makeVersion(main, sub);
         if (mApiVersion != version || !mBuild.equals(build)) {
             Logger.t(TAG).d("setApiVersion: " + version);
@@ -222,7 +222,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setRecordState(int state, boolean is_still) {
+    public void setRecordState(int state, boolean is_still) {
         if (mRecordState != state || mbIsStill != is_still) {
             Logger.t(TAG).d("setRecordState: " + state + ", is_still: " + is_still);
             mRecordState = state;
@@ -231,7 +231,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setRecordDuration(int duration) {
+    public void setRecordDuration(int duration) {
         Logger.t(TAG).d("setRecordDuration: " + duration);
         mRecordDuration = duration;
         if (mRecordState == STATE_RECORD_RECORDING || mRecordState == STATE_RECORD_STOPPING) {
@@ -241,7 +241,7 @@ public class CameraState {
         notifyStateChanged();
     }
 
-    synchronized public void setMicState(int state, int vol) {
+    public void setMicState(int state, int vol) {
         if (mMicState != state || mMicVol != vol) {
             Logger.t(TAG).d("setMicState: " + state + ", " + vol);
             mMicState = state;
@@ -250,7 +250,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setPowerState(int batteryState, int powerState) {
+    public void setPowerState(int batteryState, int powerState) {
         if (mBatteryState != batteryState || mPowerState != powerState) {
             Logger.t(TAG).d("setPowerState: " + batteryState + "," + powerState);
             mBatteryState = batteryState;
@@ -259,7 +259,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setBatteryVol(int vol) {
+    public void setBatteryVol(int vol) {
         if (mBatteryVol != vol) {
             Logger.t(TAG).d("setBatteryVol: " + vol);
             mBatteryVol = vol;
@@ -267,7 +267,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setStorageState(int state) {
+    public void setStorageState(int state) {
         if (mStorageState != state) {
             Logger.t(TAG).d("setStorageState: " + state);
             mStorageState = state;
@@ -275,7 +275,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setStorageSpace(long totalSpace, long freeSpace) {
+    public void setStorageSpace(long totalSpace, long freeSpace) {
         if (mStorageTotalSpace != totalSpace || mStorageFreeSpace != freeSpace) {
             Logger.t(TAG).d("setStorageSpace: " + totalSpace + ", " + freeSpace);
             mStorageTotalSpace = totalSpace;
@@ -284,7 +284,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setOverlayFlags(int flags) {
+    public void setOverlayFlags(int flags) {
         if (mOverlayFlags != flags) {
 
             Logger.t(TAG).d("setOverlayFlags: " + Integer.toHexString(flags));
@@ -293,7 +293,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setVideoResolutionList(int list) {
+    public void setVideoResolutionList(int list) {
         if (mVideoResolutionList != list) {
 
             Logger.t(TAG).d("setVideoResolutionList: " + Integer.toHexString(list));
@@ -302,7 +302,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setVideoResolution(int index) {
+    public void setVideoResolution(int index) {
         if (mVideoResolutionIndex != index) {
             Logger.t(TAG).d("setVideoResolution: " + index);
             mVideoResolutionIndex = index;
@@ -344,7 +344,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setVideoQualityList(int list) {
+    public void setVideoQualityList(int list) {
         if (mVideoQualityList != list) {
 
             Logger.t(TAG).d("setVideoQualityList: " + Integer.toHexString(list));
@@ -354,7 +354,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setVideoQuality(int index) {
+    public void setVideoQuality(int index) {
         if (mVideoQualityIndex != index) {
 
             Logger.t(TAG).d("setVideoQuality: " + index);
@@ -364,7 +364,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setRecordModeList(int list) {
+    public void setRecordModeList(int list) {
         if (mRecordModeList != list) {
 
             Logger.t(TAG).d("setRecordModeList: " + Integer.toHexString(list));
@@ -373,7 +373,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setRecordMode(int index) {
+    public void setRecordMode(int index) {
         if (mRecordModeIndex != index) {
 
             Logger.t(TAG).d("setRecordMode: " + index);
@@ -382,7 +382,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setColorModeList(int list) {
+    public void setColorModeList(int list) {
         if (mColorModeList != list) {
 
             Logger.t(TAG).d("setColorModeList: " + Integer.toHexString(list));
@@ -391,7 +391,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setColorMode(int index) {
+    public void setColorMode(int index) {
         if (mColorModeIndex != index) {
 
             Logger.t(TAG).d("setColorMode: " + index);
@@ -400,7 +400,7 @@ public class CameraState {
         }
     }
 
-    synchronized public void setMarkTime(int before, int after) {
+    public void setMarkTime(int before, int after) {
         if (mMarkBeforeTime != before || mMarkAfterTime != after) {
             mMarkBeforeTime = before;
             mMarkAfterTime = after;

@@ -1,23 +1,16 @@
 package com.waylens.hachi.ui.activities;
 
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.PopupWindow;
 
 import com.android.volley.RequestQueue;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.Bind;
@@ -49,7 +42,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        thisApp = (Hachi)getApplication();
+        thisApp = (Hachi) getApplication();
     }
 
     @Override
@@ -90,9 +83,6 @@ public class BaseActivity extends AppCompatActivity {
     static final private String HOST_STRING = "hostString";
 
 
-
-
-
     // API
 
     protected boolean isServerActivity(Bundle bundle) {
@@ -117,14 +107,6 @@ public class BaseActivity extends AppCompatActivity {
         VdtCamera vdtCamera = vdtCameraManager.findConnectedCamera(ssid, hostString);
         return vdtCamera;
     }
-
-
-
-
-
-
-
-
 
 
 }
