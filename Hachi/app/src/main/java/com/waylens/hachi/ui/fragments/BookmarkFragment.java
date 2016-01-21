@@ -36,9 +36,9 @@ import butterknife.Bind;
  * <p/>
  * Created by Xiaofei on 2015/8/4.
  */
-public class LiveFragment extends BaseFragment implements FragmentNavigator,
+public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
         ClipFilmAdapter.OnEditClipListener {
-    private static final String TAG = LiveFragment.class.getSimpleName();
+    private static final String TAG = BookmarkFragment.class.getSimpleName();
 
     static final String TAG_CLIP_SET = "tag.clip_set";
 

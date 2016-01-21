@@ -23,7 +23,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.CameraConnectFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.HomeFragment;
-import com.waylens.hachi.ui.fragments.LiveFragment;
+import com.waylens.hachi.ui.fragments.BookmarkFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PushUtils;
@@ -140,7 +140,7 @@ public class MainActivity extends BaseActivity {
                 fragment = new HomeFragment();
                 break;
             case TAB_TAG_BOOKMARK:
-                fragment = new LiveFragment();
+                fragment = new BookmarkFragment();
                 if (fragmentArgs != null) {
                     fragment.setArguments(fragmentArgs);
                 }
@@ -152,7 +152,6 @@ public class MainActivity extends BaseActivity {
                 fragment = new StoriesFragment();
                 break;
             case TAB_TAG_SETTINGS:
-                //fragment = new AccountFragment();
                 fragment = new SettingsFragment();
                 break;
             default:
