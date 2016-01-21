@@ -146,8 +146,8 @@ public class CameraState {
 
 
     private final void stateChanged() {
-        mStateSN++;
-        mbSchedule = true;
+//        mStateSN++;
+//        mbSchedule = true;
         if (mListener != null) {
             mListener.onStateChange();
         }

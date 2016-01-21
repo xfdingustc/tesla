@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import java.util.Map;
 
 // maintains WIFI SSID-password table
-public class PasswordList {
+class PasswordList {
 
 	public static final int MAX_ITEMS = 10;
 

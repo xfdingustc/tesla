@@ -389,7 +389,7 @@ final class VdtCameraController {
     }
 
     private void postRequest(Request request) {
-        mQueue.postRequest(request);
+//        mQueue.postRequest(request);
         mCameraRequestQueue.add(new Request(request));
     }
 
@@ -1213,7 +1213,7 @@ final class VdtCameraController {
 
         xml.startTag(null, XML_CMD);
         String act = String.format(Locale.US, "ECMD%1$d.%2$d", request.mDomain, request.mCmd); // TODO : why US
-//            String act = String.format(Locale.US, "ECMD%1$d.%2$d", newRequest.mDomain, newRequest.mCmd); // TODO : why US
+
         xml.attribute(null, XML_ACT, act);
         xml.attribute(null, XML_P1, request.mP1);
         xml.attribute(null, XML_P2, request.mP2);
@@ -1222,9 +1222,6 @@ final class VdtCameraController {
         xml.endTag(null, XML_CCEV);
         xml.endDocument();
 
-        //if (DEBUG) {
-        //	Log.d(TAG, "cmd: " + sos.toString(8));
-        //}
 
         int size = sos.getSize();
         if (size >= HEAD_SIZE) {
@@ -1246,14 +1243,14 @@ final class VdtCameraController {
         Queue.CmdResult cmdResult = new Queue.CmdResult();
 
         while (!thread.isInterrupted()) {
-            mQueue.getRequest(cmdResult);
+//            mQueue.getRequest(cmdResult);
 
 
 //            if (cmdResult.request == null) {
 //                switch (cmdResult.scheduleType) {
 //                    case Queue.SCHEDULE_UPDATE:
 //                        if (mListener != null) {
-//                            mListener.onCameraStateChanged();
+////                            mListener.onCameraStateChanged();
 //                        }
 //                        break;
 //                    case Queue.SCHEDULE_BT_UPDATE:
@@ -1283,15 +1280,23 @@ final class VdtCameraController {
 //            Request request = (Request) cmdResult.request;
 
 
-            Request newRequest = mCameraRequestQueue.take();
-            if (newRequest.mDomain == CMD_DOMAIN_USER) {
-                if (!createUserCmd(newRequest)) {
+            Request request = mCameraRequestQueue.take();
+            if (request.mDomain == CMD_DOMAIN_USER) {
+                if (!createUserCmd(request)) {
                     break;
                 }
                 continue;
             }
 
-            writeRequest(newRequest);
+            String cmd;
+            if (request.mDomain == CMD_DOMAIN_CAM) {
+                cmd = CMD_CAM_TO_STRING.get(request.mCmd);
+            } else {
+                cmd = CMD_REC_TO_STRING.get(request.mCmd);
+            }
+            Logger.t(TAG).d("Send domain: " + DOMAIN_TO_STRING.get(request.mDomain) + " cmd: " + cmd);
+
+            writeRequest(request);
 
         }
     }
@@ -1328,13 +1333,13 @@ final class VdtCameraController {
 
                 switch (domain) {
                     case CMD_DOMAIN_CAM:
-                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
-                            + " cmd = " + CMD_CAM_TO_STRING.get(cmd));
+//                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
+//                            + " cmd = " + CMD_CAM_TO_STRING.get(cmd));
                         camDomainMsg(cmd, p1, p2);
                         break;
                     case CMD_DOMAIN_REC:
-                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
-                            + " cmd =" + CMD_REC_TO_STRING.get(cmd));
+//                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
+//                            + " cmd =" + CMD_REC_TO_STRING.get(cmd));
                         recDomainMsg(cmd, p1, p2);
                         break;
                     default:
