@@ -47,9 +47,6 @@
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".ui.activities.BrowseCameraActivity"/>
         <activity android:name=".ui.activities.ClipEditActivity"/>
-        <activity
-            android:name=".ui.activities.DashboardActivity"
-            android:screenOrientation="landscape"/>
         <activity android:name=".ui.activities.UserProfileActivity"/>
         <activity android:name=".ui.activities.FollowListActivity"/>
 

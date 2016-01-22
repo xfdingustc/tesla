@@ -37,8 +37,9 @@ public class BaseFragment extends Fragment {
             }
         } else {
             mRootView = inflater.inflate(layoutResId, container, false);
-            ButterKnife.bind(this, mRootView);
+
         }
+        ButterKnife.bind(this, mRootView);
         return mRootView;
     }
 

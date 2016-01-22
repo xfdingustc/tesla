@@ -60,9 +60,6 @@ public class MomentFragment extends BaseFragment implements MomentsRecyclerAdapt
     @Bind(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
-
-    TabLayout mTabLayout;
-
     MomentsRecyclerAdapter mAdapter;
 
     RequestQueue mRequestQueue;
@@ -86,7 +83,6 @@ public class MomentFragment extends BaseFragment implements MomentsRecyclerAdapt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_moment, savedInstanceState);
-        mTabLayout = (TabLayout)getActivity().findViewById(R.id.tabs);
         mVideoListView.setAdapter(mAdapter);
         mVideoListView.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);

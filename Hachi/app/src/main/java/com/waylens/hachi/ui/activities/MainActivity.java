@@ -29,6 +29,7 @@ import com.waylens.hachi.ui.fragments.BookmarkFragment;
 import com.waylens.hachi.ui.fragments.CameraConnectFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.MomentFragment;
+import com.waylens.hachi.ui.fragments.MomentFragment2;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -69,7 +70,7 @@ public class MainActivity extends BaseActivity {
         new BookmarkFragment(),
         new StoriesFragment(),
         new CameraConnectFragment(),
-        new MomentFragment(),
+        new MomentFragment2(),
         new SettingsFragment()
     };
 

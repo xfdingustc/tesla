@@ -331,4 +331,8 @@
     <string name="backpressed_hint">Press the return key again to end the program</string>
     <string name="change_theme_hint">Change app theme need restart the application</string>
 
+    <string name="my_feed">My Feed</string>
+    <string name="me">me</string>
+    <string name="staff_picks">Staff picks</string>
+
 </resources>
