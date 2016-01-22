@@ -37,7 +37,7 @@ public class MomentFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_moment,
             savedInstanceState);
-        mTabLayout = (TabLayout)getActivity().findViewById(R.id.tabs);
+        mTabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
         setupViewPager();
         return view;
     }
@@ -45,10 +45,14 @@ public class MomentFragment extends BaseFragment {
     private void setupViewPager() {
         SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter
             (getActivity().getFragmentManager());
-        adapter.addFragment(new FeedFragment(), getString(R.string.my_feed));
-        adapter.addFragment(new FeedFragment(), getString(R.string.me));
-        adapter.addFragment(new FeedFragment(), getString(R.string.likes));
-        adapter.addFragment(new FeedFragment(), getString(R.string.staff_picks));
+
+        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
+        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R
+            .string.me));
+        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LIKES), getString(R.string
+            .likes));
+        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string
+            .staff_picks));
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }

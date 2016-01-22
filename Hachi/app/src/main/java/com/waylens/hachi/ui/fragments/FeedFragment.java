@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -45,10 +46,17 @@ import butterknife.Bind;
  */
 public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter.OnMomentActionListener,
         SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener {
-
+    private static final String TAG = FeedFragment.class.getSimpleName();
     static final int DEFAULT_COUNT = 10;
 
     static final String TAG_HOME_REQUEST = "TAG_home.request";
+
+    private static final String FEED_TAG = "feed_tag";
+
+    public static final int FEED_TAG_MY_FEED = 0;
+    public static final int FEED_TAG_ME = 1;
+    public static final int FEED_TAG_LIKES = 2;
+    public static final int FEED_TAG_STAFF_PICKS = 3;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -69,9 +77,21 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
 
     int mCurrentCursor;
 
+    private int mFeedTag;
+
+    public static FeedFragment newInstance(int tag) {
+
+        Bundle args = new Bundle();
+        args.putInt(FEED_TAG, tag);
+        FeedFragment fragment = new FeedFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFeedTag = getArguments().getInt(FEED_TAG, FEED_TAG_MY_FEED);
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
         mAdapter.setOnMomentActionListener(this);
@@ -107,10 +127,18 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         mRequestQueue.cancelAll(TAG_HOME_REQUEST);
     }
 
+
     void loadFeed(int cursor, final boolean isRefresh) {
         String url = Constants.API_MOMENTS
                 + String.format(Constants.API_QS_MOMENTS, Constants.PARAM_SORT_UPLOAD_TIME, cursor, DEFAULT_COUNT)
                 + "&filter=featured";
+
+        if (mFeedTag == FEED_TAG_ME) {
+            url = Constants.API_USERS + "/" +SessionManager.getInstance().getUserId() + "/" + Constants
+                .PARAM_MOMENTS;
+        }
+
+        Logger.t(TAG).d("Load url: " + url);
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
