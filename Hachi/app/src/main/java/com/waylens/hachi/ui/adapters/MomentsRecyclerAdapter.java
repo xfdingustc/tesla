@@ -185,9 +185,9 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     private void updateLikeState(MomentViewHolder holder, final Moment moment) {
         if (moment.isLiked) {
             //vh.btnLike.setImageResource(R.drawable.social_like_click);
-            holder.btnLikeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.social_like_click, 0, 0, 0);
+            holder.btnLike.setImageResource(R.drawable.social_like_click);
         } else {
-            holder.btnLikeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.social_like, 0, 0, 0);
+            holder.btnLike.setImageResource(R.drawable.social_like);
         }
     }
 
@@ -232,7 +232,7 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_like:
+            case R.id.btnLike:
                 MomentViewHolder holder = (MomentViewHolder) v.getTag();
                 Moment moment = mMoments.get(holder.getPosition());
                 doAddLike(holder, moment);

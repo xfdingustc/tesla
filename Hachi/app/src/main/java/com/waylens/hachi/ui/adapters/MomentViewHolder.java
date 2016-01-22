@@ -45,11 +45,9 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.video_control)
     public View videoControl;
 
-    @Bind(R.id.btn_like)
-    View btnLike;
+    @Bind(R.id.btnLike)
+    ImageView btnLike;
 
-    @Bind(R.id.btn_like_tv)
-    TextView btnLikeTextView;
 
     @Bind(R.id.btn_comment)
     View btnComment;

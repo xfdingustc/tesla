@@ -118,21 +118,26 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/btn_like"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             style="?android:attr/buttonBarButtonStyle">
+
+            <ImageButton
+                android:id="@+id/btnLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/social_like"/>
 
             <TextView
                 android:id="@+id/btn_like_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/social_like"
-                android:drawablePadding="8dp"
+                android:layout_marginLeft="8dp"
                 android:text="@string/like"
                 android:textColor="#76787A"
                 android:textSize="16sp"/>
