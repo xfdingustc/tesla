@@ -64,6 +64,16 @@ public class MainActivity extends BaseActivity {
         R.string.settings
     };
 
+    private Fragment[] mFragmentList = new Fragment[]{
+        new BookmarkFragment(),
+        new StoriesFragment(),
+        new CameraConnectFragment(),
+        new HomeFragment(),
+        new SettingsFragment()
+    };
+
+    private Fragment mCurrentFragment = null;
+
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
@@ -152,6 +162,7 @@ public class MainActivity extends BaseActivity {
             item.setChecked(false);
         }
 
+
         mCurrentNavMenuId = menuId;
         mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
 
@@ -161,33 +172,21 @@ public class MainActivity extends BaseActivity {
         }
 
 
-        Fragment fragment;
-        switch (tag) {
-            case TAB_TAG_MOMENTS:
-                fragment = new HomeFragment();
-                break;
-            case TAB_TAG_BOOKMARK:
-                fragment = new BookmarkFragment();
-                if (fragmentArgs != null) {
-                    fragment.setArguments(fragmentArgs);
-                }
-                break;
-            case TAB_TAG_LIVE_VIEW:
-                fragment = new CameraConnectFragment();
-                break;
-            case TAB_TAG_STORIES:
-                fragment = new StoriesFragment();
-                break;
-            case TAB_TAG_SETTINGS:
-                fragment = new SettingsFragment();
-                break;
-            default:
-                fragment = new HomeFragment();
-        }
+        Fragment fragment = mFragmentList[tag];
 
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_content, fragment);
-        fragmentTransaction.commit();
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        if (mCurrentFragment == null) {
+            transaction.add(R.id.fragment_content, fragment).commit();
+            mCurrentFragment = fragment;
+        } else {
+            if (!fragment.isAdded()) {
+                transaction.hide(mCurrentFragment).add(R.id.fragment_content, fragment).commit();
+            } else {
+                transaction.hide(mCurrentFragment).show(fragment).commit();
+            }
+            mCurrentFragment = fragment;
+        }
     }
 
 
