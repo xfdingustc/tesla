@@ -67,6 +67,8 @@ public class Constants {
 
     public static final String API_FRIENDS = HOST_URL + "api/friends/";
 
+    public static final String API_LIKES = HOST_URL + "api/likes";
+
     public static final String API_FRIENDS_FOLLOW = HOST_URL + "api/friends/follow";
 
     public static final String API_FRIENDS_UNFOLLOW = HOST_URL + "api/friends/unfollow";
