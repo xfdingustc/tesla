@@ -18,7 +18,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -45,7 +44,7 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter.OnMomentActionListener,
+public class MomentFragment extends BaseFragment implements MomentsRecyclerAdapter.OnMomentActionListener,
         SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener {
 
     static final int DEFAULT_COUNT = 10;
@@ -86,7 +85,7 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_home, savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_moment, savedInstanceState);
         mTabLayout = (TabLayout)getActivity().findViewById(R.id.tabs);
         mVideoListView.setAdapter(mAdapter);
         mVideoListView.setLayoutManager(mLinearLayoutManager);

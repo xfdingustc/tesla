@@ -19,7 +19,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -240,8 +239,8 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     @OnClick(R.id.btn_back)
     public void onBack() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
-        if (hasUpdates && fragment != null && fragment instanceof HomeFragment) {
-            HomeFragment fg = (HomeFragment) fragment;
+        if (hasUpdates && fragment != null && fragment instanceof MomentFragment) {
+            MomentFragment fg = (MomentFragment) fragment;
             // TODO disable it? Richard
             //fg.loadComment(mMomentID, mPosition);
         }
