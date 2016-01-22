@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.common.collect.BiMap;
@@ -31,6 +32,7 @@ import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PushUtils;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -66,17 +68,21 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.navView)
     NavigationView mNavView;
 
+
     CircleImageView mUserAvatar;
     TextView mUsername;
     TextView mEmail;
 
     private Snackbar mReturnSnackBar;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
     }
+
+
 
     @Override
     protected void init() {
@@ -194,6 +200,21 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         });
+
+        mUserAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onUserAvatarClicked();
+            }
+        });
+    }
+
+    private void onUserAvatarClicked() {
+        if (mSessionManager.isLoggedIn()) {
+            UserProfileActivity.launch(this, mSessionManager.getUserId());
+        } else {
+            LoginActivity.launch(this);
+        }
     }
 
     private boolean mIsDarkTheme = true;
