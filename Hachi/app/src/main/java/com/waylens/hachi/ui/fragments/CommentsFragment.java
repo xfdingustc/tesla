@@ -239,8 +239,8 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     @OnClick(R.id.btn_back)
     public void onBack() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
-        if (hasUpdates && fragment != null && fragment instanceof MomentFragment) {
-            MomentFragment fg = (MomentFragment) fragment;
+        if (hasUpdates && fragment != null && fragment instanceof FeedFragment) {
+            FeedFragment fg = (FeedFragment) fragment;
             // TODO disable it? Richard
             //fg.loadComment(mMomentID, mPosition);
         }
