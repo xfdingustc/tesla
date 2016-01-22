@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
@@ -76,6 +77,8 @@ public class Hachi extends Application {
         mScanner = new DeviceScanner(this);
         mScanner.startWork();
     }
+
+
 
     private void initCameraManager() {
         VdtCameraManager.initialize(this);

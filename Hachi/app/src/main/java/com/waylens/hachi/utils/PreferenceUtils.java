@@ -16,6 +16,7 @@ public class PreferenceUtils {
     public static final String IS_FIRST_INSTALL = "is_first_install";
     public static final String VERSION_NAME = "version_name";
     public static final String VERSION_CODE = "version_code";
+    public static final String APP_THEME = "app_theme";
     public static final String LOGIN_TYPE = "login_type";
     public static final String IS_LINKED = "is_linked";
     public static final String SEND_GCM_TOKEN_SERVER = "send.gcm.token.to.server";

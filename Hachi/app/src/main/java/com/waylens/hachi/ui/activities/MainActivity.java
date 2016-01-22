@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -29,6 +30,7 @@ import com.waylens.hachi.ui.fragments.HomeFragment;
 import com.waylens.hachi.ui.fragments.BookmarkFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
 import butterknife.Bind;
@@ -80,6 +82,12 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refressNavHeaderView();
     }
 
 
@@ -186,7 +194,8 @@ public class MainActivity extends BaseActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.changeTheme:
-                        toggleAppTheme();
+                        onToggleAppThemeClicked();
+
                         break;
                     default:
                         mDrawerLayout.closeDrawers();
@@ -199,6 +208,8 @@ public class MainActivity extends BaseActivity {
 
                 return true;
             }
+
+
         });
 
         mUserAvatar.setOnClickListener(new View.OnClickListener() {
@@ -209,6 +220,15 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void refressNavHeaderView() {
+        if (mSessionManager.isLoggedIn()) {
+            mUsername.setText(mSessionManager.getUserName());
+
+        } else {
+            mUsername.setText(getText(R.string.click_2_login));
+        }
+    }
+
     private void onUserAvatarClicked() {
         if (mSessionManager.isLoggedIn()) {
             UserProfileActivity.launch(this, mSessionManager.getUserId());
@@ -217,19 +237,33 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private boolean mIsDarkTheme = true;
-    private void toggleAppTheme() {
+    private void onToggleAppThemeClicked() {
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+            .content(getText(R.string.change_theme_hint))
+            .negativeText(android.R.string.cancel)
+            .positiveText(android.R.string.ok)
+            .callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    super.onPositive(dialog);
+                    toggleAppTheme();
+                    finish();
+                }
+            })
+            .show();
 
-        if (mIsDarkTheme) {
-            Logger.t(TAG).d("Set Light Theme");
+    }
+
+    private void toggleAppTheme() {
+        String appTheme = PreferenceUtils.getString(PreferenceUtils.APP_THEME, "dark");
+        if (appTheme.equals("dark")) {
             getApplication().setTheme(R.style.LightTheme);
+            PreferenceUtils.putString(PreferenceUtils.APP_THEME, "light");
 
         } else {
-            Logger.t(TAG).d("Set Dark Theme");
             getApplication().setTheme(R.style.DarkTheme);
+            PreferenceUtils.putString(PreferenceUtils.APP_THEME, "dark");
         }
-
-        mIsDarkTheme = !mIsDarkTheme;
 
     }
 

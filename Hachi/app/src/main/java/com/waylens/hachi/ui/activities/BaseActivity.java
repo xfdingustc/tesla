@@ -7,10 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.android.volley.RequestQueue;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.Bind;
@@ -47,6 +49,12 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
+        String theme = PreferenceUtils.getString(PreferenceUtils.APP_THEME, "dark");
+        if (theme.equals("dark")) {
+            setTheme(R.style.DarkTheme);
+        } else {
+            setTheme(R.style.LightTheme);
+        }
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
         setupToolbar();
