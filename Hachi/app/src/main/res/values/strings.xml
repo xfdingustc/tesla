@@ -328,4 +328,6 @@
         <item quantity="other">%d Bookmarks</item>
     </plurals>
 
+    <string name="backpressed_hint">Press the return key again to end the program</string>
+
 </resources>

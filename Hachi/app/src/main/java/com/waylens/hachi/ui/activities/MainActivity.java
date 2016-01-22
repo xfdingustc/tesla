@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -69,7 +70,7 @@ public class MainActivity extends BaseActivity {
     TextView mUsername;
     TextView mEmail;
 
-
+    private Snackbar mReturnSnackBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,6 +94,9 @@ public class MainActivity extends BaseActivity {
             startService(intent);
         }
     }
+
+
+
 
     private void initViews() {
         setContentView(R.layout.activity_main);
@@ -230,6 +234,15 @@ public class MainActivity extends BaseActivity {
                 && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
-        super.onBackPressed();
+
+        if (mReturnSnackBar != null && mReturnSnackBar.isShown()) {
+            super.onBackPressed();
+        } else {
+            mReturnSnackBar = Snackbar.make(mDrawerLayout, getText(R.string.backpressed_hint),
+                Snackbar.LENGTH_LONG);
+            mReturnSnackBar.show();
+        }
+
+
     }
 }
