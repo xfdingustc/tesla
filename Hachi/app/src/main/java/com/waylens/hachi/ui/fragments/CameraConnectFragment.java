@@ -1,28 +1,22 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
-import com.waylens.hachi.ui.activities.TabSwitchable;
-import com.waylens.hachi.ui.adapters.CameraListRvAdapter;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -31,22 +25,14 @@ import butterknife.OnClick;
  * List available Cameras
  * Created by Richard on 9/9/15.
  */
-public class CameraConnectFragment extends BaseFragment implements CameraListRvAdapter.OnCameraActionListener {
+public class CameraConnectFragment extends BaseFragment {
     private static final String TAG = CameraConnectFragment.class.getSimpleName();
+    private VdtCameraManager mVdtCameraManager;
 
-    @Bind(R.id.wifi_status)
-    TextView mWifiStatusView;
-
-    @Bind(R.id.wifi_icon)
-    ImageView mWifiIcon;
-
-    @Bind(R.id.rvCameraList)
-    RecyclerView mCameraListView;
 
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
-    private static boolean mFirstEnter = true;
 
     @Bind(R.id.btnEnterPreview)
     Button mBtnEnterPreview;
@@ -56,17 +42,10 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get(0));
     }
 
-
-    private VdtCameraManager mVdtCameraManager;
-    private CameraListRvAdapter mCameraListAdapter;
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVdtCameraManager = VdtCameraManager.getManager();
-        mCameraListAdapter = new CameraListRvAdapter(getActivity(), mVdtCameraManager, this);
-
 
         mVdtCameraManager.addCallback(new VdtCameraManager.Callback() {
             @Override
@@ -80,13 +59,6 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                 if (getActivity() == null) {
                     return;
                 }
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCameraListAdapter.notifyDataSetChanged();
-                    }
-                });
 
             }
 
@@ -105,15 +77,7 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                 });
 
 
-                LiveViewActivity.launch(getActivity(), vdtCamera);
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCameraListAdapter.notifyDataSetChanged();
-                    }
-                });
-
+//                LiveViewActivity.launch(getActivity(), vdtCamera);
 
             }
 
@@ -123,14 +87,6 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                 if (getActivity() == null) {
                     return;
                 }
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCameraListAdapter.notifyDataSetChanged();
-                    }
-                });
-
             }
 
             @Override
@@ -139,14 +95,6 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                 if (getActivity() == null) {
                     return;
                 }
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCameraListAdapter.notifyDataSetChanged();
-                    }
-                });
-
             }
 
             @Override
@@ -156,7 +104,6 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
                     return;
                 }
 
-                mCameraListAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -169,22 +116,15 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
     }
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_camera_connect, savedInstanceState);
         initViews();
-        mCameraListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mCameraListView.setAdapter(mCameraListAdapter);
 
         return view;
     }
 
-    @OnClick(R.id.wifi_status_container)
-    public void launchWifiSetting() {
-        startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
-    }
 
     @Override
     public void onResume() {
@@ -192,9 +132,6 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context
             .WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-//        Logger.t(TAG).d("WifiInfo: " + wifiInfo.toString());
-        mWifiStatusView.setText(wifiInfo.getSSID());
-
 
     }
 
@@ -215,28 +152,6 @@ public class CameraConnectFragment extends BaseFragment implements CameraListRvA
         //((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
     }
 
-
-
-    @Override
-    public void onSetup(VdtCamera camera) {
-
-//        CameraSetupActivity.launch(getActivity(), camera);
-    }
-
-    @Override
-    public void onBrowseVideo(VdtCamera camera) {
-        Bundle args = new Bundle();
-        args.putBoolean("isPcServer", camera.isPcServer());
-        args.putString("ssid", camera.getSSID());
-        args.putString("hostString", camera.getHostString());
-        ((TabSwitchable) getActivity()).switchTab(0, args);
-    }
-
-    @Override
-    public void onPreview(VdtCamera camera) {
-        //CameraControlActivity.launch(getActivity(), camera);
-        LiveViewActivity.launch(getActivity(), camera);
-    }
 
     private boolean isConnected() {
         if (mVdtCameraManager.getConnectedCameras().size() > 0) {
