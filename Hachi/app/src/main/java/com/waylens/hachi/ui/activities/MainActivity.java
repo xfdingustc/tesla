@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.activities;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -12,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -24,17 +24,16 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.fragments.BookmarkFragment;
 import com.waylens.hachi.ui.fragments.CameraConnectFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.HomeFragment;
-import com.waylens.hachi.ui.fragments.BookmarkFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -57,6 +56,13 @@ public class MainActivity extends BaseActivity {
 
     private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
 
+    private int[] mToolbarTitles = new int[]{
+        R.string.bookmark,
+        R.string.stories,
+        R.string.live_view,
+        R.string.moments,
+        R.string.settings
+    };
 
 
     private SessionManager mSessionManager = SessionManager.getInstance();
@@ -91,7 +97,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void init() {
         super.init();
@@ -108,8 +113,6 @@ public class MainActivity extends BaseActivity {
             startService(intent);
         }
     }
-
-
 
 
     private void initViews() {
@@ -152,6 +155,11 @@ public class MainActivity extends BaseActivity {
         mCurrentNavMenuId = menuId;
         mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
 
+        Toolbar toolbar = getToolbar();
+        if (toolbar != null) {
+            toolbar.setTitle(mToolbarTitles[tag]);
+        }
+
 
         Fragment fragment;
         switch (tag) {
@@ -183,16 +191,14 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
-
     private void setupNavigationView() {
-        mUserAvatar = (CircleImageView)mNavView.getHeaderView(0).findViewById(R.id.civUserAvatar);
-        mUsername = (TextView)mNavView.getHeaderView(0).findViewById(R.id.tvUserName);
-        mEmail = (TextView)mNavView.getHeaderView(0).findViewById(R.id.tvEmail);
+        mUserAvatar = (CircleImageView) mNavView.getHeaderView(0).findViewById(R.id.civUserAvatar);
+        mUsername = (TextView) mNavView.getHeaderView(0).findViewById(R.id.tvUserName);
+        mEmail = (TextView) mNavView.getHeaderView(0).findViewById(R.id.tvEmail);
         mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                switch(item.getItemId()) {
+                switch (item.getItemId()) {
                     case R.id.changeTheme:
                         onToggleAppThemeClicked();
 
@@ -270,7 +276,7 @@ public class MainActivity extends BaseActivity {
 
     private void setupActionBarToggle() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-                .drawer_open, R.string.drawer_close);
+            .drawer_open, R.string.drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
@@ -280,13 +286,13 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
