@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -85,6 +86,9 @@ public class MainActivity extends BaseActivity {
 
     @Bind(R.id.navView)
     NavigationView mNavView;
+
+    @Bind(R.id.tabs)
+    TabLayout mTabLayout;
 
 
     CircleImageView mUserAvatar;
@@ -171,6 +175,12 @@ public class MainActivity extends BaseActivity {
             toolbar.setTitle(mToolbarTitles[tag]);
         }
 
+
+        if (tag == TAB_TAG_MOMENTS) {
+            mTabLayout.setVisibility(View.VISIBLE);
+        } else {
+            mTabLayout.setVisibility(View.GONE);
+        }
 
         Fragment fragment = mFragmentList[tag];
 

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.SpannableStringBuilder;
@@ -60,6 +61,9 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Bind(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
+
+    TabLayout mTabLayout;
+
     MomentsRecyclerAdapter mAdapter;
 
     RequestQueue mRequestQueue;
@@ -83,6 +87,7 @@ public class HomeFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_home, savedInstanceState);
+        mTabLayout = (TabLayout)getActivity().findViewById(R.id.tabs);
         mVideoListView.setAdapter(mAdapter);
         mVideoListView.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);
