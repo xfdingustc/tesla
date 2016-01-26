@@ -19,23 +19,8 @@ public class RemoteClip extends Clip {
 
     public RemoteClip(int type, int subType, Object extra, int clipDate, int duration) {
         // a remote clip has 2 streams at most
-        super(new Clip.ID(CAT_REMOTE, type, subType, extra), 2);
-        this.clipDate = clipDate;
-        this.mDurationMs = duration;
+//        super(new Clip.ID(type, subType, extra), clipDate, duration);
+        super(type, subType, extra, clipDate, duration);
     }
 
-    @Override
-    public long getStartTimeMs() {
-        return clipStartTime;
-    }
-
-    @Override
-    public boolean contains(long timeMs) {
-        return timeMs >= clipStartTime && timeMs < clipStartTime + mDurationMs;
-    }
-
-    @Override
-    public String getVdbId() {
-        return (String) cid.extra;
-    }
 }

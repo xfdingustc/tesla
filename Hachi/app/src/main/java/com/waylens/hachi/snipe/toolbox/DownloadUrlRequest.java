@@ -50,7 +50,7 @@ public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
 
         int clipType = response.readi32();
         int clipId = response.readi32();
-        Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
+        Clip.ID cid = new Clip.ID(clipType, clipId, null);
         ClipDownloadInfo clipDownloadInfo = new ClipDownloadInfo(cid);
 
         int download_opt = response.readi32();

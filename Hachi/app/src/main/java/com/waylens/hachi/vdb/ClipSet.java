@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClipSet {
-    public final int clipCat; // clip category
     public final int clipType; // clip type
     public static final long U32_MASK = 0x0FFFFFFFFL;
 
@@ -13,8 +12,7 @@ public class ClipSet {
     private int totalLengthMs;
     private ArrayList<Clip> clips; // all clips; not null
 
-    public ClipSet(int cat, int type) {
-        this.clipCat = cat;
+    public ClipSet(int type) {
         this.clipType = type;
 
         totalClips = 0;

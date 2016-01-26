@@ -64,7 +64,7 @@ public class ClipPlaybackUrlRequest extends VdbRequest<PlaybackUrl> {
 
         String vdbId = null;
 
-        Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, vdbId);
+        Clip.ID cid = new Clip.ID(clipType, clipId, vdbId);
         PlaybackUrl playbackUrl = new PlaybackUrl(cid);
 
         playbackUrl.stream = stream;

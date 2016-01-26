@@ -60,7 +60,7 @@ public class ClipUploadUrlRequest extends VdbRequest<UploadUrl> {
         int reserved2 = response.readi32();
         String url = response.readString();
 
-        Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
+        Clip.ID cid = new Clip.ID(clipType, clipId, null);
         UploadUrl uploadUrl = new UploadUrl(isPlayList, cid, realTimeMs, lengthMs, uploadOpt, url);
         return VdbResponse.success(uploadUrl);
     }

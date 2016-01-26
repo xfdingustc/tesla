@@ -42,7 +42,7 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
         int bufferedClipId = response.readi32();
         Clip.ID bufferedCid = null;
         if (bufferedClipId != 0) {
-            bufferedCid = new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED, bufferedClipId, null);
+            bufferedCid = new Clip.ID(RemoteClip.TYPE_BUFFERED, bufferedClipId, null);
         }
 
         long minClipStartTimeMs = response.readi64();
@@ -51,8 +51,8 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
         long clipEndTimeMs = response.readi64();
 
         ClipExtent clipExtent = new ClipExtent(
-                new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null),
-                new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_REAL, realClipId, null),
+                new Clip.ID(clipType, clipId, null),
+                new Clip.ID(RemoteClip.TYPE_REAL, realClipId, null),
                 bufferedCid);
         clipExtent.minClipStartTimeMs = minClipStartTimeMs;
         clipExtent.maxClipEndTimeMs = maxClipEndTimeMs;

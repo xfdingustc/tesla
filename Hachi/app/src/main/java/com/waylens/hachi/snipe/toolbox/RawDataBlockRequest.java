@@ -50,7 +50,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
         int clipType = response.readi32();
         int clipId = response.readi32();
-        Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, null);
+        Clip.ID cid = new Clip.ID(clipType, clipId, null);
         RawDataBlock.RawDataBlockHeader header = new RawDataBlock.RawDataBlockHeader(cid);
         header.mClipDate = response.readi32();
         header.mDataType = response.readi32();

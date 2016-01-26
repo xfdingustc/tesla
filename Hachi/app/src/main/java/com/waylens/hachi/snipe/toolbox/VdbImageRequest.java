@@ -80,7 +80,7 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
             vdbId = response.readStringAligned();
         }
 
-        Clip.ID cid = new Clip.ID(Clip.CAT_REMOTE, clipType, clipId, vdbId);
+        Clip.ID cid = new Clip.ID(clipType, clipId, vdbId);
         ClipPos clipPos = new ClipPos(vdbId, cid, clipDate, timeMs, type, bIsLast);
         clipPos.setRealTimeMs(clipStartTime);
         clipPos.setDuration(clipDuration);

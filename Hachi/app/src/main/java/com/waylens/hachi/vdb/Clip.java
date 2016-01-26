@@ -3,13 +3,6 @@ package com.waylens.hachi.vdb;
 import com.waylens.hachi.utils.DateTime;
 
 public class Clip {
-    // clip categories: one vdb provoides one category
-    public static final int CAT_UNKNOWN = 0; // unknown clip type
-    public static final int CAT_REMOTE = 1; // vidit camera clips: RemoteClip
-    public static final int CAT_LOCAL = 2; // downloaded & downloading clips: LocalClip
-    public static final int CAT_NATIVE = 3; // Android native clips: not implemented
-
-
     // --------------------------------------------------------------
     // CAT_REMOTE:
     // 		type: clipType (buffered 0, marked 1, or plist_id >= 256)
@@ -22,17 +15,15 @@ public class Clip {
     // --------------------------------------------------------------
     public static final class ID {
 
-        public final int cat; // CAT_REMOTE, etc
         public final int type; // depends on cat
         public final int subType; // depends on type
         public Object extra; // unique clip id in this cat/type
 
         private int hash = -1; // cache hash value
 
-        final private int calcHash() {
+        private int calcHash() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + cat;
             result = prime * result + type;
             result = prime * result + subType;
             result = prime * result + (extra == null ? 0 : extra.hashCode());
@@ -60,8 +51,9 @@ public class Clip {
 
             ID other = (ID) obj;
 
-            if (cat != other.cat || type != other.type || subType != other.subType)
+            if (type != other.type || subType != other.subType) {
                 return false;
+            }
 
             if (extra == null) {
                 return other.extra == null;
@@ -70,8 +62,7 @@ public class Clip {
             }
         }
 
-        public ID(int cat, int type, int subType, Object extra) {
-            this.cat = cat;
+        public ID(int type, int subType, Object extra) {
             this.type = type;
             this.subType = subType;
             this.extra = extra;
@@ -117,6 +108,8 @@ public class Clip {
 
     public int gmtOffset;
 
+    public long clipStartTime;
+
     // clip length ms
     protected int mDurationMs;
 
@@ -126,13 +119,22 @@ public class Clip {
     // is marked as to be deleted
     public boolean bDeleting;
 
-    public Clip(ID cid, int numStreams) {
-        this.cid = cid;
+    public Clip(int type, int subType, Object extra, int clipDate, int duration) {
+        this(type, subType, extra, 2, clipDate, duration);
+    }
+
+    public Clip(int type, int subType, Object extra, int numStreams, int clipDate, int duration) {
+        this.cid = new ID(type, subType, extra);
         streams = new StreamInfo[numStreams];
         for (int i = 0; i < numStreams; i++) {
             streams[i] = new StreamInfo();
         }
+
+        this.clipDate = clipDate;
+        this.mDurationMs = duration;
     }
+
+
 
     public boolean isLocal() {
         return false;
@@ -164,11 +166,11 @@ public class Clip {
     }
 
     public long getStartTimeMs() {
-        return 0;
+        return clipStartTime;
     }
 
     public boolean contains(long timeMs) {
-        return false;
+        return timeMs >= clipStartTime && timeMs < clipStartTime + mDurationMs;
     }
 
     public boolean isDownloading() {
@@ -182,7 +184,7 @@ public class Clip {
 
     // inherit
     public String getVdbId() {
-        return null;
+        return (String) cid.extra;
     }
 
     public String toString() {

@@ -74,13 +74,13 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             return null;
         }
 
-        ClipSet clipSet = new ClipSet(Clip.CAT_REMOTE, response.readi32());
+        ClipSet clipSet = new ClipSet(response.readi32());
 
         int totalClips = response.readi32();
 
         response.readi32(); // TODO - totalLengthMs
 
-        Clip.ID liveClipId = new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED, response.readi32(), null);
+        Clip.ID liveClipId = new Clip.ID(RemoteClip.TYPE_BUFFERED, response.readi32(), null);
         clipSet.setLiveClipId(liveClipId);
 
         for (int i = 0; i < totalClips; i++) {
@@ -112,7 +112,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                 response.readi32(); //int ref_clip_date
                 clip.gmtOffset = response.readi32();
                 int realClipId = response.readi32(); //int real_clip_id
-                clip.realCid = new Clip.ID(Clip.CAT_REMOTE, RemoteClip.TYPE_BUFFERED, realClipId, guid);
+                clip.realCid = new Clip.ID(RemoteClip.TYPE_BUFFERED, realClipId, guid);
 
 
             } else if (flag == FLAG_CLIP_VDB_ID) {
