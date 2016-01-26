@@ -107,10 +107,9 @@ public class BrowseCameraActivity extends BaseActivity {
         mClipSetAdapter = new CameraClipSetAdapter(BrowseCameraActivity.this, mVdbRequestQueue);
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
 
-        Bundle parameter = new Bundle();
-        parameter.putInt(ClipSetRequest.PARAMETER_TYPE, RemoteClip.TYPE_BUFFERED);
 
-        ClipSetRequest request = new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
+        ClipSetRequest request = new ClipSetRequest(RemoteClip.TYPE_BUFFERED, ClipSetRequest
+            .FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.entities.Story;
+import com.waylens.hachi.ui.entities.story.Story;
 
 /**
  * Created by Xiaofei on 2016/1/26.

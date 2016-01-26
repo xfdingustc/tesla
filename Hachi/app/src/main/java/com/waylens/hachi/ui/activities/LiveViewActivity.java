@@ -153,7 +153,6 @@ public class LiveViewActivity extends BaseActivity {
     }
 
 
-
     @OnClick(R.id.fabBookmark)
     public void onFabClick() {
         handleOnFabClicked();
@@ -483,10 +482,7 @@ public class LiveViewActivity extends BaseActivity {
     }
 
     void getBookmarkCount() {
-        Bundle parameter = new Bundle();
-        parameter.putInt(ClipSetRequest.PARAMETER_TYPE, RemoteClip.TYPE_MARKED);
-        parameter.putInt(ClipSetRequest.PARAMETER_FLAG, ClipSetRequest.FLAG_CLIP_EXTRA);
-        mVdbRequestQueue.add(new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
+        mVdbRequestQueue.add(new ClipSetRequest(RemoteClip.TYPE_MARKED, ClipSetRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
@@ -626,7 +622,7 @@ public class LiveViewActivity extends BaseActivity {
         Logger.t(TAG).d("WifiMode: " + wifiState.mWifiMode);
         if (wifiState.mWifiMode == WifiState.WIFI_MODE_AP) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_ap);
-        } else if (wifiState.mWifiMode == WifiState.WIFI_MODE_CLIENT){
+        } else if (wifiState.mWifiMode == WifiState.WIFI_MODE_CLIENT) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_client);
         }
 

@@ -24,29 +24,29 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
 
     public static final int METHOD_GET = 0;
     public static final int METHOD_SET = 1;
-    public static final String PARAMETER_TYPE = "type";
-    public static final String PARAMETER_FLAG = "flag";
 
-    private final Bundle mParameters;
 
-    public ClipSetRequest(int method, Bundle parameters, VdbResponse.Listener<ClipSet> listener,
+
+    private final int mClipType;
+    private final int mFlag;
+
+    public ClipSetRequest(int method, int type, int flag, VdbResponse.Listener<ClipSet> listener,
                           VdbResponse.ErrorListener errorListener) {
-        super(0, listener, errorListener);
-        this.mParameters = parameters;
+        super(method, listener, errorListener);
+        this.mClipType = type;
+        this.mFlag = flag;
     }
 
-    public ClipSetRequest(Bundle parameters, VdbResponse.Listener<ClipSet> listener,
+    public ClipSetRequest(int type, int flag, VdbResponse.Listener<ClipSet> listener,
                           VdbResponse.ErrorListener errorListener) {
-        this(0, parameters, listener, errorListener);
+        this(METHOD_GET, type, flag, listener, errorListener);
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
         switch (mMethod) {
             case METHOD_GET:
-                int type = mParameters.getInt(PARAMETER_TYPE);
-                int flag = mParameters.getInt(PARAMETER_FLAG, FLAG_UNKNOWN);
-                mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(type, flag);
+                mVdbCommand = VdbCommand.Factory.createCmdGetClipSetInfo(mClipType, mFlag);
                 break;
             case METHOD_SET:
                 break;

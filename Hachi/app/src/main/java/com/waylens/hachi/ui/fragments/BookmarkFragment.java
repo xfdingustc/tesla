@@ -179,10 +179,8 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
     ClipSet retrieveVideoList(int type) {
         final CountDownLatch latch = new CountDownLatch(1);
         final ClipSet[] clipSets = new ClipSet[]{null};
-        Bundle parameter = new Bundle();
-        parameter.putInt(ClipSetRequest.PARAMETER_TYPE, type);
-        parameter.putInt(ClipSetRequest.PARAMETER_FLAG, ClipSetRequest.FLAG_CLIP_EXTRA);
-        mVdbRequestQueue.add(new ClipSetRequest(ClipSetRequest.METHOD_GET, parameter,
+
+        mVdbRequestQueue.add(new ClipSetRequest(type, ClipSetRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {

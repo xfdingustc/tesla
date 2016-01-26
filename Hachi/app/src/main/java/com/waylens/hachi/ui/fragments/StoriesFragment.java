@@ -10,12 +10,11 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.StoryEditActivity;
-import com.waylens.hachi.ui.entities.Story;
-import com.waylens.hachi.ui.helpers.StoryFactory;
-import com.waylens.hachi.ui.helpers.StoryStrategy;
-import com.waylens.hachi.ui.helpers.StoryStrategyPresets;
+import com.waylens.hachi.ui.entities.story.Story;
+import com.waylens.hachi.ui.entities.story.StoryFactory;
+import com.waylens.hachi.ui.entities.story.StoryStrategy;
+import com.waylens.hachi.ui.entities.story.StoryStrategyPresets;
 
-import butterknife.Bind;
 import butterknife.OnClick;
 
 /**
