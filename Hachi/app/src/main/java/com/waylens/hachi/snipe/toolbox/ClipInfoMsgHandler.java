@@ -6,7 +6,6 @@ import com.waylens.hachi.snipe.VdbMessageHandler;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.RemoteClip;
 
 /**
  * Created by Richard on 12/28/15.
@@ -33,9 +32,9 @@ public class ClipInfoMsgHandler extends VdbMessageHandler<ClipActionInfo> {
         int clipId = response.readi32();
         int clipDate = response.readi32();
         int duration = response.readi32();
-        RemoteClip clip = new RemoteClip(clipType, clipId, null, clipDate, duration);
+        Clip clip = new Clip(clipType, clipId, null, clipDate, duration);
         clip.index = clipIndex;
-        clip.clipStartTime = response.readi64();
+        clip.setStartTimeMs(response.readi64());
         int num_streams = response.readi32();
         for (int i = 0; i < num_streams; i++) {
             readStreamInfo(response, clip, i);
@@ -49,7 +48,7 @@ public class ClipInfoMsgHandler extends VdbMessageHandler<ClipActionInfo> {
         return VdbResponse.success(new ClipActionInfo(action, isLive, clip));
     }
 
-    void readStreamInfo(VdbAcknowledge response, RemoteClip clip, int index) {
+    void readStreamInfo(VdbAcknowledge response, Clip clip, int index) {
         Clip.StreamInfo info = clip.streams[index];
         info.version = response.readi32();
         info.video_coding = response.readi8();

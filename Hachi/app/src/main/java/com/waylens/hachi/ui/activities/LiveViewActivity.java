@@ -32,9 +32,9 @@ import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
 import com.waylens.hachi.ui.views.dashboard.adapters.LiveRawDataAdapter;
@@ -482,7 +482,7 @@ public class LiveViewActivity extends BaseActivity {
     }
 
     void getBookmarkCount() {
-        mVdbRequestQueue.add(new ClipSetRequest(RemoteClip.TYPE_MARKED, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_MARKED, ClipSetRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {

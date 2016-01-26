@@ -3,6 +3,9 @@ package com.waylens.hachi.vdb;
 import com.waylens.hachi.utils.DateTime;
 
 public class Clip {
+    public static final int TYPE_REAL = -1;
+    public static final int TYPE_BUFFERED = 0;
+    public static final int TYPE_MARKED = 1;
     // --------------------------------------------------------------
     // CAT_REMOTE:
     // 		type: clipType (buffered 0, marked 1, or plist_id >= 256)
@@ -108,7 +111,7 @@ public class Clip {
 
     public int gmtOffset;
 
-    public long clipStartTime;
+    private long mStartTimeMs;
 
     // clip length ms
     protected int mDurationMs;
@@ -166,11 +169,15 @@ public class Clip {
     }
 
     public long getStartTimeMs() {
-        return clipStartTime;
+        return mStartTimeMs;
+    }
+
+    public void setStartTimeMs(long startTime) {
+        mStartTimeMs = startTime;
     }
 
     public boolean contains(long timeMs) {
-        return timeMs >= clipStartTime && timeMs < clipStartTime + mDurationMs;
+        return timeMs >= mStartTimeMs && timeMs < mStartTimeMs + mDurationMs;
     }
 
     public boolean isDownloading() {

@@ -7,7 +7,6 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
-import com.waylens.hachi.vdb.RemoteClip;
 
 /**
  * Created by Richard on 9/15/15.
@@ -42,7 +41,7 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
         int bufferedClipId = response.readi32();
         Clip.ID bufferedCid = null;
         if (bufferedClipId != 0) {
-            bufferedCid = new Clip.ID(RemoteClip.TYPE_BUFFERED, bufferedClipId, null);
+            bufferedCid = new Clip.ID(Clip.TYPE_BUFFERED, bufferedClipId, null);
         }
 
         long minClipStartTimeMs = response.readi64();
@@ -52,7 +51,7 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
 
         ClipExtent clipExtent = new ClipExtent(
                 new Clip.ID(clipType, clipId, null),
-                new Clip.ID(RemoteClip.TYPE_REAL, realClipId, null),
+                new Clip.ID(Clip.TYPE_REAL, realClipId, null),
                 bufferedCid);
         clipExtent.minClipStartTimeMs = minClipStartTimeMs;
         clipExtent.maxClipEndTimeMs = maxClipEndTimeMs;

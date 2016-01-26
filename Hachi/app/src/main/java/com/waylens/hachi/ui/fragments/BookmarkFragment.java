@@ -24,7 +24,6 @@ import com.waylens.hachi.ui.adapters.ClipFilmAdapter;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.RemoteClip;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -61,8 +60,8 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
     ClipFilmAdapter.ClipEditViewHolder mHolder;
 
     VideoTab[] mVideoTabs = new VideoTab[]{
-            new VideoTab(R.string.camera_video_bookmark, 0, RemoteClip.TYPE_MARKED),
-            new VideoTab(R.string.camera_video_all, 0, RemoteClip.TYPE_BUFFERED),
+            new VideoTab(R.string.camera_video_bookmark, 0, Clip.TYPE_MARKED),
+            new VideoTab(R.string.camera_video_all, 0, Clip.TYPE_BUFFERED),
     };
 
     HandlerThread mBgThread;

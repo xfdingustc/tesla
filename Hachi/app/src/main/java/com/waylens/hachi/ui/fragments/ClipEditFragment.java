@@ -52,7 +52,6 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.ui.views.VideoTrimmer;
 
 import java.io.IOException;
@@ -316,7 +315,7 @@ public class ClipEditFragment extends Fragment implements MediaPlayer.OnPrepared
     void calculateExtension(ClipExtent clipExtent) {
         mClipExtent = clipExtent;
         if (mClipExtent.bufferedCid != null) {
-            mBufferedClip = new RemoteClip(mClipExtent.bufferedCid.type,
+            mBufferedClip = new Clip(mClipExtent.bufferedCid.type,
                 mClipExtent.bufferedCid.subType,
                 mClipExtent.bufferedCid.extra,
                 mClip.clipDate,

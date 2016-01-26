@@ -16,8 +16,8 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.CameraClipSetAdapter;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.RemoteClip;
 
 import butterknife.Bind;
 
@@ -108,7 +108,7 @@ public class BrowseCameraActivity extends BaseActivity {
         mRvCameraVideoList.setAdapter(mClipSetAdapter);
 
 
-        ClipSetRequest request = new ClipSetRequest(RemoteClip.TYPE_BUFFERED, ClipSetRequest
+        ClipSetRequest request = new ClipSetRequest(Clip.TYPE_BUFFERED, ClipSetRequest
             .FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override

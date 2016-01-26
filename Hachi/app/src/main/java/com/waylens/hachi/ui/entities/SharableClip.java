@@ -9,7 +9,6 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.RemoteClip;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -43,7 +42,7 @@ public class SharableClip {
         if (mVdbRequestQueue == null || clip == null) {
             return;
         }
-        if (clip.cid.type == RemoteClip.TYPE_MARKED) {
+        if (clip.cid.type == Clip.TYPE_MARKED) {
             getClipExtent();
         } else {
             minExtensibleValue = clip.getStartTimeMs();

@@ -14,7 +14,6 @@ import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.vdb.RemoteClip;
 
 import java.util.ArrayList;
 
@@ -52,7 +51,7 @@ public class RawDataFactory {
         mHandler = handler;
 
         mStartTimeMs = clip.getStartTimeMs();
-        if (mClip.cid.type == RemoteClip.TYPE_MARKED) {
+        if (mClip.cid.type == Clip.TYPE_MARKED) {
             mDuration = mClip.getDurationMs();
         }
     }

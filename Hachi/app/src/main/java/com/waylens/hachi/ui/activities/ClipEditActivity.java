@@ -50,7 +50,6 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.vdb.RemoteClip;
 import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
 import com.waylens.hachi.ui.views.VideoTrimmer;
 import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
@@ -234,7 +233,7 @@ public class ClipEditActivity extends BaseActivity {
         mDashboardLayout.setAdapter(mDashboardLayoutAdapter);
 
         initSeekBar();
-        if (mClip.cid.type == RemoteClip.TYPE_BUFFERED) {
+        if (mClip.cid.type == Clip.TYPE_BUFFERED) {
             mSeekBar.setVisibility(View.VISIBLE);
             mRangeSeekBarContainer.setVisibility(View.GONE);
             //mBtnShare.setVisibility(View.GONE);

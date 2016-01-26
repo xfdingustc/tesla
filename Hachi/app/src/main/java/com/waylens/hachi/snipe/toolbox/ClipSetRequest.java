@@ -1,7 +1,5 @@
 package com.waylens.hachi.snipe.toolbox;
 
-import android.os.Bundle;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -9,7 +7,6 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.RemoteClip;
 
 /**
  * Created by Xiaofei on 2015/8/18.
@@ -80,16 +77,16 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
 
         response.readi32(); // TODO - totalLengthMs
 
-        Clip.ID liveClipId = new Clip.ID(RemoteClip.TYPE_BUFFERED, response.readi32(), null);
+        Clip.ID liveClipId = new Clip.ID(Clip.TYPE_BUFFERED, response.readi32(), null);
         clipSet.setLiveClipId(liveClipId);
 
         for (int i = 0; i < totalClips; i++) {
             int clipId = response.readi32();
             int clipDate = response.readi32();
             int duration = response.readi32();
-            RemoteClip clip = new RemoteClip(clipSet.clipType, clipId, null, clipDate, duration);
+            Clip clip = new Clip(clipSet.clipType, clipId, null, clipDate, duration);
 
-            clip.clipStartTime = response.readi64();
+            clip.setStartTimeMs(response.readi64());
             int numStreams = response.readi16();
             int flag = response.readi16();
             //Log.e("test", "Flag: " + flag);
@@ -112,7 +109,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                 response.readi32(); //int ref_clip_date
                 clip.gmtOffset = response.readi32();
                 int realClipId = response.readi32(); //int real_clip_id
-                clip.realCid = new Clip.ID(RemoteClip.TYPE_BUFFERED, realClipId, guid);
+                clip.realCid = new Clip.ID(Clip.TYPE_BUFFERED, realClipId, guid);
 
 
             } else if (flag == FLAG_CLIP_VDB_ID) {
@@ -123,7 +120,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
         return VdbResponse.success(clipSet);
     }
 
-    private void readStreamInfo(RemoteClip clip, int index, VdbAcknowledge response) {
+    private void readStreamInfo(Clip clip, int index, VdbAcknowledge response) {
         Clip.StreamInfo info = clip.streams[index];
         info.version = response.readi32();
         info.video_coding = response.readi8();
