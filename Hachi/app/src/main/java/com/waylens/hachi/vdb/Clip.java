@@ -134,7 +134,6 @@ public class Clip {
         }
     }
 
-    // API
     public boolean isLocal() {
         return false;
     }
@@ -144,47 +143,38 @@ public class Clip {
     }
 
 
-    // API
     public final String getDateTimeString() {
         return DateTime.toString(clipDate, 0);
     }
 
-    // API
     public final String getDateString() {
         return DateTime.getDateString(clipDate, 0);
     }
 
-    // API
     public final String getTimeString() {
         return DateTime.getTimeString(clipDate, 0);
     }
 
-    // API
     public final String getWeekDayString() {
         return DateTime.getDayName(clipDate, 0);
     }
 
-    // inherit
     public Clip.StreamInfo getStream(int index) {
         return (index < 0 || index >= streams.length) ? null : streams[index];
     }
 
-    // inherit
     public long getStartTimeMs() {
         return 0;
     }
 
-    // inherit
     public boolean contains(long timeMs) {
         return false;
     }
 
-    // inherit
     public boolean isDownloading() {
         return false;
     }
 
-    // inherit
     public int getDownloadProgress() {
         return -1;
     }

@@ -53,7 +53,11 @@ public class StoryFactory {
         ClipSetRequest request = new ClipSetRequest(clipType, flag, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
-
+                Story story = new Story();
+                story.setClipSet(response);
+                if (mListener != null) {
+                    mListener.onCreateFinished(story);
+                }
             }
         }, new VdbResponse.ErrorListener() {
             @Override

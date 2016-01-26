@@ -2,6 +2,7 @@
 <resources>
 
     <attr name="toolbarColor" format="color"/>
+    <attr name="defaultBgColor" format="color"/>
 
     <declare-styleable name="VideoTrimmer">
         <attr name="thumbWidth" format="dimension"/>
