@@ -366,6 +366,13 @@ public class VdtCameraManager {
     }
 
 
+    public boolean isConnected() {
+        if (getConnectedCameras().size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     // API
     public void clearAll() {
         clearCameras(mConnectedVdtCameras);

@@ -111,7 +111,7 @@ public class CameraConnectFragment extends BaseFragment {
     private void initViews() {
         // Start connect indicator animation
 
-        toggleCameraConnected(isConnected());
+        toggleCameraConnected(mVdtCameraManager.isConnected());
 
     }
 
@@ -139,7 +139,7 @@ public class CameraConnectFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (isConnected()) {
+        if (mVdtCameraManager.isConnected()) {
             //LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get
             // (0));
             //getActivity().getActionBar().setVisibility(View.GONE);
@@ -153,12 +153,7 @@ public class CameraConnectFragment extends BaseFragment {
     }
 
 
-    private boolean isConnected() {
-        if (mVdtCameraManager.getConnectedCameras().size() > 0) {
-            return true;
-        }
-        return false;
-    }
+
 
     private void toggleCameraConnected(boolean connected) {
         if (!connected) {
