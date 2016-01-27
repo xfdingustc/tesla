@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClipSet {
-    public final int clipType; // clip type
+    private final int mClipType; // clip type
     public static final long U32_MASK = 0x0FFFFFFFFL;
 
     private Clip.ID liveClipId;
@@ -13,14 +13,16 @@ public class ClipSet {
     private ArrayList<Clip> clips; // all clips; not null
 
     public ClipSet(int type) {
-        this.clipType = type;
-
+        this.mClipType = type;
         totalClips = 0;
         totalLengthMs = 0;
         liveClipId = null;
         clips = new ArrayList<>();
     }
 
+    public int getType() {
+        return mClipType;
+    }
 
     public int getCount() {
         return totalClips;

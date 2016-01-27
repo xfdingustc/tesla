@@ -84,7 +84,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
             int clipId = response.readi32();
             int clipDate = response.readi32();
             int duration = response.readi32();
-            Clip clip = new Clip(clipSet.clipType, clipId, null, clipDate, duration);
+            Clip clip = new Clip(clipSet.getType(), clipId, null, clipDate, duration);
 
             clip.setStartTimeMs(response.readi64());
             int numStreams = response.readi16();
