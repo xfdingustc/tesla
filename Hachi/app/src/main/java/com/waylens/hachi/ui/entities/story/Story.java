@@ -14,6 +14,10 @@ public class Story {
 
     }
 
+    public Playlist getPlaylist() {
+        return mPlaylist;
+    }
+
     public void setName(String name) {
         this.mName = name;
     }

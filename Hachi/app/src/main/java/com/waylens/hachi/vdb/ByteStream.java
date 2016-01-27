@@ -1,6 +1,6 @@
 package com.waylens.hachi.vdb;
 
-public class ByteStream {
+class ByteStream {
 
 	public static final int readI32(byte[] data, int offset) {
 		int result = (int)data[offset] & 0xFF;

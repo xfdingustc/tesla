@@ -40,6 +40,10 @@ public class Playlist {
         mClipSet.clear();
     }
 
+    public int getId() {
+        return mPlayListId;
+    }
+
     public void setClipSet(ClipSet clipSet) {
         this.mClipSet = clipSet;
     }
