@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
@@ -21,6 +22,7 @@ import butterknife.OnClick;
  * Created by Richard on 1/5/16.
  */
 public class StoriesFragment extends BaseFragment {
+    private static final String TAG = StoriesFragment.class.getSimpleName();
 
     @OnClick(R.id.createStories)
     public void onCreateStoryClicked() {
@@ -42,6 +44,10 @@ public class StoriesFragment extends BaseFragment {
             });
 
             storyFactory.createStory();
+
+            Logger.t(TAG).d("Start create Story!!!");
+        } else {
+            Logger.t(TAG).d("No camera connected");
         }
     }
 

@@ -8,7 +8,7 @@ import com.waylens.hachi.vdb.Playlist;
  */
 public class Story {
     private String mName;
-    private Playlist mPlaylist;
+    private Playlist mPlaylist = new Playlist();
 
     public Story() {
 
