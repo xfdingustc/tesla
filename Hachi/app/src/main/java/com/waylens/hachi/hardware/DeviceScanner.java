@@ -140,8 +140,8 @@ public class DeviceScanner extends Thread {
     ServiceListener mServiceListener = new ServiceListener() {
         @Override
         public void serviceAdded(ServiceEvent event) {
-            Logger.t(TAG).d("serviceAdded: " + event.getName() + ", " + event.getType());
-            Logger.t(TAG).d(event.getInfo().toString());
+//            Logger.t(TAG).d("serviceAdded: " + event.getName() + ", " + event.getType());
+//            Logger.t(TAG).d(event.getInfo().toString());
             // Vidit Camera, _ccam._tcp.local.
             event.getDNS().requestServiceInfo(event.getType(), event.getName(), 1);
 
@@ -149,7 +149,7 @@ public class DeviceScanner extends Thread {
 
         @Override
         public void serviceRemoved(ServiceEvent event) {
-            Logger.t(TAG).d("serviceRemoved: " + event.getName() + ", " + event.getType());
+//            Logger.t(TAG).d("serviceRemoved: " + event.getName() + ", " + event.getType());
             Logger.t(TAG).d(event.getInfo().toString());
         }
 

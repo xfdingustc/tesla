@@ -78,7 +78,9 @@ public class StoryFactory {
         final ClipSet clipSet = story.getClipSet();
         mClipAdded = 0;
 
-        for (int i = 0; i < clipSet.getCount(); i++) {
+        int clipSetCount = Math.min(clipSet.getCount(), 3);
+
+        for (int i = 0; i < clipSetCount; i++) {
             Clip clip = clipSet.getClip(i);
 
             PlaylistEditRequest playRequest = new PlaylistEditRequest(PlaylistEditRequest.METHOD_INSERT_CLIP,
