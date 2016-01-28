@@ -14,6 +14,7 @@ import com.waylens.hachi.vdb.Playlist;
 public class PlaylistEditRequest extends VdbRequest<Integer> {
     private static final String TAG = PlaylistEditRequest.class.getSimpleName();
     public static final int METHOD_INSERT_CLIP = 0;
+    public static final int METHOD_CLEAR_PLAYLIST = 1;
     private final Clip mClip;
     private final Playlist mPlaylist;
     private final long mStartTimeMs;
@@ -38,6 +39,10 @@ public class PlaylistEditRequest extends VdbRequest<Integer> {
             case METHOD_INSERT_CLIP:
                 mVdbCommand = VdbCommand.Factory.createCmdInsertClip(mClip.cid, mStartTimeMs,
                     mEndTimeMs, mPlaylist.getId(), -1);
+                break;
+            case METHOD_CLEAR_PLAYLIST:
+                mVdbCommand = VdbCommand.Factory.createCmdClearPlayList(mPlaylist.getId());
+
                 break;
         }
         return mVdbCommand;

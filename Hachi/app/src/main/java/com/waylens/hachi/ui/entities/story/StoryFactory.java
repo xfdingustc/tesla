@@ -21,7 +21,8 @@ public class StoryFactory {
     private final VdtCamera mVdtCamera;
     private final StoryStrategy mStrategy;
 
-    private Thread mCreateStoryThread;
+    private Story mStory = new Story();
+
     private OnCreateStoryListener mListener;
 
     public interface OnCreateStoryListener {
@@ -42,20 +43,31 @@ public class StoryFactory {
 
 
     public void createStory() {
+        doClearPlayList();
         doCreateStory();
-//        mCreateStoryThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//            }
-//        });
-//        mCreateStoryThread.start();
+    }
+
+    private void doClearPlayList() {
+        PlaylistEditRequest request = new PlaylistEditRequest(PlaylistEditRequest
+            .METHOD_CLEAR_PLAYLIST, null, 0, 0, mStory.getPlaylist(), new VdbResponse.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                Logger.t(TAG).d("PlayList Cleared");
+                doCreateStory();
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mRequestQueue.add(request);
     }
 
     private void doCreateStory() {
         int clipType = mStrategy.getClipType();
         int flag = ClipSetRequest.FLAG_CLIP_EXTRA;
-        ClipSetRequest request = new ClipSetRequest(Clip.TYPE_MARKED, flag, new VdbResponse.Listener<ClipSet>() {
+        ClipSetRequest request = new ClipSetRequest(clipType, flag, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
                 Logger.t(TAG).d("Get Clip Set");

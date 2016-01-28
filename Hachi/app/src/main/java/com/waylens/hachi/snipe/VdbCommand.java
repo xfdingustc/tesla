@@ -375,6 +375,15 @@ public class VdbCommand {
             return command;
         }
 
+        public static VdbCommand createCmdClearPlayList(int playlistId) {
+            VdbCommand command = new Builder()
+                .writeCmdCode(CMD_ClearPlaylist, 0)
+                .writeInt32(playlistId)
+                .build();
+            command.setAcknowledgeCode(MSG_PlaylistCleared);
+            return command;
+        }
+
 
         public static VdbCommand createCmdGetPlaylistPlaybackUrl(int urlType, int playlistId, int
             startMs, int stream) {
