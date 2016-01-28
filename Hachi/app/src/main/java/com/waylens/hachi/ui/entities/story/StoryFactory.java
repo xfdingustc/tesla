@@ -42,25 +42,27 @@ public class StoryFactory {
 
 
     public void createStory() {
-        mCreateStoryThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doCreateStory();
-            }
-        });
-        mCreateStoryThread.start();
+        doCreateStory();
+//        mCreateStoryThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        });
+//        mCreateStoryThread.start();
     }
 
     private void doCreateStory() {
         int clipType = mStrategy.getClipType();
         int flag = ClipSetRequest.FLAG_CLIP_EXTRA;
-        ClipSetRequest request = new ClipSetRequest(clipType, flag, new VdbResponse.Listener<ClipSet>() {
+        ClipSetRequest request = new ClipSetRequest(Clip.TYPE_MARKED, flag, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
-                Story story = new Story();
-                story.setClipSet(response);
-
-                doAddClipSetIntoPlaylist(story);
+                Logger.t(TAG).d("Get Clip Set");
+//                Story story = new Story();
+//                story.setClipSet(response);
+//
+//                doAddClipSetIntoPlaylist(story);
 
             }
         }, new VdbResponse.ErrorListener() {
@@ -69,6 +71,7 @@ public class StoryFactory {
 
             }
         });
+        Logger.t(TAG).d("Add Request!!!");
         mRequestQueue.add(request);
     }
 
