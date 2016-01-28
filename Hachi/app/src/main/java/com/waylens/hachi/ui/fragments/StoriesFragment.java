@@ -45,7 +45,7 @@ public class StoriesFragment extends BaseFragment {
 
             storyFactory.createStory();
 
-            Logger.t(TAG).d("Start create Story!!!");
+
         } else {
             Logger.t(TAG).d("No camera connected");
         }

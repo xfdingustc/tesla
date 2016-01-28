@@ -23,6 +23,8 @@ public class StoryFactory {
 
     private Story mStory = new Story();
 
+    private int mClipAdded;
+
     private OnCreateStoryListener mListener;
 
     public interface OnCreateStoryListener {
@@ -44,7 +46,6 @@ public class StoryFactory {
 
     public void createStory() {
         doClearPlayList();
-        doCreateStory();
     }
 
     private void doClearPlayList() {
@@ -52,7 +53,6 @@ public class StoryFactory {
             .METHOD_CLEAR_PLAYLIST, null, 0, 0, mStory.getPlaylist(), new VdbResponse.Listener<Integer>() {
             @Override
             public void onResponse(Integer response) {
-                Logger.t(TAG).d("PlayList Cleared");
                 doCreateStory();
             }
         }, new VdbResponse.ErrorListener() {
@@ -70,11 +70,10 @@ public class StoryFactory {
         ClipSetRequest request = new ClipSetRequest(clipType, flag, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
-                Logger.t(TAG).d("Get Clip Set");
-//                Story story = new Story();
-//                story.setClipSet(response);
-//
-//                doAddClipSetIntoPlaylist(story);
+
+                mStory.setClipSet(response);
+
+                doAddClipSetIntoPlaylist(mStory);
 
             }
         }, new VdbResponse.ErrorListener() {
@@ -83,16 +82,17 @@ public class StoryFactory {
 
             }
         });
-        Logger.t(TAG).d("Add Request!!!");
+
         mRequestQueue.add(request);
     }
 
-    private int mClipAdded;
+
 
     private void doAddClipSetIntoPlaylist(final Story story) {
         final ClipSet clipSet = story.getClipSet();
         mClipAdded = 0;
 
+        Logger.t(TAG).d("Find clip count: " + clipSet.getCount());
         int clipSetCount = Math.min(clipSet.getCount(), 3);
 
         for (int i = 0; i < clipSetCount; i++) {
