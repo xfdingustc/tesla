@@ -36,7 +36,7 @@ public class StoryFactory {
         this.mStrategy = strategy;
         this.mListener = listener;
         this.mRequestQueue = Snipe.newRequestQueue();
-        mRequestQueue.start();
+
 
     }
 
