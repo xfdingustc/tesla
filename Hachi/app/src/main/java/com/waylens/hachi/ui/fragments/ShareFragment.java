@@ -117,7 +117,8 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
         mShareHelper = new MomentShareHelper(getActivity(), this);
         String title = "";
         String[] tags = new String[]{"Shanghai", "car"};
-        mShareHelper.shareMoment(mSharableClip, title, tags, "PUBLIC");
+        //mShareHelper.shareMoment(mSharableClip, title, tags, "PUBLIC");
+        mShareHelper.shareMoment(0x100, title, tags, "PUBLIC");
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.helpers;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -10,33 +9,24 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.utils.DataUploader;
 import com.waylens.hachi.utils.DataUploaderV2;
 import com.waylens.hachi.utils.VolleyUtil;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.UploadUrl;
+import com.waylens.hachi.vdb.ClipSet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.CountDownLatch;
 
-import crs_svr.ProtocolConstMsg;
 import crs_svr.v2.CrsCommand;
 
 /**
@@ -72,7 +62,11 @@ public class MomentShareHelper {
     }
 
     public void shareMoment(SharableClip sharableClip, String title, String[] tags, String accessLevel) {
-        uploadDataTask(sharableClip, title, tags, accessLevel);
+        uploadDataTask(new SharableClip[]{sharableClip}, title, tags, accessLevel);
+    }
+
+    public void shareMoment(int playListID, String title, String[] tags, String accessLevel) {
+        uploadDataTask(playListID, title, tags, accessLevel);
     }
 
     JSONObject createMoment(String title, String[] tags, String accessLevel) {
@@ -117,11 +111,11 @@ public class MomentShareHelper {
         return results[0];
     }
 
-    void uploadDataTask(final SharableClip sharableClip, final String title, final String[] tags, final String accessLevel) {
+    void uploadDataTask(final SharableClip[] sharableClips, final String title, final String[] tags, final String accessLevel) {
         mUploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                int result = uploadData(sharableClip, title, tags, accessLevel);
+                int result = uploadData(sharableClips, title, tags, accessLevel);
                 uploaderV2 = null;
                 mUploadThread = null;
                 if (mShareListener != null) {
@@ -130,6 +124,55 @@ public class MomentShareHelper {
             }
         });
         mUploadThread.start();
+    }
+
+    void uploadDataTask(final int playListID, final String title, final String[] tags, final String accessLevel) {
+        mUploadThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ClipSet playList = retrievePlayListInfo(playListID);
+                SharableClip[] sharableClips = new SharableClip[playList.getCount()];
+
+                for (int i = 0; i < sharableClips.length; i++) {
+                    sharableClips[i] = new SharableClip(playList.getClip(i));
+                }
+
+                int result = uploadData(sharableClips, title, tags, accessLevel);
+                uploaderV2 = null;
+                mUploadThread = null;
+                if (mShareListener != null) {
+                    processResult(result);
+                }
+            }
+        });
+        mUploadThread.start();
+    }
+
+    ClipSet retrievePlayListInfo(int type) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final ClipSet[] clipSets = new ClipSet[]{null};
+
+        mVdbRequestQueue.add(new ClipSetRequest(type, ClipSetRequest.FLAG_CLIP_EXTRA,
+                new VdbResponse.Listener<ClipSet>() {
+                    @Override
+                    public void onResponse(ClipSet clipSet) {
+                        clipSets[0] = clipSet;
+                        latch.countDown();
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "", error);
+                        latch.countDown();
+                    }
+                }));
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Log.e("test", "", e);
+        }
+        return clipSets[0];
     }
 
     void processResult(final int result) {
@@ -147,7 +190,7 @@ public class MomentShareHelper {
         });
     }
 
-    int uploadData(SharableClip sharableClip, String title, String[] tags, String accessLevel) {
+    int uploadData(SharableClip[] sharableClips, String title, String[] tags, String accessLevel) {
         try {
             if (isCancelled) {
                 return CrsCommand.RES_STATE_CANCELLED;
@@ -161,9 +204,9 @@ public class MomentShareHelper {
             int port = uploadServer.optInt("port");
             String privateKey = uploadServer.optString("privateKey");
             long momentID = momentInfo.optLong("momentID");
-            uploaderV2 = new DataUploaderV2(ip, port, privateKey);
+            uploaderV2 = new DataUploaderV2(ip, port, privateKey, mVdbRequestQueue);
             int dataType = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
-            return uploaderV2.upload(mVdbRequestQueue, momentID, sharableClip, dataType);
+            return uploaderV2.upload(momentID, sharableClips, dataType);
         } catch (Exception e) {
             Log.e("test", "", e);
             return CrsCommand.RES_STATE_FAIL;

@@ -29,9 +29,20 @@ public class SharableClip {
 
     VdbRequestQueue mVdbRequestQueue;
 
+    public SharableClip(Clip clip) {
+        this(clip, null);
+    }
+
     public SharableClip(Clip clip, VdbRequestQueue vdbRequestQueue) {
         this.clip = clip;
         mVdbRequestQueue = vdbRequestQueue;
+
+        minExtensibleValue = clip.getStartTimeMs();
+        maxExtensibleValue = clip.getStartTimeMs() + clip.getDurationMs();
+        selectedStartValue = minExtensibleValue;
+        selectedEndValue = maxExtensibleValue;
+        bufferedCid = clip.cid;
+        realCid = clip.cid;
     }
 
     /**
@@ -39,18 +50,11 @@ public class SharableClip {
      * should NOT be called in MAIN thread.
      */
     public void checkExtension() {
-        if (mVdbRequestQueue == null || clip == null) {
+        if (mVdbRequestQueue == null) {
             return;
         }
         if (clip.cid.type == Clip.TYPE_MARKED) {
             getClipExtent();
-        } else {
-            minExtensibleValue = clip.getStartTimeMs();
-            maxExtensibleValue = clip.getStartTimeMs() + clip.getDurationMs();
-            selectedStartValue = minExtensibleValue;
-            selectedEndValue = maxExtensibleValue;
-            bufferedCid = clip.cid;
-            realCid = clip.cid;
         }
     }
 

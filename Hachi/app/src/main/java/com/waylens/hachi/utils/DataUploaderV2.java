@@ -54,13 +54,13 @@ public class DataUploaderV2 {
 
     volatile boolean isCancelled;
 
-    public DataUploaderV2(String address, int port, String privateKey) {
+    public DataUploaderV2(String address, int port, String privateKey, VdbRequestQueue vdbRequestQueue) {
         mAddress = address;
         mPort = port;
         mPrivateKey = privateKey;
-        mMomentID = 1014;
         mUserId = SessionManager.getInstance().getUserId();
         EncodeCommandHeader.CURRENT_ENCODE_TYPE = CrsCommand.ENCODE_TYPE_OPEN;
+        mVdbRequestQueue = vdbRequestQueue;
     }
 
     private void init() throws IOException {
@@ -74,22 +74,27 @@ public class DataUploaderV2 {
         return receiveData();
     }
 
-    private int createMomentDesc(SharableClip sharableClip, UploadUrl uploadUrl, int dataType) throws IOException {
+    private int createMomentDesc(SharableClip[] sharableClips, UploadUrl[] uploadUrls, int dataType)
+            throws IOException {
         CrsMomentDescription momentDescription = new CrsMomentDescription(mUserId,
                 mMomentID,
                 "background music",
                 mPrivateKey);
-        momentDescription.addFragment(new CrsFragment(sharableClip.clip.getVdbId(),
-                getClipCaptureTime(sharableClip, uploadUrl),
-                uploadUrl.realTimeMs,
-                0,
-                uploadUrl.lengthMs,
-                sharableClip.clip.streams[1].video_width,
-                sharableClip.clip.streams[1].video_height,
-                dataType
-        ));
+        for (int i = 0; i < sharableClips.length; i++) {
+            SharableClip sharableClip = sharableClips[i];
+            UploadUrl uploadUrl = uploadUrls[i];
+            momentDescription.addFragment(new CrsFragment(sharableClip.clip.getVdbId(),
+                    getClipCaptureTime(sharableClip, uploadUrl),
+                    uploadUrl.realTimeMs,
+                    0,
+                    uploadUrl.lengthMs,
+                    sharableClip.clip.streams[1].video_width,
+                    sharableClip.clip.streams[1].video_height,
+                    dataType
+            ));
+        }
         momentDescription.addFragment(new CrsFragment(String.valueOf(mMomentID),
-                getClipCaptureTime(sharableClip, uploadUrl),
+                getClipCaptureTime(sharableClips[0], uploadUrls[0]),
                 0,
                 0,
                 0,
@@ -131,29 +136,42 @@ public class DataUploaderV2 {
         return receiveData();
     }
 
-    private int uploadMomentData(String guid, UploadUrl uploadUrl, int dataType) throws IOException {
-        int ret = startUpload(guid, uploadUrl, dataType);
-        if (ret != 0) {
-            log("StartUpload Error/Already exist: " + ret);
-            return ret;
-        }
+    private int uploadMomentData(SharableClip[] sharableClips, UploadUrl[] uploadUrls, int dataType) throws IOException {
+        for (int i = 0; i < sharableClips.length; i++) {
+            String guid = sharableClips[i].clip.getVdbId();
+            UploadUrl uploadUrl = uploadUrls[i];
+            int ret = startUpload(guid, uploadUrl, dataType);
+            if (ret == CrsCommand.RES_FILE_TRANS_COMPLETE) {
+                log("File already exist: " + ret);
+                continue;
+            }
 
-        InputStream inputStream = null;
-        try {
-            URL url = new URL(uploadUrl.url);
-            URLConnection conn = url.openConnection();
-            inputStream = conn.getInputStream();
-            Log.e("test", String.format("ContentLength[%d]", conn.getContentLength()));
-            return doUpload(guid, dataType, inputStream);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    log("", e);
+            if (ret != CrsCommand.RES_STATE_OK) {
+                log("Start upload: " + ret);
+                return ret;
+            }
+
+            InputStream inputStream = null;
+            try {
+                URL url = new URL(uploadUrl.url);
+                URLConnection conn = url.openConnection();
+                inputStream = conn.getInputStream();
+                Log.e("test", String.format("ContentLength[%d]", conn.getContentLength()));
+                ret = doUpload(guid, dataType, inputStream);
+                if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
+                    return ret;
+                }
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        log("", e);
+                    }
                 }
             }
         }
+        return CrsCommand.RES_FILE_TRANS_COMPLETE;
     }
 
     private int doUpload(String guid, int dataType, InputStream inputStream) throws IOException {
@@ -286,6 +304,7 @@ public class DataUploaderV2 {
             log("Already exists. uploadThumbnail successful");
             return ret;
         }
+
         if (ret != 0) {
             log("Start uploadThumbnail error: " + ret);
             return ret;
@@ -301,18 +320,7 @@ public class DataUploaderV2 {
 
     }
 
-    public int upload(VdbRequestQueue vdbRequestQueue, long momentID, SharableClip sharableClip, int dataType) {
-        mVdbRequestQueue = vdbRequestQueue;
-        int vdbDataType = 0;
-        if ((dataType & CrsCommand.VIDIT_VIDEO_DATA_LOW) == CrsCommand.VIDIT_VIDEO_DATA_LOW) {
-            vdbDataType = VdbCommand.Factory.UPLOAD_GET_V1;
-        }
-        if ((dataType & CrsCommand.VIDIT_RAW_DATA) == CrsCommand.VIDIT_RAW_DATA) {
-            vdbDataType |= VdbCommand.Factory.UPLOAD_GET_RAW;
-        }
-
-        UploadUrl uploadUrl = getFragmentData(sharableClip, vdbDataType);
-
+    int uploadClips(long momentID, SharableClip[] sharableClips, UploadUrl[] uploadUrls, int dataType) {
         mMomentID = momentID;
         try {
             init();
@@ -322,20 +330,20 @@ public class DataUploaderV2 {
                 return ret;
             }
             log("Login successful");
-            ret = createMomentDesc(sharableClip, uploadUrl, dataType);
+            ret = createMomentDesc(sharableClips, uploadUrls, dataType);
             if (ret != 0) {
                 log("createMoment error");
                 return ret;
             }
             log("createMoment successful");
 
-            ret = uploadMomentData(sharableClip.clip.getVdbId(), uploadUrl, dataType);
+            ret = uploadMomentData(sharableClips, uploadUrls, dataType);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 log("Upload fragment error: " + ret);
                 return ret;
             }
             log("Upload fragment successful");
-            ret = uploadThumbnail(sharableClip);
+            ret = uploadThumbnail(sharableClips[0]);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 log("Upload thumbnail error: " + ret);
                 return ret;
@@ -356,6 +364,30 @@ public class DataUploaderV2 {
                 log("", e);
             }
         }
+
+    }
+
+    public int upload(long momentID, SharableClip[] sharableClips, int dataType) {
+        log("MomentID created: " + momentID);
+        //momentID = 1201;
+        log("MomentID used: " + momentID);
+
+        int vdbDataType = 0;
+        if ((dataType & CrsCommand.VIDIT_VIDEO_DATA_LOW) == CrsCommand.VIDIT_VIDEO_DATA_LOW) {
+            vdbDataType = VdbCommand.Factory.UPLOAD_GET_V1;
+        }
+        if ((dataType & CrsCommand.VIDIT_RAW_DATA) == CrsCommand.VIDIT_RAW_DATA) {
+            vdbDataType |= VdbCommand.Factory.UPLOAD_GET_RAW;
+        }
+
+        UploadUrl[] uploadUrls = new UploadUrl[sharableClips.length];
+        int i = 0;
+        for (SharableClip sharableClip : sharableClips) {
+            uploadUrls[i] = getFragmentData(sharableClip, vdbDataType);
+            i++;
+        }
+
+        return uploadClips(momentID, sharableClips, uploadUrls, dataType);
     }
 
     public void cancel() {
