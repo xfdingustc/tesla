@@ -238,7 +238,7 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         ArrayList<Moment> momentList = new ArrayList<>();
         for (int i = 0; i < jsonMoments.length(); i++) {
-            momentList.add(Moment.fromMyMoment(jsonMoments.optJSONObject(i)));
+            momentList.add(Moment.fromJson(jsonMoments.optJSONObject(i)));
         }
         if (isRefresh) {
             mAdapter.setMoments(momentList);

@@ -312,7 +312,7 @@ public class DataUploaderV2 {
 
         Bitmap bitmap = getClipThumbnail(sharableClip);
         ByteArrayOutputStream bitmapOut = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bitmapOut);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bitmapOut);
         byte[] bytes = bitmapOut.toByteArray();
         log("Thumbnail size: " + bytes.length);
         ByteArrayInputStream bitmapIn = new ByteArrayInputStream(bytes);
@@ -368,8 +368,7 @@ public class DataUploaderV2 {
     }
 
     public int upload(long momentID, SharableClip[] sharableClips, int dataType) {
-        log("MomentID created: " + momentID);
-        //momentID = 1201;
+        //momentID = 1220;
         log("MomentID used: " + momentID);
 
         int vdbDataType = 0;
