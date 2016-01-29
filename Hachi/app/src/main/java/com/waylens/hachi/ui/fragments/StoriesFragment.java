@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -16,6 +18,7 @@ import com.waylens.hachi.ui.entities.story.StoryFactory;
 import com.waylens.hachi.ui.entities.story.StoryStrategy;
 import com.waylens.hachi.ui.entities.story.StoryStrategyPresets;
 
+import butterknife.Bind;
 import butterknife.OnClick;
 
 /**
@@ -23,6 +26,12 @@ import butterknife.OnClick;
  */
 public class StoriesFragment extends BaseFragment {
     private static final String TAG = StoriesFragment.class.getSimpleName();
+
+    @Bind(R.id.createStories)
+    ImageView mIvCreateStories;
+
+    @Bind(R.id.createStoryProgress)
+    ProgressBar mCreateStoryProgress;
 
     @OnClick(R.id.createStories)
     public void onCreateStoryClicked() {
@@ -34,7 +43,7 @@ public class StoriesFragment extends BaseFragment {
             StoryFactory storyFactory = new StoryFactory(vdtCamera, strategy, new StoryFactory.OnCreateStoryListener() {
                 @Override
                 public void onCreateProgress(int progress) {
-
+                    mCreateStoryProgress.setProgress(progress);
                 }
 
                 @Override
@@ -45,6 +54,8 @@ public class StoriesFragment extends BaseFragment {
 
             storyFactory.createStory();
 
+            mIvCreateStories.setVisibility(View.GONE);
+            mCreateStoryProgress.setVisibility(View.VISIBLE);
 
         } else {
             Logger.t(TAG).d("No camera connected");
@@ -55,6 +66,9 @@ public class StoriesFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_stories, savedInstanceState);
+        mCreateStoryProgress.setMax(100);
         return view;
     }
+
+
 }
