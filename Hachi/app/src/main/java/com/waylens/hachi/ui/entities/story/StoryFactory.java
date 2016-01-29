@@ -92,7 +92,7 @@ public class StoryFactory {
         final ClipSet clipSet = story.getClipSet();
         mClipAdded = 0;
 
-        int clipSetCount = Math.min(clipSet.getCount(), mStrategy.getMaxiumClipCount());
+        final int clipSetCount = Math.min(clipSet.getCount(), mStrategy.getMaxiumClipCount());
 
         for (int i = 0; i < clipSetCount; i++) {
             final Clip clip = clipSet.getClip(i);
@@ -107,10 +107,10 @@ public class StoryFactory {
                     mClipAdded++;
 
                     if (mListener != null) {
-                        int progress = mClipAdded * 100 / clipSet.getCount();
+                        int progress = mClipAdded * 100 / clipSetCount;
                         mListener.onCreateProgress(progress);
 
-                        if (mClipAdded == clipSet.getCount()) {
+                        if (mClipAdded == clipSetCount) {
                             mListener.onCreateFinished(story);
                         }
                     }
