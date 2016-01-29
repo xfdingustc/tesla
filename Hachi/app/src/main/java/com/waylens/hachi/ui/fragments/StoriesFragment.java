@@ -14,7 +14,6 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.ui.activities.StoryEditActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.entities.story.Story;
 import com.waylens.hachi.ui.entities.story.StoryFactory;

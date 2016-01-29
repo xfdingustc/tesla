@@ -45,8 +45,6 @@
         <activity
             android:name=".ui.activities.LoginActivity"
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".ui.activities.BrowseCameraActivity"/>
-        <activity android:name=".ui.activities.ClipEditActivity"/>
         <activity android:name=".ui.activities.UserProfileActivity"/>
         <activity android:name=".ui.activities.FollowListActivity"/>
 
@@ -67,7 +65,6 @@
             android:name=".ui.activities.ClipPlaybackActivity"
             android:screenOrientation="landscape"/>
 
-        <activity android:name=".ui.activities.StoryEditActivity"/>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
