@@ -26,6 +26,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import butterknife.Bind;
@@ -160,12 +161,12 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
             @Override
             public void run() {
                 ClipSet clipSet = retrieveVideoList(clipType);
-                updateAdapter(processClipSet(clipSet));
+                updateAdapter(SharableClip.processClipSet(clipSet, mVdbRequestQueue));
             }
         });
     }
 
-    void updateAdapter(final ArrayList<SharableClip> sharableClips) {
+    void updateAdapter(final List<SharableClip> sharableClips) {
         mUIHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -202,16 +203,6 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
         return clipSets[0];
     }
 
-    ArrayList<SharableClip> processClipSet(ClipSet clipSet) {
-        ArrayList<SharableClip> sharableClips = new ArrayList<>();
-        for (Clip clip : clipSet.getInternalList()) {
-            SharableClip sharableClip = new SharableClip(clip, mVdbRequestQueue);
-            sharableClip.checkExtension();
-            sharableClips.add(sharableClip);
-
-        }
-        return sharableClips;
-    }
 
     VdtCamera getCamera() {
         Bundle args = getArguments();

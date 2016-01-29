@@ -23,6 +23,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -57,7 +58,8 @@ public class StoriesFragment extends BaseFragment {
                 @Override
                 public void onCreateFinished(final Story story) {
 //                    StoryEditActivity.launch(getActivity(), story);
-                    ArrayList<SharableClip> sharableClips = processClipSet(story.getClipSet());
+                    List<SharableClip> sharableClips = SharableClip.processClipSet(story
+                        .getClipSet(), null);
                     Logger.t(TAG).d("sharableClips: " + sharableClips.get(0).toString());
                     getActivity().getFragmentManager().beginTransaction().add(R.id.root_container,
                         EnhancementFragment.newInstance(sharableClips.get(0))).commit();
@@ -84,16 +86,7 @@ public class StoriesFragment extends BaseFragment {
         return view;
     }
 
-    ArrayList<SharableClip> processClipSet(ClipSet clipSet) {
-        ArrayList<SharableClip> sharableClips = new ArrayList<>();
-        for (Clip clip : clipSet.getInternalList()) {
-            SharableClip sharableClip = new SharableClip(clip, null);
-            sharableClip.checkExtension();
-            sharableClips.add(sharableClip);
 
-        }
-        return sharableClips;
-    }
 
 
 }

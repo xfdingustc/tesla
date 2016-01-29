@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,9 +39,9 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     static GregorianCalendar mCalendar = new GregorianCalendar();
 
-    private ArrayList<SharableClip> mSharableClips;
+    private List<SharableClip> mSharableClips;
 
-    ArrayList<ClipFilmItem> items = new ArrayList<>();
+    List<ClipFilmItem> items = new ArrayList<>();
 
     VdbRequestQueue mVdbRequestQueue;
 
@@ -55,7 +56,7 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
     }
 
-    public void setClipSet(ArrayList<SharableClip> sharableClips) {
+    public void setClipSet(List<SharableClip> sharableClips) {
         if (sharableClips == null) {
             items.clear();
             notifyDataSetChanged();

@@ -9,7 +9,10 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -116,6 +119,20 @@ public class SharableClip {
             bufferedCid = clipExtent.cid;
             realCid = clipExtent.cid;
         }
+    }
+
+
+
+
+    public static List<SharableClip> processClipSet(ClipSet clipSet, VdbRequestQueue requestQueue) {
+        ArrayList<SharableClip> sharableClips = new ArrayList<>();
+        for (Clip clip : clipSet.getInternalList()) {
+            SharableClip sharableClip = new SharableClip(clip, requestQueue);
+            sharableClip.checkExtension();
+            sharableClips.add(sharableClip);
+
+        }
+        return sharableClips;
     }
 
 }
