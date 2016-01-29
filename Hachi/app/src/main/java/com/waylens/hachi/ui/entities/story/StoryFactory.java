@@ -92,18 +92,18 @@ public class StoryFactory {
         final ClipSet clipSet = story.getClipSet();
         mClipAdded = 0;
 
-        Logger.t(TAG).d("Find clip count: " + clipSet.getCount());
-        int clipSetCount = Math.min(clipSet.getCount(), 3);
+        int clipSetCount = Math.min(clipSet.getCount(), mStrategy.getMaxiumClipCount());
 
         for (int i = 0; i < clipSetCount; i++) {
-            Clip clip = clipSet.getClip(i);
+            final Clip clip = clipSet.getClip(i);
 
             PlaylistEditRequest playRequest = new PlaylistEditRequest(PlaylistEditRequest.METHOD_INSERT_CLIP,
                 clip, clip.getStartTimeMs(), clip.getStartTimeMs() + clip.getDurationMs(), story
                 .getPlaylist(), new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    Logger.t(TAG).d("Add one clip to playlist!!!!!!");
+                    Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + clip.cid + " " +
+                        "realId: " + clip.realCid );
                     mClipAdded++;
 
                     if (mListener != null) {

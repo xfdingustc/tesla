@@ -5,4 +5,6 @@ package com.waylens.hachi.ui.entities.story;
  */
 public interface StoryStrategy {
     int getClipType();
+
+    int getMaxiumClipCount();
 }

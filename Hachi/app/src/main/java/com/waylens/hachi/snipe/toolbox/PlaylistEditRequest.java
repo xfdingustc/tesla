@@ -37,7 +37,7 @@ public class PlaylistEditRequest extends VdbRequest<Integer> {
     protected VdbCommand createVdbCommand() {
         switch (mMethod) {
             case METHOD_INSERT_CLIP:
-                mVdbCommand = VdbCommand.Factory.createCmdInsertClip(mClip.cid, mStartTimeMs,
+                mVdbCommand = VdbCommand.Factory.createCmdInsertClip(mClip.realCid, mStartTimeMs,
                     mEndTimeMs, mPlaylist.getId(), -1);
                 break;
             case METHOD_CLEAR_PLAYLIST:

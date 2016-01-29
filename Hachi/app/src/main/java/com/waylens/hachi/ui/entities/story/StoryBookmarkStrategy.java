@@ -10,4 +10,9 @@ public class StoryBookmarkStrategy implements StoryStrategy {
     public int getClipType() {
         return Clip.TYPE_MARKED;
     }
+
+    @Override
+    public int getMaxiumClipCount() {
+        return 3;
+    }
 }

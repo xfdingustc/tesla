@@ -2,9 +2,9 @@ package com.waylens.hachi.vdb;
 
 
 public class Playlist {
-    private int mPlayListId;
+    private int mPlayListId = 0;
 
-    private ClipSet mClipSet = new ClipSet(Clip.TYPE_BUFFERED);
+    private ClipSet mClipSet = new ClipSet(Clip.TYPE_MARKED);
 
     private int mProperties;
     private int mTotalLengthMs; // TODO
