@@ -80,15 +80,6 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (mMoments == null) {
-            return 0;
-        }
-        return mMoments.get(position).type;
-    }
-
-
-    @Override
     public MomentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_moment, parent, false);
         return new MomentViewHolder(itemView);

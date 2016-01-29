@@ -134,7 +134,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
                 + "&filter=featured";
 
         if (mFeedTag == FEED_TAG_ME) {
-            url = Constants.API_USERS + "/" +SessionManager.getInstance().getUserId() + "/" + Constants
+            url = Constants.API_USERS + "/me/" + Constants
                 .PARAM_MOMENTS;
         }
 
