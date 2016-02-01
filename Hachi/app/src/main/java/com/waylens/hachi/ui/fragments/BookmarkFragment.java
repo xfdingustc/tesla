@@ -259,24 +259,14 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
         }
 
         if (mHolder != null) {
-            mHolder.videoTrimmer.setEditing(false);
-            mHolder.durationView.setVisibility(View.VISIBLE);
-            mHolder.cameraVideoView.setVisibility(View.GONE);
-            mHolder.controlPanel.setVisibility(View.GONE);
+            mHolder.stopEditing();
         }
 
         mRvCameraVideoList.setLayoutFrozen(false);
-        holder.cameraVideoView.setVisibility(View.VISIBLE);
-        holder.videoTrimmer.setInitRangeValues(sharableClip.minExtensibleValue, sharableClip.maxExtensibleValue);
-        holder.videoTrimmer.setLeftValue(sharableClip.selectedStartValue);
-        holder.videoTrimmer.setRightValue(sharableClip.selectedEndValue);
-        holder.videoTrimmer.setEditing(true);
-        holder.controlPanel.setVisibility(View.VISIBLE);
-
-        holder.durationView.setVisibility(View.INVISIBLE);
-        mHolder = holder;
+        holder.startEditing(sharableClip);
         mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
         mRvCameraVideoList.requestLayout();
+        mHolder = holder;
     }
 
     static class VideoTab {

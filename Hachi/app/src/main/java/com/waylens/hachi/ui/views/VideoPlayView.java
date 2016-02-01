@@ -19,7 +19,7 @@ import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 /**
  * VideoPlayView can be used to play videos.
- * <p>
+ * <p/>
  * Created by Richard on 1/11/16.
  */
 public class VideoPlayView extends FixedAspectRatioFrameLayout implements
@@ -106,11 +106,6 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         mNonUIHandler = new Handler(mNonUIThread.getLooper());
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-    }
-
     public void setSource(String source) {
         setSource(source, STATE_IDLE);
     }
@@ -157,7 +152,8 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     }
 
     protected void cleanup() {
-        //
+        mBtnPlay.setVisibility(VISIBLE);
+        release(true);
     }
 
     void playVideo() {
@@ -202,7 +198,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         }
     }
 
-    void release(boolean clearTargetState) {
+    public void release(boolean clearTargetState) {
         final MediaPlayer mediaPlayer = mMediaPlayer;
         mMediaPlayer = null;
         mCurrentState = STATE_IDLE;
@@ -236,8 +232,8 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
 
     public void pause() {
         if (isPlaying()) {
-                mMediaPlayer.pause();
-                mCurrentState = STATE_PAUSED;
+            mMediaPlayer.pause();
+            mCurrentState = STATE_PAUSED;
         }
         mTargetState = STATE_PAUSED;
         mUIHandler.sendEmptyMessage(SHOW_CONTROLLERS);
@@ -414,7 +410,8 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     void showProgress() {
         if (!isInPlaybackState()) {
             return;
-        };
+        }
+        ;
         int position = mMediaPlayer.getCurrentPosition();
         int duration = mMediaPlayer.getDuration();
         if (mOnProgressListener != null) {

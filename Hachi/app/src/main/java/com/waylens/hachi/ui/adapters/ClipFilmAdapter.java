@@ -225,24 +225,17 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.cameraVideoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    stopEditing(holder);
+                    holder.stopEditing();
                 }
             });
         }
-    }
-
-    void stopEditing(final ClipEditViewHolder holder) {
-        holder.cameraVideoView.setVisibility(View.GONE);
-        holder.controlPanel.setVisibility(View.GONE);
-        holder.videoTrimmer.setEditing(false);
-        holder.durationView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder viewHolder) {
         if (viewHolder instanceof ClipEditViewHolder) {
             final ClipEditViewHolder holder = (ClipEditViewHolder) viewHolder;
-            stopEditing(holder);
+            holder.stopEditing();
             holder.videoTrimmer.setOnClickListener(null);
         }
         super.onViewDetachedFromWindow(viewHolder);
@@ -289,7 +282,25 @@ public class ClipFilmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public ClipEditViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            //cameraVideoView.setId(ViewUtils.generateViewId());
+        }
+
+        public void startEditing(SharableClip sharableClip) {
+            cameraVideoView.setVisibility(View.VISIBLE);
+            videoTrimmer.setInitRangeValues(sharableClip.minExtensibleValue, sharableClip.maxExtensibleValue);
+            videoTrimmer.setLeftValue(sharableClip.selectedStartValue);
+            videoTrimmer.setRightValue(sharableClip.selectedEndValue);
+            videoTrimmer.setProgress(sharableClip.selectedStartValue);
+            videoTrimmer.setEditing(true);
+            controlPanel.setVisibility(View.VISIBLE);
+            durationView.setVisibility(View.INVISIBLE);
+        }
+
+        public void stopEditing() {
+            videoTrimmer.setEditing(false);
+            durationView.setVisibility(View.VISIBLE);
+            cameraVideoView.cleanup();
+            cameraVideoView.setVisibility(View.GONE);
+            controlPanel.setVisibility(View.GONE);
         }
     }
 
