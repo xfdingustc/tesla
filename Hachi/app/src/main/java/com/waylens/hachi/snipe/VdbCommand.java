@@ -397,6 +397,14 @@ public class VdbCommand {
             return command;
         }
 
+        public static VdbCommand createCmdGetPlaylistSetInfo(int flags) {
+            VdbCommand command = new Builder()
+                .writeCmdCode(CMD_GetAllPlaylists, 0)
+                .writeInt32(flags)
+                .build();
+            return command;
+        }
+
         public static VdbCommand createDummyGetRawData() {
             VdbCommand command = new Builder()
                 .build();

@@ -9,8 +9,10 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
+import com.waylens.hachi.snipe.toolbox.PlaylistSetRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.PlaylistSet;
 
 /**
  * Created by Xiaofei on 2016/1/26.
@@ -45,7 +47,26 @@ public class StoryFactory {
 
 
     public void createStory() {
-        doClearPlayList();
+        doGetPlaylistInfo();
+
+    }
+
+    private void doGetPlaylistInfo() {
+        Logger.t(TAG).d("Get Play list info");
+        PlaylistSetRequest request = new PlaylistSetRequest(0, new VdbResponse.Listener<PlaylistSet>() {
+            @Override
+            public void onResponse(PlaylistSet response) {
+                Logger.t(TAG).d("Get Response!!!!!!");
+                mStory.setPlaylist(response.getPlaylist(0));
+                doClearPlayList();
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mRequestQueue.add(request);
     }
 
     private void doClearPlayList() {

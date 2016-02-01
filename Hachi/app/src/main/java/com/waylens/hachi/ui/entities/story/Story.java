@@ -8,10 +8,14 @@ import com.waylens.hachi.vdb.Playlist;
  */
 public class Story {
     private String mName;
-    private Playlist mPlaylist = new Playlist();
+    private Playlist mPlaylist;;
 
     public Story() {
 
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        mPlaylist = playlist;
     }
 
     public Playlist getPlaylist() {

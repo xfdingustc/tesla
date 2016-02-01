@@ -40,8 +40,20 @@ public class Playlist {
         mClipSet.clear();
     }
 
+    public void setId(int id) {
+        this.mPlayListId = id;
+    }
+
     public int getId() {
         return mPlayListId;
+    }
+
+    public void setProperties(int properties) {
+        this.mProperties = properties;
+    }
+
+    public void setTotalLengthMs(int lengthMs) {
+        this.mTotalLengthMs = lengthMs;
     }
 
     public void setClipSet(ClipSet clipSet) {
