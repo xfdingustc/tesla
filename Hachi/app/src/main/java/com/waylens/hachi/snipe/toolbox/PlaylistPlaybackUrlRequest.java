@@ -26,6 +26,7 @@ public class PlaylistPlaybackUrlRequest extends VdbRequest<PlaylistPlaybackUrl> 
 
     @Override
     protected VdbCommand createVdbCommand() {
+        Logger.t(TAG).d("id: " + mPlaylist.getId() + " startTime: " + mStartTimeMs);
         mVdbCommand = VdbCommand.Factory.createCmdGetPlaylistPlaybackUrl(Vdb.URL_TYPE_HLS,
             mPlaylist.getId(), mStartTimeMs, Vdb.STREAM_SUB_1);
         return mVdbCommand;

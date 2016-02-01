@@ -275,8 +275,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     private void loadPlaylist() {
         PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayList,
-            (int)mPlayList
-            .getClip(0).getStartTimeMs(), new VdbResponse.Listener<PlaylistPlaybackUrl>() {
+            0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
             @Override
             public void onResponse(PlaylistPlaybackUrl response) {
                 Logger.t(TAG).d("Get playlist: " + response.url);
