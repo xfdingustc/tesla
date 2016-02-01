@@ -95,7 +95,7 @@ public class DashboardLayout extends RelativeLayout implements OverlayProvider {
     private void addPanels() {
         List<Panel> panelList = mSkin.getPanels();
         for (Panel panel : panelList) {
-            Logger.t(TAG).d("ADD Panels, alignment: " + panel.getAlignment());
+//            Logger.t(TAG).d("ADD Panels, alignment: " + panel.getAlignment());
             PanelLayout layout = new PanelLayout(getContext(), panel, mEventBus);
             LayoutParams params = LayoutParamUtils.createLayoutParam(panel);
             addView(layout, params);

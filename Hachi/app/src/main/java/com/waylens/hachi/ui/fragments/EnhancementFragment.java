@@ -140,7 +140,12 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
 
     @OnClick(R.id.btn_play)
     void playVideo() {
-        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
+        if (mEditMode == MODE_SINGLE_CLIP) {
+            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
+        } else {
+            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
+                mPlaylist, null);
+        }
         mVideoPlayFragment.setOnProgressListener(this);
         getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
         videoCover.setVisibility(View.INVISIBLE);

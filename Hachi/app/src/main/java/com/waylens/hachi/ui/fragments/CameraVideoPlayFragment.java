@@ -8,6 +8,9 @@ import android.util.SparseIntArray;
 import android.view.View;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
+import com.waylens.hachi.vdb.Playlist;
+import com.waylens.hachi.vdb.PlaylistPlaybackUrl;
 import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -28,8 +31,15 @@ import com.waylens.hachi.vdb.RawDataItem;
 public class CameraVideoPlayFragment extends VideoPlayFragment {
     private static final String TAG = CameraVideoPlayFragment.class.getSimpleName();
 
+    private static final int MODE_SINGLE_CLIP = 0;
+    private static final int MODE_PLAYLIST = 1;
+
     private VdbRequestQueue mVdbRequestQueue;
     private Clip mClip;
+    private Playlist mPlayList;
+    private int mPlayMode;
+
+
 
     SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
     SparseIntArray mTypedState = new SparseIntArray();
@@ -46,9 +56,26 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.setArguments(args);
         fragment.mVdbRequestQueue = vdbRequestQueue;
         fragment.mClip = clip;
+        fragment.mPlayMode = MODE_SINGLE_CLIP;
         fragment.mTypedState.put(RawDataItem.DATA_TYPE_OBD, RAW_DATA_STATE_UNKNOWN);
         fragment.mTypedState.put(RawDataItem.DATA_TYPE_ACC, RAW_DATA_STATE_UNKNOWN);
         fragment.mTypedState.put(RawDataItem.DATA_TYPE_GPS, RAW_DATA_STATE_UNKNOWN);
+        fragment.mDragListener = listener;
+        return fragment;
+    }
+    public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
+                                                      Playlist mPlaylist,
+                                                      OnViewDragListener listener) {
+        Bundle args = new Bundle();
+        CameraVideoPlayFragment fragment = new CameraVideoPlayFragment();
+        fragment.setArguments(args);
+        fragment.mVdbRequestQueue = vdbRequestQueue;
+        fragment.mPlayList = mPlaylist;
+        fragment.mPlayMode = MODE_PLAYLIST;
+//        fragment.mClip = clip;
+//        fragment.mTypedState.put(RawDataItem.DATA_TYPE_OBD, RAW_DATA_STATE_UNKNOWN);
+//        fragment.mTypedState.put(RawDataItem.DATA_TYPE_ACC, RAW_DATA_STATE_UNKNOWN);
+//        fragment.mTypedState.put(RawDataItem.DATA_TYPE_GPS, RAW_DATA_STATE_UNKNOWN);
         fragment.mDragListener = listener;
         return fragment;
     }
@@ -81,28 +108,29 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     protected void setProgress(int currentPosition, int duration) {
-        if (mPlaybackUrl.realTimeMs != 0
-                && mInitPosition == 0
-                && currentPosition != 0
-                && Math.abs(mPlaybackUrl.realTimeMs - currentPosition) < 200) {
-            mInitPosition = mPlaybackUrl.realTimeMs;
-            Log.e("test", "setProgress - deviation: " + Math.abs(mPlaybackUrl.realTimeMs - currentPosition));
-        }
-        //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
-        //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
-        int position = currentPosition;
-        if (duration > 0) {
-            //Log.e("test", "setProgress - position: " + position + "; real: "
-            //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
-            if (mInitPosition == 0) {
-                position = currentPosition + (int) mPlaybackUrl.realTimeMs;
-            }
-        }
-
-        displayOverlay(position);
-        if (mProgressListener != null) {
-            mProgressListener.onProgress(position, duration);
-        }
+        // TODO:
+//        if (mPlaybackUrl.realTimeMs != 0
+//                && mInitPosition == 0
+//                && currentPosition != 0
+//                && Math.abs(mPlaybackUrl.realTimeMs - currentPosition) < 200) {
+//            mInitPosition = mPlaybackUrl.realTimeMs;
+//            Log.e("test", "setProgress - deviation: " + Math.abs(mPlaybackUrl.realTimeMs - currentPosition));
+//        }
+//        //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
+//        //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
+//        int position = currentPosition;
+//        if (duration > 0) {
+//            //Log.e("test", "setProgress - position: " + position + "; real: "
+//            //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
+//            if (mInitPosition == 0) {
+//                position = currentPosition + (int) mPlaybackUrl.realTimeMs;
+//            }
+//        }
+//
+//        displayOverlay(position);
+//        if (mProgressListener != null) {
+//            mProgressListener.onProgress(position, duration);
+//        }
     }
 
     @Override
@@ -141,6 +169,9 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     boolean isRawDataReady() {
+        if (mPlayMode == MODE_PLAYLIST) {
+            return true;
+        }
         return mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_READY
                 && mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_READY
                 && mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_READY;
@@ -205,10 +236,19 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         loadPlayURL();
     }
 
-    void loadPlayURL() {
+    private void loadPlayURL() {
         if (mProgressLoading.getVisibility() != View.VISIBLE) {
             mProgressLoading.setVisibility(View.VISIBLE);
         }
+        if (mPlayMode == MODE_SINGLE_CLIP) {
+            loadPlaySingleClip();
+        } else {
+            loadPlaylist();
+        }
+    }
+
+    private void loadPlaySingleClip() {
+
         Bundle parameters = new Bundle();
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, Vdb.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, Vdb.STREAM_SUB_1);
@@ -230,6 +270,25 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             }
         });
 
+        mVdbRequestQueue.add(request.setTag(REQUEST_TAG));
+    }
+
+    private void loadPlaylist() {
+        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayList,
+            (int)mPlayList
+            .getClip(0).getStartTimeMs(), new VdbResponse.Listener<PlaylistPlaybackUrl>() {
+            @Override
+            public void onResponse(PlaylistPlaybackUrl response) {
+                Logger.t(TAG).d("Get playlist: " + response.url);
+                setSource(response.url);
+                //mProgressLoading.setVisibility(View.GONE);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                mProgressLoading.setVisibility(View.GONE);
+            }
+        });
         mVdbRequestQueue.add(request.setTag(REQUEST_TAG));
     }
 }

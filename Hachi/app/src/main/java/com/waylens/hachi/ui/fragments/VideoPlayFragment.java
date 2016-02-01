@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.DragLayout;
@@ -388,15 +389,18 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         if (mVideoSource == null
                 || mSurfaceView == null
                 || mSurfaceHolder == null
-                || mRawDataState == RAW_DATA_STATE_UNKNOWN) {
+                /*|| mRawDataState == RAW_DATA_STATE_UNKNOWN*/) {
             return;
         }
+
+
         mProgressLoading.setVisibility(View.VISIBLE);
         try {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.setOnErrorListener(this);
+
             if (mHeaders != null) {
                 mMediaPlayer.setDataSource(getActivity(), Uri.parse(mVideoSource), mHeaders);
             } else {
