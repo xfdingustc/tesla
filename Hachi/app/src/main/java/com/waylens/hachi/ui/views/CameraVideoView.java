@@ -59,13 +59,15 @@ public class CameraVideoView extends VideoPlayView {
     }
 
     @Override
-    protected void cleanup() {
+    public void cleanup() {
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.cancelAll(REQUEST_TAG);
         }
         if (bgThread != null && bgThread.isAlive()) {
             bgThread.interrupt();
         }
+
+        super.cleanup();
     }
 
     public void initVideoPlay(VdbRequestQueue vdbRequestQueue, SharableClip sharableClip) {
