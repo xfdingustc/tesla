@@ -18,8 +18,16 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.Playlist;
+
+import org.jcodec.common.ArrayUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,6 +37,8 @@ import butterknife.OnClick;
  * Created by Richard on 12/18/15.
  */
 public class EnhancementFragment extends Fragment implements FragmentNavigator, VideoPlayFragment.OnProgressListener {
+    private static final int MODE_SINGLE_CLIP = 0;
+    private static final int MODE_PLAYLIST = 1;
 
     @Bind(R.id.clip_seek_bar)
     VideoPlayerProgressBar mSeekBar;
@@ -48,8 +58,12 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    SharableClip mSharableClip;
-    VdbImageLoader mImageLoader;
+    private int mEditMode;
+    private SharableClip mSharableClip;
+    private Playlist mPlaylist;
+
+    private VdbImageLoader mImageLoader;
+
 
     CameraVideoPlayFragment mVideoPlayFragment;
     SimplePagerAdapter mPagerAdapter;
@@ -59,6 +73,16 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
         fragment.mSharableClip = sharableClip;
+        fragment.mEditMode = MODE_SINGLE_CLIP;
+        return fragment;
+    }
+
+    public static EnhancementFragment newInstance(Playlist playlist) {
+        Bundle args = new Bundle();
+        EnhancementFragment fragment = new EnhancementFragment();
+        fragment.setArguments(args);
+        fragment.mPlaylist = playlist;
+        fragment.mEditMode = MODE_PLAYLIST;
         return fragment;
     }
 
@@ -81,10 +105,21 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
-        ClipPos clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
+        ClipPos clipPos;
+        if (mEditMode == MODE_SINGLE_CLIP) {
+            clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
+            mClipDateView.setText(mSharableClip.clip.getDateTimeString());
+            initSeekBarSingleClip();
+        } else {
+            Clip firstClip = mPlaylist.getClip(0);
+            clipPos = new ClipPos(firstClip, firstClip.getStartTimeMs(), ClipPos.TYPE_POSTER,
+                false);
+            mClipDateView.setText(firstClip.getDateTimeString());
+            initSeekBarPlayList();
+        }
         mImageLoader.displayVdbImage(clipPos, videoCover);
-        initSeekBar();
-        mClipDateView.setText(mSharableClip.clip.getDateTimeString());
+
+
         mViewPager.setAdapter(mPagerAdapter);
     }
 
@@ -131,10 +166,14 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         mViewAnimator.setDisplayedChild(1);
     }
 
-    private void initSeekBar() {
+    private void initSeekBarSingleClip() {
         final ClipPos clipPos = new ClipPos(mSharableClip.clip, mSharableClip.clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-        mSeekBar.setInitRangeValues(mSharableClip.clip.getStartTimeMs(), mSharableClip.clip.getStartTimeMs() + mSharableClip.clip.getStartTimeMs());
-        mSeekBar.setClip(mSharableClip.clip, mImageLoader);
+        mSeekBar.setInitRangeValues(mSharableClip.clip.getStartTimeMs(), mSharableClip.clip
+            .getStartTimeMs() + mSharableClip.clip.getDurationMs());
+
+        ClipSet clipSet = new ClipSet(0);
+        clipSet.addClip(mSharableClip.clip);
+        mSeekBar.setClipSet(clipSet, mImageLoader);
         mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(VideoPlayerProgressBar progressBar) {
@@ -152,6 +191,11 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
                 //Log.e("test", "Stop dragging....");
             }
         });
+    }
+
+    private void initSeekBarPlayList() {
+        ClipSet clipSet = mPlaylist.getClipSet();
+        mSeekBar.setClipSet(clipSet, mImageLoader);
     }
 
     void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
@@ -182,8 +226,8 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     static class SimplePagerAdapter extends PagerAdapter {
 
         static int[] view_layouts = new int[]{
-                R.layout.layout_gauge_one,
-                R.layout.layout_gauge_two,
+            R.layout.layout_gauge_one,
+            R.layout.layout_gauge_two,
         };
 
         @Override
