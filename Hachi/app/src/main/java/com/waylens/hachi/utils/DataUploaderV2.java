@@ -54,6 +54,7 @@ public class DataUploaderV2 {
     VdbRequestQueue mVdbRequestQueue;
 
     volatile boolean isCancelled;
+    private int mClipTotalCount;
 
     private OnUploadListener mUploadListener;
 
@@ -145,6 +146,7 @@ public class DataUploaderV2 {
 
     private int uploadMomentData(SharableClip[] sharableClips, UploadUrl[] uploadUrls, int
         dataType) throws IOException {
+        mClipTotalCount = sharableClips.length + 1; // 1 for thumbnail
         for (int i = 0; i < sharableClips.length; i++) {
             String guid = sharableClips[i].clip.getVdbId();
             UploadUrl uploadUrl = uploadUrls[i];
@@ -165,7 +167,7 @@ public class DataUploaderV2 {
                 URLConnection conn = url.openConnection();
                 inputStream = conn.getInputStream();
                 Log.e("test", String.format("ContentLength[%d]", conn.getContentLength()));
-                ret = doUpload(guid, conn.getContentLength(), dataType, inputStream);
+                ret = doUpload(guid, conn.getContentLength(), dataType, inputStream, i);
                 if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                     return ret;
                 }
@@ -182,7 +184,7 @@ public class DataUploaderV2 {
         return CrsCommand.RES_FILE_TRANS_COMPLETE;
     }
 
-    private int doUpload(String guid, int totalLength, int dataType, InputStream inputStream)
+    private int doUpload(String guid, int totalLength, int dataType, InputStream inputStream, int clipIndex)
         throws IOException {
         byte[] data = new byte[1024 * 4];
         int length;
@@ -211,7 +213,12 @@ public class DataUploaderV2 {
             seqNum++;
             dataSend += length;
 
-            int percentage = dataSend * 100 / totalLength;
+            int percentageInThisClip = dataSend * 100 / totalLength / mClipTotalCount;
+
+            int percentage = clipIndex * 100 / mClipTotalCount + percentageInThisClip;
+
+
+
             mUploadListener.onUploadProgress(percentage);
         }
         return stopUpload(guid);
@@ -331,7 +338,7 @@ public class DataUploaderV2 {
         log("Thumbnail size: " + bytes.length);
         ByteArrayInputStream bitmapIn = new ByteArrayInputStream(bytes);
         return doUpload(String.valueOf(mMomentID), bytes.length, CrsCommand.VIDIT_THUMBNAIL_JPG,
-            bitmapIn);
+            bitmapIn, mClipTotalCount - 1);
 
     }
 
