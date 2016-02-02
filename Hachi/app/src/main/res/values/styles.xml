@@ -7,6 +7,7 @@
         <item name="colorAccent">@color/style_color_primary</item>
         <item name="toolbarColor">@color/style_color_primary</item>
         <item name="defaultBgColor">@color/material_grey_200</item>
+        <item name="defaultBgColorDark">@color/material_grey_700</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -15,6 +16,7 @@
         <item name="colorAccent">@color/style_color_primary</item>
         <item name="toolbarColor">@color/edit_toolbar</item>
         <item name="defaultBgColor">@color/background_color</item>
+        <item name="defaultBgColorDark">@color/background_color_dark</item>
     </style>
 
     <style name="MyRadioButton"
