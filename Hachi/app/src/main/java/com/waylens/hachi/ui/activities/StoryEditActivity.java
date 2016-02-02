@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.waylens.hachi.R;
@@ -11,10 +12,14 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.story.Story;
+import com.waylens.hachi.ui.fragments.CameraVideoPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
+import com.xfdingustc.far.FixedAspectRatioFrameLayout;
+
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/2/2.
@@ -24,11 +29,24 @@ public class StoryEditActivity extends BaseActivity {
     private static Story mSharedStory;
     private Story mStory;
 
+    private CameraVideoPlayFragment mVideoPlayFragment;
+
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mImageLoader;
 
     @Bind(R.id.video_cover)
     ImageView mVideoCover;
+
+
+
+
+    @OnClick(R.id.btn_play)
+    public void onBtnPlayClicked() {
+        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mStory
+            .getPlaylist(), null);
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, mVideoPlayFragment).commit();
+        mVideoCover.setVisibility(View.INVISIBLE);
+    }
 
     public static void launch(Activity startingActivity, Story story) {
         Intent intent = new Intent(startingActivity, StoryEditActivity.class);
