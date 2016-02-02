@@ -1,10 +1,13 @@
 package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.waylens.hachi.R;
@@ -17,6 +20,9 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -37,6 +43,8 @@ public class StoryEditActivity extends BaseActivity {
     @Bind(R.id.video_cover)
     ImageView mVideoCover;
 
+    @Bind(R.id.titleEditor)
+    EditText mTitleEditor;
 
 
 
@@ -76,5 +84,18 @@ public class StoryEditActivity extends BaseActivity {
             false);
 
         mImageLoader.displayVdbImage(clipPos, mVideoCover);
+
+        mTitleEditor.requestFocus();
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            public void run() {
+                InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.showSoftInput(mTitleEditor, 0);
+            }
+
+        }, 500);
+
     }
 }
