@@ -408,6 +408,20 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             }
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
+            mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+                @Override
+                public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                    switch (what) {
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                            mProgressLoading.setVisibility(View.VISIBLE);
+                            break;
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                            mProgressLoading.setVisibility(View.GONE);
+                            break;
+                    }
+                    return false;
+                }
+            });
             mCurrentState = STATE_PREPARING;
         } catch (IOException e) {
             mCurrentState = STATE_ERROR;
@@ -529,8 +543,10 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         if (mProgressLoading.getVisibility() == View.VISIBLE) {
             return;
         }
-        mVideoController.setVisibility(mVideoController.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-        mInfoPanel.setVisibility(mInfoPanel.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+        int visibitliy = mVideoController.getVisibility() == View.VISIBLE ? View.INVISIBLE : View
+            .VISIBLE;
+        mVideoController.setVisibility(visibitliy);
+        mInfoPanel.setVisibility(visibitliy);
     }
 
     void showController(int timeout) {
