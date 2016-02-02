@@ -82,6 +82,11 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             public void onUploadProgress(int uploadPercentage) {
 
             }
+
+            @Override
+            public void onStateChanged(int state) {
+
+            }
         });
         String title = "";
         String[] tags = new String[]{"Shanghai", "car"};

@@ -2,6 +2,7 @@ package com.waylens.hachi.utils;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -53,6 +54,12 @@ public class DataUploaderV2 {
     VdbRequestQueue mVdbRequestQueue;
 
     volatile boolean isCancelled;
+
+    private OnUploadListener mUploadListener;
+
+    public interface OnUploadListener {
+        void onUploadProgress(int percentage);
+    }
 
     public DataUploaderV2(String address, int port, String privateKey, VdbRequestQueue vdbRequestQueue) {
         mAddress = address;
@@ -136,7 +143,8 @@ public class DataUploaderV2 {
         return receiveData();
     }
 
-    private int uploadMomentData(SharableClip[] sharableClips, UploadUrl[] uploadUrls, int dataType) throws IOException {
+    private int uploadMomentData(SharableClip[] sharableClips, UploadUrl[] uploadUrls, int
+        dataType) throws IOException {
         for (int i = 0; i < sharableClips.length; i++) {
             String guid = sharableClips[i].clip.getVdbId();
             UploadUrl uploadUrl = uploadUrls[i];
@@ -157,7 +165,7 @@ public class DataUploaderV2 {
                 URLConnection conn = url.openConnection();
                 inputStream = conn.getInputStream();
                 Log.e("test", String.format("ContentLength[%d]", conn.getContentLength()));
-                ret = doUpload(guid, dataType, inputStream);
+                ret = doUpload(guid, conn.getContentLength(), dataType, inputStream);
                 if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                     return ret;
                 }
@@ -174,10 +182,12 @@ public class DataUploaderV2 {
         return CrsCommand.RES_FILE_TRANS_COMPLETE;
     }
 
-    private int doUpload(String guid, int dataType, InputStream inputStream) throws IOException {
+    private int doUpload(String guid, int totalLength, int dataType, InputStream inputStream)
+        throws IOException {
         byte[] data = new byte[1024 * 4];
         int length;
         int seqNum = 0;
+        int dataSend = 0;
         while ((length = inputStream.read(data)) != -1) {
             if (length < data.length) {
                 int secondLength = inputStream.read(data, length, data.length - length);
@@ -199,6 +209,10 @@ public class DataUploaderV2 {
                     mPrivateKey);
             sendData(tranData.getEncodedCommand());
             seqNum++;
+            dataSend += length;
+
+            int percentage = dataSend * 100 / totalLength;
+            mUploadListener.onUploadProgress(percentage);
         }
         return stopUpload(guid);
     }
@@ -316,11 +330,14 @@ public class DataUploaderV2 {
         byte[] bytes = bitmapOut.toByteArray();
         log("Thumbnail size: " + bytes.length);
         ByteArrayInputStream bitmapIn = new ByteArrayInputStream(bytes);
-        return doUpload(String.valueOf(mMomentID), CrsCommand.VIDIT_THUMBNAIL_JPG, bitmapIn);
+        return doUpload(String.valueOf(mMomentID), bytes.length, CrsCommand.VIDIT_THUMBNAIL_JPG,
+            bitmapIn);
 
     }
 
-    int uploadClips(long momentID, SharableClip[] sharableClips, UploadUrl[] uploadUrls, int dataType) {
+    int uploadClips(long momentID, SharableClip[] sharableClips, UploadUrl[] uploadUrls, int
+        dataType) {
+
         mMomentID = momentID;
         try {
             init();
@@ -367,8 +384,9 @@ public class DataUploaderV2 {
 
     }
 
-    public int upload(long momentID, SharableClip[] sharableClips, int dataType) {
+    public int upload(long momentID, SharableClip[] sharableClips, int dataType, @NonNull OnUploadListener listener) {
         //momentID = 1220;
+        mUploadListener = listener;
         log("MomentID used: " + momentID);
 
         int vdbDataType = 0;

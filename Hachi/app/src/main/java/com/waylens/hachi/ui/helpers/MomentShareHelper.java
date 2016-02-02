@@ -3,12 +3,14 @@ package com.waylens.hachi.ui.helpers;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.snipe.Snipe;
@@ -33,6 +35,11 @@ import crs_svr.v2.CrsCommand;
  * Created by Richard on 1/5/16.
  */
 public class MomentShareHelper {
+    private static final String TAG = MomentShareHelper.class.getSimpleName();
+    public static final int STATE_MOMENT_CREATED = 0;
+
+    public static final int ERROR_CREATE_MOMENT = 0;
+    //public static final
     VdbRequestQueue mVdbRequestQueue;
     RequestQueue mRequestQueue;
     OnShareMomentListener mShareListener;
@@ -44,7 +51,9 @@ public class MomentShareHelper {
 
     Handler mHandler;
 
-    public MomentShareHelper(Context context, OnShareMomentListener listener) {
+
+
+    public MomentShareHelper(Context context, @NonNull OnShareMomentListener listener) {
         mVdbRequestQueue = Snipe.newRequestQueue();
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(context);
         mShareListener = listener;
@@ -93,12 +102,14 @@ public class MomentShareHelper {
                     public void onResponse(JSONObject response) {
                         results[0] = response;
                         latch.countDown();
+                        mShareListener.onStateChanged(STATE_MOMENT_CREATED);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("test", "", error);
+                        Logger.t(TAG).e(error.toString());
+                        mShareListener.onError(ERROR_CREATE_MOMENT, 0);
                         latch.countDown();
                     }
                 }));
@@ -206,7 +217,12 @@ public class MomentShareHelper {
             long momentID = momentInfo.optLong("momentID");
             uploaderV2 = new DataUploaderV2(ip, port, privateKey, mVdbRequestQueue);
             int dataType = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
-            return uploaderV2.upload(momentID, sharableClips, dataType);
+            return uploaderV2.upload(momentID, sharableClips, dataType, new DataUploaderV2.OnUploadListener() {
+                @Override
+                public void onUploadProgress(int percentage) {
+                    mShareListener.onUploadProgress(percentage);
+                }
+            });
         } catch (Exception e) {
             Log.e("test", "", e);
             return CrsCommand.RES_STATE_FAIL;
@@ -222,5 +238,7 @@ public class MomentShareHelper {
         void onError(int errorCode, int errorResId);
 
         void onUploadProgress(int uploadPercentage);
+
+        void onStateChanged(int state);
     }
 }

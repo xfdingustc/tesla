@@ -84,6 +84,11 @@ public class StoryEditActivity extends BaseActivity {
 
             @Override
             public void onUploadProgress(int uploadPercentage) {
+                mUploadProgressBar.setProgress(uploadPercentage);
+            }
+
+            @Override
+            public void onStateChanged(int state) {
 
             }
         });
@@ -129,6 +134,7 @@ public class StoryEditActivity extends BaseActivity {
         ClipPos clipPos = new ClipPos(firstClip, firstClip.getStartTimeMs(), ClipPos.TYPE_POSTER,
             false);
 
+        mUploadProgressBar.setMax(100);
         mImageLoader.displayVdbImage(clipPos, mVideoCover);
 
         mTitleEditor.requestFocus();

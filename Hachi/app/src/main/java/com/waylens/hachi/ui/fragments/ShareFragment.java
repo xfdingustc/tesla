@@ -147,6 +147,11 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
 
     }
 
+    @Override
+    public void onStateChanged(int state) {
+
+    }
+
     @OnClick(R.id.btn_cancel)
     void onClickCancel() {
         close();
