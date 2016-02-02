@@ -67,6 +67,15 @@
         </RelativeLayout>
 
 
+        <ProgressBar
+            android:id="@+id/uploadProgressBar"
+            style="?android:progressBarStyleHorizontal"
+            android:layout_margin="32dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+
     </LinearLayout>
 
     <LinearLayout

@@ -220,5 +220,7 @@ public class MomentShareHelper {
         void onCancelShare();
 
         void onError(int errorCode, int errorResId);
+
+        void onUploadProgress(int uploadPercentage);
     }
 }

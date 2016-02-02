@@ -8,14 +8,18 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.story.Story;
 import com.waylens.hachi.ui.fragments.CameraVideoPlayFragment;
+import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
@@ -45,6 +49,48 @@ public class StoryEditActivity extends BaseActivity {
 
     @Bind(R.id.titleEditor)
     EditText mTitleEditor;
+
+    @Bind(R.id.uploadProgressBar)
+    ProgressBar mUploadProgressBar;
+
+    @Bind(R.id.btnShare)
+    ImageButton mBtnShare;
+
+    @OnClick(R.id.btnShare)
+    public void onBtnShareClicked() {
+        // First check if it is logined
+        SessionManager sessionManager = SessionManager.getInstance();
+        if (!sessionManager.isLoggedIn()) {
+            LoginActivity.launch(this);
+            return;
+        }
+
+        mUploadProgressBar.setVisibility(View.VISIBLE);
+        MomentShareHelper helper = new MomentShareHelper(this, new MomentShareHelper.OnShareMomentListener() {
+            @Override
+            public void onShareSuccessful() {
+
+            }
+
+            @Override
+            public void onCancelShare() {
+
+            }
+
+            @Override
+            public void onError(int errorCode, int errorResId) {
+
+            }
+
+            @Override
+            public void onUploadProgress(int uploadPercentage) {
+
+            }
+        });
+        String[] tags = new String[]{"Shanghai", "car"};
+        helper.shareMoment(mStory.getPlaylist().getId(), mTitleEditor.getText().toString(), tags, "PUBLIC");
+    }
+
 
 
 

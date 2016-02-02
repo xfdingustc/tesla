@@ -77,6 +77,11 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             public void onError(int errorCode, int errorResId) {
 
             }
+
+            @Override
+            public void onUploadProgress(int uploadPercentage) {
+
+            }
         });
         String title = "";
         String[] tags = new String[]{"Shanghai", "car"};

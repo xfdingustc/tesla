@@ -142,6 +142,11 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
         mViewAnimator.setDisplayedChild(3);
     }
 
+    @Override
+    public void onUploadProgress(int uploadPercentage) {
+
+    }
+
     @OnClick(R.id.btn_cancel)
     void onClickCancel() {
         close();
