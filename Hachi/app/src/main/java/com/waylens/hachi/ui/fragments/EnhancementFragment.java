@@ -62,6 +62,8 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Bind(R.id.tv_music)
     TextView mMusicView;
 
+    int mAudioID;
+
     @OnClick(R.id.btnUpload)
     public void onBtnUploadClicked() {
         MomentShareHelper helper = new MomentShareHelper(getActivity(), new MomentShareHelper.OnShareMomentListener() {
@@ -92,7 +94,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         });
         String title = "";
         String[] tags = new String[]{"Shanghai", "car"};
-        helper.shareMoment(mPlaylist.getId(), title, tags, "PUBLIC");
+        helper.shareMoment(mPlaylist.getId(), title, tags, "PUBLIC", 0);
     }
 
     private int mEditMode;
@@ -209,7 +211,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
 
     @OnClick(R.id.btn_share)
     void onClickShare() {
-
+        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
     }
 
     @OnClick(R.id.btn_music)
@@ -317,7 +319,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("test", "Intent: " + intent.getAction());
+            mAudioID = intent.getIntExtra("music-id", 0);
             String name = intent.getStringExtra("name");
             mMusicView.setText("Music: " + name);
             mAudioPath = intent.getStringExtra("path");

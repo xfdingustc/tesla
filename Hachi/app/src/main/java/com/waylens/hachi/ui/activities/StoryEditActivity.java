@@ -93,7 +93,7 @@ public class StoryEditActivity extends BaseActivity {
             }
         });
         String[] tags = new String[]{"Shanghai", "car"};
-        helper.shareMoment(mStory.getPlaylist().getId(), mTitleEditor.getText().toString(), tags, "PUBLIC");
+        helper.shareMoment(mStory.getPlaylist().getId(), mTitleEditor.getText().toString(), tags, "PUBLIC", 0);
     }
 
 

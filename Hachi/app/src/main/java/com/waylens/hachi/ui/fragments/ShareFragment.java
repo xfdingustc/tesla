@@ -51,12 +51,14 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
 
     private MomentShareHelper mShareHelper;
 
+    int mAudioID;
 
-    public static ShareFragment newInstance(SharableClip sharableClip) {
+    public static ShareFragment newInstance(SharableClip sharableClip, int audioID) {
         Bundle args = new Bundle();
         ShareFragment fragment = new ShareFragment();
         fragment.setArguments(args);
         fragment.mSharableClip = sharableClip;
+        fragment.mAudioID = audioID;
         return fragment;
     }
 
@@ -117,8 +119,8 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
         mShareHelper = new MomentShareHelper(getActivity(), this);
         String title = "";
         String[] tags = new String[]{"Shanghai", "car"};
-        //mShareHelper.shareMoment(mSharableClip, title, tags, "PUBLIC");
-        mShareHelper.shareMoment(0x100, title, tags, "PUBLIC");
+        mShareHelper.shareMoment(mSharableClip, title, tags, "PUBLIC", mAudioID);
+        //mShareHelper.shareMoment(0x100, title, tags, "PUBLIC", mAudioID);
     }
 
     @Override

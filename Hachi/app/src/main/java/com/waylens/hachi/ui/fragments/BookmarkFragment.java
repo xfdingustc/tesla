@@ -249,7 +249,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
 
     @Override
     public void onShareClip(SharableClip sharableClip) {
-        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(sharableClip)).commit();
+        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(sharableClip, 0)).commit();
     }
 
     @Override

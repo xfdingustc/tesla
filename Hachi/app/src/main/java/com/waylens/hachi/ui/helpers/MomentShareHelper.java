@@ -52,7 +52,6 @@ public class MomentShareHelper {
     Handler mHandler;
 
 
-
     public MomentShareHelper(Context context, @NonNull OnShareMomentListener listener) {
         mVdbRequestQueue = Snipe.newRequestQueue();
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(context);
@@ -72,7 +71,7 @@ public class MomentShareHelper {
 
     /**
      * Share Moment to Waylens cloud.
-     *
+     * <p/>
      * Please make sure to call cancel() method to terminate the background thread,
      *
      * @param sharableClip
@@ -80,13 +79,13 @@ public class MomentShareHelper {
      * @param tags
      * @param accessLevel
      */
-    public void shareMoment(SharableClip sharableClip, String title, String[] tags, String accessLevel) {
-        uploadDataTask(new SharableClip[]{sharableClip}, title, tags, accessLevel);
+    public void shareMoment(SharableClip sharableClip, String title, String[] tags, String accessLevel, int audioID) {
+        uploadDataTask(new SharableClip[]{sharableClip}, title, tags, accessLevel, audioID);
     }
 
     /**
      * Share playList to Waylens cloud.
-     *
+     * <p/>
      * Please make sure to call cancel() method to terminate the background thread.
      *
      * @param playListID
@@ -94,11 +93,11 @@ public class MomentShareHelper {
      * @param tags
      * @param accessLevel
      */
-    public void shareMoment(int playListID, String title, String[] tags, String accessLevel) {
-        uploadDataTask(playListID, title, tags, accessLevel);
+    public void shareMoment(int playListID, String title, String[] tags, String accessLevel, int audioID) {
+        uploadDataTask(playListID, title, tags, accessLevel, audioID);
     }
 
-    JSONObject createMoment(String title, String[] tags, String accessLevel) {
+    JSONObject createMoment(String title, String[] tags, String accessLevel, int audioID) {
         final CountDownLatch latch = new CountDownLatch(1);
         final JSONObject[] results = new JSONObject[]{null};
 
@@ -111,8 +110,10 @@ public class MomentShareHelper {
             }
             params.put("hashTags", hashTags);
             params.put("accessLevel", accessLevel);
-            params.put("audioType", 1);
-            params.put("musicSource", "2");
+            if (audioID > 0) {
+                params.put("audioType", 1);
+                params.put("musicSource", "" + audioID);
+            }
             Log.e("test", "params: " + params);
         } catch (JSONException e) {
             Log.e("test", "", e);
@@ -144,11 +145,11 @@ public class MomentShareHelper {
         return results[0];
     }
 
-    void uploadDataTask(final SharableClip[] sharableClips, final String title, final String[] tags, final String accessLevel) {
+    void uploadDataTask(final SharableClip[] sharableClips, final String title, final String[] tags, final String accessLevel, final int audioID) {
         mUploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                int result = uploadData(sharableClips, title, tags, accessLevel);
+                int result = uploadData(sharableClips, title, tags, accessLevel, audioID);
                 uploaderV2 = null;
                 mUploadThread = null;
                 if (mShareListener != null) {
@@ -159,7 +160,7 @@ public class MomentShareHelper {
         mUploadThread.start();
     }
 
-    void uploadDataTask(final int playListID, final String title, final String[] tags, final String accessLevel) {
+    void uploadDataTask(final int playListID, final String title, final String[] tags, final String accessLevel, final int audioID) {
         mUploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -170,7 +171,7 @@ public class MomentShareHelper {
                     sharableClips[i] = new SharableClip(playList.getClip(i));
                 }
 
-                int result = uploadData(sharableClips, title, tags, accessLevel);
+                int result = uploadData(sharableClips, title, tags, accessLevel, audioID);
                 uploaderV2 = null;
                 mUploadThread = null;
                 if (mShareListener != null) {
@@ -223,12 +224,12 @@ public class MomentShareHelper {
         });
     }
 
-    int uploadData(SharableClip[] sharableClips, String title, String[] tags, String accessLevel) {
+    int uploadData(SharableClip[] sharableClips, String title, String[] tags, String accessLevel, int audioID) {
         try {
             if (isCancelled) {
                 return CrsCommand.RES_STATE_CANCELLED;
             }
-            JSONObject momentInfo = createMoment(title, tags, accessLevel);
+            JSONObject momentInfo = createMoment(title, tags, accessLevel, audioID);
             if (isCancelled) {
                 return CrsCommand.RES_STATE_CANCELLED;
             }

@@ -188,6 +188,7 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
     @Override
     public void onAddMusic(MusicItem musicItem) {
         Intent intent = new Intent("choose-bg-music");
+        intent.putExtra("music-id", musicItem.id);
         intent.putExtra("name", musicItem.title);
         intent.putExtra("path", musicItem.localPath);
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
