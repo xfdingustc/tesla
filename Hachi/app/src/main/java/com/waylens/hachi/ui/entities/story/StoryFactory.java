@@ -108,7 +108,6 @@ public class StoryFactory {
     }
 
 
-
     private void doAddClipSetIntoPlaylist(final Story story) {
         final ClipSet clipSet = story.getClipSet();
         mClipAdded = 0;
@@ -118,13 +117,14 @@ public class StoryFactory {
         for (int i = 0; i < clipSetCount; i++) {
             final Clip clip = clipSet.getClip(i);
 
+            int duration = Math.min(clip.getDurationMs(), mStrategy.getMaxiumClipLengthMs());
+
             PlaylistEditRequest playRequest = new PlaylistEditRequest(PlaylistEditRequest.METHOD_INSERT_CLIP,
-                clip, clip.getStartTimeMs(), clip.getStartTimeMs() + clip.getDurationMs(), story
-                .getPlaylist(), new VdbResponse.Listener<Integer>() {
+                clip, clip.getStartTimeMs(), clip.getStartTimeMs() + duration, story.getPlaylist(), new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
                     Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + clip.cid + " " +
-                        "realId: " + clip.realCid );
+                        "realId: " + clip.realCid);
                     mClipAdded++;
 
                     if (mListener != null) {

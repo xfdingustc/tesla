@@ -7,4 +7,6 @@ public interface StoryStrategy {
     int getClipType();
 
     int getMaxiumClipCount();
+
+    int getMaxiumClipLengthMs();
 }

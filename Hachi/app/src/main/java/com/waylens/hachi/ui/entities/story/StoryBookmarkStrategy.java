@@ -15,4 +15,9 @@ public class StoryBookmarkStrategy implements StoryStrategy {
     public int getMaxiumClipCount() {
         return 3;
     }
+
+    @Override
+    public int getMaxiumClipLengthMs() {
+        return 5;
+    }
 }

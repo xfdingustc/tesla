@@ -41,6 +41,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
 
 
+
+
     SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
     SparseIntArray mTypedState = new SparseIntArray();
     SparseIntArray mTypedPosition = new SparseIntArray();
@@ -72,6 +74,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.mVdbRequestQueue = vdbRequestQueue;
         fragment.mPlayList = mPlaylist;
         fragment.mPlayMode = MODE_PLAYLIST;
+        fragment.mOverlayShouldDisplay = false;
 //        fragment.mClip = clip;
 //        fragment.mTypedState.put(RawDataItem.DATA_TYPE_OBD, RAW_DATA_STATE_UNKNOWN);
 //        fragment.mTypedState.put(RawDataItem.DATA_TYPE_ACC, RAW_DATA_STATE_UNKNOWN);
@@ -109,28 +112,30 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     protected void setProgress(int currentPosition, int duration) {
         // TODO:
-//        if (mPlaybackUrl.realTimeMs != 0
-//                && mInitPosition == 0
-//                && currentPosition != 0
-//                && Math.abs(mPlaybackUrl.realTimeMs - currentPosition) < 200) {
-//            mInitPosition = mPlaybackUrl.realTimeMs;
-//            Log.e("test", "setProgress - deviation: " + Math.abs(mPlaybackUrl.realTimeMs - currentPosition));
-//        }
-//        //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
-//        //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
-//        int position = currentPosition;
-//        if (duration > 0) {
-//            //Log.e("test", "setProgress - position: " + position + "; real: "
-//            //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
-//            if (mInitPosition == 0) {
-//                position = currentPosition + (int) mPlaybackUrl.realTimeMs;
-//            }
-//        }
-//
-//        displayOverlay(position);
-//        if (mProgressListener != null) {
-//            mProgressListener.onProgress(position, duration);
-//        }
+        if (mPlaybackUrl.realTimeMs != 0
+                && mInitPosition == 0
+                && currentPosition != 0
+                && Math.abs(mPlaybackUrl.realTimeMs - currentPosition) < 200) {
+            mInitPosition = mPlaybackUrl.realTimeMs;
+            Log.e("test", "setProgress - deviation: " + Math.abs(mPlaybackUrl.realTimeMs - currentPosition));
+        }
+        //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
+        //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
+        int position = currentPosition;
+        if (duration > 0) {
+            //Log.e("test", "setProgress - position: " + position + "; real: "
+            //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
+            if (mInitPosition == 0) {
+                position = currentPosition + (int) mPlaybackUrl.realTimeMs;
+            }
+        }
+
+        if (mOverlayShouldDisplay) {
+            displayOverlay(position);
+        }
+        if (mProgressListener != null) {
+            mProgressListener.onProgress(position, duration);
+        }
     }
 
     @Override

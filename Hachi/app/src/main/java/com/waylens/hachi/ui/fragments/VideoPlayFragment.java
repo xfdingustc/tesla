@@ -42,8 +42,8 @@ import butterknife.ButterKnife;
  * Created by Richard on 10/26/15.
  */
 public abstract class VideoPlayFragment extends Fragment implements View.OnClickListener,
-        MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
+    MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
+    MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
 
     private static final String TAG = VideoPlayFragment.class.getSimpleName();
 
@@ -72,6 +72,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private int mTargetState = STATE_IDLE;
 
     protected int mRawDataState = RAW_DATA_STATE_UNKNOWN;
+
+    protected boolean mOverlayShouldDisplay = true;
 
     public static VideoPlayFragment fullScreenPlayer;
 
@@ -168,7 +170,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -181,8 +182,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         if (mDragListener != null) {
             mVideoContainer.setOnViewDragListener(mDragListener);
         }
-
-
 
 
     }
@@ -237,11 +236,11 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
 
         if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+            || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            mPortraitParams = (FrameLayout.LayoutParams)mDashboardLayout.getLayoutParams();
-            mPortraitInfoPanelParems = (FrameLayout.LayoutParams)mInfoPanel.getLayoutParams();
+            mPortraitParams = (FrameLayout.LayoutParams) mDashboardLayout.getLayoutParams();
+            mPortraitInfoPanelParems = (FrameLayout.LayoutParams) mInfoPanel.getLayoutParams();
 
             mRootContainer.removeView(mVideoContainer);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -378,16 +377,19 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     private boolean isInPlaybackState() {
         return (mMediaPlayer != null &&
-                mCurrentState != STATE_ERROR &&
-                mCurrentState != STATE_IDLE &&
-                mCurrentState != STATE_PREPARING);
+            mCurrentState != STATE_ERROR &&
+            mCurrentState != STATE_IDLE &&
+            mCurrentState != STATE_PREPARING);
     }
 
     protected void openVideo() {
         if (mVideoSource == null
-                || mSurfaceView == null
-                || mSurfaceHolder == null
-                /*|| mRawDataState == RAW_DATA_STATE_UNKNOWN*/) {
+            || mSurfaceView == null
+            || mSurfaceHolder == null) {
+            return;
+        }
+
+        if (mOverlayShouldDisplay && mRawDataState == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
 
@@ -549,7 +551,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private void hideControllers() {
         mVideoController.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                && mCurrentState == STATE_PLAYING) {
+            && mCurrentState == STATE_PLAYING) {
             hideSystemUI();
         }
     }
