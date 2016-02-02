@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
@@ -188,6 +189,14 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @OnClick(R.id.btn_share)
     void onClickShare() {
 
+    }
+
+    @OnClick(R.id.btn_music)
+    void onClickMusic() {
+        getFragmentManager().beginTransaction()
+                .add(R.id.root_container, new MusicFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     @OnClick(R.id.btn_gauge)
