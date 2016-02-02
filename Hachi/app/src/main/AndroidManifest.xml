@@ -60,6 +60,8 @@
             />
         <activity android:name=".ui.activities.LiveViewSettingActivity"/>
 
+        <activity android:name=".ui.activities.StoryEditActivity"/>
+
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity
             android:name=".ui.activities.ClipPlaybackActivity"

@@ -14,6 +14,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.ui.activities.StoryEditActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.entities.story.Story;
 import com.waylens.hachi.ui.entities.story.StoryFactory;
@@ -58,8 +59,11 @@ public class StoriesFragment extends BaseFragment {
                 @Override
                 public void onCreateFinished(final Story story) {
 //                    Logger.t(TAG).d("sharableClips: " + sharableClips.get(0).toString());
-                    getFragmentManager().beginTransaction().add(R.id.root_container,
-                        EnhancementFragment.newInstance(story.getPlaylist())).commit();
+//                    getFragmentManager().beginTransaction().add(R.id.root_container,
+//                        EnhancementFragment.newInstance(story.getPlaylist())).commit();
+                    StoryEditActivity.launch(getActivity(), story);
+                    mIvCreateStories.setVisibility(View.VISIBLE);
+                    mCreateStoryProgress.setVisibility(View.GONE);
 
                 }
             });

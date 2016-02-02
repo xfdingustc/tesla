@@ -139,6 +139,14 @@
                     android:src="@drawable/ic_undo_white_24dp"
                     />
 
+                <ImageButton
+                    android:id="@+id/btnUpload"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_toLeftOf="@id/btn_undo"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/social_share"/>
+
 
             </RelativeLayout>
 

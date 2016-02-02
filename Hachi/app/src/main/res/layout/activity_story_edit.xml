@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="?attr/defaultBgColor"
+              android:orientation="vertical">
+
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:id="@+id/enhance_fragment_content"
+        android:layout_width="match_parent"
+        android:layout_height="202dp"
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp">
+
+        <ImageView
+            android:id="@+id/video_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
+            android:id="@+id/btn_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_play_circle_outline_white_48dp"/>
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+</LinearLayout>

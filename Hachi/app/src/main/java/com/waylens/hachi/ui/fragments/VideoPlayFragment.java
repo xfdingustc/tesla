@@ -289,7 +289,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         float scale = 1.0f;
         if (!landScape) {
             int width = parent.getMeasuredWidth();
-            int height = parent.getMeasuredHeight();
 
             if (mWidthScale == 0) {
                 mWidthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
@@ -299,7 +298,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             scale = mWidthScale;
         }
 
-//        Logger.t(TAG).d("Set scale as: " + scale);
         mDashboardLayout.setScaleX(scale);
         mDashboardLayout.setScaleY(scale);
         mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -432,7 +430,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.e("test", "surfaceCreated");
+        Logger.t(TAG).d("surfaceCreated");
         mSurfaceHolder = holder;
         if (!isInPlaybackState()) {
             openVideo();

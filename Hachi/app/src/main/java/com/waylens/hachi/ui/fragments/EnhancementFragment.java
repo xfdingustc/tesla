@@ -18,6 +18,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
@@ -57,6 +58,29 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
+
+    @OnClick(R.id.btnUpload)
+    public void onBtnUploadClicked() {
+        MomentShareHelper helper = new MomentShareHelper(getActivity(), new MomentShareHelper.OnShareMomentListener() {
+            @Override
+            public void onShareSuccessful() {
+
+            }
+
+            @Override
+            public void onCancelShare() {
+
+            }
+
+            @Override
+            public void onError(int errorCode, int errorResId) {
+
+            }
+        });
+        String title = "";
+        String[] tags = new String[]{"Shanghai", "car"};
+        helper.shareMoment(mPlaylist.getId(), title, tags, "PUBLIC");
+    }
 
     private int mEditMode;
     private SharableClip mSharableClip;
