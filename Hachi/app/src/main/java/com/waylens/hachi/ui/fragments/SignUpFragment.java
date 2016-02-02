@@ -25,7 +25,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.soundcloud.android.crop.Crop;
 import com.waylens.hachi.R;
@@ -367,7 +366,7 @@ public class SignUpFragment extends BaseFragment {
     }
 
     private void beginCrop(Uri source) {
-        File file = new File(ImageUtils.getImageStorageDir(getActivity(), "cropped"), "avatar.png");
+        File file = new File(ImageUtils.getStorageDir(getActivity(), "cropped"), "avatar.png");
         Uri destination = Uri.fromFile(file);
         Crop.of(Uri.fromFile(mImageFile), destination).asSquare().start(getActivity(), this);
     }

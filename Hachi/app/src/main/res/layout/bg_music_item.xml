@@ -41,6 +41,18 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp">
         <TextView
+            android:id="@+id/download_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFF5F5F5"
+            android:textSize="14sp"
+            android:layout_gravity="center"
+            android:text="@string/music_waiting"/>
+        <ProgressBar
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"/>
+        <TextView
             android:id="@+id/music_length"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,7 +80,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:scaleType="center"
-                android:src="@drawable/ic_play_arrow_white_24dp"
+                android:src="@drawable/ic_pause_white_24dp"
                 android:contentDescription="@null"
                 android:background="?attr/selectableItemBackground"/>
         </LinearLayout>

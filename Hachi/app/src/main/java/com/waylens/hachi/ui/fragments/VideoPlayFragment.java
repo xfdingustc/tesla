@@ -26,8 +26,8 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.DragLayout;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
@@ -42,8 +42,8 @@ import butterknife.ButterKnife;
  * Created by Richard on 10/26/15.
  */
 public abstract class VideoPlayFragment extends Fragment implements View.OnClickListener,
-    MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
+        MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
 
     private static final String TAG = VideoPlayFragment.class.getSimpleName();
 
@@ -236,7 +236,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
 
         if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+                || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             mPortraitParams = (FrameLayout.LayoutParams) mDashboardLayout.getLayoutParams();
@@ -356,7 +356,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         fadeOutControllers(DEFAULT_TIMEOUT);
     }
 
-    private void pauseVideo() {
+    void pauseVideo() {
         mMediaPlayer.pause();
         mPausePosition = mMediaPlayer.getCurrentPosition();
         mCurrentState = STATE_PAUSED;
@@ -365,7 +365,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
-    private void start() {
+    void start() {
         if (isInPlaybackState()) {
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
@@ -375,24 +375,30 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
     }
 
-    private boolean isInPlaybackState() {
+    void mute(boolean isMute) {
+        int volume = isMute ? 0 : 1;
+        if (isInPlaybackState()) {
+            mMediaPlayer.setVolume(volume, volume);
+        }
+    }
+
+    boolean isInPlaybackState() {
         return (mMediaPlayer != null &&
-            mCurrentState != STATE_ERROR &&
-            mCurrentState != STATE_IDLE &&
-            mCurrentState != STATE_PREPARING);
+                mCurrentState != STATE_ERROR &&
+                mCurrentState != STATE_IDLE &&
+                mCurrentState != STATE_PREPARING);
     }
 
     protected void openVideo() {
         if (mVideoSource == null
-            || mSurfaceView == null
-            || mSurfaceHolder == null) {
+                || mSurfaceView == null
+                || mSurfaceHolder == null) {
             return;
         }
 
         if (mOverlayShouldDisplay && mRawDataState == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
-
 
         mProgressLoading.setVisibility(View.VISIBLE);
         try {
@@ -486,7 +492,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         }
     }
 
-    private void release(final boolean clearTargetState) {
+    void release(final boolean clearTargetState) {
         final MediaPlayer mediaPlayer = mMediaPlayer;
         mMediaPlayer = null;
         mCurrentState = STATE_IDLE;
@@ -544,7 +550,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             return;
         }
         int visibitliy = mVideoController.getVisibility() == View.VISIBLE ? View.INVISIBLE : View
-            .VISIBLE;
+                .VISIBLE;
         mVideoController.setVisibility(visibitliy);
         mInfoPanel.setVisibility(visibitliy);
     }
@@ -567,7 +573,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private void hideControllers() {
         mVideoController.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            && mCurrentState == STATE_PLAYING) {
+                && mCurrentState == STATE_PLAYING) {
             hideSystemUI();
         }
     }

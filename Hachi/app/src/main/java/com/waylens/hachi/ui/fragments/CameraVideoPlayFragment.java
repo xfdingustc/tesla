@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,6 +25,9 @@ import com.waylens.hachi.vdb.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 
+import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+
 /**
  * Play Camera Video
  * Created by Richard on 11/4/15.
@@ -39,7 +43,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     private Playlist mPlayList;
     private int mPlayMode;
 
-
+    MediaPlayer mAudioPlayer;
 
 
 
@@ -49,6 +53,10 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     PlaybackUrl mPlaybackUrl;
     long mInitPosition;
+
+    String mAudioPath;
+
+    boolean isAudioPrepared;
 
     public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
                                                       Clip clip,
@@ -65,6 +73,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.mDragListener = listener;
         return fragment;
     }
+
     public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
                                                       Playlist mPlaylist,
                                                       OnViewDragListener listener) {
@@ -97,11 +106,13 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         } else {
             loadPlayURL();
         }
+        openAudio();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        releaseAudioPlayer();
     }
 
     @Override
@@ -109,6 +120,90 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         //mVdbRequestQueue.cancelAll(REQUEST_TAG);
         super.onDestroyView();
     }
+
+    @Override
+    void release(boolean clearTargetState) {
+        super.release(clearTargetState);
+        releaseAudioPlayer();
+    }
+
+    @Override
+    protected void openVideo() {
+        if (shouldPlayAudio()) {
+            openAudio();
+        }
+        super.openVideo();
+    }
+
+    void releaseAudioPlayer() {
+        if (mAudioPlayer != null) {
+            mAudioPlayer.reset();
+            mAudioPlayer.release();
+            mAudioPlayer = null;
+        }
+    }
+
+    public void setBackgroundMusic(String audioPath) {
+        mAudioPath = audioPath;
+    }
+
+    void openAudio() {
+        if (mAudioPath == null) {
+            return;
+        }
+        mAudioPlayer = new MediaPlayer();
+        try {
+            mAudioPlayer.setDataSource(mAudioPath);
+            mAudioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    onAudioPrepared(mp);
+                }
+            });
+            mAudioPlayer.prepareAsync();
+        } catch (IOException e) {
+            Log.e("test", "", e);
+        }
+
+    }
+
+    @Override
+    void pauseVideo() {
+        super.pauseVideo();
+        if (mAudioPlayer != null && mAudioPlayer.isPlaying()) {
+            mAudioPlayer.pause();
+        }
+    }
+
+    @Override
+    void start() {
+        if (shouldPlayAudio()) {
+            if (isInPlaybackState() && isInAudioPlayState()) {
+                mute(true);
+                super.start();
+                mAudioPlayer.start();
+            }
+        } else {
+            mute(false);
+            super.start();
+        }
+    }
+
+    boolean isInAudioPlayState() {
+        return mAudioPath != null
+                && mAudioPlayer != null
+                && isAudioPrepared;
+    }
+
+    boolean shouldPlayAudio() {
+        return mAudioPath != null;
+    }
+
+    void onAudioPrepared(MediaPlayer mp) {
+        isAudioPrepared = true;
+        start();
+    }
+
 
     protected void setProgress(int currentPosition, int duration) {
         // TODO:
@@ -280,7 +375,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     private void loadPlaylist() {
         PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayList,
-            0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
+                0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
             @Override
             public void onResponse(PlaylistPlaybackUrl response) {
                 Logger.t(TAG).d("Get playlist: " + response.url);

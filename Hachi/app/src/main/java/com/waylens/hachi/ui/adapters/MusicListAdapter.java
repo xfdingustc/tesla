@@ -1,5 +1,8 @@
 package com.waylens.hachi.ui.adapters;
 
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.ViewAnimator;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.MusicItem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -27,6 +31,14 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     ArrayList<MusicItem> mMusicItems = new ArrayList<>();
 
     ViewHolder currentHolder;
+
+    MediaPlayer mMediaPlayer;
+
+    OnMusicActionListener mListener;
+
+    public MusicListAdapter(OnMusicActionListener listener) {
+        mListener = listener;
+    }
 
     public void setMusicItems(ArrayList<MusicItem> musicItems) {
         if (musicItems == null) {
@@ -44,31 +56,40 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        MusicItem musicItem = mMusicItems.get(position);
+        final MusicItem musicItem = mMusicItems.get(position);
         holder.musicTitle.setText(musicItem.title);
-        holder.musicLength.setText(DateUtils.formatElapsedTime(musicItem.length / 1000l));
-        holder.itemContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentHolder != null && currentHolder != holder && currentHolder.isInPreviewMode()) {
-                    currentHolder.toggleMode();
+        holder.musicLength.setText(DateUtils.formatElapsedTime(musicItem.duration));
+        if (musicItem.isDownloading) {
+            holder.setDownloadStatus(ViewHolder.STATUS_DOWNLOADING);
+        } else if (musicItem.localPath != null) {
+            holder.setDownloadStatus(ViewHolder.STATUS_NORMAL);
+            holder.itemContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (currentHolder != null && currentHolder != holder && currentHolder.isInPreviewMode()) {
+                        currentHolder.toggleMode();
+                    }
+                    holder.toggleMode();
+                    currentHolder = holder;
+                    previewAudio(musicItem);
                 }
-                holder.toggleMode();
-                currentHolder = holder;
-            }
-        });
+            });
+        } else {
+            holder.setDownloadStatus(ViewHolder.STATUS_WAITING);
+        }
+
 
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("test", "Click add");
+                mListener.onAddMusic(musicItem);
             }
         });
 
         holder.btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("test", "Click Play");
+                togglePlayMode(holder);
             }
         });
     }
@@ -76,6 +97,59 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     @Override
     public int getItemCount() {
         return mMusicItems.size();
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        releaseMediaPlayer();
+    }
+
+    public void updateMusicItem(MusicItem musicItem) {
+        int index = mMusicItems.indexOf(musicItem);
+        notifyItemChanged(index);
+    }
+
+    void previewAudio(MusicItem musicItem) {
+        releaseMediaPlayer();
+        mMediaPlayer = new MediaPlayer();
+        try {
+            mMediaPlayer.setDataSource(musicItem.localPath);
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Log.e("test", "", e);
+        }
+    }
+
+    boolean isPlaying() {
+        return mMediaPlayer != null && mMediaPlayer.isPlaying();
+    }
+
+    void togglePlayMode(ViewHolder holder) {
+        if (mMediaPlayer == null) {
+            return;
+        }
+        if (isPlaying()) {
+            mMediaPlayer.pause();
+            holder.btnPlay.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+        } else {
+            mMediaPlayer.start();
+            holder.btnPlay.setImageResource(R.drawable.ic_pause_white_24dp);
+        }
+    }
+
+    void releaseMediaPlayer() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -96,10 +170,15 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         ViewAnimator viewAnimator;
 
         @Bind(R.id.music_btn_add)
-        View btnAdd;
+        ImageView btnAdd;
 
         @Bind(R.id.music_btn_play)
-        View btnPlay;
+        ImageView btnPlay;
+
+        static final int STATUS_WAITING = 0;
+        static final int STATUS_DOWNLOADING = 1;
+        static final int STATUS_NORMAL = 2;
+        static final int STATUS_PREVIEW = 3;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -107,11 +186,24 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         }
 
         public void toggleMode() {
-            viewAnimator.setDisplayedChild(viewAnimator.getDisplayedChild() + 1 % 2);
+            if (viewAnimator.getDisplayedChild() == STATUS_NORMAL) {
+                viewAnimator.setDisplayedChild(STATUS_PREVIEW);
+            } else {
+                viewAnimator.setDisplayedChild(STATUS_NORMAL);
+            }
+
         }
 
         public boolean isInPreviewMode() {
-            return viewAnimator.getDisplayedChild() == 1;
+            return viewAnimator.getDisplayedChild() == STATUS_PREVIEW;
         }
+
+        public void setDownloadStatus(int status) {
+            viewAnimator.setDisplayedChild(status);
+        }
+    }
+
+    public interface OnMusicActionListener {
+        void onAddMusic(MusicItem musicItem);
     }
 }

@@ -31,7 +31,7 @@ public class DiskLruCache {
      */
     protected DiskLruCache(Context context, int maxSize) {
         mFileLruCache = new FileLruCache(maxSize);
-        cacheDir = ImageUtils.getImageStorageDir(context, "diskCache");
+        cacheDir = ImageUtils.getStorageDir(context, "diskCache");
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
         }

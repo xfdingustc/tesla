@@ -70,10 +70,30 @@ public class MomentShareHelper {
         }
     }
 
+    /**
+     * Share Moment to Waylens cloud.
+     *
+     * Please make sure to call cancel() method to terminate the background thread,
+     *
+     * @param sharableClip
+     * @param title
+     * @param tags
+     * @param accessLevel
+     */
     public void shareMoment(SharableClip sharableClip, String title, String[] tags, String accessLevel) {
         uploadDataTask(new SharableClip[]{sharableClip}, title, tags, accessLevel);
     }
 
+    /**
+     * Share playList to Waylens cloud.
+     *
+     * Please make sure to call cancel() method to terminate the background thread.
+     *
+     * @param playListID
+     * @param title
+     * @param tags
+     * @param accessLevel
+     */
     public void shareMoment(int playListID, String title, String[] tags, String accessLevel) {
         uploadDataTask(playListID, title, tags, accessLevel);
     }
@@ -91,6 +111,8 @@ public class MomentShareHelper {
             }
             params.put("hashTags", hashTags);
             params.put("accessLevel", accessLevel);
+            params.put("audioType", 1);
+            params.put("musicSource", "2");
             Log.e("test", "params: " + params);
         } catch (JSONException e) {
             Log.e("test", "", e);

@@ -154,7 +154,7 @@
                 android:id="@+id/tv_clip_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:text="Today, 05:38:09"
                 android:textColor="@color/text_enhance"/>
 
@@ -172,9 +172,15 @@
 
             <View
                 android:layout_width="2dp"
-                android:layout_height="48dp"
+                android:layout_height="24dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/text_enhance"/>
+            <TextView
+                android:id="@+id/tv_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
 
         <android.support.v4.view.ViewPager

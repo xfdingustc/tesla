@@ -75,5 +75,7 @@ public class Constants {
 
     public static final String MAP_BOX_ACCESS_TOKEN = "sk.eyJ1IjoibGlhbmd5eCIsImEiOiJjaWduYjFmajIwMGEyNjFtMzAyZ2xkNTN6In0.k1oa9ynRfAHp_3ka68JJ_w";
 
+    public static final String API_MUSICS = "api/musics";
+
     public enum EventType {FOLLOW_USER, COMMENT_MOMENT, LIKE_MOMENT, REFER_USER, PUBLISH_NEWS}
 }

@@ -1,9 +1,13 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -20,16 +24,11 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
+import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.Playlist;
-
-import org.jcodec.common.ArrayUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -59,6 +58,9 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
+
+    @Bind(R.id.tv_music)
+    TextView mMusicView;
 
     @OnClick(R.id.btnUpload)
     public void onBtnUploadClicked() {
@@ -99,6 +101,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
 
     private VdbImageLoader mImageLoader;
 
+    String mAudioPath;
 
     CameraVideoPlayFragment mVideoPlayFragment;
     SimplePagerAdapter mPagerAdapter;
@@ -148,7 +151,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         } else {
             Clip firstClip = mPlaylist.getClip(0);
             clipPos = new ClipPos(firstClip, firstClip.getStartTimeMs(), ClipPos.TYPE_POSTER,
-                false);
+                    false);
             mClipDateView.setText(firstClip.getDateTimeString());
             initSeekBarPlayList();
         }
@@ -159,12 +162,19 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         if (mVideoPlayFragment != null) {
             getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
             mVideoPlayFragment = null;
         }
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -179,8 +189,9 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
         } else {
             mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
-                mPlaylist, null);
+                    mPlaylist, null);
         }
+        mVideoPlayFragment.setBackgroundMusic(mAudioPath);
         mVideoPlayFragment.setOnProgressListener(this);
         getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
         videoCover.setVisibility(View.INVISIBLE);
@@ -217,7 +228,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     private void initSeekBarSingleClip() {
         final ClipPos clipPos = new ClipPos(mSharableClip.clip, mSharableClip.clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mSeekBar.setInitRangeValues(mSharableClip.clip.getStartTimeMs(), mSharableClip.clip
-            .getStartTimeMs() + mSharableClip.clip.getDurationMs());
+                .getStartTimeMs() + mSharableClip.clip.getDurationMs());
 
         ClipSet clipSet = new ClipSet(0);
         clipSet.addClip(mSharableClip.clip);
@@ -274,8 +285,8 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     static class SimplePagerAdapter extends PagerAdapter {
 
         static int[] view_layouts = new int[]{
-            R.layout.layout_gauge_one,
-            R.layout.layout_gauge_two,
+                R.layout.layout_gauge_one,
+                R.layout.layout_gauge_two,
         };
 
         @Override
@@ -301,4 +312,20 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             Log.e("test", "destroyItem");
         }
     }
+
+
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("test", "Intent: " + intent.getAction());
+            String name = intent.getStringExtra("name");
+            mMusicView.setText("Music: " + name);
+            mAudioPath = intent.getStringExtra("path");
+            if (mVideoPlayFragment != null) {
+                getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commit();
+                videoCover.setVisibility(View.VISIBLE);
+                mVideoPlayFragment = null;
+            }
+        }
+    };
 }

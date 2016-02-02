@@ -34,7 +34,7 @@ public class ImageUtils {
                 .discCacheFileNameGenerator(new Md5FileNameGenerator())
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
                 .discCacheFileCount(300)
-                .discCache(new UnlimitedDiskCache(getImageStorageDir(context, "cache-img")))
+                .discCache(new UnlimitedDiskCache(getStorageDir(context, "cache-img")))
                 .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
                 .imageDownloader(new BaseImageDownloader(context, 5 * 1000, 30 * 1000))
                 .build();
@@ -62,11 +62,11 @@ public class ImageUtils {
                 .build();
     }
 
-    public static String getImageStoragePath(Context context, String type) {
-        return getImageStorageDir(context, type).getPath();
+    public static String getStoragePath(Context context, String type) {
+        return getStorageDir(context, type).getPath();
     }
 
-    public static File getImageStorageDir(Context context, String type) {
+    public static File getStorageDir(Context context, String type) {
         if (isExternalStorageReady()) {
             return new File(context.getExternalCacheDir(), type);
         } else {
