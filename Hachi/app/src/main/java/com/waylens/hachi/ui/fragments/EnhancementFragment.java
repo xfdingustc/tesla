@@ -22,6 +22,7 @@ import android.widget.ViewAnimator;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
@@ -79,6 +80,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
+        ((BaseActivity)getActivity()).getToolbar().setVisibility(View.GONE);
     }
 
     @Override
@@ -89,6 +91,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             mVideoPlayFragment = null;
         }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
+        ((BaseActivity)getActivity()).getToolbar().setVisibility(View.VISIBLE);
     }
 
     @Override
