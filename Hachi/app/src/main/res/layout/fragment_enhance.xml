@@ -89,29 +89,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="36dp">
 
-                <ImageView
-                    android:id="@+id/btn_add_clip"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_enhance_add_clip"/>
+                <!--<ImageView-->
+                    <!--android:id="@+id/btn_add_clip"-->
+                    <!--android:layout_width="24dp"-->
+                    <!--android:layout_height="24dp"-->
+                    <!--android:layout_alignParentLeft="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginLeft="8dp"-->
+                    <!--android:layout_marginRight="16dp"-->
+                    <!--android:background="?android:attr/selectableItemBackground"-->
+                    <!--android:contentDescription="@null"-->
+                    <!--android:src="@drawable/ic_enhance_add_clip"/>-->
 
-                <ImageView
-                    android:id="@+id/btn_bg_music"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_toRightOf="@id/btn_add_clip"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_enhance_bg_music"/>
+                <!--<ImageView-->
+                    <!--android:id="@+id/btn_bg_music"-->
+                    <!--android:layout_width="24dp"-->
+                    <!--android:layout_height="24dp"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginLeft="8dp"-->
+                    <!--android:layout_marginRight="16dp"-->
+                    <!--android:layout_toRightOf="@id/btn_add_clip"-->
+                    <!--android:background="?android:attr/selectableItemBackground"-->
+                    <!--android:contentDescription="@null"-->
+                    <!--android:src="@drawable/ic_enhance_bg_music"/>-->
 
 
                 <ImageView
@@ -139,13 +139,7 @@
                     android:src="@drawable/ic_undo_white_24dp"
                     />
 
-                <ImageButton
-                    android:id="@+id/btnUpload"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_toLeftOf="@id/btn_undo"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/social_share"/>
+
 
 
             </RelativeLayout>
@@ -204,17 +198,17 @@
             android:layout_marginRight="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/btn_enhance_gauge_n"/>
+            android:src="@drawable/btn_enhance_gauge"/>
 
         <ImageView
-            android:id="@+id/btn_filter"
+            android:id="@+id/btn_add_video"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/btn_enhance_filter_n"/>
+            android:src="@drawable/btn_enhance_addvideo"/>
 
         <ImageView
             android:id="@+id/btn_music"
@@ -224,6 +218,6 @@
             android:layout_marginRight="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/btn_enhance_music_n"/>
+            android:src="@drawable/btn_enhance_music"/>
     </LinearLayout>
 </com.waylens.hachi.ui.views.BarrierLinearLayout>

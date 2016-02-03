@@ -19,6 +19,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -40,6 +41,7 @@ import butterknife.Bind;
  * Created by Richard on 2/1/16.
  */
 public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMusicActionListener {
+    private static final String TAG = MusicFragment.class.getSimpleName();
 
     @Bind(R.id.music_list_view)
     RecyclerViewExt mMusicListView;
@@ -135,10 +137,10 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
             if (musicItem != null) {
                 musicItems.add(musicItem);
                 if (!musicItem.isDownloaded()) {
-                    Log.e("test", "Should Download: " + musicItem);
+                    Logger.t(TAG).d("Should Download: " + musicItem);
                     addToDownloadList(musicItem);
                 } else {
-                    Log.e("test", "Exist: " + musicItem);
+                    Logger.t(TAG).d("Exist: " + musicItem);
                 }
             }
         }

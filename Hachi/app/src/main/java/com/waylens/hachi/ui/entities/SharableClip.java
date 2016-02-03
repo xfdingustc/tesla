@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.entities;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.waylens.hachi.snipe.SnipeError;
@@ -124,7 +125,8 @@ public class SharableClip {
 
 
 
-    public static List<SharableClip> processClipSet(ClipSet clipSet, VdbRequestQueue requestQueue) {
+    public static List<SharableClip> processClipSet(@NonNull ClipSet clipSet, VdbRequestQueue
+        requestQueue) {
         ArrayList<SharableClip> sharableClips = new ArrayList<>();
         for (Clip clip : clipSet.getInternalList()) {
             SharableClip sharableClip = new SharableClip(clip, requestQueue);

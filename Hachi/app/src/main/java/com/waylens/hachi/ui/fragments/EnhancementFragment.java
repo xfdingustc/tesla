@@ -41,6 +41,19 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     private static final int MODE_SINGLE_CLIP = 0;
     private static final int MODE_PLAYLIST = 1;
 
+
+    private int mEditMode;
+    private SharableClip mSharableClip;
+    private Playlist mPlaylist;
+
+    private VdbImageLoader mImageLoader;
+
+    private int mAudioID;
+    private String mAudioPath;
+
+    CameraVideoPlayFragment mVideoPlayFragment;
+    SimplePagerAdapter mPagerAdapter;
+
     @Bind(R.id.clip_seek_bar)
     VideoPlayerProgressBar mSeekBar;
 
@@ -62,51 +75,71 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Bind(R.id.tv_music)
     TextView mMusicView;
 
-    int mAudioID;
-
-    @OnClick(R.id.btnUpload)
-    public void onBtnUploadClicked() {
-        MomentShareHelper helper = new MomentShareHelper(getActivity(), new MomentShareHelper.OnShareMomentListener() {
-            @Override
-            public void onShareSuccessful() {
-
-            }
-
-            @Override
-            public void onCancelShare() {
-
-            }
-
-            @Override
-            public void onError(int errorCode, int errorResId) {
-
-            }
-
-            @Override
-            public void onUploadProgress(int uploadPercentage) {
-
-            }
-
-            @Override
-            public void onStateChanged(int state) {
-
-            }
-        });
-        String title = "";
-        String[] tags = new String[]{"Shanghai", "car"};
-        helper.shareMoment(mPlaylist.getId(), title, tags, "PUBLIC", 0);
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
     }
 
-    private int mEditMode;
-    private SharableClip mSharableClip;
-    private Playlist mPlaylist;
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mVideoPlayFragment != null) {
+            getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
+            mVideoPlayFragment = null;
+        }
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
+    }
 
-    private VdbImageLoader mImageLoader;
+    @Override
+    public void onDestroyView() {
+        ButterKnife.unbind(this);
+        super.onDestroyView();
+    }
 
-    String mAudioPath;
+    @OnClick(R.id.btn_play)
+    void playVideo() {
+        if (mEditMode == MODE_SINGLE_CLIP) {
+            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
+        } else {
+            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
+                mPlaylist, null);
+        }
+        mVideoPlayFragment.setBackgroundMusic(mAudioPath);
+        mVideoPlayFragment.setOnProgressListener(this);
+        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
+        videoCover.setVisibility(View.INVISIBLE);
+    }
 
-    CameraVideoPlayFragment mVideoPlayFragment;
-    SimplePagerAdapter mPagerAdapter;
+    @OnClick(R.id.btn_cancel)
+    void onCancel() {
+        close();
+    }
+
+    @OnClick(R.id.btn_ok)
+    void onClickDone() {
+        close();
+    }
+
+    @OnClick(R.id.btn_share)
+    void onClickShare() {
+        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
+    }
+
+    @OnClick(R.id.btn_music)
+    void onClickMusic() {
+        getFragmentManager().beginTransaction()
+            .add(R.id.root_container, new MusicFragment())
+            .addToBackStack(null)
+            .commit();
+    }
+
+    @OnClick(R.id.btn_gauge)
+    void showGauge() {
+        mViewAnimator.setDisplayedChild(1);
+    }
+
+
 
     public static EnhancementFragment newInstance(SharableClip sharableClip) {
         Bundle args = new Bundle();
@@ -163,69 +196,6 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         mViewPager.setAdapter(mPagerAdapter);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mVideoPlayFragment != null) {
-            getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
-            mVideoPlayFragment = null;
-        }
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
-    }
-
-    @Override
-    public void onDestroyView() {
-        ButterKnife.unbind(this);
-        super.onDestroyView();
-    }
-
-    @OnClick(R.id.btn_play)
-    void playVideo() {
-        if (mEditMode == MODE_SINGLE_CLIP) {
-            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
-        } else {
-            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
-                    mPlaylist, null);
-        }
-        mVideoPlayFragment.setBackgroundMusic(mAudioPath);
-        mVideoPlayFragment.setOnProgressListener(this);
-        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
-        videoCover.setVisibility(View.INVISIBLE);
-    }
-
-    @OnClick(R.id.btn_cancel)
-    void onCancel() {
-        close();
-    }
-
-    @OnClick(R.id.btn_ok)
-    void onClickDone() {
-        close();
-    }
-
-    @OnClick(R.id.btn_share)
-    void onClickShare() {
-        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
-    }
-
-    @OnClick(R.id.btn_music)
-    void onClickMusic() {
-        getFragmentManager().beginTransaction()
-                .add(R.id.root_container, new MusicFragment())
-                .addToBackStack(null)
-                .commit();
-    }
-
-    @OnClick(R.id.btn_gauge)
-    void showGauge() {
-        mViewAnimator.setDisplayedChild(1);
-    }
 
     private void initSeekBarSingleClip() {
         final ClipPos clipPos = new ClipPos(mSharableClip.clip, mSharableClip.clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
