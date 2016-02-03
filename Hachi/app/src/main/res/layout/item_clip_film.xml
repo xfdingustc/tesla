@@ -58,7 +58,7 @@
             android:padding="6dp"
             android:contentDescription="@null"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/btn_edit_action_video_n"/>
+            android:src="@drawable/edit_button_action_enhance"/>
 
         <ImageView
             android:id="@+id/btn_add_to_story"
@@ -69,7 +69,7 @@
             android:padding="6dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/btn_edit_action_insert_n"/>
+            android:src="@drawable/edit_button_action_insert"/>
 
         <ImageView
             android:id="@+id/btn_share"
@@ -79,7 +79,7 @@
             android:padding="6dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/btn_edit_action_share_n"/>
+            android:src="@drawable/edit_button_action_share"/>
 
         <ImageView
             android:id="@+id/btn_delete"
@@ -89,7 +89,7 @@
             android:padding="6dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/btn_edit_action_delete_n"/>
+            android:src="@drawable/edit_button_action_delete"/>
     </LinearLayout>
 
 
