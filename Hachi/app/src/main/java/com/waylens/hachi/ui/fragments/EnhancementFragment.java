@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +81,10 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-        ((BaseActivity)getActivity()).getToolbar().setVisibility(View.GONE);
+        Toolbar mToolbar = ((BaseActivity)getActivity()).getToolbar();
+        if (mToolbar != null) {
+            mToolbar.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -91,7 +95,10 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             mVideoPlayFragment = null;
         }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
-        ((BaseActivity)getActivity()).getToolbar().setVisibility(View.VISIBLE);
+        Toolbar mToolbar = ((BaseActivity)getActivity()).getToolbar();
+        if (mToolbar != null) {
+            mToolbar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
@@ -19,6 +21,7 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.story.Story;
 import com.waylens.hachi.ui.fragments.CameraVideoPlayFragment;
+import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -69,7 +72,11 @@ public class StoryEditActivity extends BaseActivity {
         MomentShareHelper helper = new MomentShareHelper(this, new MomentShareHelper.OnShareMomentListener() {
             @Override
             public void onShareSuccessful() {
-
+                Logger.t(TAG).d("Upload done!!!");
+                Snackbar snackbar = Snackbar.make(mUploadProgressBar, "UploadDone", Snackbar
+                    .LENGTH_SHORT);
+                snackbar.show();
+                mUploadProgressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -97,8 +104,6 @@ public class StoryEditActivity extends BaseActivity {
     }
 
 
-
-
     @OnClick(R.id.btn_play)
     public void onBtnPlayClicked() {
         mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mStory
@@ -106,6 +111,16 @@ public class StoryEditActivity extends BaseActivity {
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, mVideoPlayFragment).commit();
         mVideoCover.setVisibility(View.INVISIBLE);
     }
+
+//    @OnClick(R.id.btnEnhance)
+//    public void onBtnEnhanceClicked() {
+//        EnhancementFragment fragment = EnhancementFragment.newInstance(mStory.getPlaylist());
+//
+//        getFragmentManager().beginTransaction()
+//            .add(R.id.root_container, fragment)
+//            .addToBackStack(null)
+//            .commit();
+//    }
 
     public static void launch(Activity startingActivity, Story story) {
         Intent intent = new Intent(startingActivity, StoryEditActivity.class);
@@ -143,7 +158,7 @@ public class StoryEditActivity extends BaseActivity {
         timer.schedule(new TimerTask() {
 
             public void run() {
-                InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.showSoftInput(mTitleEditor, 0);
             }
 
