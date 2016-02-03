@@ -14,7 +14,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.vdb.UploadUrl;
+import com.waylens.hachi.vdb.urls.UploadUrl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -216,8 +216,6 @@ public class DataUploaderV2 {
             int percentageInThisClip = dataSend * 100 / totalLength / mClipTotalCount;
 
             int percentage = clipIndex * 100 / mClipTotalCount + percentageInThisClip;
-
-
 
             mUploadListener.onUploadProgress(percentage);
         }

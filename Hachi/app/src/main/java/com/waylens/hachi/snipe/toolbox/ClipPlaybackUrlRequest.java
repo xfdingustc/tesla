@@ -8,7 +8,7 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.urls.PlaybackUrl;
 
 /**
  * Created by Xiaofei on 2015/8/27.

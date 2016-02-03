@@ -11,7 +11,7 @@ import android.view.View;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
 import com.waylens.hachi.vdb.Playlist;
-import com.waylens.hachi.vdb.PlaylistPlaybackUrl;
+import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
 import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -21,7 +21,7 @@ import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
-import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 
@@ -45,13 +45,11 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     MediaPlayer mAudioPlayer;
 
-
-
     SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
     SparseIntArray mTypedState = new SparseIntArray();
     SparseIntArray mTypedPosition = new SparseIntArray();
 
-    PlaybackUrl mPlaybackUrl;
+    private PlaybackUrl mPlaybackUrl;
     long mInitPosition;
 
     String mAudioPath;
@@ -380,7 +378,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             public void onResponse(PlaylistPlaybackUrl response) {
                 Logger.t(TAG).d("Get playlist: " + response.url);
                 setSource(response.url);
-                //mProgressLoading.setVisibility(View.GONE);
+                mProgressLoading.setVisibility(View.GONE);
             }
         }, new VdbResponse.ErrorListener() {
             @Override

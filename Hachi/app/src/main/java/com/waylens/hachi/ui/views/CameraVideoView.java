@@ -17,7 +17,7 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.ui.views.dashboard.DashboardLayout;

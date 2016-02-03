@@ -49,7 +49,7 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.PlaybackUrl;
+import com.waylens.hachi.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.ui.views.VideoTrimmer;

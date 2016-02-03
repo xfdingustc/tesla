@@ -6,7 +6,7 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Playlist;
-import com.waylens.hachi.vdb.PlaylistPlaybackUrl;
+import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
 import com.waylens.hachi.vdb.Vdb;
 
 /**

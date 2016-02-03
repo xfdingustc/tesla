@@ -1,20 +1,18 @@
-package com.waylens.hachi.vdb;
+package com.waylens.hachi.vdb.urls;
+
+import com.waylens.hachi.vdb.Clip;
 
 /**
  * Created by Richard on 11/19/15.
  */
-public class UploadUrl {
+public class UploadUrl extends VdbUrl {
     public boolean isPlayList;
 
     public Clip.ID cid;
 
     public long realTimeMs;
 
-    public int lengthMs;
-
     public int uploadOpt;
-
-    public String url;
 
     public UploadUrl(boolean isPlayList, Clip.ID cid, long realTimeMs, int lengthMs, int uploadOpt, String url) {
         this.isPlayList = isPlayList;
