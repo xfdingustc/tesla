@@ -18,6 +18,6 @@ public class StoryBookmarkStrategy implements StoryStrategy {
 
     @Override
     public int getMaxiumClipLengthMs() {
-        return 5;
+        return 30000;
     }
 }

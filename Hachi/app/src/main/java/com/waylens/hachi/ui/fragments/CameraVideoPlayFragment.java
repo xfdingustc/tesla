@@ -207,6 +207,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     protected void setProgress(int currentPosition, int duration) {
         // TODO:
         int position = currentPosition;
+
         if (mPlayMode == MODE_SINGLE_CLIP) {
             if (mPlaybackUrl.realTimeMs != 0
                 && mInitPosition == 0
@@ -231,7 +232,16 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         if (mOverlayShouldDisplay) {
             displayOverlay(position);
         }
+
+        if (mProgressBar != null) {
+            if (duration > 0) {
+                // use long to avoid overflow
+                long pos = MAX_PROGRESS * position / duration;
+                mProgressBar.setProgress((int) pos);
+            }
+        }
         if (mProgressListener != null) {
+            Logger.t(TAG).d("currentPosition: " + currentPosition + " duration: " + duration);
             mProgressListener.onProgress(position, duration);
         }
 
