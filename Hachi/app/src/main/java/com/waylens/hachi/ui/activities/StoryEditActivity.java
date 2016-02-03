@@ -112,15 +112,15 @@ public class StoryEditActivity extends BaseActivity {
         mVideoCover.setVisibility(View.INVISIBLE);
     }
 
-//    @OnClick(R.id.btnEnhance)
-//    public void onBtnEnhanceClicked() {
-//        EnhancementFragment fragment = EnhancementFragment.newInstance(mStory.getPlaylist());
-//
-//        getFragmentManager().beginTransaction()
-//            .add(R.id.root_container, fragment)
-//            .addToBackStack(null)
-//            .commit();
-//    }
+    @OnClick(R.id.btnEnhance)
+    public void onBtnEnhanceClicked() {
+        EnhancementFragment fragment = EnhancementFragment.newInstance(mStory.getPlaylist());
+
+        getFragmentManager().beginTransaction()
+            .add(R.id.root_container, fragment)
+            .addToBackStack(null)
+            .commit();
+    }
 
     public static void launch(Activity startingActivity, Story story) {
         Intent intent = new Intent(startingActivity, StoryEditActivity.class);

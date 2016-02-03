@@ -9,7 +9,7 @@ public class PlaybackUrl extends VdbUrl{
     public final Clip.ID cid;
     public int stream;
     public int urlType;
-    public long realTimeMs;
+
 
     public boolean bHasMore;
 

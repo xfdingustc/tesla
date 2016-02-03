@@ -6,4 +6,5 @@ package com.waylens.hachi.vdb.urls;
 class VdbUrl {
     public String url;
     public int lengthMs;
+    public long realTimeMs;
 }

@@ -50,6 +50,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     SparseIntArray mTypedPosition = new SparseIntArray();
 
     private PlaybackUrl mPlaybackUrl;
+    private PlaylistPlaybackUrl mPlaybackListUrl;
     long mInitPosition;
 
     String mAudioPath;
@@ -189,8 +190,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     boolean isInAudioPlayState() {
         return mAudioPath != null
-                && mAudioPlayer != null
-                && isAudioPrepared;
+            && mAudioPlayer != null
+            && isAudioPrepared;
     }
 
     boolean shouldPlayAudio() {
@@ -205,30 +206,35 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     protected void setProgress(int currentPosition, int duration) {
         // TODO:
-        if (mPlaybackUrl.realTimeMs != 0
+        int position = currentPosition;
+        if (mPlayMode == MODE_SINGLE_CLIP) {
+            if (mPlaybackUrl.realTimeMs != 0
                 && mInitPosition == 0
                 && currentPosition != 0
                 && Math.abs(mPlaybackUrl.realTimeMs - currentPosition) < 200) {
-            mInitPosition = mPlaybackUrl.realTimeMs;
-            Log.e("test", "setProgress - deviation: " + Math.abs(mPlaybackUrl.realTimeMs - currentPosition));
-        }
-        //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
-        //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
-        int position = currentPosition;
-        if (duration > 0) {
-            //Log.e("test", "setProgress - position: " + position + "; real: "
+                mInitPosition = mPlaybackUrl.realTimeMs;
+                Logger.t(TAG).d("setProgress - deviation: " + Math.abs(mPlaybackUrl
+                    .realTimeMs - currentPosition));
+            }
+            //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
             //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
-            if (mInitPosition == 0) {
-                position = currentPosition + (int) mPlaybackUrl.realTimeMs;
+
+
+            if (duration > 0) {
+                //Log.e("test", "setProgress - position: " + position + "; real: "
+                //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
+                if (mInitPosition == 0) {
+                    position = currentPosition + (int) mPlaybackUrl.realTimeMs;
+                }
             }
         }
-
         if (mOverlayShouldDisplay) {
             displayOverlay(position);
         }
         if (mProgressListener != null) {
             mProgressListener.onProgress(position, duration);
         }
+
     }
 
     @Override
@@ -271,8 +277,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             return true;
         }
         return mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_READY
-                && mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_READY
-                && mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_READY;
+            && mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_READY;
     }
 
     void loadRawData() {
@@ -304,30 +310,30 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
 
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,
-                new VdbResponse.Listener<RawDataBlock>() {
-                    @Override
-                    public void onResponse(RawDataBlock response) {
-                        Logger.t(TAG).d("resoponse datatype: " + dataType);
-                        mTypedRawData.put(dataType, response);
-                        mTypedState.put(dataType, RAW_DATA_STATE_READY);
-                        onLoadRawDataFinished();
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
-                        onLoadRawDataFinished();
-                        Logger.t(TAG).d("error response:");
-                    }
-                });
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    Logger.t(TAG).d("resoponse datatype: " + dataType);
+                    mTypedRawData.put(dataType, response);
+                    mTypedState.put(dataType, RAW_DATA_STATE_READY);
+                    onLoadRawDataFinished();
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
+                    onLoadRawDataFinished();
+                    Logger.t(TAG).d("error response:");
+                }
+            });
         mVdbRequestQueue.add(obdRequest.setTag(REQUEST_TAG));
     }
 
     void onLoadRawDataFinished() {
         if (mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_UNKNOWN
-                || mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_UNKNOWN
-                || mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_UNKNOWN) {
+            || mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;
         }
         mRawDataState = RAW_DATA_STATE_READY;
@@ -373,9 +379,10 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     private void loadPlaylist() {
         PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayList,
-                0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
+            0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
             @Override
             public void onResponse(PlaylistPlaybackUrl response) {
+                mPlaybackListUrl = response;
                 Logger.t(TAG).d("Get playlist: " + response.url);
                 setSource(response.url);
                 mProgressLoading.setVisibility(View.GONE);
