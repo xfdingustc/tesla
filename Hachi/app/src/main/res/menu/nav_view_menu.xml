@@ -8,8 +8,6 @@
         <item android:id="@+id/bookmark" android:title="@string/bookmark"
               android:icon="@drawable/bookmark_tab"/>
 
-        <item android:id="@+id/stories" android:title="@string/stories"
-              android:icon="@drawable/stories_tab"/>
 
         <item android:id="@+id/moments" android:title="@string/moments"
               android:icon="@drawable/moments_tab"/>

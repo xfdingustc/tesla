@@ -49,10 +49,9 @@ public class MainActivity extends BaseActivity {
     private Bundle fragmentArgs;
 
     public static final int TAB_TAG_BOOKMARK = 0;
-    public static final int TAB_TAG_STORIES = 1;
-    public static final int TAB_TAG_LIVE_VIEW = 2;
-    public static final int TAB_TAG_MOMENTS = 3;
-    public static final int TAB_TAG_SETTINGS = 4;
+    public static final int TAB_TAG_LIVE_VIEW = 1;
+    public static final int TAB_TAG_MOMENTS = 2;
+    public static final int TAB_TAG_SETTINGS = 3;
 
     private int mCurrentNavMenuId;
 
@@ -61,7 +60,6 @@ public class MainActivity extends BaseActivity {
 
     private int[] mToolbarTitles = new int[]{
         R.string.bookmark,
-        R.string.stories,
         R.string.live_view,
         R.string.moments,
         R.string.settings
@@ -69,7 +67,6 @@ public class MainActivity extends BaseActivity {
 
     private Fragment[] mFragmentList = new Fragment[]{
         new BookmarkFragment(),
-        new StoriesFragment(),
         new CameraConnectFragment(),
         new MomentFragment(),
         new SettingsFragment()
@@ -120,7 +117,6 @@ public class MainActivity extends BaseActivity {
         mMenuId2Tab.put(R.id.moments, TAB_TAG_MOMENTS);
         mMenuId2Tab.put(R.id.setting, TAB_TAG_SETTINGS);
         mMenuId2Tab.put(R.id.bookmark, TAB_TAG_BOOKMARK);
-        mMenuId2Tab.put(R.id.stories, TAB_TAG_STORIES);
         mMenuId2Tab.put(R.id.liveView, TAB_TAG_LIVE_VIEW);
 
         initViews();
