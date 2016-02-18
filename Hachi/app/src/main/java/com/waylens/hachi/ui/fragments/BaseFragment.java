@@ -15,6 +15,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
 import butterknife.ButterKnife;
@@ -23,10 +27,25 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2015/8/4.
  */
 public class BaseFragment extends Fragment {
-
     protected View mRootView;
+    protected MaterialDialog mProgressDialog;
 
-    MaterialDialog mProgressDialog;
+    protected VdtCamera mVdtCamera;
+    protected VdbRequestQueue mVdbRequestQueue;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mVdtCamera = getCamera();
+
+        if (mVdtCamera != null) {
+            mVdbRequestQueue = Snipe.newRequestQueue(getActivity());
+        }
+
+
+
+    }
 
     @NonNull
     protected View createFragmentView(LayoutInflater inflater, ViewGroup container, int layoutResId,
@@ -77,10 +96,10 @@ public class BaseFragment extends Fragment {
             return;
         }
         mProgressDialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.loading)
-                .progress(true, 0)
-                .progressIndeterminateStyle(false)
-                .build();
+            .title(R.string.loading)
+            .progress(true, 0)
+            .progressIndeterminateStyle(false)
+            .build();
 
         mProgressDialog.show();
     }
@@ -107,4 +126,24 @@ public class BaseFragment extends Fragment {
     public ViewPager getViewPager() {
         return null;
     }
+
+    protected VdtCamera getCamera() {
+        Bundle args = getArguments();
+        VdtCamera camera = null;
+
+        VdtCameraManager vdtCameraManager = VdtCameraManager.getManager();
+        if (args != null) {
+            String ssid = args.getString("ssid");
+            String hostString = args.getString("hostString");
+            if (ssid != null && hostString != null) {
+                camera = vdtCameraManager.findConnectedCamera(ssid, hostString);
+            }
+        } else {
+            if (vdtCameraManager.getConnectedCameras().size() > 0) {
+                camera = vdtCameraManager.getConnectedCameras().get(0);
+            }
+        }
+        return camera;
+    }
+
 }

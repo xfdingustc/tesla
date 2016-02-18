@@ -42,10 +42,10 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
 
     static final String TAG_CLIP_SET = "tag.clip_set";
 
-    private VdbRequestQueue mVdbRequestQueue;
+
     private ClipFilmAdapter mClipSetAdapter;
 
-    VdtCamera mVdtCamera;
+
 
     @Bind(R.id.video_type_tabs)
     TabLayout mTabLayout;
@@ -204,24 +204,6 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
     }
 
 
-    VdtCamera getCamera() {
-        Bundle args = getArguments();
-        VdtCamera camera = null;
-
-        VdtCameraManager vdtCameraManager = VdtCameraManager.getManager();
-        if (args != null) {
-            String ssid = args.getString("ssid");
-            String hostString = args.getString("hostString");
-            if (ssid != null && hostString != null) {
-                camera = vdtCameraManager.findConnectedCamera(ssid, hostString);
-            }
-        } else {
-            if (vdtCameraManager.getConnectedCameras().size() > 0) {
-                camera = vdtCameraManager.getConnectedCameras().get(0);
-            }
-        }
-        return camera;
-    }
 
     @Override
     public boolean onInterceptBackPressed() {

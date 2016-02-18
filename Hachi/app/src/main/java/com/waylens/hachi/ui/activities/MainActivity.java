@@ -147,9 +147,6 @@ public class MainActivity extends BaseActivity {
         }
 
 
-
-
-
         // update user profile;
         if (mSessionManager.isLoggedIn()) {
             Logger.t(TAG).d("mUserAvatar: " + mUserAvatar + " url: " + mSessionManager.getAvatarUrl());
@@ -183,12 +180,10 @@ public class MainActivity extends BaseActivity {
 
         if (tag == TAB_TAG_MOMENTS || tag == TAB_TAG_BOOKMARK) {
             mTabLayout.setVisibility(View.VISIBLE);
-            Logger.t(TAG).d("Set Visisble");
             if (fragment.getViewPager() != null) {
                 mTabLayout.setupWithViewPager(fragment.getViewPager());
             }
         } else {
-            Logger.t(TAG).d("Set Invisible");
             mTabLayout.setVisibility(View.GONE);
         }
 

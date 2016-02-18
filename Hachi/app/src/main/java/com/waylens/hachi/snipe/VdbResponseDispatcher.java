@@ -53,7 +53,7 @@ public class VdbResponseDispatcher extends Thread {
             VdbRequest<?> vdbRequest;
             if (vdbAcknowledge.isMessageAck()) {
                 if ((vdbRequest = mMessageHandlers.get(vdbAcknowledge.getMsgCode())) == null) {
-                    Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
+//                    Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
                     continue;
                 }
             } else {

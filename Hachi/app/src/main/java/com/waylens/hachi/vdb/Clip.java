@@ -152,7 +152,7 @@ public class Clip {
         return DateTime.toString(clipDate, 0);
     }
 
-    public final String getDateString() {
+    public String getDateString() {
         return DateTime.getDateString(clipDate, 0);
     }
 
