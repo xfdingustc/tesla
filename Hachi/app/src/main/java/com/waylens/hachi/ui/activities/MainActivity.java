@@ -27,7 +27,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.BookmarkFragment;
+import com.waylens.hachi.ui.fragments.BookmarkFragment2;
 import com.waylens.hachi.ui.fragments.CameraConnectFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.MomentFragment;
@@ -65,8 +67,8 @@ public class MainActivity extends BaseActivity {
         R.string.settings
     };
 
-    private Fragment[] mFragmentList = new Fragment[]{
-        new BookmarkFragment(),
+    private BaseFragment[] mFragmentList = new BaseFragment[]{
+        new BookmarkFragment2(),
         new CameraConnectFragment(),
         new MomentFragment(),
         new SettingsFragment()
@@ -96,12 +98,12 @@ public class MainActivity extends BaseActivity {
 
     private Snackbar mReturnSnackBar;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
     }
+
 
     @Override
     protected void onResume() {
@@ -145,6 +147,9 @@ public class MainActivity extends BaseActivity {
         }
 
 
+
+
+
         // update user profile;
         if (mSessionManager.isLoggedIn()) {
             Logger.t(TAG).d("mUserAvatar: " + mUserAvatar + " url: " + mSessionManager.getAvatarUrl());
@@ -174,14 +179,18 @@ public class MainActivity extends BaseActivity {
         }
 
 
-        if (tag == TAB_TAG_MOMENTS) {
+        BaseFragment fragment = mFragmentList[tag];
+
+        if (tag == TAB_TAG_MOMENTS || tag == TAB_TAG_BOOKMARK) {
             mTabLayout.setVisibility(View.VISIBLE);
+            Logger.t(TAG).d("Set Visisble");
+            if (fragment.getViewPager() != null) {
+                mTabLayout.setupWithViewPager(fragment.getViewPager());
+            }
         } else {
+            Logger.t(TAG).d("Set Invisible");
             mTabLayout.setVisibility(View.GONE);
         }
-
-        Fragment fragment = mFragmentList[tag];
-
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         if (mCurrentFragment == null) {

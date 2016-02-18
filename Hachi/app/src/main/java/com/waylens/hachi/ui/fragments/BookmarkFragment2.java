@@ -8,34 +8,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
-import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.Bind;
 
 /**
- * Created by Xiaofei on 2016/1/22.
+ * Created by Xiaofei on 2016/2/17.
  */
-public class MomentFragment extends BaseFragment {
+public class BookmarkFragment2 extends BaseFragment {
+    private static final String TAG = BookmarkFragment2.class.getSimpleName();
     private TabLayout mTabLayout;
 
-    RequestQueue mRequestQueue;
-
-    @Bind(R.id.viewpager)
+    @Bind(R.id.clipListViewPager)
     ViewPager mViewPager;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
     }
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_moment,
+        View view = createFragmentView(inflater, container, R.layout.fragment_bookmark2,
             savedInstanceState);
         mTabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
         setupViewPager();
@@ -43,19 +41,17 @@ public class MomentFragment extends BaseFragment {
     }
 
     private void setupViewPager() {
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter
-            (getActivity().getFragmentManager());
+        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getActivity()
+            .getFragmentManager());
+        adapter.addFragment(new ClipListFragment(), getString(R.string.bookmark));
+        adapter.addFragment(new ClipListFragment(), getString(R.string.all));
 
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R
-            .string.me));
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LIKES), getString(R.string
-            .likes));
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string
-            .staff_picks));
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
+
     }
+
+
 
     @Override
     public ViewPager getViewPager() {

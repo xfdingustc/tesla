@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -101,5 +102,9 @@ public class BaseFragment extends Fragment {
 
     void showMessage(String message) {
         Snackbar.make(mRootView, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public ViewPager getViewPager() {
+        return null;
     }
 }

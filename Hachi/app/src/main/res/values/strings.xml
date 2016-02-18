@@ -315,6 +315,7 @@
     <string name="recording_quality">Recording Quality</string>
     <string name="continuous">Continuous</string>
     <string name="manual">Manual</string>
+    <string name="all">All</string>
 
     <string name="continuous_info">The recording process continuous to record at the
         beginning, erasing non-bookmarks automatically</string>
