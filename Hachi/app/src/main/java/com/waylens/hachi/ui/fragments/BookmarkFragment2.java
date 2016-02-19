@@ -50,8 +50,9 @@ public class BookmarkFragment2 extends BaseFragment {
     private void setupViewPager() {
         SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getActivity()
             .getFragmentManager());
-        adapter.addFragment(new ClipListFragment(), getString(R.string.bookmark));
-        adapter.addFragment(new ClipListFragment(), getString(R.string.all));
+        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
+            .bookmark));
+        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED), getString(R.string.all));
 
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);

@@ -188,7 +188,5 @@ public class ClipSet {
         return totalLengthMs;
     }
 
-    public List<Clip> getInternalList() {
-        return mClipList;
-    }
+
 }

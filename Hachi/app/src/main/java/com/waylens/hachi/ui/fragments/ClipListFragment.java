@@ -37,11 +37,15 @@ public class ClipListFragment extends BaseFragment {
 
     private ClipSetGroupAdapter mAdapter;
 
+
     @Bind(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
+    
+    private int mClipSetType;
 
-    public static ClipListFragment newInstance(int tag) {
+    public static ClipListFragment newInstance(int clipSetType) {
         ClipListFragment fragment = new ClipListFragment();
+        fragment.mClipSetType = clipSetType;
         return fragment;
     }
 
@@ -70,7 +74,7 @@ public class ClipListFragment extends BaseFragment {
     }
 
     private void retrieveSharableClips() {
-        mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_MARKED, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetRequest(mClipSetType, ClipSetRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {

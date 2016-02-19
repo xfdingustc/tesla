@@ -128,7 +128,7 @@ public class SharableClip {
     public static List<SharableClip> processClipSet(@NonNull ClipSet clipSet, VdbRequestQueue
         requestQueue) {
         ArrayList<SharableClip> sharableClips = new ArrayList<>();
-        for (Clip clip : clipSet.getInternalList()) {
+        for (Clip clip : clipSet.getClipList()) {
             SharableClip sharableClip = new SharableClip(clip, requestQueue);
             sharableClip.checkExtension();
             sharableClips.add(sharableClip);
