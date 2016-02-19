@@ -53,6 +53,7 @@ public class ClipListFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         if (getCamera() != null) {
+            mClipSetGroup.clear();
             retrieveSharableClips();
         }
     }
