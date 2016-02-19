@@ -48,7 +48,9 @@ public class ClipListFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        retrieveSharableClips();
+        if (getCamera() != null) {
+            retrieveSharableClips();
+        }
     }
 
     @Nullable
@@ -75,10 +77,6 @@ public class ClipListFragment extends BaseFragment {
                     calculateClipSetGroup(clipSet);
                     setupClipSetGroupView();
                 }
-
-
-
-
             },
             new VdbResponse.ErrorListener() {
                 @Override
@@ -114,8 +112,8 @@ public class ClipListFragment extends BaseFragment {
         List<ClipSet> clipSetGroup = new ArrayList<>();
         Iterator iter = mClipSetGroup.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            clipSetGroup.add((ClipSet)entry.getValue());
+            Map.Entry entry = (Map.Entry) iter.next();
+            clipSetGroup.add((ClipSet) entry.getValue());
         }
 
         mAdapter.setClipSetGroup(clipSetGroup);

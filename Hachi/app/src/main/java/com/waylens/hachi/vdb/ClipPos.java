@@ -21,6 +21,14 @@ public class ClipPos {
     private long mRealTimeMs; // real time returned by server
     private int mDuration; // returned by server
 
+    public ClipPos(Clip clip) {
+        this(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+    }
+
+    public ClipPos(Clip clip, long clipTimeMs, int type, boolean bIsLast) {
+        this(clip.getVdbId(), clip.cid, clip.clipDate, clipTimeMs, type, bIsLast);
+    }
+
     public ClipPos(String vdbId, Clip.ID cid, int date, long timeMs, int type, boolean bIsLast) {
         this.vdbId = vdbId;
         this.cid = cid;
@@ -30,10 +38,6 @@ public class ClipPos {
         this.mClipTimeMs = timeMs;
         this.mRealTimeMs = timeMs; // fixed later by server
         this.mDuration = 0; // fixed later by server
-    }
-
-    public ClipPos(Clip clip, long clipTimeMs, int type, boolean bIsLast) {
-        this(clip.getVdbId(), clip.cid, clip.clipDate, clipTimeMs, type, bIsLast);
     }
 
     public final void setVdbId(String vdbId) {

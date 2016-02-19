@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,10 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ClipSetGroupViewHolder viewHolder = (ClipSetGroupViewHolder)holder;
 
         viewHolder.mClipSetDate.setText(clipSet.getClip(0).getDateString());
+
+        viewHolder.mRvClipGrid.setLayoutManager(new GridLayoutManager(mContext, 4));
+        ClipSetGridAdapter adapter = new ClipSetGridAdapter(mContext, clipSet);
+        viewHolder.mRvClipGrid.setAdapter(adapter);
     }
 
     @Override
@@ -64,6 +69,9 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @Bind(R.id.clipSetDate)
         TextView mClipSetDate;
+
+        @Bind(R.id.rvClipGrid)
+        RecyclerView mRvClipGrid;
 
         public ClipSetGroupViewHolder(View itemView) {
             super(itemView);
