@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.LayoutManager.WrapGridLayoutManager;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         viewHolder.mClipSetDate.setText(clipSet.getClip(0).getDateString());
 
-        viewHolder.mRvClipGrid.setLayoutManager(new GridLayoutManager(mContext, 4));
+        viewHolder.mRvClipGrid.setLayoutManager(new WrapGridLayoutManager(mContext, 4));
         ClipSetGridAdapter adapter = new ClipSetGridAdapter(mContext, clipSet);
         viewHolder.mRvClipGrid.setAdapter(adapter);
     }
