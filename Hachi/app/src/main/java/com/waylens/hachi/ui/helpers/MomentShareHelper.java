@@ -18,6 +18,7 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.utils.DataUploaderV2;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -46,7 +47,6 @@ public class MomentShareHelper {
 
     Thread mUploadThread;
     volatile DataUploaderV2 uploaderV2;
-
     volatile boolean isCancelled;
 
     Handler mHandler;
@@ -71,21 +71,27 @@ public class MomentShareHelper {
 
     /**
      * Share Moment to Waylens cloud.
-     * <p/>
+     * <p>
      * Please make sure to call cancel() method to terminate the background thread,
-     *
-     * @param sharableClip
-     * @param title
-     * @param tags
-     * @param accessLevel
      */
-    public void shareMoment(SharableClip sharableClip, String title, String[] tags, String accessLevel, int audioID) {
-        uploadDataTask(new SharableClip[]{sharableClip}, title, tags, accessLevel, audioID);
+    public void shareMoment(final LocalMoment localMoment) {
+        mUploadThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int result = uploadData(localMoment);
+                uploaderV2 = null;
+                mUploadThread = null;
+                if (mShareListener != null) {
+                    processResult(result, localMoment);
+                }
+            }
+        });
+        mUploadThread.start();
     }
 
     /**
      * Share playList to Waylens cloud.
-     * <p/>
+     * <p>
      * Please make sure to call cancel() method to terminate the background thread.
      *
      * @param playListID
@@ -93,26 +99,66 @@ public class MomentShareHelper {
      * @param tags
      * @param accessLevel
      */
-    public void shareMoment(int playListID, String title, String[] tags, String accessLevel, int audioID) {
-        uploadDataTask(playListID, title, tags, accessLevel, audioID);
+    public void shareMoment(final int playListID,
+                            final String title,
+                            final String[] tags,
+                            final String accessLevel,
+                            final int audioID) {
+        mUploadThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ClipSet playList = retrievePlayListInfo(playListID);
+                SharableClip[] sharableClips = new SharableClip[playList.getCount()];
+                LocalMoment localMoment = new LocalMoment(title, tags, accessLevel, audioID, sharableClips);
+                for (int i = 0; i < sharableClips.length; i++) {
+                    sharableClips[i] = new SharableClip(playList.getClip(i));
+                }
+
+                int result = uploadData(localMoment);
+                uploaderV2 = null;
+                mUploadThread = null;
+                if (mShareListener != null) {
+                    processResult(result, localMoment);
+                }
+            }
+        });
+        mUploadThread.start();
     }
 
-    JSONObject createMoment(String title, String[] tags, String accessLevel, int audioID) {
+    public void shareMoments(final LocalMoment[] moments) {
+        mUploadThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (LocalMoment localMoment : moments) {
+                    int result = uploadData(localMoment);
+                    if (mShareListener != null) {
+                        processResult(result, localMoment);
+                    }
+                }
+                uploaderV2 = null;
+                mUploadThread = null;
+            }
+        });
+        mUploadThread.start();
+    }
+
+
+    JSONObject createMoment(LocalMoment localMoment) {
         final CountDownLatch latch = new CountDownLatch(1);
         final JSONObject[] results = new JSONObject[]{null};
 
         JSONObject params = new JSONObject();
         try {
-            params.put("title", title);
+            params.put("title", localMoment.title);
             JSONArray hashTags = new JSONArray();
-            for (String tag : tags) {
+            for (String tag : localMoment.tags) {
                 hashTags.put(tag);
             }
             params.put("hashTags", hashTags);
-            params.put("accessLevel", accessLevel);
-            if (audioID > 0) {
+            params.put("accessLevel", localMoment.accessLevel);
+            if (localMoment.audioID > 0) {
                 params.put("audioType", 1);
-                params.put("musicSource", "" + audioID);
+                params.put("musicSource", "" + localMoment.audioID);
             }
             Log.e("test", "params: " + params);
         } catch (JSONException e) {
@@ -125,14 +171,18 @@ public class MomentShareHelper {
                     public void onResponse(JSONObject response) {
                         results[0] = response;
                         latch.countDown();
-                        mShareListener.onStateChanged(STATE_MOMENT_CREATED);
+                        if (mShareListener != null) {
+                            mShareListener.onStateChanged(STATE_MOMENT_CREATED);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Logger.t(TAG).e(error.toString());
-                        mShareListener.onError(ERROR_CREATE_MOMENT, 0);
+                        if (mShareListener != null) {
+                            mShareListener.onError(ERROR_CREATE_MOMENT, 0);
+                        }
                         latch.countDown();
                     }
                 }));
@@ -143,43 +193,6 @@ public class MomentShareHelper {
             Log.e("test", "", e);
         }
         return results[0];
-    }
-
-    void uploadDataTask(final SharableClip[] sharableClips, final String title, final String[] tags, final String accessLevel, final int audioID) {
-        mUploadThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int result = uploadData(sharableClips, title, tags, accessLevel, audioID);
-                uploaderV2 = null;
-                mUploadThread = null;
-                if (mShareListener != null) {
-                    processResult(result);
-                }
-            }
-        });
-        mUploadThread.start();
-    }
-
-    void uploadDataTask(final int playListID, final String title, final String[] tags, final String accessLevel, final int audioID) {
-        mUploadThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ClipSet playList = retrievePlayListInfo(playListID);
-                SharableClip[] sharableClips = new SharableClip[playList.getCount()];
-
-                for (int i = 0; i < sharableClips.length; i++) {
-                    sharableClips[i] = new SharableClip(playList.getClip(i));
-                }
-
-                int result = uploadData(sharableClips, title, tags, accessLevel, audioID);
-                uploaderV2 = null;
-                mUploadThread = null;
-                if (mShareListener != null) {
-                    processResult(result);
-                }
-            }
-        });
-        mUploadThread.start();
     }
 
     ClipSet retrievePlayListInfo(int type) {
@@ -209,12 +222,12 @@ public class MomentShareHelper {
         return clipSets[0];
     }
 
-    void processResult(final int result) {
+    void processResult(final int result, final LocalMoment localMoment) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 if (result == CrsCommand.RES_STATE_OK) {
-                    mShareListener.onShareSuccessful();
+                    mShareListener.onShareSuccessful(localMoment);
                 } else if (result == CrsCommand.RES_STATE_FAIL) {
                     mShareListener.onError(result, 0);
                 } else {
@@ -224,12 +237,12 @@ public class MomentShareHelper {
         });
     }
 
-    int uploadData(SharableClip[] sharableClips, String title, String[] tags, String accessLevel, int audioID) {
+    int uploadData(LocalMoment localMoment) {
         try {
             if (isCancelled) {
                 return CrsCommand.RES_STATE_CANCELLED;
             }
-            JSONObject momentInfo = createMoment(title, tags, accessLevel, audioID);
+            JSONObject momentInfo = createMoment(localMoment);
             if (isCancelled) {
                 return CrsCommand.RES_STATE_CANCELLED;
             }
@@ -240,10 +253,12 @@ public class MomentShareHelper {
             long momentID = momentInfo.optLong("momentID");
             uploaderV2 = new DataUploaderV2(ip, port, privateKey, mVdbRequestQueue);
             int dataType = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
-            return uploaderV2.upload(momentID, sharableClips, dataType, new DataUploaderV2.OnUploadListener() {
+            return uploaderV2.upload(momentID, localMoment.sharableClips, dataType, new DataUploaderV2.OnUploadListener() {
                 @Override
                 public void onUploadProgress(int percentage) {
-                    mShareListener.onUploadProgress(percentage);
+                    if (mShareListener != null) {
+                        mShareListener.onUploadProgress(percentage);
+                    }
                 }
             });
         } catch (Exception e) {
@@ -254,7 +269,7 @@ public class MomentShareHelper {
 
 
     public interface OnShareMomentListener {
-        void onShareSuccessful();
+        void onShareSuccessful(LocalMoment localMoment);
 
         void onCancelShare();
 

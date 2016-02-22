@@ -17,6 +17,7 @@ import android.widget.ViewAnimator;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
@@ -120,12 +121,12 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
         mShareHelper = new MomentShareHelper(getActivity(), this);
         String title = "";
         String[] tags = new String[]{"Shanghai", "car"};
-        mShareHelper.shareMoment(mSharableClip, title, tags, "PUBLIC", mAudioID);
-        //mShareHelper.shareMoment(0x100, title, tags, "PUBLIC", mAudioID);
+        LocalMoment localMoment = new LocalMoment(title, tags, "PUBLIC", mAudioID, new SharableClip[]{mSharableClip});
+        mShareHelper.shareMoment(localMoment);
     }
 
     @Override
-    public void onShareSuccessful() {
+    public void onShareSuccessful(LocalMoment localMoment) {
         mViewAnimator.setDisplayedChild(2);
     }
 

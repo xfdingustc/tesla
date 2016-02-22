@@ -19,6 +19,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.story.Story;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.EnhancementFragment;
@@ -70,7 +71,7 @@ public class StoryEditActivity extends BaseActivity {
         mUploadProgressBar.setVisibility(View.VISIBLE);
         MomentShareHelper helper = new MomentShareHelper(this, new MomentShareHelper.OnShareMomentListener() {
             @Override
-            public void onShareSuccessful() {
+            public void onShareSuccessful(LocalMoment localMoment) {
                 Logger.t(TAG).d("Upload done!!!");
                 Snackbar snackbar = Snackbar.make(mUploadProgressBar, "UploadDone", Snackbar
                     .LENGTH_SHORT);
@@ -116,9 +117,9 @@ public class StoryEditActivity extends BaseActivity {
         EnhancementFragment fragment = EnhancementFragment.newInstance(mStory.getPlaylist());
 
         getFragmentManager().beginTransaction()
-            .add(R.id.root_container, fragment)
+                .add(R.id.root_container, fragment)
             .addToBackStack(null)
-            .commit();
+                .commit();
     }
 
     public static void launch(Activity startingActivity, Story story) {
