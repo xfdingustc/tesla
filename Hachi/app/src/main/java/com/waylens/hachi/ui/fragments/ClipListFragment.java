@@ -10,13 +10,10 @@ import android.view.ViewGroup;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
-import com.waylens.hachi.ui.adapters.ClipSetGridAdapter;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
-import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -75,11 +72,11 @@ public class ClipListFragment extends BaseFragment {
             .OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clip);
+                popClipPreviewFragment(clip);
 
-                getFragmentManager().beginTransaction().replace(R.id.videoPlayFragmentContainer,
-                    fragment).commit();
             }
+
+
         });
         mRvClipGroupList.setAdapter(mAdapter);
 
@@ -133,5 +130,16 @@ public class ClipListFragment extends BaseFragment {
         }
 
         mAdapter.setClipSetGroup(clipSetGroup);
+    }
+
+    private void popClipPreviewFragment(Clip clip) {
+        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
+        config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
+
+        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clip, config);
+
+
+        getFragmentManager().beginTransaction().replace(R.id.videoPlayFragmentContainer,
+            fragment).commit();
     }
 }
