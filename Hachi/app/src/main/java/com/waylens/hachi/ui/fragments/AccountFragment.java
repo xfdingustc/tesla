@@ -30,6 +30,7 @@ import com.waylens.hachi.ui.adapters.MomentViewHolder;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.APIFilter;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.fragments.clipplay.MomentPlayFragment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ImageUtils;

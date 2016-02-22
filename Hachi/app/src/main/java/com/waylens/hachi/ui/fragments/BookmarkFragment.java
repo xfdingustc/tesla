@@ -13,19 +13,16 @@ import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.ClipFilmAdapter;
 import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 

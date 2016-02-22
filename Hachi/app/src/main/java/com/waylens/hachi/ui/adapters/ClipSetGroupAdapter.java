@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.LayoutManager.WrapGridLayoutManager;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.List;
@@ -24,11 +25,18 @@ import butterknife.ButterKnife;
 public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context mContext;
+    private final ClipSetGridAdapter.OnClipClickListener mClipClickListener;
     private List<ClipSet> mClipSetGroup;
 
-    public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup) {
+    public interface OnClipClickListener {
+        void onClipClicked(Clip clip);
+    }
+
+    public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup, ClipSetGridAdapter
+        .OnClipClickListener listener) {
         mContext = context;
         mClipSetGroup = clipSetGroup;
+        this.mClipClickListener = listener;
     }
 
     @Override
@@ -47,7 +55,14 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         viewHolder.mClipSetDate.setText(clipSet.getClip(0).getDateString());
 
         viewHolder.mRvClipGrid.setLayoutManager(new WrapGridLayoutManager(mContext, 4));
-        ClipSetGridAdapter adapter = new ClipSetGridAdapter(mContext, clipSet);
+        ClipSetGridAdapter adapter = new ClipSetGridAdapter(mContext, clipSet, new ClipSetGridAdapter.OnClipClickListener() {
+            @Override
+            public void onClipClicked(Clip clip) {
+                if (mClipClickListener != null) {
+                    mClipClickListener.onClipClicked(clip);
+                }
+            }
+        });
         viewHolder.mRvClipGrid.setAdapter(adapter);
     }
 

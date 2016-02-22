@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.fragments.clipplay;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

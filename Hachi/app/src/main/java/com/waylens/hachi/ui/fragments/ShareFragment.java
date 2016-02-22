@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,6 +18,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.ClipPos;
 

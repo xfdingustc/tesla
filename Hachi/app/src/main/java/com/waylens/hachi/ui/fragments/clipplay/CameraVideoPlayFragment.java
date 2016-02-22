@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.fragments.clipplay;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -26,7 +26,6 @@ import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Play Camera Video
@@ -217,9 +216,6 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
                 Logger.t(TAG).d("setProgress - deviation: " + Math.abs(mPlaybackUrl
                     .realTimeMs - currentPosition));
             }
-            //Log.e("test", "setProgress - duration: " + duration + "; position: " + position + "; real: "
-            //        + mPlaybackUrl.realTimeMs + "; duration2: " + mPlaybackUrl.lengthMs);
-
 
             if (duration > 0) {
                 //Log.e("test", "setProgress - position: " + position + "; real: "
@@ -310,8 +306,6 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             mRawDataState = RAW_DATA_STATE_ERROR;
             return;
         }
-
-        Logger.t(TAG).d("DataType[1]: " + dataType);
 
         ClipFragment clipFragment = new ClipFragment(mClip);
         Bundle params = new Bundle();

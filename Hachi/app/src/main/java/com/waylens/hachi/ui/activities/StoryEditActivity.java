@@ -20,12 +20,11 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.story.Story;
-import com.waylens.hachi.ui.fragments.CameraVideoPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 
 import java.util.Timer;

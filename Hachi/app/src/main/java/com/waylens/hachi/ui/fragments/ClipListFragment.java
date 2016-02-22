@@ -10,11 +10,13 @@ import android.view.ViewGroup;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.ui.adapters.ClipSetGridAdapter;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
-import com.waylens.hachi.utils.DateTime;
+import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
@@ -23,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import butterknife.Bind;
 
@@ -40,7 +41,7 @@ public class ClipListFragment extends BaseFragment {
 
     @Bind(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
-    
+
     private int mClipSetType;
 
     public static ClipListFragment newInstance(int clipSetType) {
@@ -69,7 +70,16 @@ public class ClipListFragment extends BaseFragment {
 
     private void setupClipSetGroup() {
         mRvClipGroupList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new ClipSetGroupAdapter(getActivity(), null);
+        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGridAdapter.OnClipClickListener() {
+            @Override
+            public void onClipClicked(Clip clip) {
+                CameraVideoPlayFragment playFragment = CameraVideoPlayFragment.newInstance
+                    (Snipe.newRequestQueue(), clip, null);
+
+                getFragmentManager().beginTransaction().replace(R.id.videoPlayFragmentContainer,
+                    playFragment).commit();
+            }
+        });
         mRvClipGroupList.setAdapter(mAdapter);
 
     }
