@@ -6,7 +6,7 @@
               android:icon="@drawable/liveview_tab"/>
 
         <item android:id="@+id/video" android:title="@string/video"
-              android:icon="@drawable/bookmark_tab"/>
+              android:icon="@drawable/video_tab"/>
 
 
         <item android:id="@+id/moments" android:title="@string/moments"

@@ -17,6 +17,7 @@ import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.ClipSetGridAdapter;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
@@ -70,14 +71,14 @@ public class ClipListFragment extends BaseFragment {
 
     private void setupClipSetGroup() {
         mRvClipGroupList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGridAdapter.OnClipClickListener() {
+        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter
+            .OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                CameraVideoPlayFragment playFragment = CameraVideoPlayFragment.newInstance
-                    (Snipe.newRequestQueue(), clip, null);
+                ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clip);
 
                 getFragmentManager().beginTransaction().replace(R.id.videoPlayFragmentContainer,
-                    playFragment).commit();
+                    fragment).commit();
             }
         });
         mRvClipGroupList.setAdapter(mAdapter);

@@ -39,6 +39,12 @@ public class Snipe {
         return _REQUEST_QUEUE_SINGLETON;
     }
 
+    // TODO: We will add multi camera support later, we need implement different request queue for
+    //       different vdt camera;
+    public static VdbRequestQueue newRequestQueue(Context context, VdtCamera camera) {
+        return newRequestQueue();
+    }
+
     public static void init() {
         VdtCameraManager manager = VdtCameraManager.getManager();
         manager.addCallback(new VdtCameraManager.Callback() {

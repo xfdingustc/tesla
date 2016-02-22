@@ -25,14 +25,14 @@ import butterknife.ButterKnife;
 public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context mContext;
-    private final ClipSetGridAdapter.OnClipClickListener mClipClickListener;
+    private final OnClipClickListener mClipClickListener;
     private List<ClipSet> mClipSetGroup;
 
     public interface OnClipClickListener {
         void onClipClicked(Clip clip);
     }
 
-    public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup, ClipSetGridAdapter
+    public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup, ClipSetGroupAdapter
         .OnClipClickListener listener) {
         mContext = context;
         mClipSetGroup = clipSetGroup;
