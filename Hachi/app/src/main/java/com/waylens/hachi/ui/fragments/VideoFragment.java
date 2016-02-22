@@ -4,30 +4,21 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipSet;
-
-import java.util.concurrent.CountDownLatch;
 
 import butterknife.Bind;
 
 /**
  * Created by Xiaofei on 2016/2/17.
  */
-public class BookmarkFragment2 extends BaseFragment {
-    private static final String TAG = BookmarkFragment2.class.getSimpleName();
+public class VideoFragment extends BaseFragment {
+    private static final String TAG = VideoFragment.class.getSimpleName();
     private TabLayout mTabLayout;
 
     @Bind(R.id.clipListViewPager)

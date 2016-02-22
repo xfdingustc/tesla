@@ -5,7 +5,7 @@
         <item android:id="@+id/liveView" android:title="@string/live_view"
               android:icon="@drawable/liveview_tab"/>
 
-        <item android:id="@+id/bookmark" android:title="@string/bookmark"
+        <item android:id="@+id/video" android:title="@string/video"
               android:icon="@drawable/bookmark_tab"/>
 
 

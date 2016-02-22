@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -28,13 +26,11 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.fragments.BookmarkFragment;
-import com.waylens.hachi.ui.fragments.BookmarkFragment2;
+import com.waylens.hachi.ui.fragments.VideoFragment;
 import com.waylens.hachi.ui.fragments.CameraConnectFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.MomentFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
-import com.waylens.hachi.ui.fragments.StoriesFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -50,7 +46,7 @@ public class MainActivity extends BaseActivity {
 
     private Bundle fragmentArgs;
 
-    public static final int TAB_TAG_BOOKMARK = 0;
+    public static final int TAB_TAG_VIDEO = 0;
     public static final int TAB_TAG_LIVE_VIEW = 1;
     public static final int TAB_TAG_MOMENTS = 2;
     public static final int TAB_TAG_SETTINGS = 3;
@@ -61,14 +57,14 @@ public class MainActivity extends BaseActivity {
     private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
 
     private int[] mToolbarTitles = new int[]{
-        R.string.bookmark,
+        R.string.video,
         R.string.live_view,
         R.string.moments,
         R.string.settings
     };
 
     private BaseFragment[] mFragmentList = new BaseFragment[]{
-        new BookmarkFragment2(),
+        new VideoFragment(),
         new CameraConnectFragment(),
         new MomentFragment(),
         new SettingsFragment()
@@ -118,7 +114,7 @@ public class MainActivity extends BaseActivity {
 
         mMenuId2Tab.put(R.id.moments, TAB_TAG_MOMENTS);
         mMenuId2Tab.put(R.id.setting, TAB_TAG_SETTINGS);
-        mMenuId2Tab.put(R.id.bookmark, TAB_TAG_BOOKMARK);
+        mMenuId2Tab.put(R.id.video, TAB_TAG_VIDEO);
         mMenuId2Tab.put(R.id.liveView, TAB_TAG_LIVE_VIEW);
 
         initViews();
@@ -178,7 +174,7 @@ public class MainActivity extends BaseActivity {
 
         BaseFragment fragment = mFragmentList[tag];
 
-        if (tag == TAB_TAG_MOMENTS || tag == TAB_TAG_BOOKMARK) {
+        if (tag == TAB_TAG_MOMENTS || tag == TAB_TAG_VIDEO) {
             mTabLayout.setVisibility(View.VISIBLE);
             if (fragment.getViewPager() != null) {
                 mTabLayout.setupWithViewPager(fragment.getViewPager());

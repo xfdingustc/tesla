@@ -280,6 +280,7 @@
     <string name="following">Following</string>
     <string name="add_follow">+ FOLLOW</string>
 
+    <string name="video">Video</string>
     <string name="live_view">Live View</string>
     <string name="bookmark">Bookmark</string>
     <string name="stories">Stories</string>
