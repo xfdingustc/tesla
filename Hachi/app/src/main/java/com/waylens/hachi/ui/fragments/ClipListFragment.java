@@ -1,15 +1,19 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
@@ -40,6 +44,11 @@ public class ClipListFragment extends BaseFragment {
     @Bind(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
+    @Bind(R.id.progressLoading)
+    ProgressBar mLoadingProgressBar;
+
+    private Handler mUiThreadHandler;
+
     private int mClipSetType;
 
     public static ClipListFragment newInstance(int clipSetType) {
@@ -54,7 +63,50 @@ public class ClipListFragment extends BaseFragment {
         if (getCamera() != null) {
             mClipSetGroup.clear();
             retrieveSharableClips();
+        } else {
+            mLoadingProgressBar.setVisibility(View.VISIBLE);
+            VdtCameraManager cameraManager = VdtCameraManager.getManager();
+            cameraManager.addCallback(new VdtCameraManager.Callback() {
+                @Override
+                public void onCameraConnecting(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onCameraConnected(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onCameraVdbConnected(VdtCamera vdtCamera) {
+                    mUiThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingProgressBar.setVisibility(View.GONE);
+                            mClipSetGroup.clear();
+                            retrieveSharableClips();
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCameraDisconnected(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onCameraStateChanged(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onWifiListChanged() {
+
+                }
+            });
         }
+
     }
 
     @Nullable
@@ -62,6 +114,7 @@ public class ClipListFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_clip_list,
             savedInstanceState);
+        mUiThreadHandler = new Handler();
         setupClipSetGroup();
         return view;
     }

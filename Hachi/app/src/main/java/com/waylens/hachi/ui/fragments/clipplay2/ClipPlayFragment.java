@@ -12,7 +12,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 import com.orhanobut.logger.Logger;
@@ -36,29 +38,6 @@ import butterknife.OnClick;
 public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
-    @Bind(R.id.videoView)
-    SurfaceView mSurfaceView;
-
-    @Bind(R.id.clipCover)
-    ImageView mClipCover;
-
-
-    @OnClick(R.id.btnPlayPause)
-    public void onBtnPlayPauseClicked() {
-//        mVideoView.setVideoURI();
-//        mVideoView.
-        mVdtUriProvider.getUri(mClip, new VdtUriProvider.OnUriLoadedListener() {
-
-            @Override
-            public void onUriLoaded(Uri uri) {
-                Logger.t(TAG).d("Uri: " + uri.toString());
-                openVideo(uri);
-                //mVideoView.setVideoURI(uri);
-//                mVideoView.start();
-            }
-        });
-    }
-
     protected Clip mClip;
     private VdtCamera mVdtCamera;
 
@@ -70,6 +49,51 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     private MediaPlayer mMediaPlayer = new MediaPlayer();
 
     private SurfaceHolder mSurfaceHolder;
+
+    private final int STATE_NONE = 0;
+    private final int STATE_PREPAREING = 1;
+    private final int STATE_PREPARED = 2;
+    private final int STATE_PLAYING = 3;
+    private final int STATE_PAUSE = 4;
+
+    private int mCurrentState = STATE_NONE;
+
+    private final int PENDING_ACTION_NONE = 0;
+    private final int PENDING_ACTION_START = 1;
+
+    private int mPendingAction = PENDING_ACTION_NONE;
+
+    @Bind(R.id.videoView)
+    SurfaceView mSurfaceView;
+
+    @Bind(R.id.clipCover)
+    ImageView mClipCover;
+
+    @Bind(R.id.progressLoading)
+    ProgressBar mProgressLoading;
+
+    @Bind(R.id.btnPlayPause)
+    ImageButton mBtnPlayPause;
+
+
+    @OnClick(R.id.btnPlayPause)
+    public void onBtnPlayPauseClicked() {
+        switch (mCurrentState) {
+            case STATE_PREPARED:
+            case STATE_PAUSE:
+                toggleMediaPlayerStart(true);
+                break;
+            case STATE_PLAYING:
+                toggleMediaPlayerStart(false);
+                break;
+            case STATE_PREPAREING:
+                mProgressLoading.setVisibility(View.VISIBLE);
+                mPendingAction = PENDING_ACTION_START;
+                break;
+        }
+
+    }
+
 
 
 
@@ -114,6 +138,15 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
         mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
+        mVdtUriProvider.getUri(mClip, new VdtUriProvider.OnUriLoadedListener() {
+            @Override
+            public void onUriLoaded(Uri uri) {
+                Logger.t(TAG).d("Uri: " + uri.toString());
+                openVideo(uri);
+            }
+        });
+
+        mCurrentState = STATE_PREPAREING;
 
     }
 
@@ -123,20 +156,21 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     }
 
     protected void openVideo(Uri uri) {
-        if (mSurfaceView == null
-            || mSurfaceHolder == null) {
+        if (mSurfaceView == null || mSurfaceHolder == null) {
             return;
         }
 
-
-//        mProgressLoading.setVisibility(View.VISIBLE);
         try {
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     Logger.t(TAG).d("Prepare finished!!!");
-                    mClipCover.setVisibility(View.GONE);
-                    mMediaPlayer.start();
+                    mCurrentState = STATE_PREPARED;
+                    if (mPendingAction == PENDING_ACTION_START) {
+                        mClipCover.setVisibility(View.GONE);
+                        toggleMediaPlayerStart(true);
+                    }
+
                 }
             });
 //            mMediaPlayer.setOnCompletionListener(this);
@@ -151,10 +185,10 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
                 public boolean onInfo(MediaPlayer mp, int what, int extra) {
                     switch (what) {
                         case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-//                            mProgressLoading.setVisibility(View.VISIBLE);
+                            mProgressLoading.setVisibility(View.VISIBLE);
                             break;
                         case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-//                            mProgressLoading.setVisibility(View.GONE);
+                            mProgressLoading.setVisibility(View.GONE);
                             break;
                     }
                     return false;
@@ -164,10 +198,22 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
         } catch (IOException e) {
 //            mCurrentState = STATE_ERROR;
 //            mTargetState = STATE_ERROR;
-            Log.e(TAG, "", e);
+            Logger.t(TAG).e("", e);
         }
     }
 
+    private void toggleMediaPlayerStart(boolean isPlay) {
+        if (isPlay == true) {
+            mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
+            mMediaPlayer.start();
+            mCurrentState = STATE_PLAYING;
+            mProgressLoading.setVisibility(View.GONE);
+        } else {
+            mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+            mMediaPlayer.pause();
+            mCurrentState = STATE_PAUSE;
+        }
+    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
