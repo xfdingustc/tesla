@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -37,7 +39,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/2/22.
  */
-public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback {
+public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Callback {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
     protected Clip mClip;
@@ -84,6 +86,10 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     @Bind(R.id.videoProgressBar)
     ProgressBar mPlayProgressBar;
 
+    @OnClick(R.id.btnDismiss)
+    public void onBtnDismissClicked() {
+        dismiss();
+    }
 
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
@@ -132,6 +138,7 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view = inflater.inflate(R.layout.fragment_clip_play, container, false);
         ButterKnife.bind(this, view);
         initViews();
@@ -142,6 +149,18 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mSurfaceView.getHolder().addCallback(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mMediaPlayer.stop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mMediaPlayer.reset();
     }
 
     private void init() {
@@ -253,7 +272,7 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
             .formatElapsedTime(duration);
 
         mTvProgress.setText(timeText);
-        
+
 
         mPlayProgressBar.setProgress(mMediaPlayer.getCurrentPosition());
 

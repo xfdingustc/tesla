@@ -160,13 +160,15 @@ public class ClipListFragment extends BaseFragment {
     }
 
     private void popClipPreviewFragment(Clip clip) {
+
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
 
         ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clip, config);
 
+        fragment.show(getFragmentManager(), "ClipPlayFragment");
 
-        getFragmentManager().beginTransaction().replace(R.id.videoPlayFragmentContainer,
-            fragment).commit();
+//        getFragmentManager().beginTransaction().replace(R.id.videoPlayFragmentContainer,
+//            fragment).commit();
     }
 }
