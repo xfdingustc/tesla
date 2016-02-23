@@ -10,27 +10,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
-import com.waylens.hachi.ui.views.VideoPlayerProgressBar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.Playlist;
 
 import butterknife.Bind;
@@ -40,7 +36,7 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 12/18/15.
  */
-public class EnhancementFragment extends Fragment implements FragmentNavigator, VideoPlayFragment.OnProgressListener {
+public class EnhancementFragment extends Fragment implements FragmentNavigator {
     private static final int MODE_SINGLE_CLIP = 0;
     private static final int MODE_PLAYLIST = 1;
 
@@ -57,12 +53,6 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     CameraVideoPlayFragment mVideoPlayFragment;
     SimplePagerAdapter mPagerAdapter;
 
-    @Bind(R.id.clip_seek_bar)
-    VideoPlayerProgressBar mSeekBar;
-
-    @Bind(R.id.tv_clip_date)
-    TextView mClipDateView;
-
     @Bind(R.id.video_cover)
     ImageView videoCover;
 
@@ -72,20 +62,10 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @Bind(R.id.view_pager)
     ViewPager mViewPager;
 
-    @Bind(R.id.view_animator)
-    ViewAnimator mViewAnimator;
-
-    @Bind(R.id.tv_music)
-    TextView mMusicView;
-
     @Override
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-        Toolbar mToolbar = ((BaseActivity)getActivity()).getToolbar();
-        if (mToolbar != null) {
-            mToolbar.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -96,10 +76,6 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             mVideoPlayFragment = null;
         }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
-        Toolbar mToolbar = ((BaseActivity)getActivity()).getToolbar();
-        if (mToolbar != null) {
-            mToolbar.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -114,25 +90,22 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
             mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
         } else {
             mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
-                mPlaylist, null);
+                    mPlaylist, null);
         }
         mVideoPlayFragment.setBackgroundMusic(mAudioPath);
-        mVideoPlayFragment.setOnProgressListener(this);
         getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
         videoCover.setVisibility(View.INVISIBLE);
     }
 
-    @OnClick(R.id.btn_cancel)
+
     void onCancel() {
         close();
     }
 
-    @OnClick(R.id.btn_ok)
     void onClickDone() {
         close();
     }
 
-    @OnClick(R.id.btn_share)
     void onClickShare() {
         getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
     }
@@ -140,16 +113,15 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
     @OnClick(R.id.btn_music)
     void onClickMusic() {
         getFragmentManager().beginTransaction()
-            .add(R.id.root_container, new MusicFragment())
-            .addToBackStack(null)
-            .commit();
+                .add(R.id.root_container, new MusicFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     @OnClick(R.id.btn_gauge)
     void showGauge() {
-        mViewAnimator.setDisplayedChild(1);
+        //TODO
     }
-
 
 
     public static EnhancementFragment newInstance(SharableClip sharableClip) {
@@ -175,6 +147,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         super.onCreate(savedInstanceState);
         mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
         mPagerAdapter = new SimplePagerAdapter();
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -192,14 +165,11 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         ClipPos clipPos;
         if (mEditMode == MODE_SINGLE_CLIP) {
             clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
-            mClipDateView.setText(mSharableClip.clip.getDateTimeString());
-            initSeekBarSingleClip();
+
         } else {
             Clip firstClip = mPlaylist.getClip(0);
             clipPos = new ClipPos(firstClip, firstClip.getStartTimeMs(), ClipPos.TYPE_POSTER,
                     false);
-            mClipDateView.setText(firstClip.getDateTimeString());
-            initSeekBarPlayList();
         }
         mImageLoader.displayVdbImage(clipPos, videoCover);
 
@@ -207,37 +177,9 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         mViewPager.setAdapter(mPagerAdapter);
     }
 
-
-    private void initSeekBarSingleClip() {
-        final ClipPos clipPos = new ClipPos(mSharableClip.clip, mSharableClip.clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-        mSeekBar.setInitRangeValues(mSharableClip.clip.getStartTimeMs(), mSharableClip.clip
-                .getStartTimeMs() + mSharableClip.clip.getDurationMs());
-
-        ClipSet clipSet = new ClipSet(0);
-        clipSet.addClip(mSharableClip.clip);
-        mSeekBar.setClipSet(clipSet, mImageLoader);
-        mSeekBar.setOnSeekBarChangeListener(new VideoPlayerProgressBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStartTrackingTouch(VideoPlayerProgressBar progressBar) {
-                //Log.e("test", "Start dragging....");
-            }
-
-            @Override
-            public void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser) {
-                //Log.e("test", "Progress: " + progress);
-                refreshThumbnail(mSharableClip.clip.getStartTimeMs() + progress, clipPos);
-            }
-
-            @Override
-            public void onStopTrackingTouch(VideoPlayerProgressBar progressBar) {
-                //Log.e("test", "Stop dragging....");
-            }
-        });
-    }
-
-    private void initSeekBarPlayList() {
-        ClipSet clipSet = mPlaylist.getClipSet();
-        mSeekBar.setClipSet(clipSet, mImageLoader);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_enhance, menu);
     }
 
     void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
@@ -257,12 +199,6 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         }
         close();
         return true;
-    }
-
-    @Override
-    public void onProgress(int position, int duration) {
-        mSeekBar.setProgress(position, duration);
-
     }
 
     static class SimplePagerAdapter extends PagerAdapter {
@@ -302,7 +238,6 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator, 
         public void onReceive(Context context, Intent intent) {
             mAudioID = intent.getIntExtra("music-id", 0);
             String name = intent.getStringExtra("name");
-            mMusicView.setText("Music: " + name);
             mAudioPath = intent.getStringExtra("path");
             if (mVideoPlayFragment != null) {
                 getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commit();

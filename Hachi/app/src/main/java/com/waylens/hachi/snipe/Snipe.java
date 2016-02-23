@@ -1,9 +1,12 @@
 package com.waylens.hachi.snipe;
 
 import android.content.Context;
+import android.os.Build;
+import android.util.Log;
 
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.snipe.toolbox.SetOptionsRequest;
 
 /**
  * Created by Xiaofei on 2015/8/17.
@@ -61,6 +64,7 @@ public class Snipe {
             @Override
             public void onCameraVdbConnected(VdtCamera vdtCamera) {
                 mVdbConnection = vdtCamera.getVdbConnection();
+                //setOptions();
             }
 
             @Override
@@ -82,6 +86,29 @@ public class Snipe {
 
     public static VdbConnection getVdbConnect() {
         return mVdbConnection;
+    }
+
+    /**
+     * Still cannot play HLS smoothly on Samsung Galaxy Note 3, even set the
+     * HLS segment duration as 2 seconds. Think about use ExoPlayer to resolve
+     * this issue. [Richard]
+     */
+    static void setOptions() {
+        if (!"samsung".equalsIgnoreCase(Build.MANUFACTURER)) {
+            return;
+        }
+        VdbRequestQueue queue = Snipe.newRequestQueue();
+        queue.add(new SetOptionsRequest(new VdbResponse.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                Log.e("test", "Response: " + response);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e("test", "setOptions Error", error);
+            }
+        }, SetOptionsRequest.VDB_OPTION_HLS_SEGMENT_LENGTH, 2000));
     }
 
 }

@@ -8,181 +8,6 @@
     android:background="@color/edit_toolbar"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/edit_toolbar">
-
-        <Button
-            android:id="@+id/btn_cancel"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start"
-            android:text="@android:string/cancel"
-            android:textColor="#FFD3D3D3"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end">
-
-            <Button
-                android:id="@+id/btn_ok"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enhance_done"
-                android:textColor="#FFD3D3D3"/>
-
-            <Button
-                android:id="@+id/btn_share"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/share"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"/>
-        </LinearLayout>
-    </FrameLayout>
-
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:id="@+id/enhance_fragment_content"
-        android:layout_width="match_parent"
-        android:layout_height="202dp"
-        app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp">
-
-        <ImageView
-            android:id="@+id/video_cover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop"/>
-
-        <ImageView
-            android:id="@+id/btn_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_play_circle_outline_white_48dp"/>
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
-    <ViewAnimator
-        android:id="@+id/view_animator"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:id="@+id/enhance_action_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:background="@color/edit_background"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="36dp">
-
-                <!--<ImageView-->
-                    <!--android:id="@+id/btn_add_clip"-->
-                    <!--android:layout_width="24dp"-->
-                    <!--android:layout_height="24dp"-->
-                    <!--android:layout_alignParentLeft="true"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginLeft="8dp"-->
-                    <!--android:layout_marginRight="16dp"-->
-                    <!--android:background="?android:attr/selectableItemBackground"-->
-                    <!--android:contentDescription="@null"-->
-                    <!--android:src="@drawable/ic_enhance_add_clip"/>-->
-
-                <!--<ImageView-->
-                    <!--android:id="@+id/btn_bg_music"-->
-                    <!--android:layout_width="24dp"-->
-                    <!--android:layout_height="24dp"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginLeft="8dp"-->
-                    <!--android:layout_marginRight="16dp"-->
-                    <!--android:layout_toRightOf="@id/btn_add_clip"-->
-                    <!--android:background="?android:attr/selectableItemBackground"-->
-                    <!--android:contentDescription="@null"-->
-                    <!--android:src="@drawable/ic_enhance_bg_music"/>-->
-
-
-                <ImageView
-                    android:id="@+id/btn_redo"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_redo_white_24dp"/>
-
-                <ImageView
-                    android:id="@+id/btn_undo"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_toLeftOf="@id/btn_redo"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_undo_white_24dp"
-                    />
-
-
-
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/tv_clip_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Today, 05:38:09"
-                android:textColor="@color/text_enhance"/>
-
-            <View
-                android:layout_width="2dp"
-                android:layout_height="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/text_enhance"/>
-
-            <com.waylens.hachi.ui.views.VideoPlayerProgressBar
-                android:id="@+id/clip_seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"/>
-
-            <View
-                android:layout_width="2dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/text_enhance"/>
-            <TextView
-                android:id="@+id/tv_music"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:textColor="@android:color/white"/>
-        </LinearLayout>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </ViewAnimator>
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="64dp"
@@ -219,5 +44,82 @@
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
             android:src="@drawable/btn_enhance_music"/>
+
+        <ImageView
+            android:id="@+id/btn_smart_remix"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@null"
+            android:src="@drawable/btn_enhance_music"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"/>
+
+        <LinearLayout
+            android:id="@+id/page_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp">
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/gauge_indicator_on"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginLeft="8dp"
+                android:background="@drawable/gauge_indicator_off"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:id="@+id/enhance_fragment_content"
+        android:layout_width="match_parent"
+        android:layout_height="202dp"
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp">
+
+        <ImageView
+            android:id="@+id/video_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
+            android:id="@+id/btn_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_play_circle_outline_white_48dp"/>
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+    <LinearLayout
+        android:id="@+id/enhance_action_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="@color/edit_background"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
     </LinearLayout>
 </com.waylens.hachi.ui.views.BarrierLinearLayout>

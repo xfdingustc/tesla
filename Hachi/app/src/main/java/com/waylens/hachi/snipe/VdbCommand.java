@@ -173,6 +173,8 @@ public class VdbCommand {
         //since version 1.4
         protected static final int CMD_GetUploadUrl = 19;
 
+        protected static final int CMD_SetOptions = 20;
+
         //-----------------------
         // since version 1.2
         //-----------------------
@@ -410,6 +412,17 @@ public class VdbCommand {
                 .build();
             command.setAcknowledgeCode(MSG_RawData);
             return command;
+        }
+
+        public static VdbCommand createCmdSetOptions(int option, int hlsSegmentLength) {
+            return new Builder()
+                    .writeCmdCode(CMD_SetOptions, 0)
+                    .writeInt32(option)
+                    .writeInt32(hlsSegmentLength)
+                    .writeInt32(0)
+                    .writeInt32(0)
+                    .writeInt32(0)
+                    .build();
         }
     }
 }

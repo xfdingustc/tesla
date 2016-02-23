@@ -24,23 +24,15 @@ public class SharableClip {
     private static final int MAX_EXTENSION = 1000 * 30;
     public Clip.ID bufferedCid;
     public Clip.ID realCid;
+    public final Clip clip;
     public long minExtensibleValue;
     public long maxExtensibleValue;
-    public final Clip clip;
     public long selectedStartValue;
     public long selectedEndValue;
     public long currentPosition;
 
-    VdbRequestQueue mVdbRequestQueue;
-
     public SharableClip(Clip clip) {
-        this(clip, null);
-    }
-
-    public SharableClip(Clip clip, VdbRequestQueue vdbRequestQueue) {
         this.clip = clip;
-        mVdbRequestQueue = vdbRequestQueue;
-
         minExtensibleValue = clip.getStartTimeMs();
         maxExtensibleValue = clip.getStartTimeMs() + clip.getDurationMs();
         selectedStartValue = minExtensibleValue;
@@ -53,12 +45,12 @@ public class SharableClip {
      * This operation involves network operation, and
      * should NOT be called in MAIN thread.
      */
-    public void checkExtension() {
-        if (mVdbRequestQueue == null) {
+    public void checkExtension(VdbRequestQueue vdbRequestQueue) {
+        if (vdbRequestQueue == null) {
             return;
         }
         if (clip.cid.type == Clip.TYPE_MARKED) {
-            getClipExtent();
+            getClipExtent(vdbRequestQueue);
         }
     }
 
@@ -71,9 +63,9 @@ public class SharableClip {
         return (int) (selectedEndValue - selectedStartValue);
     }
 
-    void getClipExtent() {
+    void getClipExtent(VdbRequestQueue vdbRequestQueue) {
         final CountDownLatch latch = new CountDownLatch(1);
-        mVdbRequestQueue.add(new ClipExtentGetRequest(clip, new VdbResponse.Listener<ClipExtent>() {
+        vdbRequestQueue.add(new ClipExtentGetRequest(clip, new VdbResponse.Listener<ClipExtent>() {
             @Override
             public void onResponse(ClipExtent clipExtent) {
                 if (clipExtent != null) {
@@ -122,19 +114,15 @@ public class SharableClip {
         }
     }
 
-
-
-
     public static List<SharableClip> processClipSet(@NonNull ClipSet clipSet, VdbRequestQueue
-        requestQueue) {
+            requestQueue) {
         ArrayList<SharableClip> sharableClips = new ArrayList<>();
         for (Clip clip : clipSet.getClipList()) {
-            SharableClip sharableClip = new SharableClip(clip, requestQueue);
-            sharableClip.checkExtension();
+            SharableClip sharableClip = new SharableClip(clip);
+            sharableClip.checkExtension(requestQueue);
             sharableClips.add(sharableClip);
 
         }
         return sharableClips;
     }
-
 }
