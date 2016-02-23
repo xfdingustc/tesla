@@ -6,6 +6,42 @@
               android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnDismiss"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/navbar_close"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnShare"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/edit_button_action_share"
+            android:background="@android:color/transparent"/>
+
+        <ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/btn_edit_action_video"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -49,7 +85,28 @@
             android:id="@+id/btnPlayPause"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/playbar_play"
+            android:background="@android:color/transparent"
+            android:src="@drawable/playbar_play"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/playProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+
+        <ImageButton
+            android:id="@+id/btnFullscreen"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/screen_full"
             android:background="@android:color/transparent"/>
 
     </LinearLayout>
