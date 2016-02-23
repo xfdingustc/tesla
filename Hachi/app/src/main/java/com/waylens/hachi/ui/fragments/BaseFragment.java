@@ -38,13 +38,43 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mVdtCamera = getCamera();
-
         if (mVdtCamera != null) {
-            mVdbRequestQueue = Snipe.newRequestQueue(getActivity());
+            mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
+        } else {
+            VdtCameraManager cameraManager = VdtCameraManager.getManager();
+            cameraManager.addCallback(new VdtCameraManager.Callback() {
+                @Override
+                public void onCameraConnecting(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onCameraConnected(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onCameraVdbConnected(VdtCamera vdtCamera) {
+                    BaseFragment.this.onCameraVdbConnected(vdtCamera);
+
+                }
+
+                @Override
+                public void onCameraDisconnected(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onCameraStateChanged(VdtCamera vdtCamera) {
+
+                }
+
+                @Override
+                public void onWifiListChanged() {
+
+                }
+            });
         }
-
-
-
     }
 
     @NonNull
@@ -67,6 +97,11 @@ public class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    public void onCameraVdbConnected(VdtCamera camera) {
+        mVdtCamera = camera;
+        mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), camera);
     }
 
     public void showToolbar() {

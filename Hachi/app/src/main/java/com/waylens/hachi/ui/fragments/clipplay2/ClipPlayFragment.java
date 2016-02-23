@@ -4,10 +4,10 @@ import android.app.Fragment;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.VideoView;
+import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -25,6 +25,8 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
+
+import org.ocpsoft.prettytime.format.SimpleTimeFormat;
 
 import java.io.IOException;
 
@@ -49,6 +51,7 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     private MediaPlayer mMediaPlayer = new MediaPlayer();
 
     private SurfaceHolder mSurfaceHolder;
+    private Handler mUiHandler;
 
     private final int STATE_NONE = 0;
     private final int STATE_PREPAREING = 1;
@@ -75,6 +78,12 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     @Bind(R.id.btnPlayPause)
     ImageButton mBtnPlayPause;
 
+    @Bind(R.id.playProgress)
+    TextView mTvProgress;
+
+    @Bind(R.id.videoProgressBar)
+    ProgressBar mPlayProgressBar;
+
 
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
@@ -82,6 +91,7 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
             case STATE_PREPARED:
             case STATE_PAUSE:
                 toggleMediaPlayerStart(true);
+                refreshProgressBar();
                 break;
             case STATE_PLAYING:
                 toggleMediaPlayerStart(false);
@@ -135,6 +145,7 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     }
 
     private void init() {
+        mUiHandler = new Handler();
         mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
@@ -171,6 +182,8 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
                         toggleMediaPlayerStart(true);
                     }
 
+                    mPlayProgressBar.setMax(mp.getDuration());
+                    refreshProgressBar();
                 }
             });
 //            mMediaPlayer.setOnCompletionListener(this);
@@ -202,6 +215,8 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
         }
     }
 
+
+
     private void toggleMediaPlayerStart(boolean isPlay) {
         if (isPlay == true) {
             mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
@@ -228,5 +243,27 @@ public class ClipPlayFragment extends Fragment implements SurfaceHolder.Callback
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mSurfaceHolder = null;
+    }
+
+    private void refreshProgressBar() {
+        int currentPos = mMediaPlayer.getCurrentPosition() / 1000;
+        int duration = mMediaPlayer.getDuration() / 1000;
+
+        String timeText = DateUtils.formatElapsedTime(currentPos) + "/" + DateUtils
+            .formatElapsedTime(duration);
+
+        mTvProgress.setText(timeText);
+        
+
+        mPlayProgressBar.setProgress(mMediaPlayer.getCurrentPosition());
+
+        if (mMediaPlayer.isPlaying()) {
+            mUiHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    refreshProgressBar();
+                }
+            }, 500);
+        }
     }
 }

@@ -65,46 +65,6 @@ public class ClipListFragment extends BaseFragment {
             retrieveSharableClips();
         } else {
             mLoadingProgressBar.setVisibility(View.VISIBLE);
-            VdtCameraManager cameraManager = VdtCameraManager.getManager();
-            cameraManager.addCallback(new VdtCameraManager.Callback() {
-                @Override
-                public void onCameraConnecting(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onCameraConnected(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onCameraVdbConnected(VdtCamera vdtCamera) {
-                    mUiThreadHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLoadingProgressBar.setVisibility(View.GONE);
-                            mClipSetGroup.clear();
-                            retrieveSharableClips();
-                        }
-                    });
-
-                }
-
-                @Override
-                public void onCameraDisconnected(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onCameraStateChanged(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onWifiListChanged() {
-
-                }
-            });
         }
 
     }
@@ -117,6 +77,20 @@ public class ClipListFragment extends BaseFragment {
         mUiThreadHandler = new Handler();
         setupClipSetGroup();
         return view;
+    }
+
+    @Override
+    public void onCameraVdbConnected(VdtCamera camera) {
+        super.onCameraVdbConnected(camera);
+        mUiThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mLoadingProgressBar.setVisibility(View.GONE);
+                mClipSetGroup.clear();
+                retrieveSharableClips();
+            }
+        });
+
     }
 
     private void setupClipSetGroup() {
