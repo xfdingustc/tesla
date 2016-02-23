@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -55,6 +57,8 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     private SurfaceHolder mSurfaceHolder;
     private Handler mUiHandler;
 
+    private Config mConfig;
+
     private final int STATE_NONE = 0;
     private final int STATE_PREPAREING = 1;
     private final int STATE_PREPARED = 2;
@@ -86,6 +90,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Bind(R.id.videoProgressBar)
     ProgressBar mPlayProgressBar;
 
+    @Bind(R.id.controlPanel)
+    LinearLayout mControlPanel;
+
     @OnClick(R.id.btnDismiss)
     public void onBtnDismissClicked() {
         dismiss();
@@ -111,14 +118,13 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     }
 
 
-
-
     public static class Config {
         public static int PROGRESS_BAR_STYLE_SINGLE = 0;
-        public int progressBarStyle;
+        public int progressBarStyle = PROGRESS_BAR_STYLE_SINGLE;
+        public boolean showControlPanel = true;
     }
 
-    private Config mConfig;
+
 
     public static ClipPlayFragment newInstance(VdtCamera camera, Clip clip, Config config) {
         ClipPlayFragment fragment = new ClipPlayFragment();
@@ -138,7 +144,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (getShowsDialog()) {
+            getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        }
         View view = inflater.inflate(R.layout.fragment_clip_play, container, false);
         ButterKnife.bind(this, view);
         initViews();
@@ -149,6 +157,16 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mSurfaceView.getHolder().addCallback(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getShowsDialog()) {
+            DisplayMetrics dm = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+            getDialog().getWindow().setLayout(dm.widthPixels, getDialog().getWindow().getAttributes().height);
+        }
     }
 
     @Override
@@ -183,7 +201,11 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     private void initViews() {
         ClipPos clipPos = new ClipPos(mClip);
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+        if (!mConfig.showControlPanel) {
+            mControlPanel.setVisibility(View.GONE);
+        }
     }
+
 
     protected void openVideo(Uri uri) {
         if (mSurfaceView == null || mSurfaceHolder == null) {
@@ -233,7 +255,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             Logger.t(TAG).e("", e);
         }
     }
-
 
 
     private void toggleMediaPlayerStart(boolean isPlay) {

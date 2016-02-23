@@ -9,4 +9,6 @@
         <attr name="barType" />
         <attr name="labelSrc" format="reference|integer"/>
     </declare-styleable>
+
+
 </resources>

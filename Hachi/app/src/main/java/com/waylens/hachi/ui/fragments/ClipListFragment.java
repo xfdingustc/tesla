@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,6 +24,9 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -131,7 +135,6 @@ public class ClipListFragment extends BaseFragment {
 
     private void calculateClipSetGroup(ClipSet clipSet) {
         for (Clip clip : clipSet.getClipList()) {
-            int date = clip.clipDate;
 
             String clipDataString = clip.getDateString();
             ClipSet oneClipSet = mClipSetGroup.get(clipDataString);
@@ -142,8 +145,6 @@ public class ClipListFragment extends BaseFragment {
 
             oneClipSet.addClip(clip);
 
-            //Logger.t(TAG).d("clipData: " + clip.getDateString() + " clipTime: " + clip
-            //    .getDateTimeString());
         }
     }
 
@@ -156,6 +157,13 @@ public class ClipListFragment extends BaseFragment {
             clipSetGroup.add((ClipSet) entry.getValue());
         }
 
+        Collections.sort(clipSetGroup, new Comparator<ClipSet>() {
+            @Override
+            public int compare(ClipSet lhs, ClipSet rhs) {
+                return rhs.getClip(0).clipDate - lhs.getClip(0).clipDate;
+            }
+        });
+
         mAdapter.setClipSetGroup(clipSetGroup);
     }
 
@@ -164,11 +172,13 @@ public class ClipListFragment extends BaseFragment {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
 
+
         ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clip, config);
+
+
+
 
         fragment.show(getFragmentManager(), "ClipPlayFragment");
 
-//        getFragmentManager().beginTransaction().replace(R.id.videoPlayFragmentContainer,
-//            fragment).commit();
     }
 }

@@ -13,4 +13,8 @@
         <attr name="rightThumb" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="ClipPlayFragment">
+        <attr name="rippleAlpha" format="boolean"/>
+    </declare-styleable>
+
 </resources>
