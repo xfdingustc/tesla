@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
@@ -67,6 +68,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     private final int STATE_PREPARED = 2;
     private final int STATE_PLAYING = 3;
     private final int STATE_PAUSE = 4;
+    private final int STATE_FAST_PREVIEW = 5;
 
     private int mCurrentState = STATE_NONE;
 
@@ -90,8 +92,8 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Bind(R.id.playProgress)
     TextView mTvProgress;
 
-    @Bind(R.id.videoProgressBar)
-    ProgressBar mPlayProgressBar;
+    @Bind(R.id.videoSeekBar)
+    SeekBar mSeekBar;
 
     @Bind(R.id.controlPanel)
     LinearLayout mControlPanel;
@@ -106,11 +108,12 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         switch (mCurrentState) {
             case STATE_PREPARED:
             case STATE_PAUSE:
-                toggleMediaPlayerStart(true);
+            case STATE_FAST_PREVIEW:
+                changeState(STATE_PLAYING);
                 refreshProgressBar();
                 break;
             case STATE_PLAYING:
-                toggleMediaPlayerStart(false);
+                changeState(STATE_PAUSE);
                 break;
             case STATE_PREPAREING:
                 mProgressLoading.setVisibility(View.VISIBLE);
@@ -119,6 +122,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         }
 
     }
+
 
     @OnClick(R.id.btnEnhance)
     public void onBtnEnhanceClicked() {
@@ -132,7 +136,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         public int progressBarStyle = PROGRESS_BAR_STYLE_SINGLE;
         public boolean showControlPanel = true;
     }
-
 
 
     public static ClipPlayFragment newInstance(VdtCamera camera, Clip clip, Config config) {
@@ -196,8 +199,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
 
 
-
-
     }
 
     private void initViews() {
@@ -206,6 +207,32 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         if (!mConfig.showControlPanel) {
             mControlPanel.setVisibility(View.GONE);
         }
+
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                Logger.t(TAG).d("onProgressChanged");
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Logger.t(TAG).d("onStartTrackingTouch");
+                changeState(STATE_FAST_PREVIEW);
+                mClipCover.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Logger.t(TAG).d("onStopTrackingTouch");
+                long clipTimeMs = mClip.getStartTimeMs() + ((long) mClip.getDurationMs() *
+                    seekBar.getProgress()) / seekBar.getMax();
+
+                ClipPos clipPos = new ClipPos(mClip, clipTimeMs, ClipPos.TYPE_POSTER, false);
+                mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+            }
+        });
 
     }
 
@@ -225,10 +252,10 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
                     if (mPendingAction == PENDING_ACTION_START) {
                         mClipCover.setVisibility(View.GONE);
-                        toggleMediaPlayerStart(true);
+                        changeState(STATE_PLAYING);
                     }
 
-                    mPlayProgressBar.setMax(mp.getDuration());
+                    mSeekBar.setMax(mp.getDuration());
                     refreshProgressBar();
                 }
             });
@@ -258,20 +285,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 //            mCurrentState = STATE_ERROR;
 //            mTargetState = STATE_ERROR;
             Logger.t(TAG).e("", e);
-        }
-    }
-
-
-    private void toggleMediaPlayerStart(boolean isPlay) {
-        if (isPlay == true) {
-            mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
-            mMediaPlayer.start();
-            changeState(STATE_PLAYING);
-            mProgressLoading.setVisibility(View.GONE);
-        } else {
-            mBtnPlayPause.setImageResource(R.drawable.playbar_play);
-            mMediaPlayer.pause();
-            changeState(STATE_PAUSE);
         }
     }
 
@@ -312,28 +325,27 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     }
 
     private void changeState(int targetState) {
-        switch (mCurrentState) {
-            case STATE_NONE:
-                break;
-            case STATE_PREPAREING:
-                if (targetState == STATE_PREPARED) {
-                    mProgressLoading.setVisibility(View.GONE);
-                }
-                break;
+        switch (targetState) {
             case STATE_PREPARED:
-                if (targetState == STATE_PLAYING) {
-                    mClipCover.setVisibility(View.GONE);
-                }
+                mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PLAYING:
+                mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
+                mMediaPlayer.start();
+                mClipCover.setVisibility(View.GONE);
+                mProgressLoading.setVisibility(View.GONE);
+                break;
+            case STATE_PAUSE:
+                mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+                mMediaPlayer.pause();
                 break;
         }
         mCurrentState = targetState;
     }
 
     private void refreshProgressBar() {
-        int currentPos = mMediaPlayer.getCurrentPosition() ;
-        int duration = mMediaPlayer.getDuration() ;
+        int currentPos = mMediaPlayer.getCurrentPosition();
+        int duration = mMediaPlayer.getDuration();
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 
@@ -345,7 +357,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         mTvProgress.setText(timeText);
 
 
-        mPlayProgressBar.setProgress(adjustedPosition);
+        mSeekBar.setProgress(adjustedPosition);
 
         if (mMediaPlayer.isPlaying()) {
             mUiHandler.postDelayed(new Runnable() {
