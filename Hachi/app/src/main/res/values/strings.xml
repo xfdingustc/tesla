@@ -345,4 +345,7 @@
         <item quantity="other">%d Clips</item>
     </plurals>
 
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+
 </resources>
