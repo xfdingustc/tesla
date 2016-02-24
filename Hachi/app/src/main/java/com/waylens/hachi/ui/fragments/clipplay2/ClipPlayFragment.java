@@ -1,9 +1,7 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -29,8 +27,7 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-
-import org.ocpsoft.prettytime.format.SimpleTimeFormat;
+import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
 
@@ -58,6 +55,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     private Handler mUiHandler;
 
     private Config mConfig;
+
+    private VdbUrl mUrl;
+    private PositionAdjuster mPositionAdjuster;
 
     private final int STATE_NONE = 0;
     private final int STATE_PREPAREING = 1;
@@ -187,11 +187,15 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
         mVdtUriProvider.getUri(mClip, new VdtUriProvider.OnUriLoadedListener() {
+
             @Override
-            public void onUriLoaded(Uri uri) {
-                Logger.t(TAG).d("Uri: " + uri.toString());
-                openVideo(uri);
+            public void onUriLoaded(VdbUrl url) {
+                mUrl = url;
+                mPositionAdjuster = new PositionAdjuster(url);
+                openVideo(url);
             }
+
+
         });
 
         mCurrentState = STATE_PREPAREING;
@@ -207,7 +211,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     }
 
 
-    protected void openVideo(Uri uri) {
+    protected void openVideo(VdbUrl url) {
         if (mSurfaceView == null || mSurfaceHolder == null) {
             return;
         }
@@ -231,7 +235,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 //            mMediaPlayer.setOnErrorListener(this);
 
 
-            mMediaPlayer.setDataSource(uri.toString());
+            mMediaPlayer.setDataSource(url.url);
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
@@ -286,16 +290,20 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     }
 
     private void refreshProgressBar() {
-        int currentPos = mMediaPlayer.getCurrentPosition() / 1000;
-        int duration = mMediaPlayer.getDuration() / 1000;
+        int currentPos = mMediaPlayer.getCurrentPosition() ;
+        int duration = mMediaPlayer.getDuration() ;
 
-        String timeText = DateUtils.formatElapsedTime(currentPos) + "/" + DateUtils
-            .formatElapsedTime(duration);
+        int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
+
+        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
+
+        String timeText = DateUtils.formatElapsedTime(adjustedPosition / 1000) + "/" + DateUtils
+            .formatElapsedTime(duration / 1000);
 
         mTvProgress.setText(timeText);
 
 
-        mPlayProgressBar.setProgress(mMediaPlayer.getCurrentPosition());
+        mPlayProgressBar.setProgress(adjustedPosition);
 
         if (mMediaPlayer.isPlaying()) {
             mUiHandler.postDelayed(new Runnable() {
@@ -303,7 +311,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 public void run() {
                     refreshProgressBar();
                 }
-            }, 500);
+            }, 50);
         }
     }
 }

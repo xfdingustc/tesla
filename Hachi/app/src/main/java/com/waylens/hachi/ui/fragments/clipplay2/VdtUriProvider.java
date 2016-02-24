@@ -12,6 +12,7 @@ import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.vdb.urls.PlaybackUrl;
+import com.waylens.hachi.vdb.urls.VdbUrl;
 
 /**
  * Created by Xiaofei on 2016/2/22.
@@ -21,7 +22,7 @@ class VdtUriProvider {
     private OnUriLoadedListener mListener;
 
     public interface OnUriLoadedListener {
-        void onUriLoaded(Uri uri);
+        void onUriLoaded(VdbUrl url);
     }
 
     public VdtUriProvider(VdbRequestQueue requestQueue) {
@@ -42,10 +43,8 @@ class VdtUriProvider {
             VdbResponse.Listener<PlaybackUrl>() {
             @Override
             public void onResponse(PlaybackUrl playbackUrl) {
-//                mPlaybackUrl = playbackUrl;
-                Uri uri = Uri.parse(playbackUrl.url);
                 if (mListener != null) {
-                    mListener.onUriLoaded(uri);
+                    mListener.onUriLoaded(playbackUrl);
                 }
 
             }
