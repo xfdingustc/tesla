@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.app.DialogFragment;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -187,22 +188,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
 
 
-        mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
 
-        mVdtUriProvider.getUri(mClip, new VdtUriProvider.OnUriLoadedListener() {
-
-            @Override
-            public void onUriLoaded(VdbUrl url) {
-                mUrl = url;
-                Logger.t(TAG).d("Get playback url: " + url.url);
-                mPositionAdjuster = new PositionAdjuster(url);
-                openVideo(url);
-            }
-
-
-        });
-
-        changeState(STATE_PREPAREING);
 
     }
 
@@ -218,6 +204,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     protected void openVideo(VdbUrl url) {
         if (mSurfaceView == null || mSurfaceHolder == null) {
+            Logger.t(TAG).d("mSurfaceView: " + mSurfaceView + " mSurfaceHolder: " + mSurfaceHolder);
             return;
         }
 
@@ -239,9 +226,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             });
 //            mMediaPlayer.setOnCompletionListener(this);
 //            mMediaPlayer.setOnErrorListener(this);
-
-
-            mMediaPlayer.setDataSource(url.url);
+            Logger.t(TAG).d("Start loading");
+            Uri uri = Uri.parse(url.url);
+            mMediaPlayer.setDataSource(uri.toString());
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
@@ -283,6 +270,27 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
+        startPreparingClip();
+
+    }
+
+    private void startPreparingClip() {
+        mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
+
+        mVdtUriProvider.getUri(mClip, new VdtUriProvider.OnUriLoadedListener() {
+
+            @Override
+            public void onUriLoaded(VdbUrl url) {
+                mUrl = url;
+                Logger.t(TAG).d("Get playback url: " + url.url);
+                mPositionAdjuster = new PositionAdjuster(url);
+                openVideo(url);
+            }
+
+
+        });
+
+        changeState(STATE_PREPAREING);
     }
 
     @Override
