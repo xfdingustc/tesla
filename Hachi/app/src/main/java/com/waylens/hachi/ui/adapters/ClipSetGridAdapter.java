@@ -3,10 +3,12 @@ package com.waylens.hachi.ui.adapters;
 import android.content.Context;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
@@ -57,6 +59,10 @@ public class ClipSetGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ClipSetGridViewHolder viewHolder = (ClipSetGridViewHolder)holder;
         Clip clip = mClipSet.getClip(position);
         ClipPos clipPos  = new ClipPos(clip);
+
+        String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
+        viewHolder.tvDuration.setText(clipDuration);
+
         mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover);
 
         viewHolder.ivClipCover.setTag(viewHolder);
@@ -86,6 +92,9 @@ public class ClipSetGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Bind(R.id.ivClipCover)
         ImageView ivClipCover;
+
+        @Bind(R.id.tvDuration)
+        TextView tvDuration;
 
         public ClipSetGridViewHolder(View itemView) {
             super(itemView);
