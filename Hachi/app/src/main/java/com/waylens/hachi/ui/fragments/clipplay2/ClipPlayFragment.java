@@ -26,6 +26,8 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.VdbUrl;
@@ -116,6 +118,12 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 break;
         }
 
+    }
+
+    @OnClick(R.id.btnEnhance)
+    public void onBtnEnhanceClicked() {
+        dismiss();
+        EnhancementActivity.launch(getActivity(), mClip);
     }
 
 

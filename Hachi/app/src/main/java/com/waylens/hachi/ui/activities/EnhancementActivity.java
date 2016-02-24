@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,14 @@ import java.util.ArrayList;
  * Created by Richard on 2/22/16.
  */
 public class EnhancementActivity extends BaseActivity {
+
+    public static void launch(Activity activity, Clip clip) {
+        Intent intent = new Intent(activity, EnhancementActivity.class);
+        ArrayList<Clip> clips = new ArrayList<>();
+        clips.add(clip);
+        intent.putParcelableArrayListExtra("clips", clips);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
