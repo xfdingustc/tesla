@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -18,6 +19,7 @@ import com.waylens.hachi.vdb.urls.VdbUrl;
  * Created by Xiaofei on 2016/2/22.
  */
 class VdtUriProvider {
+    private static final String TAG = VdtUriProvider.class.getSimpleName();
     private VdbRequestQueue mVdbRequestQueue;
     private OnUriLoadedListener mListener;
 
@@ -31,6 +33,7 @@ class VdtUriProvider {
 
 
     public void getUri(Clip clip, OnUriLoadedListener listener) {
+        Logger.t(TAG).d("Start load clip url:");
         mListener = listener;
 
         Bundle parameters = new Bundle();
@@ -51,8 +54,7 @@ class VdtUriProvider {
         }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-//                mProgressLoading.setVisibility(View.GONE);
-//                Log.e("test", "", error);
+                Logger.t(TAG).d("", error);
             }
         });
 

@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -48,8 +49,9 @@ public class ClipListFragment extends BaseFragment {
     @Bind(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
-    @Bind(R.id.progressLoading)
-    ProgressBar mLoadingProgressBar;
+
+    @Bind(R.id.refreshLayout)
+    SwipeRefreshLayout mRefreshLayout;
 
     private Handler mUiThreadHandler;
 
@@ -64,11 +66,10 @@ public class ClipListFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        mRefreshLayout.setRefreshing(true);
+
         if (getCamera() != null) {
-            mClipSetGroup.clear();
             retrieveSharableClips();
-        } else {
-            mLoadingProgressBar.setVisibility(View.VISIBLE);
         }
 
     }
@@ -80,6 +81,12 @@ public class ClipListFragment extends BaseFragment {
             savedInstanceState);
         mUiThreadHandler = new Handler();
         setupClipSetGroup();
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retrieveSharableClips();
+            }
+        });
         return view;
     }
 
@@ -89,7 +96,7 @@ public class ClipListFragment extends BaseFragment {
         mUiThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                mLoadingProgressBar.setVisibility(View.GONE);
+
                 mClipSetGroup.clear();
                 retrieveSharableClips();
             }
@@ -114,10 +121,12 @@ public class ClipListFragment extends BaseFragment {
     }
 
     private void retrieveSharableClips() {
+        mClipSetGroup.clear();
         mVdbRequestQueue.add(new ClipSetRequest(mClipSetType, ClipSetRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
+                    mRefreshLayout.setRefreshing(false);
                     calculateClipSetGroup(clipSet);
                     setupClipSetGroupView();
                 }
