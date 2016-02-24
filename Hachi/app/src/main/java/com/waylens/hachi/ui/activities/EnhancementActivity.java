@@ -10,6 +10,8 @@ import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.vdb.Clip;
 
+import java.util.ArrayList;
+
 /**
  * Created by Richard on 2/22/16.
  */
@@ -27,11 +29,12 @@ public class EnhancementActivity extends BaseActivity {
         }
 
         Intent intent = getIntent();
-        Clip clip = intent.getParcelableExtra("clip");
+        //Clip clip = intent.getParcelableExtra("clip");
+        ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
 
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_content, EnhancementFragment.newInstance(new SharableClip(clip))).commit();
+                .add(R.id.fragment_content, EnhancementFragment.newInstance(clips)).commit();
     }
 
     @Override

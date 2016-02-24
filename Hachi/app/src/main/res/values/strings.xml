@@ -326,7 +326,7 @@
     <string name="share_is_cancelled">Share is cancelled.</string>
 
     <plurals name="number_of_bookmarks">
-        <item quantity="one">%d Bookmarks</item>
+        <item quantity="one">%d Bookmark</item>
         <item quantity="other">%d Bookmarks</item>
     </plurals>
 
@@ -340,5 +340,9 @@
     <string name="music_waiting">Waiting</string>
 
     <string name="no_title">No Title</string>
+    <plurals name="numbers_of_clips">
+        <item quantity="one">%d Clip</item>
+        <item quantity="other">%d Clips</item>
+    </plurals>
 
 </resources>

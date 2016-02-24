@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,18 +15,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
-import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.Playlist;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,16 +38,14 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 12/18/15.
  */
-public class EnhancementFragment extends Fragment implements FragmentNavigator {
+public class EnhancementFragment extends BaseFragment implements FragmentNavigator {
     private static final int MODE_SINGLE_CLIP = 0;
     private static final int MODE_PLAYLIST = 1;
 
 
     private int mEditMode;
-    private SharableClip mSharableClip;
+    private ArrayList<SharableClip> mSharableClips;
     private Playlist mPlaylist;
-
-    private VdbImageLoader mImageLoader;
 
     private int mAudioID;
     private String mAudioPath;
@@ -53,14 +53,20 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
     CameraVideoPlayFragment mVideoPlayFragment;
     SimplePagerAdapter mPagerAdapter;
 
-    @Bind(R.id.video_cover)
-    ImageView videoCover;
-
     @Bind(R.id.enhance_root_view)
     LinearLayout mEnhanceRootView;
 
     @Bind(R.id.view_pager)
     ViewPager mViewPager;
+
+    @Bind(R.id.clips_edit_view)
+    ClipsEditView mClipsEditView;
+
+    @Bind(R.id.clips_count_view)
+    TextView mClipsCountView;
+
+    @Bind(R.id.view_animator)
+    ViewAnimator mViewAnimator;
 
     @Override
     public void onStart() {
@@ -84,17 +90,15 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
         super.onDestroyView();
     }
 
-    @OnClick(R.id.btn_play)
     void playVideo() {
         if (mEditMode == MODE_SINGLE_CLIP) {
-            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
+            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClips.get(0).clip, null);
         } else {
             mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
                     mPlaylist, null);
         }
         mVideoPlayFragment.setBackgroundMusic(mAudioPath);
         getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
-        videoCover.setVisibility(View.INVISIBLE);
     }
 
 
@@ -107,7 +111,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
     }
 
     void onClickShare() {
-        getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
+        //getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
     }
 
     @OnClick(R.id.btn_music)
@@ -128,7 +132,7 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
         Bundle args = new Bundle();
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
-        fragment.mSharableClip = sharableClip;
+        //fragment.mSharableClip = sharableClip;
         fragment.mEditMode = MODE_SINGLE_CLIP;
         return fragment;
     }
@@ -142,10 +146,21 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
         return fragment;
     }
 
+    public static EnhancementFragment newInstance(ArrayList<Clip> clips) {
+        Bundle args = new Bundle();
+        EnhancementFragment fragment = new EnhancementFragment();
+        fragment.setArguments(args);
+        fragment.mSharableClips = new ArrayList<>();
+        for (Clip clip : clips) {
+            fragment.mSharableClips.add(new SharableClip(clip));
+        }
+        fragment.mEditMode = MODE_SINGLE_CLIP;
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
         mPagerAdapter = new SimplePagerAdapter();
         setHasOptionsMenu(true);
     }
@@ -162,29 +177,29 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
-        ClipPos clipPos;
-        if (mEditMode == MODE_SINGLE_CLIP) {
-            clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
-
-        } else {
-            Clip firstClip = mPlaylist.getClip(0);
-            clipPos = new ClipPos(firstClip, firstClip.getStartTimeMs(), ClipPos.TYPE_POSTER,
-                    false);
-        }
-        mImageLoader.displayVdbImage(clipPos, videoCover);
-
-
         mViewPager.setAdapter(mPagerAdapter);
+        embedVideoPlayFragment();
+        mClipsEditView.setSharableClips(mSharableClips);
+        mClipsCountView.setText(getResources().getQuantityString(
+                R.plurals.numbers_of_clips,
+                mSharableClips.size(),
+                mSharableClips.size()));
+
+        mViewAnimator.setDisplayedChild(1);
+    }
+
+    void embedVideoPlayFragment() {
+        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
+        config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
+        config.showControlPanel = false;
+        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), mSharableClips.get(0).clip, config);
+        fragment.setShowsDialog(false);
+        getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, fragment).commit();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_enhance, menu);
-    }
-
-    void refreshThumbnail(long clipTimeMs, ClipPos clipPos) {
-        clipPos.setClipTimeMs(clipTimeMs);
-        mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
     }
 
     void close() {
@@ -241,7 +256,6 @@ public class EnhancementFragment extends Fragment implements FragmentNavigator {
             mAudioPath = intent.getStringExtra("path");
             if (mVideoPlayFragment != null) {
                 getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commit();
-                videoCover.setVisibility(View.VISIBLE);
                 mVideoPlayFragment = null;
             }
         }

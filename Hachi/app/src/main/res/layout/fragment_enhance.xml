@@ -2,11 +2,13 @@
 <com.waylens.hachi.ui.views.BarrierLinearLayout
     android:id="@+id/enhance_root_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:rsb="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/edit_toolbar"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -89,37 +91,42 @@
 
     </LinearLayout>
 
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:id="@+id/enhance_fragment_content"
+    <FrameLayout android:id="@+id/enhance_fragment_content"
         android:layout_width="match_parent"
-        android:layout_height="202dp"
-        app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp">
-
-        <ImageView
-            android:id="@+id/video_cover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop"/>
-
-        <ImageView
-            android:id="@+id/btn_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_play_circle_outline_white_48dp"/>
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
-    <LinearLayout
+        android:layout_height="wrap_content"
+        tools:layout_height="256dp"/>
+    <RelativeLayout
         android:id="@+id/enhance_action_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        android:background="@color/edit_background"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+        <ViewAnimator
+            android:id="@+id/view_animator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+        <TextView
+            android:id="@+id/clips_count_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/white"
+            tools:text="1 Clip"/>
+            <org.florescu.android.rangeseekbar.RangeSeekBar
+                android:id="@+id/range_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                rsb:barHeight="4dp"
+                rsb:showLabels="false"
+                rsb:valuesAboveThumbs="false"/>
+        </ViewAnimator>
+        <com.waylens.hachi.ui.views.clipseditview.ClipsEditView
+            android:id="@+id/clips_edit_view"
+            android:layout_width="match_parent"
+            android:layout_height="128dp"
+            android:layout_below="@id/view_animator"
+            android:layout_marginTop="16dp">
+        </com.waylens.hachi.ui.views.clipseditview.ClipsEditView>
+    </RelativeLayout>
 </com.waylens.hachi.ui.views.BarrierLinearLayout>
