@@ -71,12 +71,11 @@
 
     <SeekBar
         android:id="@+id/videoSeekBar"
-        style="?android:progressBarStyleHorizontal"
+        style="?android:seekBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:layout_margin="16dp"
+        android:layout_height="4dp"
+        android:layout_margin="8dp"
         android:indeterminateOnly="false"
-        android:progress="0"
         android:progressDrawable="@drawable/clip_play_fragment_progress_bar"
         android:thumb="@drawable/clip_play_fragment_progress_bar_thumb"/>
 
