@@ -1,34 +1,67 @@
 package com.waylens.hachi.ui.views.clipseditview;
 
 import android.content.Context;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
+
+import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
+ * //
  * Created by Richard on 2/23/16.
  */
-public class ClipsEditView extends RecyclerView {
+public class ClipsEditView extends RelativeLayout implements View.OnClickListener,
+        RecyclerView.OnItemTouchListener, RangeSeekBar.OnRangeSeekBarChangeListener<Long> {
+    final static float HALF_ALPHA = 0.5f;
+    final static float FULL_ALPHA = 1.0f;
 
+    @Bind(R.id.clip_list_view)
+    RecyclerView mRecyclerView;
+
+    @Bind(R.id.clips_count_view)
+    TextView mClipsCountView;
+
+    @Bind(R.id.clips_duration_view)
+    TextView mClipDurationView;
+
+    @Bind(R.id.range_seek_bar)
+    RangeSeekBar<Long> mRangeSeekBar;
+
+    @Bind(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
+    LinearLayoutManager mLayoutManager;
+    List<SharableClip> mSharableClips;
     RecyclerViewAdapter mAdapter;
     ItemTouchHelper mItemTouchHelper;
+    OnClipEditListener mOnClipEditListener;
+
+    int selectedPosition = -1;
 
     public ClipsEditView(Context context) {
         this(context, null, 0);
@@ -40,45 +73,140 @@ public class ClipsEditView extends RecyclerView {
 
     public ClipsEditView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
-    void init() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(HORIZONTAL);
-        setLayoutManager(layoutManager);
-        mAdapter = new RecyclerViewAdapter();
-        setAdapter(mAdapter);
+    void init(Context context) {
+        View.inflate(context, R.layout.layout_clips_edit_view, this);
+        ButterKnife.bind(this, this);
+
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new RecyclerViewAdapter(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(this);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+
+        setClickable(true);
+        setOnClickListener(this);
+        mRecyclerView.addOnItemTouchListener(this);
+        mRangeSeekBar.setNotifyWhileDragging(true);
+        mRangeSeekBar.setOnRangeSeekBarChangeListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        //TODO
+        //exitClipEditing();
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+        //TODO
+        //return null == recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+        return false;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        final int action = MotionEventCompat.getActionMasked(e);
+        if (action == MotionEvent.ACTION_UP) {
+            exitClipEditing();
+        }
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        //
+    }
+
+    @Override
+    public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Long minValue, Long maxValue) {
+        if (selectedPosition == -1) {
+            return;
+        }
+        SharableClip sharableClip = mSharableClips.get(selectedPosition);
+        sharableClip.selectedStartValue = minValue;
+        sharableClip.selectedEndValue = maxValue;
+        updateClipDuration(sharableClip);
     }
 
     public void setSharableClips(List<SharableClip> sharableClips) {
-        if (mAdapter != null) {
-            mAdapter.setSharableClips(sharableClips);
+        if (mAdapter != null && sharableClips != null) {
+            mSharableClips = sharableClips;
+            mAdapter.notifyDataSetChanged();
+            updateClipCount(sharableClips.size());
         }
     }
 
-    static class RecyclerViewAdapter extends RecyclerView.Adapter<VH> implements ItemTouchListener {
+    public void setOnClipEditListener(OnClipEditListener listener) {
+        mOnClipEditListener = listener;
+    }
 
-        List<SharableClip> mSharableClips;
-        VdbImageLoader mImageLoader;
-        float HALF_ALPHA = 0.5f;
-        float FULL_ALPHA = 1.0f;
+    void internalOnExitEditing() {
+        selectedPosition = -1;
+        mViewAnimator.setDisplayedChild(0);
+        if (mOnClipEditListener != null) {
+            mOnClipEditListener.onExitEditing();
+        }
+    }
 
-        VH selectedVH;
-        int selectedPosition = -1;
+    void internalOnSelectClip(int selectedPosition, SharableClip sharableClip) {
+        mViewAnimator.setDisplayedChild(1);
+        mRangeSeekBar.setRangeValues(sharableClip.minExtensibleValue, sharableClip.maxExtensibleValue);
+        mRangeSeekBar.setSelectedMinValue(sharableClip.selectedStartValue);
+        mRangeSeekBar.setSelectedMaxValue(sharableClip.selectedEndValue);
+        updateClipDuration(sharableClip);
+        if (mOnClipEditListener != null) {
+            mOnClipEditListener.onClipSelected(selectedPosition, sharableClip);
+        }
+    }
 
-        RecyclerViewAdapter() {
-            mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
+    private void updateClipDuration(SharableClip sharableClip) {
+        mClipDurationView.setText(DateUtils.formatElapsedTime(sharableClip.getSelectedLength() / 1000));
+    }
+
+    void internalOnClipMoved(int fromPosition, int toPosition) {
+        if (mOnClipEditListener != null) {
+            mOnClipEditListener.onClipMoved(fromPosition, toPosition);
+        }
+    }
+
+    void internalOnClipRemoved(int position) {
+        updateClipCount(mSharableClips.size());
+        if (mOnClipEditListener != null) {
+            mOnClipEditListener.onClipRemoved(position);
         }
 
-        public void setSharableClips(List<SharableClip> sharableClips) {
-            mSharableClips = sharableClips;
-            if (mSharableClips != null) {
-                notifyDataSetChanged();
-            }
+        if (selectedPosition == position) {
+            internalOnExitEditing();
+        }
+    }
+
+    void exitClipEditing() {
+        if (selectedPosition == -1) {
+            return;
+        }
+        View child = mLayoutManager.findViewByPosition(selectedPosition);
+        if (child != null) {
+            child.setAlpha(HALF_ALPHA);
+        }
+        internalOnExitEditing();
+    }
+
+    void updateClipCount(int clipCount) {
+        mClipsCountView.setText(getResources().getQuantityString(
+                R.plurals.numbers_of_clips, clipCount, clipCount));
+    }
+
+    class RecyclerViewAdapter extends RecyclerView.Adapter<VH> implements ItemTouchListener {
+        VdbImageLoader mImageLoader;
+
+        RecyclerViewAdapter(LinearLayoutManager layoutManager) {
+            mLayoutManager = layoutManager;
+            mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
         }
 
         @Override
@@ -89,34 +217,27 @@ public class ClipsEditView extends RecyclerView {
 
         @Override
         public void onBindViewHolder(final VH holder, final int position) {
-            Clip clip = mSharableClips.get(position).clip;
-            ClipPos clipPos = new ClipPos(clip);
+            final SharableClip sharableClip = mSharableClips.get(position);
+            ClipPos clipPos = new ClipPos(sharableClip.clip);
             mImageLoader.displayVdbImage(clipPos, holder.clipThumbnail);
             holder.itemView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e("test", "selectedPosition: " + selectedPosition);
-                    if (selectedVH == null) {
-                        Log.e("test", "selectedVH is null");
-                    } else {
-                        Log.e("test", "selectedVH.getAdapterPosition: " + selectedVH.getAdapterPosition());
-                    }
-                    Log.e("test", "position: " + position);
-                    Log.e("test", "holder.getAdapterPosition: " + holder.getAdapterPosition());
-
-                    if (selectedPosition == position) {
+                    if (selectedPosition == holder.getAdapterPosition()) {
                         holder.itemView.setAlpha(HALF_ALPHA);
-                        selectedVH = null;
-                        selectedPosition = -1;
+                        internalOnExitEditing();
                         return;
                     }
-
-                    if (selectedVH != null) {
-                        selectedVH.itemView.setAlpha(HALF_ALPHA);
+                    if (selectedPosition != -1) {
+                        View view = mLayoutManager.findViewByPosition(selectedPosition);
+                        if (view != null) {
+                            view.setAlpha(HALF_ALPHA);
+                        }
                     }
+
                     holder.itemView.setAlpha(FULL_ALPHA);
-                    selectedVH = holder;
-                    selectedPosition = position;
+                    selectedPosition = holder.getAdapterPosition();
+                    internalOnSelectClip(selectedPosition, sharableClip);
                 }
             });
         }
@@ -142,12 +263,11 @@ public class ClipsEditView extends RecyclerView {
 
         @Override
         public boolean onItemMove(int fromPosition, int toPosition) {
-            Log.e("test", "fromPosition: " + fromPosition);
-            Log.e("test", "toPosition: " + toPosition);
             Collections.swap(mSharableClips, fromPosition, toPosition);
             if (fromPosition == selectedPosition) {
                 selectedPosition = toPosition;
             }
+            internalOnClipMoved(fromPosition, toPosition);
             notifyItemMoved(fromPosition, toPosition);
             return true;
         }
@@ -155,11 +275,12 @@ public class ClipsEditView extends RecyclerView {
         @Override
         public void onItemDismiss(int position) {
             mSharableClips.remove(position);
+            internalOnClipRemoved(position);
             notifyItemRemoved(position);
         }
     }
 
-    static class VH extends RecyclerView.ViewHolder implements ItemViewHolderListener {
+    class VH extends RecyclerView.ViewHolder implements ItemViewHolderListener {
         ImageView clipThumbnail;
 
         float defaultElevation = 6.0f;
@@ -179,5 +300,15 @@ public class ClipsEditView extends RecyclerView {
         public void onItemClear() {
             ((CardView) itemView).setCardElevation(defaultElevation);
         }
+    }
+
+    public interface OnClipEditListener {
+        void onClipSelected(int position, SharableClip sharableClip);
+
+        void onClipMoved(int fromPosition, int toPosition);
+
+        void onClipRemoved(int position);
+
+        void onExitEditing();
     }
 }

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +30,8 @@ import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.Playlist;
 
+import org.florescu.android.rangeseekbar.RangeSeekBar;
+
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -38,7 +41,7 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 12/18/15.
  */
-public class EnhancementFragment extends BaseFragment implements FragmentNavigator {
+public class EnhancementFragment extends BaseFragment implements FragmentNavigator, ClipsEditView.OnClipEditListener {
     private static final int MODE_SINGLE_CLIP = 0;
     private static final int MODE_PLAYLIST = 1;
 
@@ -61,12 +64,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Bind(R.id.clips_edit_view)
     ClipsEditView mClipsEditView;
-
-    @Bind(R.id.clips_count_view)
-    TextView mClipsCountView;
-
-    @Bind(R.id.view_animator)
-    ViewAnimator mViewAnimator;
 
     @Override
     public void onStart() {
@@ -180,12 +177,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mViewPager.setAdapter(mPagerAdapter);
         embedVideoPlayFragment();
         mClipsEditView.setSharableClips(mSharableClips);
-        mClipsCountView.setText(getResources().getQuantityString(
-                R.plurals.numbers_of_clips,
-                mSharableClips.size(),
-                mSharableClips.size()));
-
-        mViewAnimator.setDisplayedChild(1);
+        mClipsEditView.setOnClipEditListener(this);
     }
 
     void embedVideoPlayFragment() {
@@ -214,6 +206,26 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
         close();
         return true;
+    }
+
+    @Override
+    public void onClipSelected(int position, SharableClip sharableClip) {
+        //TODO
+    }
+
+    @Override
+    public void onClipMoved(int fromPosition, int toPosition) {
+        //TODO
+    }
+
+    @Override
+    public void onClipRemoved(int position) {
+        //TODO
+    }
+
+    @Override
+    public void onExitEditing() {
+        //TODO
     }
 
     static class SimplePagerAdapter extends PagerAdapter {
