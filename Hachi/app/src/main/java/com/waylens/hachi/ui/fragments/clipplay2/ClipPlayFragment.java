@@ -203,6 +203,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     private void initViews() {
         ClipPos clipPos = new ClipPos(mClip);
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+
         if (!mConfig.showControlPanel) {
             mControlPanel.setVisibility(View.GONE);
         }
@@ -233,6 +234,8 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             }
         });
 
+        mSeekBar.setMax(mClip.getDurationMs());
+
     }
 
 
@@ -248,7 +251,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 public void onPrepared(MediaPlayer mp) {
                     Logger.t(TAG).d("Prepare finished!!!");
                     changeState(STATE_PLAYING);
-                    mSeekBar.setMax(mp.getDuration());
+
                     refreshProgressBar();
                 }
             });
@@ -283,7 +286,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
-        startPreparingClip(0);
+        startPreparingClip(mClip.getStartTimeMs());
 
     }
 
@@ -339,7 +342,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private void refreshProgressBar() {
         int currentPos = mMediaPlayer.getCurrentPosition();
-        int duration = mMediaPlayer.getDuration();
+        int duration = mClip.getDurationMs();
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 
