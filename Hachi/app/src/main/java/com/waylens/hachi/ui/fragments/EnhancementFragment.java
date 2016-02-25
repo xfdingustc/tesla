@@ -56,6 +56,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     CameraVideoPlayFragment mVideoPlayFragment;
     SimplePagerAdapter mPagerAdapter;
 
+    private ClipPlayFragment mClipPlayFragment;
+
     @Bind(R.id.enhance_root_view)
     LinearLayout mEnhanceRootView;
 
@@ -184,9 +186,9 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
         config.showControlPanel = false;
-        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), mSharableClips.get(0).clip, config);
-        fragment.setShowsDialog(false);
-        getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, fragment).commit();
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mSharableClips.get(0).clip, config);
+        mClipPlayFragment.setShowsDialog(false);
+        getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
     }
 
     @Override
@@ -210,6 +212,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onClipSelected(int position, SharableClip sharableClip) {
+        mClipPlayFragment.setClip(sharableClip);
         //TODO
     }
 

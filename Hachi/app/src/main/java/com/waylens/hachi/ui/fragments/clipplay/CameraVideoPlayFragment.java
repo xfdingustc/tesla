@@ -82,7 +82,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.mPlayList = mPlaylist;
         fragment.mPlayMode = MODE_PLAYLIST;
         fragment.mOverlayShouldDisplay = false;
-//        fragment.mClip = clip;
+//        fragment.mSharableClip = clip;
 //        fragment.mTypedState.put(RawDataItem.DATA_TYPE_OBD, RAW_DATA_STATE_UNKNOWN);
 //        fragment.mTypedState.put(RawDataItem.DATA_TYPE_ACC, RAW_DATA_STATE_UNKNOWN);
 //        fragment.mTypedState.put(RawDataItem.DATA_TYPE_GPS, RAW_DATA_STATE_UNKNOWN);

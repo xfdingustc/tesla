@@ -27,7 +27,7 @@ public class PositionAdjuster {
 
         adjustedPosition -= mInitPosition;
 
-//        Logger.t(TAG).d("startTime: " + mClip.getStartTimeMs() + " realTime: " + mUrl.realTimeMs);
+//        Logger.t(TAG).d("startTime: " + mSharableClip.getStartTimeMs() + " realTime: " + mUrl.realTimeMs);
         adjustedPosition += mUrl.realTimeMs - mClip.getStartTimeMs();
 
 //        if (mUrl.realTimeMs != 0 && mInitPosition == 0 && position != 0

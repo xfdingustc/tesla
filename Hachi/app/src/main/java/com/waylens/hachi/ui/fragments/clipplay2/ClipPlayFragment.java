@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.app.DialogFragment;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -28,7 +27,7 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
-import com.waylens.hachi.ui.fragments.EnhancementFragment;
+import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.VdbUrl;
@@ -45,7 +44,7 @@ import butterknife.OnClick;
 public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Callback {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
-    protected Clip mClip;
+    protected SharableClip mSharableClip;
     private VdtCamera mVdtCamera;
 
     private VdbRequestQueue mVdbRequestQueue;
@@ -126,7 +125,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @OnClick(R.id.btnEnhance)
     public void onBtnEnhanceClicked() {
         dismiss();
-        EnhancementActivity.launch(getActivity(), mClip);
+        EnhancementActivity.launch(getActivity(), mSharableClip.clip);
     }
 
 
@@ -140,7 +139,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     public static ClipPlayFragment newInstance(VdtCamera camera, Clip clip, Config config) {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
-        fragment.mClip = clip;
+        fragment.mSharableClip = new SharableClip(clip);
         fragment.mConfig = config;
         return fragment;
     }
@@ -201,7 +200,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     }
 
     private void initViews() {
-        ClipPos clipPos = new ClipPos(mClip);
+        ClipPos clipPos = new ClipPos(mSharableClip.clip);
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
         if (!mConfig.showControlPanel) {
@@ -214,7 +213,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 //                Logger.t(TAG).d("onProgressChanged");
                 if (mCurrentState == STATE_FAST_PREVIEW) {
                     long seekBarTimeMs = getSeekbarTimeMs();
-                    ClipPos clipPos = new ClipPos(mClip, seekBarTimeMs, ClipPos.TYPE_POSTER, false);
+                    ClipPos clipPos = new ClipPos(mSharableClip.clip, seekBarTimeMs, ClipPos.TYPE_POSTER, false);
                     mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
                 }
 
@@ -234,8 +233,13 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             }
         });
 
-        mSeekBar.setMax(mClip.getDurationMs());
+        mSeekBar.setMax(mSharableClip.clip.getDurationMs());
 
+    }
+
+    public void setClip(SharableClip clip) {
+        mSharableClip = clip;
+        startPreparingClip(mSharableClip.clip.getStartTimeMs());
     }
 
 
@@ -286,20 +290,20 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
-        startPreparingClip(mClip.getStartTimeMs());
+        startPreparingClip(mSharableClip.clip.getStartTimeMs());
 
     }
 
     private void startPreparingClip(long clipTimeMs) {
         mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
 
-        mVdtUriProvider.getUri(mClip, clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
+        mVdtUriProvider.getUri(mSharableClip.clip, clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
 
             @Override
             public void onUriLoaded(VdbUrl url) {
                 mUrl = url;
                 Logger.t(TAG).d("Get playback url: " + url.url);
-                mPositionAdjuster = new PositionAdjuster(mClip, url);
+                mPositionAdjuster = new PositionAdjuster(mSharableClip.clip, url);
                 openVideo(url);
             }
 
@@ -346,7 +350,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private void refreshProgressBar() {
         int currentPos = mMediaPlayer.getCurrentPosition();
-        int duration = mClip.getDurationMs();
+        int duration = mSharableClip.clip.getDurationMs();
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 
@@ -371,6 +375,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     }
 
     public long getSeekbarTimeMs() {
-        return mClip.getStartTimeMs() + ((long) mClip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
+        Clip clip = mSharableClip.clip;
+        return clip.getStartTimeMs() + ((long) clip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
     }
 }
