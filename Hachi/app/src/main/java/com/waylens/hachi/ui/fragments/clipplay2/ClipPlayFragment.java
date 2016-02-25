@@ -65,17 +65,16 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private final int STATE_NONE = 0;
     private final int STATE_PREPAREING = 1;
-    private final int STATE_PREPARED = 2;
-    private final int STATE_PLAYING = 3;
-    private final int STATE_PAUSE = 4;
-    private final int STATE_FAST_PREVIEW = 5;
+    private final int STATE_PLAYING = 2;
+    private final int STATE_PAUSE = 3;
+    private final int STATE_FAST_PREVIEW = 4;
 
     private int mCurrentState = STATE_NONE;
 
     private final int PENDING_ACTION_NONE = 0;
     private final int PENDING_ACTION_START = 1;
 
-    private int mPendingAction = PENDING_ACTION_NONE;
+    //private int mPendingAction = PENDING_ACTION_NONE;
 
     @Bind(R.id.videoView)
     SurfaceView mSurfaceView;
@@ -106,7 +105,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
         switch (mCurrentState) {
-            case STATE_PREPARED:
+            //case STATE_PREPARED:
             case STATE_PAUSE:
             case STATE_FAST_PREVIEW:
                 changeState(STATE_PLAYING);
@@ -117,7 +116,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 break;
             case STATE_PREPAREING:
                 mProgressLoading.setVisibility(View.VISIBLE);
-                mPendingAction = PENDING_ACTION_START;
+                //mPendingAction = PENDING_ACTION_START;
                 break;
         }
 
@@ -212,7 +211,11 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 //                Logger.t(TAG).d("onProgressChanged");
-
+                if (mCurrentState == STATE_FAST_PREVIEW) {
+                    long seekBarTimeMs = getSeekbarTimeMs();
+                    ClipPos clipPos = new ClipPos(mClip, seekBarTimeMs, ClipPos.TYPE_POSTER, false);
+                    mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+                }
 
             }
 
@@ -226,11 +229,8 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Logger.t(TAG).d("onStopTrackingTouch");
-                long clipTimeMs = mClip.getStartTimeMs() + ((long) mClip.getDurationMs() *
-                    seekBar.getProgress()) / seekBar.getMax();
 
-                ClipPos clipPos = new ClipPos(mClip, clipTimeMs, ClipPos.TYPE_POSTER, false);
-                mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+
             }
         });
 
@@ -248,13 +248,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     Logger.t(TAG).d("Prepare finished!!!");
-                    changeState(STATE_PREPARED);
-
-                    if (mPendingAction == PENDING_ACTION_START) {
-                        mClipCover.setVisibility(View.GONE);
-                        changeState(STATE_PLAYING);
-                    }
-
+                    changeState(STATE_PLAYING);
                     mSeekBar.setMax(mp.getDuration());
                     refreshProgressBar();
                 }
@@ -326,10 +320,8 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private void changeState(int targetState) {
         switch (targetState) {
-            case STATE_PREPARED:
-                mProgressLoading.setVisibility(View.GONE);
-                break;
             case STATE_PLAYING:
+                mClipCover.setVisibility(View.GONE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
                 mMediaPlayer.start();
                 mClipCover.setVisibility(View.GONE);
@@ -337,6 +329,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 break;
             case STATE_PAUSE:
                 mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+                mMediaPlayer.pause();
+                break;
+            case STATE_FAST_PREVIEW:
                 mMediaPlayer.pause();
                 break;
         }
@@ -367,5 +362,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 }
             }, 50);
         }
+    }
+
+    public long getSeekbarTimeMs() {
+        return mClip.getStartTimeMs() + ((long) mClip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
     }
 }
