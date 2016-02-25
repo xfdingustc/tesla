@@ -44,7 +44,8 @@
                 android:layout_marginTop="8dp"
                 rsb:barHeight="4dp"
                 rsb:showLabels="false"
-                rsb:valuesAboveThumbs="false"/>
+                rsb:valuesAboveThumbs="false"
+                rsb:activateOnDefaultValues="true"/>
         </LinearLayout>
 
     </ViewAnimator>

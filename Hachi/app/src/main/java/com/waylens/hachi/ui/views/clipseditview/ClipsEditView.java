@@ -25,6 +25,7 @@ import com.waylens.hachi.vdb.ClipPos;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -143,6 +144,24 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
     public void setOnClipEditListener(OnClipEditListener listener) {
         mOnClipEditListener = listener;
+    }
+
+
+    public void appendSharableClip(SharableClip sharableClip) {
+        ArrayList<SharableClip> sharableClips = new ArrayList<>();
+        sharableClips.add(sharableClip);
+        appendSharableClips(sharableClips);
+    }
+
+    public void appendSharableClips(List<SharableClip> sharableClips) {
+        if (mAdapter != null && mSharableClips != null && sharableClips != null) {
+            mSharableClips.addAll(sharableClips);
+            int size = sharableClips.size();
+            mAdapter.notifyItemRangeInserted(mSharableClips.size() - size, size);
+            if (mOnClipEditListener != null) {
+                mOnClipEditListener.onClipsAppended(sharableClips);
+            }
+        }
     }
 
     void internalOnExitEditing() {
@@ -306,6 +325,8 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         void onClipSelected(int position, SharableClip sharableClip);
 
         void onClipMoved(int fromPosition, int toPosition);
+
+        void onClipsAppended(List<SharableClip> sharableClips);
 
         void onClipRemoved(int position);
 
