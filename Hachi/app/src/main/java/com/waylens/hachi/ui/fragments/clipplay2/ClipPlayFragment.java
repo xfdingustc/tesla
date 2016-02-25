@@ -1,6 +1,8 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.app.DialogFragment;
+import android.graphics.PixelFormat;
+import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,8 +10,10 @@ import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -41,7 +45,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/2/22.
  */
-public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Callback {
+public class ClipPlayFragment extends DialogFragment {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
     protected SharableClip mSharableClip;
@@ -54,7 +58,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private MediaPlayer mMediaPlayer = new MediaPlayer();
 
-    private SurfaceHolder mSurfaceHolder;
     private Handler mUiHandler;
 
     private Config mConfig;
@@ -76,8 +79,8 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private int mPendingAction = PENDING_ACTION_NONE;
 
-    @Bind(R.id.videoView)
-    SurfaceView mSurfaceView;
+    @Bind(R.id.textureView)
+    TextureView mTextureView;
 
     @Bind(R.id.clipCover)
     ImageView mClipCover;
@@ -166,7 +169,28 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mSurfaceView.getHolder().addCallback(this);
+        //mSurfaceView.getHolder().addCallback(this);
+        mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+            @Override
+            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                startPreparingClip(mSharableClip.clip.getStartTimeMs());
+            }
+
+            @Override
+            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+            }
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                return false;
+            }
+
+            @Override
+            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+            }
+        });
     }
 
     @Override
@@ -244,10 +268,10 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
 
     protected void openVideo(VdbUrl url) {
-        if (mSurfaceView == null || mSurfaceHolder == null) {
-            Logger.t(TAG).d("mSurfaceView: " + mSurfaceView + " mSurfaceHolder: " + mSurfaceHolder);
-            return;
-        }
+//        if (mSurfaceView == null || mSurfaceHolder == null) {
+//            Logger.t(TAG).d("mSurfaceView: " + mSurfaceView + " mSurfaceHolder: " + mSurfaceHolder);
+//            return;
+//        }
 
         try {
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -268,7 +292,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 //            mMediaPlayer.setOnErrorListener(this);
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(url.url);
-            mMediaPlayer.setDisplay(mSurfaceHolder);
+            mMediaPlayer.setSurface(new Surface(mTextureView.getSurfaceTexture()));
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
                 @Override
@@ -292,12 +316,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         }
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        mSurfaceHolder = holder;
-        startPreparingClip(mSharableClip.clip.getStartTimeMs());
-
-    }
 
     private void startPreparingClip(long clipTimeMs) {
         mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
@@ -318,16 +336,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         changeState(STATE_PREPAREING);
     }
 
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        mMediaPlayer.setDisplay(holder);
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        mSurfaceHolder = null;
-    }
-
     private void changeState(int targetState) {
         switch (targetState) {
             case STATE_PREPAREING:
@@ -338,10 +346,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PLAYING:
-                mClipCover.setVisibility(View.GONE);
+                mClipCover.setVisibility(View.INVISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
                 mMediaPlayer.start();
-                mClipCover.setVisibility(View.GONE);
                 mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PAUSE:
@@ -350,6 +357,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 break;
             case STATE_FAST_PREVIEW:
                 mClipCover.setVisibility(View.VISIBLE);
+                mBtnPlayPause.setImageResource(R.drawable.playbar_play);
                 mMediaPlayer.pause();
                 break;
         }
@@ -386,4 +394,6 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
         Clip clip = mSharableClip.clip;
         return clip.getStartTimeMs() + ((long) clip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
     }
+
+
 }
