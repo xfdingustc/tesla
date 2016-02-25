@@ -31,15 +31,15 @@
             android:id="@+id/btnShare"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/edit_button_action_share"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:src="@drawable/edit_button_action_share"/>
 
         <ImageButton
             android:id="@+id/btnEnhance"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/btn_edit_action_video"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_edit_action_video"/>
 
     </LinearLayout>
 
@@ -75,9 +75,10 @@
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:layout_margin="16dp"
+        android:indeterminateOnly="false"
+        android:progress="0"
         android:progressDrawable="@drawable/clip_play_fragment_progress_bar"
-        android:indeterminateOnly="false"/>
-
+        android:thumb="@drawable/clip_play_fragment_progress_bar_thumb"/>
 
 
     <LinearLayout
@@ -112,8 +113,8 @@
             android:id="@+id/btnFullscreen"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/screen_full"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:src="@drawable/screen_full"/>
 
     </LinearLayout>
 
