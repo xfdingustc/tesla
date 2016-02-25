@@ -223,14 +223,13 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             public void onStartTrackingTouch(SeekBar seekBar) {
                 Logger.t(TAG).d("onStartTrackingTouch");
                 changeState(STATE_FAST_PREVIEW);
-                mClipCover.setVisibility(View.VISIBLE);
+
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Logger.t(TAG).d("onStopTrackingTouch");
-
-
+                startPreparingClip(getSeekbarTimeMs());
             }
         });
 
@@ -255,9 +254,8 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             });
 //            mMediaPlayer.setOnCompletionListener(this);
 //            mMediaPlayer.setOnErrorListener(this);
-            Logger.t(TAG).d("Start loading");
-            Uri uri = Uri.parse(url.url);
-            mMediaPlayer.setDataSource(uri.toString());
+            mMediaPlayer.reset();
+            mMediaPlayer.setDataSource(url.url);
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
@@ -285,14 +283,14 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
-        startPreparingClip();
+        startPreparingClip(0);
 
     }
 
-    private void startPreparingClip() {
+    private void startPreparingClip(long clipTimeMs) {
         mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
 
-        mVdtUriProvider.getUri(mClip, new VdtUriProvider.OnUriLoadedListener() {
+        mVdtUriProvider.getUri(mClip, clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
 
             @Override
             public void onUriLoaded(VdbUrl url) {
@@ -332,6 +330,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 mMediaPlayer.pause();
                 break;
             case STATE_FAST_PREVIEW:
+                mClipCover.setVisibility(View.VISIBLE);
                 mMediaPlayer.pause();
                 break;
         }

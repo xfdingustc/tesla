@@ -32,7 +32,7 @@ class VdtUriProvider {
     }
 
 
-    public void getUri(Clip clip, OnUriLoadedListener listener) {
+    public void getUri(Clip clip, long clipTimeMs, OnUriLoadedListener listener) {
         Logger.t(TAG).d("Start load clip url:");
         mListener = listener;
 
@@ -40,7 +40,7 @@ class VdtUriProvider {
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_URL_TYPE, Vdb.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlRequest.PARAMETER_STREAM, Vdb.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, clip.getStartTimeMs());
+        parameters.putLong(ClipPlaybackUrlRequest.PARAMETER_CLIP_TIME_MS, clipTimeMs);
 
         ClipPlaybackUrlRequest request = new ClipPlaybackUrlRequest(clip.cid, parameters, new
             VdbResponse.Listener<PlaybackUrl>() {
