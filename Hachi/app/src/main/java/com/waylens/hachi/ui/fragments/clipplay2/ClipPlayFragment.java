@@ -64,16 +64,17 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private final int STATE_NONE = 0;
     private final int STATE_PREPAREING = 1;
-    private final int STATE_PLAYING = 2;
-    private final int STATE_PAUSE = 3;
-    private final int STATE_FAST_PREVIEW = 4;
+    private final int STATE_PREPARED = 2;
+    private final int STATE_PLAYING = 3;
+    private final int STATE_PAUSE = 4;
+    private final int STATE_FAST_PREVIEW = 5;
 
     private int mCurrentState = STATE_NONE;
 
     private final int PENDING_ACTION_NONE = 0;
     private final int PENDING_ACTION_START = 1;
 
-    //private int mPendingAction = PENDING_ACTION_NONE;
+    private int mPendingAction = PENDING_ACTION_NONE;
 
     @Bind(R.id.videoView)
     SurfaceView mSurfaceView;
@@ -104,7 +105,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
         switch (mCurrentState) {
-            //case STATE_PREPARED:
+            case STATE_PREPARED:
             case STATE_PAUSE:
             case STATE_FAST_PREVIEW:
                 changeState(STATE_PLAYING);
@@ -114,8 +115,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 changeState(STATE_PAUSE);
                 break;
             case STATE_PREPAREING:
-                mProgressLoading.setVisibility(View.VISIBLE);
-                //mPendingAction = PENDING_ACTION_START;
+                mPendingAction = PENDING_ACTION_START;
                 break;
         }
 
@@ -254,7 +254,12 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     Logger.t(TAG).d("Prepare finished!!!");
-                    changeState(STATE_PLAYING);
+                    changeState(STATE_PREPARED);
+
+                    if (mPendingAction == PENDING_ACTION_START) {
+                        changeState(STATE_PLAYING);
+                        mPendingAction = PENDING_ACTION_NONE;
+                    }
 
                     refreshProgressBar();
                 }
@@ -328,6 +333,9 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             case STATE_PREPAREING:
                 mClipCover.setVisibility(View.VISIBLE);
                 mProgressLoading.setVisibility(View.VISIBLE);
+                break;
+            case STATE_PREPARED:
+                mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PLAYING:
                 mClipCover.setVisibility(View.GONE);
