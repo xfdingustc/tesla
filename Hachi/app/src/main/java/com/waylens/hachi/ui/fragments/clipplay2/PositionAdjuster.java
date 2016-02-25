@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
+import com.orhanobut.logger.Logger;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
 /**
@@ -8,9 +10,11 @@ import com.waylens.hachi.vdb.urls.VdbUrl;
 public class PositionAdjuster {
     private static final String TAG = PositionAdjuster.class.getSimpleName();
     private final VdbUrl mUrl;
+    private final Clip mClip;
     private long mInitPosition;
 
-    public PositionAdjuster(VdbUrl url) {
+    public PositionAdjuster(Clip clip, VdbUrl url) {
+        this.mClip = clip;
         this.mUrl = url;
     }
 
@@ -22,6 +26,9 @@ public class PositionAdjuster {
         }
 
         adjustedPosition -= mInitPosition;
+
+//        Logger.t(TAG).d("startTime: " + mClip.getStartTimeMs() + " realTime: " + mUrl.realTimeMs);
+        adjustedPosition += mUrl.realTimeMs - mClip.getStartTimeMs();
 
 //        if (mUrl.realTimeMs != 0 && mInitPosition == 0 && position != 0
 //            && Math.abs(mUrl.realTimeMs - position) < 200) {

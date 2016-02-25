@@ -299,7 +299,7 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
             public void onUriLoaded(VdbUrl url) {
                 mUrl = url;
                 Logger.t(TAG).d("Get playback url: " + url.url);
-                mPositionAdjuster = new PositionAdjuster(url);
+                mPositionAdjuster = new PositionAdjuster(mClip, url);
                 openVideo(url);
             }
 
@@ -321,6 +321,10 @@ public class ClipPlayFragment extends DialogFragment implements SurfaceHolder.Ca
 
     private void changeState(int targetState) {
         switch (targetState) {
+            case STATE_PREPAREING:
+                mClipCover.setVisibility(View.VISIBLE);
+                mProgressLoading.setVisibility(View.VISIBLE);
+                break;
             case STATE_PLAYING:
                 mClipCover.setVisibility(View.GONE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
