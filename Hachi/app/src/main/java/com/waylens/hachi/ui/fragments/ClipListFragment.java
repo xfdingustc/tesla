@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
+import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter2;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -45,7 +47,7 @@ public class ClipListFragment extends BaseFragment {
 
     private Map<String, ClipSet> mClipSetGroup = new HashMap<>();
 
-    private ClipSetGroupAdapter mAdapter;
+    private ClipSetGroupAdapter2 mAdapter;
 
 
     @Bind(R.id.clipGroupList)
@@ -107,22 +109,29 @@ public class ClipListFragment extends BaseFragment {
     }
 
     private void setupClipSetGroup() {
-        mRvClipGroupList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter
-            .OnClipClickListener() {
+        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+
+        mAdapter = new ClipSetGroupAdapter2(getActivity(), null, new ClipSetGroupAdapter2.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                //popClipPreviewFragment(clip);
-                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
-                ArrayList<Clip> clips = new ArrayList<>();
-                ClipSet clipSet = mClipSetGroup.get("2016-02-19");
-                clips.addAll(clipSet.getClipList());
-                intent.putParcelableArrayListExtra("clips", clips);
-                startActivity(intent);
+                popClipPreviewFragment(clip);
             }
-
-
         });
+//        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter
+//            .OnClipClickListener() {
+//            @Override
+//            public void onClipClicked(Clip clip) {
+//                //popClipPreviewFragment(clip);
+//                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
+//                ArrayList<Clip> clips = new ArrayList<>();
+//                ClipSet clipSet = mClipSetGroup.get("2016-02-19");
+//                clips.addAll(clipSet.getClipList());
+//                intent.putParcelableArrayListExtra("clips", clips);
+//                startActivity(intent);
+//            }
+//
+//
+//        });
         mRvClipGroupList.setAdapter(mAdapter);
 
     }
