@@ -108,22 +108,13 @@ public class ClipListFragment extends BaseFragment {
             public void onClipClicked(Clip clip) {
                 popClipPreviewFragment(clip);
             }
+
+            @Override
+            public void onClipLongClicked(Clip clip) {
+                mAdapter.setMultiSelectedMode(true);
+            }
         });
-//        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter
-//            .OnClipClickListener() {
-//            @Override
-//            public void onClipClicked(Clip clip) {
-//                //popClipPreviewFragment(clip);
-//                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
-//                ArrayList<Clip> clips = new ArrayList<>();
-//                ClipSet clipSet = mClipSetGroup.get("2016-02-19");
-//                clips.addAll(clipSet.getClipList());
-//                intent.putParcelableArrayListExtra("clips", clips);
-//                startActivity(intent);
-//            }
-//
-//
-//        });
+
         mRvClipGroupList.setAdapter(mAdapter);
 
     }

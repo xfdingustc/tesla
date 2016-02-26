@@ -7,6 +7,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,16 +40,23 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
+    private boolean mMultiSelectedMode = false;
 
     public interface OnClipClickListener {
         void onClipClicked(Clip clip);
+
+        void onClipLongClicked(Clip clip);
     }
 
     private class ClipGridItem {
         int itemType;
+        boolean isItemSelected = false;
         Object itemObject;
     }
+
     private List<ClipGridItem> mClipGridItemList = new ArrayList<>();
+
+
 
 
     public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup, ClipSetGroupAdapter
@@ -131,26 +139,34 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-
     private void onBindClipSetHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ClipGroupHeaderViewHolder viewHolder = (ClipGroupHeaderViewHolder)holder;
-        Integer clipDate = (Integer)mClipGridItemList.get(position).itemObject;
+        ClipGroupHeaderViewHolder viewHolder = (ClipGroupHeaderViewHolder) holder;
+        Integer clipDate = (Integer) mClipGridItemList.get(position).itemObject;
 
         viewHolder.mClipSetDate.setText(getFormattedDate(clipDate));
     }
 
     private void onBindClipGridViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ClipGridViewHolder viewHolder = (ClipGridViewHolder)holder;
-        Clip clip = (Clip)mClipGridItemList.get(position).itemObject;
-        ClipPos clipPos  = new ClipPos(clip);
+        ClipGridViewHolder viewHolder = (ClipGridViewHolder) holder;
+        Clip clip = (Clip) mClipGridItemList.get(position).itemObject;
+        ClipPos clipPos = new ClipPos(clip);
 
         String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
         viewHolder.tvDuration.setText(clipDuration);
 
         mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover);
 
+        if (mMultiSelectedMode == true) {
+            viewHolder.mBtnSelect.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.mBtnSelect.setVisibility(View.INVISIBLE);
+        }
 
+    }
 
+    public void setMultiSelectedMode(boolean multiSelectedMode) {
+        this.mMultiSelectedMode = multiSelectedMode;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -163,10 +179,23 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mClipGridItemList.get(position).itemType;
     }
 
+    public List<Clip> getSelectedClipList() {
+        List<Clip> mSelectedClipList = new ArrayList<>();
+        for (ClipGridItem gridItem : mClipGridItemList) {
+            if (gridItem.itemType == ITEM_TYPE_CLIPVIEW && gridItem.isItemSelected == true) {
+                mSelectedClipList.add((Clip)gridItem.itemObject);
+            }
+        }
+        return mSelectedClipList;
+    }
+
+
+
+
     private String getFormattedDate(int date) {
         SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy");
 
-        long clipDate = (long)date * 1000;
+        long clipDate = (long) date * 1000;
         long currentTime = System.currentTimeMillis();
 
         Calendar calendar = Calendar.getInstance();
@@ -197,7 +226,6 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Bind(R.id.clipSetDate)
         TextView mClipSetDate;
 
-
         public ClipGroupHeaderViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -212,6 +240,9 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Bind(R.id.tvDuration)
         TextView tvDuration;
 
+        @Bind(R.id.btnSelect)
+        ImageButton mBtnSelect;
+
         public ClipGridViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -224,11 +255,39 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         return;
                     }
 
-                    ClipGridViewHolder holder = (ClipGridViewHolder)v.getTag();
+                    ClipGridViewHolder holder = (ClipGridViewHolder) v.getTag();
                     ClipGridItem clipGridItem = mClipGridItemList.get(holder.getAdapterPosition());
 
-                    mClipClickListener.onClipClicked((Clip)clipGridItem.itemObject);
+                    if (mMultiSelectedMode == false) {
+                        mClipClickListener.onClipClicked((Clip) clipGridItem.itemObject);
+                    } else {
+                        if (clipGridItem.isItemSelected == true) {
+                            holder.mBtnSelect.setImageResource(R.drawable.edit_unselect);
+                            clipGridItem.isItemSelected = false;
+                        } else {
+                            holder.mBtnSelect.setImageResource(R.drawable.edit_select);
+                            clipGridItem.isItemSelected = true;
+                        }
+                    }
 
+                }
+            });
+
+            ivClipCover.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mClipClickListener == null) {
+                        return true;
+                    }
+
+                    ClipGridViewHolder holder = (ClipGridViewHolder) v.getTag();
+                    ClipGridItem clipGridItem = mClipGridItemList.get(holder.getAdapterPosition());
+                    //holder.mBtnSelect.setImageResource(R.drawable.edit_select);
+                    clipGridItem.isItemSelected = true;
+                    holder.mBtnSelect.setImageResource(R.drawable.edit_select);
+                    mClipClickListener.onClipLongClicked((Clip) clipGridItem.itemObject);
+
+                    return true;
                 }
             });
         }

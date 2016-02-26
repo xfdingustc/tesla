@@ -17,6 +17,13 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"/>
 
+        <ImageButton
+            android:id="@+id/btnSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/edit_unselect"
+            android:background="@android:color/transparent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="24dp"
