@@ -33,6 +33,7 @@ import com.waylens.hachi.vdb.Playlist;
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -218,6 +219,11 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onClipMoved(int fromPosition, int toPosition) {
+        //TODO
+    }
+
+    @Override
+    public void onClipsAppended(List<SharableClip> sharableClips) {
         //TODO
     }
 
