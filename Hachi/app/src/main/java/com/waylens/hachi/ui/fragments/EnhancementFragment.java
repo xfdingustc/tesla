@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,23 +16,28 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
+import com.waylens.hachi.snipe.toolbox.ClipMoveRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.Playlist;
-
-import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -72,6 +76,139 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
+        doGetPlaylistInfo();
+    }
+
+    private void doGetPlaylistInfo() {
+        mVdbRequestQueue = Snipe.newRequestQueue();
+        /*
+        PlaylistSetRequest request = new PlaylistSetRequest(0, new VdbResponse.Listener<PlaylistSet>() {
+            @Override
+            public void onResponse(PlaylistSet response) {
+                Log.e("test", "PlaylistSet: " + response);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
+        */
+        /*
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                buildPlayList();
+            }
+        }).start();
+        */
+        fetchPlayList();
+    }
+
+    void buildPlayList() {
+        final CountDownLatch latch = new CountDownLatch(mSharableClips.size());
+
+        for (SharableClip sharableClip : mSharableClips) {
+            PlaylistEditRequest request = new PlaylistEditRequest(
+                    PlaylistEditRequest.METHOD_INSERT_CLIP,
+                    sharableClip.clip,
+                    sharableClip.selectedStartValue,
+                    sharableClip.selectedEndValue,
+                    0x100,
+                    new VdbResponse.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            latch.countDown();
+                            Log.e("test", "Response: " + response);
+                        }
+                    },
+                    new VdbResponse.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(SnipeError error) {
+                            latch.countDown();
+                            Log.e("test", "", error);
+                        }
+                    });
+            mVdbRequestQueue.add(request);
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Log.e("test", "", e);
+        }
+    }
+
+    void fetchPlayList() {
+        mVdbRequestQueue.add(new ClipSetRequest(0x100, ClipSetRequest.FLAG_CLIP_EXTRA,
+                new VdbResponse.Listener<ClipSet>() {
+                    @Override
+                    public void onResponse(ClipSet clipSet) {
+                        Log.e("test", "PlayList clips: " + clipSet);
+                        //updateClip(clipSet.getClip(1));
+                        //moveClip(clipSet.getClip(2), 0);
+                        //deleteClip(clipSet.getClip(0));
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "", error);
+
+                    }
+                }));
+    }
+
+    void updateClip(Clip clip) {
+        mVdbRequestQueue.add(new ClipExtentUpdateRequest(clip,
+                clip.getStartTimeMs() + 2000,
+                clip.getStartTimeMs() + clip.getDurationMs() - 5000,
+                new VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        Log.e("test", "ClipExtentUpdateRequest response: " + response);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "ClipExtentUpdateRequest", error);
+                    }
+                }
+        ));
+    }
+
+    void moveClip(Clip clip, int newPosition) {
+        mVdbRequestQueue.add(new ClipMoveRequest(clip.cid, newPosition,
+                new VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        Log.e("test", "ClipMoveRequest response: " + response);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "ClipMoveRequest", error);
+                    }
+                }));
+    }
+
+    void deleteClip(Clip clip) {
+        mVdbRequestQueue.add(new ClipDeleteRequest(clip.cid,
+                new VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        Log.e("test", "ClipDeleteRequest response: " + response);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "ClipDeleteRequest", error);
+                    }
+                }));
     }
 
     @Override
@@ -99,15 +236,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
         mVideoPlayFragment.setBackgroundMusic(mAudioPath);
         getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
-    }
-
-
-    void onCancel() {
-        close();
-    }
-
-    void onClickDone() {
-        close();
     }
 
     void onClickShare() {
@@ -267,7 +395,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
             Log.e("test", "destroyItem");
         }
     }
-
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override

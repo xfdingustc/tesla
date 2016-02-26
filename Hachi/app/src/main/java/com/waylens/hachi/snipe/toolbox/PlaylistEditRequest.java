@@ -16,32 +16,31 @@ public class PlaylistEditRequest extends VdbRequest<Integer> {
     public static final int METHOD_INSERT_CLIP = 0;
     public static final int METHOD_CLEAR_PLAYLIST = 1;
     private final Clip mClip;
-    private final Playlist mPlaylist;
+    private final int mPlayListID;
     private final long mStartTimeMs;
     private final long mEndTimeMs;
 
 
     public PlaylistEditRequest(int method, Clip clip, long startTimeMs, long endTimeMs,
-                               Playlist playlist,
+                               int playListID,
                                VdbResponse.Listener<Integer> listener,
                                VdbResponse.ErrorListener errorListener) {
         super(method, listener, errorListener);
         this.mClip = clip;
-        this.mPlaylist = playlist;
         this.mStartTimeMs = startTimeMs;
         this.mEndTimeMs = endTimeMs;
+        mPlayListID = playListID;
     }
-
 
     @Override
     protected VdbCommand createVdbCommand() {
         switch (mMethod) {
             case METHOD_INSERT_CLIP:
                 mVdbCommand = VdbCommand.Factory.createCmdInsertClip(mClip.cid, mStartTimeMs,
-                    mEndTimeMs, mPlaylist.getId(), -1);
+                        mEndTimeMs, mPlayListID, -1);
                 break;
             case METHOD_CLEAR_PLAYLIST:
-                mVdbCommand = VdbCommand.Factory.createCmdClearPlayList(mPlaylist.getId());
+                mVdbCommand = VdbCommand.Factory.createCmdClearPlayList(mPlayListID);
 
                 break;
         }

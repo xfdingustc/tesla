@@ -71,7 +71,7 @@ public class StoryFactory {
 
     private void doClearPlayList() {
         PlaylistEditRequest request = new PlaylistEditRequest(PlaylistEditRequest
-            .METHOD_CLEAR_PLAYLIST, null, 0, 0, mStory.getPlaylist(), new VdbResponse.Listener<Integer>() {
+            .METHOD_CLEAR_PLAYLIST, null, 0, 0, mStory.getPlaylist().getId(), new VdbResponse.Listener<Integer>() {
             @Override
             public void onResponse(Integer response) {
                 doCreateStory();
@@ -120,7 +120,7 @@ public class StoryFactory {
             int duration = Math.min(clip.getDurationMs(), mStrategy.getMaxiumClipLengthMs());
 
             PlaylistEditRequest playRequest = new PlaylistEditRequest(PlaylistEditRequest.METHOD_INSERT_CLIP,
-                clip, clip.getStartTimeMs(), clip.getStartTimeMs() + duration, story.getPlaylist(), new VdbResponse.Listener<Integer>() {
+                clip, clip.getStartTimeMs(), clip.getStartTimeMs() + duration, story.getPlaylist().getId(), new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
                     Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + clip.cid + " " +

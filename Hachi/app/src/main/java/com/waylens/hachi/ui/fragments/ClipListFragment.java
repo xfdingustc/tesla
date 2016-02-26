@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.vdb.Clip;
@@ -110,8 +112,13 @@ public class ClipListFragment extends BaseFragment {
             .OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                popClipPreviewFragment(clip);
-
+                //popClipPreviewFragment(clip);
+                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
+                ArrayList<Clip> clips = new ArrayList<>();
+                ClipSet clipSet = mClipSetGroup.get("2016-02-19");
+                clips.addAll(clipSet.getClipList());
+                intent.putParcelableArrayListExtra("clips", clips);
+                startActivity(intent);
             }
 
 
