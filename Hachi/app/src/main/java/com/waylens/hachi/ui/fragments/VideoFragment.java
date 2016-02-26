@@ -6,6 +6,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -59,5 +60,17 @@ public class VideoFragment extends BaseFragment {
         return mViewPager;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.smartRemix:
+                PopupBottomSheet();
+                break;
+        }
+        return true;
+    }
 
+    private void PopupBottomSheet() {
+        //BottomSheet.Builder builder = new BottomSheet.Builder(this);
+    }
 }

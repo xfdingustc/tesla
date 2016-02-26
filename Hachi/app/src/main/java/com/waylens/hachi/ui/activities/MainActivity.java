@@ -107,6 +107,13 @@ public class MainActivity extends BaseActivity {
         refressNavHeaderView();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mCurrentFragment != null) {
+            return mCurrentFragment.onOptionsItemSelected(item);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void init() {
@@ -183,6 +190,11 @@ public class MainActivity extends BaseActivity {
             mTabLayout.setVisibility(View.GONE);
         }
 
+        mToolbar.getMenu().clear();
+        if (tag == TAB_TAG_VIDEO) {
+            mToolbar.inflateMenu(R.menu.menu_video_fragment);
+        }
+
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         if (mCurrentFragment == null) {
             transaction.add(R.id.fragment_content, fragment).commit();
@@ -196,6 +208,8 @@ public class MainActivity extends BaseActivity {
             mCurrentFragment = fragment;
         }
     }
+
+
 
 
     private void setupNavigationView() {
