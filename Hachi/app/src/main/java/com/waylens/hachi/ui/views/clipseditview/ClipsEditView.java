@@ -124,14 +124,36 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     }
 
     @Override
-    public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Long minValue, Long maxValue) {
+    public void onStartTrackingTouch(RangeSeekBar<Long> rangeSeekBar) {
+        if (mOnClipEditListener != null) {
+            mOnClipEditListener.onStartTrimming();
+        }
+    }
+
+    @Override
+    public void onRangeSeekBarValuesChanged(RangeSeekBar<Long> rangeSeekBar,
+                                            RangeSeekBar.Thumb pressedThumb,
+                                            Long value) {
         if (selectedPosition == -1) {
             return;
         }
         SharableClip sharableClip = mSharableClips.get(selectedPosition);
-        sharableClip.selectedStartValue = minValue;
-        sharableClip.selectedEndValue = maxValue;
+        if (pressedThumb == RangeSeekBar.Thumb.MIN) {
+            sharableClip.selectedStartValue = value;
+        } else {
+            sharableClip.selectedEndValue = value;
+        }
         updateClipDuration(sharableClip);
+        if (mOnClipEditListener != null) {
+            mOnClipEditListener.onTrimming(pressedThumb.ordinal(), value);
+        }
+    }
+
+    @Override
+    public void onStopTrackingTouch(RangeSeekBar<Long> rangeSeekBar) {
+        if (mOnClipEditListener != null) {
+            mOnClipEditListener.onStopTrimming();
+        }
     }
 
     public void setSharableClips(List<SharableClip> sharableClips) {
@@ -331,5 +353,11 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         void onClipRemoved(int position);
 
         void onExitEditing();
+
+        void onStartTrimming();
+
+        void onTrimming(int flag, long value);
+
+        void onStopTrimming();
     }
 }

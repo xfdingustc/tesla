@@ -365,6 +365,21 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         //TODO
     }
 
+    @Override
+    public void onStartTrimming() {
+        //TODO
+    }
+
+    @Override
+    public void onTrimming(int flag, long value) {
+        //TODO
+    }
+
+    @Override
+    public void onStopTrimming() {
+        //TODO
+    }
+
     static class SimplePagerAdapter extends PagerAdapter {
 
         static int[] view_layouts = new int[]{
