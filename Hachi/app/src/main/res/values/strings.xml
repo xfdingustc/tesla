@@ -349,5 +349,7 @@
     <string name="yesterday">Yesterday</string>
 
     <string name="smart_remix">SmartRemix</string>
+    <string name="upload">Upload</string>
+    <string name="delete">Delete</string>
 
 </resources>

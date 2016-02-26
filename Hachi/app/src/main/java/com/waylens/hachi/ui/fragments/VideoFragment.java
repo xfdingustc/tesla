@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cocosw.bottomsheet.BottomSheet;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
@@ -71,6 +72,27 @@ public class VideoFragment extends BaseFragment {
     }
 
     private void PopupBottomSheet() {
-        //BottomSheet.Builder builder = new BottomSheet.Builder(this);
+        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
+        builder
+            .grid()
+            .darkTheme()
+            .sheet(R.menu.menu_video_fragment_bottom_sheet)
+            .listener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onBottomSheetMenuItemClicked(item);
+                }
+            })
+            .show();
+
+
+
+    }
+
+    private boolean onBottomSheetMenuItemClicked(MenuItem item) {
+        switch (item.getItemId()) {
+//            break;
+        }
+        return true;
     }
 }
