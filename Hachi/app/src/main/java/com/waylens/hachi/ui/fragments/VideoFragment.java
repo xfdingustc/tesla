@@ -28,8 +28,6 @@ public class VideoFragment extends BaseFragment {
     ViewPager mViewPager;
 
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,7 +50,6 @@ public class VideoFragment extends BaseFragment {
         mTabLayout.setupWithViewPager(mViewPager);
 
 
-
     }
 
 
@@ -65,34 +62,37 @@ public class VideoFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.smartRemix:
-                PopupBottomSheet();
+                popupBottomSheet();
                 break;
         }
         return true;
     }
 
-    private void PopupBottomSheet() {
-        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
-        builder
-            .grid()
-            .darkTheme()
-            .sheet(R.menu.menu_video_fragment_bottom_sheet)
-            .listener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onBottomSheetMenuItemClicked(item);
-                }
-            })
-            .show();
-
-
-
-    }
 
     private boolean onBottomSheetMenuItemClicked(MenuItem item) {
         switch (item.getItemId()) {
 //            break;
         }
         return true;
+    }
+
+    private void popupBottomSheet() {
+        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
+        BottomSheet bottomSheet = builder
+            .grid()
+            .darkTheme()
+            .sheet(R.menu.menu_video_fragment_bottom_sheet)
+            .listener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    //return onBottomSheetMenuItemClicked(item);
+                    return true;
+                }
+            }).build();
+
+        bottomSheet.setCanceledOnTouchOutside(false);
+
+        bottomSheet.show();
+
     }
 }

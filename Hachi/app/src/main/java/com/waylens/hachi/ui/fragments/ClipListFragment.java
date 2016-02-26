@@ -7,9 +7,11 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -112,6 +114,7 @@ public class ClipListFragment extends BaseFragment {
             @Override
             public void onClipLongClicked(Clip clip) {
                 mAdapter.setMultiSelectedMode(true);
+                //popupBottomSheet();
             }
         });
 
@@ -187,6 +190,27 @@ public class ClipListFragment extends BaseFragment {
 
 
         fragment.show(getFragmentManager(), "ClipPlayFragment");
+
+    }
+
+    private void popupBottomSheet() {
+        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
+        BottomSheet bottomSheet = builder
+            .grid()
+            .darkTheme()
+            .sheet(R.menu.menu_video_fragment_bottom_sheet)
+            .listener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    //return onBottomSheetMenuItemClicked(item);
+                    return true;
+                }
+            }).build();
+
+        bottomSheet.setCanceledOnTouchOutside(false);
+
+        bottomSheet.show();
+
 
     }
 }

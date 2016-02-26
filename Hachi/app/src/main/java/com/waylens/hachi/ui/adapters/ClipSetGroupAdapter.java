@@ -243,6 +243,9 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Bind(R.id.btnSelect)
         ImageButton mBtnSelect;
 
+        @Bind(R.id.selectedMask)
+        View mSelectedMask;
+
         public ClipGridViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -264,9 +267,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         if (clipGridItem.isItemSelected == true) {
                             holder.mBtnSelect.setImageResource(R.drawable.edit_unselect);
                             clipGridItem.isItemSelected = false;
+                            mSelectedMask.setVisibility(View.INVISIBLE);
                         } else {
                             holder.mBtnSelect.setImageResource(R.drawable.edit_select);
                             clipGridItem.isItemSelected = true;
+                            mSelectedMask.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -285,6 +290,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     //holder.mBtnSelect.setImageResource(R.drawable.edit_select);
                     clipGridItem.isItemSelected = true;
                     holder.mBtnSelect.setImageResource(R.drawable.edit_select);
+                    mSelectedMask.setVisibility(View.VISIBLE);
                     mClipClickListener.onClipLongClicked((Clip) clipGridItem.itemObject);
 
                     return true;
