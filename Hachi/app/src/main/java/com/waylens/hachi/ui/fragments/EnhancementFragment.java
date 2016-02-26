@@ -372,7 +372,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onTrimming(int flag, long value) {
-        //TODO
+        mClipPlayFragment.showClipPosThumbnail(value);
     }
 
     @Override

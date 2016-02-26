@@ -131,6 +131,12 @@ public class ClipPlayFragment extends DialogFragment {
         EnhancementActivity.launch(getActivity(), mSharableClip.clip);
     }
 
+    public void showClipPosThumbnail(long timeMs) {
+        changeState(STATE_FAST_PREVIEW);
+        ClipPos clipPos = new ClipPos(mSharableClip.clip, timeMs, ClipPos.TYPE_POSTER, false);
+        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+    }
+
 
     public static class Config {
         public static int PROGRESS_BAR_STYLE_SINGLE = 0;
@@ -238,7 +244,7 @@ public class ClipPlayFragment extends DialogFragment {
                 if (mCurrentState == STATE_FAST_PREVIEW) {
                     long seekBarTimeMs = getSeekbarTimeMs();
                     ClipPos clipPos = new ClipPos(mSharableClip.clip, seekBarTimeMs, ClipPos.TYPE_POSTER, false);
-                    mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+                    mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
                 }
 
             }
