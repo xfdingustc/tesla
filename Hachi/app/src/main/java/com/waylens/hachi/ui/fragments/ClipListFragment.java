@@ -1,35 +1,27 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.DialogFragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
-import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
-import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter2;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -47,7 +39,7 @@ public class ClipListFragment extends BaseFragment {
 
     private Map<String, ClipSet> mClipSetGroup = new HashMap<>();
 
-    private ClipSetGroupAdapter2 mAdapter;
+    private ClipSetGroupAdapter mAdapter;
 
 
     @Bind(R.id.clipGroupList)
@@ -111,7 +103,7 @@ public class ClipListFragment extends BaseFragment {
     private void setupClipSetGroup() {
         mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ClipSetGroupAdapter2(getActivity(), null, new ClipSetGroupAdapter2.OnClipClickListener() {
+        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
                 popClipPreviewFragment(clip);

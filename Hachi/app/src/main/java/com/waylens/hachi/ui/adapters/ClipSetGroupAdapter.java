@@ -1,88 +1,166 @@
 package com.waylens.hachi.ui.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.LayoutManager.WrapGridLayoutManager;
+import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Created by Xiaofei on 2016/2/18.
+ * Created by Xiaofei on 2016/2/26.
  */
 public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private List<ClipSet> mClipSetGroup;
     private final Context mContext;
     private final OnClipClickListener mClipClickListener;
-    private List<ClipSet> mClipSetGroup;
+
+    private final static int ITEM_TYPE_HEAD = 0;
+    private final static int ITEM_TYPE_CLIPVIEW = 1;
+
+    private VdbRequestQueue mVdbRequestQueue;
+    private VdbImageLoader mVdbImageLoader;
 
     public interface OnClipClickListener {
         void onClipClicked(Clip clip);
     }
 
+    private class ClipGridItem {
+        int itemType;
+        Object itemObject;
+    }
+    private List<ClipGridItem> mClipGridItemList = new ArrayList<>();
+
+
     public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup, ClipSetGroupAdapter
         .OnClipClickListener listener) {
-        mContext = context;
-        mClipSetGroup = clipSetGroup;
+        this.mContext = context;
+        this.mClipSetGroup = clipSetGroup;
+        recalculateGridItemList();
         this.mClipClickListener = listener;
+        this.mVdbRequestQueue = Snipe.newRequestQueue(mContext);
+        this.mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+    }
+
+
+    public void setClipSetGroup(List<ClipSet> clipSetGroup) {
+        mClipSetGroup = clipSetGroup;
+        recalculateGridItemList();
+        notifyDataSetChanged();
+    }
+
+    private void recalculateGridItemList() {
+        if (mClipSetGroup == null) {
+            return;
+        }
+
+        mClipGridItemList.clear();
+        for (ClipSet clipSet : mClipSetGroup) {
+            ClipGridItem headItem = new ClipGridItem();
+            headItem.itemType = ITEM_TYPE_HEAD;
+            headItem.itemObject = clipSet.getClip(0).clipDate;
+            mClipGridItemList.add(headItem);
+
+            for (Clip clip : clipSet.getClipList()) {
+                ClipGridItem clipItem = new ClipGridItem();
+                clipItem.itemType = ITEM_TYPE_CLIPVIEW;
+                clipItem.itemObject = clip;
+                mClipGridItemList.add(clipItem);
+            }
+        }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.item_clip_set_group, parent, false);
+        if (viewType == ITEM_TYPE_HEAD) {
+            return onCreateHeaderViewHolder(parent);
+        } else if (viewType == ITEM_TYPE_CLIPVIEW) {
+            return onCreateClipGridViewHolder(parent);
+        }
 
-        return new ClipSetGroupViewHolder(view);
+        return null;
+
+
+    }
+
+    private RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.item_clip_set_header, parent, false);
+        StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams();
+        layoutParams.setFullSpan(true);
+        view.setLayoutParams(layoutParams);
+        return new ClipGroupHeaderViewHolder(view);
+    }
+
+    private RecyclerView.ViewHolder onCreateClipGridViewHolder(ViewGroup parent) {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.item_clip_set_grid, parent, false);
+        StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams();
+        layoutParams.setFullSpan(false);
+        view.setLayoutParams(layoutParams);
+        return new ClipGridViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ClipSet clipSet = mClipSetGroup.get(position);
-        ClipSetGroupViewHolder viewHolder = (ClipSetGroupViewHolder)holder;
+        int viewType = getItemViewType(position);
+        if (ITEM_TYPE_HEAD == viewType) {
+            onBindClipSetHeaderViewHolder(holder, position);
+        } else if (ITEM_TYPE_CLIPVIEW == viewType) {
+            onBindClipGridViewHolder(holder, position);
+        }
+    }
 
 
-        viewHolder.mClipSetDate.setText(getFormattedDate(clipSet.getClip(0).clipDate));
 
-        viewHolder.mRvClipGrid.setLayoutManager(new WrapGridLayoutManager(mContext, 4));
-        ClipSetGridAdapter adapter = new ClipSetGridAdapter(mContext, clipSet, new ClipSetGridAdapter.OnClipClickListener() {
-            @Override
-            public void onClipClicked(Clip clip) {
-                if (mClipClickListener != null) {
-                    mClipClickListener.onClipClicked(clip);
-                }
-            }
-        });
-        viewHolder.mRvClipGrid.setAdapter(adapter);
+    private void onBindClipSetHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ClipGroupHeaderViewHolder viewHolder = (ClipGroupHeaderViewHolder)holder;
+        Integer clipDate = (Integer)mClipGridItemList.get(position).itemObject;
+
+        viewHolder.mClipSetDate.setText(getFormattedDate(clipDate));
+    }
+
+    private void onBindClipGridViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ClipGridViewHolder viewHolder = (ClipGridViewHolder)holder;
+        Clip clip = (Clip)mClipGridItemList.get(position).itemObject;
+        ClipPos clipPos  = new ClipPos(clip);
+
+        String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
+        viewHolder.tvDuration.setText(clipDuration);
+
+        mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover);
+
+
+
     }
 
     @Override
     public int getItemCount() {
-        if (mClipSetGroup == null) {
-            return 0;
-        } else {
-            return mClipSetGroup.size();
-        }
+        return mClipGridItemList.size();
     }
 
-    public void setClipSetGroup(List<ClipSet> clipSetGroup) {
-        mClipSetGroup = clipSetGroup;
-        notifyDataSetChanged();
+    @Override
+    public int getItemViewType(int position) {
+        return mClipGridItemList.get(position).itemType;
     }
 
     private String getFormattedDate(int date) {
@@ -113,17 +191,46 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return dateString;
     }
 
-    public static class ClipSetGroupViewHolder extends RecyclerView.ViewHolder {
+
+    public static class ClipGroupHeaderViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.clipSetDate)
         TextView mClipSetDate;
 
-        @Bind(R.id.rvClipGrid)
-        RecyclerView mRvClipGrid;
 
-        public ClipSetGroupViewHolder(View itemView) {
+        public ClipGroupHeaderViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public class ClipGridViewHolder extends RecyclerView.ViewHolder {
+
+        @Bind(R.id.ivClipCover)
+        ImageView ivClipCover;
+
+        @Bind(R.id.tvDuration)
+        TextView tvDuration;
+
+        public ClipGridViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            ivClipCover.setTag(this);
+            ivClipCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mClipClickListener == null) {
+                        return;
+                    }
+
+                    ClipGridViewHolder holder = (ClipGridViewHolder)v.getTag();
+                    ClipGridItem clipGridItem = mClipGridItemList.get(holder.getAdapterPosition());
+
+                    mClipClickListener.onClipClicked((Clip)clipGridItem.itemObject);
+
+                }
+            });
         }
     }
 }
