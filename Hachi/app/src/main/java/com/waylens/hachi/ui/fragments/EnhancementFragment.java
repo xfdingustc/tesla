@@ -38,6 +38,7 @@ import com.waylens.hachi.vdb.Playlist;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 
 import butterknife.Bind;
@@ -78,12 +79,10 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-        //doGetPlaylistInfo();
+        clearExistingPlayList(0x100, null);
     }
 
     private void doGetPlaylistInfo() {
-        mVdbRequestQueue = Snipe.newRequestQueue();
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -102,6 +101,9 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                             latch.countDown();
                         }
                         Log.e("test", "PlaylistEditRequest: " + response);
+                        ConcurrentLinkedQueue<Clip> clipsQueue = new ConcurrentLinkedQueue<>();
+                        clipsQueue.addAll(mClips);
+                        appendClips(clipsQueue, playListID);
                     }
                 },
                 new VdbResponse.ErrorListener() {
@@ -175,10 +177,10 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                 }));
     }
 
-    void trimClip(final SharableClip sharableClip) {
-        mVdbRequestQueue.add(new ClipExtentUpdateRequest(sharableClip.clip,
-                sharableClip.selectedStartValue,
-                sharableClip.selectedEndValue,
+    void trimClip(final Clip clip, long selectedStartValue, long selectedEndValue) {
+        mVdbRequestQueue.add(new ClipExtentUpdateRequest(clip,
+                selectedStartValue,
+                selectedEndValue,
                 new VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
@@ -259,15 +261,18 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @OnClick(R.id.btn_music)
     void onClickMusic() {
-        getFragmentManager().beginTransaction()
-                .add(R.id.root_container, new MusicFragment())
-                .addToBackStack(null)
-                .commit();
+        //getFragmentManager().beginTransaction()
+        //        .add(R.id.root_container, new MusicFragment())
+        //        .addToBackStack(null)
+        //        .commit();
+        fetchPlayList();
     }
 
     @OnClick(R.id.btn_gauge)
     void showGauge() {
-        //TODO
+        ArrayList<Clip> newClips = new ArrayList<>();
+        newClips.addAll(mClips);
+        mClipsEditView.appendSharableClips(newClips);
     }
 
 
@@ -303,6 +308,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         super.onCreate(savedInstanceState);
         mPagerAdapter = new SimplePagerAdapter();
         setHasOptionsMenu(true);
+        mVdbRequestQueue = Snipe.newRequestQueue();
     }
 
     @Nullable
@@ -357,7 +363,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Override
     public void onClipSelected(int position, Clip clip) {
         mClipPlayFragment.setClip(clip);
-        //TODO
     }
 
     @Override
@@ -370,13 +375,53 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @Override
-    public void onClipsAppended(List<Clip> sharableClips) {
-        //TODO
+    public void onClipsAppended(List<Clip> clips) {
+        if (clips == null) {
+            return;
+        }
+        ConcurrentLinkedQueue<Clip> clipsQueue = new ConcurrentLinkedQueue<>();
+        clipsQueue.addAll(clips);
+        appendClips(clipsQueue, 0x100);
+    }
+
+    void appendClips(final ConcurrentLinkedQueue<Clip> clipsQueue, final int playListID) {
+        if (clipsQueue == null) {
+            return;
+        }
+        final Clip clip = clipsQueue.poll();
+        if (clip == null) {
+            fetchPlayList();
+            return;
+        }
+        PlaylistEditRequest request = new PlaylistEditRequest(
+                PlaylistEditRequest.METHOD_INSERT_CLIP,
+                clip,
+                clip.editInfo.selectedStartValue,
+                clip.editInfo.selectedEndValue,
+                playListID,
+                new VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        Log.e("test", "appendClips: " + response);
+                        appendClips(clipsQueue, playListID);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "appendClips", error);
+                    }
+                });
+        mVdbRequestQueue.add(request);
     }
 
     @Override
     public void onClipRemoved(int position) {
-        //TODO
+        if (mPlayListClips == null) {
+            return;
+        }
+        deleteClip(mPlayListClips.getClip(position));
+        mPlayListClips.getClipList().remove(position);
     }
 
     @Override
@@ -396,7 +441,14 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onStopTrimming() {
-        //TODO
+        int selectedPosition = mClipsEditView.getSelectedPosition();
+        if (selectedPosition == ClipsEditView.POSITION_UNKNOWN || mPlayListClips == null) {
+            return;
+        }
+        Clip clip = mClips.get(selectedPosition);
+        Clip playListClip = mPlayListClips.getClip(selectedPosition);
+        trimClip(playListClip, clip.editInfo.selectedStartValue, clip.editInfo.selectedEndValue);
+
     }
 
     static class SimplePagerAdapter extends PagerAdapter {

@@ -41,6 +41,8 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     final static float HALF_ALPHA = 0.5f;
     final static float FULL_ALPHA = 1.0f;
 
+    public final static int POSITION_UNKNOWN = -1;
+
     @Bind(R.id.clip_list_view)
     RecyclerView mRecyclerView;
 
@@ -62,7 +64,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     ItemTouchHelper mItemTouchHelper;
     OnClipEditListener mOnClipEditListener;
 
-    int selectedPosition = -1;
+    int mSelectedPosition = POSITION_UNKNOWN;
 
     public ClipsEditView(Context context) {
         this(context, null, 0);
@@ -134,10 +136,10 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     public void onRangeSeekBarValuesChanged(RangeSeekBar<Long> rangeSeekBar,
                                             RangeSeekBar.Thumb pressedThumb,
                                             Long value) {
-        if (selectedPosition == -1) {
+        if (mSelectedPosition == -1) {
             return;
         }
-       Clip clip = mClips.get(selectedPosition);
+       Clip clip = mClips.get(mSelectedPosition);
         if (pressedThumb == RangeSeekBar.Thumb.MIN) {
             clip.editInfo.selectedStartValue = value;
         } else {
@@ -180,14 +182,20 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
             mClips.addAll(clips);
             int size = clips.size();
             mAdapter.notifyItemRangeInserted(mClips.size() - size, size);
+            updateClipCount(mClips.size());
             if (mOnClipEditListener != null) {
                 mOnClipEditListener.onClipsAppended(clips);
             }
         }
     }
 
+    public int getSelectedPosition() {
+        return mSelectedPosition;
+    }
+
+
     void internalOnExitEditing() {
-        selectedPosition = -1;
+        mSelectedPosition = -1;
         mViewAnimator.setDisplayedChild(0);
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onExitEditing();
@@ -222,16 +230,16 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
             mOnClipEditListener.onClipRemoved(position);
         }
 
-        if (selectedPosition == position) {
+        if (mSelectedPosition == position) {
             internalOnExitEditing();
         }
     }
 
     void exitClipEditing() {
-        if (selectedPosition == -1) {
+        if (mSelectedPosition == -1) {
             return;
         }
-        View child = mLayoutManager.findViewByPosition(selectedPosition);
+        View child = mLayoutManager.findViewByPosition(mSelectedPosition);
         if (child != null) {
             child.setAlpha(HALF_ALPHA);
         }
@@ -265,21 +273,21 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
             holder.itemView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (selectedPosition == holder.getAdapterPosition()) {
+                    if (mSelectedPosition == holder.getAdapterPosition()) {
                         holder.itemView.setAlpha(HALF_ALPHA);
                         internalOnExitEditing();
                         return;
                     }
-                    if (selectedPosition != -1) {
-                        View view = mLayoutManager.findViewByPosition(selectedPosition);
+                    if (mSelectedPosition != -1) {
+                        View view = mLayoutManager.findViewByPosition(mSelectedPosition);
                         if (view != null) {
                             view.setAlpha(HALF_ALPHA);
                         }
                     }
 
                     holder.itemView.setAlpha(FULL_ALPHA);
-                    selectedPosition = holder.getAdapterPosition();
-                    internalOnSelectClip(selectedPosition, clip);
+                    mSelectedPosition = holder.getAdapterPosition();
+                    internalOnSelectClip(mSelectedPosition, clip);
                 }
             });
         }
@@ -296,7 +304,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         @Override
         public void onViewAttachedToWindow(VH holder) {
             super.onViewAttachedToWindow(holder);
-            if (holder.getAdapterPosition() == selectedPosition) {
+            if (holder.getAdapterPosition() == mSelectedPosition) {
                 holder.itemView.setAlpha(FULL_ALPHA);
             } else {
                 holder.itemView.setAlpha(HALF_ALPHA);
@@ -312,8 +320,8 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         @Override
         public void onItemMoved(int fromPosition, int toPosition) {
-            if (fromPosition == selectedPosition) {
-                selectedPosition = toPosition;
+            if (fromPosition == mSelectedPosition) {
+                mSelectedPosition = toPosition;
             }
             internalOnClipMoved(fromPosition, toPosition);
         }

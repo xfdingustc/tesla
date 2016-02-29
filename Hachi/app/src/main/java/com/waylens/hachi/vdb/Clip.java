@@ -316,6 +316,7 @@ public class Clip implements Parcelable {
         } else {
             bDeleting = false;
         }
+        editInfo = new EditInfo();
     }
 
     Clip.ID readID(Parcel in) {
