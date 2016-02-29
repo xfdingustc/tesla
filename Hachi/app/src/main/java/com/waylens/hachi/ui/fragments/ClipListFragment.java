@@ -209,9 +209,6 @@ public class ClipListFragment extends BaseFragment {
         clipList.add(clip);
         ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipList, config);
 
-
-
-
         fragment.show(getFragmentManager(), "ClipPlayFragment");
 
     }

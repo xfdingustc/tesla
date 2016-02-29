@@ -126,11 +126,11 @@ public class Clip implements Parcelable {
 
     }
 
-    public final ID cid;
+    public ID cid;
 
     public ID realCid;
 
-    public final StreamInfo[] streams;
+    public StreamInfo[] streams;
 
     public int index; // index in ClipSet
 
@@ -152,6 +152,7 @@ public class Clip implements Parcelable {
 
     public EditInfo editInfo;
 
+
     public Clip(int type, int subType, String extra, int clipDate, int duration) {
         this(type, subType, extra, 2, clipDate, duration);
     }
@@ -168,10 +169,6 @@ public class Clip implements Parcelable {
         this.editInfo = new EditInfo();
     }
 
-
-    public boolean isLocal() {
-        return false;
-    }
 
     public int getDurationMs() {
         return mDurationMs;
@@ -243,6 +240,7 @@ public class Clip implements Parcelable {
         write(dest, cid);
         write(dest, realCid);
         write(dest, streams);
+        write(dest, editInfo);
         dest.writeInt(index);
         dest.writeInt(clipDate);
         dest.writeInt(gmtOffset);
@@ -290,10 +288,23 @@ public class Clip implements Parcelable {
         }
     }
 
+    private void write(Parcel dest, EditInfo editInfo) {
+        if (editInfo == null) {
+            dest.writeInt(-1);
+        } else {
+            dest.writeLong(editInfo.minExtensibleValue);
+            dest.writeLong(editInfo.maxExtensibleValue);
+            dest.writeLong(editInfo.selectedStartValue);
+            dest.writeLong(editInfo.selectedEndValue);
+            dest.writeLong(editInfo.currentPosition);
+        }
+    }
+
     private Clip(Parcel in) {
         cid = readID(in);
         realCid = readID(in);
         streams = readStreams(in);
+        editInfo = readEditInfo(in);
         index = in.readInt();
         clipDate = in.readInt();
         gmtOffset = in.readInt();
@@ -343,6 +354,16 @@ public class Clip implements Parcelable {
             infos[i] = streamInfo;
         }
         return infos;
+    }
+
+    private EditInfo readEditInfo(Parcel in) {
+        EditInfo editInfo = new EditInfo();
+        editInfo.minExtensibleValue = in.readLong();
+        editInfo.maxExtensibleValue = in.readLong();
+        editInfo.selectedStartValue = in.readLong();
+        editInfo.selectedEndValue = in.readLong();
+        editInfo.currentPosition = in.readLong();
+        return editInfo;
     }
 
     public static final Parcelable.Creator<Clip> CREATOR = new Parcelable.Creator<Clip>() {

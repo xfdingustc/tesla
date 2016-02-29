@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -33,6 +34,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.ShareFragment;
+import com.waylens.hachi.ui.views.MultiSegmentsIndicator;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.VdbUrl;
@@ -103,6 +105,12 @@ public class ClipPlayFragment extends DialogFragment {
 
     @Bind(R.id.controlPanel)
     LinearLayout mControlPanel;
+
+    @Bind(R.id.vsBar)
+    ViewSwitcher mVsBar;
+
+    @Bind(R.id.multiSegIndicator)
+    MultiSegmentsIndicator mMultiSegmentIndicator;
 
     @OnClick(R.id.btnDismiss)
     public void onBtnDismissClicked() {
@@ -245,33 +253,39 @@ public class ClipPlayFragment extends DialogFragment {
             mControlPanel.setVisibility(View.GONE);
         }
 
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (mClipList.size() > 1) {
+            mVsBar.showNext();
+            mMultiSegmentIndicator.setClipList(mClipList);
+        } else {
+
+            mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 //                Logger.t(TAG).d("onProgressChanged");
-                if (mCurrentState == STATE_FAST_PREVIEW) {
-                    long seekBarTimeMs = getSeekbarTimeMs();
-                    ClipPos clipPos = new ClipPos(mClipList.get(0), seekBarTimeMs, ClipPos.TYPE_POSTER, false);
-                    mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+                    if (mCurrentState == STATE_FAST_PREVIEW) {
+                        long seekBarTimeMs = getSeekbarTimeMs();
+                        ClipPos clipPos = new ClipPos(mClipList.get(0), seekBarTimeMs, ClipPos.TYPE_POSTER, false);
+                        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+                    }
+
                 }
 
-            }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    Logger.t(TAG).d("onStartTrackingTouch");
+                    changeState(STATE_FAST_PREVIEW);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                Logger.t(TAG).d("onStartTrackingTouch");
-                changeState(STATE_FAST_PREVIEW);
+                }
 
-            }
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    Logger.t(TAG).d("onStopTrackingTouch");
+                    startPreparingClip(getSeekbarTimeMs());
+                }
+            });
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Logger.t(TAG).d("onStopTrackingTouch");
-                startPreparingClip(getSeekbarTimeMs());
-            }
-        });
-
-        mSeekBar.setMax(mClipList.get(0).getDurationMs());
+            mSeekBar.setMax(mClipList.get(0).getDurationMs());
+        }
 
     }
 

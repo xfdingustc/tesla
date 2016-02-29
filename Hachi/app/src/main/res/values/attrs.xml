@@ -17,4 +17,11 @@
         <attr name="rippleAlpha" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="MultiSegmentsIndicator">
+        <attr name="segInactiveColor" format="color"/>
+        <attr name="segActiveColor" format="color"/>
+        <attr name="dividerWidth" format="dimension"/>
+        <attr name="barMinHeight" format="dimension"/>
+    </declare-styleable>
+
 </resources>
