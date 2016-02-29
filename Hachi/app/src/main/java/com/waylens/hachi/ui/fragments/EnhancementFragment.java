@@ -362,7 +362,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onClipSelected(int position, Clip clip) {
-        mClipPlayFragment.setClip(clip);
+        //mClipPlayFragment.setClip(clip);
     }
 
     @Override
@@ -372,6 +372,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
             return;
         }
         moveClip(mPlayListClips.getClip(fromPosition), toPosition);
+        mClipPlayFragment.notifyClipSetChanged();
     }
 
     @Override
@@ -435,8 +436,9 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @Override
-    public void onTrimming(int flag, long value) {
-        mClipPlayFragment.showClipPosThumbnail(value);
+    public void onTrimming(Clip clip, int flag, long value) {
+        mClipPlayFragment.showClipPosThumbnail(clip, value);
+        mClipPlayFragment.notifyClipSetChanged();
     }
 
     @Override

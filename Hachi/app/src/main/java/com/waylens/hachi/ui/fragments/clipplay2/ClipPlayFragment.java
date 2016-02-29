@@ -144,10 +144,14 @@ public class ClipPlayFragment extends DialogFragment {
         EnhancementActivity.launch(getActivity(), mClipList);
     }
 
-    public void showClipPosThumbnail(long timeMs) {
+    public void showClipPosThumbnail(Clip clip, long timeMs) {
         changeState(STATE_FAST_PREVIEW);
         ClipPos clipPos = new ClipPos(mClipList.get(0), timeMs, ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+    }
+
+    public void notifyClipSetChanged() {
+        mMultiSegmentIndicator.invalidate();
     }
 
 

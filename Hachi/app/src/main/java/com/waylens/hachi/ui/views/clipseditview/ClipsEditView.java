@@ -147,7 +147,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         }
         updateClipDuration(clip);
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onTrimming(pressedThumb.ordinal(), value);
+            mOnClipEditListener.onTrimming(clip, pressedThumb.ordinal(), value);
         }
     }
 
@@ -369,7 +369,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         void onStartTrimming();
 
-        void onTrimming(int flag, long value);
+        void onTrimming(Clip clip, int flag, long value);
 
         void onStopTrimming();
     }
