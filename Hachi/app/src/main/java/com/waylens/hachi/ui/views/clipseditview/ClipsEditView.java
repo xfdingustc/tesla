@@ -224,10 +224,10 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         }
     }
 
-    void internalOnClipRemoved(int position) {
+    void internalOnClipRemoved(Clip clip, int position) {
         updateClipCount(mClips.size());
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onClipRemoved(position);
+            mOnClipEditListener.onClipRemoved(clip, position);
         }
 
         if (mSelectedPosition == position) {
@@ -328,8 +328,10 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         @Override
         public void onItemDismiss(int position) {
+            //mClips.remove(position);
+            Clip clip = mClips.get(position);
             mClips.remove(position);
-            internalOnClipRemoved(position);
+            internalOnClipRemoved(clip, position);
             notifyItemRemoved(position);
         }
     }
@@ -363,7 +365,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         void onClipsAppended(List<Clip> clips);
 
-        void onClipRemoved(int position);
+        void onClipRemoved(Clip clip, int position);
 
         void onExitEditing();
 

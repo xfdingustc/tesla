@@ -69,6 +69,8 @@ public class Playlist {
         mTotalLengthMs += clip.getDurationMs();
     }
 
+
+
     public boolean moveClip(Clip clip) {
         return mClipSet.moveClip(clip.cid, clip.index);
     }

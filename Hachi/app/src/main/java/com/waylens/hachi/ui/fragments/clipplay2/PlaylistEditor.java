@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -9,6 +10,7 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistSetRequest;
 import com.waylens.hachi.vdb.Clip;
@@ -27,6 +29,7 @@ public class PlaylistEditor {
     private Playlist mPlaylist;
 
     private OnBuildCompleteListener mOnBuildCompleteListener;
+    private OnDeleteCompleteListener mOnDeleteCompleteListener;
 
     private int mClipAdded;
 
@@ -48,11 +51,26 @@ public class PlaylistEditor {
         void onBuildComplete(Playlist playlist);
     }
 
+    public interface OnDeleteCompleteListener {
+        void onDeleteComplete();
+    }
+
 
     public void build(@NonNull OnBuildCompleteListener listener) {
         mOnBuildCompleteListener = listener;
         doGetPlaylistInfo();
     }
+
+    public void delete(Clip clip, OnDeleteCompleteListener listener) {
+        mOnDeleteCompleteListener = listener;
+        doDeleteClip(clip);
+    }
+
+    public void move(int fromPosition, int toPosition) {
+
+    }
+
+
 
     private void doGetPlaylistInfo() {
         Logger.t(TAG).d("Get Play list info");
@@ -115,6 +133,28 @@ public class PlaylistEditor {
 
             mVdbRequestQueue.add(playRequest);
         }
+    }
+
+
+    // Todo: This is delete the clip directly, we need to just remove this clip from the
+    // playlist!!!!
+    private void doDeleteClip(Clip clip) {
+        mVdbRequestQueue.add(new ClipDeleteRequest(clip.cid,
+            new VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+                    if (mOnDeleteCompleteListener != null) {
+                        mOnDeleteCompleteListener.onDeleteComplete();
+                    }
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Log.e("test", "ClipDeleteRequest", error);
+                }
+            }));
+
     }
 
 

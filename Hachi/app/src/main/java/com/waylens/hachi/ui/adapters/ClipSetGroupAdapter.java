@@ -279,7 +279,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         clipGridItem.isItemSelected = !clipGridItem.isItemSelected;
                         toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem
                             .isItemSelected);
-                      
+
 
                     }
 

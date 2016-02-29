@@ -214,21 +214,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                 }));
     }
 
-    void deleteClip(Clip clip) {
-        mVdbRequestQueue.add(new ClipDeleteRequest(clip.cid,
-                new VdbResponse.Listener<Integer>() {
-                    @Override
-                    public void onResponse(Integer response) {
-                        Log.e("test", "ClipDeleteRequest response: " + response);
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        Log.e("test", "ClipDeleteRequest", error);
-                    }
-                }));
-    }
+
+
 
     @Override
     public void onStop() {
@@ -375,11 +362,14 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Override
     public void onClipMoved(int fromPosition, int toPosition) {
         Log.e("test", String.format("onClipMoved[%d, %d]", fromPosition, toPosition));
-        if (mPlayListClips == null) {
-            return;
-        }
-        moveClip(mPlayListClips.getClip(fromPosition), toPosition);
+//        if (mPlayListClips == null) {
+//            return;
+//        }
+
+        mPlaylistEditor.move(fromPosition, toPosition);
         mClipPlayFragment.notifyClipSetChanged();
+        //moveClip(mPlayListClips.getClip(fromPosition), toPosition);
+        //mClipPlayFragment.notifyClipSetChanged();
     }
 
     @Override
@@ -424,12 +414,16 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @Override
-    public void onClipRemoved(int position) {
-        if (mPlayListClips == null) {
-            return;
-        }
-        deleteClip(mPlayListClips.getClip(position));
-        mPlayListClips.getClipList().remove(position);
+    public void onClipRemoved(Clip clip, int position) {
+
+        mPlaylistEditor.delete(clip, new PlaylistEditor.OnDeleteCompleteListener() {
+            @Override
+            public void onDeleteComplete() {
+                mClipPlayFragment.notifyClipSetChanged();
+            }
+        });
+        //deleteClip(mPlayListClips.getClip(position));
+        //mPlayListClips.getClipList().remove(position);
     }
 
     @Override
