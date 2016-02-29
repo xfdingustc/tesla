@@ -12,19 +12,20 @@ import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.vdb.Clip;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Richard on 2/22/16.
  */
 public class EnhancementActivity extends BaseActivity {
 
-    public static void launch(Activity activity, Clip clip) {
+    public static void launch(Activity activity, ArrayList<Clip> clipList) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
-        ArrayList<Clip> clips = new ArrayList<>();
-        clips.add(clip);
-        intent.putParcelableArrayListExtra("clips", clips);
+        intent.putParcelableArrayListExtra("clips", clipList);
         activity.startActivity(intent);
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

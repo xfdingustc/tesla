@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/edit_button_action_share"/>
+                    android:src="@drawable/btn_edit_action_share"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/edit_button_action_enhance"/>
+                    android:src="@drawable/btn_edit_action_enhance"/>
 
             </RelativeLayout>
 
@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/edit_button_action_delete"/>
+                    android:src="@drawable/btn_edit_action_delete"/>
 
             </RelativeLayout>
 

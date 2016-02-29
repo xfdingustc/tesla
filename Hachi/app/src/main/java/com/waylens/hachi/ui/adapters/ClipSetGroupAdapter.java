@@ -179,8 +179,8 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mClipGridItemList.get(position).itemType;
     }
 
-    public List<Clip> getSelectedClipList() {
-        List<Clip> mSelectedClipList = new ArrayList<>();
+    public ArrayList<Clip> getSelectedClipList() {
+        ArrayList<Clip> mSelectedClipList = new ArrayList<>();
         for (ClipGridItem gridItem : mClipGridItemList) {
             if (gridItem.itemType == ITEM_TYPE_CLIPVIEW && gridItem.isItemSelected == true) {
                 mSelectedClipList.add((Clip)gridItem.itemObject);

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
@@ -18,6 +19,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.vdb.Clip;
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -50,6 +53,16 @@ public class ClipListFragment extends BaseFragment {
 
     @Bind(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
+
+    @Bind(R.id.bottomSheet)
+    LinearLayout mBottomSheet;
+
+    @OnClick(R.id.btnEnhance)
+    public void onBtnEnhanceClicked() {
+        ArrayList selectedList = mAdapter.getSelectedClipList();
+        EnhancementActivity.launch(getActivity(), selectedList);
+
+    }
 
     private Handler mUiThreadHandler;
 
@@ -114,7 +127,7 @@ public class ClipListFragment extends BaseFragment {
             @Override
             public void onClipLongClicked(Clip clip) {
                 mAdapter.setMultiSelectedMode(true);
-                //popupBottomSheet();
+                popupBottomSheet();
             }
         });
 
@@ -194,23 +207,23 @@ public class ClipListFragment extends BaseFragment {
     }
 
     private void popupBottomSheet() {
-        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
-        BottomSheet bottomSheet = builder
-            .grid()
-            .darkTheme()
-            .sheet(R.menu.menu_video_fragment_bottom_sheet)
-            .listener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    //return onBottomSheetMenuItemClicked(item);
-                    return true;
-                }
-            }).build();
-
-        bottomSheet.setCanceledOnTouchOutside(false);
-
-        bottomSheet.show();
-
+//        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
+//        BottomSheet bottomSheet = builder
+//            .grid()
+//            .darkTheme()
+//            .sheet(R.menu.menu_video_fragment_bottom_sheet)
+//            .listener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    //return onBottomSheetMenuItemClicked(item);
+//                    return true;
+//                }
+//            }).build();
+//
+//        bottomSheet.setCanceledOnTouchOutside(false);
+//
+//        bottomSheet.show();
+        mBottomSheet.setVisibility(View.VISIBLE);
 
     }
 }

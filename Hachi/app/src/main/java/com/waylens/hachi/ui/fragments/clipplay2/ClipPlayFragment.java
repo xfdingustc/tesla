@@ -37,6 +37,8 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -128,7 +130,9 @@ public class ClipPlayFragment extends DialogFragment {
     @OnClick(R.id.btnEnhance)
     public void onBtnEnhanceClicked() {
         dismiss();
-        EnhancementActivity.launch(getActivity(), mSharableClip.clip);
+        ArrayList<Clip> clipList = new ArrayList<>();
+        clipList.add(mSharableClip.clip);
+        EnhancementActivity.launch(getActivity(), clipList);
     }
 
     public void showClipPosThumbnail(long timeMs) {
@@ -152,6 +156,11 @@ public class ClipPlayFragment extends DialogFragment {
         fragment.mConfig = config;
         return fragment;
     }
+
+//    public static ClipPlayFragment newInstance(VdtCamera camera, List<Clip> mClipList, Config
+//        config) {
+//
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

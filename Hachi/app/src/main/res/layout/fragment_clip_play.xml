@@ -32,7 +32,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/edit_button_action_share"/>
+            android:src="@drawable/btn_edit_action_share"/>
 
         <ImageButton
             android:id="@+id/btnEnhance"
@@ -115,5 +115,7 @@
             android:src="@drawable/screen_full"/>
 
     </LinearLayout>
+
+
 
 </LinearLayout>
