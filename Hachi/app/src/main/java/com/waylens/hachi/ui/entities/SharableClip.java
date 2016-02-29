@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.entities;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
  * SharableClip
  * Created by Richard on 1/17/16.
  */
-public class SharableClip {
+public class SharableClip{
     private static final int MAX_EXTENSION = 1000 * 30;
     public Clip.ID bufferedCid;
     public Clip.ID realCid;

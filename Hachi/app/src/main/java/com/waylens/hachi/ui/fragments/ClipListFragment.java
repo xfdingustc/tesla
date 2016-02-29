@@ -21,6 +21,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
+import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -196,8 +197,9 @@ public class ClipListFragment extends BaseFragment {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
 
-
-        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clip, config);
+        ArrayList<SharableClip> clipList = new ArrayList<>();
+        clipList.add(new SharableClip(clip));
+        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipList, config);
 
 
 

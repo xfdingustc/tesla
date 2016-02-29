@@ -315,7 +315,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
         config.showControlPanel = false;
-        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mSharableClips.get(0).clip, config);
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mSharableClips, config);
         mClipPlayFragment.setShowsDialog(false);
         getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
     }

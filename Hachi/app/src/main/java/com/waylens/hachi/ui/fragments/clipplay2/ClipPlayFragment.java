@@ -32,6 +32,7 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.ui.fragments.ShareFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.VdbUrl;
@@ -50,7 +51,8 @@ import butterknife.OnClick;
 public class ClipPlayFragment extends DialogFragment {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
-    protected SharableClip mSharableClip;
+    private ArrayList<SharableClip> mClipList;
+
     private VdtCamera mVdtCamera;
 
     private VdbRequestQueue mVdbRequestQueue;
@@ -131,13 +133,15 @@ public class ClipPlayFragment extends DialogFragment {
     public void onBtnEnhanceClicked() {
         dismiss();
         ArrayList<Clip> clipList = new ArrayList<>();
-        clipList.add(mSharableClip.clip);
+        for (SharableClip clip : mClipList) {
+            clipList.add(clip.clip);
+        }
         EnhancementActivity.launch(getActivity(), clipList);
     }
 
     public void showClipPosThumbnail(long timeMs) {
         changeState(STATE_FAST_PREVIEW);
-        ClipPos clipPos = new ClipPos(mSharableClip.clip, timeMs, ClipPos.TYPE_POSTER, false);
+        ClipPos clipPos = new ClipPos(mClipList.get(0).clip, timeMs, ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
     }
 
@@ -149,18 +153,16 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    public static ClipPlayFragment newInstance(VdtCamera camera, Clip clip, Config config) {
+
+
+    public static ClipPlayFragment newInstance(VdtCamera camera, ArrayList<SharableClip> clipList,
+                                               Config config) {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
-        fragment.mSharableClip = new SharableClip(clip);
+        fragment.mClipList = clipList;
         fragment.mConfig = config;
         return fragment;
     }
-
-//    public static ClipPlayFragment newInstance(VdtCamera camera, List<Clip> mClipList, Config
-//        config) {
-//
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,7 +190,7 @@ public class ClipPlayFragment extends DialogFragment {
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                startPreparingClip(mSharableClip.clip.getStartTimeMs());
+                startPreparingClip(mClipList.get(0).clip.getStartTimeMs());
             }
 
             @Override
@@ -239,7 +241,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     private void initViews() {
-        ClipPos clipPos = new ClipPos(mSharableClip.clip);
+        ClipPos clipPos = new ClipPos(mClipList.get(0).clip);
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
         if (!mConfig.showControlPanel) {
@@ -252,7 +254,7 @@ public class ClipPlayFragment extends DialogFragment {
 //                Logger.t(TAG).d("onProgressChanged");
                 if (mCurrentState == STATE_FAST_PREVIEW) {
                     long seekBarTimeMs = getSeekbarTimeMs();
-                    ClipPos clipPos = new ClipPos(mSharableClip.clip, seekBarTimeMs, ClipPos.TYPE_POSTER, false);
+                    ClipPos clipPos = new ClipPos(mClipList.get(0).clip, seekBarTimeMs, ClipPos.TYPE_POSTER, false);
                     mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
                 }
 
@@ -272,13 +274,12 @@ public class ClipPlayFragment extends DialogFragment {
             }
         });
 
-        mSeekBar.setMax(mSharableClip.clip.getDurationMs());
+        mSeekBar.setMax(mClipList.get(0).clip.getDurationMs());
 
     }
 
     public void setClip(SharableClip clip) {
-        mSharableClip = clip;
-        startPreparingClip(mSharableClip.clip.getStartTimeMs());
+        startPreparingClip(mClipList.get(0).clip.getStartTimeMs());
     }
 
 
@@ -335,13 +336,13 @@ public class ClipPlayFragment extends DialogFragment {
     private void startPreparingClip(long clipTimeMs) {
         mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
 
-        mVdtUriProvider.getUri(mSharableClip.clip, clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
+        mVdtUriProvider.getUri(mClipList.get(0).clip, clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
 
             @Override
             public void onUriLoaded(VdbUrl url) {
                 mUrl = url;
                 Logger.t(TAG).d("Get playback url: " + url.url);
-                mPositionAdjuster = new PositionAdjuster(mSharableClip.clip, url);
+                mPositionAdjuster = new PositionAdjuster(mClipList.get(0).clip, url);
                 openVideo(url);
             }
 
@@ -381,7 +382,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void refreshProgressBar() {
         int currentPos = mMediaPlayer.getCurrentPosition();
-        int duration = mSharableClip.clip.getDurationMs();
+        int duration = mClipList.get(0).clip.getDurationMs();
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 
@@ -406,7 +407,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public long getSeekbarTimeMs() {
-        Clip clip = mSharableClip.clip;
+        Clip clip = mClipList.get(0).clip;
         return clip.getStartTimeMs() + ((long) clip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
     }
 
