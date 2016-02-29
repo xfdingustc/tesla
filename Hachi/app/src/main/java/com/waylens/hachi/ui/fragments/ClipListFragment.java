@@ -24,6 +24,7 @@ import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.VdtUriProvider;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
@@ -207,7 +208,10 @@ public class ClipListFragment extends BaseFragment {
 
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
-        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipList, config);
+
+        VdtUriProvider vdtUriProvider = new VdtUriProvider(mVdbRequestQueue, clipList);
+        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipList,
+            vdtUriProvider, config);
 
         fragment.show(getFragmentManager(), "ClipPlayFragment");
 

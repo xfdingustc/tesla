@@ -30,6 +30,7 @@ import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.VdtUriProvider;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -326,7 +327,10 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
         config.showControlPanel = false;
-        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClips, config);
+
+        VdtUriProvider vdtUriProvider = new VdtUriProvider(mVdbRequestQueue, mClips);
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClips, vdtUriProvider,
+            config);
         mClipPlayFragment.setShowsDialog(false);
         getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
     }

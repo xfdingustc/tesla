@@ -161,10 +161,12 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     public static ClipPlayFragment newInstance(VdtCamera camera, ArrayList<Clip> clipList,
+                                               VdtUriProvider vdtUriProvider,
                                                Config config) {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
         fragment.mClipList = clipList;
+        fragment.mVdtUriProvider = vdtUriProvider;
         fragment.mConfig = config;
         return fragment;
     }
@@ -345,9 +347,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void startPreparingClip(long clipTimeMs) {
-        mVdtUriProvider = new VdtUriProvider(mVdbRequestQueue);
-
-        mVdtUriProvider.getUri(mClipList.get(0), clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
+        mVdtUriProvider.getUri(clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
 
             @Override
             public void onUriLoaded(VdbUrl url) {
