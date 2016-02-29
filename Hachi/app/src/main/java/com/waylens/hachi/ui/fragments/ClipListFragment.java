@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -122,7 +123,14 @@ public class ClipListFragment extends BaseFragment {
         mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                popClipPreviewFragment(clip);
+                //popClipPreviewFragment(clip);
+
+                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
+                ArrayList<Clip> clips = new ArrayList<>();
+                clips.addAll(mClipSetGroup.get("2016-02-29").getClipList());
+                intent.putParcelableArrayListExtra("clips", clips);
+                startActivity(intent);
+
             }
 
             @Override

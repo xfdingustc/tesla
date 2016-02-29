@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -305,12 +306,16 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         @Override
         public boolean onItemMove(int fromPosition, int toPosition) {
             Collections.swap(mSharableClips, fromPosition, toPosition);
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+
+        @Override
+        public void onItemMoved(int fromPosition, int toPosition) {
             if (fromPosition == selectedPosition) {
                 selectedPosition = toPosition;
             }
             internalOnClipMoved(fromPosition, toPosition);
-            notifyItemMoved(fromPosition, toPosition);
-            return true;
         }
 
         @Override

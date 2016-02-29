@@ -44,6 +44,11 @@ public interface ItemTouchListener {
 
 
     /**
+     *  Called when the dragged item has been dropped.
+     */
+    void onItemMoved(int fromPosition, int toPosition);
+
+    /**
      * Called when an item has been dismissed by a swipe.<br/>
      * <br/>
      * Implementations should call {@link RecyclerView.Adapter#notifyItemRemoved(int)} after

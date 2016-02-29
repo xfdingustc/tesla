@@ -17,7 +17,6 @@
 package com.waylens.hachi.ui.views.clipseditview;
 
 import android.graphics.Canvas;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -36,7 +35,12 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     public static final float ALPHA_FULL = 1.0f;
 
+    public static final int POSITION_UNKNOWN = -1;
+
     private final ItemTouchListener mAdapter;
+
+    private int mFromPosition = POSITION_UNKNOWN;
+    private int mToPosition = POSITION_UNKNOWN;
 
     public SimpleItemTouchHelperCallback(ItemTouchListener adapter) {
         mAdapter = adapter;
@@ -78,8 +82,11 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if (source.getItemViewType() != target.getItemViewType()) {
             return false;
         }
+        if (mFromPosition == POSITION_UNKNOWN) {
+            mFromPosition = source.getAdapterPosition();
+        }
+        mToPosition = target.getAdapterPosition();
 
-        // Notify the adapter of the move
         mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
@@ -126,6 +133,12 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             // Tell the view holder it's time to restore the idle state
             ItemViewHolderListener itemViewHolder = (ItemViewHolderListener) viewHolder;
             itemViewHolder.onItemClear();
+        }
+
+        if (mFromPosition != POSITION_UNKNOWN) {
+            mAdapter.onItemMoved(mFromPosition, mToPosition);
+            mFromPosition = POSITION_UNKNOWN;
+            mToPosition = POSITION_UNKNOWN;
         }
     }
 }

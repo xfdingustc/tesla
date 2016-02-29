@@ -54,6 +54,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     private int mEditMode;
     private ArrayList<SharableClip> mSharableClips;
     private Playlist mPlaylist;
+    ClipSet mPlayListClips;
 
     private int mAudioID;
     private String mAudioPath;
@@ -76,61 +77,76 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-        doGetPlaylistInfo();
+        //doGetPlaylistInfo();
     }
 
     private void doGetPlaylistInfo() {
         mVdbRequestQueue = Snipe.newRequestQueue();
-        /*
-        PlaylistSetRequest request = new PlaylistSetRequest(0, new VdbResponse.Listener<PlaylistSet>() {
-            @Override
-            public void onResponse(PlaylistSet response) {
-                Log.e("test", "PlaylistSet: " + response);
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
 
-            }
-        });
-        mVdbRequestQueue.add(request);
-        */
-        /*
         new Thread(new Runnable() {
             @Override
             public void run() {
                 buildPlayList();
+                fetchPlayList();
             }
         }).start();
-        */
-        fetchPlayList();
+    }
+
+    void clearExistingPlayList(final int playListID, final CountDownLatch latch) {
+        mVdbRequestQueue.add(PlaylistEditRequest.getClearPlayListRequest(playListID,
+                new VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        if (latch != null) {
+                            latch.countDown();
+                        }
+                        Log.e("test", "PlaylistEditRequest: " + response);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        if (latch != null) {
+                            latch.countDown();
+                        }
+                        Log.e("test", "PlaylistEditRequest", error);
+                    }
+                }));
+    }
+
+    void insertClipIntoPlayList(final SharableClip sharableClip, int playListID, final CountDownLatch latch) {
+        PlaylistEditRequest request = new PlaylistEditRequest(
+                PlaylistEditRequest.METHOD_INSERT_CLIP,
+                sharableClip.clip,
+                sharableClip.selectedStartValue,
+                sharableClip.selectedEndValue,
+                playListID,
+                new VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        if (latch != null) {
+                            latch.countDown();
+                        }
+                        Log.e("test", "Response: " + response);
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        if (latch != null) {
+                            latch.countDown();
+                        }
+                        Log.e("test", "", error);
+                    }
+                });
+        mVdbRequestQueue.add(request);
     }
 
     void buildPlayList() {
-        final CountDownLatch latch = new CountDownLatch(mSharableClips.size());
-
+        final CountDownLatch latch = new CountDownLatch(mSharableClips.size() + 1);
+        clearExistingPlayList(0x100, latch);
         for (SharableClip sharableClip : mSharableClips) {
-            PlaylistEditRequest request = new PlaylistEditRequest(
-                    PlaylistEditRequest.METHOD_INSERT_CLIP,
-                    sharableClip.clip,
-                    sharableClip.selectedStartValue,
-                    sharableClip.selectedEndValue,
-                    0x100,
-                    new VdbResponse.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer response) {
-                            latch.countDown();
-                            Log.e("test", "Response: " + response);
-                        }
-                    },
-                    new VdbResponse.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(SnipeError error) {
-                            latch.countDown();
-                            Log.e("test", "", error);
-                        }
-                    });
-            mVdbRequestQueue.add(request);
+            insertClipIntoPlayList(sharableClip, 0x100, latch);
         }
 
         try {
@@ -145,10 +161,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {
+                        mPlayListClips = clipSet;
                         Log.e("test", "PlayList clips: " + clipSet);
-                        //updateClip(clipSet.getClip(1));
-                        //moveClip(clipSet.getClip(2), 0);
-                        //deleteClip(clipSet.getClip(0));
                     }
                 },
                 new VdbResponse.ErrorListener() {
@@ -160,10 +174,10 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                 }));
     }
 
-    void updateClip(Clip clip) {
-        mVdbRequestQueue.add(new ClipExtentUpdateRequest(clip,
-                clip.getStartTimeMs() + 2000,
-                clip.getStartTimeMs() + clip.getDurationMs() - 5000,
+    void trimClip(final SharableClip sharableClip) {
+        mVdbRequestQueue.add(new ClipExtentUpdateRequest(sharableClip.clip,
+                sharableClip.selectedStartValue,
+                sharableClip.selectedEndValue,
                 new VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
@@ -347,7 +361,11 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onClipMoved(int fromPosition, int toPosition) {
-        //TODO
+        Log.e("test", String.format("onClipMoved[%d, %d]", fromPosition, toPosition));
+        if (mPlayListClips == null) {
+            return;
+        }
+        moveClip(mPlayListClips.getClip(fromPosition), toPosition);
     }
 
     @Override

@@ -32,6 +32,12 @@ public class PlaylistEditRequest extends VdbRequest<Integer> {
         mPlayListID = playListID;
     }
 
+    public static PlaylistEditRequest getClearPlayListRequest(int playListID,
+                                                              VdbResponse.Listener<Integer> listener,
+                                                              VdbResponse.ErrorListener errorListener) {
+        return new PlaylistEditRequest(METHOD_CLEAR_PLAYLIST, null, 0, 0, playListID, listener, errorListener);
+    }
+
     @Override
     protected VdbCommand createVdbCommand() {
         switch (mMethod) {
