@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -8,12 +7,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -22,9 +19,9 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
-import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.VdtUriProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
@@ -209,7 +206,7 @@ public class ClipListFragment extends BaseFragment {
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
 
-        VdtUriProvider vdtUriProvider = new VdtUriProvider(mVdbRequestQueue, clipList);
+        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip);
         ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipList,
             vdtUriProvider, config);
 

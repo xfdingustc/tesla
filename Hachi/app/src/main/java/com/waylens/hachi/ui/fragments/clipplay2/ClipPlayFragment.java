@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.app.DialogFragment;
-import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,8 +10,6 @@ import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +29,6 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
-import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.ShareFragment;
 import com.waylens.hachi.ui.views.MultiSegmentsIndicator;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -41,7 +36,6 @@ import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,7 +54,7 @@ public class ClipPlayFragment extends DialogFragment {
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
 
-    private VdtUriProvider mVdtUriProvider;
+    private UrlProvider mUrProvider;
 
     private MediaPlayer mMediaPlayer = new MediaPlayer();
 
@@ -165,12 +159,12 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     public static ClipPlayFragment newInstance(VdtCamera camera, ArrayList<Clip> clipList,
-                                               VdtUriProvider vdtUriProvider,
+                                               UrlProvider vdtUrlProvider,
                                                Config config) {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
         fragment.mClipList = clipList;
-        fragment.mVdtUriProvider = vdtUriProvider;
+        fragment.mUrProvider = vdtUrlProvider;
         fragment.mConfig = config;
         return fragment;
     }
@@ -351,7 +345,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void startPreparingClip(long clipTimeMs) {
-        mVdtUriProvider.getUri(clipTimeMs, new VdtUriProvider.OnUriLoadedListener() {
+        mUrProvider.getUri(clipTimeMs, new ClipUrlProvider.OnUriLoadedListener() {
 
             @Override
             public void onUriLoaded(VdbUrl url) {

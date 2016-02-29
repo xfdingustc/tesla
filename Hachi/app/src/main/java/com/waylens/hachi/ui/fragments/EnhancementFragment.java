@@ -30,7 +30,10 @@ import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.VdtUriProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -49,14 +52,12 @@ import butterknife.OnClick;
  * Created by Richard on 12/18/15.
  */
 public class EnhancementFragment extends BaseFragment implements FragmentNavigator, ClipsEditView.OnClipEditListener {
-    private static final int MODE_SINGLE_CLIP = 0;
-    private static final int MODE_PLAYLIST = 1;
 
-
-    private int mEditMode;
     private ArrayList<Clip> mClips;
     private Playlist mPlaylist;
     ClipSet mPlayListClips;
+
+    private PlaylistEditor mPlaylistEditor;
 
     private int mAudioID;
     private String mAudioPath;
@@ -79,43 +80,44 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-        clearExistingPlayList(0x100, null);
+        //clearExistingPlayList(0x100, null);
+
     }
 
-    private void doGetPlaylistInfo() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                buildPlayList();
-                fetchPlayList();
-            }
-        }).start();
-    }
+//    private void doGetPlaylistInfo() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                buildPlayList();
+//                fetchPlayList();
+//            }
+//        }).start();
+//    }
 
-    void clearExistingPlayList(final int playListID, final CountDownLatch latch) {
-        mVdbRequestQueue.add(PlaylistEditRequest.getClearPlayListRequest(playListID,
-                new VdbResponse.Listener<Integer>() {
-                    @Override
-                    public void onResponse(Integer response) {
-                        if (latch != null) {
-                            latch.countDown();
-                        }
-                        Log.e("test", "PlaylistEditRequest: " + response);
-                        ConcurrentLinkedQueue<Clip> clipsQueue = new ConcurrentLinkedQueue<>();
-                        clipsQueue.addAll(mClips);
-                        appendClips(clipsQueue, playListID);
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        if (latch != null) {
-                            latch.countDown();
-                        }
-                        Log.e("test", "PlaylistEditRequest", error);
-                    }
-                }));
-    }
+//    void clearExistingPlayList(final int playListID, final CountDownLatch latch) {
+//        mVdbRequestQueue.add(PlaylistEditRequest.getClearPlayListRequest(playListID,
+//                new VdbResponse.Listener<Integer>() {
+//                    @Override
+//                    public void onResponse(Integer response) {
+//                        if (latch != null) {
+//                            latch.countDown();
+//                        }
+//                        Log.e("test", "PlaylistEditRequest: " + response);
+//                        ConcurrentLinkedQueue<Clip> clipsQueue = new ConcurrentLinkedQueue<>();
+//                        clipsQueue.addAll(mClips);
+//                        appendClips(clipsQueue, playListID);
+//                    }
+//                },
+//                new VdbResponse.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(SnipeError error) {
+//                        if (latch != null) {
+//                            latch.countDown();
+//                        }
+//                        Log.e("test", "PlaylistEditRequest", error);
+//                    }
+//                }));
+//    }
 
     void insertClipIntoPlayList(final Clip clip, int playListID, final CountDownLatch latch) {
         PlaylistEditRequest request = new PlaylistEditRequest(
@@ -145,19 +147,19 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mVdbRequestQueue.add(request);
     }
 
-    void buildPlayList() {
-        final CountDownLatch latch = new CountDownLatch(mClips.size() + 1);
-        clearExistingPlayList(0x100, latch);
-        for (Clip clip : mClips) {
-            insertClipIntoPlayList(clip, 0x100, latch);
-        }
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Log.e("test", "", e);
-        }
-    }
+//    void buildPlayList() {
+//        final CountDownLatch latch = new CountDownLatch(mClips.size() + 1);
+//        clearExistingPlayList(0x100, latch);
+//        for (Clip clip : mClips) {
+//            insertClipIntoPlayList(clip, 0x100, latch);
+//        }
+//
+//        try {
+//            latch.await();
+//        } catch (InterruptedException e) {
+//            Log.e("test", "", e);
+//        }
+//    }
 
     void fetchPlayList() {
         mVdbRequestQueue.add(new ClipSetRequest(0x100, ClipSetRequest.FLAG_CLIP_EXTRA,
@@ -244,16 +246,16 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         super.onDestroyView();
     }
 
-    void playVideo() {
-        if (mEditMode == MODE_SINGLE_CLIP) {
-            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mClips.get(0), null);
-        } else {
-            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
-                    mPlaylist, null);
-        }
-        mVideoPlayFragment.setBackgroundMusic(mAudioPath);
-        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
-    }
+//    void playVideo() {
+//        if (mEditMode == MODE_SINGLE_CLIP) {
+//            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mClips.get(0), null);
+//        } else {
+//            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
+//                    mPlaylist, null);
+//        }
+//        mVideoPlayFragment.setBackgroundMusic(mAudioPath);
+//        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
+//    }
 
     void onClickShare() {
         //getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
@@ -271,7 +273,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @OnClick(R.id.btn_gauge)
     void showGauge() {
         ArrayList<Clip> newClips = new ArrayList<>();
-        newClips.addAll(mClips);
+        //newClips.addAll(mClips);
         mClipsEditView.appendSharableClips(newClips);
     }
 
@@ -281,7 +283,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
         //fragment.mSharableClip = sharableClip;
-        fragment.mEditMode = MODE_SINGLE_CLIP;
         return fragment;
     }
 
@@ -290,7 +291,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
         fragment.mPlaylist = playlist;
-        fragment.mEditMode = MODE_PLAYLIST;
         return fragment;
     }
 
@@ -299,7 +299,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
         fragment.mClips = clips;
-        fragment.mEditMode = MODE_SINGLE_CLIP;
         return fragment;
     }
 
@@ -324,7 +323,15 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         super.onViewCreated(view, savedInstanceState);
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
         mViewPager.setAdapter(mPagerAdapter);
-        embedVideoPlayFragment();
+
+        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClips);
+        mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(Playlist playlist) {
+                embedVideoPlayFragment();
+            }
+        });
+
         mClipsEditView.setClips(mClips);
         mClipsEditView.setOnClipEditListener(this);
     }
@@ -334,7 +341,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
         config.showControlPanel = false;
 
-        VdtUriProvider vdtUriProvider = new VdtUriProvider(mVdbRequestQueue, mClips);
+        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlaylist());
         mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClips, vdtUriProvider,
             config);
         mClipPlayFragment.setShowsDialog(false);
