@@ -199,6 +199,10 @@ public class Clip implements Parcelable {
         return mStartTimeMs;
     }
 
+    public long getEndTimeMs() {
+        return mStartTimeMs + mDurationMs;
+    }
+
     public void setStartTimeMs(long startTime) {
         mStartTimeMs = startTime;
     }
