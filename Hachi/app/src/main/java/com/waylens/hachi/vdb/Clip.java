@@ -102,6 +102,30 @@ public class Clip implements Parcelable {
 
     }
 
+    public class EditInfo {
+        public Clip.ID bufferedCid;
+        public Clip.ID realCid;
+        public long minExtensibleValue;
+        public long maxExtensibleValue;
+        public long selectedStartValue;
+        public long selectedEndValue;
+        public long currentPosition;
+
+        public EditInfo() {
+            minExtensibleValue = getStartTimeMs();
+            maxExtensibleValue = getStartTimeMs() + getDurationMs();
+            selectedStartValue = minExtensibleValue;
+            selectedEndValue = maxExtensibleValue;
+            bufferedCid = cid;
+            realCid = cid;
+        }
+        public int getSelectedLength() {
+            return (int) (selectedEndValue - selectedStartValue);
+        }
+
+
+    }
+
     public final ID cid;
 
     public ID realCid;
@@ -126,6 +150,8 @@ public class Clip implements Parcelable {
     // is marked as to be deleted
     public boolean bDeleting;
 
+    public EditInfo editInfo;
+
     public Clip(int type, int subType, String extra, int clipDate, int duration) {
         this(type, subType, extra, 2, clipDate, duration);
     }
@@ -139,6 +165,7 @@ public class Clip implements Parcelable {
 
         this.clipDate = clipDate;
         this.mDurationMs = duration;
+        this.editInfo = new EditInfo();
     }
 
 
@@ -308,7 +335,7 @@ public class Clip implements Parcelable {
             streamInfo.version = in.readInt();
             streamInfo.video_coding = in.readByte();
             streamInfo.video_framerate = in.readByte();
-            streamInfo.video_width = (short)in.readInt();
+            streamInfo.video_width = (short) in.readInt();
             streamInfo.video_height = (short) in.readInt();
             streamInfo.audio_coding = in.readByte();
             streamInfo.audio_num_channels = in.readByte();

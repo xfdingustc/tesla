@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +20,7 @@ import android.widget.ViewAnimator;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
@@ -58,7 +57,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     ViewAnimator mViewAnimator;
 
     LinearLayoutManager mLayoutManager;
-    List<SharableClip> mSharableClips;
+    List<Clip> mClips;
     RecyclerViewAdapter mAdapter;
     ItemTouchHelper mItemTouchHelper;
     OnClipEditListener mOnClipEditListener;
@@ -138,13 +137,13 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         if (selectedPosition == -1) {
             return;
         }
-        SharableClip sharableClip = mSharableClips.get(selectedPosition);
+       Clip clip = mClips.get(selectedPosition);
         if (pressedThumb == RangeSeekBar.Thumb.MIN) {
-            sharableClip.selectedStartValue = value;
+            clip.editInfo.selectedStartValue = value;
         } else {
-            sharableClip.selectedEndValue = value;
+            clip.editInfo.selectedEndValue = value;
         }
-        updateClipDuration(sharableClip);
+        updateClipDuration(clip);
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onTrimming(pressedThumb.ordinal(), value);
         }
@@ -157,11 +156,11 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         }
     }
 
-    public void setSharableClips(List<SharableClip> sharableClips) {
-        if (mAdapter != null && sharableClips != null) {
-            mSharableClips = sharableClips;
+    public void setClips(List<Clip> clips) {
+        if (mAdapter != null && clips != null) {
+            mClips = clips;
             mAdapter.notifyDataSetChanged();
-            updateClipCount(sharableClips.size());
+            updateClipCount(clips.size());
         }
     }
 
@@ -170,19 +169,19 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     }
 
 
-    public void appendSharableClip(SharableClip sharableClip) {
-        ArrayList<SharableClip> sharableClips = new ArrayList<>();
-        sharableClips.add(sharableClip);
-        appendSharableClips(sharableClips);
+    public void appendSharableClip(Clip clip) {
+        ArrayList<Clip> clips = new ArrayList<>();
+        clips.add(clip);
+        appendSharableClips(clips);
     }
 
-    public void appendSharableClips(List<SharableClip> sharableClips) {
-        if (mAdapter != null && mSharableClips != null && sharableClips != null) {
-            mSharableClips.addAll(sharableClips);
-            int size = sharableClips.size();
-            mAdapter.notifyItemRangeInserted(mSharableClips.size() - size, size);
+    public void appendSharableClips(List<Clip> clips) {
+        if (mAdapter != null && mClips != null && clips != null) {
+            mClips.addAll(clips);
+            int size = clips.size();
+            mAdapter.notifyItemRangeInserted(mClips.size() - size, size);
             if (mOnClipEditListener != null) {
-                mOnClipEditListener.onClipsAppended(sharableClips);
+                mOnClipEditListener.onClipsAppended(clips);
             }
         }
     }
@@ -195,19 +194,20 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         }
     }
 
-    void internalOnSelectClip(int selectedPosition, SharableClip sharableClip) {
+    void internalOnSelectClip(int selectedPosition, Clip clip) {
         mViewAnimator.setDisplayedChild(1);
-        mRangeSeekBar.setRangeValues(sharableClip.minExtensibleValue, sharableClip.maxExtensibleValue);
-        mRangeSeekBar.setSelectedMinValue(sharableClip.selectedStartValue);
-        mRangeSeekBar.setSelectedMaxValue(sharableClip.selectedEndValue);
-        updateClipDuration(sharableClip);
+        mRangeSeekBar.setRangeValues(clip.editInfo.minExtensibleValue, clip.editInfo.maxExtensibleValue);
+        mRangeSeekBar.setSelectedMinValue(clip.editInfo.selectedStartValue);
+        mRangeSeekBar.setSelectedMaxValue(clip.editInfo.selectedEndValue);
+        updateClipDuration(clip);
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onClipSelected(selectedPosition, sharableClip);
+            mOnClipEditListener.onClipSelected(selectedPosition, clip);
         }
     }
 
-    private void updateClipDuration(SharableClip sharableClip) {
-        mClipDurationView.setText(DateUtils.formatElapsedTime(sharableClip.getSelectedLength() / 1000));
+    private void updateClipDuration(Clip clip) {
+        mClipDurationView.setText(DateUtils.formatElapsedTime(clip.editInfo.getSelectedLength() /
+            1000));
     }
 
     void internalOnClipMoved(int fromPosition, int toPosition) {
@@ -217,7 +217,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     }
 
     void internalOnClipRemoved(int position) {
-        updateClipCount(mSharableClips.size());
+        updateClipCount(mClips.size());
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onClipRemoved(position);
         }
@@ -259,8 +259,8 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         @Override
         public void onBindViewHolder(final VH holder, final int position) {
-            final SharableClip sharableClip = mSharableClips.get(position);
-            ClipPos clipPos = new ClipPos(sharableClip.clip);
+            final Clip clip = mClips.get(position);
+            ClipPos clipPos = new ClipPos(clip);
             mImageLoader.displayVdbImage(clipPos, holder.clipThumbnail);
             holder.itemView.setOnClickListener(new OnClickListener() {
                 @Override
@@ -279,17 +279,17 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
                     holder.itemView.setAlpha(FULL_ALPHA);
                     selectedPosition = holder.getAdapterPosition();
-                    internalOnSelectClip(selectedPosition, sharableClip);
+                    internalOnSelectClip(selectedPosition, clip);
                 }
             });
         }
 
         @Override
         public int getItemCount() {
-            if (mSharableClips == null) {
+            if (mClips == null) {
                 return 0;
             } else {
-                return mSharableClips.size();
+                return mClips.size();
             }
         }
 
@@ -305,7 +305,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         @Override
         public boolean onItemMove(int fromPosition, int toPosition) {
-            Collections.swap(mSharableClips, fromPosition, toPosition);
+            Collections.swap(mClips, fromPosition, toPosition);
             notifyItemMoved(fromPosition, toPosition);
             return true;
         }
@@ -320,7 +320,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         @Override
         public void onItemDismiss(int position) {
-            mSharableClips.remove(position);
+            mClips.remove(position);
             internalOnClipRemoved(position);
             notifyItemRemoved(position);
         }
@@ -349,11 +349,11 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     }
 
     public interface OnClipEditListener {
-        void onClipSelected(int position, SharableClip sharableClip);
+        void onClipSelected(int position, Clip clip);
 
         void onClipMoved(int fromPosition, int toPosition);
 
-        void onClipsAppended(List<SharableClip> sharableClips);
+        void onClipsAppended(List<Clip> clips);
 
         void onClipRemoved(int position);
 

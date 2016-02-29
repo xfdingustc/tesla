@@ -52,7 +52,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
 
     private int mEditMode;
-    private ArrayList<SharableClip> mSharableClips;
+    private ArrayList<Clip> mClips;
     private Playlist mPlaylist;
     ClipSet mPlayListClips;
 
@@ -114,12 +114,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                 }));
     }
 
-    void insertClipIntoPlayList(final SharableClip sharableClip, int playListID, final CountDownLatch latch) {
+    void insertClipIntoPlayList(final Clip clip, int playListID, final CountDownLatch latch) {
         PlaylistEditRequest request = new PlaylistEditRequest(
                 PlaylistEditRequest.METHOD_INSERT_CLIP,
-                sharableClip.clip,
-                sharableClip.selectedStartValue,
-                sharableClip.selectedEndValue,
+                clip,
+                clip.editInfo.selectedStartValue,
+                clip.editInfo.selectedEndValue,
                 playListID,
                 new VdbResponse.Listener<Integer>() {
                     @Override
@@ -143,10 +143,10 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     void buildPlayList() {
-        final CountDownLatch latch = new CountDownLatch(mSharableClips.size() + 1);
+        final CountDownLatch latch = new CountDownLatch(mClips.size() + 1);
         clearExistingPlayList(0x100, latch);
-        for (SharableClip sharableClip : mSharableClips) {
-            insertClipIntoPlayList(sharableClip, 0x100, latch);
+        for (Clip clip : mClips) {
+            insertClipIntoPlayList(clip, 0x100, latch);
         }
 
         try {
@@ -243,7 +243,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     void playVideo() {
         if (mEditMode == MODE_SINGLE_CLIP) {
-            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClips.get(0).clip, null);
+            mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mClips.get(0), null);
         } else {
             mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(),
                     mPlaylist, null);
@@ -292,10 +292,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         Bundle args = new Bundle();
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
-        fragment.mSharableClips = new ArrayList<>();
-        for (Clip clip : clips) {
-            fragment.mSharableClips.add(new SharableClip(clip));
-        }
+        fragment.mClips = clips;
         fragment.mEditMode = MODE_SINGLE_CLIP;
         return fragment;
     }
@@ -321,7 +318,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
         mViewPager.setAdapter(mPagerAdapter);
         embedVideoPlayFragment();
-        mClipsEditView.setSharableClips(mSharableClips);
+        mClipsEditView.setClips(mClips);
         mClipsEditView.setOnClipEditListener(this);
     }
 
@@ -329,7 +326,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
         config.showControlPanel = false;
-        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mSharableClips, config);
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClips, config);
         mClipPlayFragment.setShowsDialog(false);
         getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
     }
@@ -354,8 +351,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @Override
-    public void onClipSelected(int position, SharableClip sharableClip) {
-        mClipPlayFragment.setClip(sharableClip);
+    public void onClipSelected(int position, Clip clip) {
+        mClipPlayFragment.setClip(clip);
         //TODO
     }
 
@@ -369,7 +366,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @Override
-    public void onClipsAppended(List<SharableClip> sharableClips) {
+    public void onClipsAppended(List<Clip> sharableClips) {
         //TODO
     }
 

@@ -123,13 +123,13 @@ public class ClipListFragment extends BaseFragment {
         mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                //popClipPreviewFragment(clip);
+                popClipPreviewFragment(clip);
 
-                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
-                ArrayList<Clip> clips = new ArrayList<>();
-                clips.addAll(mClipSetGroup.get("2016-02-29").getClipList());
-                intent.putParcelableArrayListExtra("clips", clips);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
+//                ArrayList<Clip> clips = new ArrayList<>();
+//                clips.addAll(mClipSetGroup.get("2016-02-29").getClipList());
+//                intent.putParcelableArrayListExtra("clips", clips);
+//                startActivity(intent);
 
             }
 
@@ -205,8 +205,8 @@ public class ClipListFragment extends BaseFragment {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
 
-        ArrayList<SharableClip> clipList = new ArrayList<>();
-        clipList.add(new SharableClip(clip));
+        ArrayList<Clip> clipList = new ArrayList<>();
+        clipList.add(clip);
         ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipList, config);
 
 
