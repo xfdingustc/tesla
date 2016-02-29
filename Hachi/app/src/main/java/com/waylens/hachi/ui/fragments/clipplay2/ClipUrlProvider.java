@@ -30,11 +30,6 @@ public class ClipUrlProvider implements UrlProvider {
     private OnUriLoadedListener mListener;
     private Clip mClip;
 
-    private Playlist mPlaylist;
-
-    private int mClipAdded;
-
-
     public ClipUrlProvider(@NonNull VdbRequestQueue requestQueue, Clip clip) {
         this.mVdbRequestQueue = requestQueue;
         this.mClip = clip;
@@ -72,79 +67,5 @@ public class ClipUrlProvider implements UrlProvider {
 
         mVdbRequestQueue.add(request);
     }
-
-
-
-//    private void startLoadPlaylist() {
-//        doGetPlaylistInfo();
-//    }
-
-//    private void doGetPlaylistInfo() {
-//        Logger.t(TAG).d("Get Play list info");
-//
-//        PlaylistSetRequest request = new PlaylistSetRequest(0, new VdbResponse.Listener<PlaylistSet>() {
-//            @Override
-//            public void onResponse(PlaylistSet response) {
-//                Logger.t(TAG).d("Get Response!!!!!!");
-//                //mStory.setPlaylist(response.getPlaylist(0));
-//                mPlaylist = response.getPlaylist(0);
-//                doClearPlayList();
-//            }
-//        }, new VdbResponse.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(SnipeError error) {
-//
-//            }
-//        });
-//        mVdbRequestQueue.add(request);
-//    }
-
-
-//    private void doClearPlayList() {
-//        PlaylistEditRequest request = new PlaylistEditRequest(PlaylistEditRequest
-//            .METHOD_CLEAR_PLAYLIST, null, 0, 0, mPlaylist.getId(), new VdbResponse.Listener<Integer>() {
-//            @Override
-//            public void onResponse(Integer response) {
-//                doConstructPlaylist();
-//            }
-//
-//
-//        }, new VdbResponse.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(SnipeError error) {
-//
-//            }
-//        });
-//        mVdbRequestQueue.add(request);
-//    }
-
-//    private void doConstructPlaylist() {
-//        mClipAdded = 0;
-//
-//        for (Clip clip : mClipList) {
-//            PlaylistEditRequest playRequest = new PlaylistEditRequest(PlaylistEditRequest.METHOD_INSERT_CLIP,
-//                clip, clip.getStartTimeMs(), clip.getEndTimeMs(), mPlaylist.getId(), new VdbResponse.Listener<Integer>() {
-//                @Override
-//                public void onResponse(Integer response) {
-//                    Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + " " + "realId: ");
-//
-//                    mClipAdded++;
-//
-//
-//                    if (mClipAdded == mClipList.size()) {
-//                        doGetPlaylistUri();
-//                    }
-//                }
-//            }, new VdbResponse.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(SnipeError error) {
-//
-//                }
-//            });
-//
-//            mVdbRequestQueue.add(playRequest);
-//        }
-//    }
-
 
 }

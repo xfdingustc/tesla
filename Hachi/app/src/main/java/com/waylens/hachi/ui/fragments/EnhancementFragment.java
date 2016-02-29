@@ -336,7 +336,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mClipsEditView.setOnClipEditListener(this);
     }
 
-    void embedVideoPlayFragment() {
+    private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
         config.showControlPanel = false;
@@ -369,7 +369,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onClipSelected(int position, Clip clip) {
-        //mClipPlayFragment.setClip(clip);
+        mClipPlayFragment.setActiveClip(position, clip);
     }
 
     @Override

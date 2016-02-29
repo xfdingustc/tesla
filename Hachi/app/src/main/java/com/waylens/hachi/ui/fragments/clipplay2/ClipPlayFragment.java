@@ -289,17 +289,13 @@ public class ClipPlayFragment extends DialogFragment {
 
     }
 
-    public void setClip(Clip clip) {
-        startPreparingClip(mClipList.get(0).getStartTimeMs());
+    public void setActiveClip(int position, Clip clip) {
+        //startPreparingClip(mClipList.get(0).getStartTimeMs());
+        mMultiSegmentIndicator.setActiveClip(position);
     }
 
 
     protected void openVideo(VdbUrl url) {
-//        if (mSurfaceView == null || mSurfaceHolder == null) {
-//            Logger.t(TAG).d("mSurfaceView: " + mSurfaceView + " mSurfaceHolder: " + mSurfaceHolder);
-//            return;
-//        }
-
         try {
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -335,10 +331,7 @@ public class ClipPlayFragment extends DialogFragment {
                     return false;
                 }
             });
-//            mCurrentState = STATE_PREPARING;
         } catch (IOException e) {
-//            mCurrentState = STATE_ERROR;
-//            mTargetState = STATE_ERROR;
             Logger.t(TAG).e("", e);
         }
     }

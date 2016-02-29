@@ -34,6 +34,7 @@ public class MultiSegmentsIndicator extends View {
 
     private int mDividerWidth = 0;
     private int mBarHeight = 0;
+    private int mActiveIndex = 0;
     private List<Clip> mClipList;
 
 
@@ -59,6 +60,11 @@ public class MultiSegmentsIndicator extends View {
         defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initAttributes(context, attrs, defStyleRes);
+    }
+
+    public void setActiveClip(int position) {
+        mActiveIndex = position;
+        invalidate();
     }
 
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
@@ -105,14 +111,19 @@ public class MultiSegmentsIndicator extends View {
 
         int left = 0;
 
-        for (Clip clip : mClipList) {
+        for (int i = 0; i < mClipList.size(); i++) {
+            Clip clip = mClipList.get(i);
             Rect rect = new Rect();
             rect.top = top;
             rect.bottom = top + mBarHeight;
             rect.left = left;
             rect.right = rect.left + (int)(widthScale * clip.editInfo.getSelectedLength());
 
-            canvas.drawRect(rect, mInactivePaint);
+            if (i == mActiveIndex) {
+                canvas.drawRect(rect, mActivePaint);
+            } else {
+                canvas.drawRect(rect, mInactivePaint);
+            }
             left = rect.right + mDividerWidth;
         }
     }
