@@ -5,7 +5,6 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
-import com.waylens.hachi.vdb.Playlist;
 import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
 
 /**
@@ -14,12 +13,12 @@ import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
 public class PlaylistUrlProvider implements UrlProvider {
     private static final String TAG = PlaylistUrlProvider.class.getSimpleName();
     private final VdbRequestQueue mVdbRequestQueue;
-    private final Playlist mPlaylist;
+    private final int mPlayListID;
     private OnUriLoadedListener mListener;
 
-    public PlaylistUrlProvider(VdbRequestQueue requestQueue, Playlist playlist) {
+    public PlaylistUrlProvider(VdbRequestQueue requestQueue, int playListID) {
         this.mVdbRequestQueue = requestQueue;
-        this.mPlaylist = playlist;
+        mPlayListID = playListID;
     }
 
     @Override
@@ -29,8 +28,8 @@ public class PlaylistUrlProvider implements UrlProvider {
     }
 
     private void doGetPlaylistUri() {
-        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlaylist.getId(),
-            0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
+        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayListID,
+                0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
             @Override
             public void onResponse(PlaylistPlaybackUrl response) {
 

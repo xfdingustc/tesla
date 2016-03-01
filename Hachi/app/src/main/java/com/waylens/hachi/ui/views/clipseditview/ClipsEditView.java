@@ -139,7 +139,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
         if (mSelectedPosition == -1) {
             return;
         }
-       Clip clip = mClips.get(mSelectedPosition);
+        Clip clip = mClips.get(mSelectedPosition);
         if (pressedThumb == RangeSeekBar.Thumb.MIN) {
             clip.editInfo.selectedStartValue = value;
         } else {
@@ -215,7 +215,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
     private void updateClipDuration(Clip clip) {
         mClipDurationView.setText(DateUtils.formatElapsedTime(clip.editInfo.getSelectedLength() /
-            1000));
+                1000));
     }
 
     void internalOnClipMoved(int fromPosition, int toPosition) {
@@ -328,9 +328,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         @Override
         public void onItemDismiss(int position) {
-            //mClips.remove(position);
-            Clip clip = mClips.get(position);
-            mClips.remove(position);
+            Clip clip = mClips.remove(position);
             internalOnClipRemoved(clip, position);
             notifyItemRemoved(position);
         }
