@@ -286,7 +286,9 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void setActiveClip(int position, Clip clip) {
-        //startPreparingClip(mClipList.get(0).getStartTimeMs());
+        changeState(STATE_FAST_PREVIEW);
+        ClipPos clipPos = new ClipPos(clip, 0, ClipPos.TYPE_POSTER, false);
+        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
         mMultiSegmentIndicator.setActiveClip(position);
     }
 
