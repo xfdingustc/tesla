@@ -153,11 +153,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
             @Override
             public void onBuildComplete() {
                 embedVideoPlayFragment();
+                mClipsEditView.setClips(mPlaylistEditor.getClipSet().getClipList());
+
             }
         });
-
-        mClipsEditView.setClips(mClips);
         mClipsEditView.setOnClipEditListener(this);
+
     }
 
     private void embedVideoPlayFragment() {

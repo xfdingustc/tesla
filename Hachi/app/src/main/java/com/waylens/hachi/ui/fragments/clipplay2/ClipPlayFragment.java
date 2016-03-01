@@ -388,7 +388,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void refreshProgressBar() {
         int currentPos = mMediaPlayer.getCurrentPosition();
-        int duration = mClipSet.getClip(0).getDurationMs();
+        int duration = mClipSet.getTotalLengthMs();
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 
