@@ -382,7 +382,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
     }
 
     private void loadPlaylist() {
-        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayList,
+        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayList.getId(),
             0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
             @Override
             public void onResponse(PlaylistPlaybackUrl response) {

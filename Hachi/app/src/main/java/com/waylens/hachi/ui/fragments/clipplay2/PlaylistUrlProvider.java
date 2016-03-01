@@ -29,7 +29,7 @@ public class PlaylistUrlProvider implements UrlProvider {
     }
 
     private void doGetPlaylistUri() {
-        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlaylist,
+        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlaylist.getId(),
             0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
             @Override
             public void onResponse(PlaylistPlaybackUrl response) {
