@@ -65,6 +65,10 @@ public class PlaylistEditor {
         }
     }
 
+    public ClipSet getClipSet() {
+        return mPlayListClipSet;
+    }
+
     public int getPlayListID() {
         return mPlayListID;
     }

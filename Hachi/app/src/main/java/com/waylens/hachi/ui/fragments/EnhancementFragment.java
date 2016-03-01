@@ -166,7 +166,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         config.showControlPanel = false;
 
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
-        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClips, vdtUriProvider,
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mPlaylistEditor.getClipSet(), vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
         getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();

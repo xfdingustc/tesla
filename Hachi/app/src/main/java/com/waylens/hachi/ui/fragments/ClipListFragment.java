@@ -203,11 +203,13 @@ public class ClipListFragment extends BaseFragment {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
 
-        ArrayList<Clip> clipList = new ArrayList<>();
-        clipList.add(clip);
+
+        ClipSet clipSet = new ClipSet(0x107);
+        clipSet.addClip(clip);
+
 
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip);
-        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipList,
+        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipSet,
             vdtUriProvider, config);
 
         fragment.show(getFragmentManager(), "ClipPlayFragment");

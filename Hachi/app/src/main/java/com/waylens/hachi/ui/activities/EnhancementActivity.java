@@ -10,6 +10,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
 import java.util.List;

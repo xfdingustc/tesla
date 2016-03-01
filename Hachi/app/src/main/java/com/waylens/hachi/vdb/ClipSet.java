@@ -10,7 +10,7 @@ public class ClipSet {
     private Clip.ID liveClipId;
     private int totalClips;
     private int totalLengthMs;
-    private List<Clip> mClipList = new ArrayList<>();
+    private ArrayList<Clip> mClipList = new ArrayList<>();
 
     public ClipSet(int type) {
         this.mClipType = type;
@@ -48,7 +48,7 @@ public class ClipSet {
         return index < 0 || index >= totalClips ? null : mClipList.get(index);
     }
 
-    public List<Clip> getClipList() {
+    public ArrayList<Clip> getClipList() {
         return mClipList;
     }
 
