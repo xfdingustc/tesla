@@ -82,7 +82,7 @@
             android:indeterminateOnly="false"
 
             />
-        <com.waylens.hachi.ui.views.MultiSegmentsIndicator
+        <com.waylens.hachi.ui.views.MultiSegSeekbar
             android:id="@+id/multiSegIndicator"
             android:layout_width="match_parent"
             android:layout_height="8dp"

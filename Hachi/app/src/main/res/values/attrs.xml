@@ -20,11 +20,13 @@
         <attr name="rippleAlpha" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="MultiSegmentsIndicator">
+    <declare-styleable name="MultiSegSeekbar">
         <attr name="segInactiveColor" format="color"/>
         <attr name="segActiveColor" format="color"/>
         <attr name="dividerWidth" format="dimension"/>
         <attr name="barMinHeight" format="dimension"/>
+        <attr name="circleSize" format="dimension"/>
+        <attr name="circleColor" format="color"/>
     </declare-styleable>
 
 </resources>

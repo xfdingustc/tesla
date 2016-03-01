@@ -8,7 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -17,12 +17,14 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 
+import org.florescu.android.rangeseekbar.RangeSeekBar;
+
 import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/2/29.
  */
-public class MultiSegmentsIndicator extends View {
+public class MultiSegSeekbar extends View {
     private static final int DEFAULT_DIVIDER_WIDTH_DP = 4;
     private static final int DEFAULT_BAR_HEIGHT = 4;
 
@@ -37,26 +39,31 @@ public class MultiSegmentsIndicator extends View {
     private int mActiveIndex = 0;
     private List<Clip> mClipList;
 
+    private ThumbView mThumb;
+    private int mBarPaddingBottom;
+    private float mCircleSize;
+    private int mCircleColor;
 
-    public MultiSegmentsIndicator(Context context) {
+
+    public MultiSegSeekbar(Context context) {
         super(context);
         initAttributes(context, null, 0);
     }
 
-    public MultiSegmentsIndicator(Context context, AttributeSet attrs) {
+    public MultiSegSeekbar(Context context, AttributeSet attrs) {
         super(context, attrs);
         initAttributes(context, attrs, 0);
 
     }
 
-    public MultiSegmentsIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MultiSegSeekbar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initAttributes(context, attrs, defStyleAttr);
 
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public MultiSegmentsIndicator(Context context, AttributeSet attrs, int defStyleAttr, int
+    public MultiSegSeekbar(Context context, AttributeSet attrs, int defStyleAttr, int
         defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initAttributes(context, attrs, defStyleRes);
@@ -70,16 +77,19 @@ public class MultiSegmentsIndicator extends View {
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
         Resources resources = getResources();
         if (attrs != null) {
-            final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MultiSegmentsIndicator, defStyle, 0);
-            mActiveColor = a.getColor(R.styleable.MultiSegmentsIndicator_segActiveColor, Color.WHITE);
-            mInactiveColor = a.getColor(R.styleable.MultiSegmentsIndicator_segInactiveColor, Color
+            final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MultiSegSeekbar, defStyle, 0);
+
+            mActiveColor = a.getColor(R.styleable.MultiSegSeekbar_segActiveColor, Color.WHITE);
+            mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color
                 .GRAY);
-            mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegmentsIndicator_dividerWidth, ViewUtils
+            mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth, ViewUtils
                 .dp2px(DEFAULT_DIVIDER_WIDTH_DP, resources));
-            mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegmentsIndicator_barMinHeight,
+            mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barMinHeight,
                 ViewUtils.dp2px(DEFAULT_BAR_HEIGHT, resources));
 
-
+            mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 15);
+            mCircleColor = a.getColor(R.styleable.MultiSegSeekbar_circleColor,
+                    0xff3f51b5);
             a.recycle();
         }
 
@@ -88,13 +98,21 @@ public class MultiSegmentsIndicator extends View {
     }
 
 
-    public void setClipList(List<Clip> clipList) {
-        this.mClipList = clipList;
-        invalidate();
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        Context context = getContext();
+
+        float yPos = h - mBarPaddingBottom;
+
+        mThumb = new ThumbView(context);
+        mThumb.init(context, yPos, mCircleSize, mCircleColor);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+
         if (mClipList == null || mClipList.isEmpty()) {
             return;
         }
@@ -126,5 +144,12 @@ public class MultiSegmentsIndicator extends View {
             }
             left = rect.right + mDividerWidth;
         }
+        mThumb.draw(canvas);
+    }
+
+
+    public void setClipList(List<Clip> clipList) {
+        this.mClipList = clipList;
+        invalidate();
     }
 }
