@@ -140,15 +140,7 @@ public class ClipPlayFragment extends DialogFragment {
         EnhancementActivity.launch(getActivity(), mClipSet.getClipList());
     }
 
-    public void showClipPosThumbnail(Clip clip, long timeMs) {
-        changeState(STATE_FAST_PREVIEW);
-        ClipPos clipPos = new ClipPos(clip, timeMs, ClipPos.TYPE_POSTER, false);
-        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
-    }
 
-    public void notifyClipSetChanged() {
-        mMultiSegmentIndicator.invalidate();
-    }
 
 
     public static class Config {
@@ -298,6 +290,16 @@ public class ClipPlayFragment extends DialogFragment {
         mMultiSegmentIndicator.setActiveClip(position);
     }
 
+    public void showClipPosThumbnail(Clip clip, long timeMs) {
+        changeState(STATE_FAST_PREVIEW);
+        ClipPos clipPos = new ClipPos(clip, timeMs, ClipPos.TYPE_POSTER, false);
+        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+    }
+
+    public void notifyClipSetChanged() {
+        mMultiSegmentIndicator.invalidate();
+    }
+
 
     protected void openVideo(VdbUrl url) {
         try {
@@ -391,7 +393,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void refreshProgressBar() {
         int currentPos = mMediaPlayer.getCurrentPosition();
-        int duration = mClipSet.getTotalLengthMs();
+        int duration = mClipSet.getTotalSelectedLengthMs();
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 

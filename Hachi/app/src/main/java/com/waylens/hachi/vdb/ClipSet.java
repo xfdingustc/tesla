@@ -188,5 +188,14 @@ public class ClipSet {
         return totalLengthMs;
     }
 
+    public int getTotalSelectedLengthMs() {
+        int total = 0;
+        for (Clip clip : mClipList) {
+            total += clip.editInfo.getSelectedLength();
+        }
+
+        return total;
+    }
+
 
 }
