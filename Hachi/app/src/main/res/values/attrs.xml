@@ -4,6 +4,9 @@
     <attr name="toolbarColor" format="color"/>
     <attr name="defaultBgColor" format="color"/>
     <attr name="defaultBgColorDark" format="color"/>
+    <attr name="hachiTextColorPrimary" format="color"/>
+    <attr name="hachiTextColorSecondary" format="color"/>
+    <attr name="hachiTextColorDisabled" format="color"/>
 
     <declare-styleable name="VideoTrimmer">
         <attr name="thumbWidth" format="dimension"/>

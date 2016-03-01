@@ -8,6 +8,9 @@
         <item name="toolbarColor">@color/style_color_primary</item>
         <item name="defaultBgColor">@color/material_grey_200</item>
         <item name="defaultBgColorDark">@color/material_grey_700</item>
+        <item name="hachiTextColorPrimary">#FFC4C5C5</item>
+        <item name="hachiTextColorSecondary">#B2C4C5C5</item>
+        <item name="hachiTextColorDisabled">#4Cc4C5C5</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -17,6 +20,9 @@
         <item name="toolbarColor">@color/edit_toolbar</item>
         <item name="defaultBgColor">@color/background_color</item>
         <item name="defaultBgColorDark">@color/background_color_dark</item>
+        <item name="hachiTextColorPrimary">#FFC4C5C5</item>
+        <item name="hachiTextColorSecondary">#B2C4C5C5</item>
+        <item name="hachiTextColorDisabled">#4Cc4C5C5</item>
     </style>
 
     <style name="MyRadioButton"

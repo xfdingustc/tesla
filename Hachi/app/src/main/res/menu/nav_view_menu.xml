@@ -20,8 +20,8 @@
 
     <group android:id="@+id/others">
 
-        <item android:id="@+id/changeTheme" android:title="@string/change_theme"
-            android:icon="@drawable/ic_settings_input_svideo_grey600_24dp"/>
+        <!--<item android:id="@+id/changeTheme" android:title="@string/change_theme"-->
+            <!--android:icon="@drawable/ic_settings_input_svideo_grey600_24dp"/>-->
 
         <item android:id="@+id/setting" android:title="@string/settings"
               android:icon="@drawable/settings_tab"/>

@@ -220,10 +220,10 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.changeTheme:
-                        onToggleAppThemeClicked();
-
-                        break;
+//                    case R.id.changeTheme:
+//                        onToggleAppThemeClicked();
+//
+//                        break;
                     default:
                         mDrawerLayout.closeDrawers();
                         if (item.getItemId() == mCurrentNavMenuId) {
