@@ -39,7 +39,6 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -348,7 +347,11 @@ public class ClipPlayFragment extends DialogFragment {
             @Override
             public void onUriLoaded(VdbUrl url) {
                 Logger.t(TAG).d("Get playback url: " + url.url);
-                mPositionAdjuster = new PositionAdjuster(mClipSet.getClip(0), url);
+                if (mClipSet.getCount() == 1) {
+                    mPositionAdjuster = new ClipPositionAdjuster(mClipSet.getClip(0), url);
+                } else {
+                    mPositionAdjuster = new PlaylistPositionAdjuster();
+                }
                 openVideo(url);
             }
 
@@ -392,7 +395,7 @@ public class ClipPlayFragment extends DialogFragment {
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 
-//        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
+        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
 
         String timeText = DateUtils.formatElapsedTime(adjustedPosition / 1000) + "/" + DateUtils
             .formatElapsedTime(duration / 1000);
