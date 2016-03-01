@@ -135,14 +135,13 @@ public class Clip implements Parcelable {
     public int index; // index in ClipSet
 
     // date when the clip is created
-    public int clipDate;
+    public final int clipDate;
 
     public int gmtOffset;
 
-    private long mStartTimeMs;
+    private final long mStartTimeMs;
 
-    // clip length ms
-    protected int mDurationMs;
+    private final int mDurationMs;
 
     // clip size in bytes
     public long clipSize = -1;
@@ -153,11 +152,11 @@ public class Clip implements Parcelable {
     public EditInfo editInfo;
 
 
-    public Clip(int type, int subType, String extra, int clipDate, int duration) {
-        this(type, subType, extra, 2, clipDate, duration);
+    public Clip(int type, int subType, String extra, int clipDate, long startTimeMs, int duration) {
+        this(type, subType, extra, 2, clipDate, startTimeMs, duration);
     }
 
-    public Clip(int type, int subType, String extra, int numStreams, int clipDate, int duration) {
+    public Clip(int type, int subType, String extra, int numStreams, int clipDate, long statTimeMs, int duration) {
         this.cid = new ID(type, subType, extra);
         streams = new StreamInfo[numStreams];
         for (int i = 0; i < numStreams; i++) {
@@ -165,6 +164,7 @@ public class Clip implements Parcelable {
         }
 
         this.clipDate = clipDate;
+        this.mStartTimeMs = statTimeMs;
         this.mDurationMs = duration;
         this.editInfo = new EditInfo();
     }
@@ -201,10 +201,6 @@ public class Clip implements Parcelable {
 
     public long getEndTimeMs() {
         return mStartTimeMs + mDurationMs;
-    }
-
-    public void setStartTimeMs(long startTime) {
-        mStartTimeMs = startTime;
     }
 
     public boolean contains(long timeMs) {

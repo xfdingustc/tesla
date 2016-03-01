@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.ui.entities.SharableClip;
@@ -154,7 +155,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
             public void onBuildComplete() {
                 embedVideoPlayFragment();
                 mClipsEditView.setClips(mPlaylistEditor.getClipSet().getClipList());
-
+                //mClipsEditView.setClips(mClips);
             }
         });
         mClipsEditView.setOnClipEditListener(this);

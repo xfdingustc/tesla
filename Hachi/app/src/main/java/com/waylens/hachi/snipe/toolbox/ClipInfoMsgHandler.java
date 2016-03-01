@@ -32,9 +32,10 @@ public class ClipInfoMsgHandler extends VdbMessageHandler<ClipActionInfo> {
         int clipId = response.readi32();
         int clipDate = response.readi32();
         int duration = response.readi32();
-        Clip clip = new Clip(clipType, clipId, null, clipDate, duration);
+        long startTime = response.readi64();
+        Clip clip = new Clip(clipType, clipId, null, clipDate, startTime, duration);
         clip.index = clipIndex;
-        clip.setStartTimeMs(response.readi64());
+
         int num_streams = response.readi32();
         for (int i = 0; i < num_streams; i++) {
             readStreamInfo(response, clip, i);
