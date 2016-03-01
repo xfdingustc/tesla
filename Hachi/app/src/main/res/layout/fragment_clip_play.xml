@@ -77,12 +77,11 @@
         <SeekBar
             android:id="@+id/videoSeekBar"
             android:layout_width="match_parent"
-            android:layout_height="16dp"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:indeterminateOnly="false"
-            android:progressDrawable="@drawable/clip_play_fragment_progress_bar"
-            android:thumb="@drawable/clip_play_fragment_progress_bar_thumb"/>
 
+            />
         <com.waylens.hachi.ui.views.MultiSegmentsIndicator
             android:id="@+id/multiSegIndicator"
             android:layout_width="match_parent"

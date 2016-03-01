@@ -1,6 +1,9 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.app.DialogFragment;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -285,6 +288,8 @@ public class ClipPlayFragment extends DialogFragment {
             });
 
             mSeekBar.setMax(mClipList.get(0).getDurationMs());
+            mSeekBar.getProgressDrawable().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
+            mSeekBar.getThumb().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
         }
 
     }
