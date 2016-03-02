@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.ui.views.multisegseekbar;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -10,7 +10,7 @@ import android.view.View;
 /**
  * Created by Xiaofei on 2016/3/1.
  */
-public class ThumbView extends View {
+class ThumbView extends View {
     private Resources mRes;
     private Paint mCirclePaint;
     private float mY;

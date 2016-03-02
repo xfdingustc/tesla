@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.ui.views.multisegseekbar;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -8,16 +8,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
-
-import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 import java.util.List;
 
@@ -31,18 +29,29 @@ public class MultiSegSeekbar extends View {
     private int mActiveColor;
     private int mInactiveColor;
 
-    private Paint mActivePaint = new Paint();
-    private Paint mInactivePaint = new Paint();
+
 
     private int mDividerWidth = 0;
     private int mBarHeight = 0;
-    private int mActiveIndex = 0;
     private List<Clip> mClipList;
 
     private ThumbView mThumb;
-    private int mBarPaddingBottom;
+    private Bar mBar;
+
+    private float mBarPaddingBottom;
     private float mCircleSize;
     private int mCircleColor;
+    private int mDefaultWidth = 500;
+    private int mDefaultHeight = 150;
+
+    private static final int DEFAULT_BAR_COLOR = Color.LTGRAY;
+    private static final float DEFAULT_BAR_WEIGHT_PX = 2;
+
+    private static final float DEFAULT_BAR_PADDING_BOTTOM_DP = 24;
+
+    private float mBarWeight = DEFAULT_BAR_WEIGHT_PX;
+
+    private int mBarColor = DEFAULT_BAR_COLOR;
 
 
     public MultiSegSeekbar(Context context) {
@@ -69,8 +78,35 @@ public class MultiSegSeekbar extends View {
         initAttributes(context, attrs, defStyleRes);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width;
+        int height;
+
+        final int measureWidthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int measureHeightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int measureWidth = MeasureSpec.getSize(widthMeasureSpec);
+        final int measureHeight = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (measureWidthMode == MeasureSpec.AT_MOST || measureWidthMode == MeasureSpec.EXACTLY) {
+            width = measureWidth;
+        } else {
+            width = mDefaultWidth;
+        }
+
+        if (measureHeightMode == MeasureSpec.AT_MOST) {
+            height = Math.min(mDefaultHeight, measureHeight);
+        } else if (measureHeight == MeasureSpec.EXACTLY) {
+            height = measureHeight;
+        } else {
+            height = mDefaultHeight;
+        }
+
+        setMeasuredDimension(width, height);
+    }
+
     public void setActiveClip(int position) {
-        mActiveIndex = position;
+        mBar.setActiveIndex(position);
         invalidate();
     }
 
@@ -86,6 +122,9 @@ public class MultiSegSeekbar extends View {
                 .dp2px(DEFAULT_DIVIDER_WIDTH_DP, resources));
             mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barMinHeight,
                 ViewUtils.dp2px(DEFAULT_BAR_HEIGHT, resources));
+            mBarPaddingBottom = a.getDimension(R.styleable.MultiSegSeekbar_barPaddingBottom,
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                            DEFAULT_BAR_PADDING_BOTTOM_DP, getResources().getDisplayMetrics()));
 
             mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 15);
             mCircleColor = a.getColor(R.styleable.MultiSegSeekbar_circleColor,
@@ -93,8 +132,8 @@ public class MultiSegSeekbar extends View {
             a.recycle();
         }
 
-        mActivePaint.setColor(mActiveColor);
-        mInactivePaint.setColor(mInactiveColor);
+        //mActivePaint.setColor(mActiveColor);
+        //mInactivePaint.setColor(mInactiveColor);
     }
 
 
@@ -106,8 +145,15 @@ public class MultiSegSeekbar extends View {
 
         float yPos = h - mBarPaddingBottom;
 
+        float marginLeft = mCircleSize;
+        float barLength = w - (2 * marginLeft);
+
+        mBar = new Bar(context, marginLeft, yPos, barLength, mBarWeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mClipList);
+
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor);
+
+        mThumb.setX(marginLeft);
     }
 
     @Override
@@ -116,6 +162,7 @@ public class MultiSegSeekbar extends View {
         if (mClipList == null || mClipList.isEmpty()) {
             return;
         }
+        /*
         int top = (canvas.getHeight() - mBarHeight) / 2;
 
         long totalClipTimeMs = 0;
@@ -143,7 +190,8 @@ public class MultiSegSeekbar extends View {
                 canvas.drawRect(rect, mInactivePaint);
             }
             left = rect.right + mDividerWidth;
-        }
+        }*/
+        mBar.draw(canvas);
         mThumb.draw(canvas);
     }
 

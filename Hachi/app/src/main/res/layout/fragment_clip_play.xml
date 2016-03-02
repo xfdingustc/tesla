@@ -72,20 +72,21 @@
     <ViewSwitcher
         android:id="@+id/vsBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
 
         <SeekBar
             android:id="@+id/videoSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
             android:indeterminateOnly="false"
 
             />
-        <com.waylens.hachi.ui.views.MultiSegSeekbar
+        <com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar
             android:id="@+id/multiSegIndicator"
             android:layout_width="match_parent"
-            android:layout_height="8dp"
+            android:layout_height="wrap_content"
             app:barHeight="8dp"/>
 
 
