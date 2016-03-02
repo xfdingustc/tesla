@@ -106,7 +106,7 @@ public class ClipPlayFragment extends DialogFragment {
     ViewSwitcher mVsBar;
 
     @Bind(R.id.multiSegIndicator)
-    MultiSegSeekbar mMultiSegmentIndicator;
+    MultiSegSeekbar mMultiSegSeekbar;
 
     @OnClick(R.id.btnDismiss)
     public void onBtnDismissClicked() {
@@ -141,15 +141,11 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-
-
     public static class Config {
         public static int PROGRESS_BAR_STYLE_SINGLE = 0;
         public int progressBarStyle = PROGRESS_BAR_STYLE_SINGLE;
         public boolean showControlPanel = true;
     }
-
-
 
 
     public static ClipPlayFragment newInstance(VdtCamera camera, ClipSet clipSet,
@@ -249,7 +245,28 @@ public class ClipPlayFragment extends DialogFragment {
 
         if (mClipSet.getCount() > 1) {
             mVsBar.showNext();
-            mMultiSegmentIndicator.setClipList(mClipSet.getClipList());
+            mMultiSegSeekbar.setClipList(mClipSet.getClipList());
+            mMultiSegSeekbar.setOnMultiSegSeekbarChangListener(new MultiSegSeekbar.OnMultiSegSeekBarChangeListener() {
+                @Override
+                public void onStartTrackingTouch(MultiSegSeekbar seekBar) {
+                    changeState(STATE_FAST_PREVIEW);
+                }
+
+                @Override
+                public void onProgressChanged(MultiSegSeekbar seekBar, int progress) {
+                    if (mCurrentState == STATE_FAST_PREVIEW) {
+                        int time = (int) (((float) progress * mClipSet.getTotalSelectedLengthMs()) / seekBar.getMax());
+                        ClipPos clipPos = mClipSet.findClipPosByTimePosition(time);
+                        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+                    }
+                }
+
+                @Override
+                public void onStopTrackingTouch(MultiSegSeekbar seekBar) {
+
+                }
+            });
+
         } else {
 
             mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -289,7 +306,7 @@ public class ClipPlayFragment extends DialogFragment {
         changeState(STATE_FAST_PREVIEW);
         ClipPos clipPos = new ClipPos(clip, 0, ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
-        mMultiSegmentIndicator.setActiveClip(position);
+        mMultiSegSeekbar.setActiveClip(position);
     }
 
     public void showClipPosThumbnail(Clip clip, long timeMs) {
@@ -299,7 +316,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void notifyClipSetChanged() {
-        mMultiSegmentIndicator.invalidate();
+        mMultiSegSeekbar.invalidate();
     }
 
 
@@ -399,10 +416,10 @@ public class ClipPlayFragment extends DialogFragment {
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
 
-        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
+//        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
 
         String timeText = DateUtils.formatElapsedTime(adjustedPosition / 1000) + "/" + DateUtils
-            .formatElapsedTime(duration / 1000);
+                .formatElapsedTime(duration / 1000);
 
         mTvProgress.setText(timeText);
 

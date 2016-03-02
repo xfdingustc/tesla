@@ -84,4 +84,12 @@ class Bar {
     public void setActiveIndex(int activeIndex) {
         mActiveIndex = activeIndex;
     }
+
+    public float getLeftX() {
+        return mLeftX;
+    }
+
+    public float getRightX() {
+        return mRightX;
+    }
 }

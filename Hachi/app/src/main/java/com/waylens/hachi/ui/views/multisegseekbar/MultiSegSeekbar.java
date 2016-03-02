@@ -11,8 +11,11 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.SeekBar;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
@@ -23,12 +26,12 @@ import java.util.List;
  * Created by Xiaofei on 2016/2/29.
  */
 public class MultiSegSeekbar extends View {
+    private static final String TAG = MultiSegSeekbar.class.getSimpleName();
     private static final int DEFAULT_DIVIDER_WIDTH_DP = 4;
     private static final int DEFAULT_BAR_HEIGHT = 4;
 
     private int mActiveColor;
     private int mInactiveColor;
-
 
 
     private int mDividerWidth = 0;
@@ -37,6 +40,9 @@ public class MultiSegSeekbar extends View {
 
     private ThumbView mThumb;
     private Bar mBar;
+
+    private int mMax = 100;
+    private int mProgress;
 
     private float mBarPaddingBottom;
     private float mCircleSize;
@@ -52,6 +58,8 @@ public class MultiSegSeekbar extends View {
     private float mBarWeight = DEFAULT_BAR_WEIGHT_PX;
 
     private int mBarColor = DEFAULT_BAR_COLOR;
+
+    private OnMultiSegSeekBarChangeListener mListener;
 
 
     public MultiSegSeekbar(Context context) {
@@ -73,7 +81,7 @@ public class MultiSegSeekbar extends View {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MultiSegSeekbar(Context context, AttributeSet attrs, int defStyleAttr, int
-        defStyleRes) {
+            defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initAttributes(context, attrs, defStyleRes);
     }
@@ -117,11 +125,11 @@ public class MultiSegSeekbar extends View {
 
             mActiveColor = a.getColor(R.styleable.MultiSegSeekbar_segActiveColor, Color.WHITE);
             mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color
-                .GRAY);
+                    .GRAY);
             mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth, ViewUtils
-                .dp2px(DEFAULT_DIVIDER_WIDTH_DP, resources));
+                    .dp2px(DEFAULT_DIVIDER_WIDTH_DP, resources));
             mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barMinHeight,
-                ViewUtils.dp2px(DEFAULT_BAR_HEIGHT, resources));
+                    ViewUtils.dp2px(DEFAULT_BAR_HEIGHT, resources));
             mBarPaddingBottom = a.getDimension(R.styleable.MultiSegSeekbar_barPaddingBottom,
                     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                             DEFAULT_BAR_PADDING_BOTTOM_DP, getResources().getDisplayMetrics()));
@@ -132,8 +140,18 @@ public class MultiSegSeekbar extends View {
             a.recycle();
         }
 
-        //mActivePaint.setColor(mActiveColor);
-        //mInactivePaint.setColor(mInactiveColor);
+    }
+
+    public void setOnMultiSegSeekbarChangListener(OnMultiSegSeekBarChangeListener listener) {
+        this.mListener = listener;
+    }
+
+    public int getMax() {
+        return mMax;
+    }
+
+    public int getProgress() {
+        return mProgress;
     }
 
 
@@ -162,42 +180,76 @@ public class MultiSegSeekbar extends View {
         if (mClipList == null || mClipList.isEmpty()) {
             return;
         }
-        /*
-        int top = (canvas.getHeight() - mBarHeight) / 2;
 
-        long totalClipTimeMs = 0;
-        for (Clip clip : mClipList) {
-            totalClipTimeMs += clip.editInfo.getSelectedLength();
-        }
-
-        float widthScale = ((float)(canvas.getWidth() - (mClipList.size() - 1) * mDividerWidth))
-            / totalClipTimeMs;
-
-
-        int left = 0;
-
-        for (int i = 0; i < mClipList.size(); i++) {
-            Clip clip = mClipList.get(i);
-            Rect rect = new Rect();
-            rect.top = top;
-            rect.bottom = top + mBarHeight;
-            rect.left = left;
-            rect.right = rect.left + (int)(widthScale * clip.editInfo.getSelectedLength());
-
-            if (i == mActiveIndex) {
-                canvas.drawRect(rect, mActivePaint);
-            } else {
-                canvas.drawRect(rect, mInactivePaint);
-            }
-            left = rect.right + mDividerWidth;
-        }*/
         mBar.draw(canvas);
         mThumb.draw(canvas);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (!isEnabled()) {
+            return false;
+        }
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Logger.t(TAG).d("DDDD");
+                onActionDown(event.getX(), event.getY());
+                return true;
+            case MotionEvent.ACTION_UP:
+                onActionUp(event.getX(), event.getY());
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                onActionMove(event.getX());
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
+
+
+    private void onActionDown(float x, float y) {
+        if (!mThumb.isPressed() && mThumb.isInTargetZone(x, y)) {
+            mThumb.press();
+            if (mListener != null) {
+                mListener.onStartTrackingTouch(this);
+            }
+        }
+    }
+
+    private void onActionUp(float x, float y) {
+        if (mThumb.isPressed()) {
+            mThumb.release();
+        }
+    }
+
+    private void onActionMove(float x) {
+        if (x < mBar.getLeftX() || x > mBar.getRightX()) {
+
+        } else {
+            mThumb.setX(x);
+            if (mListener != null) {
+                mProgress = (int)(x / (mBar.getRightX() - mBar.getLeftX()) * mMax);
+                mListener.onProgressChanged(this, mProgress);
+            }
+            invalidate();
+        }
     }
 
 
     public void setClipList(List<Clip> clipList) {
         this.mClipList = clipList;
         invalidate();
+    }
+
+    public interface OnMultiSegSeekBarChangeListener {
+        void onStartTrackingTouch(MultiSegSeekbar seekBar);
+
+        void onProgressChanged(MultiSegSeekbar seekBar, int progress);
+
+        void onStopTrackingTouch(MultiSegSeekbar seekBar);
+
     }
 }

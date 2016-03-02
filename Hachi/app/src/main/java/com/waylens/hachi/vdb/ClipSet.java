@@ -8,14 +8,11 @@ public class ClipSet {
     public static final long U32_MASK = 0x0FFFFFFFFL;
 
     private Clip.ID liveClipId;
-    private int totalClips;
-    private int totalLengthMs;
+
     private ArrayList<Clip> mClipList = new ArrayList<>();
 
     public ClipSet(int type) {
         this.mClipType = type;
-        totalClips = 0;
-        totalLengthMs = 0;
         liveClipId = null;
 
     }
@@ -25,27 +22,23 @@ public class ClipSet {
     }
 
     public int getCount() {
-        return totalClips;
+        return mClipList.size();
     }
 
 
     public void set(ClipSet other) {
         this.liveClipId = other.liveClipId;
-        this.totalClips = other.totalClips;
-        this.totalLengthMs = other.totalLengthMs;
         this.mClipList = other.mClipList;
     }
 
 
     public void clear() {
-        totalClips = 0;
-        totalLengthMs = 0;
         mClipList.clear();
     }
 
 
     public Clip getClip(int index) {
-        return index < 0 || index >= totalClips ? null : mClipList.get(index);
+        return index < 0 || index >= mClipList.size() ? null : mClipList.get(index);
     }
 
     public ArrayList<Clip> getClipList() {
@@ -53,10 +46,7 @@ public class ClipSet {
     }
 
     public void addClip(Clip clip) {
-        clip.index = mClipList.size();
         mClipList.add(clip);
-        totalClips++;
-        totalLengthMs += clip.getDurationMs();
     }
 
     public void setLiveClipId(Clip.ID liveClipId) {
@@ -73,21 +63,18 @@ public class ClipSet {
             i++;
         }
         mClipList.add(i, clip);
-        totalClips++;
-        totalLengthMs += clip.getDurationMs();
     }
 
 
     public void insertClipByIndex(Clip clip) {
         int i;
-        for (i = 0; i < totalClips; i++) {
+        for (i = 0; i < mClipList.size(); i++) {
             if (clip.index <= i)
                 break;
         }
         mClipList.add(i, clip);
-        totalClips++;
-        totalLengthMs += clip.getDurationMs();
-        for (; i < totalClips; i++) {
+
+        for (; i < mClipList.size(); i++) {
             clip = mClipList.get(i);
             clip.index = i;
         }
@@ -95,12 +82,10 @@ public class ClipSet {
 
 
     public boolean removeClip(Clip.ID cid) {
-        for (int i = 0; i < totalClips; i++) {
+        for (int i = 0; i < mClipList.size(); i++) {
             Clip clip = mClipList.get(i);
             if (clip.cid.equals(cid)) {
                 mClipList.remove(i);
-                totalClips--;
-                totalLengthMs -= clip.getDurationMs();
                 return true;
             }
         }
@@ -113,8 +98,6 @@ public class ClipSet {
         for (i = 0; i < mClipList.size(); i++) {
             Clip tmp = mClipList.get(i);
             if (tmp.cid.equals(clip.cid)) {
-                totalLengthMs -= tmp.getDurationMs();
-                totalLengthMs += clip.getDurationMs();
                 mClipList.set(i, clip);
                 if (isLive) {
                     liveClipId = bFinished ? null : clip.cid;
@@ -127,7 +110,7 @@ public class ClipSet {
 
 
     public int findClipIndex(Clip.ID cid) {
-        for (int i = 0; i < totalClips; i++) {
+        for (int i = 0; i < mClipList.size(); i++) {
             Clip clip = mClipList.get(i);
             if (clip.cid.equals(cid))
                 return i;
@@ -137,7 +120,7 @@ public class ClipSet {
 
 
     public Clip findClip(Clip.ID cid) {
-        for (int i = 0; i < totalClips; i++) {
+        for (int i = 0; i < mClipList.size(); i++) {
             Clip clip = mClipList.get(i);
             if (clip.cid.equals(cid))
                 return clip;
@@ -152,7 +135,7 @@ public class ClipSet {
 
 
     public boolean moveClip(Clip.ID cid, int clipIndex) {
-        if (clipIndex < 0 || clipIndex >= totalClips)
+        if (clipIndex < 0 || clipIndex >= mClipList.size())
             return false;
 
         int index = findClipIndex(cid);
@@ -185,6 +168,10 @@ public class ClipSet {
 
 
     public int getTotalLengthMs() {
+        int totalLengthMs = 0;
+        for (Clip clip : mClipList) {
+            totalLengthMs += clip.getDurationMs();
+        }
         return totalLengthMs;
     }
 
@@ -193,9 +180,26 @@ public class ClipSet {
         for (Clip clip : mClipList) {
             total += clip.editInfo.getSelectedLength();
         }
-
         return total;
     }
+
+    public ClipPos findClipPosByTimePosition(int position) {
+        int total = 0;
+        for (int i = 0; i < mClipList.size(); i++) {
+            Clip clip = mClipList.get(i);
+
+            if (position < total + clip.editInfo.getSelectedLength()) {
+                ClipPos clipPos = new ClipPos(clip, position - total + clip.editInfo.selectedStartValue, ClipPos.TYPE_POSTER, false);
+                return clipPos;
+            }
+
+            total += clip.editInfo.getSelectedLength();
+        }
+
+        return null;
+    }
+
+
 
 
 }

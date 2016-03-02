@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -15,8 +16,11 @@ class ThumbView extends View {
     private Paint mCirclePaint;
     private float mY;
     private float mX;
-    private boolean mIsPressed;
+    private boolean mIsPressed = false;
     private float mCircleRadiusPx;
+    private float mTargetRadiusPx;
+
+    private static final float MINIMUM_TARGET_RADIUS_DP = 48;
 
     public ThumbView(Context context) {
         super(context);
@@ -32,6 +36,10 @@ class ThumbView extends View {
         mCirclePaint.setColor(circleColor);
         mCirclePaint.setAntiAlias(true);
 
+        int targetRadius = (int) Math.max(MINIMUM_TARGET_RADIUS_DP, mCircleRadiusPx);
+        mTargetRadiusPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                targetRadius,
+                mRes.getDisplayMetrics());
         mY = y;
     }
 
@@ -59,5 +67,14 @@ class ThumbView extends View {
     public void draw(Canvas canvas) {
         canvas.drawCircle(mX, mY, mCircleRadiusPx, mCirclePaint);
         super.draw(canvas);
+    }
+
+    public boolean isInTargetZone(float x, float y) {
+        return (Math.abs(x - mX) <= mTargetRadiusPx && Math.abs(y - mY) <= mTargetRadiusPx);
+    }
+
+    public void press() {
+        mIsPressed = true;
+
     }
 }
