@@ -173,6 +173,7 @@ public class MainActivity extends BaseActivity {
         mCurrentNavMenuId = menuId;
         mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
 
+
         Toolbar toolbar = getToolbar();
         if (toolbar != null) {
             toolbar.setTitle(mToolbarTitles[tag]);

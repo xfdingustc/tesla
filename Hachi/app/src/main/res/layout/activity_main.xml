@@ -34,8 +34,6 @@
         android:fitsSystemWindows="true"
         android:background="#141618"
         android:alpha="0.9"
-        app:itemIconTint="?attr/hachiTextColorPrimary"
-        app:itemTextColor="?attr/hachiTextColorPrimary"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_view_menu">
 

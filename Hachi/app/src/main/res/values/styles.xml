@@ -23,6 +23,7 @@
         <item name="hachiTextColorPrimary">#FFC4C5C5</item>
         <item name="hachiTextColorSecondary">#B2C4C5C5</item>
         <item name="hachiTextColorDisabled">#4Cc4C5C5</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
     <style name="MyRadioButton"
