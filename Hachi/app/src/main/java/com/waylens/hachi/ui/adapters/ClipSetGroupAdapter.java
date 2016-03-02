@@ -57,10 +57,8 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<ClipGridItem> mClipGridItemList = new ArrayList<>();
 
 
-
-
     public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup, ClipSetGroupAdapter
-        .OnClipClickListener listener) {
+            .OnClipClickListener listener) {
         this.mContext = context;
         this.mClipSetGroup = clipSetGroup;
         recalculateGridItemList();
@@ -195,13 +193,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ArrayList<Clip> mSelectedClipList = new ArrayList<>();
         for (ClipGridItem gridItem : mClipGridItemList) {
             if (gridItem.itemType == ITEM_TYPE_CLIPVIEW && gridItem.isItemSelected == true) {
-                mSelectedClipList.add((Clip)gridItem.itemObject);
+                mSelectedClipList.add((Clip) gridItem.itemObject);
             }
         }
         return mSelectedClipList;
     }
-
-
 
 
     private String getFormattedDate(int date) {
@@ -273,14 +269,12 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ClipGridViewHolder holder = (ClipGridViewHolder) v.getTag();
                     ClipGridItem clipGridItem = mClipGridItemList.get(holder.getPosition());
 
-                    if (mMultiSelectedMode == false) {
+                    if (!mMultiSelectedMode) {
                         mClipClickListener.onClipClicked((Clip) clipGridItem.itemObject);
                     } else {
                         clipGridItem.isItemSelected = !clipGridItem.isItemSelected;
                         toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem
-                            .isItemSelected);
-
-
+                                .isItemSelected);
                     }
 
                 }

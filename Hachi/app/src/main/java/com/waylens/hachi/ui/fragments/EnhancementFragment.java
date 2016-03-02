@@ -20,6 +20,7 @@ import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.ui.activities.ClipChooserActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
@@ -28,7 +29,6 @@ import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
-import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.Playlist;
@@ -44,6 +44,8 @@ import butterknife.OnClick;
  * Created by Richard on 12/18/15.
  */
 public class EnhancementFragment extends BaseFragment implements FragmentNavigator, ClipsEditView.OnClipEditListener {
+
+    private static final int REQUEST_CODE_ENHANCE = 1000;
 
     private ArrayList<Clip> mClips;
     private PlaylistEditor mPlaylistEditor;
@@ -131,6 +133,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
     }
 
+    @OnClick(R.id.btn_add_video)
+    void showClipChooser() {
+        Intent intent = new Intent(getActivity(), ClipChooserActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_ENHANCE);
+    }
+
     public static EnhancementFragment newInstance(SharableClip sharableClip) {
         Bundle args = new Bundle();
         EnhancementFragment fragment = new EnhancementFragment();
@@ -205,6 +213,15 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         inflater.inflate(R.menu.menu_enhance, menu);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CODE_ENHANCE) {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+        Log.e("test", "resultCode:" + resultCode);
+    }
+
     void close() {
         getFragmentManager().beginTransaction().remove(this).commit();
     }
@@ -221,6 +238,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onClipSelected(int position, Clip clip) {
+        getActivity().setTitle(R.string.trim);
         mClipPlayFragment.setActiveClip(position, clip);
     }
 
@@ -261,7 +279,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onExitEditing() {
-        //TODO
+        getActivity().setTitle(R.string.enhance);
     }
 
     @Override

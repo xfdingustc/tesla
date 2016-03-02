@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -64,6 +65,24 @@ public class BaseActivity extends AppCompatActivity {
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
             mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        }
+    }
+
+    @Override
+    public void setTitle(int titleResID) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(titleResID);
+            actionBar.setHomeAsUpIndicator(R.drawable.navbar_close);
+        }
+    }
+
+    protected void setHomeAsUpIndicator(int indicatorResID) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(indicatorResID);
         }
     }
 

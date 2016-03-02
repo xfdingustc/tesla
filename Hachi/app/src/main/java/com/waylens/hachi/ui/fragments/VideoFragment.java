@@ -42,9 +42,9 @@ public class VideoFragment extends BaseFragment {
     private void setupViewPager() {
         SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getActivity()
             .getFragmentManager());
-        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
+        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED, false), getString(R.string
             .bookmark));
-        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED), getString(R.string.all));
+        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED, false), getString(R.string.all));
 
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);

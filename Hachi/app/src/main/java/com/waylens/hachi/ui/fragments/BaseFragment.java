@@ -131,10 +131,10 @@ public class BaseFragment extends Fragment {
             return;
         }
         mProgressDialog = new MaterialDialog.Builder(getActivity())
-            .title(R.string.loading)
-            .progress(true, 0)
-            .progressIndeterminateStyle(false)
-            .build();
+                .title(R.string.loading)
+                .progress(true, 0)
+                .progressIndeterminateStyle(false)
+                .build();
 
         mProgressDialog.show();
     }
@@ -172,6 +172,8 @@ public class BaseFragment extends Fragment {
             String hostString = args.getString("hostString");
             if (ssid != null && hostString != null) {
                 camera = vdtCameraManager.findConnectedCamera(ssid, hostString);
+            } else if (vdtCameraManager.getConnectedCameras().size() > 0) {
+                camera = vdtCameraManager.getConnectedCameras().get(0);
             }
         } else {
             if (vdtCameraManager.getConnectedCameras().size() > 0) {

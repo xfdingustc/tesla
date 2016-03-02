@@ -351,5 +351,7 @@
     <string name="smart_remix">SmartRemix</string>
     <string name="upload">Upload</string>
     <string name="delete">Delete</string>
+    <string name="trim">Trim</string>
+    <string name="add_more_clips">Add More Clips</string>
 
 </resources>

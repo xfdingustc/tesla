@@ -41,6 +41,8 @@ import butterknife.OnClick;
  */
 public class ClipListFragment extends BaseFragment {
     private static final String TAG = ClipListFragment.class.getSimpleName();
+    private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
+    private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
 
     private Map<String, ClipSet> mClipSetGroup = new HashMap<>();
 
@@ -68,10 +70,25 @@ public class ClipListFragment extends BaseFragment {
 
     private int mClipSetType;
 
-    public static ClipListFragment newInstance(int clipSetType) {
+    private boolean mIsMultipleMode;
+
+    public static ClipListFragment newInstance(int clipSetType, boolean isMultipleSelectionMode) {
         ClipListFragment fragment = new ClipListFragment();
-        fragment.mClipSetType = clipSetType;
+        Bundle args = new Bundle();
+        args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
+        args.putBoolean(ARG_IS_MULTIPLE_MODE, isMultipleSelectionMode);
+        fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            mClipSetType = args.getInt(ARG_CLIP_SET_TYPE, Clip.TYPE_MARKED);
+            mIsMultipleMode = args.getBoolean(ARG_IS_MULTIPLE_MODE, false);
+        }
     }
 
     @Override
@@ -89,7 +106,7 @@ public class ClipListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_clip_list,
-            savedInstanceState);
+                savedInstanceState);
         mUiThreadHandler = new Handler();
         setupClipSetGroup();
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -122,13 +139,6 @@ public class ClipListFragment extends BaseFragment {
             @Override
             public void onClipClicked(Clip clip) {
                 popClipPreviewFragment(clip);
-
-//                Intent intent = new Intent(getActivity(), EnhancementActivity.class);
-//                ArrayList<Clip> clips = new ArrayList<>();
-//                clips.addAll(mClipSetGroup.get("2016-02-29").getClipList());
-//                intent.putParcelableArrayListExtra("clips", clips);
-//                startActivity(intent);
-
             }
 
             @Override
@@ -138,6 +148,8 @@ public class ClipListFragment extends BaseFragment {
             }
         });
 
+        mAdapter.setMultiSelectedMode(mIsMultipleMode);
+
         mRvClipGroupList.setAdapter(mAdapter);
 
     }
@@ -145,21 +157,21 @@ public class ClipListFragment extends BaseFragment {
     private void retrieveSharableClips() {
         mClipSetGroup.clear();
         mVdbRequestQueue.add(new ClipSetRequest(mClipSetType, ClipSetRequest.FLAG_CLIP_EXTRA,
-            new VdbResponse.Listener<ClipSet>() {
-                @Override
-                public void onResponse(ClipSet clipSet) {
-                    mRefreshLayout.setRefreshing(false);
-                    calculateClipSetGroup(clipSet);
-                    setupClipSetGroupView();
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("", error);
+                new VdbResponse.Listener<ClipSet>() {
+                    @Override
+                    public void onResponse(ClipSet clipSet) {
+                        mRefreshLayout.setRefreshing(false);
+                        calculateClipSetGroup(clipSet);
+                        setupClipSetGroupView();
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Logger.t(TAG).e("", error);
 
-                }
-            }));
+                    }
+                }));
 
     }
 
@@ -210,7 +222,7 @@ public class ClipListFragment extends BaseFragment {
 
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip);
         ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipSet,
-            vdtUriProvider, config);
+                vdtUriProvider, config);
 
         fragment.show(getFragmentManager(), "ClipPlayFragment");
 

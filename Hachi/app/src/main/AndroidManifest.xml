@@ -63,6 +63,7 @@
         <activity android:name=".ui.activities.StoryEditActivity"/>
 
         <activity android:name=".ui.activities.EnhancementActivity" />
+        <activity android:name=".ui.activities.ClipChooserActivity" />
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity
