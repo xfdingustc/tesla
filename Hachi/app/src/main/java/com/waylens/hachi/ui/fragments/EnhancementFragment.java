@@ -69,6 +69,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
+    @Bind(R.id.btn_gauge)
+    View btnGauge;
+
+    @Bind(R.id.btn_music)
+    View btnMusic;
+
     String[] supportedGauges;
     int[] gaugeDefaultSizes;
     GaugeListAdapter mGaugeListAdapter;
@@ -102,15 +108,20 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @OnClick(R.id.btn_music)
-    void onClickMusic() {
-        //getFragmentManager().beginTransaction()
-        //        .add(R.id.root_container, new MusicFragment())
-        //        .addToBackStack(null)
-        //        .commit();
+    void onClickMusic(View view) {
+        btnGauge.setSelected(false);
+        view.setSelected(!view.isSelected());
+        configureActionUI(1, view.isSelected());
+    }
+
+    @OnClick(R.id.btn_add_music)
+    void adMusic() {
+        Log.e("test", "Add music");
     }
 
     @OnClick(R.id.btn_gauge)
     void showGauge(View view) {
+        btnMusic.setSelected(false);
         view.setSelected(!view.isSelected());
         if (mGaugeListAdapter == null) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());

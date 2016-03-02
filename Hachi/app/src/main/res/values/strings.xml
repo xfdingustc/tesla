@@ -353,5 +353,8 @@
     <string name="delete">Delete</string>
     <string name="trim">Trim</string>
     <string name="add_more_clips">Add More Clips</string>
+    <string name="video_volume">Video Volume</string>
+    <string name="add_music">Add Music</string>
+    <string name="time_offset">Time Offset</string>
 
 </resources>

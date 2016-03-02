@@ -53,7 +53,7 @@
             android:layout_marginRight="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/btn_enhance_music"/>
+            android:src="@drawable/btn_enhance_remix"/>
     </LinearLayout>
 
     <ViewAnimator
@@ -61,11 +61,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:visibility="gone">
+        android:background="@android:color/black"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:visibility="gone">
 
             <RelativeLayout
                 android:id="@+id/style_container_View"
@@ -108,6 +111,93 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@id/style_container_View"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:background="#FF222428">
+
+            <RelativeLayout
+                android:id="@+id/volume_desc_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/video_volume"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/volume_value_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="100"/>
+            </RelativeLayout>
+
+            <SeekBar
+                android:id="@+id/volume_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/volume_desc_container"/>
+            <RelativeLayout
+                android:id="@+id/offset_desc_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/volume_seek_bar">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/time_offset"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/offset_value_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="100"/>
+            </RelativeLayout>
+            <SeekBar
+                android:id="@+id/music_offset_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/offset_desc_container"/>
+
+            <TextView
+                android:id="@+id/btn_add_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/add_music"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 />
         </RelativeLayout>
     </ViewAnimator>
