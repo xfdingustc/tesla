@@ -34,6 +34,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         return mFragments.size();
     }
 
+
     @Override
     public CharSequence getPageTitle(int position) {
         return mFragmentTitles.get(position);

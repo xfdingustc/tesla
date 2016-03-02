@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cocosw.bottomsheet.BottomSheet;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
@@ -20,13 +22,14 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2016/2/17.
  */
-public class VideoFragment extends BaseFragment {
+public class VideoFragment extends BaseFragment implements FragmentNavigator{
     private static final String TAG = VideoFragment.class.getSimpleName();
     private TabLayout mTabLayout;
 
     @Bind(R.id.clipListViewPager)
     ViewPager mViewPager;
 
+    private SimpleFragmentPagerAdapter mAdapter;
 
     @Nullable
     @Override
@@ -40,13 +43,13 @@ public class VideoFragment extends BaseFragment {
 
 
     private void setupViewPager() {
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getActivity()
+        mAdapter = new SimpleFragmentPagerAdapter(getActivity()
             .getFragmentManager());
-        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED, false), getString(R.string
+        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED, false), getString(R.string
             .bookmark));
-        adapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED, false), getString(R.string.all));
+        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED, false), getString(R.string.all));
 
-        mViewPager.setAdapter(adapter);
+        mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
 
@@ -94,5 +97,12 @@ public class VideoFragment extends BaseFragment {
 
         bottomSheet.show();
 
+    }
+
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        ClipListFragment fragment = (ClipListFragment)mAdapter.getItem(mViewPager.getCurrentItem());
+        return fragment.onInterceptBackPressed();
     }
 }

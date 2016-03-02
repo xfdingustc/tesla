@@ -39,7 +39,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/2/18.
  */
-public class ClipListFragment extends BaseFragment {
+public class ClipListFragment extends BaseFragment implements FragmentNavigator{
     private static final String TAG = ClipListFragment.class.getSimpleName();
     private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
     private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
@@ -143,7 +143,8 @@ public class ClipListFragment extends BaseFragment {
 
             @Override
             public void onClipLongClicked(Clip clip) {
-                mAdapter.setMultiSelectedMode(true);
+                mIsMultipleMode = true;
+                mAdapter.setMultiSelectedMode(mIsMultipleMode);
                 popupBottomSheet();
             }
         });
@@ -247,5 +248,15 @@ public class ClipListFragment extends BaseFragment {
 //        bottomSheet.show();
         mBottomSheet.setVisibility(View.VISIBLE);
 
+    }
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        if (mIsMultipleMode) {
+            mIsMultipleMode = false;
+            mAdapter.setMultiSelectedMode(mIsMultipleMode);
+            return true;
+        }
+        return false;
     }
 }

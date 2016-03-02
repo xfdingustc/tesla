@@ -157,22 +157,27 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (mMultiSelectedMode == true) {
             viewHolder.mBtnSelect.setVisibility(View.VISIBLE);
-            toggleItemSelectedView(viewHolder, gridItem.isItemSelected);
         } else {
             viewHolder.mBtnSelect.setVisibility(View.INVISIBLE);
         }
+        toggleItemSelectedView(viewHolder, gridItem.isItemSelected);
 
     }
 
     public void setMultiSelectedMode(boolean multiSelectedMode) {
         this.mMultiSelectedMode = multiSelectedMode;
+        if (mMultiSelectedMode == false) {
+            for (ClipGridItem item : mClipGridItemList) {
+                item.isItemSelected = false;
+            }
+        }
         notifyDataSetChanged();
     }
 
     private void toggleItemSelectedView(ClipGridViewHolder viewHolder, boolean isSelected) {
         if (isSelected == false) {
             viewHolder.mBtnSelect.setImageResource(R.drawable.edit_unselect);
-            viewHolder.mSelectedMask.setVisibility(View.INVISIBLE);
+            viewHolder.mSelectedMask.setVisibility(View.GONE);
         } else {
             viewHolder.mBtnSelect.setImageResource(R.drawable.edit_select);
             viewHolder.mSelectedMask.setVisibility(View.VISIBLE);

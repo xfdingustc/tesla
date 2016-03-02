@@ -315,11 +315,14 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
+
+
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
             && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
+
 
         if (mReturnSnackBar != null && mReturnSnackBar.isShown()) {
             super.onBackPressed();
