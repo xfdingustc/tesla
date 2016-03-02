@@ -134,7 +134,7 @@ public class MultiSegSeekbar extends View {
                     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                             DEFAULT_BAR_PADDING_BOTTOM_DP, getResources().getDisplayMetrics()));
 
-            mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 15);
+            mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 24);
             mCircleColor = a.getColor(R.styleable.MultiSegSeekbar_circleColor,
                     0xff3f51b5);
             a.recycle();
@@ -171,7 +171,7 @@ public class MultiSegSeekbar extends View {
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor);
 
-        mThumb.setX(marginLeft);
+        mThumb.setX(0);
     }
 
     @Override
@@ -231,7 +231,7 @@ public class MultiSegSeekbar extends View {
         } else {
             mThumb.setX(x);
             if (mListener != null) {
-                mProgress = (int)(x / (mBar.getRightX() - mBar.getLeftX()) * mMax);
+                mProgress = (int)(x * mMax / mBar.getWidth() );
                 mListener.onProgressChanged(this, mProgress);
             }
             invalidate();
@@ -241,6 +241,13 @@ public class MultiSegSeekbar extends View {
 
     public void setClipList(List<Clip> clipList) {
         this.mClipList = clipList;
+        invalidate();
+    }
+
+    public void setProgress(int progress) {
+        mProgress = progress;
+        float thumbX = mProgress * mBar.getWidth() / mMax;
+        mThumb.setX(thumbX);
         invalidate();
     }
 

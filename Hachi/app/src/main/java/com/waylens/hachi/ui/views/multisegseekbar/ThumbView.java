@@ -65,7 +65,7 @@ class ThumbView extends View {
 
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawCircle(mX, mY, mCircleRadiusPx, mCirclePaint);
+        canvas.drawCircle(mX + mCircleRadiusPx, mY, mCircleRadiusPx, mCirclePaint);
         super.draw(canvas);
     }
 

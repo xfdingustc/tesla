@@ -18,6 +18,7 @@ class Bar {
     private final float mY;
     private final List<Clip> mClipList;
     private final float mDividerWidth;
+    private final float mLength;
     private int mActiveIndex = 0;
 
     private Paint mActivePaint;
@@ -27,6 +28,7 @@ class Bar {
                float dividerWidth, int activeColor, int inActiveColor, List<Clip> clipList) {
         mLeftX = x;
         mRightX = x + length;
+        mLength = length;
         mY = y;
         mDividerWidth = dividerWidth;
         this.mClipList = clipList;
@@ -57,20 +59,16 @@ class Bar {
             totalClipTimeMs += clip.editInfo.getSelectedLength();
         }
 
-        float widthScale = ((canvas.getWidth() - (mClipList.size() - 1) * mDividerWidth))
+        float widthScale = ((mLength - (mClipList.size() - 1) * mDividerWidth))
                 / totalClipTimeMs;
 
 
-        float left = 0;
-        float right = 0;
+        float left = mLeftX;
+        float right = mLeftX;
 
         for (int i = 0; i < mClipList.size(); i++) {
             Clip clip = mClipList.get(i);
-//            Rect rect = new Rect();
-//            rect.top = top;
-//            rect.bottom = top + mBarHeight;
-//            rect.left = left;
-//            rect.right = rect.left + (int)(widthScale * clip.editInfo.getSelectedLength());
+
             right = left + widthScale * clip.editInfo.getSelectedLength();
             if (i == mActiveIndex) {
                 canvas.drawLine(left, mY, right, mY, mActivePaint);
@@ -91,5 +89,9 @@ class Bar {
 
     public float getRightX() {
         return mRightX;
+    }
+
+    public float getWidth() {
+        return mRightX - mLeftX - (mClipList.size() - 1) * mDividerWidth;
     }
 }

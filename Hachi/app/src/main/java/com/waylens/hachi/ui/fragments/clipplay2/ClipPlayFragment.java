@@ -257,7 +257,9 @@ public class ClipPlayFragment extends DialogFragment {
                     if (mCurrentState == STATE_FAST_PREVIEW) {
                         int time = (int) (((float) progress * mClipSet.getTotalSelectedLengthMs()) / seekBar.getMax());
                         ClipPos clipPos = mClipSet.findClipPosByTimePosition(time);
-                        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+                        if (clipPos != null) {
+                            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+                        }
                     }
                 }
 
@@ -317,6 +319,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     public void notifyClipSetChanged() {
         mMultiSegSeekbar.invalidate();
+        refreshProgressBar();
     }
 
 
@@ -423,8 +426,12 @@ public class ClipPlayFragment extends DialogFragment {
 
         mTvProgress.setText(timeText);
 
-
-        mSeekBar.setProgress(adjustedPosition);
+        if (mClipSet.getCount() == 1) {
+            mSeekBar.setProgress(adjustedPosition);
+        } else {
+            int progress = (int)((float)adjustedPosition * mMultiSegSeekbar.getMax() / duration);
+            mMultiSegSeekbar.setProgress(progress);
+        }
 
         if (mMediaPlayer.isPlaying()) {
             mUiHandler.postDelayed(new Runnable() {
