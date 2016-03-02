@@ -24,12 +24,12 @@ public class PlaylistUrlProvider implements UrlProvider {
     @Override
     public void getUri(long clipTimeMs, OnUriLoadedListener listener) {
         mListener = listener;
-        doGetPlaylistUri();
+        doGetPlaylistUri(clipTimeMs);
     }
 
-    private void doGetPlaylistUri() {
+    private void doGetPlaylistUri(long clipTimeMs) {
         PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(mPlayListID,
-                0, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
+                (int)clipTimeMs, new VdbResponse.Listener<PlaylistPlaybackUrl>() {
             @Override
             public void onResponse(PlaylistPlaybackUrl response) {
 

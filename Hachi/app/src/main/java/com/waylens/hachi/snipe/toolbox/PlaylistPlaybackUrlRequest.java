@@ -35,7 +35,7 @@ public class PlaylistPlaybackUrlRequest extends VdbRequest<PlaylistPlaybackUrl> 
     @Override
     protected VdbResponse<PlaylistPlaybackUrl> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
-            Logger.t(TAG).e("PlaylistEditRequest: failed");
+            Logger.t(TAG).e("PlaylistPlaybackUrlRequest: failed");
             return null;
         }
 

@@ -222,6 +222,9 @@ public class MultiSegSeekbar extends View {
     private void onActionUp(float x, float y) {
         if (mThumb.isPressed()) {
             mThumb.release();
+            if (mListener != null) {
+                mListener.onStopTrackingTouch(this);
+            }
         }
     }
 
