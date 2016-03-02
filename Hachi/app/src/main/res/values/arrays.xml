@@ -81,4 +81,29 @@
         <item>20s</item>
         <item>30s</item>
     </string-array>
+
+    <string-array name="supported_gauges">
+        <item>Gauge One</item>
+        <item>Gauge Two</item>
+        <item>Gauge Three</item>
+        <item>Gauge Four</item>
+        <item>Gauge Five</item>
+        <item>Gauge Six</item>
+        <item>Gauge Seven</item>
+        <item>Gauge Eight</item>
+        <item>Gauge Nine</item>
+    </string-array>
+
+    <integer-array name="gauges_default_size">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
+
 </resources>

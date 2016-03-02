@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,10 +16,11 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ViewAnimator;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
@@ -27,6 +28,7 @@ import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
+import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.Playlist;
@@ -50,18 +52,24 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     private String mAudioPath;
 
     CameraVideoPlayFragment mVideoPlayFragment;
-    SimplePagerAdapter mPagerAdapter;
 
     private ClipPlayFragment mClipPlayFragment;
 
     @Bind(R.id.enhance_root_view)
     LinearLayout mEnhanceRootView;
 
-    @Bind(R.id.view_pager)
-    ViewPager mViewPager;
+    @Bind(R.id.gauge_list_view)
+    RecyclerView mGaugeListView;
 
     @Bind(R.id.clips_edit_view)
     ClipsEditView mClipsEditView;
+
+    @Bind(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
+    String[] supportedGauges;
+    int[] gaugeDefaultSizes;
+    GaugeListAdapter mGaugeListAdapter;
 
     @Override
     public void onStart() {
@@ -100,10 +108,28 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @OnClick(R.id.btn_gauge)
-    void showGauge() {
-        //TODO
+    void showGauge(View view) {
+        view.setSelected(!view.isSelected());
+        if (mGaugeListAdapter == null) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            mGaugeListView.setLayoutManager(layoutManager);
+            mGaugeListAdapter = new GaugeListAdapter(supportedGauges, gaugeDefaultSizes);
+            mGaugeListView.setAdapter(mGaugeListAdapter);
+        }
+        configureActionUI(0, view.isSelected());
     }
 
+    void configureActionUI(int child, boolean isShow) {
+        if (isShow) {
+            mViewAnimator.setVisibility(View.VISIBLE);
+            mViewAnimator.setDisplayedChild(child);
+            mClipsEditView.setVisibility(View.GONE);
+        } else {
+            mViewAnimator.setVisibility(View.GONE);
+            mClipsEditView.setVisibility(View.VISIBLE);
+        }
+    }
 
     public static EnhancementFragment newInstance(SharableClip sharableClip) {
         Bundle args = new Bundle();
@@ -130,9 +156,10 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPagerAdapter = new SimplePagerAdapter();
         setHasOptionsMenu(true);
         mVdbRequestQueue = Snipe.newRequestQueue();
+        supportedGauges = getResources().getStringArray(R.array.supported_gauges);
+        gaugeDefaultSizes = getResources().getIntArray(R.array.gauges_default_size);
     }
 
     @Nullable
@@ -147,7 +174,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
-        mViewPager.setAdapter(mPagerAdapter);
 
         mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClips, 0x100);
         mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
@@ -263,37 +289,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                         mClipPlayFragment.notifyClipSetChanged();
                     }
                 });
-    }
-
-    static class SimplePagerAdapter extends PagerAdapter {
-
-        static int[] view_layouts = new int[]{
-                R.layout.layout_gauge_one,
-                R.layout.layout_gauge_two,
-        };
-
-        @Override
-        public int getCount() {
-            return view_layouts.length;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View view = LayoutInflater.from(container.getContext()).inflate(view_layouts[position], container, false);
-            container.addView(view);
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-            Log.e("test", "destroyItem");
-        }
     }
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
