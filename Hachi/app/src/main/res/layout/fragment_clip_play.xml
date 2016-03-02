@@ -87,7 +87,8 @@
             android:id="@+id/multiSegIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:barHeight="8dp"/>
+            app:barHeight="8dp"
+            app:circleColor="@android:color/white"/>
 
 
 
