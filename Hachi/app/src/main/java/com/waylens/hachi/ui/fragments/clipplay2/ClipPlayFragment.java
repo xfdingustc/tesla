@@ -385,7 +385,7 @@ public class ClipPlayFragment extends DialogFragment {
                 if (mClipSet.getCount() == 1) {
                     mPositionAdjuster = new ClipPositionAdjuster(mClipSet.getClip(0), url);
                 } else {
-                    mPositionAdjuster = new PlaylistPositionAdjuster();
+                    mPositionAdjuster = new PlaylistPositionAdjuster(url);
                 }
                 openVideo(url);
             }
