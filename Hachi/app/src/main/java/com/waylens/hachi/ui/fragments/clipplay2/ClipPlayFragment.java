@@ -9,9 +9,11 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -96,11 +98,12 @@ public class ClipPlayFragment extends DialogFragment {
     @Bind(R.id.playProgress)
     TextView mTvProgress;
 
+    @Bind(R.id.clipPlayFragToolbar)
+    Toolbar mToolbar;
+
     @Bind(R.id.videoSeekBar)
     SeekBar mSeekBar;
 
-    @Bind(R.id.controlPanel)
-    LinearLayout mControlPanel;
 
     @Bind(R.id.vsBar)
     ViewSwitcher mVsBar;
@@ -108,10 +111,6 @@ public class ClipPlayFragment extends DialogFragment {
     @Bind(R.id.multiSegIndicator)
     MultiSegSeekbar mMultiSegSeekbar;
 
-    @OnClick(R.id.btnDismiss)
-    public void onBtnDismissClicked() {
-        dismiss();
-    }
 
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
@@ -132,13 +131,6 @@ public class ClipPlayFragment extends DialogFragment {
 
     }
 
-
-    @OnClick(R.id.btnEnhance)
-    public void onBtnEnhanceClicked() {
-        dismiss();
-
-        EnhancementActivity.launch(getActivity(), mClipSet.getClipList());
-    }
 
     public void prepare(long timeMs) {
         startPreparingClip(timeMs);
@@ -250,12 +242,10 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     private void initViews() {
+        setupToolbar();
+
         ClipPos clipPos = new ClipPos(mClipSet.getClip(0));
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
-
-        if (!mConfig.showControlPanel) {
-            mControlPanel.setVisibility(View.GONE);
-        }
 
         if (mClipSet.getCount() > 1) {
             mVsBar.showNext();
@@ -264,6 +254,38 @@ public class ClipPlayFragment extends DialogFragment {
             setupSeekBar();
         }
 
+    }
+
+    private void setupToolbar() {
+        mToolbar.setNavigationIcon(R.drawable.navbar_close);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        mToolbar.inflateMenu(R.menu.menu_clip_play_fragment);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.share:
+                        return true;
+
+                    case R.id.enhance:
+                        dismiss();
+                        EnhancementActivity.launch(getActivity(), mClipSet.getClipList());
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        if (getShowsDialog()) {
+            mToolbar.setVisibility(View.VISIBLE);
+        } else {
+            mToolbar.setVisibility(View.GONE);
+        }
     }
 
 

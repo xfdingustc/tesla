@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/share" android:title="@string/share"
+        android:icon="@drawable/btn_edit_action_share"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/enhance" android:title="@string/enhance"
+        android:icon="@drawable/btn_edit_action_video"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/modify" android:title="@string/modify"
+        android:icon="@drawable/btn_edit_action_crop"
+        app:showAsAction="collapseActionView|ifRoom"/>
+</menu>

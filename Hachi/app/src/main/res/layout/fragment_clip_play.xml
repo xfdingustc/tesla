@@ -6,42 +6,16 @@
               android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/controlPanel"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/clipPlayFragToolbar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btnDismiss"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/navbar_close"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+        android:layout_height="56dp">
 
 
-        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btnShare"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/btn_edit_action_share"/>
+    </android.support.v7.widget.Toolbar>
 
-        <ImageButton
-            android:id="@+id/btnEnhance"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/btn_edit_action_video"/>
 
-    </LinearLayout>
 
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:layout_width="match_parent"
