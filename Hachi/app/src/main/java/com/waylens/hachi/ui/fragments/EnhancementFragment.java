@@ -31,6 +31,7 @@ import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.Playlist;
 
 import java.util.ArrayList;
@@ -314,10 +315,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mPlaylistEditor.trimClip(selectedPosition, clip.editInfo.selectedStartValue, clip.editInfo.selectedEndValue,
                 new PlaylistEditor.OnTrimCompletedListener() {
                     @Override
-                    public void onTrimCompleted() {
-                        mClipPlayFragment.notifyClipSetChanged();
+                    public void onTrimCompleted(ClipSet clipSet) {
+                        mClipPlayFragment.setClipSet(clipSet);
+                        mClipPlayFragment.prepare(0);
                     }
                 });
+
     }
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {

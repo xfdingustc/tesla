@@ -140,6 +140,16 @@ public class ClipPlayFragment extends DialogFragment {
         EnhancementActivity.launch(getActivity(), mClipSet.getClipList());
     }
 
+    public void prepare(long timeMs) {
+        startPreparingClip(timeMs);
+    }
+
+    public void setClipSet(ClipSet clipSet) {
+        mClipSet = clipSet;
+        mMultiSegSeekbar.setClipList(clipSet.getClipList());
+        notifyClipSetChanged();
+    }
+
 
     public static class Config {
         public static int PROGRESS_BAR_STYLE_SINGLE = 0;
@@ -256,6 +266,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     }
 
+
     private void setupMultiSegSeekBar() {
         mMultiSegSeekbar.setClipList(mClipSet.getClipList());
         mMultiSegSeekbar.setOnMultiSegSeekbarChangListener(new MultiSegSeekbar.OnMultiSegSeekBarChangeListener() {
@@ -329,7 +340,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void notifyClipSetChanged() {
-        mMultiSegSeekbar.invalidate();
+        mMultiSegSeekbar.notifyDateSetChanged();
         refreshProgressBar();
     }
 
@@ -425,7 +436,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     private void refreshProgressBar() {
-        int currentPos = mMediaPlayer.getCurrentPosition();
+        int currentPos = mMediaPlayer.isPlaying() ? mMediaPlayer.getCurrentPosition() : 0;
         int duration = mClipSet.getTotalSelectedLengthMs();
 
         int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);

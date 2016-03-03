@@ -114,6 +114,8 @@ public class MultiSegSeekbar extends View {
     }
 
     public void setActiveClip(int position) {
+        // reset progress:
+        setProgress(0);
         mBar.setActiveIndex(position);
         invalidate();
     }
@@ -154,6 +156,11 @@ public class MultiSegSeekbar extends View {
         return mProgress;
     }
 
+
+    public void notifyDateSetChanged() {
+        // recalcuate current progress;
+        invalidate();
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {

@@ -125,7 +125,7 @@ public class PlaylistEditor {
                                 break;
                             case ACTION_TRIM:
                                 if (mOnTrimCompletedListener != null) {
-                                    mOnTrimCompletedListener.onTrimCompleted();
+                                    mOnTrimCompletedListener.onTrimCompleted(clipSet);
                                 }
                                 break;
                         }
@@ -271,7 +271,7 @@ public class PlaylistEditor {
     }
 
     public interface OnTrimCompletedListener {
-        void onTrimCompleted();
+        void onTrimCompleted(ClipSet clipSet);
     }
 
 }
