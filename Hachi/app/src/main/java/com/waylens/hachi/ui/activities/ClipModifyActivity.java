@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -12,8 +13,11 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
@@ -28,6 +32,7 @@ import butterknife.Bind;
  * Created by Xiaofei on 2016/3/3.
  */
 public class ClipModifyActivity extends BaseActivity {
+    private static final String TAG = ClipModifyActivity.class.getSimpleName();
 
     private VdtCamera mVdtCamera;
     private VdbRequestQueue mVdbRequestQueue;
@@ -100,7 +105,23 @@ public class ClipModifyActivity extends BaseActivity {
     }
 
     private void doSaveClipTrimInfo() {
-
+        mVdbRequestQueue.add(new ClipExtentUpdateRequest(mClip,
+                mClipTrimmer.getLeftValue(),
+                mClipTrimmer.getRightValue(),
+                new VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        //doGetPlaylistInfo(ACTION_TRIM);
+                        Logger.t(TAG).d("Trim successfully");
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Log.e("test", "ClipExtentUpdateRequest", error);
+                    }
+                }
+        ));
     }
 
     private void embedVideoPlayFragment() {
