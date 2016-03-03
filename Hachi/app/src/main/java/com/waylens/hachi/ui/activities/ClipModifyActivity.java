@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -17,6 +18,7 @@ import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
 import butterknife.Bind;
@@ -87,5 +89,57 @@ public class ClipModifyActivity extends BaseActivity {
         int defaultHeight = ViewUtils.dp2px(64, getResources());
 
         mClipTrimmer.setBackgroundClip(mVdbImageLoader, mClip, defaultHeight);
+
+        mClipTrimmer.setEditing(true);
+        mClipTrimmer.setInitRangeValues(mClip.getStartTimeMs(), mClip.getEndTimeMs());
+        //mSelectedClipStartTimeMs = mClipExtent.clipStartTimeMs;
+        //mSelectedClipEndTimeMs = mClipExtent.clipEndTimeMs;
+
+        mClipTrimmer.setLeftValue(mClip.getStartTimeMs());
+        mClipTrimmer.setRightValue(mClip.getEndTimeMs());
+
+        mClipTrimmer.setOnChangeListener(new VideoTrimmer.OnTrimmerChangeListener() {
+            @Override
+            public void onStartTrackingTouch(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag) {
+//                mTrimmerFlag = flag;
+//                if (mOnActionListener != null) {
+//                    mOnActionListener.onStartDragging();
+//                }
+//                if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
+//                    pauseVideo();
+//                }
+            }
+
+            @Override
+            public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
+//                if (videoCover != null) {
+//                    videoCover.setVisibility(View.VISIBLE);
+//                    Clip.ID cid = getWorkableCid();
+//                    ClipPos clipPos = new ClipPos(mClip.getVdbId(), cid, mClip.clipDate, progress, ClipPos.TYPE_POSTER, false);
+//                    mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
+//                }
+//                mSeekToPosition = progress;
+//                mTypedPosition.clear();
+            }
+
+            @Override
+            public void onStopTrackingTouch(VideoTrimmer trimmer) {
+//                if (mOnActionListener != null) {
+//                    mOnActionListener.onStopDragging();
+//                }
+//                if (mTrimmerFlag == VideoTrimmer.DraggingFlag.LEFT || mTrimmerFlag == VideoTrimmer.DraggingFlag.RIGHT) {
+//                    mSelectedClipStartTimeMs = trimmer.getLeftValue();
+//                    mSelectedClipEndTimeMs = trimmer.getRightValue();
+//                    loadClipInfo();
+//                    return;
+//                }
+//                if (isInPlaybackState()) {
+//                    seekTo((int) mSeekToPosition);
+//                } else {
+//                    mBtnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
+//                    mBtnPlay.setVisibility(View.VISIBLE);
+//                }
+            }
+        });
     }
 }

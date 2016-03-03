@@ -13,6 +13,6 @@
     <com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer
         android:id="@+id/clipTrimmer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="64dp" />
 
 </LinearLayout>
