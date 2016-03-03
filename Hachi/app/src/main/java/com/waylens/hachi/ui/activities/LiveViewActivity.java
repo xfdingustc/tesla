@@ -261,7 +261,7 @@ public class LiveViewActivity extends BaseActivity {
     }
 
     @Override
-    protected void setupToolbar() {
+    public void setupToolbar() {
         if (mToolbar != null) {
             mToolbar.setTitle(R.string.live_view);
         }

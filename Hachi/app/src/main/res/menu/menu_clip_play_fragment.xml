@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/share" android:title="@string/share"
+    <item
+        android:id="@+id/share"
         android:icon="@drawable/btn_edit_action_share"
-        app:showAsAction="always"/>
+        android:title="@string/share"
+        app:showAsAction="always" />
 
-    <item android:id="@+id/enhance" android:title="@string/enhance"
+    <item
+        android:id="@+id/enhance"
         android:icon="@drawable/btn_edit_action_video"
-        app:showAsAction="always"/>
+        android:title="@string/enhance"
+        app:showAsAction="always" />
 
-    <item android:id="@+id/modify" android:title="@string/modify"
+    <item
+        android:id="@+id/modify"
         android:icon="@drawable/btn_edit_action_crop"
-        app:showAsAction="collapseActionView|ifRoom"/>
+        android:title="@string/modify"
+        app:showAsAction="always" />
 </menu>

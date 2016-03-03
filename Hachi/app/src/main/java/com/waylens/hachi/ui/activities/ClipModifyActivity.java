@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
@@ -13,12 +16,10 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
 import butterknife.Bind;
@@ -43,7 +44,6 @@ public class ClipModifyActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
-
     @Bind(R.id.clipTrimmer)
     VideoTrimmer mClipTrimmer;
 
@@ -65,10 +65,43 @@ public class ClipModifyActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_clip_modify);
+
         embedVideoPlayFragment();
         initClipTrimmer();
     }
 
+
+    @Override
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.modify);
+        mToolbar.inflateMenu(R.menu.menu_clip_modify);
+
+
+        mToolbar.setNavigationIcon(R.drawable.navbar_back);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.save:
+                        doSaveClipTrimInfo();
+                        finish();
+                        break;
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void doSaveClipTrimInfo() {
+
+    }
 
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
@@ -112,7 +145,15 @@ public class ClipModifyActivity extends BaseActivity {
 
             @Override
             public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
-                mClipPlayFragment.showClipPosThumbnail(mClip, progress);
+                long currentTimeMs = 0;
+                if (flag == VideoTrimmer.DraggingFlag.LEFT) {
+                    currentTimeMs = start;
+                } else if (flag == VideoTrimmer.DraggingFlag.RIGHT) {
+                    currentTimeMs = end;
+                } else {
+                    currentTimeMs = progress;
+                }
+                mClipPlayFragment.showClipPosThumbnail(mClip, currentTimeMs);
             }
 
             @Override

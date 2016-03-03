@@ -61,10 +61,9 @@ public class BaseActivity extends AppCompatActivity {
         setupToolbar();
     }
 
-    protected void setupToolbar() {
+    public void setupToolbar() {
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
-            mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         }
     }
 

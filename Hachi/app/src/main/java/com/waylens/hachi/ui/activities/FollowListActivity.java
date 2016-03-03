@@ -78,7 +78,7 @@ public class FollowListActivity extends BaseActivity {
     }
 
     @Override
-    protected void setupToolbar() {
+    public void setupToolbar() {
         super.setupToolbar();
         if (mToolbar != null) {
             String title = mIsFollowers ? getString(R.string.followers) : getString(R.string
