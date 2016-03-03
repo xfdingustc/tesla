@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -227,11 +228,18 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != REQUEST_CODE_ENHANCE) {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
+        switch (requestCode) {
+            case REQUEST_CODE_ENHANCE:
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    ArrayList<Clip> clips = data.getParcelableArrayListExtra("clips.more");
+                    Log.e("test", "Clips: " + clips);
+                    mClipsEditView.appendSharableClips(clips);
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
-        Log.e("test", "resultCode:" + resultCode);
+
     }
 
     void close() {

@@ -26,7 +26,7 @@ public class ClipChooserActivity extends BaseActivity {
         Intent intent = getIntent();
         //Clip clip = intent.getParcelableExtra("clip");
         ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
-        Fragment fragment = ClipListFragment.newInstance(Clip.TYPE_MARKED, true);
+        Fragment fragment = ClipListFragment.newInstance(Clip.TYPE_MARKED, true, true);
 
         getFragmentManager()
                 .beginTransaction()

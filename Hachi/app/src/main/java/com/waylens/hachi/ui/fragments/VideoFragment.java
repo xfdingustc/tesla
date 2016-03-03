@@ -1,18 +1,15 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cocosw.bottomsheet.BottomSheet;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
@@ -22,7 +19,7 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2016/2/17.
  */
-public class VideoFragment extends BaseFragment implements FragmentNavigator{
+public class VideoFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = VideoFragment.class.getSimpleName();
     private TabLayout mTabLayout;
 
@@ -35,7 +32,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_bookmark2,
-            savedInstanceState);
+                savedInstanceState);
         mTabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
         setupViewPager();
         return view;
@@ -44,10 +41,10 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator{
 
     private void setupViewPager() {
         mAdapter = new SimpleFragmentPagerAdapter(getActivity()
-            .getFragmentManager());
-        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED, false), getString(R.string
-            .bookmark));
-        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED, false), getString(R.string.all));
+                .getFragmentManager());
+        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
+                .bookmark));
+        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED), getString(R.string.all));
 
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -61,17 +58,6 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator{
         return mViewPager;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.smartRemix:
-                popupBottomSheet();
-                break;
-        }
-        return true;
-    }
-
-
     private boolean onBottomSheetMenuItemClicked(MenuItem item) {
         switch (item.getItemId()) {
 //            break;
@@ -82,16 +68,16 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator{
     private void popupBottomSheet() {
         BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
         BottomSheet bottomSheet = builder
-            .grid()
-            .darkTheme()
-            .sheet(R.menu.menu_video_fragment_bottom_sheet)
-            .listener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    //return onBottomSheetMenuItemClicked(item);
-                    return true;
-                }
-            }).build();
+                .grid()
+                .darkTheme()
+                .sheet(R.menu.menu_video_fragment_bottom_sheet)
+                .listener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        //return onBottomSheetMenuItemClicked(item);
+                        return true;
+                    }
+                }).build();
 
         bottomSheet.setCanceledOnTouchOutside(false);
 
@@ -102,7 +88,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator{
 
     @Override
     public boolean onInterceptBackPressed() {
-        ClipListFragment fragment = (ClipListFragment)mAdapter.getItem(mViewPager.getCurrentItem());
+        ClipListFragment fragment = (ClipListFragment) mAdapter.getItem(mViewPager.getCurrentItem());
         return fragment.onInterceptBackPressed();
     }
 }

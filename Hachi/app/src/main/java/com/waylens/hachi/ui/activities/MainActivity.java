@@ -109,9 +109,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mCurrentFragment != null) {
-            return mCurrentFragment.onOptionsItemSelected(item);
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -189,11 +186,6 @@ public class MainActivity extends BaseActivity {
             }
         } else {
             mTabLayout.setVisibility(View.GONE);
-        }
-
-        mToolbar.getMenu().clear();
-        if (tag == TAB_TAG_VIDEO) {
-            mToolbar.inflateMenu(R.menu.menu_video_fragment);
         }
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

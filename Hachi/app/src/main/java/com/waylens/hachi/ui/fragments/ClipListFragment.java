@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -7,6 +9,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -43,6 +48,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
     private static final String TAG = ClipListFragment.class.getSimpleName();
     private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
     private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
+    private static final String ARG_IS_ADD_MORE = "is.add.more";
 
     private Map<String, ClipSet> mClipSetGroup = new HashMap<>();
 
@@ -61,7 +67,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
 
     @OnClick(R.id.btnEnhance)
     public void onBtnEnhanceClicked() {
-        ArrayList selectedList = mAdapter.getSelectedClipList();
+        ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
         EnhancementActivity.launch(getActivity(), selectedList);
 
     }
@@ -72,11 +78,28 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
 
     private boolean mIsMultipleMode;
 
-    public static ClipListFragment newInstance(int clipSetType, boolean isMultipleSelectionMode) {
+    boolean mIsAddMore;
+
+    MenuItem mMenuItemUpload;
+    MenuItem mMenuItemEnhance;
+    MenuItem mMenuItemDelete;
+
+    public static ClipListFragment newInstance(int clipSetType) {
+        ClipListFragment fragment = new ClipListFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
+        args.putBoolean(ARG_IS_MULTIPLE_MODE, false);
+        args.putBoolean(ARG_IS_ADD_MORE, false);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static ClipListFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
         ClipListFragment fragment = new ClipListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
         args.putBoolean(ARG_IS_MULTIPLE_MODE, isMultipleSelectionMode);
+        args.putBoolean(ARG_IS_ADD_MORE, isAddMore);
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,7 +111,9 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
         if (args != null) {
             mClipSetType = args.getInt(ARG_CLIP_SET_TYPE, Clip.TYPE_MARKED);
             mIsMultipleMode = args.getBoolean(ARG_IS_MULTIPLE_MODE, false);
+            mIsAddMore = args.getBoolean(ARG_IS_ADD_MORE, false);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -99,8 +124,22 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
         if (getCamera() != null) {
             retrieveSharableClips();
         }
-
     }
+
+    void configureMenuItem() {
+        if (mMenuItemUpload != null) {
+            mMenuItemUpload.setVisible(mIsMultipleMode);
+        }
+
+        if (mMenuItemEnhance != null) {
+            mMenuItemEnhance.setVisible(mIsMultipleMode);
+        }
+
+        if (mMenuItemDelete != null) {
+            mMenuItemDelete.setVisible(mIsMultipleMode);
+        }
+    }
+
 
     @Nullable
     @Override
@@ -116,6 +155,42 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
             }
         });
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_clip_list, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        mMenuItemUpload = menu.findItem(R.id.menu_to_upload);
+        mMenuItemEnhance = menu.findItem(R.id.menu_to_enhance);
+        mMenuItemDelete = menu.findItem(R.id.menu_to_delete);
+        configureMenuItem();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_to_enhance:
+                toEnhance();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    void toEnhance() {
+        if (mIsAddMore) {
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra("clips.more", mAdapter.getSelectedClipList());
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
+        } else {
+            ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+            EnhancementActivity.launch(getActivity(), selectedList);
+        }
     }
 
     @Override
@@ -145,6 +220,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
             public void onClipLongClicked(Clip clip) {
                 mIsMultipleMode = true;
                 mAdapter.setMultiSelectedMode(mIsMultipleMode);
+                configureMenuItem();
                 popupBottomSheet();
             }
         });
@@ -255,6 +331,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
         if (mIsMultipleMode) {
             mIsMultipleMode = false;
             mAdapter.setMultiSelectedMode(mIsMultipleMode);
+            configureMenuItem();
             return true;
         }
         return false;
