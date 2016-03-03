@@ -188,7 +188,7 @@ public class MultiSegSeekbar extends View {
             return;
         }
 
-        mBar.draw(canvas);
+        mBar.draw(canvas, mClipList);
         mThumb.draw(canvas);
     }
 

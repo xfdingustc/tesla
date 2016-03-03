@@ -16,7 +16,7 @@ class Bar {
     private final float mLeftX;
     private final float mRightX;
     private final float mY;
-    private final List<Clip> mClipList;
+    private List<Clip> mClipList;
     private final float mDividerWidth;
     private final float mLength;
     private int mActiveIndex = 0;
@@ -50,9 +50,13 @@ class Bar {
 
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, List<Clip> clipList) {
         //canvas.drawLine(mLeftX, mY, mRightX, mY, mBarPaint);
+        if (clipList == null) {
+            return;
+        }
 
+        mClipList = clipList;
         long totalClipTimeMs = 0;
 
         for (Clip clip : mClipList) {

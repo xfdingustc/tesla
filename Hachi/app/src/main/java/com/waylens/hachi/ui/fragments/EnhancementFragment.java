@@ -199,10 +199,9 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClips, 0x100);
         mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
             @Override
-            public void onBuildComplete() {
+            public void onBuildComplete(ClipSet clipSet) {
                 embedVideoPlayFragment();
-                mClipsEditView.setClips(mPlaylistEditor.getClipSet().getClipList());
-                //mClipsEditView.setClips(mClips);
+                mClipsEditView.setClips(mClips);
             }
         });
         mClipsEditView.setOnClipEditListener(this);
@@ -281,8 +280,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
         mPlaylistEditor.appendClips(clips, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
-            public void onBuildComplete() {
-                mClipPlayFragment.notifyClipSetChanged();
+            public void onBuildComplete(ClipSet clipSet) {
+                mClipPlayFragment.setClipSet(clipSet);
             }
         });
     }

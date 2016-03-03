@@ -110,7 +110,7 @@ public class PlaylistEditor {
                         switch (action) {
                             case ACTION_ADD:
                                 if (mOnBuildCompleteListener != null) {
-                                    mOnBuildCompleteListener.onBuildComplete();
+                                    mOnBuildCompleteListener.onBuildComplete(mPlayListClipSet);
                                 }
                                 break;
                             case ACTION_DELETE:
@@ -259,7 +259,7 @@ public class PlaylistEditor {
 
 
     public interface OnBuildCompleteListener {
-        void onBuildComplete();
+        void onBuildComplete(ClipSet clipSet);
     }
 
     public interface OnDeleteCompleteListener {

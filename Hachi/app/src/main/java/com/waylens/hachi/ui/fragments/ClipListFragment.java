@@ -128,7 +128,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
 
     void configureMenuItem() {
         if (mMenuItemUpload != null) {
-            mMenuItemUpload.setVisible(mIsMultipleMode);
+            mMenuItemUpload.setVisible(mIsMultipleMode && !mIsAddMore);
         }
 
         if (mMenuItemEnhance != null) {
@@ -136,7 +136,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
         }
 
         if (mMenuItemDelete != null) {
-            mMenuItemDelete.setVisible(mIsMultipleMode);
+            mMenuItemDelete.setVisible(mIsMultipleMode && !mIsAddMore);
         }
     }
 
