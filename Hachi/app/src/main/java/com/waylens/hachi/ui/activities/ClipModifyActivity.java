@@ -112,14 +112,7 @@ public class ClipModifyActivity extends BaseActivity {
 
             @Override
             public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
-//                if (videoCover != null) {
-//                    videoCover.setVisibility(View.VISIBLE);
-//                    Clip.ID cid = getWorkableCid();
-//                    ClipPos clipPos = new ClipPos(mClip.getVdbId(), cid, mClip.clipDate, progress, ClipPos.TYPE_POSTER, false);
-//                    mImageLoader.displayVdbImage(clipPos, videoCover, true, false);
-//                }
-//                mSeekToPosition = progress;
-//                mTypedPosition.clear();
+                mClipPlayFragment.showClipPosThumbnail(mClip, progress);
             }
 
             @Override
