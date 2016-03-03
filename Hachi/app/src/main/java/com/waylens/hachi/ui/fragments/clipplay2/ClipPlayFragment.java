@@ -33,6 +33,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.ui.activities.ClipModifyActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
@@ -271,10 +272,13 @@ public class ClipPlayFragment extends DialogFragment {
                 switch (item.getItemId()) {
                     case R.id.share:
                         return true;
-
                     case R.id.enhance:
                         dismiss();
                         EnhancementActivity.launch(getActivity(), mClipSet.getClipList());
+                        return true;
+                    case R.id.modify:
+                        dismiss();
+                        ClipModifyActivity.launch(getActivity(), mClipSet.getClip(0));
                         return true;
                 }
                 return false;

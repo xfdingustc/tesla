@@ -70,6 +70,8 @@
             android:name=".ui.activities.ClipPlaybackActivity"
             android:screenOrientation="landscape"/>
 
+        <activity android:name=".ui.activities.ClipModifyActivity"/>
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
