@@ -21,64 +21,7 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-    <LinearLayout
-        android:id="@+id/bottomSheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="?attr/defaultBgColorDark"
-        android:orientation="horizontal"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
-        android:visibility="gone">
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <ImageButton
-                android:id="@+id/btnShare"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:src="@drawable/btn_edit_action_share"/>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <ImageButton
-                android:id="@+id/btnEnhance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:src="@drawable/btn_edit_action_enhance"/>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <ImageButton
-                android:id="@+id/btnDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:src="@drawable/btn_edit_action_delete"/>
-
-        </FrameLayout>
-
-
-    </LinearLayout>
+    
 
 
 </FrameLayout>

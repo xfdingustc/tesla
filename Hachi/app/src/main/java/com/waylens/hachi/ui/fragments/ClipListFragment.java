@@ -62,15 +62,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
     @Bind(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
 
-    @Bind(R.id.bottomSheet)
-    LinearLayout mBottomSheet;
 
-    @OnClick(R.id.btnEnhance)
-    public void onBtnEnhanceClicked() {
-        ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-        EnhancementActivity.launch(getActivity(), selectedList);
-
-    }
 
     private Handler mUiThreadHandler;
 
@@ -221,7 +213,6 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
                 mIsMultipleMode = true;
                 mAdapter.setMultiSelectedMode(mIsMultipleMode);
                 configureMenuItem();
-                popupBottomSheet();
             }
         });
 
@@ -305,26 +296,6 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
 
     }
 
-    private void popupBottomSheet() {
-//        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
-//        BottomSheet bottomSheet = builder
-//            .grid()
-//            .darkTheme()
-//            .sheet(R.menu.menu_video_fragment_bottom_sheet)
-//            .listener(new MenuItem.OnMenuItemClickListener() {
-//                @Override
-//                public boolean onMenuItemClick(MenuItem item) {
-//                    //return onBottomSheetMenuItemClicked(item);
-//                    return true;
-//                }
-//            }).build();
-//
-//        bottomSheet.setCanceledOnTouchOutside(false);
-//
-//        bottomSheet.show();
-        mBottomSheet.setVisibility(View.VISIBLE);
-
-    }
 
     @Override
     public boolean onInterceptBackPressed() {
