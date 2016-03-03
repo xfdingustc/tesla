@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.ui.views.cliptrimmer;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
 
 /**
@@ -25,7 +26,7 @@ import com.waylens.hachi.utils.ViewUtils;
  * <p/>
  * Created by Richard on 9/28/15.
  */
-public class VideoTrimmerController extends View implements Progressive {
+class VideoTrimmerController extends View implements Progressive {
 
     private static final float MAX_VALUE = 1000.0f;
 

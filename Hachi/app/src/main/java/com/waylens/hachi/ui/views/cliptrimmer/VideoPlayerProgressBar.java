@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.ui.views.cliptrimmer;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -23,13 +23,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * VideoPlayerProgressBar

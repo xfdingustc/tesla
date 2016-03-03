@@ -17,7 +17,7 @@ import com.waylens.hachi.ui.views.VideoPlayView;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.ui.views.VideoTrimmer;
+import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 
 import java.util.ArrayList;
 import java.util.Calendar;

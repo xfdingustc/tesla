@@ -52,7 +52,7 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.ui.views.VideoTrimmer;
+import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 
 import java.io.IOException;
 

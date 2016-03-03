@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/defaultBgColor"
     android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/clipPlayFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout_height="256dp"/>
+        android:layout_height="wrap_content" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer
+        android:id="@+id/clipTrimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

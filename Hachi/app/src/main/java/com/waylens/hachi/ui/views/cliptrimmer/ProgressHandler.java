@@ -1,7 +1,9 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.ui.views.cliptrimmer;
 
 import android.os.Handler;
 import android.os.Message;
+
+import com.waylens.hachi.ui.views.Progressive;
 
 /**
  * ProgressHandler
