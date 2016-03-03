@@ -11,6 +11,8 @@ public class ClipSet {
 
     private ArrayList<Clip> mClipList = new ArrayList<>();
 
+
+
     public ClipSet(int type) {
         this.mClipType = type;
         liveClipId = null;

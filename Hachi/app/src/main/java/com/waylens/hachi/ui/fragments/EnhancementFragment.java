@@ -210,8 +210,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
-        config.showControlPanel = false;
+        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
 
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
         mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mPlaylistEditor.getClipSet(), vdtUriProvider,

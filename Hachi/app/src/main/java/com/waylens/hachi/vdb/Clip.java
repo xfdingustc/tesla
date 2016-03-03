@@ -10,6 +10,8 @@ public class Clip implements Parcelable {
     public static final int TYPE_BUFFERED = 0;
     public static final int TYPE_MARKED = 1;
 
+    public static final int TYPE_TEMP = 0x108;
+
     // --------------------------------------------------------------
     // CAT_REMOTE:
     // 		type: clipType (buffered 0, marked 1, or plist_id >= 256)

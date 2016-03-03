@@ -126,11 +126,10 @@ public class ClipModifyActivity extends BaseActivity {
 
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
-        config.showControlPanel = false;
+        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
 
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, mClip);
-        ClipSet clipSet = new ClipSet(0x107);
+        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         clipSet.addClip(mClip);
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, clipSet, vdtUriProvider,

@@ -281,10 +281,9 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
     private void popClipPreviewFragment(Clip clip) {
 
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.progressBarStyle = ClipPlayFragment.Config.PROGRESS_BAR_STYLE_SINGLE;
+        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
 
-
-        ClipSet clipSet = new ClipSet(0x107);
+        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         clipSet.addClip(clip);
 
 

@@ -145,9 +145,13 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     public static class Config {
-        public static int PROGRESS_BAR_STYLE_SINGLE = 0;
-        public int progressBarStyle = PROGRESS_BAR_STYLE_SINGLE;
-        public boolean showControlPanel = true;
+        public enum ClipMode {
+            SINGLE,
+            MULTI
+        }
+
+        public ClipMode clipMode = ClipMode.SINGLE;
+
     }
 
 
