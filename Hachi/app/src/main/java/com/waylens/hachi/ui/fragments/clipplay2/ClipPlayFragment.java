@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
@@ -21,7 +22,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -414,10 +414,14 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void startPreparingClip(long clipTimeMs) {
-        mUrProvider.getUri(clipTimeMs, new ClipUrlProvider.OnUriLoadedListener() {
+        mUrProvider.getUri(clipTimeMs, new UrlProvider.OnUrlLoadedListener() {
 
             @Override
-            public void onUriLoaded(VdbUrl url) {
+            public void onUrlLoaded(VdbUrl url) {
+                if (url == null) {
+                    Snackbar.make(mBtnPlayPause, R.string.get_url_failed, Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
                 Logger.t(TAG).d("Get playback url: " + url.url);
                 if (mClipSet.getCount() == 1) {
                     mPositionAdjuster = new ClipPositionAdjuster(mClipSet.getClip(0), url);
@@ -492,7 +496,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public long getSeekbarTimeMs() {
-        if (mClipSet.getCount() == 0) {
+        if (mClipSet.getCount() == 1) {
             Clip clip = mClipSet.getClip(0);
             return clip.getStartTimeMs() + ((long) clip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
         } else {

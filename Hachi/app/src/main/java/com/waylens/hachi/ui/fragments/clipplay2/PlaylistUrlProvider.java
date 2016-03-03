@@ -14,7 +14,7 @@ public class PlaylistUrlProvider implements UrlProvider {
     private static final String TAG = PlaylistUrlProvider.class.getSimpleName();
     private final VdbRequestQueue mVdbRequestQueue;
     private final int mPlayListID;
-    private OnUriLoadedListener mListener;
+    private OnUrlLoadedListener mListener;
 
     public PlaylistUrlProvider(VdbRequestQueue requestQueue, int playListID) {
         this.mVdbRequestQueue = requestQueue;
@@ -22,7 +22,7 @@ public class PlaylistUrlProvider implements UrlProvider {
     }
 
     @Override
-    public void getUri(long clipTimeMs, OnUriLoadedListener listener) {
+    public void getUri(long clipTimeMs, OnUrlLoadedListener listener) {
         mListener = listener;
         doGetPlaylistUri(clipTimeMs);
     }
@@ -35,7 +35,7 @@ public class PlaylistUrlProvider implements UrlProvider {
 
                 Logger.t(TAG).d("Get playlist: " + response.url);
                 if (mListener != null) {
-                    mListener.onUriLoaded(response);
+                    mListener.onUrlLoaded(response);
                 }
             }
         }, new VdbResponse.ErrorListener() {

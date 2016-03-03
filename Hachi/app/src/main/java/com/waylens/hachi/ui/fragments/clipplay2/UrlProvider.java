@@ -6,9 +6,9 @@ import com.waylens.hachi.vdb.urls.VdbUrl;
  * Created by Xiaofei on 2016/2/29.
  */
 public interface UrlProvider {
-    interface OnUriLoadedListener {
-        void onUriLoaded(VdbUrl url);
+    interface OnUrlLoadedListener {
+        void onUrlLoaded(VdbUrl url);
     }
 
-    void getUri(long clipTimeMs, OnUriLoadedListener listener);
+    void getUri(long clipTimeMs, OnUrlLoadedListener listener);
 }
