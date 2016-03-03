@@ -37,7 +37,7 @@ public class ClipUrlProvider implements UrlProvider {
 
     @Override
     public void getUri(long clipTimeMs, OnUriLoadedListener listener) {
-        Logger.t(TAG).d("Start load clip url:");
+        Logger.t(TAG).d("Start load clip url clipTimeMs: " + clipTimeMs);
 
         mListener = listener;
 

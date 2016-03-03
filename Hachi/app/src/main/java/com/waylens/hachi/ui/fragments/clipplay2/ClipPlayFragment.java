@@ -187,7 +187,7 @@ public class ClipPlayFragment extends DialogFragment {
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                if (mClipSet.getCount() == 0) {
+                if (mClipSet.getCount() == 1) {
                     startPreparingClip(mClipSet.getClip(0).getStartTimeMs());
                 } else {
                     startPreparingClip(0);
