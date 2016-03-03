@@ -85,8 +85,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-        //clearExistingPlayList(0x100, null);
-
     }
 
     @Override
@@ -105,9 +103,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         super.onDestroyView();
     }
 
-    void onClickShare() {
-        //getFragmentManager().beginTransaction().replace(R.id.root_container, ShareFragment.newInstance(mSharableClip, mAudioID)).commit();
-    }
 
     @OnClick(R.id.btn_music)
     void onClickMusic(View view) {
@@ -210,7 +205,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
+        config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
 
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
         mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mPlaylistEditor.getClipSet(), vdtUriProvider,

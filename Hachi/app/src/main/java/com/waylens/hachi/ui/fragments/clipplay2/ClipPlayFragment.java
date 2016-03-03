@@ -192,7 +192,7 @@ public class ClipPlayFragment extends DialogFragment {
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                if (mClipSet.getCount() == 1) {
+                if (mConfig.clipMode == Config.ClipMode.SINGLE) {
                     startPreparingClip(mClipSet.getClip(0).getStartTimeMs());
                 } else {
                     startPreparingClip(0);
@@ -252,7 +252,7 @@ public class ClipPlayFragment extends DialogFragment {
         ClipPos clipPos = new ClipPos(mClipSet.getClip(0));
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
-        if (mClipSet.getCount() > 1) {
+        if (mConfig.clipMode == Config.ClipMode.MULTI) {
             mVsBar.showNext();
             setupMultiSegSeekBar();
         } else {
@@ -427,7 +427,7 @@ public class ClipPlayFragment extends DialogFragment {
                     return;
                 }
                 Logger.t(TAG).d("Get playback url: " + url.url);
-                if (mClipSet.getCount() == 1) {
+                if (mConfig.clipMode == Config.ClipMode.SINGLE) {
                     mPositionAdjuster = new ClipPositionAdjuster(mClipSet.getClip(0), url);
                 } else {
                     mPositionAdjuster = new PlaylistPositionAdjuster(url);
@@ -470,22 +470,21 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     private void refreshProgressBar() {
-        int currentPos = mMediaPlayer.isPlaying() ? mMediaPlayer.getCurrentPosition() : 0;
-        int duration = mClipSet.getTotalSelectedLengthMs();
+        int currentPos = mPositionAdjuster.getAdjustedPostion(mMediaPlayer.getCurrentPosition());
 
-        int adjustedPosition = mPositionAdjuster.getAdjustedPostion(currentPos);
+        int duration = mClipSet.getTotalSelectedLengthMs();
 
 //        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
 
-        String timeText = DateUtils.formatElapsedTime(adjustedPosition / 1000) + "/" + DateUtils
+        String timeText = DateUtils.formatElapsedTime(currentPos / 1000) + "/" + DateUtils
                 .formatElapsedTime(duration / 1000);
 
         mTvProgress.setText(timeText);
 
-        if (mClipSet.getCount() == 1) {
-            mSeekBar.setProgress(adjustedPosition);
+        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
+            mSeekBar.setProgress(currentPos);
         } else {
-            int progress = (int)((float)adjustedPosition * mMultiSegSeekbar.getMax() / duration);
+            int progress = (int)((float)currentPos * mMultiSegSeekbar.getMax() / duration);
             mMultiSegSeekbar.setProgress(progress);
         }
 
@@ -499,8 +498,9 @@ public class ClipPlayFragment extends DialogFragment {
         }
     }
 
+
     public long getSeekbarTimeMs() {
-        if (mClipSet.getCount() == 1) {
+        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
             Clip clip = mClipSet.getClip(0);
             return clip.getStartTimeMs() + ((long) clip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
         } else {
