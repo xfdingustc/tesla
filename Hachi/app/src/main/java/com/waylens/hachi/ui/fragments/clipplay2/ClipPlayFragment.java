@@ -463,7 +463,9 @@ public class ClipPlayFragment extends DialogFragment {
             case STATE_FAST_PREVIEW:
                 mClipCover.setVisibility(View.VISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_play);
-                mMediaPlayer.pause();
+                if (mMediaPlayer.isPlaying()) {
+                    mMediaPlayer.pause();
+                }
                 break;
         }
         mCurrentState = targetState;
