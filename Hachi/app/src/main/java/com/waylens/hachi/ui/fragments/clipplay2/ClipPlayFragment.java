@@ -81,10 +81,10 @@ public class ClipPlayFragment extends DialogFragment {
 
     private int mCurrentState = STATE_NONE;
 
-    private final int PENDING_ACTION_NONE = 0;
-    private final int PENDING_ACTION_START = 1;
+    //private final int PENDING_ACTION_NONE = 0;
+    //private final int PENDING_ACTION_START = 1;
 
-    private int mPendingAction = PENDING_ACTION_NONE;
+    //private int mPendingAction = PENDING_ACTION_NONE;
 
     @Bind(R.id.textureView)
     TextureView mTextureView;
@@ -118,9 +118,14 @@ public class ClipPlayFragment extends DialogFragment {
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
         switch (mCurrentState) {
+            case STATE_NONE:
             case STATE_PREPARED:
-            case STATE_PAUSE:
             case STATE_FAST_PREVIEW:
+                start();
+                //changeState(STATE_PLAYING);
+                refreshProgressBar();
+                break;
+            case STATE_PAUSE:
                 changeState(STATE_PLAYING);
                 refreshProgressBar();
                 break;
@@ -128,19 +133,23 @@ public class ClipPlayFragment extends DialogFragment {
                 changeState(STATE_PAUSE);
                 break;
             case STATE_PREPAREING:
-                mPendingAction = PENDING_ACTION_START;
+                //mPendingAction = PENDING_ACTION_START;
                 break;
         }
 
     }
 
-
-    public void prepare(long timeMs) {
-        startPreparingClip(timeMs);
+    private void start() {
+        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
+            startPreparingClip(getSeekbarTimeMs());
+        } else {
+            startPreparingClip(0);
+        }
     }
 
+
     public void setClipSet(ClipSet clipSet) {
-        mMultiSegSeekbar.setClipList(clipSet.getClipList());
+        mMultiSegSeekbar.setClipList(getClipSet().getClipList());
         notifyClipSetChanged();
     }
 
@@ -193,11 +202,12 @@ public class ClipPlayFragment extends DialogFragment {
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-                    startPreparingClip(getClipSet().getClip(0).getStartTimeMs());
-                } else {
-                    startPreparingClip(0);
-                }
+//                if (mConfig.clipMode == Config.ClipMode.SINGLE) {
+//                    startPreparingClip(getClipSet().getClip(0).getStartTimeMs());
+//                } else {
+//                    startPreparingClip(0);
+//                }
+                mBtnPlayPause.setEnabled(true);
             }
 
             @Override
@@ -248,9 +258,16 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     private void initViews() {
+        mBtnPlayPause.setEnabled(false);
         setupToolbar();
 
-        ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
+        Clip clip = getClipSet().getClip(0);
+        ClipPos clipPos;
+        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
+            clipPos = new ClipPos(getClipSet().getClip(0));
+        } else {
+            clipPos = new ClipPos(clip, 0, ClipPos.TYPE_POSTER, false);
+        }
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
         if (mConfig.clipMode == Config.ClipMode.MULTI) {
@@ -352,7 +369,7 @@ public class ClipPlayFragment extends DialogFragment {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Logger.t(TAG).d("onStopTrackingTouch");
-                startPreparingClip(getSeekbarTimeMs());
+                //startPreparingClip(getSeekbarTimeMs());
             }
         });
 
@@ -388,20 +405,21 @@ public class ClipPlayFragment extends DialogFragment {
                     Logger.t(TAG).d("Prepare finished!!!");
                     changeState(STATE_PREPARED);
 
-                    if (mPendingAction == PENDING_ACTION_START) {
-                        changeState(STATE_PLAYING);
-                        mPendingAction = PENDING_ACTION_NONE;
-                    }
+                    changeState(STATE_PLAYING);
 
                     refreshProgressBar();
                 }
             });
-//            mMediaPlayer.setOnCompletionListener(this);
-//            mMediaPlayer.setOnErrorListener(this);
-            mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(url.url);
-            mMediaPlayer.setSurface(new Surface(mTextureView.getSurfaceTexture()));
-            mMediaPlayer.prepareAsync();
+            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    switch (what) {
+                        case MediaPlayer.MEDIA_ERROR_IO:
+                            break;
+                    }
+                    return false;
+                }
+            });
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
                 @Override
                 public boolean onInfo(MediaPlayer mp, int what, int extra) {
@@ -416,6 +434,12 @@ public class ClipPlayFragment extends DialogFragment {
                     return false;
                 }
             });
+
+            mMediaPlayer.reset();
+            mMediaPlayer.setDataSource(url.url);
+            mMediaPlayer.setSurface(new Surface(mTextureView.getSurfaceTexture()));
+            mMediaPlayer.prepareAsync();
+
         } catch (IOException e) {
             Logger.t(TAG).e("", e);
         }
@@ -469,7 +493,7 @@ public class ClipPlayFragment extends DialogFragment {
                 mClipCover.setVisibility(View.VISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_play);
                 if (mMediaPlayer.isPlaying()) {
-                    mMediaPlayer.pause();
+                    mMediaPlayer.stop();
                 }
                 break;
         }
@@ -477,7 +501,10 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     private void refreshProgressBar() {
-        int currentPos = mPositionAdjuster.getAdjustedPostion(mMediaPlayer.getCurrentPosition());
+        int currentPos = mMediaPlayer.getCurrentPosition();
+        if (mPositionAdjuster != null) {
+            currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
+        }
 
         int duration = getClipSet().getTotalSelectedLengthMs();
 

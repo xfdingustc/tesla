@@ -208,7 +208,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
 
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
-        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), ClipSetManager.CLIP_SET_TYPE_ENHANCE,
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClipSetIndex,
                 vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
@@ -303,7 +303,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onTrimming(Clip clip, int flag, long value) {
-        Logger.t("test").d("Clip selected time" + mPlaylistEditor.getClipSet().getTotalSelectedLengthMs());
+//        Logger.t("test").d("Clip selected time" + mPlaylistEditor.getClipSet().getTotalSelectedLengthMs());
         mClipPlayFragment.showClipPosThumbnail(clip, value);
         mClipPlayFragment.notifyClipSetChanged();
     }
@@ -320,7 +320,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                     @Override
                     public void onTrimCompleted(ClipSet clipSet) {
                         mClipPlayFragment.setClipSet(clipSet);
-                        mClipPlayFragment.prepare(0);
+                        //mClipPlayFragment.prepare(0);
                     }
                 });
 
