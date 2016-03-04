@@ -42,9 +42,14 @@ public class MomentFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewPager.setAdapter(null);
+    }
+
     private void setupViewPager() {
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter
-            (getActivity().getFragmentManager());
+        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
 
         adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
         adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,18 +39,19 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
         return view;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewPager.setAdapter(null);
+    }
 
     private void setupViewPager() {
-        mAdapter = new SimpleFragmentPagerAdapter(getActivity()
-                .getFragmentManager());
+        mAdapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
         mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
                 .bookmark));
         mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED), getString(R.string.all));
-
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
-
-
     }
 
 

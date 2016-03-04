@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -39,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -171,6 +169,22 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (mMenuItemUpload != null) {
+            mMenuItemUpload.setVisible(false);
+        }
+
+        if (mMenuItemEnhance != null) {
+            mMenuItemEnhance.setVisible(false);
+        }
+
+        if (mMenuItemDelete != null) {
+            mMenuItemDelete.setVisible(false);
+        }
+        super.onDestroyView();
     }
 
     void toEnhance() {

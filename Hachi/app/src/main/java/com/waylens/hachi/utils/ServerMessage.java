@@ -92,7 +92,7 @@ public class ServerMessage {
             errorMsg.errorCode = ERROR_NO_CONNECTION;
             errorMsg.msgResID = getErrorMessage(ERROR_NO_CONNECTION);
         } else {
-            Logger.t(TAG).e("", error);
+            Logger.t(TAG).e(error, "");
         }
         return errorMsg;
     }

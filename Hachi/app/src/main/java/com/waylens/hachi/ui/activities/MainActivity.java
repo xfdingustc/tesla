@@ -187,23 +187,9 @@ public class MainActivity extends BaseActivity {
         } else {
             mTabLayout.setVisibility(View.GONE);
         }
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        if (mCurrentFragment == null) {
-            transaction.add(R.id.fragment_content, fragment).commit();
-            mCurrentFragment = fragment;
-        } else {
-            if (!fragment.isAdded()) {
-                transaction.hide(mCurrentFragment).add(R.id.fragment_content, fragment).commit();
-            } else {
-                transaction.hide(mCurrentFragment).show(fragment).commit();
-            }
-            mCurrentFragment = fragment;
-        }
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
+        mCurrentFragment = fragment;
     }
-
-
-
 
     private void setupNavigationView() {
         mUserAvatar = (CircleImageView) mNavView.getHeaderView(0).findViewById(R.id.civUserAvatar);
