@@ -4,13 +4,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cocosw.bottomsheet.BottomSheet;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
@@ -40,9 +37,9 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroyView() {
         mViewPager.setAdapter(null);
+        super.onDestroyView();
     }
 
     private void setupViewPager() {
@@ -54,39 +51,10 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
-
     @Override
     public ViewPager getViewPager() {
         return mViewPager;
     }
-
-    private boolean onBottomSheetMenuItemClicked(MenuItem item) {
-        switch (item.getItemId()) {
-//            break;
-        }
-        return true;
-    }
-
-    private void popupBottomSheet() {
-        BottomSheet.Builder builder = new BottomSheet.Builder(getActivity());
-        BottomSheet bottomSheet = builder
-                .grid()
-                .darkTheme()
-                .sheet(R.menu.menu_video_fragment_bottom_sheet)
-                .listener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        //return onBottomSheetMenuItemClicked(item);
-                        return true;
-                    }
-                }).build();
-
-        bottomSheet.setCanceledOnTouchOutside(false);
-
-        bottomSheet.show();
-
-    }
-
 
     @Override
     public boolean onInterceptBackPressed() {

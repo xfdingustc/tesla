@@ -33,12 +33,11 @@ public class EnhancementActivity extends BaseActivity {
         setTitle(R.string.enhance);
         setHomeAsUpIndicator(R.drawable.navbar_close);
         Intent intent = getIntent();
-        //Clip clip = intent.getParcelableExtra("clip");
-        //ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
+
         int clipSetIndex = intent.getIntExtra("clipSetIndex", ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_content, EnhancementFragment.newInstance(clipSetIndex)).commit();
+                .replace(R.id.fragment_content, EnhancementFragment.newInstance(clipSetIndex)).commit();
     }
 
     @Override

@@ -11,6 +11,7 @@
         <item name="hachiTextColorPrimary">#FFC4C5C5</item>
         <item name="hachiTextColorSecondary">#B2C4C5C5</item>
         <item name="hachiTextColorDisabled">#4Cc4C5C5</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -24,6 +25,13 @@
         <item name="hachiTextColorSecondary">#B2C4C5C5</item>
         <item name="hachiTextColorDisabled">#4Cc4C5C5</item>
         <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeCloseDrawable">@drawable/navbar_close</item>
+        <item name="actionModeStyle">@style/Styled.ActionMode</item>
+    </style>
+
+    <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/material_blue_500</item>
     </style>
 
     <style name="MyRadioButton"

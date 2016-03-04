@@ -48,10 +48,8 @@ import butterknife.OnClick;
  * Created by Richard on 12/18/15.
  */
 public class EnhancementFragment extends BaseFragment implements FragmentNavigator, ClipsEditView.OnClipEditListener {
-
     private static final int REQUEST_CODE_ENHANCE = 1000;
 
-    //private ArrayList<Clip> mClips;
     private int mClipSetIndex;
     private PlaylistEditor mPlaylistEditor;
 
@@ -164,6 +162,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         return fragment;
     }
 
+
     public static EnhancementFragment newInstance(int clipSetIndex) {
         Bundle args = new Bundle();
         EnhancementFragment fragment = new EnhancementFragment();
@@ -193,18 +192,15 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
-
         mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClipSetIndex, 0x100);
         mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 embedVideoPlayFragment();
                 mClipsEditView.setClipIndex(mClipSetIndex);
-                //mClipPlayFragment.setClipSet(clipSet);
             }
         });
         mClipsEditView.setOnClipEditListener(this);
-
     }
 
     private void embedVideoPlayFragment() {

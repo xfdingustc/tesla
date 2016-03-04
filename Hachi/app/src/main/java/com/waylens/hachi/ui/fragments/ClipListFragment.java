@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,7 +44,7 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2016/2/18.
  */
-public class ClipListFragment extends BaseFragment implements FragmentNavigator{
+public class ClipListFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = ClipListFragment.class.getSimpleName();
     private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
     private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
@@ -62,7 +63,6 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
     SwipeRefreshLayout mRefreshLayout;
 
 
-
     private Handler mUiThreadHandler;
 
     private int mClipSetType;
@@ -71,9 +71,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
 
     boolean mIsAddMore;
 
-    MenuItem mMenuItemUpload;
-    MenuItem mMenuItemEnhance;
-    MenuItem mMenuItemDelete;
+    ActionMode mActionMode;
 
     public static ClipListFragment newInstance(int clipSetType) {
         ClipListFragment fragment = new ClipListFragment();
@@ -104,33 +102,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
             mIsMultipleMode = args.getBoolean(ARG_IS_MULTIPLE_MODE, false);
             mIsAddMore = args.getBoolean(ARG_IS_ADD_MORE, false);
         }
-        setHasOptionsMenu(true);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mRefreshLayout.setRefreshing(true);
-
-        if (getCamera() != null) {
-            retrieveSharableClips();
-        }
-    }
-
-    void configureMenuItem() {
-        if (mMenuItemUpload != null) {
-            mMenuItemUpload.setVisible(mIsMultipleMode && !mIsAddMore);
-        }
-
-        if (mMenuItemEnhance != null) {
-            mMenuItemEnhance.setVisible(mIsMultipleMode);
-        }
-
-        if (mMenuItemDelete != null) {
-            mMenuItemDelete.setVisible(mIsMultipleMode && !mIsAddMore);
-        }
-    }
-
 
     @Nullable
     @Override
@@ -149,43 +121,17 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_clip_list, menu);
-    }
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRefreshLayout.setRefreshing(true);
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        mMenuItemUpload = menu.findItem(R.id.menu_to_upload);
-        mMenuItemEnhance = menu.findItem(R.id.menu_to_enhance);
-        mMenuItemDelete = menu.findItem(R.id.menu_to_delete);
-        configureMenuItem();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_to_enhance:
-                toEnhance();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (mMenuItemUpload != null) {
-            mMenuItemUpload.setVisible(false);
+        if (getCamera() != null) {
+            retrieveSharableClips();
         }
 
-        if (mMenuItemEnhance != null) {
-            mMenuItemEnhance.setVisible(false);
+        if (mIsAddMore && mActionMode == null) {
+            mActionMode = getActivity().startActionMode(mCABCallback);
         }
-
-        if (mMenuItemDelete != null) {
-            mMenuItemDelete.setVisible(false);
-        }
-        super.onDestroyView();
     }
 
     void toEnhance() {
@@ -231,8 +177,10 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
             @Override
             public void onClipLongClicked(Clip clip) {
                 mIsMultipleMode = true;
-                mAdapter.setMultiSelectedMode(mIsMultipleMode);
-                configureMenuItem();
+                mAdapter.setMultiSelectedMode(true);
+                if (mActionMode == null) {
+                    mActionMode = getActivity().startActionMode(mCABCallback);
+                }
             }
         });
 
@@ -321,10 +269,60 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
     public boolean onInterceptBackPressed() {
         if (mIsMultipleMode) {
             mIsMultipleMode = false;
-            mAdapter.setMultiSelectedMode(mIsMultipleMode);
-            configureMenuItem();
+            mAdapter.setMultiSelectedMode(false);
             return true;
         }
         return false;
     }
+
+    ActionMode.Callback mCABCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_clip_list, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            if (mIsAddMore) {
+                MenuItem menuItem = menu.findItem(R.id.menu_to_upload);
+                if (menuItem != null) {
+                    menuItem.setVisible(false);
+                }
+                menuItem = menu.findItem(R.id.menu_to_delete);
+                if (menuItem != null) {
+                    menuItem.setVisible(false);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_to_enhance:
+                    toEnhance();
+                    return true;
+                case R.id.menu_to_upload:
+                    return false;
+                case R.id.menu_to_delete:
+                    return false;
+                default:
+                    return false;
+            }
+
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            if (mIsAddMore) {
+                getActivity().finish();
+            } else if (mIsMultipleMode) {
+                mIsMultipleMode = false;
+                mAdapter.setMultiSelectedMode(false);
+            }
+        }
+    };
 }

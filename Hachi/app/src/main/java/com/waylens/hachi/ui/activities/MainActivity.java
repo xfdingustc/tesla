@@ -187,7 +187,20 @@ public class MainActivity extends BaseActivity {
         } else {
             mTabLayout.setVisibility(View.GONE);
         }
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
+
+        /*
+         * Here we have to go through this detach, replace, attach, and addToBackStack way,
+         * to solve the ChildFragmentManager/ViewPager bug of Android
+         * https://code.google.com/p/android/issues/detail?id=42601
+         */
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        if (mCurrentFragment != null) {
+            transaction.detach(mCurrentFragment);
+        }
+        transaction.replace(R.id.fragment_content, fragment)
+                .attach(fragment)
+                .addToBackStack(null)
+                .commit();
         mCurrentFragment = fragment;
     }
 
