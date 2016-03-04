@@ -39,6 +39,7 @@ import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
@@ -53,7 +54,8 @@ import butterknife.OnClick;
 public class ClipPlayFragment extends DialogFragment {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
-    private ClipSet mClipSet;
+    //private ClipSet mClipSet;
+    private int mClipSetIndex;
 
     private VdtCamera mVdtCamera;
 
@@ -138,7 +140,6 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void setClipSet(ClipSet clipSet) {
-        mClipSet = clipSet;
         mMultiSegSeekbar.setClipList(clipSet.getClipList());
         notifyClipSetChanged();
     }
@@ -155,12 +156,12 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    public static ClipPlayFragment newInstance(VdtCamera camera, ClipSet clipSet,
+    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex,
                                                UrlProvider vdtUrlProvider,
                                                Config config) {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
-        fragment.mClipSet = clipSet;
+        fragment.mClipSetIndex = clipSetIndex;
         fragment.mUrProvider = vdtUrlProvider;
         fragment.mConfig = config;
         return fragment;
@@ -193,7 +194,7 @@ public class ClipPlayFragment extends DialogFragment {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-                    startPreparingClip(mClipSet.getClip(0).getStartTimeMs());
+                    startPreparingClip(getClipSet().getClip(0).getStartTimeMs());
                 } else {
                     startPreparingClip(0);
                 }
@@ -249,7 +250,7 @@ public class ClipPlayFragment extends DialogFragment {
     private void initViews() {
         setupToolbar();
 
-        ClipPos clipPos = new ClipPos(mClipSet.getClip(0));
+        ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
         if (mConfig.clipMode == Config.ClipMode.MULTI) {
@@ -278,11 +279,11 @@ public class ClipPlayFragment extends DialogFragment {
                         return true;
                     case R.id.enhance:
                         dismiss();
-                        EnhancementActivity.launch(getActivity(), mClipSet.getClipList());
+                        EnhancementActivity.launch(getActivity(), mClipSetIndex);
                         return true;
                     case R.id.modify:
                         dismiss();
-                        ClipModifyActivity.launch(getActivity(), mClipSet.getClip(0));
+                        ClipModifyActivity.launch(getActivity(), getClipSet().getClip(0));
                         return true;
                 }
                 return false;
@@ -296,9 +297,13 @@ public class ClipPlayFragment extends DialogFragment {
         }
     }
 
+    private ClipSet getClipSet() {
+        return ClipSetManager.getManager().getClipSet(mClipSetIndex);
+    }
+
 
     private void setupMultiSegSeekBar() {
-        mMultiSegSeekbar.setClipList(mClipSet.getClipList());
+        mMultiSegSeekbar.setClipList(getClipSet().getClipList());
         mMultiSegSeekbar.setOnMultiSegSeekbarChangListener(new MultiSegSeekbar.OnMultiSegSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(MultiSegSeekbar seekBar) {
@@ -308,8 +313,8 @@ public class ClipPlayFragment extends DialogFragment {
             @Override
             public void onProgressChanged(MultiSegSeekbar seekBar, int progress) {
                 if (mCurrentState == STATE_FAST_PREVIEW) {
-                    int time = (int) (((float) progress * mClipSet.getTotalSelectedLengthMs()) / seekBar.getMax());
-                    ClipPos clipPos = mClipSet.findClipPosByTimePosition(time);
+                    int time = (int) (((float) progress * getClipSet().getTotalSelectedLengthMs()) / seekBar.getMax());
+                    ClipPos clipPos = getClipSet().findClipPosByTimePosition(time);
                     if (clipPos != null) {
                         mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
                     }
@@ -331,7 +336,7 @@ public class ClipPlayFragment extends DialogFragment {
 //                Logger.t(TAG).d("onProgressChanged");
                 if (mCurrentState == STATE_FAST_PREVIEW) {
                     long seekBarTimeMs = getSeekbarTimeMs();
-                    ClipPos clipPos = new ClipPos(mClipSet.getClip(0), seekBarTimeMs, ClipPos.TYPE_POSTER, false);
+                    ClipPos clipPos = new ClipPos(getClipSet().getClip(0), seekBarTimeMs, ClipPos.TYPE_POSTER, false);
                     mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
                 }
 
@@ -351,7 +356,7 @@ public class ClipPlayFragment extends DialogFragment {
             }
         });
 
-        mSeekBar.setMax(mClipSet.getClip(0).getDurationMs());
+        mSeekBar.setMax(getClipSet().getClip(0).getDurationMs());
         mSeekBar.getProgressDrawable().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
         mSeekBar.getThumb().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
     }
@@ -428,7 +433,7 @@ public class ClipPlayFragment extends DialogFragment {
                 }
                 Logger.t(TAG).d("Get playback url: " + url.url);
                 if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-                    mPositionAdjuster = new ClipPositionAdjuster(mClipSet.getClip(0), url);
+                    mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), url);
                 } else {
                     mPositionAdjuster = new PlaylistPositionAdjuster(url);
                 }
@@ -474,7 +479,7 @@ public class ClipPlayFragment extends DialogFragment {
     private void refreshProgressBar() {
         int currentPos = mPositionAdjuster.getAdjustedPostion(mMediaPlayer.getCurrentPosition());
 
-        int duration = mClipSet.getTotalSelectedLengthMs();
+        int duration = getClipSet().getTotalSelectedLengthMs();
 
 //        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
 
@@ -503,10 +508,10 @@ public class ClipPlayFragment extends DialogFragment {
 
     public long getSeekbarTimeMs() {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-            Clip clip = mClipSet.getClip(0);
+            Clip clip = getClipSet().getClip(0);
             return clip.getStartTimeMs() + ((long) clip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
         } else {
-            return ((long)mClipSet.getTotalSelectedLengthMs() * mMultiSegSeekbar.getProgress()) / mMultiSegSeekbar.getMax();
+            return ((long)getClipSet().getTotalSelectedLengthMs() * mMultiSegSeekbar.getProgress()) / mMultiSegSeekbar.getMax();
         }
     }
 

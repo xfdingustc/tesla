@@ -28,6 +28,7 @@ import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,7 +196,12 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
             getActivity().finish();
         } else {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-            EnhancementActivity.launch(getActivity(), selectedList);
+            ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
+            for (Clip clip : selectedList) {
+                clipSet.addClip(clip);
+            }
+            ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+            EnhancementActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         }
     }
 
@@ -300,9 +306,10 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator{
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         clipSet.addClip(clip);
 
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
 
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip);
-        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), clipSet,
+        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), ClipSetManager.CLIP_SET_TYPE_ENHANCE,
                 vdtUriProvider, config);
 
         fragment.show(getFragmentManager(), "ClipPlayFragment");

@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.ArrayList;
 
@@ -16,9 +17,10 @@ import java.util.ArrayList;
  */
 public class EnhancementActivity extends BaseActivity {
 
-    public static void launch(Activity activity, ArrayList<Clip> clipList) {
+    public static void launch(Activity activity, int clipSetIndex) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
-        intent.putParcelableArrayListExtra("clips", clipList);
+        intent.putExtra("clipSetIndex", clipSetIndex);
+        //intent.putParcelableArrayListExtra("clips", clipList);
         activity.startActivity(intent);
     }
 
@@ -32,11 +34,11 @@ public class EnhancementActivity extends BaseActivity {
         setHomeAsUpIndicator(R.drawable.navbar_close);
         Intent intent = getIntent();
         //Clip clip = intent.getParcelableExtra("clip");
-        ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
-
+        //ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
+        int clipSetIndex = intent.getIntExtra("clipSetIndex", ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_content, EnhancementFragment.newInstance(clips)).commit();
+                .add(R.id.fragment_content, EnhancementFragment.newInstance(clipSetIndex)).commit();
     }
 
     @Override

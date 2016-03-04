@@ -17,6 +17,7 @@ import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +35,7 @@ public class PlaylistEditor {
 
     private final VdbRequestQueue mVdbRequestQueue;
     private final List<Clip> mOriginalClipList;
+    private int mClipSetIndex;
 
     private OnBuildCompleteListener mOnBuildCompleteListener;
     private OnDeleteCompleteListener mOnDeleteCompleteListener;
@@ -43,31 +45,40 @@ public class PlaylistEditor {
     private int mClipAdded;
 
     final int mPlayListID;
-    ClipSet mPlayListClipSet;
+    //ClipSet mPlayListClipSet;
+    private ClipSetManager mClipSetManager = ClipSetManager.getManager();
 
-    public PlaylistEditor(Context context, @NonNull VdtCamera vdtCamera, @NonNull List<Clip>
-            originalClipList, int playListID) {
+    public PlaylistEditor(Context context, @NonNull VdtCamera vdtCamera, @NonNull int
+            originalClipListIndex, int playListID) {
         this.mVdbRequestQueue = Snipe.newRequestQueue(context, vdtCamera);
         //this class should not modify the original clip list
-        this.mOriginalClipList = Collections.unmodifiableList(originalClipList);
+
+
+        this.mOriginalClipList = Collections.unmodifiableList(mClipSetManager.getClipSet(originalClipListIndex).getClipList());
+        mClipSetIndex = originalClipListIndex;
         mPlayListID = playListID;
     }
+
 
     public List<Clip> getOriginalClipList() {
         return mOriginalClipList;
     }
 
-    public List<Clip> getPlayListClips() {
-        if (mPlayListClipSet != null) {
-            return mPlayListClipSet.getClipList();
-        } else {
-            return null;
-        }
+    public ClipSet getClipSet() {
+        return mClipSetManager.getClipSet(mClipSetIndex);
     }
 
-    public ClipSet getClipSet() {
-        return mPlayListClipSet;
-    }
+//    public List<Clip> getPlayListClips() {
+//        if (mPlayListClipSet != null) {
+//            return mPlayListClipSet.getClipList();
+//        } else {
+//            return null;
+//        }
+//    }
+
+//    public ClipSet getClipSet() {
+//        return mPlayListClipSet;
+//    }
 
     public int getPlayListID() {
         return mPlayListID;
@@ -106,11 +117,11 @@ public class PlaylistEditor {
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {
-                        mPlayListClipSet = clipSet;
+                        mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
                         switch (action) {
                             case ACTION_ADD:
                                 if (mOnBuildCompleteListener != null) {
-                                    mOnBuildCompleteListener.onBuildComplete(mPlayListClipSet);
+                                    mOnBuildCompleteListener.onBuildComplete(clipSet);
                                 }
                                 break;
                             case ACTION_DELETE:
@@ -184,10 +195,10 @@ public class PlaylistEditor {
     }
 
     private void doDeleteClip(int position) {
-        if (mPlayListClipSet == null) {
+        if (getClipSet() == null) {
             return;
         }
-        Clip clip = mPlayListClipSet.getClip(position);
+        Clip clip = getClipSet().getClip(position);
         if (clip == null) {
             return;
         }
@@ -208,10 +219,10 @@ public class PlaylistEditor {
     }
 
     void doMoveClip(int fromPosition, int toPosition) {
-        if (mPlayListClipSet == null) {
+        if (getClipSet() == null) {
             return;
         }
-        Clip clip = mPlayListClipSet.getClip(fromPosition);
+        Clip clip = getClipSet().getClip(fromPosition);
         if (clip == null) {
             return;
         }
@@ -231,10 +242,10 @@ public class PlaylistEditor {
     }
 
     void doTrimClip(int position, long startValue, long endValue) {
-        if (mPlayListClipSet == null) {
+        if (getClipSet() == null) {
             return;
         }
-        Clip clip = mPlayListClipSet.getClip(position);
+        Clip clip = getClipSet().getClip(position);
         if (clip == null) {
             return;
         }

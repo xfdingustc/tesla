@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ViewAnimator;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.ui.activities.ClipChooserActivity;
@@ -33,6 +34,7 @@ import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.Playlist;
 
 import java.util.ArrayList;
@@ -49,7 +51,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     private static final int REQUEST_CODE_ENHANCE = 1000;
 
-    private ArrayList<Clip> mClips;
+    //private ArrayList<Clip> mClips;
+    private int mClipSetIndex;
     private PlaylistEditor mPlaylistEditor;
 
     private int mAudioID;
@@ -161,11 +164,11 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         return fragment;
     }
 
-    public static EnhancementFragment newInstance(ArrayList<Clip> clips) {
+    public static EnhancementFragment newInstance(int clipSetIndex) {
         Bundle args = new Bundle();
         EnhancementFragment fragment = new EnhancementFragment();
         fragment.setArguments(args);
-        fragment.mClips = clips;
+        fragment.mClipSetIndex = clipSetIndex;
         return fragment;
     }
 
@@ -191,12 +194,13 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         super.onViewCreated(view, savedInstanceState);
         mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
 
-        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClips, 0x100);
+        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClipSetIndex, 0x100);
         mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 embedVideoPlayFragment();
-                mClipsEditView.setClips(mClips);
+                mClipsEditView.setClipIndex(mClipSetIndex);
+                //mClipPlayFragment.setClipSet(clipSet);
             }
         });
         mClipsEditView.setOnClipEditListener(this);
@@ -208,7 +212,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
 
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
-        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mPlaylistEditor.getClipSet(), vdtUriProvider,
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), ClipSetManager.CLIP_SET_TYPE_ENHANCE,
+                vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
         getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
@@ -302,6 +307,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onTrimming(Clip clip, int flag, long value) {
+        Logger.t("test").d("Clip selected time" + mPlaylistEditor.getClipSet().getTotalSelectedLengthMs());
         mClipPlayFragment.showClipPosThumbnail(clip, value);
         mClipPlayFragment.notifyClipSetChanged();
     }
@@ -312,7 +318,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         if (selectedPosition == ClipsEditView.POSITION_UNKNOWN) {
             return;
         }
-        Clip clip = mClips.get(selectedPosition);
+        Clip clip = getClipSet().getClip(selectedPosition);
         mPlaylistEditor.trimClip(selectedPosition, clip.editInfo.selectedStartValue, clip.editInfo.selectedEndValue,
                 new PlaylistEditor.OnTrimCompletedListener() {
                     @Override
@@ -322,6 +328,10 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                     }
                 });
 
+    }
+
+    private ClipSet getClipSet() {
+        return ClipSetManager.getManager().getClipSet(mClipSetIndex);
     }
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
