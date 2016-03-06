@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+    <title>React Transform Boilerplate</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+</head>
+<body>
+<div id="root" style="width: 100vw"></div>
+
+<script src="./js/api.js"></script>
+<script>
+    setState = hachi.setBuffer.bind(hachi);
+    update = hachi.setStateByBuffer.bind(hachi);
+    showGauge = hachi.showGauge.bind(hachi);
+    hideGauge = hachi.hideGauge.bind(hachi);
+
+    var start = new Date().getTime();
+    // Following is for demonstration
+    // Feel free to modify it
+
+    // use hachi setBuffer to set an attribute
+    setState({rpm: 2000});
+
+    setState({lng: 121});
+
+    // 2000 means 2 degree
+    setState({roll: 2000});
+
+
+    // setBuffer can accept JS Object as the value
+    setState({time: new Date('December 17, 1995 03:24:00')});
+    setState({time: numericMonthDate('12 17, 1995 03:24:00')});
+
+    setState({mph: 33});
+
+    // setBuffer can accept multiple attributes
+    setState({gforceBA: 20, gforceLR: -30});
+
+    setState({
+        ambient: {
+            tempF: 12,
+            windSpeedMiles: 50,
+            pressure: 21,
+            humidity: 15,
+            weather: 1
+        }
+    });
+    // it is efficient to set everything in one-pass
+    setState({
+        rpm: 111,
+        lng: 21,
+        lat: 42.360701,
+        baro: 0,
+        roll: 1230,
+        throttle: 0,
+        pitch: 5000,
+        time: numericMonthDate('12 19, 1995 03:24:00'),
+        mph: 39,
+        gforceBA: 21,
+        psi: 20,
+        gforceLR: -32,
+        ambient: {
+            tempF: 13,
+            windSpeedMiles: 52,
+            pressure: 23,
+            humidity: 17,
+            weather: 7
+        },
+        latLngList:[[42.360701,21],[42.460701,29],[41.360701,27],[40.360701,21]],
+
+    });
+    update();
+    hideGauge('SpeedThrottle');
+    showGauge('SpeedThrottle');
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('Execution time 1 ======> ' + time);
+</script>
+
+<script type="text/javascript">
+    function showAndroidToast(toast) {
+        Android.showToast(toast);
+    }
+</script>
+
+</body>
+</html>
+
+
+

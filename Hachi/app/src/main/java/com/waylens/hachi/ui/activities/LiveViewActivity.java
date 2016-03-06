@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -92,8 +93,8 @@ public class LiveViewActivity extends BaseActivity {
     @Bind(R.id.fabBookmark)
     ImageButton mFabBookmark;
 
-    @Bind(R.id.dashboard)
-    DashboardLayout mDashboard;
+    @Bind(R.id.wvGauge)
+    WebView mWvGauge;
 
     @Bind(R.id.liveViewLayout)
     FrameLayout mLiveViewLayout;
@@ -160,11 +161,11 @@ public class LiveViewActivity extends BaseActivity {
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
-        if (mDashboard.getVisibility() == View.VISIBLE) {
+        if (mWvGauge.getVisibility() == View.VISIBLE) {
             hideOverlay();
         } else {
-            mDashboard.setVisibility(View.VISIBLE);
-            initDashboardLayout();
+            mWvGauge.setVisibility(View.VISIBLE);
+            initGaugeWebView();
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
             requestLiveRawData();
             mSharpView.setVisibility(View.INVISIBLE);
@@ -248,7 +249,7 @@ public class LiveViewActivity extends BaseActivity {
 
         // Setup rawdata adapter;
         mRawDataAdapter = new LiveRawDataAdapter();
-        mDashboard.setAdapter(mRawDataAdapter);
+        //mDashboard.setAdapter(mRawDataAdapter);
 
         // Start record red dot indicator animation
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
@@ -292,13 +293,13 @@ public class LiveViewActivity extends BaseActivity {
 
     }
 
-    private void initDashboardLayout() {
-        int width = mLiveViewLayout.getMeasuredWidth();
-        int height = mLiveViewLayout.getMeasuredHeight();
-        float widthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
-        float heightScale = (float) height / DashboardLayout.NORMAL_HEIGHT;
-        mDashboard.setScaleX(widthScale);
-        mDashboard.setScaleY(heightScale);
+    private void initGaugeWebView() {
+        mWvGauge.getSettings().setJavaScriptEnabled(true);
+        mWvGauge.setBackgroundColor(Color.TRANSPARENT);
+        //mWvGauge.addJavascriptInterface(new WebAppInterface(this), "Android");
+        //mWvGauge.setWebChromeClient(new MyWebChromeClient());
+        //mWvGauge.setWebViewClient(new MyWebViewClient());]
+        mWvGauge.loadUrl("file:///android_asset/api.html");
     }
 
 
@@ -476,7 +477,7 @@ public class LiveViewActivity extends BaseActivity {
     }
 
     void hideOverlay() {
-        mDashboard.setVisibility(View.INVISIBLE);
+        mWvGauge.setVisibility(View.INVISIBLE);
         mBtnShowOverlay.clearColorFilter();
         closeLiveRawData();
     }

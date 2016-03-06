@@ -302,14 +302,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-            <com.waylens.hachi.ui.views.dashboard.DashboardLayout
-                android:id="@+id/dashboard"
-                android:layout_width="1920px"
-                android:layout_height="1080px"
-                android:layout_gravity="center"
-                android:visibility="invisible"
-                tools:visibility="gone"/>
+            <WebView
+                android:id="@+id/wvGauge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:visibility="gone">
 
+
+            </WebView>
             <com.waylens.hachi.ui.views.SharpView
                 android:id="@+id/sharp_view"
                 android:layout_width="match_parent"
