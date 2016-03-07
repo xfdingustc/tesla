@@ -163,8 +163,10 @@ public class CameraPreviewFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            Logger.t(TAG).d("landscapte");
             view = createFragmentView(inflater, container, R.layout.fragment_camera_preview_land, savedInstanceState);
         } else {
+            Logger.t(TAG).d("portrait");
             view = createFragmentView(inflater, container, R.layout.fragment_camera_preview, savedInstanceState);
         }
         init();

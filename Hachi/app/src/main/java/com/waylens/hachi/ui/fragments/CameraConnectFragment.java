@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -79,6 +80,12 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
         return view;
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        CameraPreviewFragment fragment = CameraPreviewFragment.newInstance(getCamera());
+        getChildFragmentManager().beginTransaction().replace(R.id.cameraPreviewFragmentContainer, fragment).commit();
+    }
 
     private void init() {
         mVdtCameraManager = VdtCameraManager.getManager();
