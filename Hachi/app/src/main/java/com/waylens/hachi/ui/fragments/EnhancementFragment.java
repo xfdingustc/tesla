@@ -32,6 +32,7 @@ import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.GaugeInfoItem;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
@@ -115,12 +116,18 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     void showGauge(View view) {
         btnMusic.setSelected(false);
         btnRemix.setSelected(false);
+        mClipPlayFragment.showGaugeView(true);
         view.setSelected(!view.isSelected());
         if (mGaugeListAdapter == null) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mGaugeListView.setLayoutManager(layoutManager);
-            mGaugeListAdapter = new GaugeListAdapter(supportedGauges, gaugeDefaultSizes);
+            mGaugeListAdapter = new GaugeListAdapter(supportedGauges, gaugeDefaultSizes, new GaugeListAdapter.OnGaugeItemChangedListener() {
+                @Override
+                public void onGaugeItemChanged(GaugeInfoItem item) {
+                    mClipPlayFragment.updateGauge(item);
+                }
+            });
             mGaugeListView.setAdapter(mGaugeListAdapter);
         }
         configureActionUI(0, view.isSelected());

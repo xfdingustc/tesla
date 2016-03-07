@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.Surface;
@@ -20,6 +21,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,14 +37,20 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.views.dashboard.adapters.LiveRawDataAdapter;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -81,10 +89,6 @@ public class ClipPlayFragment extends DialogFragment {
 
     private int mCurrentState = STATE_NONE;
 
-    //private final int PENDING_ACTION_NONE = 0;
-    //private final int PENDING_ACTION_START = 1;
-
-    //private int mPendingAction = PENDING_ACTION_NONE;
 
     @Bind(R.id.textureView)
     TextureView mTextureView;
@@ -113,6 +117,9 @@ public class ClipPlayFragment extends DialogFragment {
 
     @Bind(R.id.multiSegIndicator)
     MultiSegSeekbar mMultiSegSeekbar;
+
+    @Bind(R.id.wvGauge)
+    WebView mWvGauge;
 
 
     @OnClick(R.id.btnPlayPause)
@@ -151,6 +158,18 @@ public class ClipPlayFragment extends DialogFragment {
     public void setClipSet(ClipSet clipSet) {
         mMultiSegSeekbar.setClipList(getClipSet().getClipList());
         notifyClipSetChanged();
+    }
+
+    public void updateGauge(GaugeInfoItem item) {
+        String jsApi = "javascript:";
+        if (item.isEnable) {
+            jsApi += "showGauge";
+
+        } else {
+            jsApi += "hideGauge";
+        }
+        jsApi += "('" + item.title + "')";
+        mWvGauge.loadUrl(jsApi);
     }
 
 
@@ -202,11 +221,7 @@ public class ClipPlayFragment extends DialogFragment {
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-//                if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-//                    startPreparingClip(getClipSet().getClip(0).getStartTimeMs());
-//                } else {
-//                    startPreparingClip(0);
-//                }
+
                 mBtnPlayPause.setEnabled(true);
             }
 
@@ -277,7 +292,25 @@ public class ClipPlayFragment extends DialogFragment {
             setupSeekBar();
         }
 
+        initGaugeView();
+
     }
+
+    private void initGaugeView() {
+        mWvGauge.getSettings().setJavaScriptEnabled(true);
+        mWvGauge.setBackgroundColor(Color.TRANSPARENT);
+        mWvGauge.loadUrl("file:///android_asset/api.html");
+        //LiveRawDataAdapter mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, mWvGauge);
+    }
+
+    public void showGaugeView(boolean show) {
+        if (show) {
+            mWvGauge.setVisibility(View.VISIBLE);
+        } else {
+            mWvGauge.setVisibility(View.GONE);
+        }
+    }
+
 
     private void setupToolbar() {
         mToolbar.setNavigationIcon(R.drawable.navbar_close);
@@ -522,7 +555,7 @@ public class ClipPlayFragment extends DialogFragment {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
             mSeekBar.setProgress(currentPos);
         } else {
-            int progress = (int)((float)currentPos * mMultiSegSeekbar.getMax() / duration);
+            int progress = (int) ((float) currentPos * mMultiSegSeekbar.getMax() / duration);
             mMultiSegSeekbar.setProgress(progress);
         }
 
@@ -542,7 +575,7 @@ public class ClipPlayFragment extends DialogFragment {
             Clip clip = getClipSet().getClip(0);
             return clip.getStartTimeMs() + ((long) clip.getDurationMs() * mSeekBar.getProgress()) / mSeekBar.getMax();
         } else {
-            return ((long)getClipSet().getTotalSelectedLengthMs() * mMultiSegSeekbar.getProgress()) / mMultiSegSeekbar.getMax();
+            return ((long) getClipSet().getTotalSelectedLengthMs() * mMultiSegSeekbar.getProgress()) / mMultiSegSeekbar.getMax();
         }
     }
 

@@ -195,9 +195,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
         updateMicControlButton();
 
-        // Setup rawdata adapter;
-        //mRawDataAdapter = new LiveRawDataAdapter();
-        //mDashboard.setAdapter(mRawDataAdapter);
 
         // Start record red dot indicator animation
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
@@ -248,40 +245,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void updateGaugeView(RawDataItem item) {
-        JSONObject state = new JSONObject();
 
-        try {
-            switch (item.getType()) {
-                case RawDataItem.DATA_TYPE_ACC:
-                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
-                    state.put("roll", -accData.euler_roll);
-                    state.put("pitch", -accData.euler_pitch);
-                    state.put("gforceBA", accData.accX);
-                    state.put("gforceLR", accData.accZ);
-                    break;
-                case RawDataItem.DATA_TYPE_GPS:
-                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
-                    state.put("lng", gpsData.coord.lng);
-                    state.put("lat", gpsData.coord.lat);
-                    break;
-                case RawDataItem.DATA_TYPE_OBD:
-                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
-                    state.put("rpm", obdData.rpm);
-                    state.put("mph", obdData.speed);
-                    break;
-            }
-            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
-            String date = format.format(System.currentTimeMillis());
-            Log.e("test", "date: " + date);
-            state.put("time", System.currentTimeMillis());
-        } catch (JSONException e) {
-            Log.e("test", "", e);
-        }
-
-        String callJS = "javascript:setState(" + state.toString() + ")";
-        Log.e("test", "callJS: " + callJS);
-        mWvGauge.loadUrl(callJS);
-        mWvGauge.loadUrl("javascript:update()");
         //mWebView.loadUrl("javascript:showAndroidToast('Hello')");
     }
 
@@ -436,12 +400,7 @@ public class CameraPreviewFragment extends BaseFragment {
         //mWvGauge.setWebChromeClient(new MyWebChromeClient());
         //mWvGauge.setWebViewClient(new MyWebViewClient());]
         mWvGauge.loadUrl("file:///android_asset/api.html");
-        mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, new LiveRawDataAdapter.OnRawDataListener() {
-            @Override
-            public void onRawData(RawDataItem item) {
-                updateGaugeView(item);
-            }
-        });
+        mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, mWvGauge);
     }
 
     void showMessage() {
