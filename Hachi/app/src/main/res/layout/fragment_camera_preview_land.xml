@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#222428"
@@ -8,7 +7,6 @@
 
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/liveViewLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,8 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:visibility="gone">
-        </WebView>
+            android:visibility="gone"></WebView>
 
         <com.waylens.hachi.ui.views.SharpView
             android:id="@+id/sharp_view"

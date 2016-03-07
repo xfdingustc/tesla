@@ -44,8 +44,6 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     @Bind(R.id.vsRoot)
     ViewSwitcher mVsRoot;
 
-    @Bind(R.id.btnWifiInfo)
-    Button mBtnWifiInfo;
 
     private TabLayout mTabLayout;
 
@@ -66,15 +64,44 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context
                 .WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        mBtnWifiInfo.setText(wifiInfo.getSSID());
+        //mBtnWifiInfo.setText(wifiInfo.getSSID());
         getToolbar().getMenu().clear();
         getToolbar().inflateMenu(R.menu.menu_live_view);
+
+        Logger.t(TAG).d("onResume");
+        if (mTabLayout != null) {
+            mTabLayout.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setTitle(R.string.live_view);
+        Logger.t(TAG).d("onStart");
+        if (mVdtCameraManager.isConnected()) {
+            //LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get
+            // (0));
+            //getActivity().getActionBar().setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Logger.t(TAG).d("onRause");
+        //((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
     }
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup.LayoutParams params = container.getLayoutParams();
+        Logger.t(TAG).d("height: " + params.height);
+        params.height -= getToolbar().getHeight();
+        Logger.t(TAG).d("height: " + params.height);
+        container.setLayoutParams(params);
         View view = createFragmentView(inflater, container, R.layout.fragment_camera_connect, savedInstanceState);
         init();
         return view;
@@ -162,25 +189,9 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        setTitle(R.string.live_view);
-        if (mTabLayout != null) {
-            mTabLayout.setVisibility(View.GONE);
-        }
-        if (mVdtCameraManager.isConnected()) {
-            //LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get
-            // (0));
-            //getActivity().getActionBar().setVisibility(View.GONE);
-        }
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        //((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
-    }
+
+
 
 
     private void toggleCameraConnected() {
