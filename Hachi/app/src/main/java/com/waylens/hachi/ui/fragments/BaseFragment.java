@@ -116,6 +116,10 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    public void setTitle(int titleResID) {
+        setTitle(getString(titleResID));
+    }
+
     public void setTitle(String title) {
         Toolbar toolbar = ((BaseActivity) getActivity()).getToolbar();
         if (toolbar == null) {

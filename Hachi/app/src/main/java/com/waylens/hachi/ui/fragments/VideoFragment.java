@@ -37,6 +37,12 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        setTitle(R.string.video);
+    }
+
+    @Override
     public void onDestroyView() {
         mViewPager.setAdapter(null);
         super.onDestroyView();

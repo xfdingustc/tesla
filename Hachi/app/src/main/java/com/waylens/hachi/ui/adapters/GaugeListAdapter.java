@@ -1,9 +1,11 @@
 package com.waylens.hachi.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
@@ -44,21 +46,28 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
     public void onBindViewHolder(final VH holder, int position) {
         final GaugeItem gaugeItem = mGaugeItems.get(position);
         holder.titleView.setText(gaugeItem.title);
-        holder.radioGroup.check(getRadioButtonID(gaugeItem.sizeType));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        if (gaugeItem.isEnable) {
+            holder.radioGroup.setVisibility(View.VISIBLE);
+            holder.radioGroup.check(getRadioButtonID(gaugeItem.sizeType));
+        } else {
+            holder.radioGroup.setVisibility(View.INVISIBLE);
+        }
+
+        holder.btnSwitch.setChecked(gaugeItem.isEnable);
+        holder.btnSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                enableGauge(holder, gaugeItem);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                enableGauge(holder, isChecked, gaugeItem);
             }
         });
     }
 
-    void enableGauge(VH holder, GaugeItem gaugeItem) {
-        holder.btnSwitch.setChecked(!holder.btnSwitch.isChecked());
-        if (holder.btnSwitch.isChecked()) {
+    void enableGauge(VH holder, boolean isChecked, GaugeItem gaugeItem) {
+        if (isChecked) {
+            holder.radioGroup.setVisibility(View.VISIBLE);
             holder.radioGroup.check(getRadioButtonID(gaugeItem.sizeType));
         } else {
-            holder.radioGroup.clearCheck();
+            holder.radioGroup.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -99,7 +108,7 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
         View btnLarge;
 
         @Bind(R.id.btn_switch)
-        Switch btnSwitch;
+        SwitchCompat btnSwitch;
 
         @Bind(R.id.radio_group)
         RadioGroup radioGroup;

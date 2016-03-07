@@ -12,7 +12,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -26,11 +25,11 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.fragments.VideoFragment;
 import com.waylens.hachi.ui.fragments.CameraConnectFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.MomentFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
+import com.waylens.hachi.ui.fragments.VideoFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -44,8 +43,6 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private Bundle fragmentArgs;
-
     public static final int TAB_TAG_VIDEO = 0;
     public static final int TAB_TAG_LIVE_VIEW = 1;
     public static final int TAB_TAG_MOMENTS = 2;
@@ -53,15 +50,7 @@ public class MainActivity extends BaseActivity {
 
     private int mCurrentNavMenuId;
 
-
     private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
-
-    private int[] mToolbarTitles = new int[]{
-        R.string.video,
-        R.string.live_view,
-        R.string.moments,
-        R.string.settings
-    };
 
     private BaseFragment[] mFragmentList = new BaseFragment[]{
         new VideoFragment(),
@@ -133,19 +122,18 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         setupActionBarToggle();
         setupNavigationView();
 
-
-        if (!mSessionManager.isLoggedIn()) {
+        if (mSessionManager.isLoggedIn()) {
             switchFragment(TAB_TAG_MOMENTS);
         } else {
             switchFragment(TAB_TAG_LIVE_VIEW);
-
         }
-
 
         // update user profile;
         if (mSessionManager.isLoggedIn()) {
@@ -169,13 +157,6 @@ public class MainActivity extends BaseActivity {
 
         mCurrentNavMenuId = menuId;
         mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
-
-
-        Toolbar toolbar = getToolbar();
-        if (toolbar != null) {
-            toolbar.setTitle(mToolbarTitles[tag]);
-        }
-
 
         BaseFragment fragment = mFragmentList[tag];
 
@@ -297,7 +278,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+        if (getFragmentManager().getBackStackEntryCount() > 1) {
             getFragmentManager().popBackStack();
             return;
         }

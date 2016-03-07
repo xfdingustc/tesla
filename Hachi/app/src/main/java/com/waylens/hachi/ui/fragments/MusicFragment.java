@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.fragments;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -32,7 +31,6 @@ import com.waylens.hachi.utils.VolleyUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -56,16 +54,14 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
 
     RequestQueue mRequestQueue;
 
-    ArrayDeque<MusicItem> mDownloadItems = new ArrayDeque<>();
-
     DownloadHelper mDownloadHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
-        mMusicListAdapter = new MusicListAdapter(this);
         mDownloadHelper = new DownloadHelper(getActivity(), mListener);
+        mMusicListAdapter = new MusicListAdapter(this, mDownloadHelper);
     }
 
     @Nullable
@@ -133,12 +129,11 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
             return;
         }
         for (int i = 0; i < jsonArray.length(); i++) {
-            MusicItem musicItem = MusicItem.fromJson(jsonArray.optJSONObject(i));
+            MusicItem musicItem = MusicItem.fromJson(jsonArray.optJSONObject(i), getActivity());
             if (musicItem != null) {
                 musicItems.add(musicItem);
                 if (!musicItem.isDownloaded()) {
                     Logger.t(TAG).d("Should Download: " + musicItem);
-                    addToDownloadList(musicItem);
                 } else {
                     Logger.t(TAG).d("Exist: " + musicItem);
                 }
@@ -146,25 +141,6 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
         }
         mMusicListAdapter.setMusicItems(musicItems);
         mViewAnimator.setDisplayedChild(1);
-        downloadMusicFiles();
-    }
-
-    void addToDownloadList(MusicItem item) {
-        mDownloadItems.add(item);
-    }
-
-    void downloadMusicFiles() {
-        if (mDownloadItems == null) {
-            return;
-        }
-        MusicItem musicItem = mDownloadItems.poll();
-        if (musicItem == null) {
-            return;
-        }
-
-        mDownloadHelper.download(musicItem);
-        musicItem.isDownloading = true;
-        mMusicListAdapter.updateMusicItem(musicItem);
     }
 
     DownloadHelper.OnDownloadListener mListener = new DownloadHelper.OnDownloadListener() {
@@ -173,17 +149,15 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
             Log.e("test", "Download: " + downloadable);
             MusicItem musicItem = (MusicItem) downloadable;
             musicItem.localPath = filePath;
-            musicItem.isDownloading = false;
+            musicItem.status = MusicItem.STATUS_LOCAL;
             mMusicListAdapter.updateMusicItem(musicItem);
-            downloadMusicFiles();
         }
 
         @Override
         public void onError(DownloadHelper.Downloadable downloadable) {
             MusicItem musicItem = (MusicItem) downloadable;
-            musicItem.isDownloading = false;
+            musicItem.status = MusicItem.STATUS_REMOTE;
             mMusicListAdapter.updateMusicItem(musicItem);
-            //downloadMusicFiles();
         }
     };
 

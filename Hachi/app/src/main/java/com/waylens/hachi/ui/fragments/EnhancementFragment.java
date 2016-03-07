@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,12 +18,15 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.ui.activities.ClipChooserActivity;
+import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
@@ -53,15 +57,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     private int mClipSetIndex;
     private PlaylistEditor mPlaylistEditor;
 
-    private int mAudioID;
+    private int mAudioID = -1;
     private String mAudioPath;
 
     CameraVideoPlayFragment mVideoPlayFragment;
 
     private ClipPlayFragment mClipPlayFragment;
-
-    @Bind(R.id.enhance_root_view)
-    LinearLayout mEnhanceRootView;
 
     @Bind(R.id.gauge_list_view)
     RecyclerView mGaugeListView;
@@ -78,48 +79,42 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Bind(R.id.btn_music)
     View btnMusic;
 
+    @Bind(R.id.btn_smart_remix)
+    View btnRemix;
+
+    @Bind(R.id.volume_value_view)
+    TextView mVolumeView;
+
+    @Bind(R.id.volume_seek_bar)
+    SeekBar mVolumeSeekBar;
+
+    @Bind(R.id.offset_value_view)
+    TextView mOffsetView;
+
+    @Bind(R.id.music_offset_seek_bar)
+    SeekBar mOffsetSeekBar;
+
     String[] supportedGauges;
     int[] gaugeDefaultSizes;
     GaugeListAdapter mGaugeListAdapter;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mVideoPlayFragment != null) {
-            getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
-            mVideoPlayFragment = null;
-        }
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
-    }
-
-    @Override
-    public void onDestroyView() {
-        ButterKnife.unbind(this);
-        super.onDestroyView();
-    }
-
-
     @OnClick(R.id.btn_music)
     void onClickMusic(View view) {
         btnGauge.setSelected(false);
+        btnRemix.setSelected(false);
         view.setSelected(!view.isSelected());
         configureActionUI(1, view.isSelected());
     }
 
     @OnClick(R.id.btn_add_music)
     void adMusic() {
-        Log.e("test", "Add music");
+        MusicDownloadActivity.launch(getActivity());
     }
 
     @OnClick(R.id.btn_gauge)
     void showGauge(View view) {
         btnMusic.setSelected(false);
+        btnRemix.setSelected(false);
         view.setSelected(!view.isSelected());
         if (mGaugeListAdapter == null) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -142,10 +137,19 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
     }
 
+
     @OnClick(R.id.btn_add_video)
     void showClipChooser() {
         Intent intent = new Intent(getActivity(), ClipChooserActivity.class);
         startActivityForResult(intent, REQUEST_CODE_ENHANCE);
+    }
+
+    @OnClick(R.id.btn_smart_remix)
+    void showSmartRemix(View view) {
+        btnMusic.setSelected(false);
+        btnGauge.setSelected(false);
+        view.setSelected(!view.isSelected());
+        configureActionUI(2, view.isSelected());
     }
 
     public static EnhancementFragment newInstance(SharableClip sharableClip) {
@@ -183,15 +187,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_enhance, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        return createFragmentView(inflater, container, R.layout.fragment_enhance, savedInstanceState);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mEnhanceRootView.requestDisallowInterceptTouchEvent(true);
         mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClipSetIndex, 0x100);
         mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
             @Override
@@ -201,6 +202,29 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
             }
         });
         mClipsEditView.setOnClipEditListener(this);
+
+        mVolumeView.setText("100");
+        mVolumeSeekBar.setMax(100);
+        mVolumeSeekBar.setProgress(100);
+        mOffsetView.setText(DateUtils.formatElapsedTime(0));
+        mOffsetSeekBar.setEnabled(mAudioID != -1);
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mVideoPlayFragment != null) {
+            getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
+            mVideoPlayFragment = null;
+        }
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
     }
 
     private void embedVideoPlayFragment() {

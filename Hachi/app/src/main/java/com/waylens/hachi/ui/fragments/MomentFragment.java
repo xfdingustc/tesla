@@ -43,6 +43,12 @@ public class MomentFragment extends BaseFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        setTitle(R.string.moments);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         mViewPager.setAdapter(null);

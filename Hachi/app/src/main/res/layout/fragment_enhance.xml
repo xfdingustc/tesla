@@ -67,44 +67,43 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:visibility="gone">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
+            <RadioGroup
                 android:id="@+id/style_container_View"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-                <ImageView
+                <RadioButton
                     android:id="@+id/btn_gauge_off"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_centerInParent="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/btn_enhance_music"/>
+                    android:background="@drawable/btn_gauge_style"
+                    android:button="@android:color/transparent"/>
 
-                <ImageView
+                <RadioButton
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_toStartOf="@id/btn_gauge_off"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/btn_enhance_music"/>
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/btn_gauge_style"
+                    android:button="@android:color/transparent"/>
 
-                <ImageView
+                <RadioButton
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_toEndOf="@id/btn_gauge_off"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/btn_enhance_music"/>
-            </RelativeLayout>
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/btn_gauge_style"
+                    android:button="@android:color/transparent"/>
+            </RadioGroup>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/gauge_list_view"
@@ -117,11 +116,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="16dp"
+            android:background="#FF222428"
             android:paddingEnd="16dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:background="#FF222428">
+            android:paddingStart="16dp">
 
             <RelativeLayout
                 android:id="@+id/volume_desc_container"
@@ -151,16 +148,17 @@
                 android:id="@+id/volume_seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/volume_desc_container"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/volume_desc_container"/>
+                android:layout_marginTop="8dp"/>
+
             <RelativeLayout
                 android:id="@+id/offset_desc_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/volume_seek_bar"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/volume_seek_bar">
+                android:layout_marginTop="8dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -178,28 +176,131 @@
                     android:textSize="16sp"
                     tools:text="100"/>
             </RelativeLayout>
+
             <SeekBar
                 android:id="@+id/music_offset_seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/offset_desc_container"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/offset_desc_container"/>
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/btn_add_music"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:text="@string/add_music"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 />
         </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/length_container"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:background="@drawable/settings_bg"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/length_of_remix"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="30s"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/theme_container"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/length_container"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:background="@drawable/settings_bg"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/length_of_remix"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:text="30s"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/theme_container"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:background="@drawable/settings_bg"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/length_of_remix"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:text="30s"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/btn_shuffle_remix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:text="@string/shuffle_remix"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                />
+        </RelativeLayout>
+
     </ViewAnimator>
 
     <FrameLayout
@@ -214,5 +315,6 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        tools:visibility="gone"/>
 </LinearLayout>

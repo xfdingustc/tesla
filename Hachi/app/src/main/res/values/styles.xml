@@ -35,7 +35,7 @@
     </style>
 
     <style name="MyRadioButton"
-           parent="@android:style/Widget.Material.CompoundButton.RadioButton">
+           parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:button">@null</item>
     </style>
 

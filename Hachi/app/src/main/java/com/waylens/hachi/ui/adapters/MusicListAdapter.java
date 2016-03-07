@@ -16,6 +16,7 @@ import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.MusicItem;
+import com.waylens.hachi.ui.helpers.DownloadHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,8 +37,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     OnMusicActionListener mListener;
 
-    public MusicListAdapter(OnMusicActionListener listener) {
+    DownloadHelper mDownloadHelper;
+
+    public MusicListAdapter(OnMusicActionListener listener, DownloadHelper downloadHelper) {
         mListener = listener;
+        mDownloadHelper = downloadHelper;
     }
 
     public void setMusicItems(ArrayList<MusicItem> musicItems) {
@@ -59,25 +63,27 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         final MusicItem musicItem = mMusicItems.get(position);
         holder.musicTitle.setText(musicItem.title);
         holder.musicLength.setText(DateUtils.formatElapsedTime(musicItem.duration));
-        if (musicItem.isDownloading) {
-            holder.setDownloadStatus(ViewHolder.STATUS_DOWNLOADING);
-        } else if (musicItem.localPath != null) {
-            holder.setDownloadStatus(ViewHolder.STATUS_NORMAL);
-            holder.itemContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (currentHolder != null && currentHolder != holder && currentHolder.isInPreviewMode()) {
-                        currentHolder.toggleMode();
+        switch (musicItem.status) {
+            case MusicItem.STATUS_LOCAL:
+                holder.setDownloadStatus(ViewHolder.STATUS_NORMAL);
+                holder.itemContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (currentHolder != null && currentHolder != holder && currentHolder.isInPreviewMode()) {
+                            currentHolder.toggleMode();
+                        }
+                        holder.toggleMode();
+                        currentHolder = holder;
+                        previewAudio(musicItem);
                     }
-                    holder.toggleMode();
-                    currentHolder = holder;
-                    previewAudio(musicItem);
-                }
-            });
-        } else {
-            holder.setDownloadStatus(ViewHolder.STATUS_WAITING);
+                });
+                break;
+            case MusicItem.STATUS_REMOTE:
+                break;
+            case MusicItem.STATUS_DOWNLOADING:
+                holder.setDownloadStatus(ViewHolder.STATUS_DOWNLOADING);
+                break;
         }
-
 
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override

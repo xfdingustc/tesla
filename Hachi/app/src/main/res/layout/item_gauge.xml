@@ -6,8 +6,7 @@
     android:background="@drawable/settings_bg"
     android:orientation="horizontal"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:clickable="true">
+    android:paddingRight="16dp">
 
     <TextView
         android:id="@+id/title"
@@ -21,7 +20,7 @@
         android:textSize="18sp"
         tools:text="Speed"/>
 
-    <Switch
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/btn_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,13 +33,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginEnd="8dp"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@id/btn_switch">
 
         <RadioButton
             android:id="@+id/btn_small"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:contentDescription="@null"
@@ -49,8 +49,8 @@
 
         <RadioButton
             android:id="@+id/btn_medium"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:contentDescription="@null"
@@ -59,8 +59,8 @@
 
         <RadioButton
             android:id="@+id/btn_large"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:contentDescription="@null"

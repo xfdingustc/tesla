@@ -16,6 +16,13 @@ import java.io.File;
  * Created by Richard on 2/1/16.
  */
 public class MusicItem implements DownloadHelper.Downloadable {
+
+    public static final int STATUS_LOCAL = 0;
+
+    public static final int STATUS_REMOTE = 1;
+
+    public static final int STATUS_DOWNLOADING = 2;
+
     public int id;
 
     public String title;
@@ -32,11 +39,11 @@ public class MusicItem implements DownloadHelper.Downloadable {
 
     public String localPath;
 
-    public boolean isDownloading;
+    public int status;
 
     private String destFileName;
 
-    public static MusicItem fromJson(JSONObject jsonObject) {
+    public static MusicItem fromJson(JSONObject jsonObject, Context context) {
         if (jsonObject == null) {
             return null;
         }
@@ -49,9 +56,25 @@ public class MusicItem implements DownloadHelper.Downloadable {
         item.md5sum = jsonObject.optString("md5sum");
         item.duration = jsonObject.optInt("duration");
         item.updateTime = jsonObject.optLong("updateTime");
-
         item.destFileName = "music-" + item.id + ".m4a";
+        item.checkLocalFile(context);
         return item;
+    }
+
+    void checkLocalFile(Context context) {
+        File dir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+        if (dir == null) {
+            status = STATUS_REMOTE;
+            return;
+        }
+        File file = new File(dir, destFileName);
+        if (file.exists()) {
+            localPath = file.getAbsolutePath();
+            status = STATUS_LOCAL;
+        } else {
+            status = STATUS_REMOTE;
+            localPath = null;
+        }
     }
 
     @Override
@@ -85,22 +108,13 @@ public class MusicItem implements DownloadHelper.Downloadable {
         request.setAllowedOverRoaming(true);
         request.setMimeType("audio/mp4");
         request.setVisibleInDownloadsUi(true);
-        //request.setDestinationInExternalFilesDir(context, "musics", destFileName);
+        request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_MUSIC, destFileName);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, destFileName);
         request.setTitle(title);
         return request;
     }
 
     public boolean isDownloaded() {
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        if (dir == null) {
-            return false;
-        }
-        File file = new File(dir, destFileName);
-        boolean exist = file.exists();
-        if (exist) {
-            localPath = file.getAbsolutePath();
-        }
-        return exist;
+        return status == STATUS_LOCAL;
     }
 }

@@ -358,5 +358,8 @@
     <string name="video_volume">Video Volume</string>
     <string name="add_music">Add Music</string>
     <string name="time_offset">Time Offset</string>
+    <string name="length_of_remix">Length of Remix</string>
+    <string name="shuffle_remix">Shuffle Remix</string>
+    <string name="musics">Musics</string>
 
 </resources>

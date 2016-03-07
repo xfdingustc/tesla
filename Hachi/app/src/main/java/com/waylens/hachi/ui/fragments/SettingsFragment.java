@@ -21,6 +21,12 @@ public class SettingsFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        setTitle(R.string.settings);
+    }
+
     @OnClick(R.id.settings_account)
     void clickAccount() {
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, new AccountFragment()).commit();

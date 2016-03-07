@@ -6,6 +6,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +30,13 @@ public class CameraConnectFragment extends BaseFragment {
     private static final String TAG = CameraConnectFragment.class.getSimpleName();
     private VdtCameraManager mVdtCameraManager;
 
-
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
-
     @Bind(R.id.btnEnterPreview)
     Button mBtnEnterPreview;
+
+    private TabLayout mTabLayout;
 
     @OnClick(R.id.btnEnterPreview)
     public void onBtnEnterPreviewClicked() {
@@ -46,7 +47,6 @@ public class CameraConnectFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVdtCameraManager = VdtCameraManager.getManager();
-
         mVdtCameraManager.addCallback(new VdtCameraManager.Callback() {
             @Override
             public void onCameraConnecting(VdtCamera vdtCamera) {
@@ -68,16 +68,12 @@ public class CameraConnectFragment extends BaseFragment {
                 if (getActivity() == null) {
                     return;
                 }
-
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         toggleCameraConnected(true);
                     }
                 });
-
-
-//                LiveViewActivity.launch(getActivity(), vdtCamera);
 
             }
 
@@ -109,10 +105,7 @@ public class CameraConnectFragment extends BaseFragment {
     }
 
     private void initViews() {
-        // Start connect indicator animation
-
         toggleCameraConnected(mVdtCameraManager.isConnected());
-
     }
 
 
@@ -121,16 +114,20 @@ public class CameraConnectFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_camera_connect, savedInstanceState);
         initViews();
-
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mTabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context
-            .WIFI_SERVICE);
+                .WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 
     }
@@ -139,6 +136,10 @@ public class CameraConnectFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        setTitle(R.string.live_view);
+        if (mTabLayout != null) {
+            mTabLayout.setVisibility(View.GONE);
+        }
         if (mVdtCameraManager.isConnected()) {
             //LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get
             // (0));
@@ -151,8 +152,6 @@ public class CameraConnectFragment extends BaseFragment {
         super.onPause();
         //((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
     }
-
-
 
 
     private void toggleCameraConnected(boolean connected) {
