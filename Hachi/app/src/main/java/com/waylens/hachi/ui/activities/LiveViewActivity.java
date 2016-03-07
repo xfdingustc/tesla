@@ -9,6 +9,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -33,14 +34,21 @@ import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
+import com.waylens.hachi.ui.views.dashboard.eventbus.EventConstants;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
 import com.waylens.hachi.ui.views.dashboard.adapters.LiveRawDataAdapter;
+import com.waylens.hachi.vdb.RawDataItem;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.ocpsoft.prettytime.format.SimpleTimeFormat;
 
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -248,7 +256,12 @@ public class LiveViewActivity extends BaseActivity {
         updateMicControlButton();
 
         // Setup rawdata adapter;
-        mRawDataAdapter = new LiveRawDataAdapter();
+        mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, new LiveRawDataAdapter.OnRawDataListener() {
+            @Override
+            public void onRawData(RawDataItem item) {
+                updateGaugeView(item);
+            }
+        });
         //mDashboard.setAdapter(mRawDataAdapter);
 
         // Start record red dot indicator animation
@@ -259,6 +272,44 @@ public class LiveViewActivity extends BaseActivity {
         if (mTvTitle != null) {
             mTvTitle.setText(mVdtCamera.getName());
         }
+    }
+
+    private void updateGaugeView(RawDataItem item) {
+        JSONObject state = new JSONObject();
+
+        try {
+            switch (item.getType()) {
+                case RawDataItem.DATA_TYPE_ACC:
+                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
+                    state.put("roll", -accData.euler_roll / 1000);
+                    state.put("pitch", -accData.euler_pitch / 1000);
+                    break;
+                case RawDataItem.DATA_TYPE_GPS:
+                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                    state.put("lng", gpsData.coord.lng);
+                    state.put("lat", gpsData.coord.lat);
+                    break;
+                case RawDataItem.DATA_TYPE_OBD:
+                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+                    state.put("rpm", obdData.rpm / 1000);
+                    state.put("mph", obdData.speed);
+                    break;
+            }
+            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
+            String date = format.format(item.getPtsMs());
+            Log.e("test", "date: " + date);
+            //state.put("time", "numericMonthDate('" + date + "')");
+            state.put("time", date);
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+
+        String callJS = "javascript:setState(" + state.toString() + ")";
+        Log.e("test", "callJS: " + callJS);
+        mWvGauge.loadUrl(callJS);
+        mWvGauge.loadUrl("javascript:update()");
+        //mWebView.loadUrl("javascript:showAndroidToast('Hello')");
     }
 
     @Override

@@ -386,7 +386,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void setAudioUrl(String audioUrl) {
-        
+
     }
 
     public void showClipPosThumbnail(Clip clip, long timeMs) {

@@ -16,14 +16,20 @@ import com.waylens.hachi.vdb.RawDataItem;
 /**
  * Created by Xiaofei on 2015/12/18.
  */
-public class LiveRawDataAdapter extends RawDataAdapter {
+public class LiveRawDataAdapter {
     private static final String TAG = LiveRawDataAdapter.class.getSimpleName();
 
     private final VdbRequestQueue mVdbRequestQueue;
+    private final OnRawDataListener mRawDataListener;
     private RawDataItem mLatestAccRawData = null;
 
-    public LiveRawDataAdapter() {
-        this.mVdbRequestQueue = Snipe.newRequestQueue();
+    public interface OnRawDataListener {
+        void onRawData(RawDataItem item);
+    }
+
+    public LiveRawDataAdapter(VdbRequestQueue mVdbRequestQueue, OnRawDataListener listener) {
+        this.mVdbRequestQueue = mVdbRequestQueue;
+        this.mRawDataListener = listener;
         init();
     }
 
@@ -49,7 +55,9 @@ public class LiveRawDataAdapter extends RawDataAdapter {
 //                Logger.t(TAG).d(String.format("RawDataMsgHandler: Type[%d]:[%s]", response
 //                    .dataType, response.data));
 
-                notifyDataSetChanged(response);
+                if (mRawDataListener != null) {
+                    mRawDataListener.onRawData(response);
+                }
             }
         }, new VdbResponse.ErrorListener() {
             @Override

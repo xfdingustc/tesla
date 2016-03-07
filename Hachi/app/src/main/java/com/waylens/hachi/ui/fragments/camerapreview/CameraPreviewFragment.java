@@ -7,6 +7,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,13 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.views.dashboard.adapters.LiveRawDataAdapter;
 import com.waylens.hachi.vdb.ClipActionInfo;
+import com.waylens.hachi.vdb.RawDataItem;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -49,7 +55,9 @@ public class CameraPreviewFragment extends BaseFragment {
 
     int mBookmarkCount = -1;
     int mBookmarkClickCount;
+
     private Handler mHandler = new Handler();
+    private LiveRawDataAdapter mRawDataAdapter;
 
     @Bind(R.id.cameraPreview)
     CameraLiveView mLiveView;
@@ -119,6 +127,8 @@ public class CameraPreviewFragment extends BaseFragment {
     @Nullable
     @Bind(R.id.tvBatteryVol)
     TextView mTvBatteryVol;
+
+
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
@@ -235,6 +245,44 @@ public class CameraPreviewFragment extends BaseFragment {
 
         }
 
+    }
+
+    private void updateGaugeView(RawDataItem item) {
+        JSONObject state = new JSONObject();
+
+        try {
+            switch (item.getType()) {
+                case RawDataItem.DATA_TYPE_ACC:
+                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
+                    state.put("roll", -accData.euler_roll);
+                    state.put("pitch", -accData.euler_pitch);
+                    state.put("gforceBA", accData.accX);
+                    state.put("gforceLR", accData.accZ);
+                    break;
+                case RawDataItem.DATA_TYPE_GPS:
+                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                    state.put("lng", gpsData.coord.lng);
+                    state.put("lat", gpsData.coord.lat);
+                    break;
+                case RawDataItem.DATA_TYPE_OBD:
+                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+                    state.put("rpm", obdData.rpm);
+                    state.put("mph", obdData.speed);
+                    break;
+            }
+            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
+            String date = format.format(System.currentTimeMillis());
+            Log.e("test", "date: " + date);
+            state.put("time", System.currentTimeMillis());
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+        String callJS = "javascript:setState(" + state.toString() + ")";
+        Log.e("test", "callJS: " + callJS);
+        mWvGauge.loadUrl(callJS);
+        mWvGauge.loadUrl("javascript:update()");
+        //mWebView.loadUrl("javascript:showAndroidToast('Hello')");
     }
 
     private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
@@ -388,6 +436,12 @@ public class CameraPreviewFragment extends BaseFragment {
         //mWvGauge.setWebChromeClient(new MyWebChromeClient());
         //mWvGauge.setWebViewClient(new MyWebViewClient());]
         mWvGauge.loadUrl("file:///android_asset/api.html");
+        mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, new LiveRawDataAdapter.OnRawDataListener() {
+            @Override
+            public void onRawData(RawDataItem item) {
+                updateGaugeView(item);
+            }
+        });
     }
 
     void showMessage() {
