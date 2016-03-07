@@ -1245,7 +1245,7 @@ class VdtCameraController {
             } else {
                 cmd = CMD_REC_TO_STRING.get(request.mCmd);
             }
-            Logger.t(TAG).d("Send domain: " + DOMAIN_TO_STRING.get(request.mDomain) + " cmd: " + cmd);
+            //Logger.t(TAG).d("Send domain: " + DOMAIN_TO_STRING.get(request.mDomain) + " cmd: " + cmd);
 
             writeRequest(request);
 

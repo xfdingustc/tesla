@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewSwitcher xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vsRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
@@ -13,6 +13,12 @@
         android:layout_margin="30dp"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/btnWifiInfo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
         <RelativeLayout
             android:id="@+id/connectingLayout"
             android:layout_width="match_parent"
@@ -20,14 +26,13 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/connectIndicator"
                     android:layout_width="44dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerInParent="true" />
 
                 <ImageView
                     android:id="@+id/ivConnectStatus"
@@ -37,7 +42,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_toLeftOf="@id/connectIndicator"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/camera_connecting_phone"/>
+                    android:src="@drawable/camera_connecting_phone" />
 
 
                 <ImageView
@@ -47,7 +52,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/connectIndicator"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/camera_connecting_camera"/>
+                    android:src="@drawable/camera_connecting_camera" />
 
                 <Button
                     android:id="@+id/btnEnterPreview"
@@ -57,10 +62,16 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="56dp"
                     android:text="Preview"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
             </RelativeLayout>
         </RelativeLayout>
     </FrameLayout>
-</LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/cameraPreviewFragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+</ViewSwitcher>

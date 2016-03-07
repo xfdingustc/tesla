@@ -232,7 +232,7 @@ public class CameraState {
     }
 
     public void setRecordDuration(int duration) {
-        Logger.t(TAG).d("setRecordDuration: " + duration);
+//        Logger.t(TAG).d("setRecordDuration: " + duration);
         mRecordDuration = duration;
         if (mRecordState == STATE_RECORD_RECORDING || mRecordState == STATE_RECORD_STOPPING) {
             mRecordTimeFetchedTime = SystemClock.uptimeMillis();
@@ -243,7 +243,7 @@ public class CameraState {
 
     public void setMicState(int state, int vol) {
         if (mMicState != state || mMicVol != vol) {
-            Logger.t(TAG).d("setMicState: " + state + ", " + vol);
+//            Logger.t(TAG).d("setMicState: " + state + ", " + vol);
             mMicState = state;
             mMicVol = vol;
             notifyStateChanged();
@@ -252,7 +252,7 @@ public class CameraState {
 
     public void setPowerState(int batteryState, int powerState) {
         if (mBatteryState != batteryState || mPowerState != powerState) {
-            Logger.t(TAG).d("setPowerState: " + batteryState + "," + powerState);
+//            Logger.t(TAG).d("setPowerState: " + batteryState + "," + powerState);
             mBatteryState = batteryState;
             mPowerState = powerState;
             notifyStateChanged();
@@ -261,7 +261,7 @@ public class CameraState {
 
     public void setBatteryVol(int vol) {
         if (mBatteryVol != vol) {
-            Logger.t(TAG).d("setBatteryVol: " + vol);
+//            Logger.t(TAG).d("setBatteryVol: " + vol);
             mBatteryVol = vol;
             notifyStateChanged();
         }
@@ -269,7 +269,7 @@ public class CameraState {
 
     public void setStorageState(int state) {
         if (mStorageState != state) {
-            Logger.t(TAG).d("setStorageState: " + state);
+//            Logger.t(TAG).d("setStorageState: " + state);
             mStorageState = state;
             notifyStateChanged();
         }
@@ -277,7 +277,7 @@ public class CameraState {
 
     public void setStorageSpace(long totalSpace, long freeSpace) {
         if (mStorageTotalSpace != totalSpace || mStorageFreeSpace != freeSpace) {
-            Logger.t(TAG).d("setStorageSpace: " + totalSpace + ", " + freeSpace);
+//            Logger.t(TAG).d("setStorageSpace: " + totalSpace + ", " + freeSpace);
             mStorageTotalSpace = totalSpace;
             mStorageFreeSpace = freeSpace;
             notifyStateChanged();
@@ -286,8 +286,7 @@ public class CameraState {
 
     public void setOverlayFlags(int flags) {
         if (mOverlayFlags != flags) {
-
-            Logger.t(TAG).d("setOverlayFlags: " + Integer.toHexString(flags));
+//            Logger.t(TAG).d("setOverlayFlags: " + Integer.toHexString(flags));
             mOverlayFlags = flags;
             notifyStateChanged();
         }
@@ -296,7 +295,7 @@ public class CameraState {
     public void setVideoResolutionList(int list) {
         if (mVideoResolutionList != list) {
 
-            Logger.t(TAG).d("setVideoResolutionList: " + Integer.toHexString(list));
+//            Logger.t(TAG).d("setVideoResolutionList: " + Integer.toHexString(list));
             mVideoResolutionList = list;
             notifyStateChanged();
         }
@@ -304,7 +303,7 @@ public class CameraState {
 
     public void setVideoResolution(int index) {
         if (mVideoResolutionIndex != index) {
-            Logger.t(TAG).d("setVideoResolution: " + index);
+//            Logger.t(TAG).d("setVideoResolution: " + index);
             mVideoResolutionIndex = index;
             notifyStateChanged();
         }
@@ -347,7 +346,7 @@ public class CameraState {
     public void setVideoQualityList(int list) {
         if (mVideoQualityList != list) {
 
-            Logger.t(TAG).d("setVideoQualityList: " + Integer.toHexString(list));
+//            Logger.t(TAG).d("setVideoQualityList: " + Integer.toHexString(list));
 
             mVideoQualityList = list;
             notifyStateChanged();
@@ -357,7 +356,7 @@ public class CameraState {
     public void setVideoQuality(int index) {
         if (mVideoQualityIndex != index) {
 
-            Logger.t(TAG).d("setVideoQuality: " + index);
+//            Logger.t(TAG).d("setVideoQuality: " + index);
 
             mVideoQualityIndex = index;
             notifyStateChanged();
@@ -367,7 +366,7 @@ public class CameraState {
     public void setRecordModeList(int list) {
         if (mRecordModeList != list) {
 
-            Logger.t(TAG).d("setRecordModeList: " + Integer.toHexString(list));
+//            Logger.t(TAG).d("setRecordModeList: " + Integer.toHexString(list));
             mRecordModeList = list;
             notifyStateChanged();
         }
@@ -376,7 +375,7 @@ public class CameraState {
     public void setRecordMode(int index) {
         if (mRecordModeIndex != index) {
 
-            Logger.t(TAG).d("setRecordMode: " + index);
+//            Logger.t(TAG).d("setRecordMode: " + index);
             mRecordModeIndex = index;
             notifyStateChanged();
         }
@@ -385,7 +384,7 @@ public class CameraState {
     public void setColorModeList(int list) {
         if (mColorModeList != list) {
 
-            Logger.t(TAG).d("setColorModeList: " + Integer.toHexString(list));
+//            Logger.t(TAG).d("setColorModeList: " + Integer.toHexString(list));
             mColorModeList = list;
             notifyStateChanged();
         }
@@ -394,7 +393,7 @@ public class CameraState {
     public void setColorMode(int index) {
         if (mColorModeIndex != index) {
 
-            Logger.t(TAG).d("setColorMode: " + index);
+//            Logger.t(TAG).d("setColorMode: " + index);
             mColorModeIndex = index;
             notifyStateChanged();
         }

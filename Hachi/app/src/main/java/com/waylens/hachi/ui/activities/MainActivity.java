@@ -3,6 +3,8 @@ package com.waylens.hachi.ui.activities;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -14,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -53,10 +56,10 @@ public class MainActivity extends BaseActivity {
     private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
 
     private BaseFragment[] mFragmentList = new BaseFragment[]{
-        new VideoFragment(),
-        new CameraConnectFragment(),
-        new MomentFragment(),
-        new SettingsFragment()
+            new VideoFragment(),
+            new CameraConnectFragment(),
+            new MomentFragment(),
+            new SettingsFragment()
     };
 
     private Fragment mCurrentFragment = null;
@@ -102,6 +105,21 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mTabLayout.setVisibility(View.GONE);
+            mToolbar.setVisibility(View.GONE);
+            hideSystemUI(true);
+
+        } else {
+            mTabLayout.setVisibility(View.VISIBLE);
+            mToolbar.setVisibility(View.VISIBLE);
+            hideSystemUI(false);
+        }
+    }
+
+    @Override
     protected void init() {
         super.init();
 
@@ -144,6 +162,19 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void hideSystemUI(boolean hide) {
+        if (hide) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            getWindow().setAttributes(lp);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        } else {
+            WindowManager.LayoutParams attr = getWindow().getAttributes();
+            attr.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().setAttributes(attr);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+    }
 
     public void switchFragment(int tag) {
         int menuId = mMenuId2Tab.inverse().get(tag);
@@ -239,18 +270,18 @@ public class MainActivity extends BaseActivity {
 
     private void onToggleAppThemeClicked() {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-            .content(getText(R.string.change_theme_hint))
-            .negativeText(android.R.string.cancel)
-            .positiveText(android.R.string.ok)
-            .callback(new MaterialDialog.ButtonCallback() {
-                @Override
-                public void onPositive(MaterialDialog dialog) {
-                    super.onPositive(dialog);
-                    toggleAppTheme();
-                    finish();
-                }
-            })
-            .show();
+                .content(getText(R.string.change_theme_hint))
+                .negativeText(android.R.string.cancel)
+                .positiveText(android.R.string.ok)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        toggleAppTheme();
+                        finish();
+                    }
+                })
+                .show();
 
     }
 
@@ -270,7 +301,7 @@ public class MainActivity extends BaseActivity {
 
     private void setupActionBarToggle() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-            .drawer_open, R.string.drawer_close);
+                .drawer_open, R.string.drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
@@ -284,15 +315,14 @@ public class MainActivity extends BaseActivity {
         }
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment instanceof FragmentNavigator
-            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
 
-
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
-            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
@@ -301,7 +331,7 @@ public class MainActivity extends BaseActivity {
             super.onBackPressed();
         } else {
             mReturnSnackBar = Snackbar.make(mDrawerLayout, getText(R.string.backpressed_hint),
-                Snackbar.LENGTH_LONG);
+                    Snackbar.LENGTH_LONG);
             mReturnSnackBar.show();
         }
 

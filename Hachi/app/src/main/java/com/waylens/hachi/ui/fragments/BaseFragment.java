@@ -102,6 +102,10 @@ public class BaseFragment extends Fragment {
         mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), camera);
     }
 
+    public Toolbar getToolbar() {
+        return ((BaseActivity) getActivity()).getToolbar();
+    }
+
     public void showToolbar() {
         Toolbar toolbar = ((BaseActivity) getActivity()).getToolbar();
         if (toolbar != null) {
