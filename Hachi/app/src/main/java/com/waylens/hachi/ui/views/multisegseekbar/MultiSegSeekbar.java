@@ -200,7 +200,6 @@ public class MultiSegSeekbar extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Logger.t(TAG).d("DDDD");
                 onActionDown(event.getX(), event.getY());
                 return true;
             case MotionEvent.ACTION_UP:

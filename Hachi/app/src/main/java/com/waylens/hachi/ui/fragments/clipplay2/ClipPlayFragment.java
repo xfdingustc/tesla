@@ -373,7 +373,7 @@ public class ClipPlayFragment extends DialogFragment {
 
             @Override
             public void onStopTrackingTouch(MultiSegSeekbar seekBar) {
-                startPreparingClip(getSeekbarTimeMs());
+                //startPreparingClip(getSeekbarTimeMs());
             }
         });
     }

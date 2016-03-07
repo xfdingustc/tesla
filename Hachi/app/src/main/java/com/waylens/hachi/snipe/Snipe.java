@@ -50,39 +50,41 @@ public class Snipe {
 
     public static void init() {
         VdtCameraManager manager = VdtCameraManager.getManager();
-        manager.addCallback(new VdtCameraManager.Callback() {
-            @Override
-            public void onCameraConnecting(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onCameraConnected(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onCameraVdbConnected(VdtCamera vdtCamera) {
-                mVdbConnection = vdtCamera.getVdbConnection();
-                //setOptions();
-            }
-
-            @Override
-            public void onCameraDisconnected(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onCameraStateChanged(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onWifiListChanged() {
-
-            }
-        });
+        manager.addCallback(mCallback);
     }
+
+    private static VdtCameraManager.Callback mCallback = new VdtCameraManager.Callback() {
+        @Override
+        public void onCameraConnecting(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onCameraConnected(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onCameraVdbConnected(VdtCamera vdtCamera) {
+            mVdbConnection = vdtCamera.getVdbConnection();
+            setOptions();
+        }
+
+        @Override
+        public void onCameraDisconnected(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onCameraStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onWifiListChanged() {
+
+        }
+    };
 
     public static VdbConnection getVdbConnect() {
         return mVdbConnection;

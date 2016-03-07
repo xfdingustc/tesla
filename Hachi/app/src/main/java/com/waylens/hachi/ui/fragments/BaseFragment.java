@@ -40,38 +40,7 @@ public class BaseFragment extends Fragment {
             mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
         } else {
             VdtCameraManager cameraManager = VdtCameraManager.getManager();
-            cameraManager.addCallback(new VdtCameraManager.Callback() {
-                @Override
-                public void onCameraConnecting(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onCameraConnected(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onCameraVdbConnected(VdtCamera vdtCamera) {
-                    BaseFragment.this.onCameraVdbConnected(vdtCamera);
-
-                }
-
-                @Override
-                public void onCameraDisconnected(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onCameraStateChanged(VdtCamera vdtCamera) {
-
-                }
-
-                @Override
-                public void onWifiListChanged() {
-
-                }
-            });
+            cameraManager.addCallback(mVdtCameraMangerCallback);
         }
     }
 
@@ -96,6 +65,40 @@ public class BaseFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+
+
+    private VdtCameraManager.Callback mVdtCameraMangerCallback = new VdtCameraManager.Callback() {
+        @Override
+        public void onCameraConnecting(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onCameraConnected(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onCameraVdbConnected(VdtCamera vdtCamera) {
+            BaseFragment.this.onCameraVdbConnected(vdtCamera);
+        }
+
+        @Override
+        public void onCameraDisconnected(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onCameraStateChanged(VdtCamera vdtCamera) {
+
+        }
+
+        @Override
+        public void onWifiListChanged() {
+
+        }
+    };
+
 
     public void onCameraVdbConnected(VdtCamera camera) {
         mVdtCamera = camera;

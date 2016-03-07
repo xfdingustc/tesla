@@ -45,6 +45,8 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     ViewSwitcher mVsRoot;
 
 
+
+
     private TabLayout mTabLayout;
 
     @OnClick(R.id.btnEnterPreview)
@@ -97,11 +99,6 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup.LayoutParams params = container.getLayoutParams();
-        Logger.t(TAG).d("height: " + params.height);
-        params.height -= getToolbar().getHeight();
-        Logger.t(TAG).d("height: " + params.height);
-        container.setLayoutParams(params);
         View view = createFragmentView(inflater, container, R.layout.fragment_camera_connect, savedInstanceState);
         init();
         return view;
@@ -114,63 +111,23 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
         getChildFragmentManager().beginTransaction().replace(R.id.cameraPreviewFragmentContainer, fragment).commit();
     }
 
-    private void init() {
-        mVdtCameraManager = VdtCameraManager.getManager();
-        mVdtCameraManager.addCallback(new VdtCameraManager.Callback() {
+    @Override
+    public void onCameraVdbConnected(VdtCamera camera) {
+        super.onCameraVdbConnected(camera);
+        if (getActivity() == null) {
+            return;
+        }
+        getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void onCameraConnecting(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onCameraConnected(VdtCamera vdtCamera) {
-                Logger.t(TAG).d("on Camera Connected");
-                if (getActivity() == null) {
-                    return;
-                }
-
-            }
-
-            @Override
-            public void onCameraVdbConnected(VdtCamera vdtCamera) {
-                Logger.t(TAG).d("camera vdb connected");
-                if (getActivity() == null) {
-                    return;
-                }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        toggleCameraConnected();
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCameraDisconnected(VdtCamera vdtCamera) {
-                Logger.t(TAG).d("onCameraDisconnected");
-                if (getActivity() == null) {
-                    return;
-                }
-            }
-
-            @Override
-            public void onCameraStateChanged(VdtCamera vdtCamera) {
-                Logger.t(TAG).d("onCameraStateChanged");
-                if (getActivity() == null) {
-                    return;
-                }
-            }
-
-            @Override
-            public void onWifiListChanged() {
-                Logger.t(TAG).d("onWifiListChanged");
-                if (getActivity() == null) {
-                    return;
-                }
-
+            public void run() {
+                toggleCameraConnected();
             }
         });
+    }
+
+    private void init() {
+        mVdtCameraManager = VdtCameraManager.getManager();
+
         initViews();
     }
 
