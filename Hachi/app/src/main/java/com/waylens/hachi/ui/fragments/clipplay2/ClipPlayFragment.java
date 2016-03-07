@@ -385,6 +385,10 @@ public class ClipPlayFragment extends DialogFragment {
         mMultiSegSeekbar.setActiveClip(position);
     }
 
+    public void setAudioUrl(String audioUrl) {
+        
+    }
+
     public void showClipPosThumbnail(Clip clip, long timeMs) {
         changeState(STATE_FAST_PREVIEW);
         ClipPos clipPos = new ClipPos(clip, timeMs, ClipPos.TYPE_POSTER, false);
