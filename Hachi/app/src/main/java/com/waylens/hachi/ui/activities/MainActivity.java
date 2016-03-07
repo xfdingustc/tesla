@@ -180,7 +180,7 @@ public class MainActivity extends BaseActivity {
         }
         transaction.replace(R.id.fragment_content, fragment)
                 .attach(fragment)
-                .addToBackStack(null)
+                //.addToBackStack(null)
                 .commit();
         mCurrentFragment = fragment;
     }
