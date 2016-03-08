@@ -78,9 +78,13 @@ public class ClipPlayFragment extends DialogFragment {
     private String mAudioUrl;
     private VdbUrl mVdbUrl;
 
+    private float mAudioPlayerVolume = 1.0f;
+
     private Handler mUiHandler;
 
     private Config mConfig;
+
+    private RawDataLoader mRawDataLoader;
 
     private PositionAdjuster mPositionAdjuster;
 
@@ -148,9 +152,9 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void start() {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-            startPreparingClip(getSeekbarTimeMs());
+            startPreparingClip(getSeekbarTimeMs(), false);
         } else {
-            startPreparingClip(0);
+            startPreparingClip(0, true);
         }
     }
 
@@ -421,6 +425,15 @@ public class ClipPlayFragment extends DialogFragment {
     public void setAudioUrl(String audioUrl) {
         Logger.t(TAG).d("audio url: " + audioUrl);
         mAudioUrl = audioUrl;
+        if (audioUrl == null && mAudioPlayer != null && mAudioPlayer.isPlaying()) {
+            mAudioPlayer.stop();
+        }
+    }
+
+    public void setAudioPlayerVolume(float volume) {
+        if (mAudioPlayer != null) {
+            mAudioPlayer.setVolume(volume, volume);
+        }
     }
 
     public void showClipPosThumbnail(Clip clip, long timeMs) {
@@ -486,7 +499,9 @@ public class ClipPlayFragment extends DialogFragment {
     private void openAudio() {
         if (mAudioUrl == null) {
             openVideo();
+            return;
         }
+        
         mAudioPlayer = new MediaPlayer();
         try {
             mAudioPlayer.setDataSource(mAudioUrl);
@@ -504,7 +519,22 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    private void startPreparingClip(long clipTimeMs) {
+    private void startPreparingClip(final long clipTimeMs, boolean loadRawData) {
+        if (loadRawData == false) {
+            startLoadPlaybackUrl(clipTimeMs);
+        } else {
+            mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
+            mRawDataLoader.startLoad(new RawDataLoader.OnLoadCompleteListener() {
+                @Override
+                public void onLoadComplete() {
+                    startLoadPlaybackUrl(clipTimeMs);
+                }
+            });
+        }
+        changeState(STATE_PREPAREING);
+    }
+
+    private void startLoadPlaybackUrl(long clipTimeMs) {
         mUrProvider.getUri(clipTimeMs, new UrlProvider.OnUrlLoadedListener() {
 
             @Override
@@ -525,8 +555,6 @@ public class ClipPlayFragment extends DialogFragment {
 
 
         });
-
-        changeState(STATE_PREPAREING);
     }
 
     private void changeState(int targetState) {

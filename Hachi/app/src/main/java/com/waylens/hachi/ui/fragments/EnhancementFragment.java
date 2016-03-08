@@ -59,8 +59,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     private int mClipSetIndex;
     private PlaylistEditor mPlaylistEditor;
 
-    CameraVideoPlayFragment mVideoPlayFragment;
-
     private ClipPlayFragment mClipPlayFragment;
 
     @Bind(R.id.gauge_list_view)
@@ -133,13 +131,14 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     @OnClick(R.id.btn_add_music)
-    void adMusic() {
+    void addMusic() {
         MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
     }
 
     @OnClick(R.id.btn_remove)
     void removeMusic() {
         mMusicItem = null;
+        mClipPlayFragment.setAudioUrl(null);
         updateMusicUI();
     }
 
@@ -284,15 +283,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                 //
             }
         });
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mVideoPlayFragment != null) {
-            getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
-            mVideoPlayFragment = null;
-        }
     }
 
     private void embedVideoPlayFragment() {
