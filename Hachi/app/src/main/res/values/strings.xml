@@ -361,5 +361,8 @@
     <string name="length_of_remix">Length of Remix</string>
     <string name="shuffle_remix">Shuffle Remix</string>
     <string name="musics">Musics</string>
+    <string name="btn_swap">Swap</string>
+    <string name="theme">Theme</string>
+    <string name="clip_from">Use Clips From</string>
 
 </resources>

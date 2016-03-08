@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.activities;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +16,9 @@ import com.waylens.hachi.ui.fragments.MusicFragment;
  */
 public class MusicDownloadActivity extends BaseActivity {
 
-    public static void launch(Context context) {
-        Intent intent = new Intent(context, MusicDownloadActivity.class);
-        context.startActivity(intent);
+    public static void launchForResult(Fragment fragment, int requestCode) {
+        Intent intent = new Intent(fragment.getActivity(), MusicDownloadActivity.class);
+        fragment.startActivityForResult(intent, requestCode);
     }
 
     @Override

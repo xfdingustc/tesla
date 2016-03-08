@@ -1,8 +1,7 @@
 package com.waylens.hachi.ui.adapters;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -31,7 +30,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     ArrayList<MusicItem> mMusicItems = new ArrayList<>();
 
-    ViewHolder currentHolder;
+    int mPreviewIndex = -1;
 
     MediaPlayer mMediaPlayer;
 
@@ -39,9 +38,13 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     DownloadHelper mDownloadHelper;
 
-    public MusicListAdapter(OnMusicActionListener listener, DownloadHelper downloadHelper) {
+    LinearLayoutManager mLayoutManager;
+
+    public MusicListAdapter(OnMusicActionListener listener, DownloadHelper downloadHelper,
+                            LinearLayoutManager layoutManager) {
         mListener = listener;
         mDownloadHelper = downloadHelper;
+        mLayoutManager = layoutManager;
     }
 
     public void setMusicItems(ArrayList<MusicItem> musicItems) {
@@ -63,22 +66,42 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         final MusicItem musicItem = mMusicItems.get(position);
         holder.musicTitle.setText(musicItem.title);
         holder.musicLength.setText(DateUtils.formatElapsedTime(musicItem.duration));
+        holder.musicIcon.setImageResource(R.drawable.ic_cloud_queue_white_24dp);
+
         switch (musicItem.status) {
             case MusicItem.STATUS_LOCAL:
+                holder.musicIcon.setImageResource(R.drawable.ic_cloud_done_white_24dp);
                 holder.setDownloadStatus(ViewHolder.STATUS_NORMAL);
                 holder.itemContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (currentHolder != null && currentHolder != holder && currentHolder.isInPreviewMode()) {
-                            currentHolder.toggleMode();
+                        if (mPreviewIndex == holder.getAdapterPosition()) {
+                            holder.toggleMode();
+                            releaseMediaPlayer();
+                            mPreviewIndex = -1;
+                            return;
                         }
+
+                        if (mPreviewIndex >= mLayoutManager.findFirstVisibleItemPosition()
+                                && mPreviewIndex <= mLayoutManager.findLastVisibleItemPosition()) {
+                            notifyItemChanged(mPreviewIndex);
+                        }
+
                         holder.toggleMode();
-                        currentHolder = holder;
+                        mPreviewIndex = holder.getAdapterPosition();
                         previewAudio(musicItem);
                     }
                 });
                 break;
             case MusicItem.STATUS_REMOTE:
+                holder.itemContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        musicItem.status = MusicItem.STATUS_DOWNLOADING;
+                        mDownloadHelper.download(musicItem);
+                        holder.setDownloadStatus(ViewHolder.STATUS_DOWNLOADING);
+                    }
+                });
                 break;
             case MusicItem.STATUS_DOWNLOADING:
                 holder.setDownloadStatus(ViewHolder.STATUS_DOWNLOADING);
@@ -98,6 +121,10 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
                 togglePlayMode(holder);
             }
         });
+    }
+
+    void exitPreviewMode() {
+
     }
 
     @Override
@@ -181,10 +208,9 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         @Bind(R.id.music_btn_play)
         ImageView btnPlay;
 
-        static final int STATUS_WAITING = 0;
+        static final int STATUS_NORMAL = 0;
         static final int STATUS_DOWNLOADING = 1;
-        static final int STATUS_NORMAL = 2;
-        static final int STATUS_PREVIEW = 3;
+        static final int STATUS_PREVIEW = 2;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -198,10 +224,6 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
                 viewAnimator.setDisplayedChild(STATUS_NORMAL);
             }
 
-        }
-
-        public boolean isInPreviewMode() {
-            return viewAnimator.getDisplayedChild() == STATUS_PREVIEW;
         }
 
         public void setDownloadStatus(int status) {

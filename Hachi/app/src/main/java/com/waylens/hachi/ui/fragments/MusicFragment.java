@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -61,7 +62,6 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
         super.onCreate(savedInstanceState);
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mDownloadHelper = new DownloadHelper(getActivity(), mListener);
-        mMusicListAdapter = new MusicListAdapter(this, mDownloadHelper);
     }
 
     @Nullable
@@ -73,7 +73,9 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mMusicListView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        mMusicListView.setLayoutManager(layoutManager);
+        mMusicListAdapter = new MusicListAdapter(this, mDownloadHelper, layoutManager);
         mMusicListView.setAdapter(mMusicListAdapter);
         mRefreshLayout.setEnabled(false);
     }
@@ -163,11 +165,9 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
 
     @Override
     public void onAddMusic(MusicItem musicItem) {
-        Intent intent = new Intent("choose-bg-music");
-        intent.putExtra("music-id", musicItem.id);
-        intent.putExtra("name", musicItem.title);
-        intent.putExtra("path", musicItem.localPath);
-        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-        getFragmentManager().popBackStack();
+        Intent intent = new Intent();
+        intent.putExtra("music.item", musicItem.toBundle());
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
     }
 }

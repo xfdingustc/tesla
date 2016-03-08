@@ -2,7 +2,9 @@ package com.waylens.hachi.ui.entities;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 
 import com.waylens.hachi.ui.helpers.DownloadHelper;
@@ -109,12 +111,30 @@ public class MusicItem implements DownloadHelper.Downloadable {
         request.setMimeType("audio/mp4");
         request.setVisibleInDownloadsUi(true);
         request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_MUSIC, destFileName);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, destFileName);
+        //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, destFileName);
         request.setTitle(title);
         return request;
     }
 
     public boolean isDownloaded() {
         return status == STATUS_LOCAL;
+    }
+
+    public Bundle toBundle() {
+        Bundle data = new Bundle();
+        data.putInt("id", id);
+        data.putString("title", title);
+        data.putString("localPath", localPath);
+        data.putInt("duration", duration);
+        return data;
+    }
+
+    public static MusicItem fromBundle(Bundle bundle) {
+        MusicItem musicItem = new MusicItem();
+        musicItem.id = bundle.getInt("id");
+        musicItem.duration = bundle.getInt("duration");
+        musicItem.title = bundle.getString("title");
+        musicItem.localPath = bundle.getString("localPath");
+        return musicItem;
     }
 }

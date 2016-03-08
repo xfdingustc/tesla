@@ -20,8 +20,8 @@
         android:id="@+id/music_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:contentDescription="@null"
         android:src="@drawable/ic_cloud_queue_white_24dp"/>
 
@@ -38,20 +38,8 @@
         android:id="@+id/item_view_animator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp">
-        <TextView
-            android:id="@+id/download_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFF5F5F5"
-            android:textSize="14sp"
-            android:layout_gravity="center"
-            android:text="@string/music_waiting"/>
-        <ProgressBar
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp">
         <TextView
             android:id="@+id/music_length"
             android:layout_width="wrap_content"
@@ -60,6 +48,10 @@
             android:textSize="14sp"
             android:layout_gravity="center"
             tools:text="3:28"/>
+        <ProgressBar
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,7 +63,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:scaleType="center"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
                 android:src="@drawable/ic_add_white_24dp"
                 android:contentDescription="@null"
                 android:background="?attr/selectableItemBackground"/>

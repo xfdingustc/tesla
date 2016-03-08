@@ -105,4 +105,29 @@
         <item>2</item>
     </integer-array>
 
+    <string-array name="theme_remix">
+        <item>Drifts</item>
+        <item>Theme Two</item>
+        <item>Theme Three</item>
+        <item>Theme Four</item>
+    </string-array>
+
+    <string-array name="theme_length">
+        <item>5 sec</item>
+        <item>10 sec</item>
+        <item>20 sec</item>
+        <item>30 sec</item>
+        <item>45 sec</item>
+        <item>60 sec</item>
+        <item>90 sec</item>
+
+    </string-array>
+
+    <string-array name="theme_clip_src">
+        <item>Timeline Only</item>
+        <item>Last Hour</item>
+        <item>Today</item>
+        <item>Last 3 Days</item>
+    </string-array>
+
 </resources>

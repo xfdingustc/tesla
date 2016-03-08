@@ -62,8 +62,10 @@
 
         <activity android:name=".ui.activities.StoryEditActivity"/>
 
-        <activity android:name=".ui.activities.EnhancementActivity" />
-        <activity android:name=".ui.activities.ClipChooserActivity" />
+        <activity android:name=".ui.activities.EnhancementActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.ClipChooserActivity"
+            android:screenOrientation="portrait"/>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity
@@ -71,7 +73,8 @@
             android:screenOrientation="landscape"/>
 
         <activity android:name=".ui.activities.ClipModifyActivity"/>
-        <activity android:name=".ui.activities.MusicDownloadActivity" />
+        <activity android:name=".ui.activities.MusicDownloadActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name="com.facebook.FacebookActivity"

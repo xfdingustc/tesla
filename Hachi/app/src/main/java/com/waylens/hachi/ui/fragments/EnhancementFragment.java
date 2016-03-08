@@ -1,33 +1,30 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.ui.activities.ClipChooserActivity;
 import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
+import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
@@ -46,20 +43,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * Created by Richard on 12/18/15.
  */
-public class EnhancementFragment extends BaseFragment implements FragmentNavigator, ClipsEditView.OnClipEditListener {
+public class EnhancementFragment extends BaseFragment implements FragmentNavigator,
+        ClipsEditView.OnClipEditListener {
     private static final int REQUEST_CODE_ENHANCE = 1000;
+    private static final int REQUEST_CODE_ADD_MUSIC = 1001;
 
     private int mClipSetIndex;
     private PlaylistEditor mPlaylistEditor;
-
-    private int mAudioID = -1;
-    private String mAudioPath;
 
     CameraVideoPlayFragment mVideoPlayFragment;
 
@@ -89,15 +84,30 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Bind(R.id.volume_seek_bar)
     SeekBar mVolumeSeekBar;
 
-    @Bind(R.id.offset_value_view)
-    TextView mOffsetView;
+    @Bind(R.id.btn_add_music)
+    Button btnAddMusic;
 
-    @Bind(R.id.music_offset_seek_bar)
-    SeekBar mOffsetSeekBar;
+    @Bind(R.id.btn_remove)
+    View btnRemove;
+
+    @Bind(R.id.spinner_theme)
+    Spinner mThemeSpinner;
+
+    @Bind(R.id.spinner_length)
+    Spinner mLengthSpinner;
+
+    @Bind(R.id.spinner_clip_src)
+    Spinner mClipSrcSpinner;
 
     String[] supportedGauges;
     int[] gaugeDefaultSizes;
     GaugeListAdapter mGaugeListAdapter;
+
+    MusicItem mMusicItem;
+
+    ArrayAdapter<CharSequence> mThemeAdapter;
+    ArrayAdapter<CharSequence> mLengthAdapter;
+    ArrayAdapter<CharSequence> mClipSrcAdapter;
 
     @OnClick(R.id.btn_music)
     void onClickMusic(View view) {
@@ -105,11 +115,29 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         btnRemix.setSelected(false);
         view.setSelected(!view.isSelected());
         configureActionUI(1, view.isSelected());
+        updateMusicUI();
+    }
+
+    void updateMusicUI() {
+        if (mMusicItem == null) {
+            btnAddMusic.setText(R.string.add_music);
+            btnRemove.setVisibility(View.GONE);
+        } else {
+            btnAddMusic.setText(R.string.btn_swap);
+            btnRemove.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @OnClick(R.id.btn_add_music)
     void adMusic() {
-        MusicDownloadActivity.launch(getActivity());
+        MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
+    }
+
+    @OnClick(R.id.btn_remove)
+    void removeMusic() {
+        mMusicItem = null;
+        updateMusicUI();
     }
 
     @OnClick(R.id.btn_gauge)
@@ -157,6 +185,29 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         btnGauge.setSelected(false);
         view.setSelected(!view.isSelected());
         configureActionUI(2, view.isSelected());
+        if (mThemeAdapter == null) {
+            mThemeAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.theme_remix,
+                    R.layout.layout_remix_spinner);
+            mThemeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mThemeSpinner.setAdapter(mThemeAdapter);
+        }
+
+        if (mLengthAdapter == null) {
+            mLengthAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.theme_length,
+                    R.layout.layout_remix_spinner);
+            mLengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mLengthSpinner.setAdapter(mLengthAdapter);
+        }
+
+        if (mClipSrcAdapter == null) {
+            mClipSrcAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.theme_clip_src,
+                    R.layout.layout_remix_spinner);
+            mClipSrcAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mClipSrcSpinner.setAdapter(mClipSrcAdapter);
+        }
     }
 
     public static EnhancementFragment newInstance(SharableClip sharableClip) {
@@ -213,15 +264,23 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mVolumeView.setText("100");
         mVolumeSeekBar.setMax(100);
         mVolumeSeekBar.setProgress(100);
-        mOffsetView.setText(DateUtils.formatElapsedTime(0));
-        mOffsetSeekBar.setEnabled(mAudioID != -1);
 
-    }
+        mVolumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mVolumeView.setText(String.valueOf(progress));
+            }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, new IntentFilter("choose-bg-music"));
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //
+            }
+        });
     }
 
     @Override
@@ -231,7 +290,6 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
             getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
             mVideoPlayFragment = null;
         }
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
     }
 
     private void embedVideoPlayFragment() {
@@ -259,6 +317,13 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra("clips.more");
                     Log.e("test", "Clips: " + clips);
                     mClipsEditView.appendSharableClips(clips);
+                }
+                break;
+            case REQUEST_CODE_ADD_MUSIC:
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    mMusicItem = MusicItem.fromBundle(data.getBundleExtra("music.item"));
+                    updateMusicUI();
+                    Log.e("test", "item: " + mMusicItem);
                 }
                 break;
             default:
@@ -360,17 +425,4 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     private ClipSet getClipSet() {
         return ClipSetManager.getManager().getClipSet(mClipSetIndex);
     }
-
-    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mAudioID = intent.getIntExtra("music-id", 0);
-            String name = intent.getStringExtra("name");
-            mAudioPath = intent.getStringExtra("path");
-            if (mVideoPlayFragment != null) {
-                getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commit();
-                mVideoPlayFragment = null;
-            }
-        }
-    };
 }
