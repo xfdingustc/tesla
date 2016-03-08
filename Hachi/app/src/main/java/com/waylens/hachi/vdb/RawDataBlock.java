@@ -52,4 +52,14 @@ public class RawDataBlock {
     public void addRawDataItem(RawDataItem item) {
         mRawDataItems.add(item);
     }
+
+    public RawDataItem getRawDataItemByItem(int timeMs) {
+        for (RawDataItem item : mRawDataItems) {
+            if (item.getPtsMs() < timeMs) {
+                return item;
+            }
+        }
+
+        return null;
+    }
 }

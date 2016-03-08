@@ -1,10 +1,9 @@
-package com.waylens.hachi.ui.views.dashboard.adapters;
+package com.waylens.hachi.ui.fragments.camerapreview;
 
 import android.util.Log;
 import android.webkit.WebView;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -94,16 +93,20 @@ public class LiveRawDataAdapter {
                     state.put("mph", obdData.speed);
                     break;
             }
+//            state.put("rpm", 5000);
+//            state.put("roll", -2000);
+//            state.put("pitch", -50);
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
             String date = format.format(System.currentTimeMillis());
-            Log.e("test", "date: " + date);
-            state.put("time", System.currentTimeMillis());
+            String data = "numericMonthDate('" + date + "')";
+            Log.e("test", "date: " + data);
+            state.put("time", data);
         } catch (JSONException e) {
             Log.e("test", "", e);
         }
 
         String callJS = "javascript:setState(" + state.toString() + ")";
-        Log.e("test", "callJS: " + callJS);
+        Logger.t(TAG).d("callJS: " + callJS);
         mGaugeView.loadUrl(callJS);
         mGaugeView.loadUrl("javascript:update()");
     }

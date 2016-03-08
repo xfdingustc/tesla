@@ -1,9 +1,11 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.View;
+import android.webkit.WebView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.SnipeError;
@@ -12,11 +14,16 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +36,6 @@ public class RawDataLoader {
     private final int mClipSetIndex;
     private final VdbRequestQueue mVdbRequestQueue;
     private OnLoadCompleteListener mListener;
-
-    protected static final int RAW_DATA_STATE_UNKNOWN = -1;
-    protected static final int RAW_DATA_STATE_READY = 0;
-    protected static final int RAW_DATA_STATE_ERROR = 1;
-
-    SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
-    SparseIntArray mTypedState = new SparseIntArray();
-    SparseIntArray mTypedPosition = new SparseIntArray();
 
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
 
@@ -68,18 +67,6 @@ public class RawDataLoader {
         }
 
         loadRawData(RawDataItem.DATA_TYPE_OBD);
-//        if (mTypedState.get(RawDataItem.DATA_TYPE_OBD) != RAW_DATA_STATE_READY) {
-//            loadRawData(RawDataItem.DATA_TYPE_OBD);
-//        }
-//
-//        if (mTypedState.get(RawDataItem.DATA_TYPE_ACC) != RAW_DATA_STATE_READY) {
-//            loadRawData(RawDataItem.DATA_TYPE_ACC);
-//        }
-//        if (mTypedState.get(RawDataItem.DATA_TYPE_GPS) != RAW_DATA_STATE_READY) {
-//            loadRawData(RawDataItem.DATA_TYPE_GPS);
-//        }
-
-
     }
 
     private void loadRawData(final int dataType) {
@@ -87,8 +74,6 @@ public class RawDataLoader {
 
             return;
         }
-
-//        Logger.t(TAG).d("start loading type: " + dataType + " index: " + mCurrentLoadingIndex);
 
         Clip clip = getClipSet().getClip(mCurrentLoadingIndex);
 
@@ -102,16 +87,12 @@ public class RawDataLoader {
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
                     public void onResponse(RawDataBlock response) {
-                        //Logger.t(TAG).d("resoponse datatype: " + dataType);
-                        //mTypedRawData.put(dataType, response);
-                        //mTypedState.put(dataType, RAW_DATA_STATE_READY);
                         onLoadRawDataFinished(dataType, response);
                     }
                 },
                 new VdbResponse.ErrorListener() {
                     @Override
                     public void onErrorResponse(SnipeError error) {
-                        //mTypedState.put(dataType, RAW_DATA_STATE_ERROR);
                         onLoadRawDataFinished(dataType, null);
                     }
                 });
@@ -147,6 +128,73 @@ public class RawDataLoader {
 
                 break;
         }
+    }
+
+    public void updateGaugeView(int playTimeMs, WebView gaugeView) {
+        ClipSet clipSet = getClipSet();
+        int clipIndex = clipSet.getClipIndexByTimePosition(playTimeMs);
+        if (clipIndex == -1) {
+            return;
+        }
+        ClipPos clipPos = clipSet.findClipPosByTimePosition(playTimeMs);
+
+        //RawDataItem item = findRawDataItem()
+        RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(clipIndex);
+
+        if (rawDataBlockAll.gpsDataBlock != null) {
+            RawDataItem gpsItem = rawDataBlockAll.gpsDataBlock.getRawDataItemByItem(playTimeMs);
+            updateGaugeView(gpsItem, gaugeView);
+        }
+
+        if (rawDataBlockAll.obdDataBlock != null) {
+            RawDataItem obdItem = rawDataBlockAll.obdDataBlock.getRawDataItemByItem(playTimeMs);
+            updateGaugeView(obdItem, gaugeView);
+        }
+
+        if (rawDataBlockAll.accDataBlock != null) {
+            RawDataItem accItem = rawDataBlockAll.accDataBlock.getRawDataItemByItem(playTimeMs);
+            updateGaugeView(accItem, gaugeView);
+        }
+
+    }
+
+    private void updateGaugeView(RawDataItem item, WebView gaugeView) {
+        if (item == null) {
+            return;
+        }
+        JSONObject state = new JSONObject();
+
+        try {
+            switch (item.getType()) {
+                case RawDataItem.DATA_TYPE_ACC:
+                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
+                    state.put("roll", -accData.euler_roll);
+                    state.put("pitch", -accData.euler_pitch);
+                    state.put("gforceBA", accData.accX);
+                    state.put("gforceLR", accData.accZ);
+                    break;
+                case RawDataItem.DATA_TYPE_GPS:
+                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                    state.put("lng", gpsData.coord.lng);
+                    state.put("lat", gpsData.coord.lat);
+                    break;
+                case RawDataItem.DATA_TYPE_OBD:
+                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+                    state.put("rpm", obdData.rpm);
+                    state.put("mph", obdData.speed);
+                    break;
+            }
+            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
+            String date = format.format(System.currentTimeMillis());
+            state.put("time", System.currentTimeMillis());
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+        String callJS = "javascript:setState(" + state.toString() + ")";
+        Logger.t(TAG).d("callJS: " + callJS);
+        gaugeView.loadUrl(callJS);
+        gaugeView.loadUrl("javascript:update()");
     }
 
     public interface OnLoadCompleteListener {

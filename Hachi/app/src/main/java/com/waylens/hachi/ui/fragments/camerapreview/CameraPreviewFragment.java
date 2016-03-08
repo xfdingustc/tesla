@@ -1,17 +1,14 @@
 package com.waylens.hachi.ui.fragments.camerapreview;
 
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -34,15 +31,10 @@ import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
-import com.waylens.hachi.ui.views.dashboard.adapters.LiveRawDataAdapter;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.RawDataItem;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.InetSocketAddress;
-import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.OnClick;

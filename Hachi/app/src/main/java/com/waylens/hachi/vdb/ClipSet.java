@@ -185,6 +185,22 @@ public class ClipSet {
         return total;
     }
 
+    public int getClipIndexByTimePosition(int position) {
+        int total = 0;
+        for (int i = 0; i < mClipList.size(); i++) {
+            Clip clip = mClipList.get(i);
+
+            if (position < total + clip.editInfo.getSelectedLength()) {
+
+                return i;
+            }
+
+            total += clip.editInfo.getSelectedLength();
+        }
+
+        return -1;
+    }
+
     public ClipPos findClipPosByTimePosition(int position) {
         int total = 0;
         for (int i = 0; i < mClipList.size(); i++) {

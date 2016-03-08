@@ -37,20 +37,14 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
-import com.waylens.hachi.ui.views.dashboard.adapters.LiveRawDataAdapter;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
-import com.waylens.hachi.vdb.RawDataItem;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -304,7 +298,6 @@ public class ClipPlayFragment extends DialogFragment {
         mWvGauge.getSettings().setJavaScriptEnabled(true);
         mWvGauge.setBackgroundColor(Color.TRANSPARENT);
         mWvGauge.loadUrl("file:///android_asset/api.html");
-        //LiveRawDataAdapter mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, mWvGauge);
     }
 
     public void showGaugeView(boolean show) {
@@ -501,7 +494,7 @@ public class ClipPlayFragment extends DialogFragment {
             openVideo();
             return;
         }
-        
+
         mAudioPlayer = new MediaPlayer();
         try {
             mAudioPlayer.setDataSource(mAudioUrl);
@@ -630,6 +623,8 @@ public class ClipPlayFragment extends DialogFragment {
             int progress = (int) ((float) currentPos * mMultiSegSeekbar.getMax() / duration);
             mMultiSegSeekbar.setProgress(progress);
         }
+
+        mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
 
         if (mMediaPlayer.isPlaying()) {
             mUiHandler.postDelayed(new Runnable() {
