@@ -423,6 +423,11 @@ public class ClipPlayFragment extends DialogFragment {
         }
     }
 
+    public void setGaugeTheme(String theme) {
+        Logger.t(TAG).d("set gauge theme as: " + theme);
+        mWvGauge.loadUrl("javascript:setTheme('" + theme + "')");
+    }
+
     public void setAudioPlayerVolume(float volume) {
         if (mAudioPlayer != null) {
             mAudioPlayer.setVolume(volume, volume);

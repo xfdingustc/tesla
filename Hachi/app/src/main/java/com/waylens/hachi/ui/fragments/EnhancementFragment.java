@@ -100,6 +100,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     @Bind(R.id.spinner_clip_src)
     Spinner mClipSrcSpinner;
 
+
+
     String[] supportedGauges;
     int[] gaugeDefaultSizes;
     GaugeListAdapter mGaugeListAdapter;
@@ -161,6 +163,16 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
             mGaugeListView.setAdapter(mGaugeListAdapter);
         }
         configureActionUI(0, view.isSelected());
+    }
+
+    @OnClick(R.id.btnThemeDefault)
+    public void onBtnThemeDefaultClicked() {
+        mClipPlayFragment.setGaugeTheme("default");
+    }
+
+    @OnClick(R.id.btnThemeNeo)
+    public void onBtnThemeNeoClicked() {
+        mClipPlayFragment.setGaugeTheme("neo");
     }
 
     void configureActionUI(int child, boolean isShow) {

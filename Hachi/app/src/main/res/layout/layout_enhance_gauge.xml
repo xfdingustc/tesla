@@ -18,7 +18,7 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/btn_gauge_off"
+            android:id="@+id/btnThemeDefault"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginLeft="16dp"
@@ -27,6 +27,7 @@
             android:button="@android:color/transparent"/>
 
         <RadioButton
+            android:id="@+id/btnThemeNeo"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginLeft="16dp"

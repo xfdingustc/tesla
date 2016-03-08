@@ -106,8 +106,8 @@
     </integer-array>
 
     <string-array name="theme_remix">
-        <item>Drifts</item>
-        <item>Theme Two</item>
+        <item>default</item>
+        <item>neo</item>
         <item>Theme Three</item>
         <item>Theme Four</item>
     </string-array>
