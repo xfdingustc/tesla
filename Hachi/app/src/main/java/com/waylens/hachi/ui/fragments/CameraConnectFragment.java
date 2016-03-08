@@ -93,6 +93,7 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
         super.onPause();
         Logger.t(TAG).d("onRause");
         //((MainActivity2)getActivity()).switchFragment(MainActivity2.TAB_TAG_SOCIAL);
+
     }
 
 

@@ -130,11 +130,11 @@ public class ClipPlayFragment extends DialogFragment {
             case STATE_FAST_PREVIEW:
                 start();
                 //changeState(STATE_PLAYING);
-                refreshProgressBar();
+                //refreshProgressBar();
                 break;
             case STATE_PAUSE:
                 changeState(STATE_PLAYING);
-                refreshProgressBar();
+                //refreshProgressBar();
                 break;
             case STATE_PLAYING:
                 changeState(STATE_PAUSE);

@@ -56,7 +56,7 @@ public class CameraPreviewFragment extends BaseFragment {
     int mBookmarkCount = -1;
     int mBookmarkClickCount;
 
-    private Handler mHandler = new Handler();
+    private Handler mHandler;
     private LiveRawDataAdapter mRawDataAdapter;
 
     @Bind(R.id.cameraPreview)
@@ -187,7 +187,11 @@ public class CameraPreviewFragment extends BaseFragment {
 
     protected void init() {
         mVdbRequestQueue = Snipe.newRequestQueue();
-        initViews();
+        mVdtCamera = getCameraFromIntent(getArguments());
+        mHandler = new Handler();
+        if (mVdtCamera != null) {
+            initViews();
+        }
     }
 
     private void initViews() {
@@ -221,7 +225,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void initCameraPreview() {
-        mVdtCamera = getCameraFromIntent(getArguments());
+
         mLiveView.setBackgroundColor(Color.BLACK);
         if (mVdtCamera != null) {
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
@@ -273,7 +277,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void updateCameraState(final CameraState state) {
-        getActivity().runOnUiThread(new Runnable() {
+        mHandler.post(new Runnable() {
             @Override
             public void run() {
                 updateCameraStatusInfo(state);
@@ -281,6 +285,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 toggleRecordDot(state);
             }
         });
+
     }
 
 
