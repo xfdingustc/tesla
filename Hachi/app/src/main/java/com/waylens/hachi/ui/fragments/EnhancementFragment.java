@@ -19,9 +19,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.ui.activities.ClipChooserActivity;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
@@ -50,6 +52,7 @@ import butterknife.OnClick;
  */
 public class EnhancementFragment extends BaseFragment implements FragmentNavigator,
         ClipsEditView.OnClipEditListener {
+    private static final String TAG = EnhancementFragment.class.getSimpleName();
     private static final int REQUEST_CODE_ENHANCE = 1000;
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
 
@@ -320,10 +323,12 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
                 }
                 break;
             case REQUEST_CODE_ADD_MUSIC:
+                Logger.t(TAG).d("Resultcode: " + resultCode + " data: " + data);
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     mMusicItem = MusicItem.fromBundle(data.getBundleExtra("music.item"));
                     updateMusicUI();
-                    Log.e("test", "item: " + mMusicItem);
+                    Log.e("test", "item: " + mMusicItem.localPath);
+                    mClipPlayFragment.setAudioUrl(mMusicItem.localPath);
                 }
                 break;
             default:

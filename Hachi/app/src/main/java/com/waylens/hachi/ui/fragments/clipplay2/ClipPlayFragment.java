@@ -73,6 +73,10 @@ public class ClipPlayFragment extends DialogFragment {
     private UrlProvider mUrProvider;
 
     private MediaPlayer mMediaPlayer = new MediaPlayer();
+    private MediaPlayer mAudioPlayer = new MediaPlayer();
+
+    private String mAudioUrl;
+    private VdbUrl mVdbUrl;
 
     private Handler mUiHandler;
 
@@ -129,18 +133,14 @@ public class ClipPlayFragment extends DialogFragment {
             case STATE_PREPARED:
             case STATE_FAST_PREVIEW:
                 start();
-                //changeState(STATE_PLAYING);
-                //refreshProgressBar();
                 break;
             case STATE_PAUSE:
                 changeState(STATE_PLAYING);
-                //refreshProgressBar();
                 break;
             case STATE_PLAYING:
                 changeState(STATE_PAUSE);
                 break;
             case STATE_PREPAREING:
-                //mPendingAction = PENDING_ACTION_START;
                 break;
         }
 
@@ -255,7 +255,7 @@ public class ClipPlayFragment extends DialogFragment {
     @Override
     public void onStop() {
         super.onStop();
-        mMediaPlayer.stop();
+        stopPlayer();
     }
 
     @Override
@@ -419,7 +419,8 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void setAudioUrl(String audioUrl) {
-
+        Logger.t(TAG).d("audio url: " + audioUrl);
+        mAudioUrl = audioUrl;
     }
 
     public void showClipPosThumbnail(Clip clip, long timeMs) {
@@ -434,7 +435,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    protected void openVideo(VdbUrl url) {
+    protected void openVideo() {
         try {
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -473,13 +474,33 @@ public class ClipPlayFragment extends DialogFragment {
             });
 
             mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(url.url);
+            mMediaPlayer.setDataSource(mVdbUrl.url);
             mMediaPlayer.setSurface(new Surface(mTextureView.getSurfaceTexture()));
             mMediaPlayer.prepareAsync();
 
         } catch (IOException e) {
             Logger.t(TAG).e("", e);
         }
+    }
+
+    private void openAudio() {
+        if (mAudioUrl == null) {
+            openVideo();
+        }
+        mAudioPlayer = new MediaPlayer();
+        try {
+            mAudioPlayer.setDataSource(mAudioUrl);
+            mAudioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    openVideo();
+                }
+            });
+            mAudioPlayer.prepareAsync();
+        } catch (IOException e) {
+            Log.e("test", "", e);
+        }
+
     }
 
 
@@ -493,12 +514,13 @@ public class ClipPlayFragment extends DialogFragment {
                     return;
                 }
                 Logger.t(TAG).d("Get playback url: " + url.url);
+                mVdbUrl = url;
                 if (mConfig.clipMode == Config.ClipMode.SINGLE) {
                     mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), url);
                 } else {
                     mPositionAdjuster = new PlaylistPositionAdjuster(url);
                 }
-                openVideo(url);
+                openAudio();
             }
 
 
@@ -519,23 +541,45 @@ public class ClipPlayFragment extends DialogFragment {
             case STATE_PLAYING:
                 mClipCover.setVisibility(View.INVISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
-                mMediaPlayer.start();
+                startPlayer();
                 mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PAUSE:
                 mBtnPlayPause.setImageResource(R.drawable.playbar_play);
-                mMediaPlayer.pause();
+                pausePlayer();
                 break;
             case STATE_FAST_PREVIEW:
                 mClipCover.setVisibility(View.VISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_play);
-                if (mMediaPlayer.isPlaying()) {
-                    mMediaPlayer.stop();
-                }
+                stopPlayer();
                 break;
         }
         mCurrentState = targetState;
     }
+
+    private void startPlayer() {
+        mMediaPlayer.start();
+        if (mAudioUrl != null) {
+            mAudioPlayer.start();
+        }
+    }
+
+    private void pausePlayer() {
+        mMediaPlayer.pause();
+        if (mAudioUrl != null) {
+            mAudioPlayer.pause();
+        }
+    }
+
+    private void stopPlayer() {
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.stop();
+        }
+        if (mAudioUrl != null && mAudioPlayer.isPlaying()) {
+            mAudioPlayer.stop();
+        }
+    }
+
 
     private void refreshProgressBar() {
         int currentPos = mMediaPlayer.getCurrentPosition();

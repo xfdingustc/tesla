@@ -74,8 +74,8 @@ public class Hachi extends Application {
 
         Snipe.init();
 
-        SkinManager.initialize(this);
-        SkinManager.getManager().load();
+        //SkinManager.initialize(this);
+        //SkinManager.getManager().load();
 
         mScanner = new DeviceScanner(this);
         mScanner.startWork();
