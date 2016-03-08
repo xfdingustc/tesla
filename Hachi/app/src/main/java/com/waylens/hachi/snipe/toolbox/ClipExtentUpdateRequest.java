@@ -5,31 +5,30 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipExtent;
 
 /**
  * Created by Richard on 9/17/15.
  */
 public class ClipExtentUpdateRequest extends VdbRequest<Integer> {
 
-    private Clip mClip;
+    private Clip.ID mCid;
     private long mClipStart;
     private long mClipEnd;
 
-    public ClipExtentUpdateRequest(Clip clip,
+    public ClipExtentUpdateRequest(Clip.ID cid,
                                    long newClipStart,
                                    long newClipEnd,
                                    VdbResponse.Listener<Integer> listener,
                                    VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
-        mClip = clip;
+        mCid = cid;
         mClipStart = newClipStart;
         mClipEnd = newClipEnd;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
-        mVdbCommand = VdbCommand.Factory.createCmdSetClipExtent(mClip, mClipStart, mClipEnd);
+        mVdbCommand = VdbCommand.Factory.createCmdSetClipExtent(mCid, mClipStart, mClipEnd);
         return mVdbCommand;
     }
 

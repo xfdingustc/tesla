@@ -250,7 +250,7 @@ public class PlaylistEditor {
             return;
         }
 
-        mVdbRequestQueue.add(new ClipExtentUpdateRequest(clip,
+        mVdbRequestQueue.add(new ClipExtentUpdateRequest(clip.cid,
                 startValue,
                 endValue,
                 new VdbResponse.Listener<Integer>() {

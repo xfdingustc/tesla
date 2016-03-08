@@ -326,10 +326,10 @@ public class VdbCommand {
                     .build();
         }
 
-        public static VdbCommand createCmdSetClipExtent(Clip clip, long newClipStart, long newClipEnd) {
+        public static VdbCommand createCmdSetClipExtent(Clip.ID cid, long newClipStart, long newClipEnd) {
             return new Builder()
                     .writeCmdCode(CMD_SetClipExtent, 0)
-                    .writeClipId(clip.cid)
+                    .writeClipId(cid)
                     .writeInt64(newClipStart)
                     .writeInt64(newClipEnd)
                     .build();

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/defaultBgColor"
     android:orientation="vertical">
 
@@ -15,11 +15,20 @@
     <FrameLayout
         android:id="@+id/clipPlayFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
-    <com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer
-        android:id="@+id/clipTrimmer"
+    <ViewAnimator
+        android:id="@+id/view_animator"
         android:layout_width="match_parent"
-        android:layout_height="64dp" />
+        android:layout_height="wrap_content">
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer
+            android:id="@+id/clipTrimmer"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"/>
+    </ViewAnimator>
 </LinearLayout>

@@ -136,13 +136,16 @@ class VideoTrimmerController extends View implements Progressive {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mRightStartPos = w - mThumbWidth;
         mTotalViewLength = w - mThumbWidth * 2 - mProgressBarWidth;
-        mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, h);
-        mRectLeftEx.set(0, 0, mLeftStartPos, h);
-        mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, h);
-        mRectRightEx.set(mRectRight.right, 0, w, h);
-        mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, h);
+        positionLeft();
+        positionRight();
+        positionProgress();
+        //mRightStartPos = w - mThumbWidth;
+        //mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, h);
+        //mRectLeftEx.set(0, 0, mLeftStartPos, h);
+        //mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, h);
+        //mRectRightEx.set(mRectRight.right, 0, w, h);
+        //mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, h);
     }
 
     @Override
@@ -252,7 +255,13 @@ class VideoTrimmerController extends View implements Progressive {
         }
         mProgress = value;
 
-        double normalizedValue = value - mRangeValueLeft;
+        positionProgress();
+
+        invalidate();
+    }
+
+    private void positionProgress() {
+        double normalizedValue = mProgress - mRangeValueLeft;
         mProgressLeft = (int) (normalizedValue / getRange() * mTotalViewLength) + mThumbWidth;
         if (mProgressLeft < mRectLeft.right) {
             mProgressLeft = mRectLeft.right;
@@ -261,7 +270,6 @@ class VideoTrimmerController extends View implements Progressive {
             mProgressLeft = mRectRight.left - mProgressBarWidth;
         }
         mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, getHeight());
-        invalidate();
     }
 
     void setInitRangeValues(long min, long max) {
@@ -292,11 +300,9 @@ class VideoTrimmerController extends View implements Progressive {
             return;
         }
         mStart = value;
-        double normalizedValue = value - mRangeValueLeft;
-        mLeftStartPos = (int) Math.round(normalizedValue / getRange() * mTotalViewLength);
-        int height = getHeight();
-        mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, height);
-        mRectLeftEx.set(0, 0, mLeftStartPos, height);
+
+        positionLeft();
+
         if (mProgress < mStart) {
             setProgress(mStart);
         } else {
@@ -304,21 +310,35 @@ class VideoTrimmerController extends View implements Progressive {
         }
     }
 
+    private void positionLeft() {
+        double normalizedValue = mStart - mRangeValueLeft;
+        mLeftStartPos = (int) Math.round(normalizedValue / getRange() * mTotalViewLength);
+        int height = getHeight();
+        mRectLeft.set(mLeftStartPos, 0, mLeftStartPos + mThumbWidth, height);
+        mRectLeftEx.set(0, 0, mLeftStartPos, height);
+    }
+
     void setRightValue(long value) {
         if (value < mRangeValueLeft || value > mRangeValueRight) {
             return;
         }
         mEnd = value;
-        double normalizedValue = value - mRangeValueLeft;
-        mRightStartPos = (int) Math.round((normalizedValue / getRange() * mTotalViewLength) + mProgressBarWidth + mThumbWidth);
-        int height = getHeight();
-        mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, height);
-        mRectRightEx.set(mRectRight.right, 0, getWidth(), height);
+
+        positionRight();
+
         if (mProgress > mEnd) {
             setProgress(mEnd);
         } else {
             invalidate();
         }
+    }
+
+    private void positionRight() {
+        double normalizedValue = mEnd - mRangeValueLeft;
+        mRightStartPos = (int) Math.round((normalizedValue / getRange() * mTotalViewLength) + mProgressBarWidth + mThumbWidth);
+        int height = getHeight();
+        mRectRight.set(mRightStartPos, 0, mRightStartPos + mThumbWidth, height);
+        mRectRightEx.set(mRectRight.right, 0, getWidth(), height);
     }
 
     void trackTouchEvent(MotionEvent event) {

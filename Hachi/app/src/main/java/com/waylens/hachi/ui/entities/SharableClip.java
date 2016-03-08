@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.entities;
 
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -15,13 +14,12 @@ import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * SharableClip
  * Created by Richard on 1/17/16.
  */
-public class SharableClip{
+public class SharableClip {
     private static final int MAX_EXTENSION = 1000 * 30;
     public Clip.ID bufferedCid;
     public Clip.ID realCid;
@@ -65,53 +63,42 @@ public class SharableClip{
     }
 
     void getClipExtent(VdbRequestQueue vdbRequestQueue) {
-        final CountDownLatch latch = new CountDownLatch(1);
         vdbRequestQueue.add(new ClipExtentGetRequest(clip, new VdbResponse.Listener<ClipExtent>() {
             @Override
             public void onResponse(ClipExtent clipExtent) {
                 if (clipExtent != null) {
                     calculateExtension(clipExtent);
                 }
-                latch.countDown();
             }
         }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
                 Log.e("test", "", error);
-                latch.countDown();
             }
         }));
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Log.e("test", "", e);
-        }
     }
 
-    void calculateExtension(ClipExtent clipExtent) {
+    public void calculateExtension(ClipExtent clipExtent) {
+        minExtensibleValue = clipExtent.clipStartTimeMs - MAX_EXTENSION;
+        if (minExtensibleValue < clipExtent.minClipStartTimeMs) {
+            minExtensibleValue = clipExtent.minClipStartTimeMs;
+        }
+        maxExtensibleValue = clipExtent.clipEndTimeMs + MAX_EXTENSION;
+        if (maxExtensibleValue > clipExtent.maxClipEndTimeMs) {
+            maxExtensibleValue = clipExtent.maxClipEndTimeMs;
+        }
+        selectedStartValue = clipExtent.clipStartTimeMs;
+        selectedEndValue = clipExtent.clipEndTimeMs;
+
+        bufferedCid = clipExtent.bufferedCid;
+        realCid = clipExtent.realCid;
+
         if (clipExtent.bufferedCid != null) {
-            minExtensibleValue = clipExtent.clipStartTimeMs - MAX_EXTENSION;
-            if (minExtensibleValue < clipExtent.minClipStartTimeMs) {
-                minExtensibleValue = clipExtent.minClipStartTimeMs;
-            }
-            maxExtensibleValue = clipExtent.clipEndTimeMs + MAX_EXTENSION;
-            if (maxExtensibleValue > clipExtent.maxClipEndTimeMs) {
-                maxExtensibleValue = clipExtent.maxClipEndTimeMs;
-            }
-            selectedStartValue = clipExtent.clipStartTimeMs;
-            selectedEndValue = clipExtent.clipEndTimeMs;
-
             bufferedCid = clipExtent.bufferedCid;
-            realCid = clipExtent.realCid;
+        }
 
-        } else {
-            minExtensibleValue = clipExtent.clipStartTimeMs;
-            maxExtensibleValue = clipExtent.clipEndTimeMs;
-            selectedStartValue = minExtensibleValue;
-            selectedEndValue = maxExtensibleValue;
-            bufferedCid = clipExtent.cid;
-            realCid = clipExtent.cid;
+        if (clipExtent.realCid != null) {
+            realCid = clipExtent.realCid;
         }
     }
 
