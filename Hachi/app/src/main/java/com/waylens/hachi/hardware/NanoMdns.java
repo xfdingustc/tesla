@@ -12,8 +12,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import android.content.Context;
+import android.hardware.Camera;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
 abstract public class NanoMdns {
 
@@ -22,7 +25,7 @@ abstract public class NanoMdns {
 	static final String SERVICE_VIDITCAM = "Vidit Camera";
 	static final String SERVICE_VIDIT_STUDIO = "Vidit Studio";
 
-	abstract public void onServiceResoledAsync(NanoMdns mdns, Camera.ServiceInfo serviceInfo);
+	abstract public void onServiceResoledAsync(NanoMdns mdns, VdtCamera.ServiceInfo serviceInfo);
 
 	private final static String MDNS_GROUP = "224.0.0.251";
 	private final static int MDNS_PORT = 5353;
@@ -48,7 +51,7 @@ abstract public class NanoMdns {
 		stopAll();
 	}
 
-	public boolean verify(Camera.ServiceInfo serviceInfo) {
+	public boolean verify(VdtCamera.ServiceInfo serviceInfo) {
 		if (serviceInfo.sessionCounter != mSessionCounter) {
 			Log.d(TAG, "session changed, " + serviceInfo.sessionCounter + ", " + mSessionCounter);
 			return false;
@@ -294,7 +297,7 @@ abstract public class NanoMdns {
 								serviceName = serviceName.substring(0, i);
 								boolean bIsPcServer = serviceName.equals(SERVICE_VIDIT_STUDIO);
 								String serverName = "Transee"; // TODO
-								Camera.ServiceInfo info = new Camera.ServiceInfo(inetAddress, port, serverName,
+								VdtCamera.ServiceInfo info = new VdtCamera.ServiceInfo(inetAddress, port, serverName,
 										serviceName, bIsPcServer);
 								info.sessionCounter = mMyCounter;
 								onServiceResoledAsync(NanoMdns.this, info);

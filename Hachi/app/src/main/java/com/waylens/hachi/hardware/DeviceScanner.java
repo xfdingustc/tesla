@@ -44,7 +44,6 @@ public class DeviceScanner extends Thread {
     private WifiManager.MulticastLock mLock;
     private boolean mbRunning;
 
-
     public DeviceScanner(Context context) {
         super("ServiceDiscovery");
         this.mContext = context;
@@ -97,6 +96,7 @@ public class DeviceScanner extends Thread {
                 JmDNS dns = JmDNS.create(addr, SERVICE_VIDITCAM);
                 mDns.add(dns);
                 dns.addServiceListener(SERVICE_TYPE, mServiceListener);
+
             }
 
 

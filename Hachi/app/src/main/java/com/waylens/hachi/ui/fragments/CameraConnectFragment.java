@@ -114,7 +114,7 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     @Override
     public void onCameraVdbConnected(VdtCamera camera) {
         super.onCameraVdbConnected(camera);
-        if (getActivity() == null) {
+        if (getActivity() == null || mVsRoot == null) {
             return;
         }
         getActivity().runOnUiThread(new Runnable() {

@@ -34,6 +34,7 @@ public class VdtCamera {
         public final String serverName;
         public final String serviceName;
         public final boolean bPcServer;
+        public int sessionCounter;
 
 
         public ServiceInfo(InetAddress inetAddr, int port, String serverName, String serviceName, boolean bPcServer) {

@@ -10,6 +10,8 @@ import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.DeviceScanner;
+import com.waylens.hachi.hardware.NanoMdns;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.views.dashboard.models.SkinManager;
@@ -33,6 +35,7 @@ public class Hachi extends Application {
     private static Context mSharedContext = null;
 
     private DeviceScanner mScanner;
+    private NanoMdns mNanoMdns;
 
     @Override
     public void onCreate() {
@@ -74,8 +77,18 @@ public class Hachi extends Application {
         SkinManager.initialize(this);
         SkinManager.getManager().load();
 
-        mScanner = new DeviceScanner(this);
-        mScanner.startWork();
+        //mScanner = new DeviceScanner(this);
+        //mScanner.startWork();
+
+        mNanoMdns = new NanoMdns(this) {
+            @Override
+            public void onServiceResoledAsync(NanoMdns mdns, VdtCamera.ServiceInfo serviceInfo) {
+                //Logger.t("test").d("onServiceResoledAsync");
+                VdtCameraManager.getManager().connectCamera(serviceInfo);
+                //mVdtCameraManager.connectCamera(serviceInfo);
+            }
+        };
+        mNanoMdns.startWork();
     }
 
 
