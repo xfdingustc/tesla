@@ -14,6 +14,8 @@
     update = hachi.setStateByBuffer.bind(hachi);
     showGauge = hachi.showGauge.bind(hachi);
     hideGauge = hachi.hideGauge.bind(hachi);
+    setTheme = hachi.setTheme.bind(hachi);
+
 
     var start = new Date().getTime();
     // Following is for demonstration
@@ -73,17 +75,13 @@
     update();
     hideGauge('SpeedThrottle');
     showGauge('SpeedThrottle');
+    setTheme('neo');
     var end = new Date().getTime();
     var time = end - start;
     console.log('Execution time 1 ======> ' + time);
-</script>
 
-<script type="text/javascript">
-    function showAndroidToast(toast) {
-        Android.showToast(toast);
-    }
-</script>
 
+</script>
 </body>
 </html>
 

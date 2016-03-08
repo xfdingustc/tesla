@@ -57,8 +57,6 @@ public class RawDataLoader {
     }
 
 
-
-
     private void loadRawData() {
         mCurrentLoadingIndex = 0;
         for (int i = 0; i < getClipSet().getCount(); i++) {
@@ -163,7 +161,7 @@ public class RawDataLoader {
             return;
         }
         JSONObject state = new JSONObject();
-
+        String data = null;
         try {
             switch (item.getType()) {
                 case RawDataItem.DATA_TYPE_ACC:
@@ -186,14 +184,21 @@ public class RawDataLoader {
             }
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
             String date = format.format(System.currentTimeMillis());
-            state.put("time", System.currentTimeMillis());
+            data = "numericMonthDate('" + date + "')";
         } catch (JSONException e) {
             Log.e("test", "", e);
         }
 
-        String callJS = "javascript:setState(" + state.toString() + ")";
-        Logger.t(TAG).d("callJS: " + callJS);
-        gaugeView.loadUrl(callJS);
+
+        String callJS1 = "javascript:setState(" + state.toString() + ")";
+        gaugeView.loadUrl(callJS1);
+        if (data != null) {
+            String callJS2 = "javascript:setState(" + "{time:" + data + "})";
+            gaugeView.loadUrl(callJS2);
+        }
+        //Logger.t(TAG).d("callJS: " + callJS);
+
+
         gaugeView.loadUrl("javascript:update()");
     }
 

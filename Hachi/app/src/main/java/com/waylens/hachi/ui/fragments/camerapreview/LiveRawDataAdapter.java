@@ -72,7 +72,7 @@ public class LiveRawDataAdapter {
 
     private void updateGaugeView(RawDataItem item) {
         JSONObject state = new JSONObject();
-
+        String data = null;
         try {
             switch (item.getType()) {
                 case RawDataItem.DATA_TYPE_ACC:
@@ -98,16 +98,18 @@ public class LiveRawDataAdapter {
 //            state.put("pitch", -50);
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
             String date = format.format(System.currentTimeMillis());
-            String data = "numericMonthDate('" + date + "')";
-            Log.e("test", "date: " + data);
-            state.put("time", data);
+            data = "numericMonthDate('" + date + "')";
+            //Log.e("test", "date: " + data);
+            //state.put("time", data);
         } catch (JSONException e) {
             Log.e("test", "", e);
         }
 
-        String callJS = "javascript:setState(" + state.toString() + ")";
-        Logger.t(TAG).d("callJS: " + callJS);
-        mGaugeView.loadUrl(callJS);
+        String callJS1 = "javascript:setState(" + state.toString() + ")";
+        String callJS2 = "javascript:setState(" + "{time:" + data + "})";
+//        Logger.t(TAG).d("callJS: " + callJS1);
+        mGaugeView.loadUrl(callJS1);
+        mGaugeView.loadUrl(callJS2);
         mGaugeView.loadUrl("javascript:update()");
     }
 
