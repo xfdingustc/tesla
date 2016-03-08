@@ -77,18 +77,18 @@ public class Hachi extends Application {
         SkinManager.initialize(this);
         SkinManager.getManager().load();
 
-        //mScanner = new DeviceScanner(this);
-        //mScanner.startWork();
+        mScanner = new DeviceScanner(this);
+        mScanner.startWork();
 
-        mNanoMdns = new NanoMdns(this) {
-            @Override
-            public void onServiceResoledAsync(NanoMdns mdns, VdtCamera.ServiceInfo serviceInfo) {
-                //Logger.t("test").d("onServiceResoledAsync");
-                VdtCameraManager.getManager().connectCamera(serviceInfo);
-                //mVdtCameraManager.connectCamera(serviceInfo);
-            }
-        };
-        mNanoMdns.startWork();
+//        mNanoMdns = new NanoMdns(this) {
+//            @Override
+//            public void onServiceResoledAsync(NanoMdns mdns, VdtCamera.ServiceInfo serviceInfo) {
+//                //Logger.t("test").d("onServiceResoledAsync");
+//                VdtCameraManager.getManager().connectCamera(serviceInfo);
+//                //mVdtCameraManager.connectCamera(serviceInfo);
+//            }
+//        };
+//        mNanoMdns.startWork();
     }
 
 
