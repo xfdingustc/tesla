@@ -101,16 +101,16 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-//        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
 //            mTabLayout.setVisibility(View.GONE);
 //            mToolbar.setVisibility(View.GONE);
-//            hideSystemUI(true);
-//
-//        } else {
+            hideSystemUI(true);
+
+        } else {
 //            mTabLayout.setVisibility(View.VISIBLE);
 //            mToolbar.setVisibility(View.VISIBLE);
-//            hideSystemUI(false);
-//        }
+            hideSystemUI(false);
+        }
     }
 
     @Override
@@ -133,12 +133,6 @@ public class MainActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_main);
 
-//        final ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-//
-//        setupActionBarToggle();
         setupNavigationView();
 
         if (mSessionManager.isLoggedIn()) {
@@ -185,14 +179,6 @@ public class MainActivity extends BaseActivity {
 
         BaseFragment fragment = mFragmentList[tag];
 
-//        if (tag == TAB_TAG_MOMENTS || tag == TAB_TAG_VIDEO) {
-//            mTabLayout.setVisibility(View.VISIBLE);
-//            if (fragment.getViewPager() != null) {
-//                mTabLayout.setupWithViewPager(fragment.getViewPager());
-//            }
-//        } else {
-//            mTabLayout.setVisibility(View.GONE);
-//        }
 
         /*
          * Here we have to go through this detach, replace, attach, and addToBackStack way,

@@ -22,9 +22,9 @@ public class SettingsFragment extends BaseFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-//        setTitle(R.string.settings);
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.settings);
+        super.setupToolbar();
     }
 
     @OnClick(R.id.settings_account)
