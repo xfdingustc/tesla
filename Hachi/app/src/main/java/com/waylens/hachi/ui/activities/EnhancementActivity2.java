@@ -259,10 +259,7 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setHasOptionsMenu(true);
-
         init();
-
     }
 
     @Override
@@ -311,6 +308,7 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
 
     @Override
     public void setupToolbar() {
+        mToolbar.setTitle(R.string.enhance);
         mToolbar.setNavigationIcon(R.drawable.navbar_close);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -321,17 +319,6 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
         super.setupToolbar();
 
     }
-
-    //    @Nullable
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        return createFragmentView(inflater, container, R.layout.fragment_enhance, savedInstanceState);
-//    }
-
-
-
-
-
 
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();

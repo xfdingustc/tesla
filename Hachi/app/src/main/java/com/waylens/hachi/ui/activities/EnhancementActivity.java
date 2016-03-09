@@ -13,12 +13,7 @@ import com.waylens.hachi.vdb.ClipSetManager;
  */
 public class EnhancementActivity extends BaseActivity {
 
-    public static void launch(Activity activity, int clipSetIndex) {
-        Intent intent = new Intent(activity, EnhancementActivity.class);
-        intent.putExtra("clipSetIndex", clipSetIndex);
-        //intent.putParcelableArrayListExtra("clips", clipList);
-        activity.startActivity(intent);
-    }
+
 
 
 

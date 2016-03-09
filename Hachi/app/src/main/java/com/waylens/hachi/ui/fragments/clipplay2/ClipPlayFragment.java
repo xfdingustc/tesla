@@ -37,6 +37,7 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.activities.EnhancementActivity2;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -326,7 +327,7 @@ public class ClipPlayFragment extends DialogFragment {
                         return true;
                     case R.id.enhance:
                         dismiss();
-                        EnhancementActivity.launch(getActivity(), mClipSetIndex);
+                        EnhancementActivity2.launch(getActivity(), mClipSetIndex);
                         return true;
                     case R.id.modify:
                         dismiss();
