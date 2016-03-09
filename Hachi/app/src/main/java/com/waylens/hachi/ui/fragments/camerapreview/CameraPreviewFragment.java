@@ -261,10 +261,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
-    private void updateGaugeView(RawDataItem item) {
-
-        //mWebView.loadUrl("javascript:showAndroidToast('Hello')");
-    }
 
     private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
         @Override
@@ -313,7 +309,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     void requestLiveRawData() {
-
         registerMessageHandler();
     }
 
