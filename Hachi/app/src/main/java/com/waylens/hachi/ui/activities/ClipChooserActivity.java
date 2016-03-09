@@ -8,7 +8,6 @@ import android.view.MenuItem;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.ClipListFragment;
-import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.vdb.Clip;
 
 import java.util.ArrayList;

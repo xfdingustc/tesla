@@ -22,7 +22,6 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.story.Story;
 import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
-import com.waylens.hachi.ui.fragments.EnhancementFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -114,12 +113,12 @@ public class StoryEditActivity extends BaseActivity {
 
     @OnClick(R.id.btnEnhance)
     public void onBtnEnhanceClicked() {
-        EnhancementFragment fragment = EnhancementFragment.newInstance(mStory.getPlaylist());
-
-        getFragmentManager().beginTransaction()
-                .add(R.id.root_container, fragment)
-            .addToBackStack(null)
-                .commit();
+//        EnhancementActivity2 fragment = EnhancementActivity2.newInstance(mStory.getPlaylist());
+//
+//        getFragmentManager().beginTransaction()
+//                .add(R.id.root_container, fragment)
+//            .addToBackStack(null)
+//                .commit();
     }
 
     public static void launch(Activity startingActivity, Story story) {

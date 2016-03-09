@@ -17,6 +17,7 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.ui.activities.EnhancementActivity2;
 import com.waylens.hachi.ui.adapters.ClipFilmAdapter;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
@@ -223,7 +224,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
 
     @Override
     public void onEnhanceClip(SharableClip sharableClip) {
-        getFragmentManager().beginTransaction().add(R.id.root_container, EnhancementFragment.newInstance(sharableClip)).commit();
+        //getFragmentManager().beginTransaction().add(R.id.root_container, EnhancementActivity2.newInstance(sharableClip)).commit();
     }
 
     @Override

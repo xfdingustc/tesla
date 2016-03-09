@@ -1,8 +1,9 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,14 +22,14 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
-import com.waylens.hachi.ui.activities.ClipChooserActivity;
-import com.waylens.hachi.ui.activities.EnhancementActivity;
-import com.waylens.hachi.ui.activities.MusicDownloadActivity;
+import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
+import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.GaugeInfoItem;
@@ -50,9 +51,9 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 12/18/15.
  */
-public class EnhancementFragment extends BaseFragment implements FragmentNavigator,
+public class EnhancementActivity2 extends BaseActivity implements FragmentNavigator,
         ClipsEditView.OnClipEditListener {
-    private static final String TAG = EnhancementFragment.class.getSimpleName();
+    private static final String TAG = EnhancementActivity2.class.getSimpleName();
     private static final int REQUEST_CODE_ENHANCE = 1000;
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
 
@@ -111,6 +112,8 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     ArrayAdapter<CharSequence> mThemeAdapter;
     ArrayAdapter<CharSequence> mLengthAdapter;
     ArrayAdapter<CharSequence> mClipSrcAdapter;
+    private VdbRequestQueue mVdbRequestQueue;
+    private VdtCamera mVdtCamera;
 
     @OnClick(R.id.btn_music)
     void onClickMusic(View view) {
@@ -151,7 +154,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         mClipPlayFragment.showGaugeView(true);
         view.setSelected(!view.isSelected());
         if (mGaugeListAdapter == null) {
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mGaugeListView.setLayoutManager(layoutManager);
             mGaugeListAdapter = new GaugeListAdapter(supportedGauges, gaugeDefaultSizes, new GaugeListAdapter.OnGaugeItemChangedListener() {
@@ -189,7 +192,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @OnClick(R.id.btn_add_video)
     void showClipChooser() {
-        Intent intent = new Intent(getActivity(), ClipChooserActivity.class);
+        Intent intent = new Intent(this, ClipChooserActivity.class);
         startActivityForResult(intent, REQUEST_CODE_ENHANCE);
     }
 
@@ -200,7 +203,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         view.setSelected(!view.isSelected());
         configureActionUI(2, view.isSelected());
         if (mThemeAdapter == null) {
-            mThemeAdapter = ArrayAdapter.createFromResource(getActivity(),
+            mThemeAdapter = ArrayAdapter.createFromResource(this,
                     R.array.theme_remix,
                     R.layout.layout_remix_spinner);
             mThemeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -208,7 +211,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
 
         if (mLengthAdapter == null) {
-            mLengthAdapter = ArrayAdapter.createFromResource(getActivity(),
+            mLengthAdapter = ArrayAdapter.createFromResource(this,
                     R.array.theme_length,
                     R.layout.layout_remix_spinner);
             mLengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -216,7 +219,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
 
         if (mClipSrcAdapter == null) {
-            mClipSrcAdapter = ArrayAdapter.createFromResource(getActivity(),
+            mClipSrcAdapter = ArrayAdapter.createFromResource(this,
                     R.array.theme_clip_src,
                     R.layout.layout_remix_spinner);
             mClipSrcAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -224,48 +227,57 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         }
     }
 
-    public static EnhancementFragment newInstance(SharableClip sharableClip) {
-        Bundle args = new Bundle();
-        EnhancementFragment fragment = new EnhancementFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static EnhancementActivity2 newInstance(SharableClip sharableClip) {
+//        Bundle args = new Bundle();
+//        EnhancementActivity2 fragment = new EnhancementActivity2();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
-    public static EnhancementFragment newInstance(Playlist playlist) {
-        Bundle args = new Bundle();
-        EnhancementFragment fragment = new EnhancementFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static EnhancementActivity2 newInstance(Playlist playlist) {
+//        Bundle args = new Bundle();
+//        EnhancementActivity2 fragment = new EnhancementActivity2();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
 
-    public static EnhancementFragment newInstance(int clipSetIndex) {
-        Bundle args = new Bundle();
-        EnhancementFragment fragment = new EnhancementFragment();
-        fragment.setArguments(args);
-        fragment.mClipSetIndex = clipSetIndex;
-        return fragment;
+//    public static EnhancementActivity2 newInstance(int clipSetIndex) {
+//        Bundle args = new Bundle();
+//        EnhancementActivity2 fragment = new EnhancementActivity2();
+//        fragment.setArguments(args);
+//        fragment.mClipSetIndex = clipSetIndex;
+//        return fragment;
+//    }
+
+    public static void launch(Activity activity, int clipSetIndex) {
+        Intent intent = new Intent(activity, EnhancementActivity2.class);
+        intent.putExtra("clipSetIndex", clipSetIndex);
+        activity.startActivity(intent);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
+
+        init();
+
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
         supportedGauges = getResources().getStringArray(R.array.supported_gauges);
         gaugeDefaultSizes = getResources().getIntArray(R.array.gauges_default_size);
+        mClipSetIndex = getIntent().getIntExtra("clipSetIndex", ClipSetManager.CLIP_SET_TYPE_ENHANCE);
+        initViews();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return createFragmentView(inflater, container, R.layout.fragment_enhance, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClipSetIndex, 0x100);
+    private void initViews() {
+        setContentView(R.layout.fragment_enhance);
+        mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, mClipSetIndex, 0x100);
         mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
@@ -297,22 +309,43 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
         });
     }
 
+    @Override
+    public void setupToolbar() {
+        mToolbar.setNavigationIcon(R.drawable.navbar_close);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        super.setupToolbar();
+
+    }
+
+    //    @Nullable
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+//        return createFragmentView(inflater, container, R.layout.fragment_enhance, savedInstanceState);
+//    }
+
+
+
+
+
+
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
 
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
-        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClipSetIndex,
+        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex,
                 vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
-        getChildFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_enhance, menu);
-    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -340,7 +373,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
     }
 
     void close() {
-        getFragmentManager().beginTransaction().remove(this).commit();
+        //getFragmentManager().beginTransaction().remove(this).commit();
     }
 
     @Override
@@ -355,7 +388,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onClipSelected(int position, Clip clip) {
-        getActivity().setTitle(R.string.trim);
+        mToolbar.setTitle(R.string.trim);
         mClipPlayFragment.setActiveClip(position, clip);
     }
 
@@ -396,7 +429,7 @@ public class EnhancementFragment extends BaseFragment implements FragmentNavigat
 
     @Override
     public void onExitEditing() {
-        getActivity().setTitle(R.string.enhance);
+        mToolbar.setTitle(R.string.enhance);
     }
 
     @Override

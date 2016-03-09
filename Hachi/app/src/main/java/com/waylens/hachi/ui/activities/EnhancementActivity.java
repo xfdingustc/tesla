@@ -6,11 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.fragments.EnhancementFragment;
-import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSetManager;
-
-import java.util.ArrayList;
 
 /**
  * Created by Richard on 2/22/16.
@@ -35,9 +31,10 @@ public class EnhancementActivity extends BaseActivity {
         Intent intent = getIntent();
 
         int clipSetIndex = intent.getIntExtra("clipSetIndex", ClipSetManager.CLIP_SET_TYPE_ENHANCE);
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_content, EnhancementFragment.newInstance(clipSetIndex)).commit();
+//        getFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.fragment_content, EnhancementActivity2.newInstance(clipSetIndex)).commit();
+        //EnhancementActivity2.launch();
     }
 
     @Override

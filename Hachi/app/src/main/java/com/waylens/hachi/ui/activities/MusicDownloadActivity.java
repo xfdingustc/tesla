@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.waylens.hachi.R;
@@ -16,9 +17,9 @@ import com.waylens.hachi.ui.fragments.MusicFragment;
  */
 public class MusicDownloadActivity extends BaseActivity {
 
-    public static void launchForResult(Fragment fragment, int requestCode) {
-        Intent intent = new Intent(fragment.getActivity(), MusicDownloadActivity.class);
-        fragment.startActivityForResult(intent, requestCode);
+    public static void launchForResult(Activity activity, int requestCode) {
+        Intent intent = new Intent(activity, MusicDownloadActivity.class);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     @Override

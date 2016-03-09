@@ -66,6 +66,7 @@
 
         <activity android:name=".ui.activities.EnhancementActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.EnhancementActivity2"/>
         <activity android:name=".ui.activities.ClipChooserActivity"
             android:screenOrientation="portrait"/>
 
