@@ -48,6 +48,8 @@
         <activity android:name=".ui.activities.UserProfileActivity"/>
         <activity android:name=".ui.activities.FollowListActivity"/>
 
+        <activity android:name=".ui.activities.CommentsActivity"/>
+
 
         <activity
             android:name=".ui.activities.LiveViewActivity">

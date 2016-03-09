@@ -185,6 +185,11 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
     public void setupToolbar() {
         mToolbar.setTitle(R.string.live_view);
         mToolbar.getMenu().clear();

@@ -181,13 +181,27 @@ public class MainActivity extends BaseActivity {
          * https://code.google.com/p/android/issues/detail?id=42601
          */
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        if (mCurrentFragment != null) {
-            transaction.detach(mCurrentFragment);
+        boolean mUseHideAndShow = true;
+        if (mUseHideAndShow) {
+            if (mCurrentFragment == null) {
+                transaction.add(R.id.fragment_content, fragment).commit();
+
+            } else {
+                if (!fragment.isAdded()) {
+                    transaction.hide(mCurrentFragment).add(R.id.fragment_content, fragment).commit();
+                } else {
+                    transaction.hide(mCurrentFragment).show(fragment).commit();
+                }
+            }
+        } else {
+            if (mCurrentFragment != null) {
+                transaction.detach(mCurrentFragment);
+            }
+            transaction.replace(R.id.fragment_content, fragment)
+                    .attach(fragment)
+                    //.addToBackStack(null)
+                    .commit();
         }
-        transaction.replace(R.id.fragment_content, fragment)
-                .attach(fragment)
-                //.addToBackStack(null)
-                .commit();
         mCurrentFragment = fragment;
     }
 

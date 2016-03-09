@@ -23,6 +23,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.CommentsActivity;
 import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Comment;
@@ -87,6 +88,8 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
             mMomentID = args.getLong(ARG_MOMENT_ID, Moment.INVALID_MOMENT_ID);
             mPosition = args.getInt(ARG_MOMENT_POSITION, 0);
         }
+
+
         hasUpdates = false;
     }
 

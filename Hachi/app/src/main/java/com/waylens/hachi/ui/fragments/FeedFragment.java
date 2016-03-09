@@ -23,6 +23,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.CommentsActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.adapters.MomentViewHolder;
@@ -123,10 +124,16 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mCurrentCursor = 0;
         loadFeed(mCurrentCursor, true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
     }
 
     @Override
@@ -269,12 +276,15 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
             LoginActivity.launch(getActivity());
             return;
         }
-        CommentsFragment fragment = new CommentsFragment();
-        Bundle args = new Bundle();
-        args.putLong(CommentsFragment.ARG_MOMENT_ID, moment.id);
-        args.putInt(CommentsFragment.ARG_MOMENT_POSITION, position);
-        fragment.setArguments(args);
-        getFragmentManager().beginTransaction().add(R.id.root_container, fragment).commit();
+        //CommentsActivity.launch(getActivity(), moment.id, position);
+//        CommentsFragment fragment = new CommentsFragment();
+//        Bundle args = new Bundle();
+//        args.putLong(CommentsFragment.ARG_MOMENT_ID, moment.id);
+//        args.putInt(CommentsFragment.ARG_MOMENT_POSITION, position);
+//        fragment.setArguments(args);
+//
+//
+//        getFragmentManager().beginTransaction().add(R.id.view_animator, fragment).commit();
     }
 
     @Override

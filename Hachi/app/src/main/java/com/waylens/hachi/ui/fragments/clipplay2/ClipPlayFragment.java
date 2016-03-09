@@ -447,6 +447,10 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     protected void openVideo() {
+        if (mTextureView == null) {
+            return;
+        }
+
         try {
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
