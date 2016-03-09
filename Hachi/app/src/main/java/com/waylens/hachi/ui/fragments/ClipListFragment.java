@@ -22,7 +22,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
-import com.waylens.hachi.ui.activities.EnhancementActivity2;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
@@ -147,7 +147,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator 
                 clipSet.addClip(clip);
             }
             ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-            EnhancementActivity2.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
+            EnhancementActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         }
     }
 

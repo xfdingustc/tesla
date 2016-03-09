@@ -36,7 +36,7 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
-import com.waylens.hachi.ui.activities.EnhancementActivity2;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -168,6 +168,10 @@ public class ClipPlayFragment extends DialogFragment {
         }
         jsApi += "('" + item.title + "')";
         mWvGauge.loadUrl(jsApi);
+    }
+
+    public void setPosition(int position) {
+        setPlaybackPosition(position, getClipSet().getTotalSelectedLengthMs());
     }
 
 
@@ -326,7 +330,7 @@ public class ClipPlayFragment extends DialogFragment {
                         return true;
                     case R.id.enhance:
                         dismiss();
-                        EnhancementActivity2.launch(getActivity(), mClipSetIndex);
+                        EnhancementActivity.launch(getActivity(), mClipSetIndex);
                         return true;
                     case R.id.modify:
                         dismiss();
@@ -442,7 +446,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     public void notifyClipSetChanged() {
         mMultiSegSeekbar.notifyDateSetChanged();
-        refreshProgressBar();
+        //refreshProgressBar();
     }
 
 
@@ -622,19 +626,8 @@ public class ClipPlayFragment extends DialogFragment {
 
         int duration = getClipSet().getTotalSelectedLengthMs();
 
-//        Logger.t(TAG).d("duration: " + duration + " currentPos: " + currentPos);
 
-        String timeText = DateUtils.formatElapsedTime(currentPos / 1000) + "/" + DateUtils
-                .formatElapsedTime(duration / 1000);
-
-        mTvProgress.setText(timeText);
-
-        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-            mSeekBar.setProgress(currentPos);
-        } else {
-            int progress = (int) ((float) currentPos * mMultiSegSeekbar.getMax() / duration);
-            mMultiSegSeekbar.setProgress(progress);
-        }
+        setPlaybackPosition(currentPos, duration);
 
         if (mRawDataLoader != null) {
             mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
@@ -647,6 +640,20 @@ public class ClipPlayFragment extends DialogFragment {
                     refreshProgressBar();
                 }
             }, 50);
+        }
+    }
+
+    private void setPlaybackPosition(int position, int duration) {
+        String timeText = DateUtils.formatElapsedTime(position / 1000) + "/" + DateUtils
+                .formatElapsedTime(duration / 1000);
+//        Logger.t(TAG).d("duration: " + duration + " currentPos: " + position);
+        mTvProgress.setText(timeText);
+
+        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
+            mSeekBar.setProgress(position);
+        } else {
+            int progress = (int) ((float) position * mMultiSegSeekbar.getMax() / duration);
+            mMultiSegSeekbar.setProgress(progress);
         }
     }
 

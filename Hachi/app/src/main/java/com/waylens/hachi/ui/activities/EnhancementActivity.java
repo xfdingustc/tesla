@@ -3,16 +3,10 @@ package com.waylens.hachi.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -27,8 +21,6 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
-import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
@@ -40,7 +32,6 @@ import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
-import com.waylens.hachi.vdb.Playlist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +42,9 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 12/18/15.
  */
-public class EnhancementActivity2 extends BaseActivity implements FragmentNavigator,
+public class EnhancementActivity extends BaseActivity implements FragmentNavigator,
         ClipsEditView.OnClipEditListener {
-    private static final String TAG = EnhancementActivity2.class.getSimpleName();
+    private static final String TAG = EnhancementActivity.class.getSimpleName();
     private static final int REQUEST_CODE_ENHANCE = 1000;
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
 
@@ -228,7 +219,7 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
     }
 
     public static void launch(Activity activity, int clipSetIndex) {
-        Intent intent = new Intent(activity, EnhancementActivity2.class);
+        Intent intent = new Intent(activity, EnhancementActivity.class);
         intent.putExtra("clipSetIndex", clipSetIndex);
         activity.startActivity(intent);
     }
@@ -319,6 +310,7 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra("clips.more");
                     Log.e("test", "Clips: " + clips);
                     mClipsEditView.appendSharableClips(clips);
+                    mClipPlayFragment.setPosition(0);
                 }
                 break;
             case REQUEST_CODE_ADD_MUSIC:
