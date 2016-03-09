@@ -6,7 +6,9 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -186,6 +188,20 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void setupToolbar() {
         mToolbar.setTitle(R.string.live_view);
+        mToolbar.getMenu().clear();
+        mToolbar.inflateMenu(R.menu.menu_live_view);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.cameraInfo:
+                        int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+                        mInfoView.setVisibility(visibility);
+                        break;
+                }
+                return false;
+            }
+        });
         super.setupToolbar();
     }
 
