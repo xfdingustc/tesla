@@ -280,7 +280,7 @@ public class ClipPlayFragment extends DialogFragment {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
             clipPos = new ClipPos(getClipSet().getClip(0));
         } else {
-            clipPos = new ClipPos(clip, 0, ClipPos.TYPE_POSTER, false);
+            clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         }
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
