@@ -44,9 +44,6 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     @Bind(R.id.vsRoot)
     ViewSwitcher mVsRoot;
 
-
-
-
     private TabLayout mTabLayout;
 
     @OnClick(R.id.btnEnterPreview)
@@ -67,8 +64,8 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
                 .WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         //mBtnWifiInfo.setText(wifiInfo.getSSID());
-        getToolbar().getMenu().clear();
-        getToolbar().inflateMenu(R.menu.menu_live_view);
+//        getToolbar().getMenu().clear();
+//        getToolbar().inflateMenu(R.menu.menu_live_view);
 
         Logger.t(TAG).d("onResume");
         if (mTabLayout != null) {
@@ -79,7 +76,7 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     @Override
     public void onStart() {
         super.onStart();
-        setTitle(R.string.live_view);
+        //setTitle(R.string.live_view);
         Logger.t(TAG).d("onStart");
         if (mVdtCameraManager.isConnected()) {
             //LiveViewActivity.launch(getActivity(), mVdtCameraManager.getConnectedCameras().get
@@ -139,6 +136,11 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
         toggleCameraConnected();
     }
 
+    @Override
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.live_view);
+        super.setupToolbar();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

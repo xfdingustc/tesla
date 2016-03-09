@@ -3,7 +3,9 @@ package com.waylens.hachi.ui.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,7 +20,9 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -30,6 +34,14 @@ public class BaseFragment extends Fragment {
 
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
+
+    @Nullable
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @Nullable
+    @Bind(R.id.tabs)
+    TabLayout mTabLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +69,7 @@ public class BaseFragment extends Fragment {
 
         }
         ButterKnife.bind(this, mRootView);
+        setupToolbar();
         return mRootView;
     }
 
@@ -105,35 +118,20 @@ public class BaseFragment extends Fragment {
         mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), camera);
     }
 
-    public Toolbar getToolbar() {
-        return ((BaseActivity) getActivity()).getToolbar();
-    }
 
-    public void showToolbar() {
-        Toolbar toolbar = ((BaseActivity) getActivity()).getToolbar();
-        if (toolbar != null) {
-            toolbar.setVisibility(View.VISIBLE);
+    public void setupToolbar() {
+        if (mToolbar != null) {
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity)getActivity()).showDrawer();
+                }
+            });
         }
     }
 
-    public void hideToolbar() {
-        Toolbar toolbar = ((BaseActivity) getActivity()).getToolbar();
-        if (toolbar != null) {
-            toolbar.setVisibility(View.GONE);
-        }
-    }
 
-    public void setTitle(int titleResID) {
-        setTitle(getString(titleResID));
-    }
-
-    public void setTitle(String title) {
-        Toolbar toolbar = ((BaseActivity) getActivity()).getToolbar();
-        if (toolbar == null) {
-            return;
-        }
-        toolbar.setTitle(title);
-    }
 
     public void showDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {

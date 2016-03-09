@@ -19,7 +19,6 @@ import butterknife.Bind;
  * Created by Xiaofei on 2016/1/22.
  */
 public class MomentFragment extends BaseFragment {
-    private TabLayout mTabLayout;
 
     RequestQueue mRequestQueue;
 
@@ -37,15 +36,15 @@ public class MomentFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_moment,
             savedInstanceState);
-        mTabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
+
         setupViewPager();
         return view;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        setTitle(R.string.moments);
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.moments);
+        super.setupToolbar();
     }
 
     @Override

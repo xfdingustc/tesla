@@ -14,6 +14,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -44,7 +45,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private ActionBarDrawerToggle mDrawerToggle;
+//    private ActionBarDrawerToggle mDrawerToggle;
 
     public static final int TAB_TAG_VIDEO = 0;
     public static final int TAB_TAG_LIVE_VIEW = 1;
@@ -63,26 +64,18 @@ public class MainActivity extends BaseActivity {
     };
 
     private Fragment mCurrentFragment = null;
-
-
     private SessionManager mSessionManager = SessionManager.getInstance();
 
     @Bind(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.root_container)
-    CoordinatorLayout mRootView;
-
     @Bind(R.id.navView)
     NavigationView mNavView;
 
-    @Bind(R.id.tabs)
-    TabLayout mTabLayout;
 
-
-    CircleImageView mUserAvatar;
-    TextView mUsername;
-    TextView mEmail;
+    private CircleImageView mUserAvatar;
+    private TextView mUsername;
+    private TextView mEmail;
 
     private Snackbar mReturnSnackBar;
 
@@ -107,16 +100,16 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            mTabLayout.setVisibility(View.GONE);
-            mToolbar.setVisibility(View.GONE);
-            hideSystemUI(true);
-
-        } else {
-            mTabLayout.setVisibility(View.VISIBLE);
-            mToolbar.setVisibility(View.VISIBLE);
-            hideSystemUI(false);
-        }
+//        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+//            mTabLayout.setVisibility(View.GONE);
+//            mToolbar.setVisibility(View.GONE);
+//            hideSystemUI(true);
+//
+//        } else {
+//            mTabLayout.setVisibility(View.VISIBLE);
+//            mToolbar.setVisibility(View.VISIBLE);
+//            hideSystemUI(false);
+//        }
     }
 
     @Override
@@ -139,12 +132,12 @@ public class MainActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_main);
 
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        setupActionBarToggle();
+//        final ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
+//
+//        setupActionBarToggle();
         setupNavigationView();
 
         if (mSessionManager.isLoggedIn()) {
@@ -191,14 +184,14 @@ public class MainActivity extends BaseActivity {
 
         BaseFragment fragment = mFragmentList[tag];
 
-        if (tag == TAB_TAG_MOMENTS || tag == TAB_TAG_VIDEO) {
-            mTabLayout.setVisibility(View.VISIBLE);
-            if (fragment.getViewPager() != null) {
-                mTabLayout.setupWithViewPager(fragment.getViewPager());
-            }
-        } else {
-            mTabLayout.setVisibility(View.GONE);
-        }
+//        if (tag == TAB_TAG_MOMENTS || tag == TAB_TAG_VIDEO) {
+//            mTabLayout.setVisibility(View.VISIBLE);
+//            if (fragment.getViewPager() != null) {
+//                mTabLayout.setupWithViewPager(fragment.getViewPager());
+//            }
+//        } else {
+//            mTabLayout.setVisibility(View.GONE);
+//        }
 
         /*
          * Here we have to go through this detach, replace, attach, and addToBackStack way,
@@ -285,6 +278,10 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    public void showDrawer() {
+        mDrawerLayout.openDrawer(Gravity.LEFT);
+    }
+
     private void toggleAppTheme() {
         String appTheme = PreferenceUtils.getString(PreferenceUtils.APP_THEME, "dark");
         if (appTheme.equals("dark")) {
@@ -300,10 +297,10 @@ public class MainActivity extends BaseActivity {
 
 
     private void setupActionBarToggle() {
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-                .drawer_open, R.string.drawer_close);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
+//        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
+//                .drawer_open, R.string.drawer_close);
+//        mDrawerLayout.setDrawerListener(mDrawerToggle);
+//        mDrawerToggle.syncState();
 
     }
 

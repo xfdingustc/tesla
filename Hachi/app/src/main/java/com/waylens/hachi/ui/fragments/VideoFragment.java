@@ -19,7 +19,6 @@ import butterknife.Bind;
  */
 public class VideoFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = VideoFragment.class.getSimpleName();
-    private TabLayout mTabLayout;
 
     @Bind(R.id.clipListViewPager)
     ViewPager mViewPager;
@@ -31,21 +30,21 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_bookmark2,
                 savedInstanceState);
-        mTabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
         setupViewPager();
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        setTitle(R.string.video);
-    }
 
     @Override
     public void onDestroyView() {
         mViewPager.setAdapter(null);
         super.onDestroyView();
+    }
+
+    @Override
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.video);
+        super.setupToolbar();
     }
 
     private void setupViewPager() {

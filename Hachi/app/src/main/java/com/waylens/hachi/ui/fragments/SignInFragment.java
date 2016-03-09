@@ -129,7 +129,7 @@ public class SignInFragment extends BaseFragment {
     }
 
     void initViews() {
-        hideToolbar();
+//        hideToolbar();
         mBtnLogin.setVisibility(View.GONE);
         String userName = SessionManager.getInstance().getUserName();
         if (!TextUtils.isEmpty(userName)) {

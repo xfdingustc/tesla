@@ -68,8 +68,8 @@ public class LinkAccountFragment extends BaseFragment {
     }
 
     void initViews() {
-        showToolbar();
-        setTitle("LinkAccount");
+//        showToolbar();
+//        setTitle("LinkAccount");
         Bundle args = getArguments();
         if (args != null) {
             String suggestedName = args.getString(ARG_SUGGESTED_USER_NAME);

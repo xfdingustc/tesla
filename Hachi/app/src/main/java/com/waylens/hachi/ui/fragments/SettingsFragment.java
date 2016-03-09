@@ -24,7 +24,7 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        setTitle(R.string.settings);
+//        setTitle(R.string.settings);
     }
 
     @OnClick(R.id.settings_account)
