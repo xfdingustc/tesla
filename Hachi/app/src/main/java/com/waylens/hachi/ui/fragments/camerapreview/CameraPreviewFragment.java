@@ -31,6 +31,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
+import com.waylens.hachi.ui.activities.LiveViewActivity;
 import com.waylens.hachi.ui.activities.LiveViewSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
@@ -138,7 +139,8 @@ public class CameraPreviewFragment extends BaseFragment {
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            LiveViewActivity.launch(getActivity(), mVdtCamera);
         }
     }
 

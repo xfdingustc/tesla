@@ -52,7 +52,8 @@
 
 
         <activity
-            android:name=".ui.activities.LiveViewActivity">
+            android:name=".ui.activities.LiveViewActivity"
+            android:screenOrientation="landscape">
         </activity>
 
 

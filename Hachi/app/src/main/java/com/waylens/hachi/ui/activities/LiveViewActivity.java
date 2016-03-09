@@ -175,7 +175,7 @@ public class LiveViewActivity extends BaseActivity {
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullscreenClick() {
-        toggleFullScreen();
+       finish();
     }
 
     @OnClick(R.id.btnWaterLine)
