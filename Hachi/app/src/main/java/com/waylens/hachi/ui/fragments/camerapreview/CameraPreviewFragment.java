@@ -31,6 +31,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
+import com.waylens.hachi.ui.activities.LiveViewSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.ClipActionInfo;
@@ -174,8 +175,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
-
-
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             view = createFragmentView(inflater, container, R.layout.fragment_camera_preview_land, savedInstanceState);
         } else {
@@ -197,6 +196,9 @@ public class CameraPreviewFragment extends BaseFragment {
                     case R.id.cameraInfo:
                         int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
                         mInfoView.setVisibility(visibility);
+                        break;
+                    case R.id.cameraSetting:
+                        LiveViewSettingActivity.launch(getActivity(), mVdtCamera);
                         break;
                 }
                 return false;

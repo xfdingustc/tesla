@@ -6,4 +6,10 @@
         android:icon="@drawable/nav_bar_info"
         android:title="@string/share"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/cameraSetting"
+        android:icon="@drawable/settings_menu_general"
+        android:title="@string/settings"
+        app:showAsAction="always" />
 </menu>

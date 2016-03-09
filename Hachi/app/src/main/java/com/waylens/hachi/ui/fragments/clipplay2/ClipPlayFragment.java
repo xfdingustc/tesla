@@ -629,7 +629,9 @@ public class ClipPlayFragment extends DialogFragment {
             mMultiSegSeekbar.setProgress(progress);
         }
 
-        mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
+        if (mRawDataLoader != null) {
+            mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
+        }
 
         if (mMediaPlayer.isPlaying()) {
             mUiHandler.postDelayed(new Runnable() {
