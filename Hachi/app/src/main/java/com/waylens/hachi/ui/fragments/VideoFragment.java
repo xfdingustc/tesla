@@ -57,11 +57,6 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     }
 
     @Override
-    public ViewPager getViewPager() {
-        return mViewPager;
-    }
-
-    @Override
     public boolean onInterceptBackPressed() {
         ClipListFragment fragment = (ClipListFragment) mAdapter.getItem(mViewPager.getCurrentItem());
         return fragment.onInterceptBackPressed();

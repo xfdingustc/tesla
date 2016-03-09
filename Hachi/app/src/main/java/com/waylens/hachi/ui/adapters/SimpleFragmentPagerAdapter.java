@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
+import com.waylens.hachi.ui.fragments.BaseFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,20 +14,20 @@ import java.util.List;
  * Created by Xiaofei on 2015/7/22.
  */
 public class SimpleFragmentPagerAdapter extends BaseFragmentStatePagerAdapter {
-    private final List<Fragment> mFragmentList = new ArrayList<>();
+    private final List<BaseFragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitles = new ArrayList<>();
 
     public SimpleFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void addFragment(Fragment fragment, String title) {
+    public void addFragment(BaseFragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitles.add(title);
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public BaseFragment getItem(int position) {
         return mFragmentList.get(position);
     }
 

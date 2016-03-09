@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment  {
     protected View mRootView;
     protected MaterialDialog mProgressDialog;
 
@@ -78,8 +78,7 @@ public class BaseFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
-
-
+    
     private VdtCameraManager.Callback mVdtCameraMangerCallback = new VdtCameraManager.Callback() {
         @Override
         public void onCameraConnecting(VdtCamera vdtCamera) {
@@ -165,9 +164,6 @@ public class BaseFragment extends Fragment {
         Snackbar.make(mRootView, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    public ViewPager getViewPager() {
-        return null;
-    }
 
     protected VdtCamera getCamera() {
         Bundle args = getArguments();

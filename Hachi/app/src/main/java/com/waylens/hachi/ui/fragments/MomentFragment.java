@@ -50,7 +50,7 @@ public class MomentFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-        mViewPager.setAdapter(null);
+        //mViewPager.setAdapter(null);
     }
 
     private void setupViewPager() {
@@ -67,10 +67,7 @@ public class MomentFragment extends BaseFragment {
                 .all));
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
+
     }
 
-    @Override
-    public ViewPager getViewPager() {
-        return mViewPager;
-    }
 }

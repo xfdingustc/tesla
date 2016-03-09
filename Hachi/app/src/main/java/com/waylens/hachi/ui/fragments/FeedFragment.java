@@ -132,8 +132,14 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
 
     @Override
     public void onStart() {
+        Logger.t(TAG).d("onstart");
         super.onStart();
+    }
 
+    @Override
+    public void onPause() {
+        Logger.t(TAG).d("onPause");
+        super.onPause();
     }
 
     @Override
@@ -142,7 +148,19 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         mRequestQueue.cancelAll(TAG_HOME_REQUEST);
     }
 
-    void loadFeed(int cursor, final boolean isRefresh) {
+    @Override
+    public void onStop() {
+        Logger.t(TAG).d("onstop");
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        Logger.t(TAG).d("onresume");
+        super.onResume();
+    }
+
+    private void loadFeed(int cursor, final boolean isRefresh) {
         String url = getFeedURL(cursor);
         if (url == null) {
             return;

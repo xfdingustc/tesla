@@ -227,29 +227,6 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
         }
     }
 
-//    public static EnhancementActivity2 newInstance(SharableClip sharableClip) {
-//        Bundle args = new Bundle();
-//        EnhancementActivity2 fragment = new EnhancementActivity2();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
-//    public static EnhancementActivity2 newInstance(Playlist playlist) {
-//        Bundle args = new Bundle();
-//        EnhancementActivity2 fragment = new EnhancementActivity2();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
-
-//    public static EnhancementActivity2 newInstance(int clipSetIndex) {
-//        Bundle args = new Bundle();
-//        EnhancementActivity2 fragment = new EnhancementActivity2();
-//        fragment.setArguments(args);
-//        fragment.mClipSetIndex = clipSetIndex;
-//        return fragment;
-//    }
-
     public static void launch(Activity activity, int clipSetIndex) {
         Intent intent = new Intent(activity, EnhancementActivity2.class);
         intent.putExtra("clipSetIndex", clipSetIndex);
@@ -359,9 +336,7 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
 
     }
 
-    void close() {
-        //getFragmentManager().beginTransaction().remove(this).commit();
-    }
+
 
     @Override
     public boolean onInterceptBackPressed() {
@@ -369,7 +344,6 @@ public class EnhancementActivity2 extends BaseActivity implements FragmentNaviga
             VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
             return true;
         }
-        close();
         return true;
     }
 

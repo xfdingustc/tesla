@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity {
             new SettingsFragment()
     };
 
-    private Fragment mCurrentFragment = null;
+    private BaseFragment mCurrentFragment = null;
     private SessionManager mSessionManager = SessionManager.getInstance();
 
     @Bind(R.id.drawerLayout)
