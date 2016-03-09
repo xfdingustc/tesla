@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -30,9 +31,9 @@ import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.clipplay.MomentPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
+import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
@@ -59,6 +60,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     public static final int FEED_TAG_ME = 1;
     public static final int FEED_TAG_LIKES = 2;
     public static final int FEED_TAG_STAFF_PICKS = 3;
+    public static final int FEED_TAG_ALL = 4;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -93,7 +95,11 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFeedTag = getArguments().getInt(FEED_TAG, FEED_TAG_MY_FEED);
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_MY_FEED);
+        }
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
         mAdapter.setOnMomentActionListener(this);
@@ -129,17 +135,11 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         mRequestQueue.cancelAll(TAG_HOME_REQUEST);
     }
 
-
     void loadFeed(int cursor, final boolean isRefresh) {
-        String url = Constants.API_MOMENTS
-                + String.format(Constants.API_QS_MOMENTS, Constants.PARAM_SORT_UPLOAD_TIME, cursor, DEFAULT_COUNT)
-                + "&filter=featured";
-
-        if (mFeedTag == FEED_TAG_ME) {
-            url = Constants.API_USERS + "/me/" + Constants
-                .PARAM_MOMENTS;
+        String url = getFeedURL(cursor);
+        if (url == null) {
+            return;
         }
-
         Logger.t(TAG).d("Load url: " + url);
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
@@ -154,6 +154,37 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
                         onLoadFeedFailed(error);
                     }
                 }).setTag(TAG_HOME_REQUEST));
+    }
+
+    String getFeedURL(int cursor) {
+        String url = null;
+        switch (mFeedTag) {
+            case FEED_TAG_MY_FEED:
+                url = Constants.API_MOMENTS_MY_FEED;
+                break;
+            case FEED_TAG_ME:
+                url = Constants.API_MOMENTS_ME;
+                break;
+            case FEED_TAG_LIKES:
+                url = null;
+                break;
+            case FEED_TAG_STAFF_PICKS:
+                url = Constants.API_MOMENTS_FEATURED;
+                break;
+            case FEED_TAG_ALL:
+                url = Constants.API_MOMENTS;
+                break;
+        }
+        if (url != null) {
+            Uri uri = Uri.parse(url).buildUpon()
+                    .appendQueryParameter(Constants.API_MOMENTS_PARAM_CURSOR, String.valueOf(cursor))
+                    .appendQueryParameter(Constants.API_MOMENTS_PARAM_COUNT, String.valueOf(DEFAULT_COUNT))
+                    .appendQueryParameter(Constants.API_MOMENTS_PARAM_ORDER, Constants.PARAM_SORT_UPLOAD_TIME)
+                    .build();
+            return uri.toString();
+        } else {
+            return null;
+        }
     }
 
     void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {

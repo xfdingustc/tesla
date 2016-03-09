@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -215,8 +216,12 @@ public class AccountFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     void loadFeed(int cursor, final boolean isRefresh) {
-        String url = Constants.API_MOMENTS_ME + String.format(Constants.API_QS_MOMENTS, Constants.PARAM_SORT_UPLOAD_TIME, cursor, DEFAULT_COUNT);
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
+        Uri uri = Uri.parse(Constants.API_MOMENTS_ME).buildUpon()
+                .appendQueryParameter(Constants.API_MOMENTS_PARAM_CURSOR, String.valueOf(cursor))
+                .appendQueryParameter(Constants.API_MOMENTS_PARAM_COUNT, String.valueOf(DEFAULT_COUNT))
+                .appendQueryParameter(Constants.API_MOMENTS_PARAM_ORDER, Constants.PARAM_SORT_UPLOAD_TIME)
+                .build();
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, uri.toString(),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

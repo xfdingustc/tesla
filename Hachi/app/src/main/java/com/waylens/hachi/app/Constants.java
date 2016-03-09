@@ -33,13 +33,17 @@ public class Constants {
 
     public static final String API_MOMENTS = HOST_URL + "api/moments";
 
+    public static final String API_MOMENTS_MY_FEED = API_MOMENTS + "/myfeed";
+
+    public static final String API_MOMENTS_FEATURED = API_MOMENTS + "?filter=featured";
+
     public static final String API_MOMENTS_ME = HOST_URL + "api/users/me/moments";
 
-    public static final String API_QS_MOMENTS = "?order=%s&cursor=%d&count=%d";
+    public static final String API_MOMENTS_PARAM_ORDER = "order";
+    public static final String API_MOMENTS_PARAM_CURSOR = "cursor";
+    public static final String API_MOMENTS_PARAM_COUNT = "count";
 
     public static final String API_MOMENT_PLAY = HOST_URL + "api/moments/play/";
-
-    public static final String PARAM_MOMENTS = "moments";
 
     public static final String PARAM_SORT_UPLOAD_TIME = "uploadtime_desc";
 
