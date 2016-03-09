@@ -281,7 +281,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Logger.t(TAG).d("need finished");
                 finish();
             }
         });

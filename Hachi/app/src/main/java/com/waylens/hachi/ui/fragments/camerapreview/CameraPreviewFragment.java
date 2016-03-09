@@ -24,6 +24,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.hardware.vdtcamera.WifiState;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -200,8 +201,8 @@ public class CameraPreviewFragment extends BaseFragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.cameraInfo:
-                        int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-                        mInfoView.setVisibility(visibility);
+
+                        toggleInfoView();
                         break;
                     case R.id.cameraSetting:
                         LiveViewSettingActivity.launch(getActivity(), mVdtCamera);
@@ -532,5 +533,60 @@ public class CameraPreviewFragment extends BaseFragment {
             mRecordDot.setVisibility(View.GONE);
         }
 
+    }
+
+    private void toggleInfoView() {
+        if (mInfoView != null) {
+            int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+            mInfoView.setVisibility(visibility);
+            if (visibility == View.VISIBLE) {
+                updateCameraInfoPanel();
+            }
+        }
+    }
+
+    private void updateCameraInfoPanel() {
+        if (mInfoView == null) {
+            return;
+        }
+
+        // update battery info:
+        int batteryStatus = mVdtCamera.getBatteryState();
+        if (batteryStatus != CameraState.STATE_BATTERY_CHARGING) {
+            mIsCharging.setVisibility(View.INVISIBLE);
+        } else {
+            mIsCharging.setVisibility(View.VISIBLE);
+        }
+
+        int batterVol = mVdtCamera.getBatterVolume();
+        if (batterVol < 25) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_4);
+        } else if (batterVol < 50) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_3);
+        } else if (batterVol < 75) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_2);
+        } else if (batterVol < 100) {
+            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_1);
+        }
+
+        String batterVolString = "" + batterVol + "%";
+        mTvBatteryVol.setText(batterVolString);
+
+        // update Wifi info:
+        WifiState wifiState = mVdtCamera.getWifiStates();
+        Logger.t(TAG).d("WifiMode: " + wifiState.mWifiMode);
+        if (wifiState.mWifiMode == WifiState.WIFI_MODE_AP) {
+            mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_ap);
+        } else if (wifiState.mWifiMode == WifiState.WIFI_MODE_CLIENT) {
+            mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_client);
+        }
+
+        // update storage info;
+        VdtCamera.StorageInfo storageInfo = mVdtCamera.getStorageInfo();
+
+        Logger.t(TAG).d("totalSpace: " + storageInfo.totalSpace + " freeSpace: " + storageInfo.freeSpace);
+
+        mStorageView.setMax(storageInfo.totalSpace);
+        mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
     }
 }
