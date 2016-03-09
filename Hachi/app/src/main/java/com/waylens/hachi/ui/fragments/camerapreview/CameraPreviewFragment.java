@@ -82,9 +82,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.btnFullscreen)
     ImageButton mBtnFullScreen;
 
-    @Bind(R.id.btnWaterLine)
-    ImageButton mBtnWaterLine;
-
     @Nullable
     @Bind(R.id.tvTitle)
     TextView mTvTitle;
@@ -159,7 +156,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
             requestLiveRawData();
             mSharpView.setVisibility(View.INVISIBLE);
-            mBtnWaterLine.clearColorFilter();
+
         }
     }
 
@@ -195,7 +192,9 @@ public class CameraPreviewFragment extends BaseFragment {
     public void setupToolbar() {
         mToolbar.setTitle(R.string.live_view);
         mToolbar.getMenu().clear();
-        mToolbar.inflateMenu(R.menu.menu_live_view);
+        if (mVdtCamera != null) {
+            mToolbar.inflateMenu(R.menu.menu_live_view);
+        }
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -217,15 +216,15 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onCameraVdbConnected(VdtCamera camera) {
         super.onCameraVdbConnected(camera);
-        getActivity().runOnUiThread(new Runnable() {
+        mHandler.post(new Runnable() {
             @Override
             public void run() {
                 mCameraConnecting.setVisibility(View.GONE);
+                mToolbar.getMenu().clear();
+                mToolbar.inflateMenu(R.menu.menu_live_view);
                 initViews();
             }
         });
-
-
     }
 
     protected void init() {

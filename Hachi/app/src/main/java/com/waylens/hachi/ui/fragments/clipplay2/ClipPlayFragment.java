@@ -36,7 +36,6 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
-import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity2;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
@@ -523,6 +522,9 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void startPreparingClip(final long clipTimeMs, boolean loadRawData) {
+        if (mBtnPlayPause.isEnabled() == false) {
+            return;
+        }
         if (loadRawData == false) {
             startLoadPlaybackUrl(clipTimeMs);
         } else {

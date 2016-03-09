@@ -90,7 +90,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/playbar_play"/>
+            android:src="@drawable/playbar_play"
+            android:enabled="false"/>
 
         <FrameLayout
             android:layout_width="0dp"

@@ -321,15 +321,15 @@
                     android:background="@android:color/transparent"
                     android:src="@drawable/screen_full" />
 
-                <ImageButton
-                    android:id="@+id/btnWaterLine"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="20dp"
-                    android:layout_toLeftOf="@id/btnFullscreen"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/camera_control_grid" />
+                <!--<ImageButton-->
+                    <!--android:id="@+id/btnWaterLine"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginRight="20dp"-->
+                    <!--android:layout_toLeftOf="@id/btnFullscreen"-->
+                    <!--android:background="@android:color/transparent"-->
+                    <!--android:src="@drawable/camera_control_grid" />-->
 
 
                 <ImageButton
@@ -338,7 +338,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="20dp"
-                    android:layout_toLeftOf="@id/btnWaterLine"
+                    android:layout_toLeftOf="@id/btnFullscreen"
                     android:background="@android:color/transparent"
                     android:src="@drawable/btn_gauge_overlay" />
             </RelativeLayout>
