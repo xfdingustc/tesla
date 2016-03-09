@@ -34,6 +34,7 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.MomentFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.VideoFragment;
+import com.waylens.hachi.ui.fragments.camerapreview.CameraPreviewFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -58,7 +59,7 @@ public class MainActivity extends BaseActivity {
 
     private BaseFragment[] mFragmentList = new BaseFragment[]{
             new VideoFragment(),
-            new CameraConnectFragment(),
+            new CameraPreviewFragment(),
             new MomentFragment(),
             new SettingsFragment()
     };
@@ -296,13 +297,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private void setupActionBarToggle() {
-//        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string
-//                .drawer_open, R.string.drawer_close);
-//        mDrawerLayout.setDrawerListener(mDrawerToggle);
-//        mDrawerToggle.syncState();
-
-    }
 
     @Override
     public void onBackPressed() {

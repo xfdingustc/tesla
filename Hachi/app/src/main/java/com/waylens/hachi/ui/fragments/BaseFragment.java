@@ -37,7 +37,7 @@ public class BaseFragment extends Fragment {
 
     @Nullable
     @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    public Toolbar mToolbar;
 
     @Nullable
     @Bind(R.id.tabs)

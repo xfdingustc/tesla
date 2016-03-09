@@ -120,6 +120,14 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.tvBatteryVol)
     TextView mTvBatteryVol;
 
+    @Nullable
+    @Bind(R.id.cameraConnecting)
+    LinearLayout mCameraConnecting;
+
+    @Nullable
+    @Bind(R.id.connectIndicator)
+    ImageView mIvConnectIdicator;
+
 
 
     @OnClick(R.id.btnFullscreen)
@@ -175,12 +183,39 @@ public class CameraPreviewFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.live_view);
+        super.setupToolbar();
+    }
 
+    @Override
+    public void onCameraVdbConnected(VdtCamera camera) {
+        super.onCameraVdbConnected(camera);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCameraConnecting.setVisibility(View.GONE);
+                initViews();
+            }
+        });
+
+
+    }
 
     protected void init() {
         mVdbRequestQueue = Snipe.newRequestQueue();
-        mVdtCamera = getCameraFromIntent(getArguments());
         mHandler = new Handler();
+        if (VdtCameraManager.getManager().isConnected()) {
+            mVdtCamera = VdtCameraManager.getManager().getConnectedCameras().get(0);
+            mCameraConnecting.setVisibility(View.GONE);
+        } else {
+            mCameraConnecting.setVisibility(View.VISIBLE);
+            mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+            AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+            animationDrawable.start();
+        }
+
         if (mVdtCamera != null) {
             initViews();
         }
@@ -201,20 +236,6 @@ public class CameraPreviewFragment extends BaseFragment {
             mTvTitle.setText(mVdtCamera.getName());
         }
     }
-
-    protected VdtCamera getCameraFromIntent(Bundle bundle) {
-
-        String ssid = bundle.getString("ssid");
-        String hostString = bundle.getString("hostString");
-        if (ssid == null || hostString == null) {
-            Logger.t(TAG).d("NNNNNNNNNNNNNNNNNNNNNNN");
-            return null;
-        }
-        VdtCameraManager vdtCameraManager = VdtCameraManager.getManager();
-        VdtCamera vdtCamera = vdtCameraManager.findConnectedCamera(ssid, hostString);
-        return vdtCamera;
-    }
-
 
     private void initCameraPreview() {
 
@@ -393,9 +414,6 @@ public class CameraPreviewFragment extends BaseFragment {
     private void initGaugeWebView() {
         mWvGauge.getSettings().setJavaScriptEnabled(true);
         mWvGauge.setBackgroundColor(Color.TRANSPARENT);
-        //mWvGauge.addJavascriptInterface(new WebAppInterface(this), "Android");
-        //mWvGauge.setWebChromeClient(new MyWebChromeClient());
-        //mWvGauge.setWebViewClient(new MyWebViewClient());]
         mWvGauge.loadUrl("file:///android_asset/api.html");
         mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, mWvGauge);
     }

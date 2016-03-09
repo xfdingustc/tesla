@@ -1,85 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cameraConnecting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
+
     android:orientation="vertical"
     android:paddingBottom="?attr/actionBarSize">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:elevation="@dimen/default_elevation"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <ViewSwitcher
-        android:id="@+id/vsRoot"
+    <RelativeLayout
+        android:id="@+id/connectingLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="30dp"
-            android:orientation="vertical">
-
-
-            <RelativeLayout
-                android:id="@+id/connectingLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/connectIndicator"
-                        android:layout_width="44dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true" />
-
-                    <ImageView
-                        android:id="@+id/ivConnectStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"
-                        android:layout_toLeftOf="@id/connectIndicator"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/camera_connecting_phone" />
-
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_toRightOf="@id/connectIndicator"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/camera_connecting_camera" />
-
-                    <Button
-                        android:id="@+id/btnEnterPreview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/connectIndicator"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="56dp"
-                        android:text="Preview"
-                        android:visibility="gone" />
-
-                </RelativeLayout>
-            </RelativeLayout>
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/cameraPreviewFragmentContainer"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </FrameLayout>
-    </ViewSwitcher>
+            <ImageView
+                android:id="@+id/connectIndicator"
+                android:layout_width="44dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <ImageView
+                android:id="@+id/ivConnectStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/connectIndicator"
+                android:background="@android:color/transparent"
+                android:src="@drawable/camera_connecting_phone" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/connectIndicator"
+                android:background="@android:color/transparent"
+                android:src="@drawable/camera_connecting_camera" />
+
+            <Button
+                android:id="@+id/btnEnterPreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/connectIndicator"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="56dp"
+                android:text="Preview"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
 </LinearLayout>

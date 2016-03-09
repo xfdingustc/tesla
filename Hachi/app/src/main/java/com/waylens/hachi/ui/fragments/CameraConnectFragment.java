@@ -41,8 +41,7 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     @Bind(R.id.btnEnterPreview)
     Button mBtnEnterPreview;
 
-    @Bind(R.id.vsRoot)
-    ViewSwitcher mVsRoot;
+
 
     private TabLayout mTabLayout;
 
@@ -106,13 +105,13 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         CameraPreviewFragment fragment = CameraPreviewFragment.newInstance(getCamera());
-        getChildFragmentManager().beginTransaction().replace(R.id.cameraPreviewFragmentContainer, fragment).commit();
+        //getChildFragmentManager().beginTransaction().replace(R.id.cameraPreviewFragmentContainer, fragment).commit();
     }
 
     @Override
     public void onCameraVdbConnected(VdtCamera camera) {
         super.onCameraVdbConnected(camera);
-        if (getActivity() == null || mVsRoot == null) {
+        if (getActivity() == null ) {
             return;
         }
         getActivity().runOnUiThread(new Runnable() {
@@ -156,19 +155,19 @@ public class CameraConnectFragment extends BaseFragment implements FragmentNavig
 
     private void toggleCameraConnected() {
         boolean isConnected = mVdtCameraManager.isConnected();
-        if (!isConnected) {
-            int childIndex = mVsRoot.getDisplayedChild();
-            if (childIndex == 1) {
-                mVsRoot.showNext();
-            }
-        } else {
-            int childIndex = mVsRoot.getDisplayedChild();
-            if (childIndex == 0) {
-                mVsRoot.showNext();
-            }
-            CameraPreviewFragment fragment = CameraPreviewFragment.newInstance(getCamera());
-            getChildFragmentManager().beginTransaction().replace(R.id.cameraPreviewFragmentContainer, fragment).commit();
-        }
+//        if (!isConnected) {
+//            int childIndex = mVsRoot.getDisplayedChild();
+//            if (childIndex == 1) {
+//                mVsRoot.showNext();
+//            }
+//        } else {
+//            int childIndex = mVsRoot.getDisplayedChild();
+//            if (childIndex == 0) {
+//                mVsRoot.showNext();
+//            }
+//            CameraPreviewFragment fragment = CameraPreviewFragment.newInstance(getCamera());
+//            getChildFragmentManager().beginTransaction().replace(R.id.cameraPreviewFragmentContainer, fragment).commit();
+//        }
     }
 
 
