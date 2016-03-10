@@ -219,7 +219,7 @@ public class VdtCameraManager {
 
     // API
     synchronized public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
-
+        Logger.t(TAG).d("connect Camera");
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectedVdtCameras)) {
             // already connected
             return;
@@ -237,6 +237,7 @@ public class VdtCameraManager {
         }
 
         VdtCamera vdtCamera = new VdtCamera(serviceInfo);
+        Logger.t(TAG).d("camera is created");
         //vdtCamera.addCallback(mCameraCallback);
         vdtCamera.setOnConnectionChangeListener(new VdtCamera.OnConnectionChangeListener() {
             @Override

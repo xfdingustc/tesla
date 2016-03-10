@@ -315,6 +315,7 @@ class VdtCameraController {
 
     public VdtCameraController(InetAddress host, int port, CameraState state) {
         InetSocketAddress address = new InetSocketAddress(host, port);
+        Logger.t("testconnect").d("create connection " + address.getAddress());
         mConnection = new MyTcpConnection("ccam", address);
         this.mStates = state;
     }

@@ -124,10 +124,7 @@ public class VdtCamera {
             @Override
             public void onDisconnected() {
                 onCameraDisconnected();
-
             }
-
-
 
             @Override
             public void onBtStateChanged() {

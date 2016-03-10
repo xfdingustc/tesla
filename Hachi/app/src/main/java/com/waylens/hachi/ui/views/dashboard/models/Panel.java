@@ -37,7 +37,7 @@ public class Panel extends Element {
                 if (element.mType != ELEMENT_TYPE_UNKNOWN) {
                     mElementList.add(element);
                 } else {
-                    Logger.t(TAG).d("Unknown element");
+//                    Logger.t(TAG).d("Unknown element");
                 }
 
             }

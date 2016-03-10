@@ -109,9 +109,9 @@ abstract public class TcpConnection {
             mSocket = new Socket();
         }
         mSocket.setReceiveBufferSize(8192);
-        Logger.t(TAG).d("Connecting to: " + mAddress.getHostName() + ": " + mAddress.getPort());
+        Logger.t(TAG).d("Connecting to: ");
         mSocket.connect(mAddress, CONNECT_TIMEOUT);
-        Logger.t(TAG).d("Connected: " + mAddress.getHostName());
+        Logger.t(TAG).d("Connected: " );
 
         TcpConnection.this.onConnectedAsync();
         Logger.t(TAG).d("connected to " + mAddress.toString());
