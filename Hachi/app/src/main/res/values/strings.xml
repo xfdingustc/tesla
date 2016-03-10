@@ -366,5 +366,7 @@
     <string name="clip_from">Use Clips From</string>
     <string name="bookmark_update_successful">Bookmark is updated!</string>
     <string name="bookmark_update_error">Fail to update Bookmark.</string>
+    <string name="share_to">To:</string>
+    <string name="share_hint">Say something about the video…</string>
 
 </resources>

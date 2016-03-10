@@ -1,30 +1,20 @@
 package com.waylens.hachi.utils;
 
-import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.widget.ImageView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbCommand;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
-import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
-import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.ui.entities.LocalMoment;
+import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.urls.UploadUrl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.concurrent.CountDownLatch;
 
 import crs_svr.v2.CrsClientTranData;
 import crs_svr.v2.CrsCommand;
@@ -51,7 +41,6 @@ public class DataUploaderV2 {
     private String mPrivateKey;
     String mUserId;
     long mMomentID;
-    VdbRequestQueue mVdbRequestQueue;
 
     volatile boolean isCancelled;
     private int mClipTotalCount;
@@ -59,16 +48,18 @@ public class DataUploaderV2 {
     private OnUploadListener mUploadListener;
 
     public interface OnUploadListener {
+        void onUploadSuccessful();
+
         void onUploadProgress(int percentage);
+
+        void onUploadError(int errorCode, int extraCode);
+
+        void onCancelUpload();
     }
 
-    public DataUploaderV2(String address, int port, String privateKey, VdbRequestQueue vdbRequestQueue) {
-        mAddress = address;
-        mPort = port;
-        mPrivateKey = privateKey;
+    public DataUploaderV2() {
         mUserId = SessionManager.getInstance().getUserId();
         EncodeCommandHeader.CURRENT_ENCODE_TYPE = CrsCommand.ENCODE_TYPE_OPEN;
-        mVdbRequestQueue = vdbRequestQueue;
     }
 
     private void init() throws IOException {
@@ -82,27 +73,25 @@ public class DataUploaderV2 {
         return receiveData();
     }
 
-    private int createMomentDesc(SharableClip[] sharableClips, UploadUrl[] uploadUrls, int dataType)
+    private int createMomentDesc(LocalMoment localMoment)
             throws IOException {
         CrsMomentDescription momentDescription = new CrsMomentDescription(mUserId,
                 mMomentID,
                 "background music",
                 mPrivateKey);
-        for (int i = 0; i < sharableClips.length; i++) {
-            SharableClip sharableClip = sharableClips[i];
-            UploadUrl uploadUrl = uploadUrls[i];
-            momentDescription.addFragment(new CrsFragment(sharableClip.clip.getVdbId(),
-                    getClipCaptureTime(sharableClip, uploadUrl),
-                    uploadUrl.realTimeMs,
+        for (LocalMoment.Fragment fragment : localMoment.fragments) {
+            momentDescription.addFragment(new CrsFragment(fragment.clip.getVdbId(),
+                    fragment.getClipCaptureTime(),
+                    fragment.uploadURL.realTimeMs,
                     0,
-                    uploadUrl.lengthMs,
-                    sharableClip.clip.streams[1].video_width,
-                    sharableClip.clip.streams[1].video_height,
-                    dataType
+                    fragment.uploadURL.lengthMs,
+                    fragment.clip.streams[1].video_width,
+                    fragment.clip.streams[1].video_height,
+                    fragment.dataType
             ));
         }
         momentDescription.addFragment(new CrsFragment(String.valueOf(mMomentID),
-                getClipCaptureTime(sharableClips[0], uploadUrls[0]),
+                localMoment.fragments.get(0).getClipCaptureTime(),
                 0,
                 0,
                 0,
@@ -112,11 +101,6 @@ public class DataUploaderV2 {
         ));
         sendData(momentDescription.getEncodedCommand());
         return receiveData();
-    }
-
-    String getClipCaptureTime(SharableClip sharableClip, UploadUrl uploadUrl) {
-        long offset = uploadUrl.realTimeMs - sharableClip.clip.getStartTimeMs();
-        return DateTime.toString(sharableClip.clip.clipDate, offset);
     }
 
     private int startUpload(String guid, UploadUrl uploadUrl, int dataType) throws IOException {
@@ -144,20 +128,20 @@ public class DataUploaderV2 {
         return receiveData();
     }
 
-    private int uploadMomentData(SharableClip[] sharableClips, UploadUrl[] uploadUrls, int
-        dataType) throws IOException {
-        mClipTotalCount = sharableClips.length + 1; // 1 for thumbnail
-        for (int i = 0; i < sharableClips.length; i++) {
-            String guid = sharableClips[i].clip.getVdbId();
-            UploadUrl uploadUrl = uploadUrls[i];
-            int ret = startUpload(guid, uploadUrl, dataType);
+    private int uploadMomentData(LocalMoment localMoment) throws IOException {
+        mClipTotalCount = localMoment.fragments.size() + 1; // 1 for thumbnail
+        int clipIndex = 0;
+        for (LocalMoment.Fragment fragment : localMoment.fragments) {
+            String guid = fragment.clip.getVdbId();
+            UploadUrl uploadUrl = fragment.uploadURL;
+            int ret = startUpload(guid, uploadUrl, fragment.dataType);
             if (ret == CrsCommand.RES_FILE_TRANS_COMPLETE) {
-                log("File already exist: " + ret);
+                Logger.t(TAG).d("File already exist: " + ret);
                 continue;
             }
 
             if (ret != CrsCommand.RES_STATE_OK) {
-                log("Start upload: " + ret);
+                Logger.t(TAG).d("Start upload: " + ret);
                 return ret;
             }
 
@@ -166,8 +150,8 @@ public class DataUploaderV2 {
                 URL url = new URL(uploadUrl.url);
                 URLConnection conn = url.openConnection();
                 inputStream = conn.getInputStream();
-                Log.e("test", String.format("ContentLength[%d]", conn.getContentLength()));
-                ret = doUpload(guid, conn.getContentLength(), dataType, inputStream, i);
+                Logger.t(TAG).d("test", String.format("ContentLength[%d]", conn.getContentLength()));
+                ret = doUpload(guid, conn.getContentLength(), fragment.dataType, inputStream, clipIndex++);
                 if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                     return ret;
                 }
@@ -176,7 +160,7 @@ public class DataUploaderV2 {
                     try {
                         inputStream.close();
                     } catch (IOException e) {
-                        log("", e);
+                        Logger.t(TAG).e(e, "Close inputStream");
                     }
                 }
             }
@@ -185,7 +169,7 @@ public class DataUploaderV2 {
     }
 
     private int doUpload(String guid, int totalLength, int dataType, InputStream inputStream, int clipIndex)
-        throws IOException {
+            throws IOException {
         byte[] data = new byte[1024 * 4];
         int length;
         int seqNum = 0;
@@ -219,6 +203,9 @@ public class DataUploaderV2 {
 
             mUploadListener.onUploadProgress(percentage);
         }
+
+        inputStream.close();
+
         return stopUpload(guid);
     }
 
@@ -249,193 +236,107 @@ public class DataUploaderV2 {
         }
     }
 
-    UploadUrl getFragmentData(SharableClip sharableClip, int dataType) {
-        final CountDownLatch latch = new CountDownLatch(1);
-        final UploadUrl[] urlWrapper = new UploadUrl[]{null};
-        Bundle parameters = new Bundle();
-        parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
-        parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, sharableClip.selectedStartValue);
-        parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, sharableClip.getSelectedLength());
-        parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, dataType);
-
-        ClipUploadUrlRequest request = new ClipUploadUrlRequest(sharableClip.bufferedCid, parameters,
-                new VdbResponse.Listener<UploadUrl>() {
-                    @Override
-                    public void onResponse(UploadUrl response) {
-                        urlWrapper[0] = response;
-                        latch.countDown();
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        log("", error);
-                        latch.countDown();
-                    }
-                });
-        mVdbRequestQueue.add(request);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            log("", e);
-        }
-        return urlWrapper[0];
-    }
-
-    Bitmap getClipThumbnail(SharableClip sharableClip) {
-        final CountDownLatch latch = new CountDownLatch(1);
-        final Bitmap[] bitmaps = new Bitmap[]{null};
-        VdbImageRequest request = new VdbImageRequest(
-                sharableClip.getThumbnailClipPos(sharableClip.selectedStartValue),
-                new VdbResponse.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        bitmaps[0] = response;
-                        latch.countDown();
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        log("", error);
-                        latch.countDown();
-                    }
-                },
-                0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.RGB_565, null
-        );
-        mVdbRequestQueue.add(request);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            log("", e);
-        }
-        return bitmaps[0];
-    }
-
     private void logOut() throws IOException {
         CrsUserLogout logout = new CrsUserLogout(mUserId, mPrivateKey);
         sendData(logout.getEncodedCommand());
     }
 
-    private int uploadThumbnail(SharableClip sharableClip) throws IOException {
+    private int uploadThumbnail(String thumbnailPath) throws IOException {
         int ret = startUpload(String.valueOf(mMomentID), null, CrsCommand.VIDIT_THUMBNAIL_JPG);
         if (ret == CrsCommand.RES_FILE_TRANS_COMPLETE) {
-            log("Already exists. uploadThumbnail successful");
+            Logger.t(TAG).d("Already exists. uploadThumbnail successful");
             return ret;
         }
 
         if (ret != 0) {
-            log("Start uploadThumbnail error: " + ret);
+            Logger.t(TAG).d("Start uploadThumbnail error: " + ret);
             return ret;
         }
 
-        Bitmap bitmap = getClipThumbnail(sharableClip);
-        ByteArrayOutputStream bitmapOut = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bitmapOut);
-        byte[] bytes = bitmapOut.toByteArray();
-        log("Thumbnail size: " + bytes.length);
-        ByteArrayInputStream bitmapIn = new ByteArrayInputStream(bytes);
-        return doUpload(String.valueOf(mMomentID), bytes.length, CrsCommand.VIDIT_THUMBNAIL_JPG,
-            bitmapIn, mClipTotalCount - 1);
+        FileInputStream fis = new FileInputStream(thumbnailPath);
+        return doUpload(String.valueOf(mMomentID), fis.available(), CrsCommand.VIDIT_THUMBNAIL_JPG,
+                fis, mClipTotalCount - 1);
 
     }
 
-    int uploadClips(long momentID, SharableClip[] sharableClips, UploadUrl[] uploadUrls, int
-        dataType) {
-
-        mMomentID = momentID;
+    void uploadClips(LocalMoment localMoment) {
+        mMomentID = localMoment.momentID;
+        Logger.t(TAG).e("MomentID: " + mMomentID);
         try {
             init();
             int ret = login();
             if (ret != 0) {
-                log("Login error");
-                return ret;
+                Logger.t(TAG).d("Login error");
+                mUploadListener.onUploadError(MomentShareHelper.ERROR_LOGIN, ret);
+                return;
             }
-            log("Login successful");
-            ret = createMomentDesc(sharableClips, uploadUrls, dataType);
+            Logger.t(TAG).d("Login successful");
+            ret = createMomentDesc(localMoment);
             if (ret != 0) {
-                log("createMoment error");
-                return ret;
+                Logger.t(TAG).d("createMoment error");
+                mUploadListener.onUploadError(MomentShareHelper.ERROR_CREATE_MOMENT_DESC, ret);
+                return;
             }
-            log("createMoment successful");
+            Logger.t(TAG).d("createMoment successful");
 
-            ret = uploadMomentData(sharableClips, uploadUrls, dataType);
+            ret = uploadMomentData(localMoment);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
-                log("Upload fragment error: " + ret);
-                return ret;
+                Logger.t(TAG).d("Upload fragment error: " + ret);
+                mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_VIDEO, ret);
+                return;
             }
-            log("Upload fragment successful");
-            ret = uploadThumbnail(sharableClips[0]);
+            Logger.t(TAG).d("Upload fragment successful");
+            ret = uploadThumbnail(localMoment.thumbnailPath);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
-                log("Upload thumbnail error: " + ret);
-                return ret;
+                Logger.t(TAG).d("Upload thumbnail error: " + ret);
+                mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_THUMBNAIL, ret);
+                return;
             }
-            log("Upload thumbnail successful");
-            return CrsCommand.RES_STATE_OK;
+            Logger.t(TAG).d("Upload thumbnail successful");
+            mUploadListener.onUploadSuccessful();
         } catch (IOException e) {
-            log("", e);
+            Logger.t(TAG).e(e, "IOException");
             if (isCancelled) {
-                return CrsCommand.RES_STATE_CANCELLED;
+                mUploadListener.onCancelUpload();
             } else {
-                return CrsCommand.RES_STATE_FAIL;
+                mUploadListener.onUploadError(MomentShareHelper.ERROR_IO, CrsCommand.RES_STATE_FAIL);
             }
         } finally {
             try {
                 logOut();
             } catch (Exception e) {
-                log("", e);
+                Logger.t(TAG).e(e, "Exception");
             }
         }
 
     }
 
-    public int upload(long momentID, SharableClip[] sharableClips, int dataType, @NonNull OnUploadListener listener) {
-        //momentID = 1220;
+    public void upload(LocalMoment localMoment, @NonNull OnUploadListener listener) {
+        mAddress = localMoment.cloudInfo.address;
+        mPort = localMoment.cloudInfo.port;
+        mPrivateKey = localMoment.cloudInfo.privateKey;
         mUploadListener = listener;
-        log("MomentID used: " + momentID);
+        uploadClips(localMoment);
 
-        int vdbDataType = 0;
-        if ((dataType & CrsCommand.VIDIT_VIDEO_DATA_LOW) == CrsCommand.VIDIT_VIDEO_DATA_LOW) {
-            vdbDataType = VdbCommand.Factory.UPLOAD_GET_V1;
-        }
-        if ((dataType & CrsCommand.VIDIT_RAW_DATA) == CrsCommand.VIDIT_RAW_DATA) {
-            vdbDataType |= VdbCommand.Factory.UPLOAD_GET_RAW;
-        }
-
-        UploadUrl[] uploadUrls = new UploadUrl[sharableClips.length];
-        int i = 0;
-        for (SharableClip sharableClip : sharableClips) {
-            uploadUrls[i] = getFragmentData(sharableClip, vdbDataType);
-            i++;
-        }
-
-        return uploadClips(momentID, sharableClips, uploadUrls, dataType);
     }
 
     public void cancel() {
-        log("Cancel task....");
+        Logger.t(TAG).d("Cancel task....");
+
         isCancelled = true;
         if (mOutputStream != null) {
             try {
                 mOutputStream.close();
             } catch (IOException e) {
-                log("Close OutputStream", e);
+                Logger.t(TAG).d("Close OutputStream");
             }
         }
         if (mSocket != null) {
             try {
                 mSocket.close();
             } catch (IOException e) {
-                log("Close Socket", e);
+                Logger.t(TAG).d("Close Socket");
             }
         }
-    }
-
-    void log(String msg, Exception e) {
-        Log.e(TAG, msg, e);
-    }
-
-    void log(String msg) {
-        Log.e(TAG, msg);
     }
 }

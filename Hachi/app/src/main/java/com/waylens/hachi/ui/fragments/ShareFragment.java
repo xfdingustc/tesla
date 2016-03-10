@@ -1,101 +1,174 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.Fragment;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.snipe.Snipe;
-import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.clipplay.CameraVideoPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
-import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * Created by Richard on 12/18/15.
  */
-public class ShareFragment extends Fragment implements FragmentNavigator, MomentShareHelper.OnShareMomentListener {
-    @Bind(R.id.video_cover)
-    ImageView videoCover;
+public class ShareFragment extends BaseFragment implements MomentShareHelper.OnShareMomentListener {
+    private static final String TAG = "ShareFragment";
 
-    @Bind(R.id.social_icons)
-    RecyclerView mRecyclerView;
+    private static final String ARG_CLIP_SET_INDEX = "arg.clip.set.index";
+    private static final String ARG_GAUGE_SETTINGS = "arg.gauge.settings";
+    private static final String ARG_AUDIO_ID = "arg.audio.id";
+    private static final String ARG_IS_FROM_ENHANCE = "arg.is.from.enhance";
+
+    int mClipSetIndex;
+    PlaylistEditor mPlaylistEditor;
+    ClipPlayFragment mClipPlayFragment;
+
+    @Bind(R.id.spinner_social_privacy)
+    Spinner mPrivacySpinner;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.share_success_view)
-    ImageView mShareSuccessView;
-
-    @Bind(R.id.error_msg_view)
-    TextView mErrorMsgView;
-
-    SharableClip mSharableClip;
-    VdbImageLoader mImageLoader;
-    CameraVideoPlayFragment mVideoPlayFragment;
+    @Bind(R.id.moment_title)
+    TextView mTitleView;
 
     private MomentShareHelper mShareHelper;
 
+    String[] mSupportedPrivacy;
+
+    String mSocialPrivacy;
+
+    String mGaugeSettings;
+
     int mAudioID;
 
-    public static ShareFragment newInstance(SharableClip sharableClip, int audioID) {
+    boolean mIsFromEnhance;
+
+    public static ShareFragment newInstance(int clipSetIndex, String gaugeSettings, int audioID, boolean isFromEnhance) {
         Bundle args = new Bundle();
+        args.putInt(ARG_CLIP_SET_INDEX, clipSetIndex);
+        args.putString(ARG_GAUGE_SETTINGS, gaugeSettings);
+        args.putInt(ARG_AUDIO_ID, audioID);
+        args.putBoolean(ARG_IS_FROM_ENHANCE, isFromEnhance);
         ShareFragment fragment = new ShareFragment();
         fragment.setArguments(args);
-        fragment.mSharableClip = sharableClip;
-        fragment.mAudioID = audioID;
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
+        Bundle args = getArguments();
+        if (args != null) {
+            mClipSetIndex = args.getInt(ARG_CLIP_SET_INDEX, ClipSetManager.CLIP_SET_TYPE_ENHANCE);
+            mGaugeSettings = args.getString(ARG_GAUGE_SETTINGS, "");
+            mAudioID = args.getInt(ARG_AUDIO_ID, -1);
+            mIsFromEnhance = args.getBoolean(ARG_IS_FROM_ENHANCE, false);
+        } else {
+            mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_ENHANCE;
+            mGaugeSettings = "";
+            mAudioID = -1;
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_share, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        return createFragmentView(inflater, container, R.layout.fragment_share, savedInstanceState);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ClipPos clipPos = mSharableClip.getThumbnailClipPos(mSharableClip.currentPosition);
-        mImageLoader.displayVdbImage(clipPos, videoCover);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(new IconAdapter());
-        mShareSuccessView.setColorFilter(getResources().getColor(R.color.style_color_primary));
+        if (mIsFromEnhance) {
+            embedVideoPlayFragment();
+        } else {
+            mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, mClipSetIndex, 0x100);
+            mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
+                @Override
+                public void onBuildComplete(ClipSet clipSet) {
+                    embedVideoPlayFragment();
+                }
+            });
+        }
+        CharSequence[] strings = getResources().getTextArray(R.array.social_privacy_text);
+        TypedArray typedArray = getResources().obtainTypedArray(R.array.social_privacy_icon);
+        Drawable[] drawables = new Drawable[typedArray.length()];
+        for (int i = 0; i < drawables.length; i++) {
+            drawables[i] = typedArray.getDrawable(i);
+        }
+        typedArray.recycle();
+        IconSpinnerAdapter mAdapter = new IconSpinnerAdapter(getActivity(),
+                android.R.layout.simple_spinner_item,
+                strings,
+                drawables,
+                ViewUtils.dp2px(16, getResources()));
+        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mPrivacySpinner.setAdapter(mAdapter);
+
+        mSupportedPrivacy = getResources().getStringArray(R.array.social_privacy_value);
+        mSocialPrivacy = mSupportedPrivacy[0];
+        mPrivacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSocialPrivacy = mSupportedPrivacy[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                mSocialPrivacy = mSupportedPrivacy[0];
+            }
+        });
+
+    }
+
+    void embedVideoPlayFragment() {
+        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
+        config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
+
+        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, 0x100);
+        mClipPlayFragment = ClipPlayFragment.newInstance(getCamera(), mClipSetIndex,
+                vdtUriProvider,
+                config);
+        mClipPlayFragment.setShowsDialog(false);
+        getChildFragmentManager().beginTransaction().replace(R.id.share_fragment_content, mClipPlayFragment).commit();
+    }
+
+    @OnClick(R.id.btn_share)
+    void shareVideo() {
+        mViewAnimator.setDisplayedChild(1);
+        mShareHelper = new MomentShareHelper(getActivity(), this);
+        String title = mTitleView.getText().toString();
+        String[] tags = new String[]{"Shanghai", "car"};
+        mShareHelper.shareMoment(0x100, title, tags, mSocialPrivacy, mAudioID, mGaugeSettings);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mVideoPlayFragment != null) {
-            getFragmentManager().beginTransaction().remove(mVideoPlayFragment).commitAllowingStateLoss();
-            mVideoPlayFragment = null;
-        }
 
         if (mShareHelper != null) {
             mShareHelper.cancel(true);
@@ -103,82 +176,28 @@ public class ShareFragment extends Fragment implements FragmentNavigator, Moment
     }
 
     @Override
-    public void onDestroyView() {
-        ButterKnife.unbind(this);
-        super.onDestroyView();
-    }
-
-    @OnClick(R.id.btn_play)
-    void playVideo() {
-        mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mSharableClip.clip, null);
-        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mVideoPlayFragment).commit();
-        videoCover.setVisibility(View.INVISIBLE);
-    }
-
-    @OnClick(R.id.btn_ok)
-    void performShare() {
-        mViewAnimator.setDisplayedChild(1);
-        mShareHelper = new MomentShareHelper(getActivity(), this);
-        String title = "";
-        String[] tags = new String[]{"Shanghai", "car"};
-        LocalMoment localMoment = new LocalMoment(title, tags, "PUBLIC", mAudioID, new SharableClip[]{mSharableClip});
-        mShareHelper.shareMoment(localMoment);
-    }
-
-    @Override
     public void onShareSuccessful(LocalMoment localMoment) {
+        Logger.t(TAG).e("onShareSuccessful");
         mViewAnimator.setDisplayedChild(2);
     }
 
     @Override
     public void onCancelShare() {
-        View view = getView();
-        if (view != null) {
-            Snackbar.make(view, R.string.share_is_cancelled, Snackbar.LENGTH_SHORT).show();
-        }
+        Logger.t(TAG).e("onCancelShare");
+        mViewAnimator.setDisplayedChild(0);
     }
 
     @Override
-    public void onError(int errorCode, final int errorResId) {
-        if (errorResId != 0) {
-            mErrorMsgView.setText(errorResId);
-        }
+    public void onShareError(int errorCode, int errorResId) {
+        Logger.t(TAG).e("onShareError:" + errorCode);
         mViewAnimator.setDisplayedChild(3);
     }
 
     @Override
     public void onUploadProgress(int uploadPercentage) {
-
+        //Logger.t(TAG).e("onUploadProgress: "+ uploadPercentage);
     }
 
-    @Override
-    public void onStateChanged(int state) {
-
-    }
-
-    @OnClick(R.id.btn_cancel)
-    void onClickCancel() {
-        close();
-    }
-
-    void close() {
-        getFragmentManager().beginTransaction().remove(this).commit();
-    }
-
-    @Override
-    public boolean onInterceptBackPressed() {
-        if (VideoPlayFragment.fullScreenPlayer != null) {
-            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
-            return true;
-        }
-        if (mViewAnimator.getDisplayedChild() == 1 && mShareHelper != null) {
-            mShareHelper.cancel(false);
-            mViewAnimator.setDisplayedChild(0);
-            return true;
-        }
-        close();
-        return true;
-    }
 
     static class IconAdapter extends RecyclerView.Adapter<IconVH> {
 

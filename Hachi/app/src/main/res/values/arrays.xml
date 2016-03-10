@@ -130,4 +130,22 @@
         <item>Last 3 Days</item>
     </string-array>
 
+    <string-array name="social_privacy_text">
+        <item>Everyone</item>
+        <item>Followers</item>
+        <item>Only Me</item>
+    </string-array>
+
+    <string-array name="social_privacy_value">
+        <item>PUBLIC</item>
+        <item>FOLLOWERS</item>
+        <item>PRIVATE</item>
+    </string-array>
+
+
+    <integer-array name="social_privacy_icon">
+        <item>@drawable/social_privacy_everyone</item>
+        <item>@drawable/social_privacy_followers</item>
+        <item>@drawable/social_privacy_me</item>
+    </integer-array>
 </resources>

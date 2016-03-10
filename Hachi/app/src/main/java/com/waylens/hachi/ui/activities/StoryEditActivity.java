@@ -26,7 +26,6 @@ import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -73,7 +72,7 @@ public class StoryEditActivity extends BaseActivity {
             public void onShareSuccessful(LocalMoment localMoment) {
                 Logger.t(TAG).d("Upload done!!!");
                 Snackbar snackbar = Snackbar.make(mUploadProgressBar, "UploadDone", Snackbar
-                    .LENGTH_SHORT);
+                        .LENGTH_SHORT);
                 snackbar.show();
                 mUploadProgressBar.setVisibility(View.GONE);
             }
@@ -84,7 +83,7 @@ public class StoryEditActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(int errorCode, int errorResId) {
+            public void onShareError(int errorCode, int errorResId) {
 
             }
 
@@ -92,21 +91,16 @@ public class StoryEditActivity extends BaseActivity {
             public void onUploadProgress(int uploadPercentage) {
                 mUploadProgressBar.setProgress(uploadPercentage);
             }
-
-            @Override
-            public void onStateChanged(int state) {
-
-            }
         });
         String[] tags = new String[]{"Shanghai", "car"};
-        helper.shareMoment(mStory.getPlaylist().getId(), mTitleEditor.getText().toString(), tags, "PUBLIC", 0);
+        //helper.shareMoment(mStory.getPlaylist().getId(), mTitleEditor.getText().toString(), tags, "PUBLIC", 0);
     }
 
 
     @OnClick(R.id.btn_play)
     public void onBtnPlayClicked() {
         mVideoPlayFragment = CameraVideoPlayFragment.newInstance(Snipe.newRequestQueue(), mStory
-            .getPlaylist(), null);
+                .getPlaylist(), null);
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, mVideoPlayFragment).commit();
         mVideoCover.setVisibility(View.INVISIBLE);
     }
@@ -146,7 +140,7 @@ public class StoryEditActivity extends BaseActivity {
         setContentView(R.layout.activity_story_edit);
         Clip firstClip = mStory.getPlaylist().getClip(0);
         ClipPos clipPos = new ClipPos(firstClip, firstClip.getStartTimeMs(), ClipPos.TYPE_POSTER,
-            false);
+                false);
 
         mUploadProgressBar.setMax(100);
         mImageLoader.displayVdbImage(clipPos, mVideoCover);

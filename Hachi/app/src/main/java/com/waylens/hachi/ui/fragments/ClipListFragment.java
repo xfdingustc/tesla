@@ -23,6 +23,7 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.activities.ShareActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
@@ -305,6 +306,7 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator 
                     toEnhance();
                     return true;
                 case R.id.menu_to_upload:
+                    toShare();
                     return false;
                 case R.id.menu_to_delete:
                     return false;
@@ -325,4 +327,14 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator 
             }
         }
     };
+
+    void toShare() {
+        ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
+        for (Clip clip : selectedList) {
+            clipSet.addClip(clip);
+        }
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+        ShareActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
+    }
 }

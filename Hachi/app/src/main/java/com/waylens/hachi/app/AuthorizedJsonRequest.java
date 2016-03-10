@@ -3,6 +3,7 @@ package com.waylens.hachi.app;
 import android.text.TextUtils;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.waylens.hachi.session.SessionManager;
@@ -27,6 +28,7 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
                                  Response.ErrorListener errorListener, String token) {
         super(method, url, listener, errorListener);
         mToken = token;
+        setTimeout();
     }
 
     public AuthorizedJsonRequest(int method,
@@ -35,6 +37,7 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
                                  Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
         mToken = null;
+        setTimeout();
     }
 
     public AuthorizedJsonRequest(int method,
@@ -44,6 +47,7 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
                                  Response.ErrorListener errorListener) {
         super(method, url, requestBody, listener, errorListener);
         mToken = null;
+        setTimeout();
     }
 
     public AuthorizedJsonRequest(String url,
@@ -51,6 +55,7 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
                                  Response.ErrorListener errorListener) {
         super(url, listener, errorListener);
         mToken = null;
+        setTimeout();
     }
 
     public AuthorizedJsonRequest(int method,
@@ -60,6 +65,15 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
                                  Response.ErrorListener errorListener) {
         super(method, url, jsonRequest, listener, errorListener);
         mToken = null;
+        setTimeout();
+    }
+
+    private void setTimeout() {
+        setRetryPolicy(
+                new DefaultRetryPolicy(
+                        1000 * 10,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     @Override
