@@ -65,7 +65,8 @@
 
         <activity android:name=".ui.activities.StoryEditActivity"/>
 
-        <activity android:name=".ui.activities.EnhancementActivity"/>
+        <activity android:name=".ui.activities.EnhancementActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.activities.ClipChooserActivity"
             android:screenOrientation="portrait"/>
 

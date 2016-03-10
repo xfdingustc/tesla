@@ -103,6 +103,10 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator 
             mIsMultipleMode = args.getBoolean(ARG_IS_MULTIPLE_MODE, false);
             mIsAddMore = args.getBoolean(ARG_IS_ADD_MORE, false);
         }
+
+        if (mIsAddMore) {
+            setHasOptionsMenu(true);
+        }
     }
 
     @Nullable
@@ -129,10 +133,21 @@ public class ClipListFragment extends BaseFragment implements FragmentNavigator 
         if (getCamera() != null) {
             retrieveSharableClips();
         }
+    }
 
-        if (mIsAddMore && mActionMode == null) {
-            mActionMode = getActivity().startActionMode(mCABCallback);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_add_clip, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_to_enhance:
+                toEnhance();
+                return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     void toEnhance() {

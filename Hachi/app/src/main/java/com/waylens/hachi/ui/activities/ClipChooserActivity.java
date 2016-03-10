@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.ClipListFragment;
@@ -20,8 +21,15 @@ public class ClipChooserActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
+        setSupportActionBar(mToolbar);
         setTitle(R.string.add_more_clips);
         setHomeAsUpIndicator(R.drawable.navbar_close);
+
+        View view = findViewById(R.id.tabs);
+        if (view != null) {
+            view.setVisibility(View.GONE);
+        }
+
         Intent intent = getIntent();
         //Clip clip = intent.getParcelableExtra("clip");
         ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
