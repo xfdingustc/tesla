@@ -1,5 +1,7 @@
 package com.waylens.hachi.snipe.toolbox;
 
+import android.util.Log;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -101,7 +103,7 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                 }
             }
             response.readi32(); //int clipType
-            response.readi32(); //int extraSize
+            int extraSize = response.readi32(); //int extraSize
             if (flag == FLAG_CLIP_EXTRA) {
                 String guid = new String(response.readByteArray(UUID_LENGTH));
                 clip.cid.setExtra(guid);
@@ -111,9 +113,16 @@ public class ClipSetRequest extends VdbRequest<ClipSet> {
                 int realClipId = response.readi32(); //int real_clip_id
                 clip.realCid = new Clip.ID(Clip.TYPE_BUFFERED, realClipId, guid);
 
+                int offsetSize = UUID_LENGTH + 3 * 4;
+                response.skip(extraSize - offsetSize);
 
-            } else if (flag == FLAG_CLIP_VDB_ID) {
-                //TODO VDB_ID
+
+            } else if (flag == FLAG_CLIP_VDB_ID){
+                String extraString = new String();
+                int offsetSize = response.readStringAlignedReturnSize(extraString);
+
+                clip.cid.setExtra(extraString);
+                response.skip(extraSize - offsetSize);
             }
             clipSet.addClip(clip);
         }

@@ -171,4 +171,24 @@ public class VdbAcknowledge {
         return result;
     }
 
+    public int readStringAlignedReturnSize(String str) {
+        int origialSize = mMsgIndex;
+        int size = readi32();
+        if (size <= 0) {
+            str = "";
+            return mMsgIndex - origialSize;
+        }
+
+        try {
+            str = new String(mMsgBuffer, mMsgIndex, size - 1, "US-ASCII");
+        } catch (UnsupportedEncodingException ex) {
+            str = "";
+        }
+        mMsgIndex += size;
+        if ((size % 4) != 0) {
+            mMsgIndex += 4 - (size % 4);
+        }
+        return mMsgIndex - origialSize;
+    }
+
 }

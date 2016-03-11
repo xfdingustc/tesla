@@ -91,24 +91,24 @@ public class Hachi extends Application {
 //
 //            });
 
-//        CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
-//            @Override
-//            public void onCameraFound(NsdServiceInfo cameraService) {
-//                String serviceName = cameraService.getServiceName();
-//                boolean bIsPcServer = serviceName.equals("Vidit Studio");
-//                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-//                    cameraService.getHost(),
-//                    cameraService.getPort(),
-//                    "", serviceName, bIsPcServer);
-//                Logger.t("testconnect").d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-//                VdtCameraManager.getManager().connectCamera(serviceInfo);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//
-//            }
-//        });
+        CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
+            @Override
+            public void onCameraFound(NsdServiceInfo cameraService) {
+                String serviceName = cameraService.getServiceName();
+                boolean bIsPcServer = serviceName.equals("Vidit Studio");
+                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
+                    cameraService.getHost(),
+                    cameraService.getPort(),
+                    "", serviceName, bIsPcServer);
+                Logger.t("testconnect").d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+                VdtCameraManager.getManager().connectCamera(serviceInfo);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
 
         mScanner = new DeviceScanner(this);
         mScanner.startWork();
