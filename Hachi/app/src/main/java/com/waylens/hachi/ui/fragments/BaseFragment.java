@@ -50,9 +50,6 @@ public class BaseFragment extends Fragment  {
         mVdtCamera = getCamera();
         if (mVdtCamera != null) {
             mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
-        } else {
-            VdtCameraManager cameraManager = VdtCameraManager.getManager();
-            cameraManager.addCallback(mVdtCameraMangerCallback);
         }
     }
 
@@ -71,6 +68,13 @@ public class BaseFragment extends Fragment  {
         ButterKnife.bind(this, mRootView);
         setupToolbar();
         return mRootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        VdtCameraManager cameraManager = VdtCameraManager.getManager();
+        cameraManager.addCallback(mVdtCameraMangerCallback);
     }
 
     @Override

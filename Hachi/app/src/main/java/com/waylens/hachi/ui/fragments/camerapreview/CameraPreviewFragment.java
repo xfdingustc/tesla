@@ -185,11 +185,6 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
     public void setupToolbar() {
         mToolbar.setTitle(R.string.live_view);
         mToolbar.getMenu().clear();
@@ -217,6 +212,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onCameraVdbConnected(VdtCamera camera) {
         super.onCameraVdbConnected(camera);
+
         mHandler.post(new Runnable() {
             @Override
             public void run() {
