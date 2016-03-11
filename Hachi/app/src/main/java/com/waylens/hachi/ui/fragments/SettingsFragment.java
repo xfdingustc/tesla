@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.AccountActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
 
 import butterknife.OnClick;
@@ -30,7 +31,7 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.settings_account)
     void clickAccount() {
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new AccountFragment()).commit();
+        AccountActivity.launch(getActivity());
     }
 
     @OnClick(R.id.settings_help)
