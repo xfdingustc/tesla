@@ -1,5 +1,6 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.activities;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,18 +9,17 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.internal.Version;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import java.io.File;
@@ -33,7 +33,7 @@ import im.fir.sdk.version.AppVersion;
 /**
  * Created by Richard on 1/8/16.
  */
-public class VersionCheckFragment extends BaseFragment implements FragmentNavigator {
+public class VersionCheckActivity extends BaseActivity {
 
     private static final String TAG = "FIR";
 
@@ -49,34 +49,65 @@ public class VersionCheckFragment extends BaseFragment implements FragmentNaviga
     @Bind(R.id.btn_update_now)
     View mBtnUpdateNow;
 
+    @OnClick(R.id.btn_update_now)
+    void updateApp() {
+        mViewAnimator.setDisplayedChild(0);
+        downloadUpdateAPK();
+    }
+
+    @OnClick(R.id.btn_install_now)
+    void installAPK() {
+        if (mDownloadedFile == null) {
+            return;
+        }
+
+        File file = new File(mDownloadedFile);
+        if (file.exists()) {
+            installAPK(file);
+        }
+    }
+
     AppVersion mAppVersion;
     String mDownloadedFile;
     DownloadManager downloadManager;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_vesion, savedInstanceState);
-        return view;
+    public static void launch(Activity activity) {
+        Intent intent = new Intent(activity, VersionCheckActivity.class);
+        activity.startActivity(intent);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        init();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        initViews();
+    }
+
+    private void initViews() {
+        setContentView(R.layout.activity_vesion);
         mCurrentVersionView.setText(getString(R.string.current_version, BuildConfig.VERSION_NAME));
         mViewAnimator.setDisplayedChild(2);
     }
 
+
+
+
+
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(receiver);
+        unregisterReceiver(receiver);
     }
 
     @OnClick(R.id.btn_check_update)
@@ -122,29 +153,13 @@ public class VersionCheckFragment extends BaseFragment implements FragmentNaviga
         });
     }
 
-    @OnClick(R.id.btn_update_now)
-    void updateApp() {
-        mViewAnimator.setDisplayedChild(0);
-        downloadUpdateAPK();
-    }
 
-    @OnClick(R.id.btn_install_now)
-    void installAPK() {
-        if (mDownloadedFile == null) {
-            return;
-        }
-
-        File file = new File(mDownloadedFile);
-        if (file.exists()) {
-            installAPK(file);
-        }
-    }
 
     void downloadUpdateAPK() {
         if (mAppVersion == null) {
             return;
         }
-        downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(mAppVersion.getUpdateUrl()));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
         request.setAllowedOverRoaming(true);
@@ -200,11 +215,6 @@ public class VersionCheckFragment extends BaseFragment implements FragmentNaviga
         startActivity(intent);
     }
 
-    @Override
-    public boolean onInterceptBackPressed() {
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SettingsFragment()).commit();
-        return true;
-    }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override

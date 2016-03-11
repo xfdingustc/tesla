@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.VersionCheckActivity;
 
 import butterknife.OnClick;
 
@@ -34,6 +35,6 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.settings_help)
     void clickHelp() {
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new VersionCheckFragment()).commit();
+        VersionCheckActivity.launch(getActivity());
     }
 }

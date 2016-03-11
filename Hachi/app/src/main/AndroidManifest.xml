@@ -50,6 +50,8 @@
 
         <activity android:name=".ui.activities.CommentsActivity"/>
 
+        <activity android:name=".ui.activities.VersionCheckActivity"/>
+
 
         <activity
             android:name=".ui.activities.LiveViewActivity"
