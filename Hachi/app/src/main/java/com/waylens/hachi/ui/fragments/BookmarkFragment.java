@@ -29,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import butterknife.Bind;
 
 /**
- * Live Fragment
+ * Live Segment
  * <p/>
  * Created by Xiaofei on 2015/8/4.
  */

@@ -10,11 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toolbar;
 import android.widget.ViewAnimator;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -34,13 +35,14 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-
-import butterknife.Bind;
 
 /**
  * Created by Richard on 12/18/15.
@@ -95,10 +97,11 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Bind(R.id.spinner_clip_src)
     Spinner mClipSrcSpinner;
 
+    @Bind(R.id.style_radio_group)
+    RadioGroup mStyleRadioGroup;
 
 
     String[] supportedGauges;
-    int[] gaugeDefaultSizes;
     GaugeListAdapter mGaugeListAdapter;
 
     MusicItem mMusicItem;
@@ -108,7 +111,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     ArrayAdapter<CharSequence> mClipSrcAdapter;
     private VdbRequestQueue mVdbRequestQueue;
     private VdtCamera mVdtCamera;
-    private String mGaugeSettings = "";
 
     @OnClick(R.id.btn_music)
     void onClickMusic(View view) {
@@ -152,7 +154,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mGaugeListView.setLayoutManager(layoutManager);
-            mGaugeListAdapter = new GaugeListAdapter(supportedGauges, gaugeDefaultSizes, new GaugeListAdapter.OnGaugeItemChangedListener() {
+            mGaugeListAdapter = new GaugeListAdapter(supportedGauges, new GaugeListAdapter.OnGaugeItemChangedListener() {
                 @Override
                 public void onGaugeItemChanged(GaugeInfoItem item) {
                     mClipPlayFragment.updateGauge(item);
@@ -161,6 +163,11 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             mGaugeListView.setAdapter(mGaugeListAdapter);
         }
         configureActionUI(0, view.isSelected());
+    }
+
+    @OnClick(R.id.btnThemeOff)
+    public void onBtnThemeOffClicked() {
+        mClipPlayFragment.setGaugeTheme("NA");
     }
 
     @OnClick(R.id.btnThemeDefault)
@@ -239,13 +246,12 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
         supportedGauges = getResources().getStringArray(R.array.supported_gauges);
-        gaugeDefaultSizes = getResources().getIntArray(R.array.gauges_default_size);
         mClipSetIndex = getIntent().getIntExtra("clipSetIndex", ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         initViews();
     }
 
     private void initViews() {
-        setContentView(R.layout.fragment_enhance);
+        setContentView(R.layout.activity_enhance);
         mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, mClipSetIndex, 0x100);
         mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
             @Override
@@ -309,7 +315,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -335,7 +340,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }
 
     }
-
 
 
     @Override
@@ -431,13 +435,35 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_to_share:
+                String gaugeSettings = getGaugeSettings();
                 ShareActivity.launch(this,
                         ClipSetManager.CLIP_SET_TYPE_ENHANCE,
-                        mGaugeSettings,
+                        gaugeSettings,
                         mMusicItem == null ? -1 : mMusicItem.id,
                         true);
                 return true;
         }
         return false;
+    }
+
+    String getGaugeSettings() {
+        JSONObject jsonObject = mGaugeListAdapter.toJSOptions();
+        int checkedId = mStyleRadioGroup.getCheckedRadioButtonId();
+        try {
+            switch (checkedId) {
+                case R.id.btnThemeOff:
+                    jsonObject.put("theme", "NA");
+                    break;
+                case R.id.btnThemeDefault:
+                    jsonObject.put("theme", "default");
+                    break;
+                case R.id.btnThemeNeo:
+                    jsonObject.put("theme", "neo");
+                    break;
+            }
+        } catch (JSONException e) {
+            Logger.t(TAG).e(e, "");
+        }
+        return jsonObject.toString();
     }
 }

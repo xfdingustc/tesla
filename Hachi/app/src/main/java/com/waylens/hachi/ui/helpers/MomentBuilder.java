@@ -64,7 +64,7 @@ public class MomentBuilder {
     int mPlayListID;
 
     ClipSet mClipSet;
-    ArrayList<LocalMoment.Fragment> mFragmentList = new ArrayList<>();
+    ArrayList<LocalMoment.Segment> mSegmentList = new ArrayList<>();
     String mThumbnailPath;
 
     int requestCounter;
@@ -114,7 +114,7 @@ public class MomentBuilder {
                             mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_CLIP_SET, 0);
                         } else {
                             mClipSet = clipSet;
-                            mFragmentList.clear();
+                            mSegmentList.clear();
                             requestCounter = 0;
                             retrieveUploadURL();
                         }
@@ -152,8 +152,8 @@ public class MomentBuilder {
                     @Override
                     public void onResponse(UploadUrl uploadUrl) {
                         requestCounter++;
-                        LocalMoment.Fragment fragment = new LocalMoment.Fragment(clip, uploadUrl, DEFAULT_DATA_TYPE_CLOUD);
-                        mFragmentList.add(fragment);
+                        LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, DEFAULT_DATA_TYPE_CLOUD);
+                        mSegmentList.add(segment);
                         retrieveUploadURL();
                     }
                 },
@@ -219,7 +219,7 @@ public class MomentBuilder {
         }
 
         Logger.t(TAG).d("prepareUpload");
-        mLocalMoment.setFragments(mFragmentList, mThumbnailPath);
+        mLocalMoment.setFragments(mSegmentList, mThumbnailPath);
         mLocalMoment.setPrepared(true);
         mOnBuildListener.onBuildSuccessful(mLocalMoment);
     }

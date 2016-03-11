@@ -161,7 +161,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     public void updateGauge(GaugeInfoItem item) {
         String jsApi = "javascript:";
-        if (item.isEnable) {
+        if (item.isEnabled) {
             jsApi += "showGauge";
 
         } else {

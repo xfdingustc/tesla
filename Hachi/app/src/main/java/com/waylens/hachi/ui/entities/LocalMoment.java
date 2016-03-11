@@ -21,7 +21,7 @@ public class LocalMoment {
 
     public String gaugeSettings;
 
-    public ArrayList<Fragment> fragments;
+    public ArrayList<Segment> mSegments;
 
     public CloudInfo cloudInfo;
 
@@ -43,8 +43,8 @@ public class LocalMoment {
         this.gaugeSettings = gaugeSettings;
     }
 
-    public void setFragments(ArrayList<Fragment> fragments, String thumbnailPath) {
-        this.fragments = fragments;
+    public void setFragments(ArrayList<Segment> segments, String thumbnailPath) {
+        this.mSegments = segments;
         this.thumbnailPath = thumbnailPath;
     }
 
@@ -73,14 +73,14 @@ public class LocalMoment {
         }
     }
 
-    public static class Fragment {
+    public static class Segment {
 
         public Clip clip;
         public UploadUrl uploadURL;
         public int dataType;
 
 
-        public Fragment(Clip clip, UploadUrl uploadURL, int dataType) {
+        public Segment(Clip clip, UploadUrl uploadURL, int dataType) {
             this.clip = clip;
             this.uploadURL = uploadURL;
             this.dataType = dataType;

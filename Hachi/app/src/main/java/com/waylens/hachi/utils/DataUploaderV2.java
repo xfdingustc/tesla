@@ -79,19 +79,19 @@ public class DataUploaderV2 {
                 mMomentID,
                 "background music",
                 mPrivateKey);
-        for (LocalMoment.Fragment fragment : localMoment.fragments) {
-            momentDescription.addFragment(new CrsFragment(fragment.clip.getVdbId(),
-                    fragment.getClipCaptureTime(),
-                    fragment.uploadURL.realTimeMs,
+        for (LocalMoment.Segment segment : localMoment.mSegments) {
+            momentDescription.addFragment(new CrsFragment(segment.clip.getVdbId(),
+                    segment.getClipCaptureTime(),
+                    segment.uploadURL.realTimeMs,
                     0,
-                    fragment.uploadURL.lengthMs,
-                    fragment.clip.streams[1].video_width,
-                    fragment.clip.streams[1].video_height,
-                    fragment.dataType
+                    segment.uploadURL.lengthMs,
+                    segment.clip.streams[1].video_width,
+                    segment.clip.streams[1].video_height,
+                    segment.dataType
             ));
         }
         momentDescription.addFragment(new CrsFragment(String.valueOf(mMomentID),
-                localMoment.fragments.get(0).getClipCaptureTime(),
+                localMoment.mSegments.get(0).getClipCaptureTime(),
                 0,
                 0,
                 0,
@@ -129,12 +129,12 @@ public class DataUploaderV2 {
     }
 
     private int uploadMomentData(LocalMoment localMoment) throws IOException {
-        mClipTotalCount = localMoment.fragments.size() + 1; // 1 for thumbnail
+        mClipTotalCount = localMoment.mSegments.size() + 1; // 1 for thumbnail
         int clipIndex = 0;
-        for (LocalMoment.Fragment fragment : localMoment.fragments) {
-            String guid = fragment.clip.getVdbId();
-            UploadUrl uploadUrl = fragment.uploadURL;
-            int ret = startUpload(guid, uploadUrl, fragment.dataType);
+        for (LocalMoment.Segment segment : localMoment.mSegments) {
+            String guid = segment.clip.getVdbId();
+            UploadUrl uploadUrl = segment.uploadURL;
+            int ret = startUpload(guid, uploadUrl, segment.dataType);
             if (ret == CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 Logger.t(TAG).d("File already exist: " + ret);
                 continue;
@@ -151,7 +151,7 @@ public class DataUploaderV2 {
                 URLConnection conn = url.openConnection();
                 inputStream = conn.getInputStream();
                 Logger.t(TAG).d("test", String.format("ContentLength[%d]", conn.getContentLength()));
-                ret = doUpload(guid, conn.getContentLength(), fragment.dataType, inputStream, clipIndex++);
+                ret = doUpload(guid, conn.getContentLength(), segment.dataType, inputStream, clipIndex++);
                 if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                     return ret;
                 }

@@ -63,10 +63,13 @@ public class MomentFragment extends BaseFragment {
             .likes));
         adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string
             .staff_picks));
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ALL), getString(R.string
-                .all));
+        //adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ALL), getString(R.string
+        //        .all));
         mViewPager.setAdapter(adapter);
-        mTabLayout.setupWithViewPager(mViewPager);
+        if (mTabLayout != null) {
+            mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+            mTabLayout.setupWithViewPager(mViewPager);
+        }
 
     }
 

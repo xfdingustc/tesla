@@ -62,9 +62,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void setupToolbar() {
-        if (mToolbar != null) {
-            //setSupportActionBar(mToolbar);
-        }
+        //
     }
 
     @Override

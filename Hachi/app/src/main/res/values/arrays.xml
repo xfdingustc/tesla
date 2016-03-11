@@ -82,6 +82,7 @@
         <item>30s</item>
     </string-array>
 
+    <!-- NOTE: Code update might be required after changing this array. -->
     <string-array name="supported_gauges">
         <item>SpeedThrottle</item>
         <item>Rpm</item>
@@ -92,18 +93,6 @@
         <item>RollPitch</item>
         <item>Gps</item>
     </string-array>
-
-    <integer-array name="gauges_default_size">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </integer-array>
 
     <string-array name="theme_remix">
         <item>default</item>

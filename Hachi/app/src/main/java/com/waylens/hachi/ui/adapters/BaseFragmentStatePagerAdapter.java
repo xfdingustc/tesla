@@ -32,7 +32,7 @@ public abstract class BaseFragmentStatePagerAdapter extends PagerAdapter {
     }
 
     /**
-     * Return the Fragment associated with a specified position.
+     * Return the Segment associated with a specified position.
      */
     public abstract Fragment getItem(int position);
 
@@ -45,7 +45,7 @@ public abstract class BaseFragmentStatePagerAdapter extends PagerAdapter {
         // If we already have this item instantiated, there is nothing
         // to do.  This can happen when we are restoring the entire pager
         // from its saved state, where the fragment manager has already
-        // taken care of restoring the fragments we previously had instantiated.
+        // taken care of restoring the mSegments we previously had instantiated.
         if (mFragments.size() > position) {
             Fragment f = mFragments.get(position);
             if (f != null) {

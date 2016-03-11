@@ -8,7 +8,7 @@
     tools:background="@android:color/black">
 
     <RadioGroup
-        android:id="@+id/style_container_View"
+        android:id="@+id/style_radio_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -16,6 +16,15 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/btnThemeOff"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/btn_gauge_style"
+            android:button="@android:color/transparent"/>
 
         <RadioButton
             android:id="@+id/btnThemeDefault"
@@ -32,14 +41,7 @@
             android:layout_height="36dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/btn_gauge_style"
-            android:button="@android:color/transparent"/>
-
-        <RadioButton
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:checked="true"
             android:background="@drawable/btn_gauge_style"
             android:button="@android:color/transparent"/>
     </RadioGroup>
@@ -48,7 +50,7 @@
         android:id="@+id/gauge_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/style_container_View"
+        android:layout_above="@id/style_radio_group"
         />
 </RelativeLayout>
 
