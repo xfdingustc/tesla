@@ -17,6 +17,8 @@
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
 
     <application
@@ -70,9 +72,11 @@
         <activity android:name=".ui.activities.StoryEditActivity"/>
         <activity android:name=".ui.activities.SetupActivity"/>
 
-        <activity android:name=".ui.activities.EnhancementActivity"
+        <activity
+            android:name=".ui.activities.EnhancementActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activities.ClipChooserActivity"
+        <activity
+            android:name=".ui.activities.ClipChooserActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
@@ -81,10 +85,12 @@
             android:screenOrientation="landscape"/>
 
         <activity android:name=".ui.activities.ClipModifyActivity"/>
-        <activity android:name=".ui.activities.MusicDownloadActivity"
+        <activity
+            android:name=".ui.activities.MusicDownloadActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activities.ShareActivity"
+        <activity
+            android:name=".ui.activities.ShareActivity"
             android:screenOrientation="portrait"/>
 
         <activity
