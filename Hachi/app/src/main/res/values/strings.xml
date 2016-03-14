@@ -368,5 +368,7 @@
     <string name="bookmark_update_error">Fail to update Bookmark.</string>
     <string name="share_to">To:</string>
     <string name="share_hint">Say something about the video…</string>
+    <string name="scan_qr_code_hint">Scan QR Code on Your Camera</string>
+    <string name="please_open_your_camera">Please open your camera and load QR</string>
 
 </resources>

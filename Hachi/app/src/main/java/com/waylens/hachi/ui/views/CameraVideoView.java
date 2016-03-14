@@ -20,8 +20,7 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
-import com.waylens.hachi.ui.views.dashboard.adapters.RawDataAdapter;
+
 
 import java.util.concurrent.CountDownLatch;
 
@@ -42,7 +41,7 @@ public class CameraVideoView extends VideoPlayView {
 
     Thread bgThread;
 
-    CameraRawDataBlockAdapter mRawDataBlockAdapter;
+//    CameraRawDataBlockAdapter mRawDataBlockAdapter;
 
     SparseArray<RawDataBlock> mTypedRawData = new SparseArray<>();
 
@@ -75,7 +74,7 @@ public class CameraVideoView extends VideoPlayView {
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         mBtnPlay.setVisibility(VISIBLE);
         updateSharableClip(sharableClip, 0);
-        mRawDataBlockAdapter = new CameraRawDataBlockAdapter();
+//        mRawDataBlockAdapter = new CameraRawDataBlockAdapter();
 
     }
 
@@ -83,9 +82,9 @@ public class CameraVideoView extends VideoPlayView {
         //clean exist clip info
         mPlaybackUrl = null;
         mTypedRawData.clear();
-        if (mRawDataBlockAdapter != null) {
-            mRawDataBlockAdapter.setRawDataBlock(null);
-        }
+//        if (mRawDataBlockAdapter != null) {
+//            mRawDataBlockAdapter.setRawDataBlock(null);
+//        }
         mSharableClip = sharableClip;
         ClipPos clipPos = sharableClip.getThumbnailClipPos(mSharableClip.clip.getStartTimeMs());
         mVdbImageLoader.displayVdbImage(clipPos, videoCover);
@@ -116,17 +115,17 @@ public class CameraVideoView extends VideoPlayView {
 
     @Override
     protected void updateInternalProgress(int position, int duration) {
-        if (mRawDataBlockAdapter != null) {
-            mRawDataBlockAdapter.refresh(position);
-        }
+//        if (mRawDataBlockAdapter != null) {
+//            mRawDataBlockAdapter.refresh(position);
+//        }
     }
 
     @Override
     public void seekTo(int msec) {
         super.seekTo(msec);
-        if (mRawDataBlockAdapter != null) {
-            mRawDataBlockAdapter.resetPosition();
-        }
+//        if (mRawDataBlockAdapter != null) {
+//            mRawDataBlockAdapter.resetPosition();
+//        }
     }
 
     void loadPlayURL(final CountDownLatch latch) {
@@ -201,20 +200,14 @@ public class CameraVideoView extends VideoPlayView {
 
     void showOverlay() {
         if (mTypedRawData.size() > 0) {
-            mRawDataBlockAdapter.setRawDataBlock(mTypedRawData);
-            mOverlayLayout.setAdapter(mRawDataBlockAdapter);
-            calculateDashboardScaling();
-            mOverlayLayout.setVisibility(VISIBLE);
+//            mRawDataBlockAdapter.setRawDataBlock(mTypedRawData);
+//            mOverlayLayout.setAdapter(mRawDataBlockAdapter);
+//            calculateDashboardScaling();
+//            mOverlayLayout.setVisibility(VISIBLE);
         }
     }
 
-    private void calculateDashboardScaling() {
-        float scale = 1.0f;
-        int width = getWidth();
-        scale = (float) width / DashboardLayout.NORMAL_WIDTH;
-        mOverlayLayout.setScaleX(scale);
-        mOverlayLayout.setScaleY(scale);
-    }
+
 
     void loadRawData(final int dataType, final CountDownLatch latch) {
         if (mSharableClip == null || mVdbRequestQueue == null) {
@@ -246,62 +239,62 @@ public class CameraVideoView extends VideoPlayView {
         mVdbRequestQueue.add(obdRequest.setTag(REQUEST_TAG));
     }
 
-    static class CameraRawDataBlockAdapter extends RawDataAdapter {
-
-        SparseArray<RawDataBlock> mRawData = new SparseArray<>();
-        SparseIntArray mPositions = new SparseIntArray();
-
-        public void setRawDataBlock(SparseArray<RawDataBlock> rawData) {
-            mRawData = rawData;
-            mPositions.clear();
-        }
-
-        public void resetPosition() {
-            mPositions.clear();
-        }
-
-
-        public void refresh(int position) {
-            RawDataItem gps = getRawData(RawDataItem.DATA_TYPE_GPS, position);
-            if (gps != null) {
-                notifyDataSetChanged(gps);
-            }
-
-            RawDataItem acc = getRawData(RawDataItem.DATA_TYPE_ACC, position);
-            if (acc != null) {
-                notifyDataSetChanged(acc);
-            }
-
-            RawDataItem obd = getRawData(RawDataItem.DATA_TYPE_OBD, position);
-            if (obd != null) {
-                notifyDataSetChanged(obd);
-            }
-
-        }
-
-        RawDataItem getRawData(int dataType, int position) {
-            RawDataBlock raw = mRawData.get(dataType);
-            if (raw == null) {
-                return null;
-            }
-            int pos = mPositions.get(dataType);
-            RawDataItem rawDataItem = null;
-            while (pos < raw.dataSize.length) {
-                RawDataItem tmp = raw.getRawDataItem(pos);
-                long timeOffsetMs = raw.timeOffsetMs[pos] + raw.header.mRequestedTimeMs;
-                if (timeOffsetMs == position) {
-                    rawDataItem = tmp;
-                    mPositions.put(dataType, pos);
-                    break;
-                } else if (timeOffsetMs < position) {
-                    rawDataItem = tmp;
-                    mPositions.put(dataType, pos);
-                    pos++;
-                } else if (timeOffsetMs > position) {
-                    break;
-                }
-            }
-            return rawDataItem;
-        }
-    }
+//    static class CameraRawDataBlockAdapter extends RawDataAdapter {
+//
+//        SparseArray<RawDataBlock> mRawData = new SparseArray<>();
+//        SparseIntArray mPositions = new SparseIntArray();
+//
+//        public void setRawDataBlock(SparseArray<RawDataBlock> rawData) {
+//            mRawData = rawData;
+//            mPositions.clear();
+//        }
+//
+//        public void resetPosition() {
+//            mPositions.clear();
+//        }
+//
+//
+//        public void refresh(int position) {
+//            RawDataItem gps = getRawData(RawDataItem.DATA_TYPE_GPS, position);
+//            if (gps != null) {
+//                notifyDataSetChanged(gps);
+//            }
+//
+//            RawDataItem acc = getRawData(RawDataItem.DATA_TYPE_ACC, position);
+//            if (acc != null) {
+//                notifyDataSetChanged(acc);
+//            }
+//
+//            RawDataItem obd = getRawData(RawDataItem.DATA_TYPE_OBD, position);
+//            if (obd != null) {
+//                notifyDataSetChanged(obd);
+//            }
+//
+//        }
+//
+//        RawDataItem getRawData(int dataType, int position) {
+//            RawDataBlock raw = mRawData.get(dataType);
+//            if (raw == null) {
+//                return null;
+//            }
+//            int pos = mPositions.get(dataType);
+//            RawDataItem rawDataItem = null;
+//            while (pos < raw.dataSize.length) {
+//                RawDataItem tmp = raw.getRawDataItem(pos);
+//                long timeOffsetMs = raw.timeOffsetMs[pos] + raw.header.mRequestedTimeMs;
+//                if (timeOffsetMs == position) {
+//                    rawDataItem = tmp;
+//                    mPositions.put(dataType, pos);
+//                    break;
+//                } else if (timeOffsetMs < position) {
+//                    rawDataItem = tmp;
+//                    mPositions.put(dataType, pos);
+//                    pos++;
+//                } else if (timeOffsetMs > position) {
+//                    break;
+//                }
+//            }
+//            return rawDataItem;
+//        }
+//    }
 }

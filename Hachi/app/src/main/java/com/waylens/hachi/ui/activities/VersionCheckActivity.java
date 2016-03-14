@@ -15,8 +15,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.internal.Version;
+
+import com.android.volley.Request;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -113,44 +113,44 @@ public class VersionCheckActivity extends BaseActivity {
     @OnClick(R.id.btn_check_update)
     void checkUpdate() {
         mViewAnimator.setDisplayedChild(0);
-        FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
-            @Override
-            public void onSuccess(AppVersion appVersion, boolean result) {
-                Log.e("FIR", "onSuccess: thisCode: " + BuildConfig.VERSION_CODE + "; result: " + result);
-                Log.e("FIR", "onSuccess: AppVersion: " + appVersion);
-
-                if (appVersion == null) {
-                    return;
-                }
-                int versionCode = appVersion.getVersionCode();
-                if (versionCode <= BuildConfig.VERSION_CODE) {
-                    mFirVersionView.setText(R.string.version_up_to_date);
-                    mViewAnimator.setDisplayedChild(1);
-                } else {
-                    mAppVersion = appVersion;
-                    mFirVersionView.setText(getString(R.string.fir_version, versionCode));
-                    mViewAnimator.setDisplayedChild(3);
-                }
-
-            }
-
-            @Override
-            public void onFail(Request request, Exception e) {
-                Log.e("FIR", "", e);
-                mFirVersionView.setText(R.string.error_check_fir);
-                mViewAnimator.setDisplayedChild(2);
-            }
-
-            @Override
-            public void onStart() {
-                Log.e("FIR", "onStart");
-            }
-
-            @Override
-            public void onFinish() {
-                mFirVersionView.setVisibility(View.VISIBLE);
-            }
-        });
+//        FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
+//            @Override
+//            public void onSuccess(AppVersion appVersion, boolean result) {
+//                Log.e("FIR", "onSuccess: thisCode: " + BuildConfig.VERSION_CODE + "; result: " + result);
+//                Log.e("FIR", "onSuccess: AppVersion: " + appVersion);
+//
+//                if (appVersion == null) {
+//                    return;
+//                }
+//                int versionCode = appVersion.getVersionCode();
+//                if (versionCode <= BuildConfig.VERSION_CODE) {
+//                    mFirVersionView.setText(R.string.version_up_to_date);
+//                    mViewAnimator.setDisplayedChild(1);
+//                } else {
+//                    mAppVersion = appVersion;
+//                    mFirVersionView.setText(getString(R.string.fir_version, versionCode));
+//                    mViewAnimator.setDisplayedChild(3);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFail(Request request, Exception e) {
+//                Log.e("FIR", "", e);
+//                mFirVersionView.setText(R.string.error_check_fir);
+//                mViewAnimator.setDisplayedChild(2);
+//            }
+//
+//            @Override
+//            public void onStart() {
+//                Log.e("FIR", "onStart");
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                mFirVersionView.setVisibility(View.VISIBLE);
+//            }
+//        });
     }
 
 

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 
+
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.CameraDiscovery;
@@ -14,7 +15,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.ui.views.dashboard.models.SkinManager;
+
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -66,12 +67,11 @@ public class Hachi extends Application {
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
         VdbImageLoader.getImageLoader(null).init(this, 1024 * 64);
-        FIR.init(this);
+//        FIR.init(this);
 
         Snipe.init();
 
-        SkinManager.initialize(this);
-        SkinManager.getManager().load();
+
 
 //        CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
 //            @Override

@@ -28,8 +28,8 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
-import com.waylens.hachi.ui.views.dashboard.adapters.BlockAdapter;
+
+
 
 import java.io.IOException;
 
@@ -51,7 +51,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     private static Clip mSharedClip;
 
 
-    private BlockAdapter mDashboardLayoutAdapter;
+//    private BlockAdapter mDashboardLayoutAdapter;
 
 
     @Bind(R.id.svClipPlayback)
@@ -60,8 +60,7 @@ public class ClipPlaybackActivity extends BaseActivity {
     @Bind(R.id.ivBackgroundPicture)
     ImageView mIvBackground;
 
-    @Bind(R.id.dashboard)
-    DashboardLayout mDashboardLayout;
+
 
     @Bind(R.id.btnPlay)
     ImageButton mBtnPlay;
@@ -113,8 +112,7 @@ public class ClipPlaybackActivity extends BaseActivity {
         ClipPos clipPos = new ClipPos(mClip, mClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         mVdbImageLoader.displayVdbImage(clipPos, mIvBackground);
 
-        mDashboardLayoutAdapter = new BlockAdapter();
-        mDashboardLayout.setAdapter(mDashboardLayoutAdapter);
+
 
     }
 
@@ -131,7 +129,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("Get ACC data block");
-                    mDashboardLayoutAdapter.setAccDataBlock(response);
+//                    mDashboardLayoutAdapter.setAccDataBlock(response);
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -150,7 +148,7 @@ public class ClipPlaybackActivity extends BaseActivity {
             @Override
             public void onResponse(RawDataBlock response) {
                 Logger.t(TAG).d("Get GPS data block");
-                mDashboardLayoutAdapter.setGpsDataBlock(response);
+//                mDashboardLayoutAdapter.setGpsDataBlock(response);
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -169,7 +167,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                 @Override
                 public void onResponse(RawDataBlock response) {
                     Logger.t(TAG).d("Get Obd data block");
-                    mDashboardLayoutAdapter.setObdDataBlock(response);
+//                    mDashboardLayoutAdapter.setObdDataBlock(response);
                     startPlayback();
                 }
             }, new VdbResponse.ErrorListener() {
@@ -195,7 +193,7 @@ public class ClipPlaybackActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mDashboardLayout.update(currentPlayTime);
+//                            mDashboardLayout.update(currentPlayTime);
                         }
                     });
 

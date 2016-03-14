@@ -18,7 +18,7 @@ import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.RawDataItem;
-import com.waylens.hachi.ui.views.dashboard.adapters.RawDataAdapter;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +37,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
     RequestQueue mRequestQueue;
     JSONArray mRawDataUrls;
 
-    private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
+//    private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
 
     public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
         Bundle args = new Bundle();
@@ -67,7 +67,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     @Override
     public void onStop() {
-        mRawDataAdapter.reset();
+//        mRawDataAdapter.reset();
         super.onStop();
     }
 
@@ -105,7 +105,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
     @Override
     protected void displayOverlay(int position) {
-        mRawDataAdapter.updateCurrentTime(position);
+//        mRawDataAdapter.updateCurrentTime(position);
 
     }
 
@@ -118,7 +118,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
     void onLoadRawDataSuccessfully() {
         mRawDataState = RAW_DATA_STATE_READY;
         mProgressLoading.setVisibility(View.GONE);
-        mDashboardLayout.setAdapter(mRawDataAdapter);
+//        mDashboardLayout.setAdapter(mRawDataAdapter);
         openVideo();
     }
 
@@ -201,15 +201,15 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 JSONArray bp = obd.getJSONArray("bp");
                 JSONArray bhp = obd.getJSONArray("bhp");
                 for (int i = 0; i < captureTime.length(); i++) {
-                    mRawDataAdapter.addObdData(
-                        captureTime.getLong(i),
-                        speed.getInt(i),
-                        rpm.getInt(i),
-                        temperature.getInt(i),
-                        tp.getInt(i),
-                        imp.getInt(i),
-                        bp.getInt(i),
-                        bhp.getInt(i));
+//                    mRawDataAdapter.addObdData(
+//                        captureTime.getLong(i),
+//                        speed.getInt(i),
+//                        rpm.getInt(i),
+//                        temperature.getInt(i),
+//                        tp.getInt(i),
+//                        imp.getInt(i),
+//                        bp.getInt(i),
+//                        bhp.getInt(i));
 
                 }
             }
@@ -219,15 +219,15 @@ public class MomentPlayFragment extends VideoPlayFragment {
                 JSONArray acceleration = acc.getJSONArray("acceleration");
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONObject accObj = acceleration.getJSONObject(i);
-                    mRawDataAdapter.addAccData(
-                        captureTime.getLong(i),
-                        accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
-                        accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
-                        accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
-                        accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
-                        accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
-                        accObj.getInt("pressure")
-                    );
+//                    mRawDataAdapter.addAccData(
+//                        captureTime.getLong(i),
+//                        accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
+//                        accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
+//                        accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
+//                        accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
+//                        accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
+//                        accObj.getInt("pressure")
+//                    );
                 }
             }
             JSONObject gps = response.optJSONObject("gps");
@@ -237,12 +237,12 @@ public class MomentPlayFragment extends VideoPlayFragment {
 
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONArray coordinateObj = coordinates.getJSONArray(i);
-                    mRawDataAdapter.addGpsData(
-                        captureTime.getLong(i),
-                        coordinateObj.getDouble(0),
-                        coordinateObj.getDouble(1),
-                        coordinateObj.getDouble(2)
-                    );
+//                    mRawDataAdapter.addGpsData(
+//                        captureTime.getLong(i),
+//                        coordinateObj.getDouble(0),
+//                        coordinateObj.getDouble(1),
+//                        coordinateObj.getDouble(2)
+//                    );
                 }
             }
 
@@ -254,91 +254,91 @@ public class MomentPlayFragment extends VideoPlayFragment {
     }
 
 
-    private static class MomentRawDataAdapter extends RawDataAdapter {
-        private static final String TAG = MomentRawDataAdapter.class.getSimpleName();
-        List<RawDataItem> mOBDData = new ArrayList<>();
-        List<RawDataItem> mAccData = new ArrayList<>();
-        List<RawDataItem> mGPSData = new ArrayList<>();
-
-        private int mObdDataIndex = 0;
-        private int mAccDataIndex = 0;
-        private int mGpsDataIndex = 0;
-
-        public void reset() {
-            mObdDataIndex = 0;
-            mAccDataIndex = 0;
-            mGpsDataIndex = 0;
-        }
-
-
-        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
-            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
-
-            RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperature, rpm);
-            item.data = data;
-            mOBDData.add(item);
-        }
-
-        public void addAccData(long captureTime, int accX, int accY, int accZ,
-                               int gyroX, int gyroY, int gyroZ,
-                               int magnX, int magnY, int magnZ,
-                               int eulerHeading, int eulerRoll, int eulerPitch,
-                               int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
-                               int pressure) {
-            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_ACC, captureTime);
-            RawDataItem.AccData data = new RawDataItem.AccData();
-
-            data.accX = accX;
-            data.accY = accY;
-            data.accZ = accZ;
-            data.euler_roll = eulerRoll;
-            data.euler_pitch = eulerPitch;
-
-            item.data = data;
-            mAccData.add(item);
-        }
-
-        public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
-            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_GPS, captureTime);
-            RawDataItem.GpsData data = new RawDataItem.GpsData();
-            data.coord.lat = latitude;
-            data.coord.lat_orig = latitude;
-            data.coord.lng = longitude;
-            data.coord.lng_orig = longitude;
-            data.altitude = altitude;
-            item.data = data;
-
-            mGPSData.add(item);
-        }
-
-        public void updateCurrentTime(int currentTime) {
-            if (checkIfUpdated(mAccData, mAccDataIndex, currentTime)) {
-                mAccDataIndex++;
-            }
-            if (checkIfUpdated(mGPSData, mGpsDataIndex, currentTime)) {
-                mGpsDataIndex++;
-            }
-            if (checkIfUpdated(mOBDData, mObdDataIndex, currentTime)) {
-                mObdDataIndex++;
-            }
-        }
-
-        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
-            int index = fromPosition;
-            if (index >= list.size()) {
-                return false;
-            }
-
-            RawDataItem item = list.get(index);
-            if (item.getPtsMs() < currentTime) {
-                fromPosition++;
-                notifyDataSetChanged(item);
-                return true;
-            }
-
-            return false;
-        }
-
-
-    }
+//    private static class MomentRawDataAdapter extends RawDataAdapter {
+//        private static final String TAG = MomentRawDataAdapter.class.getSimpleName();
+//        List<RawDataItem> mOBDData = new ArrayList<>();
+//        List<RawDataItem> mAccData = new ArrayList<>();
+//        List<RawDataItem> mGPSData = new ArrayList<>();
+//
+//        private int mObdDataIndex = 0;
+//        private int mAccDataIndex = 0;
+//        private int mGpsDataIndex = 0;
+//
+//        public void reset() {
+//            mObdDataIndex = 0;
+//            mAccDataIndex = 0;
+//            mGpsDataIndex = 0;
+//        }
+//
+//
+//        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
+//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
+//
+//            RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperature, rpm);
+//            item.data = data;
+//            mOBDData.add(item);
+//        }
+//
+//        public void addAccData(long captureTime, int accX, int accY, int accZ,
+//                               int gyroX, int gyroY, int gyroZ,
+//                               int magnX, int magnY, int magnZ,
+//                               int eulerHeading, int eulerRoll, int eulerPitch,
+//                               int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
+//                               int pressure) {
+//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_ACC, captureTime);
+//            RawDataItem.AccData data = new RawDataItem.AccData();
+//
+//            data.accX = accX;
+//            data.accY = accY;
+//            data.accZ = accZ;
+//            data.euler_roll = eulerRoll;
+//            data.euler_pitch = eulerPitch;
+//
+//            item.data = data;
+//            mAccData.add(item);
+//        }
+//
+//        public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
+//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_GPS, captureTime);
+//            RawDataItem.GpsData data = new RawDataItem.GpsData();
+//            data.coord.lat = latitude;
+//            data.coord.lat_orig = latitude;
+//            data.coord.lng = longitude;
+//            data.coord.lng_orig = longitude;
+//            data.altitude = altitude;
+//            item.data = data;
+//
+//            mGPSData.add(item);
+//        }
+//
+//        public void updateCurrentTime(int currentTime) {
+//            if (checkIfUpdated(mAccData, mAccDataIndex, currentTime)) {
+//                mAccDataIndex++;
+//            }
+//            if (checkIfUpdated(mGPSData, mGpsDataIndex, currentTime)) {
+//                mGpsDataIndex++;
+//            }
+//            if (checkIfUpdated(mOBDData, mObdDataIndex, currentTime)) {
+//                mObdDataIndex++;
+//            }
+//        }
+//
+//        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
+//            int index = fromPosition;
+//            if (index >= list.size()) {
+//                return false;
+//            }
+//
+//            RawDataItem item = list.get(index);
+//            if (item.getPtsMs() < currentTime) {
+//                fromPosition++;
+//                notifyDataSetChanged(item);
+//                return true;
+//            }
+//
+//            return false;
+//        }
+//
+//
+//    }
 }

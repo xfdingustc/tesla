@@ -28,7 +28,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.views.DragLayout;
 import com.waylens.hachi.ui.views.OnViewDragListener;
-import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
+
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.io.IOException;
@@ -83,8 +83,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     @Bind(R.id.waylens_video_container)
     DragLayout mVideoContainer;
 
-    @Bind(R.id.overlayLayout)
-    DashboardLayout mDashboardLayout;
+
 
     @Bind(R.id.video_controllers)
     FrameLayout mVideoController;
@@ -189,7 +188,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     @Override
     public void onResume() {
         super.onResume();
-        mDashboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(this);
+//        mDashboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
 
     }
@@ -239,7 +238,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
                 || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            mPortraitParams = (FrameLayout.LayoutParams) mDashboardLayout.getLayoutParams();
+//            mPortraitParams = (FrameLayout.LayoutParams) mDashboardLayout.getLayoutParams();
             mPortraitInfoPanelParems = (FrameLayout.LayoutParams) mInfoPanel.getLayoutParams();
 
             mRootContainer.removeView(mVideoContainer);
@@ -247,8 +246,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mRootView.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
 
-            mRootContainer.removeView(mDashboardLayout);
-            mRootView.addView(mDashboardLayout, params);
+//            mRootContainer.removeView(mDashboardLayout);
+//            mRootView.addView(mDashboardLayout, params);
             calculateDashboardScaling(mRootView, true);
 
             mRootContainer.removeView(mInfoPanel);
@@ -264,8 +263,8 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             fullScreenPlayer = null;
 
 
-            mRootView.removeView(mDashboardLayout);
-            mRootContainer.addView(mDashboardLayout, mPortraitParams);
+//            mRootView.removeView(mDashboardLayout);
+//            mRootContainer.addView(mDashboardLayout, mPortraitParams);
             calculateDashboardScaling(mRootContainer, false);
 
             mRootView.removeView(mInfoPanel);
@@ -290,16 +289,16 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             int width = parent.getMeasuredWidth();
 
             if (mWidthScale == 0) {
-                mWidthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
+//                mWidthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
 
             }
 
             scale = mWidthScale;
         }
 
-        mDashboardLayout.setScaleX(scale);
-        mDashboardLayout.setScaleY(scale);
-        mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//        mDashboardLayout.setScaleX(scale);
+//        mDashboardLayout.setScaleY(scale);
+//        mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
 

@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.views.dashboard.DashboardLayout;
+
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 /**
@@ -69,7 +69,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
     View mLoadingIcon;
     public ImageView videoCover;
 
-    protected DashboardLayout mOverlayLayout;
+//    protected DashboardLayout mOverlayLayout;
 
     OnProgressListener mOnProgressListener;
     protected VideoHandler mUIHandler;
@@ -99,7 +99,7 @@ public class VideoPlayView extends FixedAspectRatioFrameLayout implements
         mBtnPlay.setOnClickListener(this);
         mLoadingIcon = findViewById(R.id.progress_loading);
         videoCover = (ImageView) findViewById(R.id.video_cover);
-        mOverlayLayout = (DashboardLayout) findViewById(R.id.overlayLayout);
+//        mOverlayLayout = (DashboardLayout) findViewById(R.id.overlayLayout);
         mUIHandler = new VideoHandler(this);
         mNonUIThread = new HandlerThread(TAG);
         mNonUIThread.start();
