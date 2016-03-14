@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.AccountActivity;
+import com.waylens.hachi.ui.activities.SetupActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
 
 import butterknife.OnClick;
@@ -37,5 +38,10 @@ public class SettingsFragment extends BaseFragment {
     @OnClick(R.id.settings_help)
     void clickHelp() {
         VersionCheckActivity.launch(getActivity());
+    }
+
+    @OnClick(R.id.addNewCamera)
+    public void onAddNewCameraClicked() {
+        SetupActivity.launch(getActivity());
     }
 }

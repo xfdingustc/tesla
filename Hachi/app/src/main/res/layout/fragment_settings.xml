@@ -14,9 +14,7 @@
         app:layout_scrollFlags="scroll"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
@@ -172,7 +170,9 @@
         android:layout_height="1px"
         android:layout_marginLeft="56dp"
         android:background="#FF35373B"/>
+
     <LinearLayout
+        android:id="@+id/addNewCamera"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"

@@ -67,6 +67,7 @@
         <activity android:name=".ui.activities.LiveViewSettingActivity"/>
 
         <activity android:name=".ui.activities.StoryEditActivity"/>
+        <activity android:name=".ui.activities.SetupActivity"/>
 
         <activity android:name=".ui.activities.EnhancementActivity"
             android:screenOrientation="portrait"/>
