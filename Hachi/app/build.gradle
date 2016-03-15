@@ -15,8 +15,8 @@ android {
         //multiDexEnabled true
 
         //ndk {
-            //moduleName "HttpRemuxer"
-            //ldLibs "log"
+        //moduleName "HttpRemuxer"
+        //ldLibs "log"
         //    abiFilters "armeabi", "armeabi-v7a"
         //}
     }
@@ -63,7 +63,7 @@ android {
 
 repositories {
     mavenCentral()
-    flatDir{
+    flatDir {
         dirs 'libs'
     }
     maven {
@@ -76,6 +76,9 @@ repositories {
     maven {
         url "http://oss.sonatype.org/content/repositories/snapshots/"
     }
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 
@@ -84,6 +87,7 @@ dependencies {
     compile(name: 'rangeseekbar-release', ext: 'aar')
     compile project(':library')
     compile project(':mediatranscoder')
+    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v13:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
@@ -93,7 +97,9 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.orhanobut:logger:1.11'
     compile 'com.mcxiaoke.volley:library:1.0.18'
-    compile 'com.afollestad:material-dialogs:0.7.6.0'
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.7@aar') {
+        transitive = true
+    }
     compile 'com.facebook.android:facebook-android-sdk:4.5.0'
     compile 'com.xfdingustc.fixaspectratiolayout:layout:0.2@aar'
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
@@ -102,9 +108,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'im.fir:sdk:latest.integration@aar'
     compile 'javax.jmdns:jmdns:3.4.1'
-//    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:2.3.0@aar') {
-//        transitive = true
-//    }
+
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'info.hoang8f:android-segmented:1.0.6'

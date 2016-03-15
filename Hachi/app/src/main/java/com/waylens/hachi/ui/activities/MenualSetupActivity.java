@@ -10,7 +10,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.orhanobut.logger.Logger;
@@ -25,8 +24,8 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2016/3/14.
  */
-public class SetupActivity extends BaseActivity {
-    private static final String TAG = SetupActivity.class.getSimpleName();
+public class MenualSetupActivity extends BaseActivity {
+    private static final String TAG = MenualSetupActivity.class.getSimpleName();
 
     @Bind(R.id.qrDecoderView)
     QRCodeReaderView mQrCodeReaderView;
@@ -36,7 +35,7 @@ public class SetupActivity extends BaseActivity {
     private BroadcastReceiver mWifiStateReceiver;
 
     public static void launch(Activity activity) {
-        Intent intent = new Intent(activity, SetupActivity.class);
+        Intent intent = new Intent(activity, MenualSetupActivity.class);
         activity.startActivity(intent);
     }
 

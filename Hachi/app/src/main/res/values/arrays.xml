@@ -131,6 +131,11 @@
         <item>PRIVATE</item>
     </string-array>
 
+    <string-array name="setup_items">
+        <item>SmartConfig</item>
+        <item>Menual</item>
+    </string-array>
+
 
     <integer-array name="social_privacy_icon">
         <item>@drawable/social_privacy_everyone</item>
