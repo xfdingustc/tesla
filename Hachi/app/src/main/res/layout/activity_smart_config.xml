@@ -95,7 +95,7 @@
         android:layout_marginRight="20dp"
         android:minHeight="5dp"
         android:maxHeight="5dp"
-        android:visibility="invisible" />
+         />
 
     <TextView
         android:id="@+id/smartconfig_start"
