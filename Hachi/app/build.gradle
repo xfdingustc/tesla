@@ -19,7 +19,7 @@ android {
         targetSdkVersion 23
         versionCode 38
         versionName "0.38"
-        //multiDexEnabled true
+        multiDexEnabled true
 
         //ndk {
         //moduleName "HttpRemuxer"
