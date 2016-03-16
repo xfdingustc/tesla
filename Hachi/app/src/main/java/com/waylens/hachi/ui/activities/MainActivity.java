@@ -17,8 +17,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -32,6 +31,9 @@ import com.waylens.hachi.ui.fragments.VideoFragment;
 import com.waylens.hachi.ui.fragments.camerapreview.CameraPreviewFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,7 +52,9 @@ public class MainActivity extends BaseActivity {
 
     private int mCurrentNavMenuId;
 
-    private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
+    //private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
+    private Map<Integer, Integer> mMenuId2Tab = new HashMap<>();
+    private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
     private BaseFragment[] mFragmentList = new BaseFragment[]{
             new VideoFragment(),
@@ -117,6 +121,11 @@ public class MainActivity extends BaseActivity {
         mMenuId2Tab.put(R.id.video, TAB_TAG_VIDEO);
         mMenuId2Tab.put(R.id.liveView, TAB_TAG_LIVE_VIEW);
 
+        mTab2MenuId.put(TAB_TAG_MOMENTS, R.id.moments);
+        mTab2MenuId.put(TAB_TAG_SETTINGS, R.id.setting);
+        mTab2MenuId.put(TAB_TAG_VIDEO, R.id.video);
+        mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.liveView);
+
         initViews();
         if (mSessionManager.isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
             Intent intent = new Intent(this, RegistrationIntentService.class);
@@ -160,7 +169,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void switchFragment(int tag) {
-        int menuId = mMenuId2Tab.inverse().get(tag);
+        int menuId = mTab2MenuId.get(tag);
 
         // When init current menu id is 0. so here must check if MenuItem is null
         MenuItem item = mNavView.getMenu().findItem(mCurrentNavMenuId);
