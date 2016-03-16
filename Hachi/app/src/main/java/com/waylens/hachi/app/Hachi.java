@@ -4,9 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 
-
+import com.bugtags.library.Bugtags;
+import com.bugtags.library.BugtagsOptions;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -14,12 +16,8 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
-
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
-
-import com.bugtags.library.Bugtags;
-import com.bugtags.library.BugtagsOptions;
 
 
 /**
@@ -50,6 +48,11 @@ public class Hachi extends Application {
                 trackingNetworkURLFilter("(.*)").
                 build();
         Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
+
+        /**
+         * inti Burly
+         */
+        CrashReport.initCrashReport(getApplicationContext(), "900022478", false);
 
         init();
     }
