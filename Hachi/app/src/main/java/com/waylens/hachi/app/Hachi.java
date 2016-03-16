@@ -45,7 +45,6 @@ public class Hachi extends Application {
                 trackingUserSteps(true).
                 versionName("0.38").
                 versionCode(1).
-                trackingNetworkURLFilter("(.*)").
                 build();
         Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
 

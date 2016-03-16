@@ -5,7 +5,6 @@ apply plugin: 'com.bugtags.library.plugin'
 bugtags {
     appKey "a088e06d7c05be80a41cf34e7de0f9b0"
     appSecret "987419e43304030b00a399e6235413ff"
-    trackingNetworkEnabled true
 }
 
 android {
