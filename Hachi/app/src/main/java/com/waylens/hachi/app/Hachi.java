@@ -18,6 +18,9 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
+import com.bugtags.library.Bugtags;
+import com.bugtags.library.BugtagsOptions;
+
 
 /**
  * Created by Xiaofei on 2015/8/4.
@@ -34,6 +37,20 @@ public class Hachi extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        /**
+         * inti Bugtags
+         */
+        BugtagsOptions options = new BugtagsOptions.Builder().
+                trackingLocation(true).
+                trackingCrashLog(true).
+                trackingConsoleLog(true).
+                trackingUserSteps(true).
+                versionName("0.38").
+                versionCode(1).
+                trackingNetworkURLFilter("(.*)").
+                build();
+        Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
+
         init();
     }
 

@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.bugtags.library.plugin'
+
+bugtags {
+    appKey "a088e06d7c05be80a41cf34e7de0f9b0"
+    appSecret "987419e43304030b00a399e6235413ff"
+    trackingNetworkEnabled true
+}
 
 android {
     compileSdkVersion 23
@@ -76,7 +83,9 @@ repositories {
     maven {
         url "http://oss.sonatype.org/content/repositories/snapshots/"
     }
-
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 
@@ -109,4 +118,5 @@ dependencies {
     compile 'info.hoang8f:android-segmented:1.0.6'
     compile 'com.google.guava:guava-collections:r03'
     compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+    compile 'com.bugtags.library:bugtags-lib:latest.integration'
 }

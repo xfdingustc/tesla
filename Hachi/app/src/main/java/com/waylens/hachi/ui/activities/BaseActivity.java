@@ -6,9 +6,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 
 import com.android.volley.RequestQueue;
-import com.orhanobut.logger.Logger;
+import com.bugtags.library.Bugtags;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -23,6 +24,29 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2015/7/29.
  */
 public class BaseActivity extends AppCompatActivity {
+
+    /**
+     * Bugtags call
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Bugtags.onResume(this);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Bugtags.onPause(this);
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        Bugtags.onDispatchTouchEvent(this, event);
+        return super.dispatchTouchEvent(event);
+    }
+
+    /**
+     * end Bugtags
+     */
 
     @Nullable
     @Bind(R.id.toolbar)
