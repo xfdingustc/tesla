@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_bookmark2,
+        View view = createFragmentView(inflater, container, R.layout.fragment_video,
                 savedInstanceState);
         setupViewPager();
         return view;
@@ -49,7 +48,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
 
     private void setupViewPager() {
         mAdapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
-        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
+        mAdapter.addFragment(BookmarkFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
                 .bookmark));
         mAdapter.addFragment(AllFootageFragment.newInstance(), getString(R.string
             .all_footage));
@@ -59,7 +58,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
 
     @Override
     public boolean onInterceptBackPressed() {
-        ClipListFragment fragment = (ClipListFragment) mAdapter.getItem(mViewPager.getCurrentItem());
+        BookmarkFragment fragment = (BookmarkFragment) mAdapter.getItem(mViewPager.getCurrentItem());
         return fragment.onInterceptBackPressed();
     }
 }

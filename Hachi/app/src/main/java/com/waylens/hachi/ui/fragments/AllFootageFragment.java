@@ -79,7 +79,6 @@ public class AllFootageFragment extends BaseFragment {
     }
 
     private void setupClipPlayFragment(ClipSet clipSet) {
-        Logger.t(TAG).d("ClipSet: " + clipSet.getCount());
         mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
         UrlProvider urlProvider = new ClipUrlProvider(mVdbRequestQueue, getClipSet().getClip(0));
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();

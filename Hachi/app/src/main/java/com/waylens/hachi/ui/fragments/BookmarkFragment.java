@@ -1,262 +1,355 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.support.design.widget.TabLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ViewAnimator;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
-import com.waylens.hachi.ui.adapters.ClipFilmAdapter;
-import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.activities.ShareActivity;
+import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.Map;
 
 import butterknife.Bind;
 
 /**
- * Live Segment
- * <p/>
- * Created by Xiaofei on 2015/8/4.
+ * Created by Xiaofei on 2016/2/18.
  */
-public class BookmarkFragment extends BaseFragment implements FragmentNavigator,
-        ClipFilmAdapter.OnEditClipListener {
+public class BookmarkFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = BookmarkFragment.class.getSimpleName();
+    private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
+    private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
+    private static final String ARG_IS_ADD_MORE = "is.add.more";
 
-    static final String TAG_CLIP_SET = "tag.clip_set";
+    private Map<String, ClipSet> mClipSetGroup = new HashMap<>();
+
+    private ClipSetGroupAdapter mAdapter;
 
 
-    private ClipFilmAdapter mClipSetAdapter;
+    @Bind(R.id.clipGroupList)
+    RecyclerView mRvClipGroupList;
 
 
+    @Bind(R.id.refreshLayout)
+    SwipeRefreshLayout mRefreshLayout;
 
-    @Bind(R.id.video_type_tabs)
-    TabLayout mTabLayout;
 
-    @Bind(R.id.video_list_view)
-    RecyclerView mRvCameraVideoList;
+    private Handler mUiThreadHandler;
 
-    @Bind(R.id.view_animator)
-    ViewAnimator mViewAnimator;
+    private int mClipSetType;
 
-    LinearLayoutManager mLinearLayoutManager;
+    private boolean mIsMultipleMode;
 
-    ClipFilmAdapter.ClipEditViewHolder mHolder;
+    boolean mIsAddMore;
 
-    VideoTab[] mVideoTabs = new VideoTab[]{
-            new VideoTab(R.string.camera_video_bookmark, 0, Clip.TYPE_MARKED),
-            new VideoTab(R.string.camera_video_all, 0, Clip.TYPE_BUFFERED),
-    };
+    ActionMode mActionMode;
 
-    HandlerThread mBgThread;
-    Handler mBgHandler;
-    Handler mUIHandler;
+    public static BookmarkFragment newInstance(int clipSetType) {
+        BookmarkFragment fragment = new BookmarkFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
+        args.putBoolean(ARG_IS_MULTIPLE_MODE, false);
+        args.putBoolean(ARG_IS_ADD_MORE, false);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static BookmarkFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
+        BookmarkFragment fragment = new BookmarkFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
+        args.putBoolean(ARG_IS_MULTIPLE_MODE, isMultipleSelectionMode);
+        args.putBoolean(ARG_IS_ADD_MORE, isAddMore);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mBgThread = new HandlerThread("LiveFragment-bg-thread");
-        mBgThread.start();
-        mBgHandler = new Handler(mBgThread.getLooper());
-        mUIHandler = new Handler();
-    }
+        Bundle args = getArguments();
+        if (args != null) {
+            mClipSetType = args.getInt(ARG_CLIP_SET_TYPE, Clip.TYPE_MARKED);
+            mIsMultipleMode = args.getBoolean(ARG_IS_MULTIPLE_MODE, false);
+            mIsAddMore = args.getBoolean(ARG_IS_ADD_MORE, false);
+        }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (mVdtCamera != null) {
-            retrieveSharableClips(mVideoTabs[mTabLayout.getSelectedTabPosition()].tabTag);
+        if (mIsAddMore) {
+            setHasOptionsMenu(true);
         }
     }
 
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_live, savedInstanceState);
-        initViews();
+        View view = createFragmentView(inflater, container, R.layout.fragment_bookmark,
+                savedInstanceState);
+        mUiThreadHandler = new Handler();
+        setupClipSetGroup();
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retrieveSharableClips();
+            }
+        });
         return view;
     }
 
-    void initViews() {
-        mVdtCamera = getCamera();
-        if (mVdtCamera != null) {
-            mVdbRequestQueue = Snipe.newRequestQueue(getActivity());
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRefreshLayout.setRefreshing(true);
+
+        if (getCamera() != null) {
+            retrieveSharableClips();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_add_clip, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_to_enhance:
+                toEnhance();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    void toEnhance() {
+        if (mIsAddMore) {
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra("clips.more", mAdapter.getSelectedClipList());
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
         } else {
-            mViewAnimator.setDisplayedChild(2);
+            ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+            ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
+            for (Clip clip : selectedList) {
+                clipSet.addClip(clip);
+            }
+            ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+            EnhancementActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         }
+    }
 
-        //mClipSetAdapter = new CameraClipSetAdapter(getActivity(), mVdbRequestQueue);
-        //mClipSetAdapter.setClipActionListener(this);
-
-        mClipSetAdapter = new ClipFilmAdapter();
-        mClipSetAdapter.mOnEditClipListener = this;
-        mRvCameraVideoList.setAdapter(mClipSetAdapter);
-        mRvCameraVideoList.setLayoutManager(mLinearLayoutManager);
-
-        for (VideoTab videoTab : mVideoTabs) {
-            TabLayout.Tab tab = mTabLayout.newTab().setText(videoTab.textRes);
-
-            mTabLayout.addTab(tab);
-        }
-
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+    @Override
+    public void onCameraVdbConnected(VdtCamera camera) {
+        super.onCameraVdbConnected(camera);
+        mUiThreadHandler.post(new Runnable() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (mVdtCamera != null) {
-                    mClipSetAdapter.setClipSet(null);
-                    retrieveSharableClips(mVideoTabs[tab.getPosition()].tabTag);
+            public void run() {
+
+                mClipSetGroup.clear();
+                retrieveSharableClips();
+            }
+        });
+
+    }
+
+    private void setupClipSetGroup() {
+        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+
+        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter.OnClipClickListener() {
+            @Override
+            public void onClipClicked(Clip clip) {
+                popClipPreviewFragment(clip);
+            }
+
+            @Override
+            public void onClipLongClicked(Clip clip) {
+                mIsMultipleMode = true;
+                mAdapter.setMultiSelectedMode(true);
+                if (mActionMode == null) {
+                    mActionMode = getActivity().startActionMode(mCABCallback);
                 }
             }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
         });
+
+        mAdapter.setMultiSelectedMode(mIsMultipleMode);
+
+        mRvClipGroupList.setAdapter(mAdapter);
+
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (mVdbRequestQueue != null) {
-            mVdbRequestQueue.cancelAll(TAG_CLIP_SET);
-            mVdbRequestQueue = null;
-        }
-        mTabLayout.setOnTabSelectedListener(null);
-        mRvCameraVideoList.setAdapter(null);
-        mClipSetAdapter.mOnEditClipListener = null;
-        mClipSetAdapter = null;
-        super.onDestroyView();
-    }
-
-    void retrieveSharableClips(final int clipType) {
-        mViewAnimator.setDisplayedChild(0);
-        mBgHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                ClipSet clipSet = retrieveVideoList(clipType);
-                updateAdapter(SharableClip.processClipSet(clipSet, mVdbRequestQueue));
-            }
-        });
-    }
-
-    void updateAdapter(final List<SharableClip> sharableClips) {
-        mUIHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mClipSetAdapter.setClipSet(sharableClips);
-                mViewAnimator.setDisplayedChild(1);
-            }
-        });
-    }
-
-    ClipSet retrieveVideoList(int type) {
-        final CountDownLatch latch = new CountDownLatch(1);
-        final ClipSet[] clipSets = new ClipSet[]{null};
-
-        mVdbRequestQueue.add(new ClipSetRequest(type, ClipSetRequest.FLAG_CLIP_EXTRA,
+    private void retrieveSharableClips() {
+        mClipSetGroup.clear();
+        mVdbRequestQueue.add(new ClipSetRequest(mClipSetType, ClipSetRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {
-                        clipSets[0] = clipSet;
-                        latch.countDown();
+                        mRefreshLayout.setRefreshing(false);
+                        calculateClipSetGroup(clipSet);
+                        setupClipSetGroupView();
                     }
                 },
                 new VdbResponse.ErrorListener() {
                     @Override
                     public void onErrorResponse(SnipeError error) {
-                        Log.e("test", "", error);
-                        latch.countDown();
+                        Logger.t(TAG).e("", error);
+
                     }
-                }).setTag(TAG_CLIP_SET));
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Log.e("test", "", e);
-        }
-        return clipSets[0];
+                }));
+
     }
 
+
+    private void calculateClipSetGroup(ClipSet clipSet) {
+        for (Clip clip : clipSet.getClipList()) {
+
+            String clipDataString = clip.getDateString();
+            ClipSet oneClipSet = mClipSetGroup.get(clipDataString);
+            if (oneClipSet == null) {
+                oneClipSet = new ClipSet(clipSet.getType());
+                mClipSetGroup.put(clipDataString, oneClipSet);
+            }
+
+            oneClipSet.addClip(clip);
+
+        }
+    }
+
+    private void setupClipSetGroupView() {
+
+        List<ClipSet> clipSetGroup = new ArrayList<>();
+        Iterator iter = mClipSetGroup.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            clipSetGroup.add((ClipSet) entry.getValue());
+        }
+
+        Collections.sort(clipSetGroup, new Comparator<ClipSet>() {
+            @Override
+            public int compare(ClipSet lhs, ClipSet rhs) {
+                return rhs.getClip(0).clipDate - lhs.getClip(0).clipDate;
+            }
+        });
+
+        mAdapter.setClipSetGroup(clipSetGroup);
+    }
+
+    private void popClipPreviewFragment(Clip clip) {
+
+        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
+        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
+
+        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
+        clipSet.addClip(clip);
+
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+
+        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip);
+        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), ClipSetManager.CLIP_SET_TYPE_ENHANCE,
+                vdtUriProvider, config);
+
+        fragment.show(getFragmentManager(), "ClipPlayFragment");
+
+    }
 
 
     @Override
     public boolean onInterceptBackPressed() {
-        if (VideoPlayFragment.fullScreenPlayer != null) {
-            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
+        if (mIsMultipleMode) {
+            mIsMultipleMode = false;
+            mAdapter.setMultiSelectedMode(false);
             return true;
         }
         return false;
     }
 
-    @Override
-    public void onStartDragging() {
-        mRvCameraVideoList.setLayoutFrozen(true);
-    }
-
-    @Override
-    public void onStopDragging() {
-        mRvCameraVideoList.setLayoutFrozen(false);
-    }
-
-    @Override
-    public void onEnhanceClip(SharableClip sharableClip) {
-        //getFragmentManager().beginTransaction().add(R.id.root_container, EnhancementActivity2.newInstance(sharableClip)).commit();
-    }
-
-    @Override
-    public void onShareClip(SharableClip sharableClip) {
-        //
-    }
-
-    @Override
-    public void onEditClip(final SharableClip sharableClip, final ClipFilmAdapter.ClipEditViewHolder holder, final int position) {
-        if (mHolder == holder && holder.videoTrimmer.isInEditMode()) {
-            return;
+    ActionMode.Callback mCABCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_clip_list, menu);
+            return true;
         }
 
-        if (mHolder != null) {
-            mHolder.stopEditing();
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            if (mIsAddMore) {
+                MenuItem menuItem = menu.findItem(R.id.menu_to_upload);
+                if (menuItem != null) {
+                    menuItem.setVisible(false);
+                }
+                menuItem = menu.findItem(R.id.menu_to_delete);
+                if (menuItem != null) {
+                    menuItem.setVisible(false);
+                }
+            }
+            return true;
         }
 
-        mRvCameraVideoList.setLayoutFrozen(false);
-        holder.startEditing(sharableClip);
-        mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
-        mRvCameraVideoList.requestLayout();
-        mHolder = holder;
-    }
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_to_enhance:
+                    toEnhance();
+                    return true;
+                case R.id.menu_to_upload:
+                    toShare();
+                    return false;
+                case R.id.menu_to_delete:
+                    return false;
+                default:
+                    return false;
+            }
 
-    static class VideoTab {
-        int textRes;
-        int iconRes;
-        int tabTag;
-
-        public VideoTab(int textRes, int iconRes, int tabTag) {
-            this.textRes = textRes;
-            this.iconRes = iconRes;
-            this.tabTag = tabTag;
         }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            if (mIsAddMore) {
+                getActivity().finish();
+            } else if (mIsMultipleMode) {
+                mIsMultipleMode = false;
+                mAdapter.setMultiSelectedMode(false);
+            }
+        }
+    };
+
+    void toShare() {
+        ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
+        for (Clip clip : selectedList) {
+            clipSet.addClip(clip);
+        }
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+        ShareActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
     }
 }
