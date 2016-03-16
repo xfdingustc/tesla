@@ -51,7 +51,8 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
         mAdapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
         mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
                 .bookmark));
-        mAdapter.addFragment(ClipListFragment.newInstance(Clip.TYPE_BUFFERED), getString(R.string.all));
+        mAdapter.addFragment(AllFootageFragment.newInstance(), getString(R.string
+            .all_footage));
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }

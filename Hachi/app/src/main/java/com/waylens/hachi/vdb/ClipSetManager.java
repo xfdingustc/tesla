@@ -18,6 +18,7 @@ public class ClipSetManager {
     }
 
     public static final int CLIP_SET_TYPE_ENHANCE = 0x108;
+    public static final int CLIP_SET_TYPE_ALLFOOTAGE = 0x109;
 
     private static volatile ClipSetManager CLIP_SET_MANAGER;
 
