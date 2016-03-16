@@ -9,7 +9,6 @@ import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
-import com.waylens.hachi.hardware.NanoMdns;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
@@ -18,8 +17,6 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
-
-import im.fir.sdk.FIR;
 
 
 /**
@@ -32,7 +29,7 @@ public class Hachi extends Application {
     private static Context mSharedContext = null;
 
     private DeviceScanner mScanner;
-    private NanoMdns mNanoMdns;
+
 
     @Override
     public void onCreate() {
