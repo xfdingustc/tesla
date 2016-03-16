@@ -5,9 +5,10 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -15,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
@@ -23,7 +23,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -37,7 +36,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.activities.LoginActivity;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 
@@ -57,50 +56,53 @@ import butterknife.OnTextChanged;
  */
 public class SignInFragment extends BaseFragment {
     private static final String TAG = "SignInFragment";
-    @Bind(R.id.sign_up_tabs)
-    TabLayout mTabLayout;
 
-    @Bind(R.id.sign_in_container)
-    View mSignInContainer;
+    private static final String TAG_REQUEST_VERIFY_EMAIL = "SignInFragment.request.verify.email";
 
-    @Bind(R.id.sign_up_container)
-    View mSignUpContainer;
+    private static final String TAG_REQUEST_SIGN_UP = "SignInFragment.request.sign.up";
 
+    private static final int PASSWORD_MIN_LENGTH = 6;
     @Bind(R.id.login_button)
     LoginButton mFBLoginButton;
 
-    @Bind(R.id.sign_in_username)
-    TextView mTvUsername;
+    @Bind(R.id.button_animator)
+    ViewAnimator mButtonAnimator;
 
-    @Bind(R.id.sign_in_password)
-    TextView mTvPassword;
-
-    @Bind(R.id.btn_login)
-    View mBtnLogin;
-
-    @Bind(R.id.sign_in_animator)
-    ViewAnimator mSignInAnimator;
-
-    @Bind(R.id.sign_up_animator)
-    ViewAnimator mSignUpAnimator;
+    @Bind(R.id.input_animator)
+    ViewAnimator mInputAnimator;
 
     @Bind(R.id.sign_up_email)
     AutoCompleteTextView mTvSignUpEmail;
 
+    @Bind(R.id.sign_up_password)
+    AppCompatEditText mEvPassword;
+
     @Bind(R.id.text_input_email)
     TextInputLayout mTextInputEmail;
 
+    @Bind(R.id.text_input_password)
+    TextInputLayout mTextInputPassword;
+
+    @Bind(R.id.btn_clean_input)
+    View mBtnCleanEmail;
+
+    @Bind(R.id.password_controls)
+    View mPasswordControls;
+
     CallbackManager mCallbackManager;
 
-    RequestQueue mRequestQueue;
+    RequestQueue mVolleyRequestQueue;
 
     ArrayAdapter<String> mAccountAdapter;
+
+    PasswordTransformationMethod mTransformationMethod;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCallbackManager = CallbackManager.Factory.create();
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        mTransformationMethod = new PasswordTransformationMethod();
     }
 
     @Nullable
@@ -123,50 +125,30 @@ public class SignInFragment extends BaseFragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        if (mVolleyRequestQueue != null) {
+            mVolleyRequestQueue.cancelAll(TAG_REQUEST_VERIFY_EMAIL);
+            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_UP);
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     void initViews() {
-//        hideToolbar();
-        mBtnLogin.setVisibility(View.GONE);
-        String userName = SessionManager.getInstance().getUserName();
-        if (!TextUtils.isEmpty(userName)) {
-            mTvUsername.setText(userName);
-        }
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0:
-                        mSignInContainer.setVisibility(View.GONE);
-                        mSignUpContainer.setVisibility(View.VISIBLE);
-                        break;
-                    case 1:
-                        mSignUpContainer.setVisibility(View.GONE);
-                        mSignInContainer.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                //
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                //
-            }
-        });
-
-        mTabLayout.addTab(mTabLayout.newTab().setText("SIGN UP"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("SIGN IN"));
-        mTabLayout.getTabAt(1).select();
+        mRootView.requestFocus();
         mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends");
         mFBLoginButton.registerCallback(mCallbackManager, new FBCallback());
-        mFBLoginButton.requestFocus();
+        mBtnCleanEmail.setVisibility(View.GONE);
+        mPasswordControls.setVisibility(View.GONE);
+        String email = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, null);
+        if (email != null) {
+            mTvSignUpEmail.setText(email);
+        }
         initAccountsView();
     }
 
@@ -186,17 +168,24 @@ public class SignInFragment extends BaseFragment {
         }
     }
 
-    @OnTextChanged({R.id.sign_in_password, R.id.sign_in_username})
-    public void inputPassword(CharSequence s, int start, int before, int count) {
-        if (mTvPassword.getText().length() == 0 || mTvUsername.getText().length() == 0) {
-            mSignInAnimator.setDisplayedChild(0);
-        } else {
-            mSignInAnimator.setDisplayedChild(1);
-        }
+    @OnClick(R.id.btn_clean_input)
+    void cleanInputText() {
+        mTvSignUpEmail.getText().clear();
+    }
+
+    @OnClick(R.id.btn_clean_password)
+    void cleanPassword() {
+        mEvPassword.getText().clear();
+    }
+
+    @OnClick(R.id.btn_show_password)
+    void showPassword(View view) {
+        view.setSelected(!view.isSelected());
+        mEvPassword.setTransformationMethod(view.isSelected() ? null : mTransformationMethod);
     }
 
     @OnClick(R.id.sign_up_next)
-    public void signUp() {
+    public void signUpNext() {
         String email = mTvSignUpEmail.getText().toString();
         if (TextUtils.isEmpty(email)) {
             mTextInputEmail.setError(getString(R.string.the_field_is_required));
@@ -210,99 +199,106 @@ public class SignInFragment extends BaseFragment {
         }
         mTextInputEmail.setError(null);
         verifyEmail();
-        mSignUpAnimator.setDisplayedChild(1);
+        mButtonAnimator.setDisplayedChild(1);
     }
 
     @OnTextChanged(R.id.sign_up_email)
     public void inputEmail(CharSequence text) {
         mTextInputEmail.setError(null);
+        mBtnCleanEmail.setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
+    }
+
+    @OnTextChanged(R.id.sign_up_password)
+    public void inputPassword(CharSequence text) {
+        mPasswordControls.setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
+    }
+
+    @OnClick(R.id.sign_up_done)
+    void signUpDone() {
+        String password = mEvPassword.getText().toString();
+        if (TextUtils.isEmpty(password) || password.length() < PASSWORD_MIN_LENGTH) {
+            mTextInputPassword.setError(getString(R.string.password_min_error, PASSWORD_MIN_LENGTH));
+            return;
+        }
+        mEvPassword.setError(null);
+        mButtonAnimator.setDisplayedChild(1);
+        performSignUp(mTvSignUpEmail.getText().toString(), password);
+    }
+
+    void performSignUp(String email, String password) {
+        JSONObject params = new JSONObject();
+        try {
+            params.put(JsonKey.EMAIL, email);
+            params.put(JsonKey.NICK_NAME, email.substring(0, email.indexOf("@")));
+            params.put(JsonKey.PASSWORD, password);
+        } catch (JSONException e) {
+            Logger.t(TAG).e(e, "");
+        }
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_UP, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        onSignUpSuccessful(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        onSignUpFailed(error);
+                    }
+                }).setTag(TAG_REQUEST_SIGN_UP));
+    }
+
+    void onSignUpFailed(VolleyError error) {
+        Log.e("test", "Error: " + ServerMessage.parseServerError(error));
+
+    }
+
+    void onSignUpSuccessful(JSONObject response) {
+        Log.e("test", "SignUp successfully.");
     }
 
     private void verifyEmail() {
         String url = Constants.API_CHECK_EMAIL;
+        final String email = mTvSignUpEmail.getText().toString();
         try {
-            url = url + URLEncoder.encode(mTvSignUpEmail.getText().toString(), "utf-8");
+            url = url + URLEncoder.encode(email, "utf-8");
         } catch (UnsupportedEncodingException e) {
             Logger.t(TAG).e(e, "");
         }
 
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                onValidEmail(response);
+                onValidEmail(email, response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 onInvalidEmail(error);
             }
-        }));
+        }).setTag(TAG_REQUEST_VERIFY_EMAIL));
     }
 
     void onInvalidEmail(VolleyError error) {
         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
         showMessage(errorInfo.msgResID);
-        mSignUpAnimator.setDisplayedChild(0);
+        mButtonAnimator.setDisplayedChild(0);
     }
 
-    void onValidEmail(JSONObject response) {
+    void onValidEmail(String email, JSONObject response) {
         if (response.optBoolean("result")) {
-            SignUpFragment fragment = new SignUpFragment();
-            Bundle args = new Bundle();
-            args.putString(SignUpFragment.ARG_KEY_EMAIL, mTvSignUpEmail.getText().toString());
-            fragment.setArguments(args);
-            getFragmentManager().beginTransaction().add(R.id.fragment_content, fragment).commit();
+            PreferenceUtils.putString(PreferenceUtils.KEY_SIGN_UP_EMAIL, email);
+            mInputAnimator.setDisplayedChild(1);
+            mButtonAnimator.setDisplayedChild(2);
         } else {
-            showMessage(R.string.email_has_been_used);
+            mTextInputEmail.setError(getString(R.string.email_has_been_used));
+            mButtonAnimator.setDisplayedChild(0);
         }
-        mSignUpAnimator.setDisplayedChild(0);
-
-    }
-
-    @OnClick(R.id.btn_login)
-    public void signIn() {
-        mSignInAnimator.setDisplayedChild(2);
-
-        JSONObject params = new JSONObject();
-        try {
-            params.put(JsonKey.USERNAME, mTvUsername.getText().toString());
-            params.put(JsonKey.PASSWORD, mTvPassword.getText().toString());
-        } catch (JSONException e) {
-            Logger.t(TAG).e(e, "");
-        }
-
-        mRequestQueue.start();
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_LOGIN, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onLoginSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onLoginFailed(error);
-                    }
-                }));
-    }
-
-    void onLoginSuccessful(JSONObject response) {
-        SessionManager.getInstance().saveLoginInfo(response);
-        getActivity().finish();
-    }
-
-    void onLoginFailed(VolleyError error) {
-        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.msgResID);
-        if (errorInfo.errorCode == ServerMessage.USER_NAME_PASSWORD_NOT_MATCHED) {
-            mTvPassword.requestFocus();
-        }
-        mSignInAnimator.setDisplayedChild(1);
     }
 
     void signUpWithFacebook(final AccessToken accessToken) {
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -323,7 +319,7 @@ public class SignInFragment extends BaseFragment {
                 hideDialog();
             }
         }));
-        mRequestQueue.start();
+        mVolleyRequestQueue.start();
 
         showDialog();
     }
@@ -349,7 +345,7 @@ public class SignInFragment extends BaseFragment {
                         if (SessionManager.getInstance().needLinkAccount()) {
                             LinkAccountFragment fragment = new LinkAccountFragment();
                             fragment.setArguments(args);
-                            ((LoginActivity) getActivity()).pushFragment(fragment);
+                            getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
                         } else {
                             getActivity().finish();
                         }

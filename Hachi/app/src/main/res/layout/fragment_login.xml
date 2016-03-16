@@ -1,142 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/root_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/defaultBgColor"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:paddingTop="48dp">
+
+    <ViewAnimator
+        android:id="@+id/input_animator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/layout_sign_up_email" />
+        <include layout="@layout/layout_sign_up_password" />
+    </ViewAnimator>
+
+    <ViewAnimator
+        android:id="@+id/button_animator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="48dp">
+
+        <Button
+            android:id="@+id/sign_up_next"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/next"/>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/sign_up_done"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_done"/>
+    </ViewAnimator>
+
 
     <TextView
+        style="@style/Base.TextAppearance.AppCompat.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="48dp"
+        android:text="@string/already_a_member"/>
+
+    <Button
+        android:id="@+id/btn_sign_in"
+        style="@style/Widget.AppCompat.Button.Hachi"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:background="@color/material_blue_grey_700"
-        android:gravity="center"
-        android:text="@string/sign_in_message"/>
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/sign_up_tabs"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        app:tabIndicatorColor="@android:color/white"/>
-
-    <LinearLayout
-        android:id="@+id/sign_up_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/text_input_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <AutoCompleteTextView
-            android:id="@+id/sign_up_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <ViewAnimator
-            android:id="@+id/sign_up_animator"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:id="@+id/sign_up_next"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:background="@android:drawable/list_selector_background"
-                style="@style/TextAppearance.AppCompat.Subhead"
-                android:text="@string/next"/>
-
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
-        </ViewAnimator>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/sign_in_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical">
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
-
-            <EditText
-                android:id="@+id/sign_in_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/username"
-                android:inputType="textEmailAddress"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp">
-
-                <EditText
-                    android:id="@+id/sign_in_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"/>
-            </android.support.design.widget.TextInputLayout>
-
-            <ViewAnimator
-                android:id="@+id/sign_in_animator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical">
-
-                <TextView
-                    android:id="@+id/btn_forgot_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/forgot"
-                    android:textColor="@color/material_blue_300"/>
-
-                <Button
-                    android:id="@+id/btn_login"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/ic_arrow_forward"/>
-
-                <ProgressBar
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"/>
-            </ViewAnimator>
-        </FrameLayout>
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/login"/>
 
     <FrameLayout
         android:id="@+id/row_divider"
@@ -162,6 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"/>
 
 </LinearLayout>

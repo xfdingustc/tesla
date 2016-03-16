@@ -26,6 +26,7 @@ public class PreferenceUtils {
     public static final String KEY_WEATHER_ICON_URL = "weather.icon.url";
     public static final String KEY_WEATHER_UPDATE_TIME = "weather.update.time";
 
+    public static final String KEY_SIGN_UP_EMAIL = "sign.up.email";
 
     private static Context mSharedAppContext = null;
     private static SharedPreferences mShare = null;

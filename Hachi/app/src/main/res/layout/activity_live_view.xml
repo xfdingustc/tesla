@@ -11,11 +11,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/edit_toolbar">
+            android:layout_height="48dp">
 
             <ImageView
                 android:id="@+id/btn_info"
@@ -370,8 +368,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/edit_toolbar"/>
+            android:layout_height="1px"/>
 
 
     </LinearLayout>

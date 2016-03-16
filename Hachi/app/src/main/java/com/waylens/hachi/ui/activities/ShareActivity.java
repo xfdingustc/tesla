@@ -123,7 +123,7 @@ public class ShareActivity extends BaseActivity implements MomentShareHelper.OnS
     }
 
     private void initViews() {
-        setContentView(R.layout.fragment_share);
+        setContentView(R.layout.activity_share);
 
         if (mIsFromEnhance) {
             embedVideoPlayFragment();

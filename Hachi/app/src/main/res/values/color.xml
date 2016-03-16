@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- TODO: We should merge color.xml and colors.xml into one file, and remove all the redundant color values. -->
     <color name="fab_color_pressed">@color/material_lime_700</color>
     <color name="fab_color_shadow">#44000000</color>
-    <color name="style_color_primary">@color/material_deep_orange_500</color>
-    <color name="style_color_primary_dark">@color/material_deep_orange_700</color>
-    <color name="style_color_accent">@color/material_amber_500</color>
+
 
     <color name="btn_default_light_normal">#00000000</color>
     <color name="btn_default_light_pressed">#40ffffff</color>

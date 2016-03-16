@@ -23,7 +23,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.activities.CommentsActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.adapters.MomentViewHolder;
@@ -53,7 +52,10 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     private static final String TAG = FeedFragment.class.getSimpleName();
     static final int DEFAULT_COUNT = 10;
 
-    static final String TAG_HOME_REQUEST = "TAG_home.request";
+    static final String TAG_REQUEST_MY_FEED = "TAG_request.my.feed";
+    static final String TAG_REQUEST_ME = "TAG_request.me";
+    static final String TAG_REQUEST_MY_LIKE = "TAG_request.my.like";
+    static final String TAG_REQUEST_STAFF_PICKS = "TAG_request.staff.picks";
 
     private static final String FEED_TAG = "feed_tag";
 
@@ -134,9 +136,8 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRequestQueue.cancelAll(TAG_HOME_REQUEST);
+        mRequestQueue.cancelAll(getRequestTag());
     }
-
 
 
     private void loadFeed(int cursor, final boolean isRefresh) {
@@ -157,7 +158,22 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
                     public void onErrorResponse(VolleyError error) {
                         onLoadFeedFailed(error);
                     }
-                }).setTag(TAG_HOME_REQUEST));
+                }).setTag(getRequestTag()));
+    }
+
+    String getRequestTag() {
+        switch (mFeedTag) {
+            case FEED_TAG_MY_FEED:
+                return TAG_REQUEST_MY_FEED;
+            case FEED_TAG_ME:
+                return TAG_REQUEST_ME;
+            case FEED_TAG_LIKES:
+                return TAG_REQUEST_MY_LIKE;
+            case FEED_TAG_STAFF_PICKS:
+                return TAG_REQUEST_STAFF_PICKS;
+            default:
+                return "";
+        }
     }
 
     String getFeedURL(int cursor) {
@@ -246,7 +262,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                 showMessage(errorInfo.msgResID);
             }
-        }).setTag(TAG_HOME_REQUEST));
+        }).setTag(getRequestTag()));
     }
 
     void refreshComment(long momentID, int position, JSONObject response) {
@@ -388,5 +404,25 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     public void onStopDragging() {
         mVideoListView.setLayoutFrozen(false);
         mRefreshLayout.setEnabled(true);
+    }
+
+    public boolean isLoginRequired() {
+        Bundle args = getArguments();
+        if (args == null) {
+            return false;
+        }
+        int tag = mFeedTag = args.getInt(FEED_TAG, FEED_TAG_MY_FEED);
+        switch (tag) {
+            case FEED_TAG_MY_FEED:
+                return true;
+            case FEED_TAG_ME:
+                return true;
+            case FEED_TAG_LIKES:
+                return true;
+            case FEED_TAG_STAFF_PICKS:
+                return false;
+            default:
+                return false;
+        }
     }
 }

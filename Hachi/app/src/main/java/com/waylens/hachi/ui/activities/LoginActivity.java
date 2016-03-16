@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
@@ -19,6 +20,10 @@ import com.waylens.hachi.ui.fragments.SignUpFragment;
 public class LoginActivity extends BaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
+    public static void launch(Activity startActivity) {
+        Intent intent = new Intent(startActivity, LoginActivity.class);
+        startActivity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,30 +35,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!TextUtils.isEmpty(SessionManager.getInstance().getToken())
-                && SessionManager.getInstance().needLinkAccount()) {
-            pushFragment(new LinkAccountFragment());
-        }
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof SignInFragment) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    public static void launch(Activity startActivity) {
-        Intent intent = new Intent(startActivity, LoginActivity.class);
-        startActivity.startActivity(intent);
-    }
-
-    public void pushFragment(Fragment fragment) {
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
     }
 
     @Override
@@ -64,6 +51,20 @@ public class LoginActivity extends BaseActivity {
         } else {
             super.onBackPressed();
         }
+    }
 
+    @Override
+    public void setupToolbar() {
+        if (mToolbar == null) {
+            return;
+        }
+        mToolbar.setTitle(R.string.sign_up);
+        mToolbar.setNavigationIcon(R.drawable.navbar_close);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }

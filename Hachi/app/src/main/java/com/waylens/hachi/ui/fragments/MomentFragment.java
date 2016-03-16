@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.adapters.FeedPageAdapter;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.utils.VolleyUtil;
 
@@ -54,7 +55,7 @@ public class MomentFragment extends BaseFragment {
     }
 
     private void setupViewPager() {
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
+        SimpleFragmentPagerAdapter adapter = new FeedPageAdapter(getChildFragmentManager());
 
         adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
         adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R
