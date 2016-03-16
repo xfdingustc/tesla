@@ -96,7 +96,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile(name: 'rangeseekbar-release', ext: 'aar')
     compile project(':library')
-    compile project(':mediatranscoder')
+//    compile project(':mediatranscoder')
     compile 'com.android.support:support-v13:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
