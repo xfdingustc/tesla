@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
  */
-public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
+public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     public RecyclerView mRecyclerView;
     MarkView mMarkView;
@@ -56,23 +56,23 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
     private long mMinValue;
     private long mMaxValue;
 
-    public VideoPlayerProgressBar(Context context) {
+    public ClipSetProgressBar(Context context) {
         super(context);
         initChildren();
     }
 
-    public VideoPlayerProgressBar(Context context, AttributeSet attrs) {
+    public ClipSetProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         initChildren();
     }
 
-    public VideoPlayerProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ClipSetProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initChildren();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public VideoPlayerProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ClipSetProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initChildren();
     }
@@ -94,7 +94,7 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     mDragging = true;
                     if (mOnSeekBarChangeListener != null) {
-                        mOnSeekBarChangeListener.onStartTrackingTouch(VideoPlayerProgressBar.this);
+                        mOnSeekBarChangeListener.onStartTrackingTouch(ClipSetProgressBar.this);
                     }
 
                 } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -103,7 +103,7 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
                         updateProgress();
                     }
                     if (mOnSeekBarChangeListener != null) {
-                        mOnSeekBarChangeListener.onStopTrackingTouch(VideoPlayerProgressBar.this);
+                        mOnSeekBarChangeListener.onStopTrackingTouch(ClipSetProgressBar.this);
                     }
                 }
 
@@ -126,7 +126,7 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
                 int offset = (position - 1) * cellWidth + (centerPos - view.getLeft());
                 long progress = offset * mVideoLength / length;
                 if (mOnSeekBarChangeListener != null) {
-                    mOnSeekBarChangeListener.onProgressChanged(VideoPlayerProgressBar.this, progress, true);
+                    mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, progress, true);
                 }
             }
         };
@@ -353,11 +353,11 @@ public class VideoPlayerProgressBar extends FrameLayout implements Progressive {
     }
 
     public interface OnSeekBarChangeListener {
-        void onStartTrackingTouch(VideoPlayerProgressBar progressBar);
+        void onStartTrackingTouch(ClipSetProgressBar progressBar);
 
-        void onProgressChanged(VideoPlayerProgressBar progressBar, long progress, boolean fromUser);
+        void onProgressChanged(ClipSetProgressBar progressBar, long progress, boolean fromUser);
 
-        void onStopTrackingTouch(VideoPlayerProgressBar progressBar);
+        void onStopTrackingTouch(ClipSetProgressBar progressBar);
     }
 
 }

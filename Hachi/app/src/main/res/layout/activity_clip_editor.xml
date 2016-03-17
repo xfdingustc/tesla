@@ -37,7 +37,7 @@
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-    <com.waylens.hachi.ui.views.cliptrimmer.VideoPlayerProgressBar
+    <com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar
         android:id="@+id/video_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="36dp"

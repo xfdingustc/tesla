@@ -14,9 +14,13 @@ import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
+
+import com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+
+import butterknife.Bind;
 
 /**
  * Created by Xiaofei on 2016/3/16.
@@ -36,6 +40,9 @@ public class AllFootageFragment extends BaseFragment {
 
         return fragment;
     }
+
+    @Bind(R.id.clipSetPrgressBar)
+    ClipSetProgressBar mClipSetProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,7 @@ public class AllFootageFragment extends BaseFragment {
                         onHandleEmptyCamera();
                     }
                     setupClipPlayFragment(clipSet);
+                    setupClipProgressBar(clipSet);
                 }
             },
             new VdbResponse.ErrorListener() {
@@ -73,6 +81,8 @@ public class AllFootageFragment extends BaseFragment {
                 }
             }));
     }
+
+
 
     private void onHandleEmptyCamera() {
         
@@ -88,7 +98,31 @@ public class AllFootageFragment extends BaseFragment {
             config);
 
         getChildFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
+
+
     }
+
+    private void setupClipProgressBar(ClipSet clipSet) {
+        mClipSetProgressBar.setClipSet(clipSet, mVdbImageLoader);
+        mClipSetProgressBar.setOnSeekBarChangeListener(new ClipSetProgressBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStartTrackingTouch(ClipSetProgressBar progressBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(ClipSetProgressBar progressBar, long progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(ClipSetProgressBar progressBar) {
+
+            }
+        });
+
+    }
+
 
 
     private ClipSet getClipSet() {

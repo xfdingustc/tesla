@@ -18,6 +18,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
@@ -34,6 +35,7 @@ public class BaseFragment extends Fragment  {
 
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
+    protected VdbImageLoader mVdbImageLoader;
 
     @Nullable
     @Bind(R.id.toolbar)
@@ -50,6 +52,7 @@ public class BaseFragment extends Fragment  {
         mVdtCamera = getCamera();
         if (mVdtCamera != null) {
             mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
+            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         }
     }
 
