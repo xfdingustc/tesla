@@ -182,6 +182,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     @OnClick(R.id.btn_add_video)
     void showClipChooser() {
+        configureActionUI(0, false);
         Intent intent = new Intent(this, ClipChooserActivity.class);
         startActivityForResult(intent, REQUEST_CODE_ENHANCE);
     }
