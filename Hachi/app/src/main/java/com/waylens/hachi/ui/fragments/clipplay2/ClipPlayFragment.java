@@ -444,7 +444,13 @@ public class ClipPlayFragment extends DialogFragment {
     public void showClipPosThumbnail(Clip clip, long timeMs) {
         changeState(STATE_FAST_PREVIEW);
         ClipPos clipPos = new ClipPos(clip, timeMs, ClipPos.TYPE_POSTER, false);
-        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+        showThumbnail(clipPos);
+    }
+
+    public void showThumbnail(ClipPos clipPos) {
+        if (clipPos != null && mVdbImageLoader != null) {
+            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+        }
     }
 
     public void notifyClipSetChanged() {

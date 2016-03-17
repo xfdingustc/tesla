@@ -1,7 +1,6 @@
 package com.waylens.hachi.vdb;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ClipSet {
     private final int mClipType;
@@ -10,7 +9,6 @@ public class ClipSet {
     private Clip.ID liveClipId;
 
     private ArrayList<Clip> mClipList = new ArrayList<>();
-
 
 
     public ClipSet(int type) {
@@ -207,7 +205,8 @@ public class ClipSet {
             Clip clip = mClipList.get(i);
 
             if (position < total + clip.editInfo.getSelectedLength()) {
-                ClipPos clipPos = new ClipPos(clip, position - total + clip.editInfo.selectedStartValue, ClipPos.TYPE_POSTER, false);
+                ClipPos clipPos = new ClipPos(clip, position - total + clip
+                    .editInfo.selectedStartValue, ClipPos.TYPE_POSTER, false);
                 return clipPos;
             }
 
@@ -216,8 +215,6 @@ public class ClipSet {
 
         return null;
     }
-
-
 
 
 }

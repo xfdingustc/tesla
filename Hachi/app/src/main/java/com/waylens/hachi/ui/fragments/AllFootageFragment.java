@@ -18,6 +18,7 @@ import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 
 import com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
@@ -48,7 +49,7 @@ public class AllFootageFragment extends BaseFragment {
 
     @OnClick(R.id.btnAddBookmark)
     public void onBtnAddBookmarkClicked() {
-        
+
     }
 
     @Override
@@ -109,7 +110,7 @@ public class AllFootageFragment extends BaseFragment {
 
     }
 
-    private void setupClipProgressBar(ClipSet clipSet) {
+    private void setupClipProgressBar(final ClipSet clipSet) {
         mClipSetProgressBar.setClipSet(clipSet, mVdbImageLoader);
         mClipSetProgressBar.setOnSeekBarChangeListener(new ClipSetProgressBar.OnSeekBarChangeListener() {
             @Override
@@ -120,6 +121,10 @@ public class AllFootageFragment extends BaseFragment {
             @Override
             public void onProgressChanged(ClipSetProgressBar progressBar, long progress, boolean fromUser) {
 
+                ClipSet clipSet = getClipSet();
+                ClipPos clipPos = clipSet.findClipPosByTimePosition((int)progress);
+                Logger.t(TAG).d("Progress is : " + progress + " clipPos: " + clipPos);
+                mClipPlayFragment.showThumbnail(clipPos);
             }
 
             @Override
