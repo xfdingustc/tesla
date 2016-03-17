@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -35,10 +37,13 @@ import java.util.ArrayList;
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
  */
-public class ClipSetProgressBar extends FrameLayout implements Progressive {
+public class ClipSetProgressBar extends CoordinatorLayout implements Progressive {
 
     public RecyclerView mRecyclerView;
-    MarkView mMarkView;
+    private MarkView mMarkView;
+    private SelectView mSelectingView;
+
+
     LinearLayoutManager mLayoutManager;
 
     RecyclerView.OnScrollListener mScrollListener;
@@ -55,6 +60,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private ProgressHandler mHandler;
     private long mMinValue;
     private long mMaxValue;
+    private boolean mIsSelectMode;
+
+    private int mStartSelectPosition;
+    private int mEndSelectPosition;
 
     public ClipSetProgressBar(Context context) {
         super(context);
@@ -71,22 +80,25 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         initChildren();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ClipSetProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        initChildren();
-    }
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    public ClipSetProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+//        super(context, attrs, defStyleAttr, defStyleRes);
+//        initChildren();
+//    }
 
     private void initChildren() {
         mScreenWidth = getScreenWidth();
+
         mRecyclerView = new RecyclerView(getContext());
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         layoutParams.gravity = Gravity.BOTTOM;
         addView(mRecyclerView, layoutParams);
+
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
 
         mScrollListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -120,13 +132,16 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     return;
                 }
 
-                int centerPos = mScreenWidth / 2;
-                View view = mRecyclerView.findChildViewUnder(centerPos, 0);
-                int position = mLayoutManager.getPosition(view);
-                int offset = (position - 1) * cellWidth + (centerPos - view.getLeft());
+
+                int offset = getRecyclerViewOffset();
                 long progress = offset * mVideoLength / length;
                 if (mOnSeekBarChangeListener != null) {
                     mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, progress, true);
+                }
+
+                if (mIsSelectMode) {
+                    mEndSelectPosition = offset;
+                    mSelectingView.setWidth(mEndSelectPosition - mStartSelectPosition);
                 }
             }
         };
@@ -137,6 +152,16 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         layoutParams = new LayoutParams(ViewUtils.dp2px(21, getResources()), ViewGroup.LayoutParams.MATCH_PARENT);
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
         addView(mMarkView, layoutParams);
+    }
+
+
+    public int getRecyclerViewOffset() {
+        int cellWidth = getCellUnit();
+        int centerPos = mScreenWidth / 2;
+        View view = mRecyclerView.findChildViewUnder(centerPos, 0);
+        int position = mLayoutManager.getPosition(view);
+        int offset = (position - 1) * cellWidth + (centerPos - view.getLeft());
+        return offset;
     }
 
     public void setClipSet(ClipSet clipSet, VdbImageLoader imageLoader) {
@@ -150,6 +175,18 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         RecyclerListAdapter adapter = new RecyclerListAdapter(imageLoader, clipSet, mScreenWidth,
             itemWidth, itemHeight);
         mRecyclerView.setAdapter(adapter);
+    }
+
+    public void toggleSelectMode(boolean isSelectMode) {
+        this.mIsSelectMode = isSelectMode;
+        if (mIsSelectMode == true) {
+            mSelectingView = new SelectView(getContext());
+            LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+            layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
+            addView(mSelectingView, layoutParams);
+            mStartSelectPosition = mEndSelectPosition = getRecyclerViewOffset();
+        }
     }
 
     int getScreenWidth() {
@@ -257,6 +294,40 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
             mRect.set(0, 0, getWidth(), getHeight());
             canvas.drawRect(mRect, mPaintBackground);
             mRect.set((getWidth() - mMarkWidth) / 2, 0, (getWidth() + mMarkWidth) / 2, getHeight());
+            canvas.drawRect(mRect, mPaintMark);
+        }
+    }
+
+    @SuppressLint("ViewConstructor")
+    private static class SelectView extends View {
+        private Paint mPaintMark;
+        private int mWidth = 1;
+        Rect mRect;
+
+
+        public void setWidth(int width) {
+            mWidth = width;
+            invalidate();
+        }
+
+        public SelectView(Context context) {
+            super(context);
+            mPaintMark = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mPaintMark.setColor(Color.GREEN);
+            mPaintMark.setAlpha(125);
+            mRect = new Rect();
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            int halfScreenPosition = getWidth() / 2;
+            if (mWidth >= 0) {
+                mRect.set(halfScreenPosition - mWidth, 0, halfScreenPosition , getHeight());
+            } else {
+                mRect.set(halfScreenPosition, 0, halfScreenPosition - mWidth, getHeight());
+            }
+
             canvas.drawRect(mRect, mPaintMark);
         }
     }

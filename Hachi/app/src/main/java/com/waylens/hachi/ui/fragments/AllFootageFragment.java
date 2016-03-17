@@ -15,7 +15,6 @@ import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
-
 import com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -38,6 +37,8 @@ public class AllFootageFragment extends BaseFragment {
 
     private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_ALLFOOTAGE;
 
+    private boolean mIsAddingBookmark = false;
+
     public static AllFootageFragment newInstance() {
         AllFootageFragment fragment = new AllFootageFragment();
 
@@ -47,9 +48,18 @@ public class AllFootageFragment extends BaseFragment {
     @Bind(R.id.clipSetPrgressBar)
     ClipSetProgressBar mClipSetProgressBar;
 
+    @Bind(R.id.btnAddBookmark)
+    ImageButton mBtnAddBookmark;
+
     @OnClick(R.id.btnAddBookmark)
     public void onBtnAddBookmarkClicked() {
-
+        if (mIsAddingBookmark == false) {
+            mBtnAddBookmark.setImageDrawable(getResources().getDrawable(R.drawable.btn_enhance_addbookmark_s));
+        } else {
+            mBtnAddBookmark.setImageDrawable(getResources().getDrawable(R.drawable.btn_enhance_addbookmark_n));
+        }
+        mIsAddingBookmark = !mIsAddingBookmark;
+        mClipSetProgressBar.toggleSelectMode(mIsAddingBookmark);
     }
 
     @Override
@@ -91,15 +101,14 @@ public class AllFootageFragment extends BaseFragment {
     }
 
 
-
     private void onHandleEmptyCamera() {
-        
+
     }
 
     private void setupClipPlayFragment(ClipSet clipSet) {
         mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
         UrlProvider urlProvider = new ClipUrlProvider(mVdbRequestQueue, getClipSet().getClip(0).cid,
-                getClipSet().getClip(0).getDurationMs());
+            getClipSet().getClip(0).getDurationMs());
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider,
@@ -122,8 +131,8 @@ public class AllFootageFragment extends BaseFragment {
             public void onProgressChanged(ClipSetProgressBar progressBar, long progress, boolean fromUser) {
 
                 ClipSet clipSet = getClipSet();
-                ClipPos clipPos = clipSet.findClipPosByTimePosition((int)progress);
-                Logger.t(TAG).d("Progress is : " + progress + " clipPos: " + clipPos);
+                ClipPos clipPos = clipSet.findClipPosByTimePosition((int) progress);
+//                Logger.t(TAG).d("Progress is : " + progress + " clipPos: " + clipPos);
                 mClipPlayFragment.showThumbnail(clipPos);
             }
 
@@ -134,7 +143,6 @@ public class AllFootageFragment extends BaseFragment {
         });
 
     }
-
 
 
     private ClipSet getClipSet() {
