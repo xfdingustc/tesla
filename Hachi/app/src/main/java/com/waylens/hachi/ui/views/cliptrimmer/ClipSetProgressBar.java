@@ -1,15 +1,8 @@
 package com.waylens.hachi.ui.views.cliptrimmer;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -37,20 +29,20 @@ import java.util.ArrayList;
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
  */
-public class ClipSetProgressBar extends CoordinatorLayout implements Progressive {
+public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     public RecyclerView mRecyclerView;
     private MarkView mMarkView;
     private SelectView mSelectingView;
 
 
-    LinearLayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
 
-    RecyclerView.OnScrollListener mScrollListener;
+    private RecyclerView.OnScrollListener mScrollListener;
 
-    OnSeekBarChangeListener mOnSeekBarChangeListener;
+    private OnSeekBarChangeListener mOnSeekBarChangeListener;
 
-    int mScreenWidth;
+    private int mScreenWidth;
 
     private volatile int mScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
@@ -64,6 +56,7 @@ public class ClipSetProgressBar extends CoordinatorLayout implements Progressive
 
     private int mStartSelectPosition;
     private int mEndSelectPosition;
+    private Clip mSelectedClip ;
 
     public ClipSetProgressBar(Context context) {
         super(context);
@@ -132,15 +125,13 @@ public class ClipSetProgressBar extends CoordinatorLayout implements Progressive
                     return;
                 }
 
-
-                int offset = getRecyclerViewOffset();
-                long progress = offset * mVideoLength / length;
+                long progress = getCurrentTime();
                 if (mOnSeekBarChangeListener != null) {
                     mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, progress, true);
                 }
 
                 if (mIsSelectMode) {
-                    mEndSelectPosition = offset;
+                    mEndSelectPosition = getCurrentOffset();
                     mSelectingView.setWidth(mEndSelectPosition - mStartSelectPosition);
                 }
             }
@@ -155,14 +146,7 @@ public class ClipSetProgressBar extends CoordinatorLayout implements Progressive
     }
 
 
-    public int getRecyclerViewOffset() {
-        int cellWidth = getCellUnit();
-        int centerPos = mScreenWidth / 2;
-        View view = mRecyclerView.findChildViewUnder(centerPos, 0);
-        int position = mLayoutManager.getPosition(view);
-        int offset = (position - 1) * cellWidth + (centerPos - view.getLeft());
-        return offset;
-    }
+
 
     public void setClipSet(ClipSet clipSet, VdbImageLoader imageLoader) {
         mVideoLength = clipSet.getTotalLengthMs();
@@ -180,14 +164,45 @@ public class ClipSetProgressBar extends CoordinatorLayout implements Progressive
     public void toggleSelectMode(boolean isSelectMode) {
         this.mIsSelectMode = isSelectMode;
         if (mIsSelectMode == true) {
+
+            // add SelectView;
             mSelectingView = new SelectView(getContext());
             LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
             layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
             addView(mSelectingView, layoutParams);
-            mStartSelectPosition = mEndSelectPosition = getRecyclerViewOffset();
+            mStartSelectPosition = mEndSelectPosition = getCurrentOffset();
+        } else {
+            removeView(mSelectingView);
         }
     }
+
+    public int getCurrentOffset() {
+        int cellWidth = getCellUnit();
+        int centerPos = mScreenWidth / 2;
+        View view = mRecyclerView.findChildViewUnder(centerPos, 0);
+        int position = mLayoutManager.getPosition(view);
+        int offset = (position - 1) * cellWidth + (centerPos - view.getLeft());
+        return offset;
+    }
+
+    private long getTimeByOffset(int offset) {
+        return offset * mVideoLength / getLength();
+    }
+
+    private long getCurrentTime() {
+        return getTimeByOffset(getCurrentOffset());
+    }
+
+    public long getSelectStartTimeMs() {
+        return getTimeByOffset(mStartSelectPosition);
+    }
+
+    public long getSelectEndTimeMs() {
+        return getTimeByOffset(mEndSelectPosition);
+    }
+
+
 
     int getScreenWidth() {
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
@@ -271,66 +286,9 @@ public class ClipSetProgressBar extends CoordinatorLayout implements Progressive
         mMaxValue = maxClipEndTimeMs;
     }
 
-    @SuppressLint("ViewConstructor")
-    static class MarkView extends View {
-        Paint mPaintBackground;
-        Rect mRect;
-        Paint mPaintMark;
-        int mMarkWidth;
-
-        public MarkView(Context context, int markWidth) {
-            super(context);
-            mPaintBackground = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaintBackground.setColor(Color.argb(0x80, 0xFF, 0xFF, 0xFF));
-            mPaintMark = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaintMark.setColor(Color.rgb(0x1e, 0x88, 0xe5));
-            mRect = new Rect();
-            mMarkWidth = markWidth;
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            mRect.set(0, 0, getWidth(), getHeight());
-            canvas.drawRect(mRect, mPaintBackground);
-            mRect.set((getWidth() - mMarkWidth) / 2, 0, (getWidth() + mMarkWidth) / 2, getHeight());
-            canvas.drawRect(mRect, mPaintMark);
-        }
-    }
-
-    @SuppressLint("ViewConstructor")
-    private static class SelectView extends View {
-        private Paint mPaintMark;
-        private int mWidth = 1;
-        Rect mRect;
 
 
-        public void setWidth(int width) {
-            mWidth = width;
-            invalidate();
-        }
 
-        public SelectView(Context context) {
-            super(context);
-            mPaintMark = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaintMark.setColor(Color.GREEN);
-            mPaintMark.setAlpha(125);
-            mRect = new Rect();
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            int halfScreenPosition = getWidth() / 2;
-            if (mWidth >= 0) {
-                mRect.set(halfScreenPosition - mWidth, 0, halfScreenPosition , getHeight());
-            } else {
-                mRect.set(halfScreenPosition, 0, halfScreenPosition - mWidth, getHeight());
-            }
-
-            canvas.drawRect(mRect, mPaintMark);
-        }
-    }
 
     public static class RecyclerListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         private static final int TYPE_NORMAL = 0;

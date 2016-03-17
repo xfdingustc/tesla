@@ -11,6 +11,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
@@ -57,10 +58,13 @@ public class AllFootageFragment extends BaseFragment {
             mBtnAddBookmark.setImageDrawable(getResources().getDrawable(R.drawable.btn_enhance_addbookmark_s));
         } else {
             mBtnAddBookmark.setImageDrawable(getResources().getDrawable(R.drawable.btn_enhance_addbookmark_n));
+            doAddBookmark();
         }
         mIsAddingBookmark = !mIsAddingBookmark;
         mClipSetProgressBar.toggleSelectMode(mIsAddingBookmark);
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,7 +148,28 @@ public class AllFootageFragment extends BaseFragment {
 
     }
 
+    private void doAddBookmark() {
+        //Clip clip = mClipSetProgressBar.getSelectClip;
+        long startTimeMs = mClipSetProgressBar.getSelectStartTimeMs();
+        long endTimeMs = mClipSetProgressBar.getSelectEndTimeMs();
 
+        ClipPos clipPos = getClipSet().findClipPosByTimePosition((int)startTimeMs);
+
+        AddBookmarkRequest request = new AddBookmarkRequest(clipPos.cid, startTimeMs, endTimeMs, new
+            VdbResponse.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+
+        mVdbRequestQueue.add(request);
+    }
     private ClipSet getClipSet() {
         return mClipSetManager.getClipSet(mClipSetIndex);
     }

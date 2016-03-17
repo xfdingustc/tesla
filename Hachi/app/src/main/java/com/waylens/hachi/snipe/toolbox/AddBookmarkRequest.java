@@ -10,21 +10,21 @@ import com.waylens.hachi.vdb.Clip;
 public class AddBookmarkRequest extends VdbRequest<Integer> {
     private static final String TAG = AddBookmarkRequest.class.getSimpleName();
 
-    private final Clip mClip;
+    private final Clip.ID mClipId;
     private final long mStartTimeMs;
     private final long mEndTimeMs;
 
-    public AddBookmarkRequest(Clip clip, long startTimeMs, long endTimeMs, VdbResponse
+    public AddBookmarkRequest(Clip.ID cid, long startTimeMs, long endTimeMs, VdbResponse
         .Listener<Integer> listener, VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
-        this.mClip = clip;
+        this.mClipId = cid;
         this.mStartTimeMs = startTimeMs;
         this.mEndTimeMs = endTimeMs;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
-        mVdbCommand = VdbCommand.Factory.createCmdAddBookmark(mClip.cid, mStartTimeMs, mEndTimeMs);
+        mVdbCommand = VdbCommand.Factory.createCmdAddBookmark(mClipId, mStartTimeMs, mEndTimeMs);
         return mVdbCommand;
     }
 
