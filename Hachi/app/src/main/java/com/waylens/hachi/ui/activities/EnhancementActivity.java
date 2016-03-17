@@ -150,18 +150,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         btnRemix.setSelected(false);
         mClipPlayFragment.showGaugeView(true);
         view.setSelected(!view.isSelected());
-        if (mGaugeListAdapter == null) {
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mGaugeListView.setLayoutManager(layoutManager);
-            mGaugeListAdapter = new GaugeListAdapter(supportedGauges, new GaugeListAdapter.OnGaugeItemChangedListener() {
-                @Override
-                public void onGaugeItemChanged(GaugeInfoItem item) {
-                    mClipPlayFragment.updateGauge(item);
-                }
-            });
-            mGaugeListView.setAdapter(mGaugeListAdapter);
-        }
         configureActionUI(0, view.isSelected());
     }
 
@@ -282,6 +270,18 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 //
             }
         });
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mGaugeListView.setLayoutManager(layoutManager);
+        mGaugeListAdapter = new GaugeListAdapter(supportedGauges, new GaugeListAdapter.OnGaugeItemChangedListener() {
+            @Override
+            public void onGaugeItemChanged(GaugeInfoItem item) {
+                mClipPlayFragment.updateGauge(item);
+            }
+        });
+        mGaugeListView.setAdapter(mGaugeListAdapter);
+        
     }
 
     @Override
