@@ -9,9 +9,11 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -60,18 +62,23 @@ public class LiveViewActivity extends BaseActivity {
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
 
+    private static final String EXTRA_IS_GAUGE_VISIBLE = "extra.is.gauge.visible";
+
     private int mCurrentOrientation;
     private Handler mHandler = new Handler();
     private VdbRequestQueue mVdbRequestQueue;
     int mBookmarkCount = -1;
     int mBookmarkClickCount;
 
-    public static void launch(Activity startingActivity, VdtCamera camera) {
+    boolean mIsGaugeVisible;
+
+    public static void launch(Activity startingActivity, VdtCamera camera, boolean isGaugeVisible) {
         Intent intent = new Intent(startingActivity, LiveViewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean(IS_PC_SERVER, camera.isPcServer());
         bundle.putString(SSID, camera.getSSID());
         bundle.putString(HOST_STRING, camera.getHostString());
+        bundle.putBoolean(EXTRA_IS_GAUGE_VISIBLE, isGaugeVisible);
         intent.putExtras(bundle);
         startingActivity.startActivity(intent);
     }
@@ -164,7 +171,6 @@ public class LiveViewActivity extends BaseActivity {
             hideOverlay();
         } else {
             mWvGauge.setVisibility(View.VISIBLE);
-            initGaugeWebView();
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
             requestLiveRawData();
             mSharpView.setVisibility(View.INVISIBLE);
@@ -226,6 +232,10 @@ public class LiveViewActivity extends BaseActivity {
         super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
         initViews();
+        Intent intent = getIntent();
+        if (intent != null) {
+            mIsGaugeVisible = intent.getBooleanExtra(EXTRA_IS_GAUGE_VISIBLE, false);
+        }
     }
 
     private void initViews() {
@@ -258,6 +268,8 @@ public class LiveViewActivity extends BaseActivity {
         if (mTvTitle != null) {
             mTvTitle.setText(mVdtCamera.getName());
         }
+
+        initGaugeWebView();
     }
 
 
@@ -297,9 +309,8 @@ public class LiveViewActivity extends BaseActivity {
     private void initGaugeWebView() {
         mWvGauge.getSettings().setJavaScriptEnabled(true);
         mWvGauge.setBackgroundColor(Color.TRANSPARENT);
-        //mWvGauge.addJavascriptInterface(new WebAppInterface(this), "Android");
-        //mWvGauge.setWebChromeClient(new MyWebChromeClient());
-        //mWvGauge.setWebViewClient(new MyWebViewClient());]
+        mWvGauge.setVisibility(View.INVISIBLE);
+        mWvGauge.setWebViewClient(mWebViewClient);
         mWvGauge.loadUrl("file:///android_asset/api.html");
     }
 
@@ -643,5 +654,14 @@ public class LiveViewActivity extends BaseActivity {
         }
     }
 
+    WebViewClient mWebViewClient = new WebViewClient() {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            if (mIsGaugeVisible) {
+                view.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 
 }

@@ -129,6 +129,9 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
+    boolean mIsGaugeVisible;
+
+
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
@@ -136,7 +139,7 @@ public class CameraPreviewFragment extends BaseFragment {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
             //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            LiveViewActivity.launch(getActivity(), mVdtCamera);
+            LiveViewActivity.launch(getActivity(), mVdtCamera, mIsGaugeVisible);
         }
     }
 
@@ -148,10 +151,11 @@ public class CameraPreviewFragment extends BaseFragment {
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
         if (mWvGauge.getVisibility() == View.VISIBLE) {
+            mIsGaugeVisible = false;
             hideOverlay();
         } else {
+            mIsGaugeVisible = true;
             mWvGauge.setVisibility(View.VISIBLE);
-            initGaugeWebView();
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
             requestLiveRawData();
             mSharpView.setVisibility(View.INVISIBLE);
@@ -269,6 +273,7 @@ public class CameraPreviewFragment extends BaseFragment {
         if (mTvTitle != null) {
             mTvTitle.setText(mVdtCamera.getName());
         }
+        initGaugeWebView();
     }
 
     private void initCameraPreview() {
@@ -443,6 +448,7 @@ public class CameraPreviewFragment extends BaseFragment {
     private void initGaugeWebView() {
         mWvGauge.getSettings().setJavaScriptEnabled(true);
         mWvGauge.setBackgroundColor(Color.TRANSPARENT);
+        mWvGauge.setVisibility(View.INVISIBLE);
         mWvGauge.loadUrl("file:///android_asset/api.html");
         mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, mWvGauge);
     }
