@@ -37,7 +37,6 @@ import com.waylens.hachi.ui.activities.LiveViewSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.RawDataItem;
 
 import java.net.InetSocketAddress;
 
@@ -131,7 +130,6 @@ public class CameraPreviewFragment extends BaseFragment {
     ImageView mIvConnectIdicator;
 
 
-
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
@@ -210,6 +208,24 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        initCameraPreview();
+    }
+
+    @Override
+    public void onStop() {
+        if (mVdtCamera != null) {
+            mVdtCamera.setOnStateChangeListener(null);
+        }
+
+        if (mLiveView != null) {
+            mLiveView.stopStream();
+        }
+        super.onStop();
+    }
+
+    @Override
     public void onCameraVdbConnected(VdtCamera camera) {
         super.onCameraVdbConnected(camera);
 
@@ -220,6 +236,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 mToolbar.getMenu().clear();
                 mToolbar.inflateMenu(R.menu.menu_live_view);
                 initViews();
+                initCameraPreview();
             }
         });
     }
@@ -243,11 +260,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void initViews() {
-        initCameraPreview();
-
         updateMicControlButton();
-
-
         // Start record red dot indicator animation
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
@@ -259,12 +272,12 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void initCameraPreview() {
-
         mLiveView.setBackgroundColor(Color.BLACK);
         if (mVdtCamera != null) {
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
                 mVdtCamera = null;
+                return;
             } else {
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mLiveView.startStream(serverAddr, null, true);

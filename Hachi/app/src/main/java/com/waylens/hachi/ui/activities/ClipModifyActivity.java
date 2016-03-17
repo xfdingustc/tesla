@@ -5,13 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ViewAnimator;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
@@ -22,6 +22,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.ui.fragments.BookmarkFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
@@ -50,6 +51,8 @@ public class ClipModifyActivity extends BaseActivity {
     private ClipPlayFragment mClipPlayFragment;
 
     SharableClip mSharableClip;
+
+    boolean hasUpdated;
 
     public static void launch(Activity activity, Clip clip) {
         Intent intent = new Intent(activity, ClipModifyActivity.class);
@@ -105,6 +108,9 @@ public class ClipModifyActivity extends BaseActivity {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (hasUpdated) {
+                    LocalBroadcastManager.getInstance(ClipModifyActivity.this).sendBroadcast(new Intent(BookmarkFragment.ACTION_RETRIEVE_CLIPS));
+                }
                 finish();
             }
         });
@@ -123,12 +129,17 @@ public class ClipModifyActivity extends BaseActivity {
     }
 
     private void doSaveClipTrimInfo() {
+        if (mSharableClip.selectedStartValue == mSharableClip.clip.getStartTimeMs() &&
+                mSharableClip.getSelectedLength() == mSharableClip.clip.getDurationMs()) {
+            return;
+        }
         mVdbRequestQueue.add(new ClipExtentUpdateRequest(mSharableClip.clip.cid,
                 mClipTrimmer.getLeftValue(),
                 mClipTrimmer.getRightValue(),
                 new VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
+                        hasUpdated = true;
                         Snackbar.make(mRootView, R.string.bookmark_update_successful, Snackbar.LENGTH_SHORT).show();
                     }
                 },
@@ -145,7 +156,9 @@ public class ClipModifyActivity extends BaseActivity {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
 
-        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, mSharableClip.clip);
+        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
+                mSharableClip.bufferedCid,
+                mSharableClip.getSelectedLength());
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         clipSet.addClip(mSharableClip.clip);
 
@@ -194,8 +207,10 @@ public class ClipModifyActivity extends BaseActivity {
                 long currentTimeMs = 0;
                 if (flag == VideoTrimmer.DraggingFlag.LEFT) {
                     currentTimeMs = start;
+                    mSharableClip.selectedStartValue = start;
                 } else if (flag == VideoTrimmer.DraggingFlag.RIGHT) {
                     currentTimeMs = end;
+                    mSharableClip.selectedEndValue = end;
                 } else {
                     currentTimeMs = progress;
                 }
@@ -204,6 +219,10 @@ public class ClipModifyActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(VideoTrimmer trimmer) {
+                UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
+                        mSharableClip.bufferedCid,
+                        mSharableClip.getSelectedLength());
+                mClipPlayFragment.setUrlProvider(vdtUriProvider);
             }
         });
 

@@ -198,9 +198,13 @@ public class MainActivity extends BaseActivity {
             } else {
                 if (!fragment.isAdded()) {
                     transaction.hide(mCurrentFragment).add(R.id.fragment_content, fragment).commit();
+                    stopLiveView();
                 } else {
                     transaction.hide(mCurrentFragment).show(fragment).commit();
+                    stopLiveView();
+                    startLiveView(fragment);
                 }
+
             }
         } else {
             if (mCurrentFragment != null) {
@@ -212,6 +216,22 @@ public class MainActivity extends BaseActivity {
                     .commit();
         }
         mCurrentFragment = fragment;
+    }
+
+    /**
+     * The following 2 methods do something trick, because we use fragment hide/show,
+     * instead of replace/backStack.
+     * */
+    void stopLiveView() {
+        if (mCurrentFragment instanceof CameraPreviewFragment) {
+            mCurrentFragment.onStop();
+        }
+    }
+
+    void startLiveView(Fragment fragment) {
+        if (fragment instanceof CameraPreviewFragment) {
+            fragment.onStart();
+        }
     }
 
     private void setupNavigationView() {

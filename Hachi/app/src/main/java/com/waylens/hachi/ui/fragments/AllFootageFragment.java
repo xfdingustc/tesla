@@ -80,7 +80,8 @@ public class AllFootageFragment extends BaseFragment {
 
     private void setupClipPlayFragment(ClipSet clipSet) {
         mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
-        UrlProvider urlProvider = new ClipUrlProvider(mVdbRequestQueue, getClipSet().getClip(0));
+        UrlProvider urlProvider = new ClipUrlProvider(mVdbRequestQueue, getClipSet().getClip(0).cid,
+                getClipSet().getClip(0).getDurationMs());
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider,

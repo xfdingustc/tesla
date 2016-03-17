@@ -65,7 +65,7 @@ public class ClipPlayFragment extends DialogFragment {
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
 
-    private UrlProvider mUrProvider;
+    private UrlProvider mUrlProvider;
 
     private MediaPlayer mMediaPlayer = new MediaPlayer();
     private MediaPlayer mAudioPlayer = new MediaPlayer();
@@ -193,7 +193,7 @@ public class ClipPlayFragment extends DialogFragment {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
         fragment.mClipSetIndex = clipSetIndex;
-        fragment.mUrProvider = vdtUrlProvider;
+        fragment.mUrlProvider = vdtUrlProvider;
         fragment.mConfig = config;
         return fragment;
     }
@@ -547,7 +547,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     private void startLoadPlaybackUrl(long clipTimeMs) {
-        mUrProvider.getUri(clipTimeMs, new UrlProvider.OnUrlLoadedListener() {
+        mUrlProvider.getUri(clipTimeMs, new UrlProvider.OnUrlLoadedListener() {
 
             @Override
             public void onUrlLoaded(VdbUrl url) {
@@ -670,5 +670,8 @@ public class ClipPlayFragment extends DialogFragment {
         }
     }
 
+    public void setUrlProvider(UrlProvider urlProvider) {
+        mUrlProvider = urlProvider;
+    }
 
 }

@@ -1,10 +1,14 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -51,6 +55,8 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
     private static final String ARG_IS_ADD_MORE = "is.add.more";
 
+    public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
+
     private Map<String, ClipSet> mClipSetGroup = new HashMap<>();
 
     private ClipSetGroupAdapter mAdapter;
@@ -73,6 +79,8 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     boolean mIsAddMore;
 
     ActionMode mActionMode;
+
+    private LocalBroadcastManager mBroadcastManager;
 
     public static BookmarkFragment newInstance(int clipSetType) {
         BookmarkFragment fragment = new BookmarkFragment();
@@ -132,6 +140,11 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
         if (getCamera() != null) {
             retrieveSharableClips();
+        }
+
+        mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        if (mBroadcastManager != null) {
+            mBroadcastManager.registerReceiver(localReceiver, new IntentFilter(ACTION_RETRIEVE_CLIPS));
         }
     }
 
@@ -272,7 +285,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
 
-        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip);
+        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip.cid, clip.getDurationMs());
         ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), ClipSetManager.CLIP_SET_TYPE_ENHANCE,
                 vdtUriProvider, config);
 
@@ -352,4 +365,11 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
         ShareActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
     }
+
+    BroadcastReceiver localReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            retrieveSharableClips();
+        }
+    };
 }
