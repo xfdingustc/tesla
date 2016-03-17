@@ -77,6 +77,7 @@ public class AllFootageFragment extends BaseFragment {
         View view = createFragmentView(inflater, container, R.layout.fragment_all_footage,
             savedInstanceState);
         getAllClips();
+
         return view;
 
     }
@@ -93,6 +94,7 @@ public class AllFootageFragment extends BaseFragment {
                     }
                     setupClipPlayFragment(clipSet);
                     setupClipProgressBar(clipSet);
+
                 }
             },
             new VdbResponse.ErrorListener() {
@@ -145,6 +147,21 @@ public class AllFootageFragment extends BaseFragment {
 
             }
         });
+
+
+        ClipSetRequest request = new ClipSetRequest(Clip.TYPE_MARKED, ClipSetRequest
+            .FLAG_CLIP_EXTRA, new VdbResponse.Listener<ClipSet>() {
+            @Override
+            public void onResponse(ClipSet response) {
+                mClipSetProgressBar.setBookmarkClipSet(response);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
 
     }
 

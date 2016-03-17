@@ -1,7 +1,12 @@
 package com.waylens.hachi.ui.views.cliptrimmer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
@@ -35,6 +41,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private MarkView mMarkView;
     private SelectView mSelectingView;
 
+    private BookmarkView mBookmarkView;
 
     private LinearLayoutManager mLayoutManager;
 
@@ -57,6 +64,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private int mStartSelectPosition;
     private int mEndSelectPosition;
     private Clip mSelectedClip ;
+    private ClipSet mClipSet;
+    private ClipSet mBookmarkClipSet;
 
     public ClipSetProgressBar(Context context) {
         super(context);
@@ -91,6 +100,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mBookmarkView = new BookmarkView(getContext());
+        layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        addView(mBookmarkView, layoutParams);
 
 
         mScrollListener = new RecyclerView.OnScrollListener() {
@@ -134,6 +147,11 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     mEndSelectPosition = getCurrentOffset();
                     mSelectingView.setWidth(mEndSelectPosition - mStartSelectPosition);
                 }
+
+                mBookmarkView.mOffset = getWidth() / 2 - getCurrentOffset();
+//                Logger.t("FFFFF").d("Offset: " + getCurrentOffset());
+
+                mBookmarkView.invalidate();
             }
         };
 
@@ -149,6 +167,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
 
     public void setClipSet(ClipSet clipSet, VdbImageLoader imageLoader) {
+        mClipSet = clipSet;
         mVideoLength = clipSet.getTotalLengthMs();
         int itemHeight = mRecyclerView.getHeight();
         if (mRecyclerView.getHeight() == 0) {
@@ -159,6 +178,11 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         RecyclerListAdapter adapter = new RecyclerListAdapter(imageLoader, clipSet, mScreenWidth,
             itemWidth, itemHeight);
         mRecyclerView.setAdapter(adapter);
+    }
+
+    public void setBookmarkClipSet(ClipSet clipSet) {
+        this.mBookmarkClipSet = clipSet;
+        mBookmarkView.invalidate();
     }
 
     public void toggleSelectMode(boolean isSelectMode) {
@@ -200,6 +224,14 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     public long getSelectEndTimeMs() {
         return getTimeByOffset(mEndSelectPosition);
+    }
+
+    private int getOffsetByTime(long time) {
+        //int clipIndex = mClipSet.findClipIndex(clip.cid);
+        double offset = (1.0f * time) / mVideoLength * getLength();
+
+        return (int)offset;
+
     }
 
 
@@ -286,6 +318,51 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mMaxValue = maxClipEndTimeMs;
     }
 
+
+    @SuppressLint("ViewConstructor")
+    private class BookmarkView extends View {
+        private Paint mPaintMark;
+
+        private int mOffset = getWidth() / 2;
+
+        public BookmarkView(Context context) {
+            super(context);
+            mPaintMark = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mPaintMark.setColor(Color.RED);
+            mPaintMark.setAlpha(125);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            if (mBookmarkClipSet == null) {
+                return;
+            }
+            for (int i = 0; i < mBookmarkClipSet.getCount(); i++) {
+                Clip clip = mBookmarkClipSet.getClip(i);
+                //ClipPos startClipPos = mClipSet.findClipPosByAbsTime(clip.getStartTimeMs());
+                //ClipPos endClipPos = mClipSet.findClipPosByAbsTime(clip.getEndTimeMs());
+
+                Clip realClip = mClipSet.findClip(clip.realCid);
+
+                Rect rect = new Rect(mOffset + getOffsetByTime(clip.getStartTimeMs()), 0,
+                    mOffset + getOffsetByTime(clip.getEndTimeMs()), getHeight());
+
+                canvas.drawRect(rect, mPaintMark);
+
+
+                Logger.t("FFFFF").d("bookstartTime: " + clip.getStartTimeMs());
+                //Logger.t("FFFFF").d("bookendTime: " + clip.getEndTimeMs());
+            }
+        }
+
+
+        private void getBookmarkClipRe(Clip clip) {
+            Clip realClip = mClipSet.findClip(clip.realCid);
+//            Logger.t("FFFFF").d("realClip startTime: " + realClip.getStartTimeMs());
+//            Logger.t("FFFFF").d("realClip endTime: " + realClip.getEndTimeMs());
+        }
+    }
 
 
 
