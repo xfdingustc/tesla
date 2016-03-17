@@ -339,7 +339,7 @@
     <string name="my_feed">My Feed</string>
     <string name="me">me</string>
     <string name="staff_picks">Staff picks</string>
-    <string name="error_loading_musics">Error to load music list</string>
+    <string name="error_loading_musics">Cannot load music list, \n please check network.</string>
     <string name="music_waiting">Waiting</string>
 
     <string name="no_title">No Title</string>

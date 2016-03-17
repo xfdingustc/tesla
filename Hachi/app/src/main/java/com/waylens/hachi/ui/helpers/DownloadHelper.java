@@ -41,8 +41,10 @@ public class DownloadHelper {
         DownloadManager.Request request;
         try {
             request = downloadable.getDownloadRequest(mContextReference.get());
-            long downloadID = downloadManager.enqueue(request);
-            PreferenceUtils.putLong(DOWNLOAD_ID, downloadID);
+            if (request != null) {
+                long downloadID = downloadManager.enqueue(request);
+                PreferenceUtils.putLong(DOWNLOAD_ID, downloadID);
+            }
         } catch (Exception e) {
             Log.e(TAG, "", e);
             if (mDownloadListener != null) {

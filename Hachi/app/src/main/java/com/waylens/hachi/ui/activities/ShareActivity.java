@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -18,6 +19,7 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
@@ -76,16 +78,15 @@ public class ShareActivity extends BaseActivity implements MomentShareHelper.OnS
     VdbRequestQueue mVdbRequestQueue;
     VdtCamera mVdtCamera;
 
-    public static void launch(Context context, int clipSetIndex) {
-        Intent intent = new Intent(context, ShareActivity.class);
-        intent.putExtra(EXTRA_CLIP_SET_INDEX, clipSetIndex);
-        intent.putExtra(EXTRA_GAUGE_SETTINGS, "");
-        intent.putExtra(EXTRA_AUDIO_ID, -1);
-        intent.putExtra(EXTRA_IS_FROM_ENHANCE, false);
-        context.startActivity(intent);
+    public static void launch(Activity context, int clipSetIndex) {
+        launch(context, clipSetIndex, "", -1, false);
     }
 
-    public static void launch(Context context, int clipSetIndex, String gaugeSettings, int audioID, boolean isFromEnhance) {
+    public static void launch(Activity context, int clipSetIndex, String gaugeSettings, int audioID, boolean isFromEnhance) {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            LoginActivity.launch(context);
+            return;
+        }
         Intent intent = new Intent(context, ShareActivity.class);
         intent.putExtra(EXTRA_CLIP_SET_INDEX, clipSetIndex);
         intent.putExtra(EXTRA_GAUGE_SETTINGS, gaugeSettings);

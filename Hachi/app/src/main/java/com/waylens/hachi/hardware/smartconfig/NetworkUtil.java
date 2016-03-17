@@ -64,4 +64,14 @@ public class NetworkUtil {
 				((i >> 8 ) & 0xFF) + "." +
 				( i & 0xFF) ;
 	}
+
+	public static boolean isWifiConnected(Context context) {
+		ConnectivityManager cm =
+				(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		return activeNetwork != null
+				&& activeNetwork.getType() == ConnectivityManager.TYPE_WIFI
+				&& activeNetwork.isConnected();
+	}
 }

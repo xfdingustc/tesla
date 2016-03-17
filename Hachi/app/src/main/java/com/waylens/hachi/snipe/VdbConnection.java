@@ -24,10 +24,8 @@ public class VdbConnection {
 
     public void connect() throws IOException, InterruptedException {
         mSocket.setReceiveBufferSize(8192);
-        Logger.t(TAG).d("Connecting to: " + mSocketAddress.getHostName() + ": " + mSocketAddress.getPort());
         mSocket.connect(mSocketAddress, CONNECT_TIMEOUT);
-        Logger.t(TAG).d("Connected: " + mSocketAddress.getHostName());
-
+        Logger.t(TAG).d("Connected");
         // clear input stream
         // TODO: we need figure out why we received null package here
         //byte[] tmp = new byte[160];

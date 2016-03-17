@@ -87,57 +87,34 @@ public class Hachi extends Application {
 
         Snipe.init();
 
-
-
-//        CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
-//            @Override
-//            public void onCameraFound(NsdServiceInfo cameraService) {
-//                String serviceName = cameraService.getServiceName();
-//                boolean bIsPcServer = serviceName.equals("Vidit Studio");
-//                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-//                    cameraService.getHost(),
-//                    cameraService.getPort(),
-//                    "", serviceName, bIsPcServer);
-//                VdtCameraManager.getManager().connectCamera(serviceInfo);
-//
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//
-//            });
-
         CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
             @Override
             public void onCameraFound(NsdServiceInfo cameraService) {
                 String serviceName = cameraService.getServiceName();
                 boolean bIsPcServer = serviceName.equals("Vidit Studio");
                 final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-                    cameraService.getHost(),
-                    cameraService.getPort(),
-                    "", serviceName, bIsPcServer);
+                        cameraService.getHost(),
+                        cameraService.getPort(),
+                        "", serviceName, bIsPcServer);
 //                Logger.t("testconnect").d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
                 VdtCameraManager.getManager().connectCamera(serviceInfo);
             }
 
             @Override
             public void onError(int errorCode) {
-
+                Logger.t(TAG).e("errorCode: " + errorCode);
             }
         });
 
+        startDeviceScanner();
+    }
+
+    public void startDeviceScanner() {
+        if (mScanner != null) {
+            mScanner.stopWork();
+        }
         mScanner = new DeviceScanner(this);
         mScanner.startWork();
-
-//        mNanoMdns = new NanoMdns(this) {
-//            @Override
-//            public void onServiceResoledAsync(NanoMdns mdns, VdtCamera.ServiceInfo serviceInfo) {
-//                //Logger.t("test").d("onServiceResoledAsync");
-//                VdtCameraManager.getManager().connectCamera(serviceInfo);
-//                //mVdtCameraManager.connectCamera(serviceInfo);
-//            }
-//        };
-//        mNanoMdns.startWork();
     }
 
 
@@ -156,9 +133,9 @@ public class Hachi extends Application {
 
     private void initLogger() {
         Logger
-            .init(TAG)
-            .setMethodCount(1)
-            .hideThreadInfo();
+                .init(TAG)
+                .setMethodCount(1)
+                .hideThreadInfo();
     }
 
 

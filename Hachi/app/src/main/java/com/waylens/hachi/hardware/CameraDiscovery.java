@@ -5,6 +5,8 @@ import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -47,24 +49,24 @@ public class CameraDiscovery {
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 mIsStarted.set(false);
                 callback.onError(errorCode);
-                Log.d(TAG, "onStartDiscoveryFailed: " + errorCode);
+                Logger.t(TAG).d("onStartDiscoveryFailed: " + errorCode);
             }
 
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.d(TAG, "onStopDiscoveryFailed: " + errorCode);
+                Logger.t(TAG).d("onStopDiscoveryFailed: " + errorCode);
             }
 
             @Override
             public void onDiscoveryStarted(String serviceType) {
                 mIsStarted.set(true);
-                Log.d(TAG, "onDiscoveryStarted: " + serviceType);
+                Logger.t(TAG).d("onDiscoveryStarted: " + serviceType);
             }
 
             @Override
             public void onDiscoveryStopped(String serviceType) {
                 mIsStarted.set(false);
-                Log.d(TAG, "onDiscoveryStopped: " + serviceType);
+                Logger.t(TAG).d("onDiscoveryStopped: " + serviceType);
             }
 
             @Override
@@ -87,7 +89,7 @@ public class CameraDiscovery {
         return new NsdManager.ResolveListener() {
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.d(TAG, "onResolveFailed: " + errorCode);
+                Logger.t(TAG).d("onResolveFailed: " + errorCode);
             }
 
             @Override

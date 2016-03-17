@@ -109,12 +109,8 @@ abstract public class TcpConnection {
             mSocket = new Socket();
         }
         mSocket.setReceiveBufferSize(8192);
-        Logger.t(TAG).d("Connecting to: ");
-        mSocket.connect(mAddress, CONNECT_TIMEOUT);
-        Logger.t(TAG).d("Connected: " );
-
+        mSocket.connect(mAddress);
         TcpConnection.this.onConnectedAsync();
-        Logger.t(TAG).d("connected to " + mAddress.toString());
     }
 
     class CmdThread extends Thread {
@@ -132,7 +128,7 @@ abstract public class TcpConnection {
                 msgThread.start();
                 cmdLoop(this);
             } catch (Exception e) {
-                Logger.t(TAG).e("cmd thread error");
+                Logger.t(TAG).e(e, "cmd thread error");
             }
 
             if (msgThread != null) {

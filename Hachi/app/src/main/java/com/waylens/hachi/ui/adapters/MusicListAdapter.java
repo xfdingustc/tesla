@@ -97,9 +97,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
                 holder.itemContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        musicItem.status = MusicItem.STATUS_DOWNLOADING;
-                        mDownloadHelper.download(musicItem);
-                        holder.setDownloadStatus(ViewHolder.STATUS_DOWNLOADING);
+                        mListener.onDownloadMusic(musicItem, holder);
                     }
                 });
                 break;
@@ -185,7 +183,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         }
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.item_container)
         LinearLayout itemContainer;
@@ -208,9 +206,9 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         @Bind(R.id.music_btn_play)
         ImageView btnPlay;
 
-        static final int STATUS_NORMAL = 0;
-        static final int STATUS_DOWNLOADING = 1;
-        static final int STATUS_PREVIEW = 2;
+        public static final int STATUS_NORMAL = 0;
+        public static final int STATUS_DOWNLOADING = 1;
+        public static final int STATUS_PREVIEW = 2;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -233,5 +231,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     public interface OnMusicActionListener {
         void onAddMusic(MusicItem musicItem);
+
+        void onDownloadMusic(MusicItem musicItem, ViewHolder holder);
     }
 }

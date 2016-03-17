@@ -1,9 +1,13 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.hardware.NetworkStateReceiver;
+import com.waylens.hachi.hardware.smartconfig.NetworkUtil;
 import com.waylens.hachi.utils.Utils;
 
 import java.lang.ref.WeakReference;
@@ -437,7 +441,20 @@ public class VdtCameraManager {
         }
         Logger.t(TAG).d("camera connected, but was not connecting, stop it");
         vdtCamera.stopClient();
+        enableNetworkStateReceiver(false);
     }
+
+    void enableNetworkStateReceiver(boolean isEnabled) {
+        int newState = isEnabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        ComponentName receiver = new ComponentName(mContext, NetworkStateReceiver.class);
+        PackageManager pm = mContext.getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                newState,
+                PackageManager.DONT_KILL_APP);
+        Logger.t(TAG).e("NetworkStateReceiver status: " + newState);
+    }
+
 
     private void onCameraVdbConnected(VdtCamera vdtCamera) {
         for (WeakReference<Callback> callback : mCallbackList) {
@@ -477,8 +494,9 @@ public class VdtCameraManager {
 
         }
 
-
-        Logger.t(TAG).d("camera disconnected, but was not connected");
+        if (!NetworkUtil.isWifiConnected(mContext)) {
+            enableNetworkStateReceiver(true);
+        }
     }
 
 

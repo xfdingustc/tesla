@@ -1,11 +1,15 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +27,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.MusicListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.helpers.DownloadHelper;
@@ -56,6 +61,9 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
     RequestQueue mRequestQueue;
 
     DownloadHelper mDownloadHelper;
+
+    MusicItem mMusicItem;
+    MusicListAdapter.ViewHolder mViewHolder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -169,5 +177,32 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
         intent.putExtra("music.item", musicItem.toBundle());
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
+    }
+
+    @Override
+    public void onDownloadMusic(MusicItem musicItem, MusicListAdapter.ViewHolder holder) {
+        mMusicItem = musicItem;
+        mViewHolder = holder;
+
+        int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            continueDownloadMusic();
+        } else {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MusicDownloadActivity.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    public void continueDownloadMusic() {
+        if (mMusicItem == null || mViewHolder == null) {
+            return;
+        }
+        mMusicItem.status = MusicItem.STATUS_DOWNLOADING;
+        mDownloadHelper.download(mMusicItem);
+        mViewHolder.setDownloadStatus(MusicListAdapter.ViewHolder.STATUS_DOWNLOADING);
+        mMusicItem = null;
+        mViewHolder = null;
     }
 }

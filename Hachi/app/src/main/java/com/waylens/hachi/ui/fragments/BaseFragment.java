@@ -70,18 +70,17 @@ public class BaseFragment extends Fragment  {
         }
         ButterKnife.bind(this, mRootView);
         setupToolbar();
+
+        VdtCameraManager cameraManager = VdtCameraManager.getManager();
+        cameraManager.addCallback(mVdtCameraMangerCallback);
+
         return mRootView;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        VdtCameraManager cameraManager = VdtCameraManager.getManager();
-        cameraManager.addCallback(mVdtCameraMangerCallback);
-    }
-
-    @Override
     public void onDestroyView() {
+        VdtCameraManager cameraManager = VdtCameraManager.getManager();
+        cameraManager.removeCallback(mVdtCameraMangerCallback);
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
@@ -104,7 +103,7 @@ public class BaseFragment extends Fragment  {
 
         @Override
         public void onCameraDisconnected(VdtCamera vdtCamera) {
-
+            BaseFragment.this.onCameraDisconnected(vdtCamera);
         }
 
         @Override
@@ -117,6 +116,10 @@ public class BaseFragment extends Fragment  {
 
         }
     };
+
+    protected void onCameraDisconnected(VdtCamera vdtCamera) {
+        //
+    }
 
 
     public void onCameraVdbConnected(VdtCamera camera) {

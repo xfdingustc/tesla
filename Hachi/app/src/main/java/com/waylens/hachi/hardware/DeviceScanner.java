@@ -84,7 +84,7 @@ public class DeviceScanner extends Thread {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.t("DeviceScanner").e(e, "DeviceScanner");
         }
 
         if (mWifiManager != null) {
@@ -99,19 +99,14 @@ public class DeviceScanner extends Thread {
 
             }
 
-
             threadLoop();
 
             for (JmDNS dns : mDns) {
                 dns.close();
             }
 
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-
+        } catch (Exception e) {
+            Logger.t("DeviceScanner").e(e, "DeviceScanner");
         } finally {
             if (mWifiManager != null) {
                 unlockWifi();

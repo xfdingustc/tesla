@@ -190,7 +190,7 @@ public class CameraPreviewFragment extends BaseFragment {
     public void setupToolbar() {
         mToolbar.setTitle(R.string.live_view);
         mToolbar.getMenu().clear();
-        if (mVdtCamera != null) {
+        if (VdtCameraManager.getManager().isConnected()) {
             mToolbar.inflateMenu(R.menu.menu_live_view);
         }
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -236,11 +236,25 @@ public class CameraPreviewFragment extends BaseFragment {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                if (mCameraConnecting == null) {
+                    return;
+                }
                 mCameraConnecting.setVisibility(View.GONE);
                 mToolbar.getMenu().clear();
                 mToolbar.inflateMenu(R.menu.menu_live_view);
                 initViews();
                 initCameraPreview();
+            }
+        });
+    }
+
+    @Override
+    protected void onCameraDisconnected(VdtCamera vdtCamera) {
+        super.onCameraDisconnected(vdtCamera);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                showConnectingStatus();
             }
         });
     }
@@ -252,15 +266,23 @@ public class CameraPreviewFragment extends BaseFragment {
             mVdtCamera = VdtCameraManager.getManager().getConnectedCameras().get(0);
             mCameraConnecting.setVisibility(View.GONE);
         } else {
-            mCameraConnecting.setVisibility(View.VISIBLE);
-            mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
-            AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
-            animationDrawable.start();
+            showConnectingStatus();
         }
 
         if (mVdtCamera != null) {
             initViews();
         }
+    }
+
+    void showConnectingStatus() {
+        if (mCameraConnecting == null) {
+            return;
+        }
+        mCameraConnecting.setVisibility(View.VISIBLE);
+        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+        animationDrawable.start();
+        mToolbar.getMenu().clear();
     }
 
     private void initViews() {
