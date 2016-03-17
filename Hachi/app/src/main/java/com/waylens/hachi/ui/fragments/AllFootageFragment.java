@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -21,6 +22,7 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/3/16.
@@ -43,6 +45,11 @@ public class AllFootageFragment extends BaseFragment {
 
     @Bind(R.id.clipSetPrgressBar)
     ClipSetProgressBar mClipSetProgressBar;
+
+    @OnClick(R.id.btnAddBookmark)
+    public void onBtnAddBookmarkClicked() {
+        
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
