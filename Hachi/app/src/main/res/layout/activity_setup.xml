@@ -23,7 +23,7 @@
         android:layout_marginRight="16dp"
         android:text="@string/scan_qr_code_hint"
         android:textAlignment="center"
-        android:textColor="?attr/hachiTextColorPrimary"
+        android:textColor="@android:color/white"
         android:textSize="20sp"/>
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_marginRight="16dp"
         android:text="@string/please_open_your_camera"
         android:textAlignment="center"
-        android:textColor="?attr/hachiTextColorPrimary"
+        android:textColor="@android:color/white"
         android:textSize="14sp"/>
 
     <com.xfdingustc.far.FixedAspectRatioFrameLayout

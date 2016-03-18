@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/defaultBgColor"
+                android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/slogan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/slogan"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textColor="@color/text_camera_info"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/slogan"
+        android:src="@drawable/waylens_logo"
+        android:layout_centerHorizontal="true"/>
+
+
+</RelativeLayout>
