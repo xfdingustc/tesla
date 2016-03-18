@@ -9,7 +9,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -22,10 +22,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.vdtcamera.WifiState;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.WifiState;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -35,11 +35,11 @@ import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
+import com.waylens.hachi.ui.fragments.camerapreview.LiveRawDataAdapter;
+import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
-import com.waylens.hachi.ui.fragments.camerapreview.LiveRawDataAdapter;
 
 import java.net.InetSocketAddress;
 
@@ -62,7 +62,8 @@ public class LiveViewActivity extends BaseActivity {
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
 
-    private static final String EXTRA_IS_GAUGE_VISIBLE = "extra.is.gauge.visible";
+    public static final String EXTRA_IS_GAUGE_VISIBLE = "extra.is.gauge.visible";
+    public static final String ACTION_IS_GAUGE_VISIBLE = "broadcast.action.is.gauge.visible";
 
     private int mCurrentOrientation;
     private Handler mHandler = new Handler();
@@ -168,8 +169,10 @@ public class LiveViewActivity extends BaseActivity {
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
         if (mWvGauge.getVisibility() == View.VISIBLE) {
+            mIsGaugeVisible = false;
             hideOverlay();
         } else {
+            mIsGaugeVisible = true;
             mWvGauge.setVisibility(View.VISIBLE);
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
             requestLiveRawData();
@@ -181,7 +184,14 @@ public class LiveViewActivity extends BaseActivity {
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullscreenClick() {
-       finish();
+        notifyGaugeSettingsChange();
+        finish();
+    }
+
+    private void notifyGaugeSettingsChange() {
+        Intent intent = new Intent(ACTION_IS_GAUGE_VISIBLE);
+        intent.putExtra(EXTRA_IS_GAUGE_VISIBLE, mIsGaugeVisible);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @OnClick(R.id.btnWaterLine)
@@ -226,6 +236,11 @@ public class LiveViewActivity extends BaseActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        notifyGaugeSettingsChange();
+        super.onBackPressed();
+    }
 
     @Override
     protected void init() {
@@ -271,7 +286,6 @@ public class LiveViewActivity extends BaseActivity {
 
         initGaugeWebView();
     }
-
 
 
     @Override
@@ -375,8 +389,8 @@ public class LiveViewActivity extends BaseActivity {
                     mTvCameraStatus.setText(R.string.continuous_recording);
                     if (mBookmarkCount != -1) {
                         updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
-                            mBookmarkCount + mBookmarkClickCount,
-                            mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
+                                mBookmarkCount + mBookmarkClickCount,
+                                mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
                         mTvStatusAdditional.setVisibility(View.VISIBLE);
 
                     }
@@ -496,57 +510,57 @@ public class LiveViewActivity extends BaseActivity {
 
     void getBookmarkCount() {
         mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_MARKED, ClipSetRequest.FLAG_CLIP_EXTRA,
-            new VdbResponse.Listener<ClipSet>() {
-                @Override
-                public void onResponse(ClipSet clipSet) {
-                    if (clipSet != null) {
-                        mBookmarkCount = clipSet.getCount();
-                        mBookmarkClickCount = 0;
-                        Logger.t(TAG).d("Current bookmarks: " + mBookmarkCount);
-                        if (mVdtCamera != null) {
-                            updateCameraStatusInfo(mVdtCamera.getState());
+                new VdbResponse.Listener<ClipSet>() {
+                    @Override
+                    public void onResponse(ClipSet clipSet) {
+                        if (clipSet != null) {
+                            mBookmarkCount = clipSet.getCount();
+                            mBookmarkClickCount = 0;
+                            Logger.t(TAG).d("Current bookmarks: " + mBookmarkCount);
+                            if (mVdtCamera != null) {
+                                updateCameraStatusInfo(mVdtCamera.getState());
+                            }
                         }
                     }
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("ClipSetRequest: " + error);
-                }
-            }).setTag(TAG_GET_BOOKMARK_COUNT));
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Logger.t(TAG).e("ClipSetRequest: " + error);
+                    }
+                }).setTag(TAG_GET_BOOKMARK_COUNT));
     }
 
     void registerMessageHandler() {
 
         ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
-            new VdbResponse.Listener<ClipActionInfo>() {
-                @Override
-                public void onResponse(ClipActionInfo response) {
-                    Logger.t(TAG).e(response.toString());
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("ClipInfoMsgHandler ERROR", error);
-                }
-            });
+                new VdbResponse.Listener<ClipActionInfo>() {
+                    @Override
+                    public void onResponse(ClipActionInfo response) {
+                        Logger.t(TAG).e(response.toString());
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Logger.t(TAG).e("ClipInfoMsgHandler ERROR", error);
+                    }
+                });
         mVdbRequestQueue.registerMessageHandler(clipInfoMsgHandler);
 
         MarkLiveMsgHandler markLiveMsgHandler = new MarkLiveMsgHandler(
-            new VdbResponse.Listener<ClipActionInfo>() {
-                @Override
-                public void onResponse(ClipActionInfo response) {
-                    Logger.t(TAG).e(response.toString());
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("MarkLiveMsgHandler ERROR", error);
-                }
-            });
+                new VdbResponse.Listener<ClipActionInfo>() {
+                    @Override
+                    public void onResponse(ClipActionInfo response) {
+                        Logger.t(TAG).e(response.toString());
+                    }
+                },
+                new VdbResponse.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(SnipeError error) {
+                        Logger.t(TAG).e("MarkLiveMsgHandler ERROR", error);
+                    }
+                });
         mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
     }
 
@@ -557,12 +571,12 @@ public class LiveViewActivity extends BaseActivity {
 
     void closeLiveRawData() {
         LiveRawDataRequest request = new LiveRawDataRequest(0, new
-            VdbResponse.Listener<Integer>() {
-                @Override
-                public void onResponse(Integer response) {
-                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
-                }
-            }, new VdbResponse.ErrorListener() {
+                VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                    }
+                }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
                 Logger.t(TAG).e("LiveRawDataResponse ERROR", error);

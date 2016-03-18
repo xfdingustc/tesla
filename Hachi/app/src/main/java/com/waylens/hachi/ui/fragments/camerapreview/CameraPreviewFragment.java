@@ -1,11 +1,16 @@
 package com.waylens.hachi.ui.fragments.camerapreview;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -131,7 +136,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     boolean mIsGaugeVisible;
 
-
+    LocalBroadcastManager mLocalBroadcastManager;
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
@@ -150,16 +155,19 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
-        if (mWvGauge.getVisibility() == View.VISIBLE) {
-            mIsGaugeVisible = false;
-            hideOverlay();
-        } else {
+        showOverlay(!mIsGaugeVisible);
+    }
+
+    void showOverlay(boolean isGaugeVisible) {
+        if (isGaugeVisible) {
             mIsGaugeVisible = true;
             mWvGauge.setVisibility(View.VISIBLE);
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
             requestLiveRawData();
             mSharpView.setVisibility(View.INVISIBLE);
-
+        } else {
+            mIsGaugeVisible = false;
+            hideOverlay();
         }
     }
 
@@ -215,6 +223,8 @@ public class CameraPreviewFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         initCameraPreview();
+        showOverlay(mIsGaugeVisible);
+        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -226,7 +236,17 @@ public class CameraPreviewFragment extends BaseFragment {
         if (mLiveView != null) {
             mLiveView.stopStream();
         }
+
+        mLocalBroadcastManager.registerReceiver(mBroadcastReceiver,
+                new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
+
         super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+        super.onDestroyView();
     }
 
     @Override
@@ -272,6 +292,7 @@ public class CameraPreviewFragment extends BaseFragment {
         if (mVdtCamera != null) {
             initViews();
         }
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
     }
 
     void showConnectingStatus() {
@@ -306,11 +327,11 @@ public class CameraPreviewFragment extends BaseFragment {
                 mVdtCamera = null;
                 return;
             } else {
+                mVdtCamera.startPreview();
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mLiveView.startStream(serverAddr, null, true);
             }
 
-            mVdtCamera.startPreview();
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getCameraTime();
             mVdtCamera.getAudioMicState();
@@ -626,4 +647,14 @@ public class CameraPreviewFragment extends BaseFragment {
         mStorageView.setMax(storageInfo.totalSpace);
         mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
     }
+
+    /**
+     * This receiver is used to sync gauge settings during screen rotation.
+     */
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mIsGaugeVisible = intent.getBooleanExtra(LiveViewActivity.EXTRA_IS_GAUGE_VISIBLE, false);
+        }
+    };
 }
