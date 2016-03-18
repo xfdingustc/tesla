@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_smartconfig">Device Configuration</string>
+    <string name="title_smartconfig">Smart Config</string>
     <string name="title_devices">Devices</string>
     <string name="title_settings">Settings</string>
     <string name="smartconfig_network_name_text">Network Name</string>

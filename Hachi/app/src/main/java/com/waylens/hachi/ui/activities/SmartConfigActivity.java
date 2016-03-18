@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
@@ -93,7 +94,20 @@ public class SmartConfigActivity extends BaseActivity {
         setContentView(R.layout.activity_smart_config);
     }
 
-    public void startSmartConfig() {
+    @Override
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.title_smartconfig);
+        mToolbar.setNavigationIcon(R.drawable.navbar_back_s);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        super.setupToolbar();
+    }
+
+    private void startSmartConfig() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -161,7 +175,9 @@ public class SmartConfigActivity extends BaseActivity {
     }
 
     void updateProgressBar(int runTime) {
-        if (smartconfig_progressbar != null)
+        smartconfig_progressbar.setVisibility(View.VISIBLE);
+        if (smartconfig_progressbar != null) {
             smartconfig_progressbar.setProgress(smartconfig_progressbar.getMax() * runTime / SmartConfigConstants.SC_RUNTIME);
+        }
     }
 }
