@@ -61,7 +61,6 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     ViewAnimator mViewAnimator;
 
     LinearLayoutManager mLayoutManager;
-    //List<Clip> mClips;
     private int mClipSetIndex;
     RecyclerViewAdapter mAdapter;
     ItemTouchHelper mItemTouchHelper;
@@ -161,12 +160,13 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     @Override
     public void onStopTrackingTouch(RangeSeekBar<Long> rangeSeekBar) {
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onStopTrimming();
+            Clip clip = getClipSet().getClip(mSelectedPosition);
+            mOnClipEditListener.onStopTrimming(clip);
         }
     }
 
     public void setClipIndex(int clipSetIndex) {
-        if (mAdapter != null ) {
+        if (mAdapter != null) {
             mClipSetIndex = clipSetIndex;
             mAdapter.notifyDataSetChanged();
             updateClipCount(getClipSet().getCount());
@@ -227,7 +227,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
     void internalOnClipMoved(int fromPosition, int toPosition) {
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onClipMoved(fromPosition, toPosition);
+            mOnClipEditListener.onClipMoved(fromPosition, toPosition, getClipSet().getClip(toPosition));
         }
     }
 
@@ -320,16 +320,22 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         @Override
         public boolean onItemMove(int fromPosition, int toPosition) {
+            updateSelectedPosition(fromPosition, toPosition);
             Collections.swap(getClipSet().getClipList(), fromPosition, toPosition);
             notifyItemMoved(fromPosition, toPosition);
             return true;
         }
 
+        void updateSelectedPosition(int from, int to) {
+            if (from == mSelectedPosition) {
+                mSelectedPosition = to;
+            } else if (to == mSelectedPosition) {
+                mSelectedPosition = from;
+            }
+        }
+
         @Override
         public void onItemMoved(int fromPosition, int toPosition) {
-            if (fromPosition == mSelectedPosition) {
-                mSelectedPosition = toPosition;
-            }
             internalOnClipMoved(fromPosition, toPosition);
         }
 
@@ -366,7 +372,7 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     public interface OnClipEditListener {
         void onClipSelected(int position, Clip clip);
 
-        void onClipMoved(int fromPosition, int toPosition);
+        void onClipMoved(int fromPosition, int toPosition, Clip clip);
 
         void onClipsAppended(List<Clip> clips);
 
@@ -378,6 +384,6 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
         void onTrimming(Clip clip, int flag, long value);
 
-        void onStopTrimming();
+        void onStopTrimming(Clip clip);
     }
 }

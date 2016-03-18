@@ -19,7 +19,7 @@ class Bar {
     private List<Clip> mClipList;
     private final float mDividerWidth;
     private final float mLength;
-    private int mActiveIndex = 0;
+    private int mActiveIndex = -1;
 
     private Paint mActivePaint;
     private Paint mInactivePaint;
@@ -85,6 +85,10 @@ class Bar {
 
     public void setActiveIndex(int activeIndex) {
         mActiveIndex = activeIndex;
+    }
+
+    int getActiveIndex() {
+        return mActiveIndex;
     }
 
     public float getLeftX() {

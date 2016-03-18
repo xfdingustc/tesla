@@ -6,6 +6,7 @@ import com.waylens.hachi.snipe.VdbSocket;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Xiaofei on 2016/3/4.
@@ -14,11 +15,12 @@ public class ClipSetManager {
     private Map<Integer, ClipSet> mClipSetMap;
 
     private ClipSetManager() {
-        mClipSetMap = new HashMap<>();
+        mClipSetMap = new ConcurrentHashMap<>();
     }
 
     public static final int CLIP_SET_TYPE_ENHANCE = 0x108;
     public static final int CLIP_SET_TYPE_ALLFOOTAGE = 0x109;
+    public static final int CLIP_SET_TYPE_ENHANCE_EDITING = 0x110;
 
     private static volatile ClipSetManager CLIP_SET_MANAGER;
 

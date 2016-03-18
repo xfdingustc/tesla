@@ -52,8 +52,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     private static final String TAG = EnhancementActivity.class.getSimpleName();
     private static final int REQUEST_CODE_ENHANCE = 1000;
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
+    public static final String EXTRA_CLIPS_TO_ENHANCE = "extra.clips.to.enhance";
+    public static final String EXTRA_CLIPS_TO_APPEND = "extra.clips.to.append";
 
-    private int mClipSetIndex;
     private PlaylistEditor mPlaylistEditor;
 
     private ClipPlayFragment mClipPlayFragment;
@@ -221,9 +222,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }
     }
 
-    public static void launch(Activity activity, int clipSetIndex) {
+    public static void launch(Activity activity, ArrayList<Clip> clipList) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
-        intent.putExtra("clipSetIndex", clipSetIndex);
+        intent.putParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE, clipList);
         activity.startActivity(intent);
     }
 
@@ -238,20 +239,33 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
         supportedGauges = getResources().getStringArray(R.array.supported_gauges);
-        mClipSetIndex = getIntent().getIntExtra("clipSetIndex", ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_enhance);
-        mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, mClipSetIndex, 0x100);
-        mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
+        ArrayList<Clip> mClipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
+
+        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
+        ClipSet clipSetEditing = new ClipSet(Clip.TYPE_TEMP);
+        for (Clip clip : mClipList) {
+            clipSet.addClip(clip);
+            clipSetEditing.addClip(clip);
+        }
+
+        //ClipsEditView and VideoPlayFragment use CLIP_SET_TYPE_ENHANCE
+
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
+        mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, 0x100);
+        mPlaylistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 embedVideoPlayFragment();
-                mClipsEditView.setClipIndex(mClipSetIndex);
+                mClipsEditView.setClipIndex(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
             }
         });
+
         mClipsEditView.setOnClipEditListener(this);
 
         mVolumeView.setText("100");
@@ -285,7 +299,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             }
         });
         mGaugeListView.setAdapter(mGaugeListAdapter);
-        
+
     }
 
     @Override
@@ -311,7 +325,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
 
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
-        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex,
+        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE,
                 vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
@@ -324,7 +338,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         switch (requestCode) {
             case REQUEST_CODE_ENHANCE:
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Clip> clips = data.getParcelableArrayListExtra("clips.more");
+                    ArrayList<Clip> clips = data.getParcelableArrayListExtra(EXTRA_CLIPS_TO_APPEND);
                     Log.e("test", "Clips: " + clips);
                     mClipsEditView.appendSharableClips(clips);
                     mClipPlayFragment.setPosition(0);
@@ -357,16 +371,25 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     @Override
     public void onClipSelected(int position, Clip clip) {
-        mToolbar.setTitle(R.string.trim);
-        mClipPlayFragment.setActiveClip(position, clip);
+        if (mToolbar != null) {
+            mToolbar.setTitle(R.string.trim);
+        }
+        mClipPlayFragment.setActiveClip(position, clip, true);
     }
 
     @Override
-    public void onClipMoved(int fromPosition, int toPosition) {
-        Log.e("test", String.format("onClipMoved[%d, %d]", fromPosition, toPosition));
+    public void onClipMoved(int fromPosition, final int toPosition, final Clip clip) {
+
         mPlaylistEditor.move(fromPosition, toPosition, new PlaylistEditor.OnMoveCompletedListener() {
             @Override
-            public void onMoveCompleted() {
+            public void onMoveCompleted(ClipSet clipSet) {
+                int selectedPosition = mClipsEditView.getSelectedPosition();
+                if (selectedPosition != mClipPlayFragment.getActiveClipIndex()) {
+                    mClipPlayFragment.setActiveClip(selectedPosition, clip, false);
+                }
+                if (selectedPosition == -1 && toPosition == 0) {
+                    mClipPlayFragment.showClipPosThumbnail(clip, clip.getStartTimeMs());
+                }
                 mClipPlayFragment.notifyClipSetChanged();
             }
         });
@@ -381,7 +404,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         mPlaylistEditor.appendClips(clips, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
-                mClipPlayFragment.setClipSet(clipSet);
+                mClipPlayFragment.notifyClipSetChanged();
             }
         });
     }
@@ -414,25 +437,23 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     @Override
-    public void onStopTrimming() {
+    public void onStopTrimming(Clip clip) {
         int selectedPosition = mClipsEditView.getSelectedPosition();
         if (selectedPosition == ClipsEditView.POSITION_UNKNOWN) {
             return;
         }
-        Clip clip = getClipSet().getClip(selectedPosition);
-        mPlaylistEditor.trimClip(selectedPosition, clip.editInfo.selectedStartValue, clip.editInfo.selectedEndValue,
+        mPlaylistEditor.trimClip(selectedPosition, clip,
                 new PlaylistEditor.OnTrimCompletedListener() {
                     @Override
                     public void onTrimCompleted(ClipSet clipSet) {
-                        mClipPlayFragment.setClipSet(clipSet);
-                        //mClipPlayFragment.prepare(0);
+                        mClipPlayFragment.notifyClipSetChanged();
                     }
                 });
 
     }
 
     private ClipSet getClipSet() {
-        return ClipSetManager.getManager().getClipSet(mClipSetIndex);
+        return ClipSetManager.getManager().getClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
     }
 
     @Override

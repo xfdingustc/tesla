@@ -46,6 +46,7 @@ import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,7 +58,6 @@ import butterknife.OnClick;
 public class ClipPlayFragment extends DialogFragment {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
-    //private ClipSet mClipSet;
     private int mClipSetIndex;
 
     private VdtCamera mVdtCamera;
@@ -151,12 +151,6 @@ public class ClipPlayFragment extends DialogFragment {
         } else {
             startPreparingClip(0, true);
         }
-    }
-
-
-    public void setClipSet(ClipSet clipSet) {
-        mMultiSegSeekbar.setClipList(getClipSet().getClipList());
-        notifyClipSetChanged();
     }
 
     public void updateGauge(GaugeInfoItem item) {
@@ -333,7 +327,12 @@ public class ClipPlayFragment extends DialogFragment {
                         return true;
                     case R.id.enhance:
                         dismiss();
-                        EnhancementActivity.launch(getActivity(), mClipSetIndex);
+                        ClipSet clipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
+                        ArrayList<Clip> clipList = new ArrayList<>();
+                        for (Clip clip : clipSet.getClipList()) {
+                            clipList.add(clip);
+                        }
+                        EnhancementActivity.launch(getActivity(), clipList);
                         return true;
                     case R.id.modify:
                         dismiss();
@@ -415,11 +414,17 @@ public class ClipPlayFragment extends DialogFragment {
         mSeekBar.getThumb().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
     }
 
-    public void setActiveClip(int position, Clip clip) {
+    public void setActiveClip(int position, Clip clip, boolean refreshThumbnail) {
         changeState(STATE_FAST_PREVIEW);
-        ClipPos clipPos = new ClipPos(clip, 0, ClipPos.TYPE_POSTER, false);
-        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+        if (refreshThumbnail) {
+            ClipPos clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+        }
         mMultiSegSeekbar.setActiveClip(position);
+    }
+
+    public int getActiveClipIndex() {
+        return mMultiSegSeekbar.getActiveIndex();
     }
 
     public void setAudioUrl(String audioUrl) {
@@ -454,6 +459,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void notifyClipSetChanged() {
+        mMultiSegSeekbar.setClipList(getClipSet().getClipList());
         mMultiSegSeekbar.notifyDateSetChanged();
         //refreshProgressBar();
     }

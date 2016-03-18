@@ -120,6 +120,10 @@ public class MultiSegSeekbar extends View {
         invalidate();
     }
 
+    public int getActiveIndex() {
+        return mBar.getActiveIndex();
+    }
+
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
         Resources resources = getResources();
         if (attrs != null) {

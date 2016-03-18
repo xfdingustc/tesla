@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -129,8 +128,8 @@ public class ShareActivity extends BaseActivity implements MomentShareHelper.OnS
         if (mIsFromEnhance) {
             embedVideoPlayFragment();
         } else {
-            mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, mClipSetIndex, 0x100);
-            mPlaylistEditor.build(new PlaylistEditor.OnBuildCompleteListener() {
+            mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, 0x100);
+            mPlaylistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
                     embedVideoPlayFragment();

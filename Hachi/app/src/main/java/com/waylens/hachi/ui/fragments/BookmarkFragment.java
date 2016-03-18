@@ -18,9 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
@@ -94,13 +92,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
 
     public static BookmarkFragment newInstance(int clipSetType) {
-        BookmarkFragment fragment = new BookmarkFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
-        args.putBoolean(ARG_IS_MULTIPLE_MODE, false);
-        args.putBoolean(ARG_IS_ADD_MORE, false);
-        fragment.setArguments(args);
-        return fragment;
+        return newInstance(clipSetType, false, false);
     }
 
     public static BookmarkFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
@@ -171,6 +163,19 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         inflater.inflate(R.menu.menu_add_clip, menu);
     }
 
+    /**
+     * Don't remove
+     * This callback is used by "Enhance -> Add more clips"
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_to_enhance:
+                toEnhance();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
     private void doDeleteSelectedClips() {
@@ -202,17 +207,13 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     private void toEnhance() {
         if (mIsAddMore) {
             Intent intent = new Intent();
-            intent.putParcelableArrayListExtra("clips.more", mAdapter.getSelectedClipList());
+            intent.putParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND,
+                    mAdapter.getSelectedClipList());
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         } else {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-            ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
-            for (Clip clip : selectedList) {
-                clipSet.addClip(clip);
-            }
-            ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-            EnhancementActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
+            EnhancementActivity.launch(getActivity(), selectedList);
         }
     }
 
