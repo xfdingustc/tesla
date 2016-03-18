@@ -18,7 +18,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.widget.ViewAnimator;
+import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -62,15 +65,6 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
     private ClipSetGroupAdapter mAdapter;
 
-
-    @Bind(R.id.clipGroupList)
-    RecyclerView mRvClipGroupList;
-
-
-    @Bind(R.id.refreshLayout)
-    SwipeRefreshLayout mRefreshLayout;
-
-
     private Handler mUiThreadHandler;
 
     private int mClipSetType;
@@ -84,6 +78,20 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     private int mDeleteClipCount = 0;
 
     private LocalBroadcastManager mBroadcastManager;
+
+
+    @Bind(R.id.clipGroupList)
+    RecyclerView mRvClipGroupList;
+
+
+    @Bind(R.id.refreshLayout)
+    SwipeRefreshLayout mRefreshLayout;
+
+    @Bind(R.id.rootViewSwitcher)
+    ViewSwitcher mRootViewSwitcher;
+
+
+
 
     public static BookmarkFragment newInstance(int clipSetType) {
         BookmarkFragment fragment = new BookmarkFragment();
@@ -148,6 +156,13 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         if (mBroadcastManager != null) {
             mBroadcastManager.registerReceiver(localReceiver, new IntentFilter(ACTION_RETRIEVE_CLIPS));
+        }
+    }
+
+    @Override
+    public void onFragmentFocused(boolean focused) {
+        if (focused == true) {
+            retrieveSharableClips();
         }
     }
 
@@ -247,8 +262,18 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                     @Override
                     public void onResponse(ClipSet clipSet) {
                         mRefreshLayout.setRefreshing(false);
-                        calculateClipSetGroup(clipSet);
-                        setupClipSetGroupView();
+                        if (clipSet.getCount() == 0) {
+                            if (mRootViewSwitcher.getDisplayedChild() == 0) {
+                                mRootViewSwitcher.showNext();
+                            }
+                        } else {
+                            if (mRootViewSwitcher.getDisplayedChild() == 1) {
+                                mRootViewSwitcher.showPrevious();
+                            }
+                            calculateClipSetGroup(clipSet);
+                            setupClipSetGroupView();
+                        }
+
                     }
                 },
                 new VdbResponse.ErrorListener() {

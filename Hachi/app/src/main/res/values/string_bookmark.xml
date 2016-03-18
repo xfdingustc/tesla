@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_bookmark">"You don't have any bookmarks"</string>
+    <string name="no_bookmark_help">"Bookmarks won't be erased automatically on you SD card, you can add bookmarks by:\n\n1.Click on remote control button when continuous recording is on.\n2.Choose one footage to add bookmarks"</string>
+
+
+</resources>
