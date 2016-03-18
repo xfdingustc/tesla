@@ -61,6 +61,7 @@
         <activity android:name=".ui.activities.VersionCheckActivity"/>
         <activity android:name=".ui.activities.AccountActivity"/>
         <activity android:name=".ui.activities.SmartConfigActivity"/>
+        <activity android:name=".ui.activities.StartupActivity"/>
 
 
         <activity

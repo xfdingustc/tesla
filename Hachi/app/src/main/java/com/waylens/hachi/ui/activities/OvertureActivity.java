@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 
 /**
@@ -41,8 +42,9 @@ public class OvertureActivity extends BaseActivity {
 
     private void redirectTo() {
         Intent intent = new Intent();
-        if (false) {
-            //intent.setClass(this, FirstInstallActivity.class);
+        boolean enterSetup = VdtCameraManager.getManager().isConnected();
+        if (enterSetup == false) {
+            intent.setClass(this, StartupActivity.class);
         } else {
             intent.setClass(this, MainActivity.class);
         }

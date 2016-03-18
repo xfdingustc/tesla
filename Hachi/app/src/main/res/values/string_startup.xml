@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="steps">"3 Steps to Wake up Your Camera"</string>
+    <string name="step1">"1.Scan QR code on your camera."</string>
+    <string name="step2">"2.Connect your phone to the camera."</string>
+    <string name="step3">"3.Connect your camera to your home WiFi"</string>
+    <string name="get_started">Get Started</string>
+    <string name="skip">SKIP</string>
+</resources>
