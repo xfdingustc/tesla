@@ -268,6 +268,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                             }
                         } else {
                             if (mRootViewSwitcher.getDisplayedChild() == 1) {
+                                Logger.t(TAG).d("show previous");
                                 mRootViewSwitcher.showPrevious();
                             }
                             calculateClipSetGroup(clipSet);

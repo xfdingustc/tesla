@@ -76,35 +76,20 @@ public class AllFootageFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_all_footage,
             savedInstanceState);
-        getAllClips();
+        refreshAllFootageClipSet();
 
         return view;
 
     }
 
-    private void getAllClips() {
-        mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_BUFFERED, ClipSetRequest.FLAG_CLIP_EXTRA,
-            new VdbResponse.Listener<ClipSet>() {
-                @Override
-                public void onResponse(ClipSet clipSet) {
-                    //calculateClipSetGroup(clipSet);
-                    //setupClipSetGroupView();
-                    if (clipSet.getCount() == 0) {
-                        onHandleEmptyCamera();
-                    }
-                    setupClipPlayFragment(clipSet);
-                    setupClipProgressBar(clipSet);
-
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("", error);
-
-                }
-            }));
+    @Override
+    public void onFragmentFocused(boolean focused) {
+        if (focused) {
+            refreshBookmarkClipSet();
+        }
     }
+
+
 
 
     private void onHandleEmptyCamera() {
@@ -148,7 +133,34 @@ public class AllFootageFragment extends BaseFragment {
             }
         });
 
+    }
 
+
+    private void refreshAllFootageClipSet() {
+        mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_BUFFERED, ClipSetRequest.FLAG_CLIP_EXTRA,
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet clipSet) {
+                    //calculateClipSetGroup(clipSet);
+                    //setupClipSetGroupView();
+                    if (clipSet.getCount() == 0) {
+                        onHandleEmptyCamera();
+                    }
+                    setupClipPlayFragment(clipSet);
+                    setupClipProgressBar(clipSet);
+
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("", error);
+
+                }
+            }));
+    }
+
+    private void refreshBookmarkClipSet() {
         ClipSetRequest request = new ClipSetRequest(Clip.TYPE_MARKED, ClipSetRequest
             .FLAG_CLIP_EXTRA, new VdbResponse.Listener<ClipSet>() {
             @Override
@@ -162,7 +174,6 @@ public class AllFootageFragment extends BaseFragment {
             }
         });
         mVdbRequestQueue.add(request);
-
     }
 
     private void doAddBookmark() {
@@ -176,7 +187,7 @@ public class AllFootageFragment extends BaseFragment {
             VdbResponse.Listener<Integer>() {
             @Override
             public void onResponse(Integer response) {
-
+                refreshBookmarkClipSet();
             }
         }, new VdbResponse.ErrorListener() {
             @Override
