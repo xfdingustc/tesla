@@ -25,6 +25,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.ShareActivity;
@@ -79,6 +80,8 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     boolean mIsAddMore;
 
     ActionMode mActionMode;
+
+    private int mDeleteClipCount = 0;
 
     private LocalBroadcastManager mBroadcastManager;
 
@@ -153,17 +156,35 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         inflater.inflate(R.menu.menu_add_clip, menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_to_enhance:
-                toEnhance();
-                return true;
+
+
+    private void doDeleteSelectedClips() {
+        ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+        final int toDeleteClipCount = selectedList.size();
+        mDeleteClipCount = 0;
+
+        for (Clip clip : selectedList) {
+            ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, new VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+                    mDeleteClipCount++;
+                    Logger.t(TAG).d("" + mDeleteClipCount + " clips deleted");
+                    if (mDeleteClipCount == toDeleteClipCount) {
+                        retrieveSharableClips();
+                    }
+                }
+            }, new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+
+                }
+            });
+
+            mVdbRequestQueue.add(request);
         }
-        return super.onOptionsItemSelected(item);
     }
 
-    void toEnhance() {
+    private void toEnhance() {
         if (mIsAddMore) {
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra("clips.more", mAdapter.getSelectedClipList());
@@ -337,6 +358,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                     toShare();
                     return false;
                 case R.id.menu_to_delete:
+                    doDeleteSelectedClips();
                     return false;
                 default:
                     return false;
