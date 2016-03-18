@@ -541,16 +541,16 @@ abstract public class BitmapCanvas {
 
 		if (viewWidth * bmHeight >= viewHeight * bmWidth) {
 			// screen is wider
-			width = (int)((double)viewHeight * bmWidth / bmHeight + 0.5);
-			height = viewHeight;
-			marginX = (viewWidth - width) / 2;
-			marginY = 0;
-		} else {
-			// bitmap is wider
 			width = viewWidth;
 			height = (int)((double)viewWidth * bmHeight / bmWidth + 0.5);
 			marginX = 0;
 			marginY = (viewHeight - height) / 2;
+		} else {
+			// bitmap is wider
+			width = (int)((double)viewHeight * bmWidth / bmHeight + 0.5);
+			height = viewHeight;
+			marginX = (viewWidth - width) / 2;
+			marginY = 0;
 		}
 
 		rect.left = marginX;

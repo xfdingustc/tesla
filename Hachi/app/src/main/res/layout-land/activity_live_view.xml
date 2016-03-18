@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#222428"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <FrameLayout
         android:id="@+id/liveViewLayout"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipChildren="false">
+        android:layout_height="match_parent">
 
         <com.waylens.hachi.ui.views.camerapreview.CameraLiveView
             android:id="@+id/cameraPreview"
@@ -26,7 +21,6 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:visibility="gone">
-
 
         </WebView>
 
@@ -81,7 +75,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="10dp"
-                android:text="300 bookmarks remain"
                 android:textColor="@color/text_camera_info"
                 android:textSize="12sp"/>
         </LinearLayout>
@@ -116,12 +109,12 @@
         </RelativeLayout>
     </FrameLayout>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_alignParentBottom="true"
-                    android:alpha="0.8"
-                    android:background="#222428">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:alpha="0.8"
+        android:background="#222428">
 
         <ImageButton
             android:id="@+id/btnMicControl"

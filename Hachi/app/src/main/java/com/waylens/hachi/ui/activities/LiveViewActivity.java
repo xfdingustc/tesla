@@ -303,12 +303,13 @@ public class LiveViewActivity extends BaseActivity {
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
                 mVdtCamera = null;
+                return;
             } else {
+                mVdtCamera.startPreview();
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
                 mLiveView.startStream(serverAddr, null, true);
             }
 
-            mVdtCamera.startPreview();
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getCameraTime();
             mVdtCamera.getAudioMicState();
