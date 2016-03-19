@@ -1,34 +1,37 @@
 package com.waylens.hachi.ui.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-
-import com.android.volley.Request;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
+
+import org.json.JSONObject;
 
 import java.io.File;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import im.fir.sdk.FIR;
-import im.fir.sdk.callback.VersionCheckCallback;
-import im.fir.sdk.version.AppVersion;
+import im.fir.sdk.VersionCheckCallback;
+
 
 /**
  * Created by Richard on 1/8/16.
@@ -36,6 +39,7 @@ import im.fir.sdk.version.AppVersion;
 public class VersionCheckActivity extends BaseActivity {
 
     private static final String TAG = "FIR";
+    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0x10;
 
     @Bind(R.id.current_version_view)
     TextView mCurrentVersionView;
@@ -48,6 +52,11 @@ public class VersionCheckActivity extends BaseActivity {
 
     @Bind(R.id.btn_update_now)
     View mBtnUpdateNow;
+
+    private int mVersionCode;
+    private String mVersionName;
+    private String mInstallURL;
+
 
     @OnClick(R.id.btn_update_now)
     void updateApp() {
@@ -67,7 +76,6 @@ public class VersionCheckActivity extends BaseActivity {
         }
     }
 
-    AppVersion mAppVersion;
     String mDownloadedFile;
     DownloadManager downloadManager;
 
@@ -85,6 +93,7 @@ public class VersionCheckActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+        FIR.init(getApplicationContext());
         initViews();
     }
 
@@ -93,9 +102,6 @@ public class VersionCheckActivity extends BaseActivity {
         mCurrentVersionView.setText(getString(R.string.current_version, BuildConfig.VERSION_NAME));
         mViewAnimator.setDisplayedChild(2);
     }
-
-
-
 
 
     @Override
@@ -113,61 +119,86 @@ public class VersionCheckActivity extends BaseActivity {
     @OnClick(R.id.btn_check_update)
     void checkUpdate() {
         mViewAnimator.setDisplayedChild(0);
-//        FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
-//            @Override
-//            public void onSuccess(AppVersion appVersion, boolean result) {
-//                Log.e("FIR", "onSuccess: thisCode: " + BuildConfig.VERSION_CODE + "; result: " + result);
-//                Log.e("FIR", "onSuccess: AppVersion: " + appVersion);
-//
-//                if (appVersion == null) {
-//                    return;
-//                }
-//                int versionCode = appVersion.getVersionCode();
-//                if (versionCode <= BuildConfig.VERSION_CODE) {
-//                    mFirVersionView.setText(R.string.version_up_to_date);
-//                    mViewAnimator.setDisplayedChild(1);
-//                } else {
-//                    mAppVersion = appVersion;
-//                    mFirVersionView.setText(getString(R.string.fir_version, versionCode));
-//                    mViewAnimator.setDisplayedChild(3);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onFail(Request request, Exception e) {
-//                Log.e("FIR", "", e);
-//                mFirVersionView.setText(R.string.error_check_fir);
-//                mViewAnimator.setDisplayedChild(2);
-//            }
-//
-//            @Override
-//            public void onStart() {
-//                Log.e("FIR", "onStart");
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                mFirVersionView.setVisibility(View.VISIBLE);
-//            }
-//        });
+
+        FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
+            @Override
+            public void onSuccess(String response) {
+                super.onSuccess(response);
+                Log.e("test", "Msg: " + response);
+                if (response == null) {
+                    return;
+                }
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    mVersionCode = Integer.parseInt(jsonObject.getString("build"));
+                    mVersionName = jsonObject.getString("versionShort");
+                    mInstallURL = jsonObject.getString("install_url");
+
+                    if (mVersionCode <= BuildConfig.VERSION_CODE) {
+                        mFirVersionView.setText(R.string.version_up_to_date);
+                        mViewAnimator.setDisplayedChild(1);
+                    } else {
+                        mFirVersionView.setText(getString(R.string.fir_version, mVersionName));
+                        mViewAnimator.setDisplayedChild(3);
+                    }
+                } catch (Exception e) {
+                    Log.e("test", "", e);
+                    mFirVersionView.setText(R.string.error_check_fir);
+                    mViewAnimator.setDisplayedChild(2);
+                }
+            }
+
+            @Override
+            public void onFail(Exception e) {
+                super.onFail(e);
+                Log.e("FIR", "", e);
+                mFirVersionView.setText(R.string.error_check_fir);
+                mViewAnimator.setDisplayedChild(2);
+            }
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                Log.e("FIR", "onStart");
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                mFirVersionView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
 
-
     void downloadUpdateAPK() {
-        if (mAppVersion == null) {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            continueDownloadAPK();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+
+
+    }
+
+    public void continueDownloadAPK() {
+        if (mInstallURL == null) {
             return;
         }
+        mFirVersionView.setText(R.string.now_downloading);
         downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(mAppVersion.getUpdateUrl()));
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(mInstallURL));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
         request.setAllowedOverRoaming(true);
         request.setMimeType("application/vnd.android.package-archive");
         request.setVisibleInDownloadsUi(true);
-        String apkFile = "waylens-v" + mAppVersion.getVersionCode() + ".apk";
+        String apkFile = "waylens-v" + mVersionCode + ".apk";
         request.setDestinationInExternalPublicDir("/download/", apkFile);
-        request.setTitle(getString(R.string.app_name) + " v" + mAppVersion.getVersionName());
+        request.setTitle(getString(R.string.app_name) + " v" + mVersionName);
         long id = downloadManager.enqueue(request);
         PreferenceUtils.putLong("download_id", id);
     }
@@ -213,6 +244,29 @@ public class VersionCheckActivity extends BaseActivity {
         intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                int i = 0;
+                for (String permission : permissions) {
+                    if (Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permission)) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            continueDownloadAPK();
+                        } else {
+                            mFirVersionView.setText(R.string.error_no_write_external_storage_permission);
+                            mViewAnimator.setDisplayedChild(3);
+                        }
+                        break;
+                    }
+                    i++;
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 

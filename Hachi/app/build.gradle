@@ -16,8 +16,8 @@ android {
         applicationId "com.waylens.hachi"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 41
-        versionName "0.41"
+        versionCode 43
+        versionName "0.43"
         //multiDexEnabled true
 
         //ndk {
@@ -114,7 +114,7 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'com.google.android.gms:play-services-gcm:7.8.0'
 //    compile 'com.google.android.gms:play-services-maps:7.8.0'
-    compile 'im.fir:sdk:latest.integration@aar'
+    compile 'im.fir:fir-sdk:latest.integration@aar'
     compile 'javax.jmdns:jmdns:3.4.1'
 
     compile 'com.google.code.gson:gson:2.3.1'

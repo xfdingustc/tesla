@@ -371,8 +371,10 @@
     <string name="share_to">To:</string>
     <string name="share_hint">Say something about the video…</string>
     <string name="sign_up_invitation_message">Sign up now to view, comment, and share videos.</string>
-    <string name="already_a_member">Already a memeber?</string>
+    <string name="already_a_member">Already a member?</string>
     <string name="sign_up_done">Done</string>
     <string name="scan_qr_code_hint">Scan QR Code on Your Camera</string>
     <string name="please_open_your_camera">Please open your camera and load QR</string>
+    <string name="error_no_write_external_storage_permission">Grant \"Write External Storage\" permission, \n and try again</string>
+    <string name="now_downloading">Now downloading…</string>
 </resources>
