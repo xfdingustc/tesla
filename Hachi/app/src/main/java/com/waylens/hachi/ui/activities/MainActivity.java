@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -78,6 +79,11 @@ public class MainActivity extends BaseActivity {
     private TextView mEmail;
 
     private Snackbar mReturnSnackBar;
+
+    public static void launch(Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

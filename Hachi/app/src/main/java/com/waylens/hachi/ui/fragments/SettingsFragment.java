@@ -10,7 +10,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.AccountActivity;
-import com.waylens.hachi.ui.activities.MenualSetupActivity;
 import com.waylens.hachi.ui.activities.SmartConfigActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
 
@@ -57,7 +56,7 @@ public class SettingsFragment extends BaseFragment {
                             SmartConfigActivity.launch(getActivity());
                             break;
                         case 1:
-                            MenualSetupActivity.launch(getActivity());
+                            ScanQrCodeFragment.launch(getActivity());
                             break;
                     }
                     return true;
