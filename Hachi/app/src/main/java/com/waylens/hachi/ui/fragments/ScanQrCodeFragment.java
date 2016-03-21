@@ -1,18 +1,16 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.PointF;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 
@@ -34,16 +32,53 @@ public class ScanQrCodeFragment extends BaseFragment {
     private WifiManager mWifiManager;
     private BroadcastReceiver mWifiStateReceiver;
 
-    public static void launch(Activity activity) {
-        Intent intent = new Intent(activity, ScanQrCodeFragment.class);
-        activity.startActivity(intent);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        init();
     }
 
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        init();
-//    }
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = createFragmentView(inflater, container, R.layout.fragment_qr_code_scan, savedInstanceState);
+        initViews();
+        return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mQrCodeReaderView.getCameraManager().stopPreview();
+    }
+
+    private void init() {
+        mWifiManager = (WifiManager)getActivity().getSystemService(Context.WIFI_SERVICE);
+    }
+
+    private void initViews() {
+        mQrCodeReaderView.getCameraManager().startPreview();
+        mQrCodeReaderView.setOnQRCodeReadListener(new QRCodeReaderView.OnQRCodeReadListener() {
+            @Override
+            public void onQRCodeRead(String text, PointF[] points) {
+                if (parseWifiInfo(text) == true) {
+                    mQrCodeReaderView.getCameraManager().stopPreview();
+                }
+            }
+
+            @Override
+            public void cameraNotFound() {
+
+            }
+
+            @Override
+            public void QRCodeNotFoundOnCamImage() {
+
+            }
+        });
+    }
+
+
 //
 //    @Override
 //    protected void onStart() {
@@ -63,7 +98,7 @@ public class ScanQrCodeFragment extends BaseFragment {
 //    @Override
 //    protected void init() {
 //        super.init();
-//        this.mWifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+//
 //        mWifiStateReceiver = new BroadcastReceiver() {
 //
 //            @Override
@@ -80,34 +115,6 @@ public class ScanQrCodeFragment extends BaseFragment {
 //        initViews();
 //    }
 
-//    private void initViews() {
-//        setContentView(R.layout.activity_setup);
-//        mQrCodeReaderView.getCameraManager().startPreview();
-//        mQrCodeReaderView.setOnQRCodeReadListener(new QRCodeReaderView.OnQRCodeReadListener() {
-//            @Override
-//            public void onQRCodeRead(String text, PointF[] points) {
-//                if (parseWifiInfo(text) == true) {
-//                    mQrCodeReaderView.getCameraManager().stopPreview();
-//                }
-//            }
-//
-//            @Override
-//            public void cameraNotFound() {
-//
-//            }
-//
-//            @Override
-//            public void QRCodeNotFoundOnCamImage() {
-//
-//            }
-//        });
-//    }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        mQrCodeReaderView.getCameraManager().stopPreview();
-//    }
 
     private boolean parseWifiInfo(String result) {
         Pattern pattern = Pattern.compile("<a>(\\w*)</a>.*<p>(\\w*)</?p>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
@@ -116,7 +123,7 @@ public class ScanQrCodeFragment extends BaseFragment {
         if (matcher.find() && matcher.groupCount() == 2) {
             mWifiName = matcher.group(1);
             mWifiPassword = matcher.group(2);
-            WifiAutoConnectManager wifiAutoConnectManager= new WifiAutoConnectManager
+            WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
                 (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
                     @Override
                     public void onAudoConnectStarted() {

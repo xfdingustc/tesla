@@ -56,7 +56,7 @@ public class SettingsFragment extends BaseFragment {
                             SmartConfigActivity.launch(getActivity());
                             break;
                         case 1:
-                            ScanQrCodeFragment.launch(getActivity());
+                            //
                             break;
                     }
                     return true;
