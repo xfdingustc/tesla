@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/slogan"
-        android:src="@drawable/waylens_logo"
+        android:src="@drawable/waylens_logo_140x98"
         android:layout_centerHorizontal="true"/>
 
 

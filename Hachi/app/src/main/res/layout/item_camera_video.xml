@@ -70,15 +70,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|start"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_theaters_white_36dp"/>
+                android:layout_margin="16dp"/>
             <ImageButton
                 android:id="@+id/btn_video_play"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_play_circle_outline_white_48dp"/>
+                android:src="@drawable/playbar_play"/>
         </FrameLayout>
 
 

@@ -143,8 +143,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
             android:layout_toLeftOf="@id/btnFullscreen"
-            android:background="@android:color/transparent"
-            android:src="@drawable/camera_control_grid"/>
+            android:background="@android:color/transparent"/>
 
 
         <ImageButton

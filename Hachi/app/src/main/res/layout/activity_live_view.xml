@@ -42,8 +42,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/settings_menu_general"/>
+                android:contentDescription="@null"/>
         </FrameLayout>
 
         <FrameLayout
@@ -251,13 +250,6 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/rec_info_bookmark_indicator"/>
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -265,13 +257,6 @@
                         android:text="Used Space"
                         android:textColor="@color/text_camera_info"
                         android:textSize="14sp"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/rec_info_bookmark_remain_indicator"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -351,8 +336,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@id/btnFullscreen"
-                android:background="@android:color/transparent"
-                android:src="@drawable/camera_control_grid"/>
+                android:background="@android:color/transparent"/>
 
 
             <ImageButton

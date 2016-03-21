@@ -23,7 +23,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@null"
-        android:src="@drawable/ic_cloud_queue_white_24dp"/>
+        android:src="@drawable/music_cloud"/>
 
     <TextView
         android:id="@+id/music_title"
@@ -64,7 +64,7 @@
                 android:layout_height="48dp"
                 android:scaleType="center"
                 android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_add_white_24dp"
+                android:src="@drawable/btn_music_add"
                 android:contentDescription="@null"
                 android:background="?attr/selectableItemBackground"/>
             <ImageView
@@ -72,7 +72,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:scaleType="center"
-                android:src="@drawable/ic_pause_white_24dp"
+                android:src="@drawable/btn_music_pause"
                 android:contentDescription="@null"
                 android:background="?attr/selectableItemBackground"/>
         </LinearLayout>

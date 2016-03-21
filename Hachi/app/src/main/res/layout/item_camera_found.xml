@@ -27,7 +27,6 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_slideshow_white_36dp"
         android:contentDescription="@null"/>
 
     <ImageButton
@@ -35,7 +34,6 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_visibility_white_36dp"
         android:contentDescription="@null"/>
 
     <ImageButton
@@ -43,7 +41,6 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_settings_white_36dp"
         android:contentDescription="@null"/>
 
 

@@ -145,7 +145,7 @@
             android:layout_marginRight="20dp"
             android:layout_toLeftOf="@id/btnFullscreen"
             android:background="@android:color/transparent"
-            android:src="@drawable/camera_control_grid" />
+            />
 
 
         <ImageButton

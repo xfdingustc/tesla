@@ -10,7 +10,6 @@
             android:layout_gravity="center"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/loadmore_add_compound"
             />
         <ProgressBar
             android:id="@+id/load_more_progressbar"

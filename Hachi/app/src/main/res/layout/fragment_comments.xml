@@ -24,7 +24,6 @@
             android:background="?attr/selectableItemBackground"
             android:contentDescription="@null"
             android:padding="8dp"
-            android:src="@drawable/ic_arrow_back"
             />
 
         <TextView
@@ -81,7 +80,6 @@
             android:background="?attr/colorPrimary"
             android:contentDescription="@null"
             android:padding="8dp"
-            android:src="@drawable/ic_send"
             />
     </LinearLayout>
 

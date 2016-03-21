@@ -10,8 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:src="@drawable/stories_placeholder"/>
+        android:scaleType="centerCrop"/>
 
     <ProgressBar
         android:id="@+id/createStoryProgress"

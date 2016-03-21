@@ -9,7 +9,6 @@
 
     <item
         android:id="@+id/cameraSetting"
-        android:icon="@drawable/settings_menu_general"
         android:title="@string/settings"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 </menu>

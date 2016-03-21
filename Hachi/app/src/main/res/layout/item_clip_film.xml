@@ -58,7 +58,7 @@
             android:padding="6dp"
             android:contentDescription="@null"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/btn_edit_action_enhance"/>
+            android:src="@drawable/btn_edit_action_video"/>
 
         <ImageView
             android:id="@+id/btn_add_to_story"
@@ -69,7 +69,7 @@
             android:padding="6dp"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/edit_button_action_insert"/>
+            android:src="@drawable/btn_edit_action_insert"/>
 
         <ImageView
             android:id="@+id/btn_share"

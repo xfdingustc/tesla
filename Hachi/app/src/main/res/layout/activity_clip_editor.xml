@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_play_circle_outline_white_48dp"/>
+            android:src="@drawable/playbar_play"/>
 
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
@@ -77,7 +77,7 @@
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackground"
             android:contentDescription="@null"
-            android:src="@drawable/ic_autorenew_white_48dp"/>
+            android:src="@drawable/navbar_info_n"/>
     </LinearLayout>
 
     <Button
