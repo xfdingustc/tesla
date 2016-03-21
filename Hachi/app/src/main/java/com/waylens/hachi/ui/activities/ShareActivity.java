@@ -238,13 +238,8 @@ public class ShareActivity extends BaseActivity implements MomentShareHelper.OnS
     static class IconAdapter extends RecyclerView.Adapter<IconVH> {
 
         int[] drawables = new int[]{
-                R.drawable.toggle_waylens,
                 R.drawable.toggle_facebook,
-                R.drawable.toggle_twitter,
                 R.drawable.toggle_youtube,
-                R.drawable.toggle_vimeo,
-                R.drawable.toggle_pinterest,
-                R.drawable.toggle_instagram,
         };
 
         @Override

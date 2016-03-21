@@ -119,8 +119,8 @@ class VideoTrimmerController extends View implements Progressive {
         mRectRightEx = new Rect();
         mRectProgress = new RectF();
 
-        mBitmapLeftArrow = BitmapFactory.decodeResource(getResources(), R.drawable.ic_navigate_before_white_36dp);
-        mBitmapRightArrow = BitmapFactory.decodeResource(getResources(), R.drawable.ic_navigate_next_white_36dp);
+        mBitmapLeftArrow = BitmapFactory.decodeResource(getResources(), R.drawable.video_handle_left);
+        mBitmapRightArrow = BitmapFactory.decodeResource(getResources(), R.drawable.video_handle_right);
         mPaintEx = new Paint();
         mPaintEx.setColor(Color.argb(0x80, 0xFF, 0xFF, 0xFF));
         mPaintProgress = new Paint();

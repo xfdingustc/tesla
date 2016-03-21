@@ -244,7 +244,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mRootContainer.removeView(mVideoContainer);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRootView.addView(mVideoContainer, params);
-            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit_white_36dp);
+            mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
 
 //            mRootContainer.removeView(mDashboardLayout);
 //            mRootView.addView(mDashboardLayout, params);
@@ -259,7 +259,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mRootView.removeView(mVideoContainer);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRootContainer.addView(mVideoContainer, params);
-            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_white_36dp);
+            mBtnFullScreen.setImageResource(R.drawable.screen_full);
             fullScreenPlayer = null;
 
 
@@ -351,7 +351,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         start();
         mCurrentState = STATE_PLAYING;
         mTargetState = STATE_PLAYING;
-        mBtnPlay.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
+        mBtnPlay.setImageResource(R.drawable.playbar_pause);
         fadeOutControllers(DEFAULT_TIMEOUT);
     }
 
@@ -360,7 +360,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mPausePosition = mMediaPlayer.getCurrentPosition();
         mCurrentState = STATE_PAUSED;
         mTargetState = STATE_PAUSED;
-        mBtnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
+        mBtnPlay.setImageResource(R.drawable.playbar_play);
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
@@ -516,7 +516,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     public void onCompletion(MediaPlayer mp) {
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
-        mBtnPlay.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
+        mBtnPlay.setImageResource(R.drawable.playbar_play);
         showController(0);
         int duration = mp.getDuration();
         setProgress(duration, duration);

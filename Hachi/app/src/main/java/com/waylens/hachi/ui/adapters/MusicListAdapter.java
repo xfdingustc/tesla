@@ -66,11 +66,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         final MusicItem musicItem = mMusicItems.get(position);
         holder.musicTitle.setText(musicItem.title);
         holder.musicLength.setText(DateUtils.formatElapsedTime(musicItem.duration));
-        holder.musicIcon.setImageResource(R.drawable.ic_cloud_queue_white_24dp);
+        holder.musicIcon.setImageResource(R.drawable.music_cloud);
 
         switch (musicItem.status) {
             case MusicItem.STATUS_LOCAL:
-                holder.musicIcon.setImageResource(R.drawable.ic_cloud_done_white_24dp);
+                holder.musicIcon.setImageResource(R.drawable.music_local);
                 holder.setDownloadStatus(ViewHolder.STATUS_NORMAL);
                 holder.itemContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -168,10 +168,10 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         }
         if (isPlaying()) {
             mMediaPlayer.pause();
-            holder.btnPlay.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+            holder.btnPlay.setImageResource(R.drawable.music_list_play_n);
         } else {
             mMediaPlayer.start();
-            holder.btnPlay.setImageResource(R.drawable.ic_pause_white_24dp);
+            holder.btnPlay.setImageResource(R.drawable.music_list_pause_n);
         }
     }
 

@@ -212,7 +212,7 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
                     if (response.optBoolean("result")) {
                         PreferenceUtils.remove(PreferenceUtils.SEND_GCM_TOKEN_SERVER);
                         SessionManager.getInstance().logout();
-                        mBtnAvatar.setImageResource(R.drawable.sailor);
+                        mBtnAvatar.setImageResource(R.drawable.settings_profile_photo_default);
                         mLoginStatus.setText(R.string.login);
                     }
                 }

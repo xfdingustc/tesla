@@ -44,9 +44,9 @@ public class ImageUtils {
 
     public static DisplayImageOptions getAvatarOptions() {
         return new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.sailor)
-                .showImageForEmptyUri(R.drawable.sailor)
-                .showImageOnFail(R.drawable.sailor)
+                .showImageOnLoading(R.drawable.settings_profile_photo_default)
+                .showImageForEmptyUri(R.drawable.settings_profile_photo_default)
+                .showImageOnFail(R.drawable.settings_profile_photo_default)
                 .cacheInMemory(true)
                 .cacheOnDisc(true)
                 .build();

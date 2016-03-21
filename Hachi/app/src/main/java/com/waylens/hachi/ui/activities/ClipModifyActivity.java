@@ -104,7 +104,7 @@ public class ClipModifyActivity extends BaseActivity {
         mToolbar.inflateMenu(R.menu.menu_clip_modify);
 
 
-        mToolbar.setNavigationIcon(R.drawable.navbar_back);
+        mToolbar.setNavigationIcon(R.drawable.navbar_close);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
