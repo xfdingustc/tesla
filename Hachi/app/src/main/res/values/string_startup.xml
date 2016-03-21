@@ -11,4 +11,6 @@
     <string name="understand">"OK, I Understand"</string>
     <string name="phone_camera">PHONE CAMERA</string>
     <string name="providing_access">Providing access to your phone camera , so you can scan the QR code to get the SSID and Password</string>
+    <string name="connect_successfully">Camera connnected successfully!</string>
+    <string name="what_to_do_next">WHAT TO DO NEXT</string>
 </resources>

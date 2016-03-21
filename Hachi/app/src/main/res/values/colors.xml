@@ -19,6 +19,8 @@
     <color name="text_camera_info">#A4A6A6</color>
     <color name="text_enhance">#9B9B9B</color>
     <color name="text_enhance_highlight">#FFECECEC</color>
+    
+    <color name="text_color_title">#C4C5C5</color>
 
     
     <color name="bg_toolbar">#FF141618</color>

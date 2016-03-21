@@ -31,9 +31,9 @@ public class ScanQrCodeFragment extends BaseFragment {
 
     private String mWifiName;
     private String mWifiPassword;
-    private WifiManager mWifiManager;
 
-    private BroadcastReceiver mWifiStateReceiver;
+
+
 
     @Bind(R.id.qrDecoderView)
     QRCodeReaderView mQrCodeReaderView;
@@ -56,24 +56,7 @@ public class ScanQrCodeFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        mWifiStateReceiver = new BroadcastReceiver() {
 
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-                    Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID());
-
-
-                } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-                    Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION");
-                }
-            }
-        };
-        getActivity().registerReceiver(mWifiStateReceiver, filter);
     }
 
     @Override
@@ -82,14 +65,10 @@ public class ScanQrCodeFragment extends BaseFragment {
         mQrCodeReaderView.getCameraManager().stopPreview();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        getActivity().unregisterReceiver(mWifiStateReceiver);
-    }
+
 
     private void init() {
-        mWifiManager = (WifiManager)getActivity().getSystemService(Context.WIFI_SERVICE);
+
     }
 
     private void initViews() {
@@ -118,15 +97,7 @@ public class ScanQrCodeFragment extends BaseFragment {
     private void launchApConnectFragment() {
         ApConnectFragment fragment = ApConnectFragment.newInstance(mWifiName, mWifiPassword);
         getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
-//        WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
-//            (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
-//                @Override
-//                public void onAudoConnectStarted() {
-//
-//                }
-//            });
-//        wifiAutoConnectManager.connect(mWifiName, mWifiPassword, WifiAutoConnectManager
-//            .WifiCipherType.WIFICIPHER_WPA);
+
     }
 
 
