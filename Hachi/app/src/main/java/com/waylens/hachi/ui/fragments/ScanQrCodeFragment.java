@@ -2,7 +2,10 @@ package com.waylens.hachi.ui.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PointF;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 
@@ -25,12 +29,15 @@ import butterknife.Bind;
 public class ScanQrCodeFragment extends BaseFragment {
     private static final String TAG = ScanQrCodeFragment.class.getSimpleName();
 
-    @Bind(R.id.qrDecoderView)
-    QRCodeReaderView mQrCodeReaderView;
     private String mWifiName;
     private String mWifiPassword;
     private WifiManager mWifiManager;
+
     private BroadcastReceiver mWifiStateReceiver;
+
+    @Bind(R.id.qrDecoderView)
+    QRCodeReaderView mQrCodeReaderView;
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -47,9 +54,38 @@ public class ScanQrCodeFragment extends BaseFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        mWifiStateReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                    Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID());
+
+
+                } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+                    Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION");
+                }
+            }
+        };
+        getActivity().registerReceiver(mWifiStateReceiver, filter);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mQrCodeReaderView.getCameraManager().stopPreview();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unregisterReceiver(mWifiStateReceiver);
     }
 
     private void init() {
@@ -63,6 +99,7 @@ public class ScanQrCodeFragment extends BaseFragment {
             public void onQRCodeRead(String text, PointF[] points) {
                 if (parseWifiInfo(text) == true) {
                     mQrCodeReaderView.getCameraManager().stopPreview();
+                    launchApConnectFragment();
                 }
             }
 
@@ -76,6 +113,20 @@ public class ScanQrCodeFragment extends BaseFragment {
 
             }
         });
+    }
+
+    private void launchApConnectFragment() {
+        ApConnectFragment fragment = ApConnectFragment.newInstance(mWifiName, mWifiPassword);
+        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
+//        WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
+//            (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
+//                @Override
+//                public void onAudoConnectStarted() {
+//
+//                }
+//            });
+//        wifiAutoConnectManager.connect(mWifiName, mWifiPassword, WifiAutoConnectManager
+//            .WifiCipherType.WIFICIPHER_WPA);
     }
 
 
@@ -123,15 +174,7 @@ public class ScanQrCodeFragment extends BaseFragment {
         if (matcher.find() && matcher.groupCount() == 2) {
             mWifiName = matcher.group(1);
             mWifiPassword = matcher.group(2);
-            WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
-                (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
-                    @Override
-                    public void onAudoConnectStarted() {
 
-                    }
-                });
-            wifiAutoConnectManager.connect(mWifiName, mWifiPassword, WifiAutoConnectManager
-                .WifiCipherType.WIFICIPHER_WPA);
             return true;
         }
         return false;
