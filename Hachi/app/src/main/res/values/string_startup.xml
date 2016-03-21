@@ -4,6 +4,11 @@
     <string name="step1">"1.Scan QR code on your camera."</string>
     <string name="step2">"2.Connect your phone to the camera."</string>
     <string name="step3">"3.Connect your camera to your home WiFi"</string>
+    <string name="skip_confirm">Are you sure you want to skip connnection setting?\nVideos may not be previewed here.></string>
     <string name="get_started">Get Started</string>
     <string name="skip">SKIP</string>
+    <string name="leave">Leave</string>
+    <string name="understand">"OK, I Understand"</string>
+    <string name="phone_camera">PHONE CAMERA</string>
+    <string name="providing_access">Providing access to your phone camera , so you can scan the QR code to get the SSID and Password</string>
 </resources>
