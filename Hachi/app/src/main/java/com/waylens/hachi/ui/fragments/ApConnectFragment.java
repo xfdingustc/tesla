@@ -151,6 +151,9 @@ public class ApConnectFragment extends BaseFragment {
     }
 
     private void toggleCameraConnectView() {
+        if (mVsRootView == null) {
+            return;
+        }
         if (mVdtCameraManager.isConnected()) {
             mVsRootView.showNext();
             mUiHandler.postDelayed(new Runnable() {

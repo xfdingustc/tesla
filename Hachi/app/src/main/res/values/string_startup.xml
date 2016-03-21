@@ -13,4 +13,6 @@
     <string name="providing_access">Providing access to your phone camera , so you can scan the QR code to get the SSID and Password</string>
     <string name="connect_successfully">Camera connnected successfully!</string>
     <string name="what_to_do_next">WHAT TO DO NEXT</string>
+    <string name="choose_your_home_wifi">Choose Your Home Wi-Fi</string>
+    <string name="connected_before">Or one you have connected before</string>
 </resources>

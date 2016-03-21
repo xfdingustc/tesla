@@ -1,6 +1,7 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
 import com.waylens.hachi.snipe.VdbConnection;
+import com.waylens.hachi.ui.entities.NetworkItemBean;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -25,6 +26,8 @@ public class VdtCamera {
     private BtState mBtStates = new BtState();
     private GpsState mGpsStates = new GpsState();
     private WifiState mWifiStates = new WifiState();
+
+    private OnScanHostListener mOnScanHostListener;
 
 
     public static class ServiceInfo {
@@ -178,6 +181,13 @@ public class VdtCamera {
             @Override
             public void onStillCaptureDone() {
                 VdtCamera.this.onStillCaptureDone();
+            }
+
+            @Override
+            public void onScanHostResult(List<NetworkItemBean> networkList) {
+                if (mOnScanHostListener != null) {
+                    mOnScanHostListener.OnScanHostResult(networkList);
+                }
             }
         });
     }
@@ -482,6 +492,11 @@ public class VdtCamera {
         mController.cmd_Network_Synctime(time, timezone);
     }
 
+    public void scanHost(OnScanHostListener listener) {
+        mOnScanHostListener = listener;
+        mController.cmd_Network_ScanHost();
+    }
+
     public void GetSetup() {
         mController.userCmd_GetSetup();
     }
@@ -561,6 +576,11 @@ public class VdtCamera {
         storageInfo.totalSpace = (int)(mState.getStorageTotalSpace() / 1024);
         storageInfo.freeSpace = (int)(mState.getStorageFreeSpace() / 1024);
         return storageInfo;
+    }
+
+
+    public interface OnScanHostListener {
+        void OnScanHostResult(List<NetworkItemBean> networkList);
     }
 
 }

@@ -1,10 +1,16 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
+import android.util.JsonReader;
 import android.util.Log;
 import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.ui.entities.NetworkItemBean;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -12,7 +18,9 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -88,6 +96,8 @@ class VdtCameraController {
     private static final int CMD_NETWORK_RMV_HOST = 31;
     private static final int CMD_NETWORK_CONNECT_HOST = 32;
 
+    private static final int CMD_NETWORK_SCANHOST = 74;
+
     private static final int CMD_NETWORK_SYNCTIME = 33;
     private static final int CMD_NETWORK_GET_DEVICETIME = 34;
 
@@ -149,6 +159,8 @@ class VdtCameraController {
     private static final int CMD_REC_MARK_LIVE_VIDEO = 27;
     private static final int CMD_REC_SET_MARK_TIME = 28;
     private static final int CMD_REC_GET_MARK_TIME = 29;
+
+
 
     // oliver
     private static final int CMD_REC_SET_STILL_MODE = 100;
@@ -297,6 +309,8 @@ class VdtCameraController {
         void onStillPictureInfo(boolean bCapturing, int numPictures, int burstTicks);
 
         void onStillCaptureDone();
+
+        void onScanHostResult(List<NetworkItemBean> networkList);
     }
 
 
@@ -676,6 +690,10 @@ class VdtCameraController {
         String p1 = Long.toString(time);
         String p2 = Integer.toString(timezone);
         postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_SYNCTIME, p1, p2);
+    }
+
+    public void cmd_Network_ScanHost() {
+        postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_SCANHOST);
     }
 
     // ========================================================
@@ -1328,6 +1346,8 @@ class VdtCameraController {
                 sis.setRange(8, length);
 
                 xpp.setInput(sis, "UTF-8");
+
+
                 int eventType = xpp.getEventType();
                 while (!thread.isInterrupted()) {
                     switch (eventType) {
@@ -1477,6 +1497,9 @@ class VdtCameraController {
             case CMD_NETWORK_CONNECT_HOST:
                 ackNotHandled("CMD_NETWORK_CONNECT_HOST", p1, p2);
                 break;
+            case CMD_NETWORK_SCANHOST:
+                handleNetWorkScanHostResult(p1, p2);
+                break;
             case CMD_NETWORK_SYNCTIME:
                 ackNotHandled("CMD_NETWORK_SYNCTIME", p1, p2);
                 break;
@@ -1540,6 +1563,30 @@ class VdtCameraController {
             default:
                 Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
+        }
+    }
+
+    private void handleNetWorkScanHostResult(String p1, String p2) {
+        Logger.t(TAG).d("p1: " + p1 + " P2: " + p2);
+        List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
+        try {
+            JSONObject object = new JSONObject(p1);
+            JSONArray networks = object.getJSONArray("networks");
+            for (int i = 0; i < networks.length(); i++) {
+                NetworkItemBean networkItem = new NetworkItemBean();
+                networkItem.ssid = object.optString("ssid");
+                networkItem.bssid = object.optString("bssid");
+                networkItem.flags = object.optString("flags");
+                networkItem.frequency = object.optInt("frequency");
+                networkItem.singalLevel = object.optInt("signal_level");
+                networkItemBeanList.add(networkItem);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (mListener != null) {
+            mListener.onScanHostResult(networkItemBeanList);
         }
     }
 
