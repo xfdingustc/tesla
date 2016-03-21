@@ -58,7 +58,7 @@ public class MenualSetupActivity extends BaseActivity {
     @Override
     public void setupToolbar() {
         mToolbar.setTitle(R.string.initial_setup);
-        //mToolbar.setNavigationIcon(R.drawable.navbar_back);
+        mToolbar.setNavigationIcon(R.drawable.navbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
