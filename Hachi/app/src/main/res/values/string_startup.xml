@@ -15,4 +15,5 @@
     <string name="what_to_do_next">WHAT TO DO NEXT</string>
     <string name="choose_your_home_wifi">Choose Your Home Wi-Fi</string>
     <string name="connected_before">Or one you have connected before</string>
+    <string name="join">Join</string>
 </resources>

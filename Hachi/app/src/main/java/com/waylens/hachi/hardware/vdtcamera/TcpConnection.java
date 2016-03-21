@@ -155,7 +155,7 @@ abstract public class TcpConnection {
             try {
                 msgLoop(this);
             } catch (Exception e) {
-                Logger.t(TAG).e(e, "");
+                e.printStackTrace();
             }
 
             if (isInterrupted()) {

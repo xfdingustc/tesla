@@ -329,7 +329,6 @@ class VdtCameraController {
 
     public VdtCameraController(InetAddress host, int port, CameraState state) {
         InetSocketAddress address = new InetSocketAddress(host, port);
-        Logger.t("testconnect").d("create connection " + address.getAddress());
         mConnection = new MyTcpConnection("ccam", address);
         this.mStates = state;
     }
@@ -1129,11 +1128,11 @@ class VdtCameraController {
     }
 
     private void ack_Rec_GetMarkTime(String p1, String p2) {
-        Log.e("test", String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2));
+        Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2));
         try {
             mStates.setMarkTime(Integer.parseInt(p1), Integer.parseInt(p2));
         } catch (Exception e) {
-            Log.e("test", String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
     }
 
@@ -1146,11 +1145,11 @@ class VdtCameraController {
     }
 
     private void ack_Rec_SetMarkTime(String p1, String p2) {
-        Log.e("test", String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
+        Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
         try {
             mStates.setMarkTime(Integer.parseInt(p1), Integer.parseInt(p2));
         } catch (Exception e) {
-            Log.e("test", String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
     }
 
@@ -1321,7 +1320,7 @@ class VdtCameraController {
 
     private final void msgLoop(Thread thread) throws IOException, InterruptedException {
 
-        SimpleInputStream sis = new SimpleInputStream(1024);
+        SimpleInputStream sis = new SimpleInputStream(8192);
         XmlPullParser xpp = Xml.newPullParser();
         int length = 0;
         int appended = 0;
@@ -1567,18 +1566,18 @@ class VdtCameraController {
     }
 
     private void handleNetWorkScanHostResult(String p1, String p2) {
-        Logger.t(TAG).d("p1: " + p1 + " P2: " + p2);
         List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
         try {
             JSONObject object = new JSONObject(p1);
             JSONArray networks = object.getJSONArray("networks");
             for (int i = 0; i < networks.length(); i++) {
+                JSONObject networkObject = networks.getJSONObject(i);
                 NetworkItemBean networkItem = new NetworkItemBean();
-                networkItem.ssid = object.optString("ssid");
-                networkItem.bssid = object.optString("bssid");
-                networkItem.flags = object.optString("flags");
-                networkItem.frequency = object.optInt("frequency");
-                networkItem.singalLevel = object.optInt("signal_level");
+                networkItem.ssid = networkObject.optString("ssid");
+                networkItem.bssid = networkObject.optString("bssid");
+                networkItem.flags = networkObject.optString("flags");
+                networkItem.frequency = networkObject.optInt("frequency");
+                networkItem.singalLevel = networkObject.optInt("signal_level");
                 networkItemBeanList.add(networkItem);
             }
         } catch (JSONException e) {

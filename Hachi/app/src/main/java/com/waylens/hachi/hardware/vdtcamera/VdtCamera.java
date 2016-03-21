@@ -557,7 +557,7 @@ public class VdtCamera {
         mController.cmd_Network_RmvHost(ssid);
     }
 
-    public void setAddNetworkHost(String ssid, String password) {
+    public void addNetworkHost(String ssid, String password) {
         mController.cmd_Network_AddHost(ssid, password);
     }
 
