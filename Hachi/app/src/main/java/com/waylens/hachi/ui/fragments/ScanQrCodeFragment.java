@@ -1,6 +1,8 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.graphics.PointF;
+import android.graphics.Rect;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,6 +17,8 @@ import android.widget.ImageView;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.waylens.hachi.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,7 +61,7 @@ public class ScanQrCodeFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        int halfHeight = mCropWindow.getHeight() / 2;
+
 
     }
 
@@ -74,6 +78,8 @@ public class ScanQrCodeFragment extends BaseFragment {
 
     private void initViews() {
         mQrCodeReaderView.getCameraManager().startPreview();
+
+
         mQrCodeReaderView.setOnQRCodeReadListener(new QRCodeReaderView.OnQRCodeReadListener() {
             @Override
             public void onQRCodeRead(String text, PointF[] points) {

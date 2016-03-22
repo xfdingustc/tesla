@@ -87,9 +87,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.btnFullscreen)
     ImageButton mBtnFullScreen;
 
-    @Nullable
-    @Bind(R.id.tvTitle)
-    TextView mTvTitle;
 
     @Nullable
     @Bind(R.id.sharp_view)
@@ -196,26 +193,28 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.live_view);
-        mToolbar.getMenu().clear();
-        if (VdtCameraManager.getManager().isConnected()) {
-            mToolbar.inflateMenu(R.menu.menu_live_view);
-        }
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.cameraInfo:
-
-                        toggleInfoView();
-                        break;
-                    case R.id.cameraSetting:
-                        LiveViewSettingActivity.launch(getActivity(), mVdtCamera);
-                        break;
-                }
-                return false;
+        if (mToolbar != null) {
+            mToolbar.setTitle(R.string.live_view);
+            mToolbar.getMenu().clear();
+            if (VdtCameraManager.getManager().isConnected()) {
+                mToolbar.inflateMenu(R.menu.menu_live_view);
             }
-        });
+            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.cameraInfo:
+
+                            toggleInfoView();
+                            break;
+                        case R.id.cameraSetting:
+                            LiveViewSettingActivity.launch(getActivity(), mVdtCamera);
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
         super.setupToolbar();
     }
 
@@ -284,7 +283,9 @@ public class CameraPreviewFragment extends BaseFragment {
         mHandler = new Handler();
         if (VdtCameraManager.getManager().isConnected()) {
             mVdtCamera = VdtCameraManager.getManager().getConnectedCameras().get(0);
-            mCameraConnecting.setVisibility(View.GONE);
+            if (mCameraConnecting != null) {
+                mCameraConnecting.setVisibility(View.GONE);
+            }
         } else {
             showConnectingStatus();
         }
@@ -312,10 +313,7 @@ public class CameraPreviewFragment extends BaseFragment {
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
 
-        // show camera name;
-        if (mTvTitle != null) {
-            mTvTitle.setText(mVdtCamera.getName());
-        }
+
         initGaugeWebView();
     }
 

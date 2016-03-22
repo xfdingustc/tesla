@@ -66,8 +66,7 @@
 
         <activity
             android:name=".ui.activities.LiveViewActivity"
-            android:screenOrientation="landscape">
-        </activity>
+            android:screenOrientation="landscape"></activity>
 
 
         <activity
@@ -77,7 +76,6 @@
         <activity android:name=".ui.activities.LiveViewSettingActivity"/>
 
         <activity android:name=".ui.activities.StoryEditActivity"/>
-        <activity android:name=".ui.fragments.ScanQrCodeFragment"/>
         <activity android:name=".ui.activities.MenualSetupActivity"/>
 
         <activity
