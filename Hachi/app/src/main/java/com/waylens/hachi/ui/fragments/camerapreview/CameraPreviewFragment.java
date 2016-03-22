@@ -332,6 +332,16 @@ public class CameraPreviewFragment extends BaseFragment {
                     public void onRecStateChanged(int newState, boolean isStill) {
                         updateCameraState(mVdtCamera.getState());
                     }
+
+                    @Override
+                    public void onRecDurationChanged(int duration) {
+
+                    }
+
+                    @Override
+                    public void onRecError(int error) {
+
+                    }
                 });
                 mLiveView.startStream(serverAddr, null, true);
             }
