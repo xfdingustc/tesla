@@ -29,6 +29,11 @@ public class MusicDownloadActivity extends BaseActivity {
         activity.startActivityForResult(intent, requestCode);
     }
 
+    public static void launchForResult(Fragment fragment, int requestCode) {
+        Intent intent = new Intent(fragment.getActivity(), MusicDownloadActivity.class);
+        fragment.startActivityForResult(intent, requestCode);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

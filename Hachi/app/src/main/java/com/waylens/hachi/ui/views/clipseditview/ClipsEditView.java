@@ -1,25 +1,27 @@
 package com.waylens.hachi.ui.views.clipseditview;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.format.DateUtils;
+import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
@@ -38,7 +40,7 @@ import butterknife.ButterKnife;
  * //
  * Created by Richard on 2/23/16.
  */
-public class ClipsEditView extends RelativeLayout implements View.OnClickListener,
+public class ClipsEditView extends LinearLayout implements View.OnClickListener,
         RecyclerView.OnItemTouchListener, RangeSeekBar.OnRangeSeekBarChangeListener<Long> {
     final static float HALF_ALPHA = 0.5f;
     final static float FULL_ALPHA = 1.0f;
@@ -57,8 +59,8 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     @Bind(R.id.range_seek_bar)
     RangeSeekBar<Long> mRangeSeekBar;
 
-    @Bind(R.id.view_animator)
-    ViewAnimator mViewAnimator;
+    @Bind(R.id.trimming_bar)
+    View mTrimmingBar;
 
     LinearLayoutManager mLayoutManager;
     private int mClipSetIndex;
@@ -67,6 +69,8 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     OnClipEditListener mOnClipEditListener;
 
     int mSelectedPosition = POSITION_UNKNOWN;
+
+    int mOriginalSize;
 
     public ClipsEditView(Context context) {
         this(context, null, 0);
@@ -82,8 +86,12 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
     }
 
     void init(Context context) {
+        setOrientation(VERTICAL);
         View.inflate(context, R.layout.layout_clips_edit_view, this);
         ButterKnife.bind(this, this);
+
+        mTrimmingBar.setVisibility(INVISIBLE);
+        mClipsCountView.setVisibility(VISIBLE);
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -203,14 +211,16 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
     void internalOnExitEditing() {
         mSelectedPosition = -1;
-        mViewAnimator.setDisplayedChild(0);
+        mTrimmingBar.setVisibility(INVISIBLE);
+        mClipsCountView.setVisibility(VISIBLE);
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onExitEditing();
         }
     }
 
     void internalOnSelectClip(int selectedPosition, Clip clip) {
-        mViewAnimator.setDisplayedChild(1);
+        mTrimmingBar.setVisibility(VISIBLE);
+        mClipsCountView.setVisibility(INVISIBLE);
         mRangeSeekBar.setRangeValues(clip.editInfo.minExtensibleValue, clip.editInfo.maxExtensibleValue);
         mRangeSeekBar.setSelectedMinValue(clip.editInfo.selectedStartValue);
         mRangeSeekBar.setSelectedMaxValue(clip.editInfo.selectedEndValue);
@@ -258,6 +268,28 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
                 R.plurals.numbers_of_clips, clipCount, clipCount));
     }
 
+    void layoutTransition(VH holder, boolean isSelected) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            TransitionManager.beginDelayedTransition(holder.cardView);
+        }
+        ViewGroup.LayoutParams lp = holder.cardView.getLayoutParams();
+        if (isSelected) {
+            if (mOriginalSize == 0) {
+                mOriginalSize = holder.cardView.getWidth();
+            }
+            int newSize = ViewUtils.dp2px(112, getResources());
+            lp.width = newSize;
+            lp.height = newSize;
+        } else {
+            if (mOriginalSize == 0) {
+                mOriginalSize = ViewUtils.dp2px(80, getResources());
+            }
+            lp.width = mOriginalSize;
+            lp.height = mOriginalSize;
+        }
+        holder.cardView.setLayoutParams(lp);
+    }
+
     class RecyclerViewAdapter extends RecyclerView.Adapter<VH> implements ItemTouchListener {
         VdbImageLoader mImageLoader;
 
@@ -277,11 +309,13 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
             final Clip clip = getClipSet().getClip(position);
             ClipPos clipPos = new ClipPos(clip);
             mImageLoader.displayVdbImage(clipPos, holder.clipThumbnail);
+            holder.itemView.setTag(holder);
             holder.itemView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mSelectedPosition == holder.getAdapterPosition()) {
                         holder.itemView.setAlpha(HALF_ALPHA);
+                        layoutTransition(holder, false);
                         internalOnExitEditing();
                         return;
                     }
@@ -289,10 +323,16 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
                         View view = mLayoutManager.findViewByPosition(mSelectedPosition);
                         if (view != null) {
                             view.setAlpha(HALF_ALPHA);
+                            Object tag = view.getTag();
+                            if (tag instanceof VH) {
+                                layoutTransition((VH) tag, false);
+                            }
                         }
+
                     }
 
                     holder.itemView.setAlpha(FULL_ALPHA);
+                    layoutTransition(holder, true);
                     mSelectedPosition = holder.getAdapterPosition();
                     internalOnSelectClip(mSelectedPosition, clip);
                 }
@@ -316,6 +356,12 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
             } else {
                 holder.itemView.setAlpha(HALF_ALPHA);
             }
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(VH holder) {
+            super.onViewDetachedFromWindow(holder);
+            holder.itemView.setTag(null);
         }
 
         @Override
@@ -349,23 +395,26 @@ public class ClipsEditView extends RelativeLayout implements View.OnClickListene
 
     class VH extends RecyclerView.ViewHolder implements ItemViewHolderListener {
         ImageView clipThumbnail;
-
+        CardView cardView;
         float defaultElevation = 6.0f;
 
         public VH(View itemView) {
             super(itemView);
             clipThumbnail = (ImageView) itemView.findViewById(R.id.clip_thumbnail);
-            defaultElevation = ((CardView) itemView).getCardElevation();
+            cardView = (CardView) itemView.findViewById(R.id.card_view);
+            defaultElevation = cardView.getCardElevation();
         }
 
         @Override
         public void onItemSelected() {
-            ((CardView) itemView).setCardElevation(12.0f);
+            //cardView.setCardElevation(12.0f);
+            layoutTransition(this, true);
         }
 
         @Override
         public void onItemClear() {
-            ((CardView) itemView).setCardElevation(defaultElevation);
+            //cardView.setCardElevation(defaultElevation);
+            layoutTransition(this, false);
         }
     }
 

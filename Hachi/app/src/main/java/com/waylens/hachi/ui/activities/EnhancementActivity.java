@@ -1,230 +1,66 @@
 package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.ViewAnimator;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.ui.adapters.GaugeListAdapter;
-import com.waylens.hachi.ui.entities.MusicItem;
+import com.waylens.hachi.ui.fragments.EnhanceFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.ui.fragments.ShareFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.GaugeInfoItem;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
-import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * Created by Richard on 12/18/15.
  */
 public class EnhancementActivity extends BaseActivity implements FragmentNavigator,
-        ClipsEditView.OnClipEditListener, android.support.v7.widget.Toolbar.OnMenuItemClickListener {
+        android.support.v7.widget.Toolbar.OnMenuItemClickListener,
+        ClipPlayFragment.ClipPlayFragmentContainer {
     private static final String TAG = EnhancementActivity.class.getSimpleName();
-    private static final int REQUEST_CODE_ENHANCE = 1000;
-    private static final int REQUEST_CODE_ADD_MUSIC = 1001;
+
     public static final String EXTRA_CLIPS_TO_ENHANCE = "extra.clips.to.enhance";
     public static final String EXTRA_CLIPS_TO_APPEND = "extra.clips.to.append";
 
-    private PlaylistEditor mPlaylistEditor;
+    public static final String EXTRA_LAUNCH_MODE = "extra.launch.mode";
+
+    public static final int LAUNCH_MODE_QUICK_VIEW = 0;
+    public static final int LAUNCH_MODE_ENHANCE = 1;
+    public static final int LAUNCH_MODE_SHARE = 2;
 
     private ClipPlayFragment mClipPlayFragment;
 
-    @Bind(R.id.gauge_list_view)
-    RecyclerView mGaugeListView;
+    @Bind(R.id.top_place_holder)
+    View mTopPlaceHolder;
 
-    @Bind(R.id.clips_edit_view)
-    ClipsEditView mClipsEditView;
+    int mLaunchMode;
 
-    @Bind(R.id.view_animator)
-    ViewAnimator mViewAnimator;
-
-    @Bind(R.id.btn_gauge)
-    View btnGauge;
-
-    @Bind(R.id.btn_music)
-    View btnMusic;
-
-    @Bind(R.id.btn_smart_remix)
-    View btnRemix;
-
-    @Bind(R.id.volume_value_view)
-    TextView mVolumeView;
-
-    @Bind(R.id.volume_seek_bar)
-    SeekBar mVolumeSeekBar;
-
-    @Bind(R.id.btn_add_music)
-    Button btnAddMusic;
-
-    @Bind(R.id.btn_remove)
-    View btnRemove;
-
-    @Bind(R.id.spinner_theme)
-    Spinner mThemeSpinner;
-
-    @Bind(R.id.spinner_length)
-    Spinner mLengthSpinner;
-
-    @Bind(R.id.spinner_clip_src)
-    Spinner mClipSrcSpinner;
-
-    @Bind(R.id.style_radio_group)
-    RadioGroup mStyleRadioGroup;
-
-
-    String[] supportedGauges;
-    GaugeListAdapter mGaugeListAdapter;
-
-    MusicItem mMusicItem;
-
-    ArrayAdapter<CharSequence> mThemeAdapter;
-    ArrayAdapter<CharSequence> mLengthAdapter;
-    ArrayAdapter<CharSequence> mClipSrcAdapter;
     private VdbRequestQueue mVdbRequestQueue;
     private VdtCamera mVdtCamera;
 
-    @OnClick(R.id.btn_music)
-    void onClickMusic(View view) {
-        btnGauge.setSelected(false);
-        btnRemix.setSelected(false);
-        view.setSelected(!view.isSelected());
-        configureActionUI(1, view.isSelected());
-        updateMusicUI();
-    }
+    EnhanceFragment mEnhanceFragment;
+    ShareFragment mShareFragment;
 
-    void updateMusicUI() {
-        if (mMusicItem == null) {
-            btnAddMusic.setText(R.string.add_music);
-            btnRemove.setVisibility(View.GONE);
-        } else {
-            btnAddMusic.setText(R.string.btn_swap);
-            btnRemove.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    @OnClick(R.id.btn_add_music)
-    void addMusic() {
-        MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
-    }
-
-    @OnClick(R.id.btn_remove)
-    void removeMusic() {
-        mMusicItem = null;
-        mClipPlayFragment.setAudioUrl(null);
-        updateMusicUI();
-    }
-
-    @OnClick(R.id.btn_gauge)
-    void showGauge(View view) {
-        btnMusic.setSelected(false);
-        btnRemix.setSelected(false);
-        mClipPlayFragment.showGaugeView(true);
-        view.setSelected(!view.isSelected());
-        configureActionUI(0, view.isSelected());
-    }
-
-    @OnClick(R.id.btnThemeOff)
-    public void onBtnThemeOffClicked() {
-        mClipPlayFragment.setGaugeTheme("NA");
-    }
-
-    @OnClick(R.id.btnThemeDefault)
-    public void onBtnThemeDefaultClicked() {
-        mClipPlayFragment.setGaugeTheme("default");
-    }
-
-    @OnClick(R.id.btnThemeNeo)
-    public void onBtnThemeNeoClicked() {
-        mClipPlayFragment.setGaugeTheme("neo");
-    }
-
-    void configureActionUI(int child, boolean isShow) {
-        if (isShow) {
-            mViewAnimator.setVisibility(View.VISIBLE);
-            mViewAnimator.setDisplayedChild(child);
-            mClipsEditView.setVisibility(View.GONE);
-        } else {
-            mViewAnimator.setVisibility(View.GONE);
-            mClipsEditView.setVisibility(View.VISIBLE);
-        }
-    }
-
-
-    @OnClick(R.id.btn_add_video)
-    void showClipChooser() {
-        btnMusic.setSelected(false);
-        btnRemix.setSelected(false);
-        btnGauge.setSelected(false);
-        configureActionUI(0, false);
-        Intent intent = new Intent(this, ClipChooserActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_ENHANCE);
-    }
-
-    @OnClick(R.id.btn_smart_remix)
-    void showSmartRemix(View view) {
-        btnMusic.setSelected(false);
-        btnGauge.setSelected(false);
-        view.setSelected(!view.isSelected());
-        configureActionUI(2, view.isSelected());
-        if (mThemeAdapter == null) {
-            mThemeAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.theme_remix,
-                    R.layout.layout_remix_spinner);
-            mThemeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mThemeSpinner.setAdapter(mThemeAdapter);
-        }
-
-        if (mLengthAdapter == null) {
-            mLengthAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.theme_length,
-                    R.layout.layout_remix_spinner);
-            mLengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mLengthSpinner.setAdapter(mLengthAdapter);
-        }
-
-        if (mClipSrcAdapter == null) {
-            mClipSrcAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.theme_clip_src,
-                    R.layout.layout_remix_spinner);
-            mClipSrcAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mClipSrcSpinner.setAdapter(mClipSrcAdapter);
-        }
-    }
-
-    public static void launch(Activity activity, ArrayList<Clip> clipList) {
+    public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
         intent.putParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE, clipList);
+        intent.putExtra(EXTRA_LAUNCH_MODE, launchMode);
         activity.startActivity(intent);
     }
 
@@ -238,7 +74,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     protected void init() {
         super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
-        supportedGauges = getResources().getStringArray(R.array.supported_gauges);
+        mLaunchMode = getIntent().getIntExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_QUICK_VIEW);
         initViews();
     }
 
@@ -253,58 +89,40 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             clipSetEditing.addClip(clip);
         }
 
-        //ClipsEditView and VideoPlayFragment use CLIP_SET_TYPE_ENHANCE
-
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
-        mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, 0x100);
-        mPlaylistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, new PlaylistEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                embedVideoPlayFragment();
-                mClipsEditView.setClipIndex(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
-            }
-        });
-
-        mClipsEditView.setOnClipEditListener(this);
-
-        mVolumeView.setText("100");
-        mVolumeSeekBar.setMax(100);
-        mVolumeSeekBar.setProgress(100);
-
-        mVolumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mVolumeView.setText(String.valueOf(progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                //
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //
-            }
-        });
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mGaugeListView.setLayoutManager(layoutManager);
-        mGaugeListAdapter = new GaugeListAdapter(supportedGauges, new GaugeListAdapter.OnGaugeItemChangedListener() {
-            @Override
-            public void onGaugeItemChanged(GaugeInfoItem item) {
-                mClipPlayFragment.updateGauge(item);
-            }
-        });
-        mGaugeListView.setAdapter(mGaugeListAdapter);
-
+        embedVideoPlayFragment();
+        switchToMode();
     }
 
-    @Override
-    public void setupToolbar() {
-        mToolbar.setTitle(R.string.enhance);
+    void switchToMode() {
+        setupToolbarImpl();
+        switch (mLaunchMode) {
+            case LAUNCH_MODE_QUICK_VIEW:
+                mTopPlaceHolder.setVisibility(View.VISIBLE);
+                break;
+            case LAUNCH_MODE_ENHANCE:
+                mTopPlaceHolder.setVisibility(View.GONE);
+                if (mEnhanceFragment == null) {
+                    mEnhanceFragment = new EnhanceFragment();
+                }
+                switchFragment(mShareFragment, mEnhanceFragment);
+                break;
+            case LAUNCH_MODE_SHARE:
+                mTopPlaceHolder.setVisibility(View.GONE);
+                if (mShareFragment == null) {
+                    mShareFragment = new ShareFragment();
+                }
+                switchFragment(mEnhanceFragment, mShareFragment);
+                break;
+        }
+    }
+
+
+    void setupToolbarImpl() {
+        if (mToolbar == null) {
+            return;
+        }
         mToolbar.setNavigationIcon(R.drawable.navbar_close);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -312,53 +130,37 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 finish();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_enhance);
-
         mToolbar.setOnMenuItemClickListener(this);
+        mToolbar.getMenu().clear();
+        switch (mLaunchMode) {
+            case LAUNCH_MODE_QUICK_VIEW:
+                mToolbar.setTitle("");
+                mToolbar.inflateMenu(R.menu.menu_clip_play_fragment);
+                break;
+            case LAUNCH_MODE_ENHANCE:
+                mToolbar.setTitle(R.string.enhance);
+                mToolbar.inflateMenu(R.menu.menu_enhance);
+                break;
+            case LAUNCH_MODE_SHARE:
+                mToolbar.setTitle(R.string.share);
+                mToolbar.inflateMenu(R.menu.menu_share);
+                break;
+        }
 
         super.setupToolbar();
-
     }
 
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
 
-        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlayListID());
+        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, 0x100);
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE,
                 vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
-        getFragmentManager().beginTransaction().replace(R.id.enhance_fragment_content, mClipPlayFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CODE_ENHANCE:
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Clip> clips = data.getParcelableArrayListExtra(EXTRA_CLIPS_TO_APPEND);
-                    Log.e("test", "Clips: " + clips);
-                    mClipsEditView.appendSharableClips(clips);
-                    mClipPlayFragment.setPosition(0);
-                }
-                break;
-            case REQUEST_CODE_ADD_MUSIC:
-                Logger.t(TAG).d("Resultcode: " + resultCode + " data: " + data);
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    mMusicItem = MusicItem.fromBundle(data.getBundleExtra("music.item"));
-                    updateMusicUI();
-                    Log.e("test", "item: " + mMusicItem.localPath);
-                    mClipPlayFragment.setAudioUrl(mMusicItem.localPath);
-                }
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-        }
-
-    }
-
 
     @Override
     public boolean onInterceptBackPressed() {
@@ -370,125 +172,60 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     @Override
-    public void onClipSelected(int position, Clip clip) {
-        if (mToolbar != null) {
-            mToolbar.setTitle(R.string.trim);
-        }
-        mClipPlayFragment.setActiveClip(position, clip, true);
-    }
-
-    @Override
-    public void onClipMoved(int fromPosition, final int toPosition, final Clip clip) {
-
-        mPlaylistEditor.move(fromPosition, toPosition, new PlaylistEditor.OnMoveCompletedListener() {
-            @Override
-            public void onMoveCompleted(ClipSet clipSet) {
-                int selectedPosition = mClipsEditView.getSelectedPosition();
-                if (selectedPosition != mClipPlayFragment.getActiveClipIndex()) {
-                    mClipPlayFragment.setActiveClip(selectedPosition, clip, false);
-                }
-                if (selectedPosition == -1 && toPosition == 0) {
-                    mClipPlayFragment.showClipPosThumbnail(clip, clip.getStartTimeMs());
-                }
-                mClipPlayFragment.notifyClipSetChanged();
-            }
-        });
-
-    }
-
-    @Override
-    public void onClipsAppended(List<Clip> clips) {
-        if (clips == null) {
-            return;
-        }
-        mPlaylistEditor.appendClips(clips, new PlaylistEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                mClipPlayFragment.notifyClipSetChanged();
-            }
-        });
-    }
-
-    @Override
-    public void onClipRemoved(Clip clip, int position) {
-        mPlaylistEditor.delete(position, new PlaylistEditor.OnDeleteCompleteListener() {
-            @Override
-            public void onDeleteComplete() {
-                mClipPlayFragment.notifyClipSetChanged();
-            }
-        });
-    }
-
-    @Override
-    public void onExitEditing() {
-        mToolbar.setTitle(R.string.enhance);
-    }
-
-    @Override
-    public void onStartTrimming() {
-        //TODO
-    }
-
-    @Override
-    public void onTrimming(Clip clip, int flag, long value) {
-//        Logger.t("test").d("Clip selected time" + mPlaylistEditor.getClipSet().getTotalSelectedLengthMs());
-        mClipPlayFragment.showClipPosThumbnail(clip, value);
-        mClipPlayFragment.notifyClipSetChanged();
-    }
-
-    @Override
-    public void onStopTrimming(Clip clip) {
-        int selectedPosition = mClipsEditView.getSelectedPosition();
-        if (selectedPosition == ClipsEditView.POSITION_UNKNOWN) {
-            return;
-        }
-        mPlaylistEditor.trimClip(selectedPosition, clip,
-                new PlaylistEditor.OnTrimCompletedListener() {
-                    @Override
-                    public void onTrimCompleted(ClipSet clipSet) {
-                        mClipPlayFragment.notifyClipSetChanged();
-                    }
-                });
-
-    }
-
-    private ClipSet getClipSet() {
-        return ClipSetManager.getManager().getClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
-    }
-
-    @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_to_enhance:
+                mLaunchMode = LAUNCH_MODE_ENHANCE;
+                switchToMode();
+                return true;
             case R.id.menu_to_share:
-                String gaugeSettings = getGaugeSettings();
-                ShareActivity.launch(this,
-                        ClipSetManager.CLIP_SET_TYPE_ENHANCE,
-                        gaugeSettings,
-                        mMusicItem == null ? -1 : mMusicItem.id,
-                        true);
+                mLaunchMode = LAUNCH_MODE_SHARE;
+                switchToMode();
+                return true;
+            case R.id.menu_to_modify:
+                //TODO
+                return true;
+            case R.id.menu_to_delete:
+                //TODO
+                return true;
+            case R.id.menu_to_download:
+                //TODO
                 return true;
         }
         return false;
     }
 
-    String getGaugeSettings() {
-        JSONObject jsonObject = mGaugeListAdapter.toJSOptions();
-        int checkedId = mStyleRadioGroup.getCheckedRadioButtonId();
-        try {
-            switch (checkedId) {
-                case R.id.btnThemeOff:
-                    jsonObject.put("theme", "NA");
-                    break;
-                case R.id.btnThemeDefault:
-                    jsonObject.put("theme", "default");
-                    break;
-                case R.id.btnThemeNeo:
-                    jsonObject.put("theme", "neo");
-                    break;
-            }
-        } catch (JSONException e) {
-            Logger.t(TAG).e(e, "");
+    void switchFragment(Fragment currentFragment, Fragment newFragment) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        if (currentFragment != null) {
+            ft.hide(currentFragment);
         }
-        return jsonObject.toString();
+        if (newFragment.isAdded()) {
+            ft.show(newFragment);
+        } else {
+            ft.add(R.id.enhance_fragment_content, newFragment);
+        }
+        ft.commit();
+    }
+
+    @Override
+    public ClipPlayFragment getClipPlayFragment() {
+        return mClipPlayFragment;
+    }
+
+    public int getAudioID() {
+        if (mEnhanceFragment != null) {
+            return mEnhanceFragment.getAudioID();
+        } else {
+            return EnhanceFragment.DEFAULT_AUDIO_ID;
+        }
+    }
+
+    public String getGaugeSettings() {
+        if (mEnhanceFragment != null) {
+            return mEnhanceFragment.getGaugeSettings();
+        } else {
+            return "";
+        }
     }
 }

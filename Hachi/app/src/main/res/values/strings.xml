@@ -377,4 +377,5 @@
     <string name="please_open_your_camera">Please open your camera and load QR</string>
     <string name="error_no_write_external_storage_permission">Grant \"Write External Storage\" permission, \n and try again</string>
     <string name="now_downloading">Now downloading…</string>
+    <string name="also_post_on">Also post on other social network:</string>
 </resources>

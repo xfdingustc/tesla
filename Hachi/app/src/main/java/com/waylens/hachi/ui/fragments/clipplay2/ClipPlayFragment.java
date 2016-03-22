@@ -37,7 +37,6 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
-import com.waylens.hachi.ui.activities.ShareActivity;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -321,20 +320,20 @@ public class ClipPlayFragment extends DialogFragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.share:
+                    case R.id.menu_to_share:
                         dismiss();
-                        ShareActivity.launch(getActivity(), mClipSetIndex);
+                        //ShareActivity.launch(getActivity(), mClipSetIndex);
                         return true;
-                    case R.id.enhance:
+                    case R.id.menu_to_enhance:
                         dismiss();
                         ClipSet clipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
                         ArrayList<Clip> clipList = new ArrayList<>();
                         for (Clip clip : clipSet.getClipList()) {
                             clipList.add(clip);
                         }
-                        EnhancementActivity.launch(getActivity(), clipList);
+                        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
                         return true;
-                    case R.id.modify:
+                    case R.id.menu_to_modify:
                         dismiss();
                         ClipModifyActivity.launch(getActivity(), getClipSet().getClip(0));
                         return true;
@@ -686,4 +685,8 @@ public class ClipPlayFragment extends DialogFragment {
         mUrlProvider = urlProvider;
     }
 
+
+    public interface ClipPlayFragmentContainer {
+        ClipPlayFragment getClipPlayFragment();
+    }
 }

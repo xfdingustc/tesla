@@ -29,11 +29,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
-import com.waylens.hachi.ui.activities.ShareActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
-import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
@@ -213,7 +209,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             getActivity().finish();
         } else {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-            EnhancementActivity.launch(getActivity(), selectedList);
+            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
         }
     }
 
@@ -324,21 +320,9 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     }
 
     private void popClipPreviewFragment(Clip clip) {
-
-        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
-
-        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
-        clipSet.addClip(clip);
-
-        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-
-        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip.cid, clip.getDurationMs());
-        ClipPlayFragment fragment = ClipPlayFragment.newInstance(getCamera(), ClipSetManager.CLIP_SET_TYPE_ENHANCE,
-                vdtUriProvider, config);
-
-        fragment.show(getFragmentManager(), "ClipPlayFragment");
-
+        ArrayList<Clip> clipList = new ArrayList<>();
+        clipList.add(clip);
+        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_QUICK_VIEW);
     }
 
 
@@ -407,12 +391,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
     void toShare() {
         ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
-        for (Clip clip : selectedList) {
-            clipSet.addClip(clip);
-        }
-        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-        ShareActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_ENHANCE);
+        EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
     }
 
     BroadcastReceiver localReceiver = new BroadcastReceiver() {
