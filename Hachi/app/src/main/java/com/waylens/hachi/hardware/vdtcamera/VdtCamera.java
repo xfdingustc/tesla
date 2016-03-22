@@ -25,7 +25,7 @@ public class VdtCamera {
 
     private int mRecordState = STATE_RECORD_UNKNOWN;
 
-    private List<Callback> mCallbacks = new ArrayList<>();
+
     private final ServiceInfo mServiceInfo;
     private final VdtCameraController mController;
 
@@ -105,22 +105,7 @@ public class VdtCamera {
         return mVdbConnection;
     }
 
-    public interface Callback {
 
-        void onStartRecordError(VdtCamera vdtCamera, int error);
-
-        void onHostSSIDFetched(VdtCamera vdtCamera, String ssid);
-
-        void onScanBtDone(VdtCamera vdtCamera);
-
-        void onBtDevInfo(VdtCamera vdtCamera, int type, String mac, String name);
-
-        void onStillCaptureStarted(VdtCamera vdtCamera, boolean bOneShot);
-
-        void onStillPictureInfo(VdtCamera vdtCamera, boolean bCapturing, int numPictures, int burstTicks);
-
-        void onStillCaptureDone(VdtCamera vdtCamera);
-    }
 
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
@@ -150,7 +135,9 @@ public class VdtCamera {
             @Override
             public void onRecStateChanged(int state, boolean isStill) {
                 mRecordState = state;
-                mOnRecStateChangeListener.onRecStateChanged(state, isStill);
+                if (mOnRecStateChangeListener != null) {
+                    mOnRecStateChangeListener.onRecStateChanged(state, isStill);
+                }
             }
 
             @Override
@@ -248,14 +235,7 @@ public class VdtCamera {
         return mServiceInfo.inetAddr;
     }
 
-    public void addCallback(Callback callback) {
-        mCallbacks.add(callback);
-    }
 
-
-    public void removeCallback(Callback callback) {
-        mCallbacks.remove(callback);
-    }
 
     public String getSSID() {
         return mServiceInfo.ssid;
@@ -335,20 +315,13 @@ public class VdtCamera {
 
     private void onCameraDisconnected() {
         // callback may unregister itself; so use a copy
-        List<Callback> c = createCallbackCopy();
+
         if (mOnConnectionChangeListener != null) {
             mOnConnectionChangeListener.onDisconnected(this);
         }
         mIsConnected = false;
     }
 
-    private List<Callback> createCallbackCopy() {
-        List<Callback> c = new ArrayList<>();
-        for (Callback callback : mCallbacks) {
-            c.add(callback);
-        }
-        return c;
-    }
 
 
     // called on camera thread
@@ -392,46 +365,32 @@ public class VdtCamera {
     }
 
     private void onStartRecordError(int error) {
-        for (Callback callback : mCallbacks) {
-            callback.onStartRecordError(this, error);
-        }
+
     }
 
     private void onHostSSIDFetched(String ssid) {
-        for (Callback callback : mCallbacks) {
-            callback.onHostSSIDFetched(this, ssid);
-        }
+
     }
 
     private void onScanBtDone() {
         mController.syncBtState(mBtStates);
-        for (Callback callback : mCallbacks) {
-            callback.onScanBtDone(this);
-        }
+
     }
 
     private void onBtDevInfo(int type, String mac, String name) {
-        for (Callback callback : mCallbacks) {
-            callback.onBtDevInfo(this, type, mac, name);
-        }
+
     }
 
     private void onStillCaptureStarted(boolean bOneShot) {
-        for (Callback callback : mCallbacks) {
-            callback.onStillCaptureStarted(this, bOneShot);
-        }
+
     }
 
     private void onStillPictureInfo(boolean bCapturing, int numPictures, int burst_ticks) {
-        for (Callback callback : mCallbacks) {
-            callback.onStillPictureInfo(this, bCapturing, numPictures, burst_ticks);
-        }
+
     }
 
     private void onStillCaptureDone() {
-        for (Callback callback : mCallbacks) {
-            callback.onStillCaptureDone(this);
-        }
+
     }
 
 
