@@ -1,22 +1,19 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.PointF;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.WifiAutoConnectManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,10 +30,14 @@ public class ScanQrCodeFragment extends BaseFragment {
     private String mWifiPassword;
 
 
-
+    @Bind(R.id.cropWindow)
+    FrameLayout mCropWindow;
 
     @Bind(R.id.qrDecoderView)
     QRCodeReaderView mQrCodeReaderView;
+
+    @Bind(R.id.scanLine)
+    ImageView mScanLine;
 
 
     @Override
@@ -56,6 +57,7 @@ public class ScanQrCodeFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        int halfHeight = mCropWindow.getHeight() / 2;
 
     }
 
@@ -64,7 +66,6 @@ public class ScanQrCodeFragment extends BaseFragment {
         super.onPause();
         mQrCodeReaderView.getCameraManager().stopPreview();
     }
-
 
 
     private void init() {
@@ -92,6 +93,20 @@ public class ScanQrCodeFragment extends BaseFragment {
 
             }
         });
+
+
+        mCropWindow.post(new Runnable() {
+            @Override
+            public void run() {
+                TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mCropWindow.getMeasuredHeight());
+                animation.setRepeatCount(-1);
+                animation.setRepeatMode(Animation.RESTART);
+                animation.setInterpolator(new LinearInterpolator());
+                animation.setDuration(1200);
+                mScanLine.startAnimation(animation);
+            }
+        });
+
     }
 
     private void launchApConnectFragment() {
@@ -99,43 +114,6 @@ public class ScanQrCodeFragment extends BaseFragment {
         getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
 
     }
-
-
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-//        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-//        //registerReceiver(mWifiStateReceiver, filter);
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        //unregisterReceiver(mWifiStateReceiver);
-//    }
-
-//    @Override
-//    protected void init() {
-//        super.init();
-//
-//        mWifiStateReceiver = new BroadcastReceiver() {
-//
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-//
-//                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-//                    Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID());
-//                } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-//                    Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION");
-//                }
-//            }
-//        };
-//        initViews();
-//    }
 
 
     private boolean parseWifiInfo(String result) {
