@@ -290,6 +290,10 @@ class VdtCameraController {
 
         void onDisconnected();
 
+        void onRecStateChanged(int state, boolean isStill);
+
+        void onRecDurationChanged(int duration);
+
         void onBtStateChanged();
 
         void onGpsStateChanged();
@@ -477,7 +481,8 @@ class VdtCameraController {
     private void ack_Cam_get_State_result(String p1, String p2) {
         int state = Integer.parseInt(p1);
         boolean is_still = p2.length() > 0 ? Integer.parseInt(p2) != 0 : false;
-        mStates.setRecordState(state, is_still);
+//        mStates.setRecordState(state, is_still);
+        mListener.onRecStateChanged(state, is_still);
 
     }
 
@@ -507,7 +512,9 @@ class VdtCameraController {
     // ========================================================
     private void ack_Cam_get_time_result(String p1, String p2) {
         int duration = Integer.parseInt(p1);
-        mStates.setRecordDuration(duration);
+//        mStates.setRecordDuration(duration);
+        mListener.onRecDurationChanged(duration);
+
     }
 
     // ========================================================

@@ -327,6 +327,12 @@ public class CameraPreviewFragment extends BaseFragment {
             } else {
                 mVdtCamera.startPreview();
                 mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
+                mVdtCamera.setOnRecStateChangeListener(new VdtCamera.OnRecStateChangeListener() {
+                    @Override
+                    public void onRecStateChanged(int newState, boolean isStill) {
+                        updateCameraState(mVdtCamera.getState());
+                    }
+                });
                 mLiveView.startStream(serverAddr, null, true);
             }
 
@@ -453,8 +459,8 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void handleOnFabClicked() {
-        switch (mVdtCamera.getState().getRecordState()) {
-            case CameraState.STATE_RECORD_RECORDING:
+        switch (mVdtCamera.getRecordState()) {
+            case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode(mVdtCamera.getState())) {
                     mVdtCamera.markLiveVideo();
                     mBookmarkClickCount++;
@@ -470,7 +476,7 @@ public class CameraPreviewFragment extends BaseFragment {
                     mVdtCamera.stopRecording();
                 }
                 break;
-            case CameraState.STATE_RECORD_STOPPED:
+            case VdtCamera.STATE_RECORD_STOPPED:
                 mVdtCamera.startRecording();
                 break;
         }
@@ -499,21 +505,21 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void updateCameraStatusInfo(CameraState state) {
-        int recState = state.getRecordState();
+        int recState = mVdtCamera.getRecordState();
         switch (recState) {
-            case CameraState.STATE_RECORD_UNKNOWN:
+            case VdtCamera.STATE_RECORD_UNKNOWN:
                 mTvCameraStatus.setText(R.string.record_unknown);
                 break;
-            case CameraState.STATE_RECORD_STOPPED:
+            case VdtCamera.STATE_RECORD_STOPPED:
                 mTvCameraStatus.setText(R.string.record_stopped);
                 break;
-            case CameraState.STATE_RECORD_STOPPING:
+            case VdtCamera.STATE_RECORD_STOPPING:
                 mTvCameraStatus.setText(R.string.record_stopping);
                 break;
-            case CameraState.STATE_RECORD_STARTING:
+            case VdtCamera.STATE_RECORD_STARTING:
                 mTvCameraStatus.setText(R.string.record_starting);
                 break;
-            case CameraState.STATE_RECORD_RECORDING:
+            case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode(state)) {
                     mTvCameraStatus.setText(R.string.continuous_recording);
                     if (mBookmarkCount != -1) {
@@ -528,13 +534,13 @@ public class CameraPreviewFragment extends BaseFragment {
                     mTvStatusAdditional.setVisibility(View.GONE);
                 }
                 break;
-            case CameraState.STATE_RECORD_SWITCHING:
+            case VdtCamera.STATE_RECORD_SWITCHING:
                 mTvCameraStatus.setText(R.string.record_switching);
                 break;
             default:
                 break;
         }
-        if (recState != CameraState.STATE_RECORD_RECORDING) {
+        if (recState != VdtCamera.STATE_RECORD_RECORDING) {
             mTvStatusAdditional.setVisibility(View.GONE);
         }
     }
@@ -552,20 +558,20 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void updateFloatActionButton(CameraState state) {
-        switch (state.getRecordState()) {
-            case CameraState.STATE_RECORD_UNKNOWN:
+        switch (mVdtCamera.getRecordState()) {
+            case VdtCamera.STATE_RECORD_UNKNOWN:
                 break;
-            case CameraState.STATE_RECORD_STOPPED:
+            case VdtCamera.STATE_RECORD_STOPPED:
                 mFabBookmark.setEnabled(true);
                 mFabBookmark.setImageResource(R.drawable.camera_control_start);
                 break;
-            case CameraState.STATE_RECORD_STOPPING:
+            case VdtCamera.STATE_RECORD_STOPPING:
                 mFabBookmark.setEnabled(false);
                 break;
-            case CameraState.STATE_RECORD_STARTING:
+            case VdtCamera.STATE_RECORD_STARTING:
                 mFabBookmark.setEnabled(false);
                 break;
-            case CameraState.STATE_RECORD_RECORDING:
+            case VdtCamera.STATE_RECORD_RECORDING:
                 mFabBookmark.setEnabled(true);
                 if (isInCarMode(state)) {
                     mFabBookmark.setImageResource(R.drawable.camera_control_bookmark);
@@ -573,7 +579,7 @@ public class CameraPreviewFragment extends BaseFragment {
                     mFabBookmark.setImageResource(R.drawable.camera_control_stop);
                 }
                 break;
-            case CameraState.STATE_RECORD_SWITCHING:
+            case VdtCamera.STATE_RECORD_SWITCHING:
                 mFabBookmark.setEnabled(false);
                 break;
             default:
@@ -583,7 +589,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void toggleRecordDot(CameraState state) {
-        if (state.getRecordState() == CameraState.STATE_RECORD_RECORDING) {
+        if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
             mRecordDot.setVisibility(View.VISIBLE);
         } else {
             mRecordDot.setVisibility(View.GONE);

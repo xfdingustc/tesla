@@ -9,12 +9,7 @@ import java.util.Locale;
 public class CameraState {
     public static final String TAG = CameraState.class.getSimpleName();
 
-    public static final int STATE_RECORD_UNKNOWN = -1;
-    public static final int STATE_RECORD_STOPPED = 0;
-    public static final int STATE_RECORD_STOPPING = 1;
-    public static final int STATE_RECORD_STARTING = 2;
-    public static final int STATE_RECORD_RECORDING = 3;
-    public static final int STATE_RECORD_SWITCHING = 4;
+
 
     public static final int STATE_MIC_UNKNOWN = -1;
     public static final int STATE_MIC_ON = 0;
@@ -105,7 +100,7 @@ public class CameraState {
     private int mApiVersion = 0;
     private String mBuild = new String();
 
-    private int mRecordState = STATE_RECORD_UNKNOWN;
+
 
     private boolean mbIsStill = false;
     private int mRecordDuration = -1;
@@ -222,24 +217,24 @@ public class CameraState {
         }
     }
 
-    public void setRecordState(int state, boolean is_still) {
-        if (mRecordState != state || mbIsStill != is_still) {
-            Logger.t(TAG).d("setRecordState: " + state + ", is_still: " + is_still);
-            mRecordState = state;
-            mbIsStill = is_still;
-            notifyStateChanged();
-        }
-    }
+//    public void setRecordState(int state, boolean is_still) {
+//        if (mRecordState != state || mbIsStill != is_still) {
+//            Logger.t(TAG).d("setRecordState: " + state + ", is_still: " + is_still);
+//            mRecordState = state;
+//            mbIsStill = is_still;
+//            notifyStateChanged();
+//        }
+//    }
 
-    public void setRecordDuration(int duration) {
-//        Logger.t(TAG).d("setRecordDuration: " + duration);
-        mRecordDuration = duration;
-        if (mRecordState == STATE_RECORD_RECORDING || mRecordState == STATE_RECORD_STOPPING) {
-            mRecordTimeFetchedTime = SystemClock.uptimeMillis();
-            mbRecordDurationUpdated = true;
-        }
-        notifyStateChanged();
-    }
+//    public void setRecordDuration(int duration) {
+////        Logger.t(TAG).d("setRecordDuration: " + duration);
+//        mRecordDuration = duration;
+//        if (mRecordState == STATE_RECORD_RECORDING || mRecordState == STATE_RECORD_STOPPING) {
+//            mRecordTimeFetchedTime = SystemClock.uptimeMillis();
+//            mbRecordDurationUpdated = true;
+//        }
+//        notifyStateChanged();
+//    }
 
     public void setMicState(int state, int vol) {
         if (mMicState != state || mMicVol != vol) {
@@ -407,9 +402,9 @@ public class CameraState {
         }
     }
 
-    public int getRecordState() {
-        return mRecordState;
-    }
+    //public int getRecordState() {
+//        return mRecordState;
+//    }
 
     public int getRecordMode() {
         return mRecordModeIndex;

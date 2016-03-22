@@ -13,8 +13,17 @@ import java.util.List;
 public class VdtCamera {
     private static final String TAG = VdtCamera.class.getSimpleName();
 
+    public static final int STATE_RECORD_UNKNOWN = -1;
+    public static final int STATE_RECORD_STOPPED = 0;
+    public static final int STATE_RECORD_STOPPING = 1;
+    public static final int STATE_RECORD_STARTING = 2;
+    public static final int STATE_RECORD_RECORDING = 3;
+    public static final int STATE_RECORD_SWITCHING = 4;
+
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
+
+    private int mRecordState = STATE_RECORD_UNKNOWN;
 
     private List<Callback> mCallbacks = new ArrayList<>();
     private final ServiceInfo mServiceInfo;
@@ -50,6 +59,10 @@ public class VdtCamera {
         }
     }
 
+    public interface OnRecStateChangeListener {
+        void onRecStateChanged(int newState, boolean isStill);
+    }
+
     public interface OnConnectionChangeListener {
         void onConnected(VdtCamera vdtCamera);
 
@@ -71,6 +84,7 @@ public class VdtCamera {
 
     private OnConnectionChangeListener mOnConnectionChangeListener = null;
     private OnStateChangeListener mOnStateChangeListener = null;
+    private OnRecStateChangeListener mOnRecStateChangeListener = null;
 
 
     public void setOnConnectionChangeListener(OnConnectionChangeListener listener) {
@@ -79,6 +93,10 @@ public class VdtCamera {
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
         mOnStateChangeListener = listener;
+    }
+
+    public void setOnRecStateChangeListener(OnRecStateChangeListener listener) {
+        mOnRecStateChangeListener = listener;
     }
 
     private VdbConnection mVdbConnection;
@@ -127,6 +145,17 @@ public class VdtCamera {
             @Override
             public void onDisconnected() {
                 onCameraDisconnected();
+            }
+
+            @Override
+            public void onRecStateChanged(int state, boolean isStill) {
+                mRecordState = state;
+                mOnRecStateChangeListener.onRecStateChanged(state, isStill);
+            }
+
+            @Override
+            public void onRecDurationChanged(int duration) {
+
             }
 
             @Override
@@ -249,17 +278,19 @@ public class VdtCamera {
     }
 
 
-    // API - camera can be null
+
     public CameraState getState() {
         return mState;
     }
 
-    // API - camera can be null
+    public int getRecordState() {
+        return mRecordState;
+    }
+
     public BtState getBtStates() {
         return mBtStates;
     }
 
-    // API - camera can be null
     public WifiState getWifiStates() {
         return mWifiStates;
     }
