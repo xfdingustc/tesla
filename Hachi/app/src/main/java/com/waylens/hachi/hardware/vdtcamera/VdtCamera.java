@@ -109,6 +109,12 @@ public class VdtCamera {
     public static final int ERROR_START_RECORD_CARD_FULL = 2;
     public static final int ERROR_START_RECORD_CARD_ERROR = 3;
 
+
+    public static final int WIFI_MODE_UNKNOWN = -1;
+    public static final int WIFI_MODE_AP = 0;
+    public static final int WIFI_MODE_CLIENT = 1;
+    public static final int WIFI_MODE_OFF = 2; //
+
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
@@ -147,6 +153,9 @@ public class VdtCamera {
 
     private int mMarkBeforeTime = -1;
     private int mMarkAfterTime = -1;
+
+    private int mWifiMode = WIFI_MODE_UNKNOWN;
+    public int mNumWifiAP = 0;
 
 
     private final ServiceInfo mServiceInfo;
@@ -330,6 +339,10 @@ public class VdtCamera {
         return mMicState;
     }
 
+    public int getWifiMode() {
+        return mWifiMode;
+    }
+
 
 
 
@@ -375,8 +388,6 @@ public class VdtCamera {
     public WifiState getWifiStates() {
         return mWifiStates;
     }
-
-
 
 
 
@@ -502,14 +513,6 @@ public class VdtCamera {
         if (mController.syncGpsState(mGpsStates)) {
             if (mOnStateChangeListener != null) {
                 mOnStateChangeListener.onGpsStateChanged(this);
-            }
-        }
-    }
-
-    private void syncWifiState() {
-        if (mController.syncWifiState(mWifiStates)) {
-            if (mOnStateChangeListener != null) {
-                mOnStateChangeListener.onWifiStateChanged(this);
             }
         }
     }
@@ -720,9 +723,9 @@ public class VdtCamera {
             return mGpsStates.syncStates(user);
         }
 
-        public boolean syncWifiState(WifiState user) {
-            return mWifiStates.syncStates(user);
-        }
+//        public boolean syncWifiState(WifiState user) {
+//            return mWifiStates.syncStates(user);
+//        }
 
         public InetSocketAddress getInetSocketAddress() {
             return getConnection().getInetSocketAddress();
@@ -943,7 +946,7 @@ public class VdtCamera {
 
         private void ack_Network_GetWLanMode(String p1, String p2) {
             int mode = Integer.parseInt(p1);
-            mWifiStates.setWifiMode(mode);
+            mWifiMode = mode;
         }
 
 
@@ -953,7 +956,7 @@ public class VdtCamera {
 
         private void ack_Network_GetHostNum(String p1, String p2) {
             int num = Integer.parseInt(p1);
-            mWifiStates.setNumWifiAP(num);
+            mNumWifiAP = num;
             for (int i = 0; i < num; i++) {
                 cmd_Network_GetHostInfor(i);
             }

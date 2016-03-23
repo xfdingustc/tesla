@@ -645,11 +645,12 @@ public class CameraPreviewFragment extends BaseFragment {
         mTvBatteryVol.setText(batterVolString);
 
         // update Wifi info:
-        WifiState wifiState = mVdtCamera.getWifiStates();
-        Logger.t(TAG).d("WifiMode: " + wifiState.mWifiMode);
-        if (wifiState.mWifiMode == WifiState.WIFI_MODE_AP) {
+        //WifiState wifiState = mVdtCamera.getWifiStates();
+        Logger.t(TAG).d("WifiMode: " + mVdtCamera.getWifiMode());
+        int wifiMode = mVdtCamera.getWifiMode();
+        if (wifiMode == VdtCamera.WIFI_MODE_AP) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_ap);
-        } else if (wifiState.mWifiMode == WifiState.WIFI_MODE_CLIENT) {
+        } else if (wifiMode == VdtCamera.WIFI_MODE_CLIENT) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_client);
         }
 
