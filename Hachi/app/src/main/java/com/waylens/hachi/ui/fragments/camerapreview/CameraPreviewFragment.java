@@ -142,7 +142,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            getActivity().finish();
         } else {
             //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             LiveViewActivity.launch(getActivity(), mVdtCamera, mIsGaugeVisible);
