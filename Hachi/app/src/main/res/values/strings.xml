@@ -234,7 +234,14 @@
     <string name="sign_up_message">Sign up to see videos from your friends</string>
     <string name="sign_in_message">Sign in to see videos from your friends</string>
     <string name="next">Next</string>
-    <string name="forgot">Forgot?</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="forgot_password_hint1">Forgot Password?&#160;</string>
+    <string name="forgot_password_hint2">Find it Back</string>
+    <string name="forgot_password_hint3">We will send you an email to validate your account.</string>
+    <string name="forgot_password_hint4">Input the code received in your email:</string>
+    <string name="forgot_password_hint5">Haven\'t received email?&#160;</string>
+    <string name="forgot_password_hint6">Resend</string>
+
     <string name="or">OR</string>
     <string name="logout">Log out</string>
     <string name="confirm_logout">Log out?</string>
@@ -263,6 +270,7 @@
     <string name="reply_to">\@%s</string>
     <string name="the_field_is_required">This field is required.</string>
     <string name="password_min_error">Passwords must be at least %s characters.</string>
+    <string name="code_min_error">Passwords must be at least %s characters.</string>
     <string name="user_name">Username</string>
     <string name="user_name_invalid">Usernames can only use letters, numbers, underscores and periods.</string>
     <string name="email_invalid">Please enter a valid email address</string>
@@ -379,4 +387,7 @@
     <string name="now_downloading">Now downloading…</string>
     <string name="also_post_on">Also post on other social network:</string>
     <string name="welcome_back">Welcome Back</string>
+    <string name="send">Send</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="change_password">Change Password</string>
 </resources>

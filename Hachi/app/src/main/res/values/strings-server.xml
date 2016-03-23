@@ -9,5 +9,8 @@
     <string name="server_msg_account_already_bound">The account has already bounded with another SNS.</string>
     <string name="server_msg_user_name_has_been_used">The user name has been used.</string>
     <string name="server_msg_email_has_been_used">The email address has been used.</string>
-
+    <string name="server_msg_reset_email_not_sent">Error to send email</string>
+    <string name="server_msg_email_not_exist">Email has not been registered.</string>
+    <string name="server_msg_exceed_max_retries">You tried too many times.</string>
+    <string name="server_msg_email_too_frequent">You tried too frequently.</string>
 </resources>

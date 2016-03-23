@@ -3,13 +3,20 @@ package com.waylens.hachi.ui.fragments;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.AppCompatEditText;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -17,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
@@ -85,6 +93,9 @@ public class SignInFragment extends BaseFragment {
     @Bind(R.id.password_controls)
     View mPasswordControls;
 
+    @Bind(R.id.forgot_password_view)
+    TextView mForgotPasswordView;
+
     CallbackManager mCallbackManager;
 
     RequestQueue mVolleyRequestQueue;
@@ -110,6 +121,34 @@ public class SignInFragment extends BaseFragment {
         View view = createFragmentView(inflater, container, R.layout.fragment_signin, savedInstanceState);
         initViews();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forgot_password_hint1));
+        int start = ssb.length();
+        ssb.append(getString(R.string.forgot_password_hint2))
+                .setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        onForgotPassword();
+                    }
+                }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mForgotPasswordView.setText(ssb);
+        mForgotPasswordView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    void onForgotPassword() {
+        Fragment fragment;
+        if (PreferenceUtils.getBoolean(PreferenceUtils.KEY_RESET_EMAIL_SENT, false)) {
+            getActivity().setTitle(R.string.change_password);
+            fragment = new ChangePasswordFragment();
+        } else {
+            getActivity().setTitle(R.string.forgot_password);
+            fragment = new ForgotPasswordFragment();
+        }
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
     }
 
     @Override
@@ -358,5 +397,4 @@ public class SignInFragment extends BaseFragment {
             showMessage(R.string.login_error_facebook);
         }
     }
-
 }

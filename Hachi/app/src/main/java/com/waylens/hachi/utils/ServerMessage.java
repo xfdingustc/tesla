@@ -38,6 +38,10 @@ public class ServerMessage {
 
     public static final int EMAIL_HAS_BEEN_USED = 31;
 
+    public static final int EMAIL_NOT_EXIST = 32;
+    public static final int EXCEED_MAX_RETRIES = 39;
+    public static final int EMAIL_TOO_FREQUENT = 40;
+
     private static SparseIntArray msgResourceIDs = new SparseIntArray();
 
 

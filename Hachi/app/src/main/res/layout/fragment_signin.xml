@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
@@ -42,6 +43,14 @@
             android:layout_gravity="center"/>
     </ViewAnimator>
 
+    <TextView
+        android:id="@+id/forgot_password_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        style="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+        tools:text="@string/forgot_password"
+        android:background="?attr/selectableItemBackground"/>
 
     <FrameLayout
         android:id="@+id/row_divider"
