@@ -1,41 +1,8 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
-import android.os.SystemClock;
-
-import com.orhanobut.logger.Logger;
-
-import java.util.Locale;
-
 public class CameraState {
     public static final String TAG = CameraState.class.getSimpleName();
 
-
-
-    public static final int STATE_MIC_UNKNOWN = -1;
-    public static final int STATE_MIC_ON = 0;
-    public static final int STATE_MIC_OFF = 1;
-
-    public static final int STATE_BATTERY_UNKNOWN = -1;
-    public static final int STATE_BATTERY_FULL = 0;
-    public static final int STATE_BATTERY_NOT_CHARGING = 1;
-    public static final int STATE_BATTERY_DISCHARGING = 2;
-    public static final int STATE_BATTERY_CHARGING = 3;
-
-    public static final int STATE_POWER_UNKNOWN = -1;
-    public static final int STATE_POWER_NO = 0;
-    public static final int STATE_POWER_YES = 1;
-
-    public static final int STATE_STORAGE_UNKNOWN = -1;
-    public static final int STATE_STORAGE_NO_STORAGE = 0;
-    public static final int STATE_STORAGE_LOADING = 1;
-    public static final int STATE_STORAGE_READY = 2;
-    public static final int STATE_STORAGE_ERROR = 3;
-    public static final int STATE_STORAGE_USBDISC = 4;
-
-    public static final int OVERLAY_FLAG_NAME = 0x01;
-    public static final int OVERLAY_FLAG_TIME = 0x02;
-    public static final int OVERLAY_FLAG_GPS = 0x04;
-    public static final int OVERLAY_FLAG_SPEED = 0x08;
 
     public static final int VIDEO_RESOLUTION_UNKNOWN = -1;
     public static final int VIDEO_RESOLUTION_1080P30 = 0;
@@ -95,25 +62,11 @@ public class CameraState {
     private OnStateChangeListener mListener = null;
 
 
-
-
-
-
     private boolean mbIsStill = false;
     private int mRecordDuration = -1;
     private boolean mbRecordDurationUpdated; //
     private long mRecordTimeFetchedTime;
 
-    private int mMicState = STATE_MIC_UNKNOWN;
-    private int mMicVol = -1;
-
-    private int mBatteryState = STATE_BATTERY_UNKNOWN;
-    private int mPowerState = STATE_POWER_UNKNOWN;
-    private int mBatteryVol = -1;
-
-    private int mStorageState = STATE_STORAGE_UNKNOWN;
-    private long mStorageTotalSpace = 0;
-    private long mStorageFreeSpace = 0;
 
     private int mOverlayFlags = -1;
 
@@ -133,8 +86,6 @@ public class CameraState {
     private int mMarkAfterTime = -1;
 
 
-
-
     private void notifyStateChanged() {
         if (mListener != null) {
             mListener.onStateChange();
@@ -145,93 +96,6 @@ public class CameraState {
         return (mVideoResolutionList & (1 << VIDEO_RESOLUTION_STILL)) != 0;
     }
 
-
-
-
-
-    public int getBatteryState() {
-        return mBatteryState;
-    }
-
-    public int getBatteryVolume() {
-        return mBatteryVol;
-    }
-
-    public int getStorageState() {
-        return mStorageState;
-    }
-
-    public long getStorageTotalSpace() {
-        return mStorageTotalSpace;
-    }
-
-    public long getStorageFreeSpace() {
-        return mStorageFreeSpace;
-    }
-
-
-
-//    public void setRecordState(int state, boolean is_still) {
-//        if (mRecordState != state || mbIsStill != is_still) {
-//            Logger.t(TAG).d("setRecordState: " + state + ", is_still: " + is_still);
-//            mRecordState = state;
-//            mbIsStill = is_still;
-//            notifyStateChanged();
-//        }
-//    }
-
-//    public void setRecordDuration(int duration) {
-////        Logger.t(TAG).d("setRecordDuration: " + duration);
-//        mRecordDuration = duration;
-//        if (mRecordState == STATE_RECORD_RECORDING || mRecordState == STATE_RECORD_STOPPING) {
-//            mRecordTimeFetchedTime = SystemClock.uptimeMillis();
-//            mbRecordDurationUpdated = true;
-//        }
-//        notifyStateChanged();
-//    }
-
-    public void setMicState(int state, int vol) {
-        if (mMicState != state || mMicVol != vol) {
-//            Logger.t(TAG).d("setMicState: " + state + ", " + vol);
-            mMicState = state;
-            mMicVol = vol;
-            notifyStateChanged();
-        }
-    }
-
-    public void setPowerState(int batteryState, int powerState) {
-        if (mBatteryState != batteryState || mPowerState != powerState) {
-//            Logger.t(TAG).d("setPowerState: " + batteryState + "," + powerState);
-            mBatteryState = batteryState;
-            mPowerState = powerState;
-            notifyStateChanged();
-        }
-    }
-
-    public void setBatteryVol(int vol) {
-        if (mBatteryVol != vol) {
-//            Logger.t(TAG).d("setBatteryVol: " + vol);
-            mBatteryVol = vol;
-            notifyStateChanged();
-        }
-    }
-
-    public void setStorageState(int state) {
-        if (mStorageState != state) {
-//            Logger.t(TAG).d("setStorageState: " + state);
-            mStorageState = state;
-            notifyStateChanged();
-        }
-    }
-
-    public void setStorageSpace(long totalSpace, long freeSpace) {
-        if (mStorageTotalSpace != totalSpace || mStorageFreeSpace != freeSpace) {
-//            Logger.t(TAG).d("setStorageSpace: " + totalSpace + ", " + freeSpace);
-            mStorageTotalSpace = totalSpace;
-            mStorageFreeSpace = freeSpace;
-            notifyStateChanged();
-        }
-    }
 
     public void setOverlayFlags(int flags) {
         if (mOverlayFlags != flags) {
@@ -364,8 +228,5 @@ public class CameraState {
         return mRecordModeIndex;
     }
 
-    public int getMicState() {
-        return mMicState;
-    }
 
 }

@@ -624,13 +624,13 @@ public class CameraPreviewFragment extends BaseFragment {
 
         // update battery info:
         int batteryStatus = mVdtCamera.getBatteryState();
-        if (batteryStatus != CameraState.STATE_BATTERY_CHARGING) {
+        if (batteryStatus != VdtCamera.STATE_BATTERY_CHARGING) {
             mIsCharging.setVisibility(View.INVISIBLE);
         } else {
             mIsCharging.setVisibility(View.VISIBLE);
         }
 
-        int batterVol = mVdtCamera.getBatterVolume();
+        int batterVol = mVdtCamera.getBatteryVolume();
         if (batterVol < 25) {
             mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_4);
         } else if (batterVol < 50) {

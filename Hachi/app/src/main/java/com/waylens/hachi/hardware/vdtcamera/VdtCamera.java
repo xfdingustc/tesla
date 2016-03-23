@@ -29,12 +29,38 @@ import java.util.regex.Pattern;
 public class VdtCamera {
     private static final String TAG = VdtCamera.class.getSimpleName();
 
+    public static final int STATE_MIC_UNKNOWN = -1;
+    public static final int STATE_MIC_ON = 0;
+    public static final int STATE_MIC_OFF = 1;
+
+    public static final int STATE_BATTERY_UNKNOWN = -1;
+    public static final int STATE_BATTERY_FULL = 0;
+    public static final int STATE_BATTERY_NOT_CHARGING = 1;
+    public static final int STATE_BATTERY_DISCHARGING = 2;
+    public static final int STATE_BATTERY_CHARGING = 3;
+
+    public static final int STATE_POWER_UNKNOWN = -1;
+    public static final int STATE_POWER_NO = 0;
+    public static final int STATE_POWER_YES = 1;
+
     public static final int STATE_RECORD_UNKNOWN = -1;
     public static final int STATE_RECORD_STOPPED = 0;
     public static final int STATE_RECORD_STOPPING = 1;
     public static final int STATE_RECORD_STARTING = 2;
     public static final int STATE_RECORD_RECORDING = 3;
     public static final int STATE_RECORD_SWITCHING = 4;
+
+    public static final int STATE_STORAGE_UNKNOWN = -1;
+    public static final int STATE_STORAGE_NO_STORAGE = 0;
+    public static final int STATE_STORAGE_LOADING = 1;
+    public static final int STATE_STORAGE_READY = 2;
+    public static final int STATE_STORAGE_ERROR = 3;
+    public static final int STATE_STORAGE_USBDISC = 4;
+
+    public static final int OVERLAY_FLAG_NAME = 0x01;
+    public static final int OVERLAY_FLAG_TIME = 0x02;
+    public static final int OVERLAY_FLAG_GPS = 0x04;
+    public static final int OVERLAY_FLAG_SPEED = 0x08;
 
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
@@ -43,6 +69,17 @@ public class VdtCamera {
     private String mFirmwareVersion = new String();
     private int mApiVersion = 0;
     private String mBuild = new String();
+
+    private int mMicState = STATE_MIC_UNKNOWN;
+    private int mMicVol = -1;
+
+    private int mBatteryState = STATE_BATTERY_UNKNOWN;
+    private int mPowerState = STATE_POWER_UNKNOWN;
+    private int mBatteryVol = -1;
+
+    private int mStorageState = STATE_STORAGE_UNKNOWN;
+    private long mStorageTotalSpace = 0;
+    private long mStorageFreeSpace = 0;
 
     private int mRecordState = STATE_RECORD_UNKNOWN;
 
@@ -200,17 +237,37 @@ public class VdtCamera {
     }
 
 
+    public int getBatteryState() {
+        return mBatteryState;
+    }
+
+    public int getBatteryVolume() {
+        return mBatteryVol;
+    }
+
+    public int getStorageState() {
+        return mStorageState;
+    }
+
+    public long getStorageTotalSpace() {
+        return mStorageTotalSpace;
+    }
+
+    public long getStorageFreeSpace() {
+        return mStorageFreeSpace;
+    }
+
     public String getServerName() {
         return mServiceInfo.serverName;
     }
 
-    public int getBatteryState() {
-        return mStates.getBatteryState();
+    public int getMicState() {
+        return mMicState;
     }
 
-    public int getBatterVolume() {
-        return mStates.getBatteryVolume();
-    }
+
+
+
 
     public InetAddress getAddress() {
         return mServiceInfo.inetAddr;
@@ -505,8 +562,8 @@ public class VdtCamera {
     }
 
     public boolean isMicEnabled() {
-        int micState = mStates.getMicState();
-        return micState == CameraState.STATE_MIC_ON;
+        int micState = getMicState();
+        return micState == STATE_MIC_ON;
     }
 
     public static class StorageInfo {
@@ -516,8 +573,8 @@ public class VdtCamera {
 
     public StorageInfo getStorageInfo() {
         StorageInfo storageInfo = new StorageInfo();
-        storageInfo.totalSpace = (int) (mStates.getStorageTotalSpace() / 1024);
-        storageInfo.freeSpace = (int) (mStates.getStorageFreeSpace() / 1024);
+        storageInfo.totalSpace = (int) (getStorageTotalSpace() / 1024);
+        storageInfo.freeSpace = (int) (getStorageFreeSpace() / 1024);
         return storageInfo;
     }
 
@@ -703,20 +760,21 @@ public class VdtCamera {
 
 
         private void ack_Cam_msg_Storage_infor(String p1, String p2) {
-            int state = Integer.parseInt(p1);
-            mStates.setStorageState(state);
+            mStorageState = Integer.parseInt(p1);
         }
 
         private void ack_Cam_msg_StorageSpace_infor(String p1, String p2) {
             long totalSpace = p1.length() > 0 ? Long.parseLong(p1) : 0;
             long freeSpace = p2.length() > 0 ? Long.parseLong(p2) : 0;
-            mStates.setStorageSpace(totalSpace, freeSpace);
+
+            mStorageTotalSpace = totalSpace;
+            mStorageFreeSpace = freeSpace;
         }
 
 
         private void ack_Cam_msg_Battery_infor(String p1, String p2) {
             int vol = Integer.parseInt(p2);
-            mStates.setBatteryVol(vol);
+            mBatteryVol = vol;
         }
 
         private void ack_Cam_msg_power_infor(String p1, String p2) {
@@ -724,18 +782,19 @@ public class VdtCamera {
                 Logger.t(TAG).d("bad power info, schedule update");
 
             } else {
-                int batteryState = CameraState.STATE_BATTERY_UNKNOWN;
+                int batteryState = STATE_BATTERY_UNKNOWN;
                 if (p1.equals("Full")) {
-                    batteryState = CameraState.STATE_BATTERY_FULL;
+                    batteryState = STATE_BATTERY_FULL;
                 } else if (p1.equals("Not charging")) {
-                    batteryState = CameraState.STATE_BATTERY_NOT_CHARGING;
+                    batteryState = STATE_BATTERY_NOT_CHARGING;
                 } else if (p1.equals("Discharging")) {
-                    batteryState = CameraState.STATE_BATTERY_DISCHARGING;
+                    batteryState = STATE_BATTERY_DISCHARGING;
                 } else if (p1.equals("Charging")) {
-                    batteryState = CameraState.STATE_BATTERY_CHARGING;
+                    batteryState = STATE_BATTERY_CHARGING;
                 }
                 int powerState = Integer.parseInt(p2);
-                mStates.setPowerState(batteryState, powerState);
+                mBatteryState = batteryState;
+                mPowerState = powerState;
             }
         }
 
@@ -748,7 +807,9 @@ public class VdtCamera {
         private void ack_Cam_msg_Mic_infor(String p1, String p2) {
             int state = Integer.parseInt(p1);
             int vol = Integer.parseInt(p2);
-            mStates.setMicState(state, vol);
+            mMicState = state;
+            mMicVol = vol;
+
         }
 
 
@@ -848,7 +909,7 @@ public class VdtCamera {
         // CMD_AUDIO_SET_MIC
         // ========================================================
         public void cmd_audio_setMic(int state, int gain) {
-            if (state == CameraState.STATE_MIC_ON && gain == 0)
+            if (state == STATE_MIC_ON && gain == 0)
                 gain = 5;
             String p1 = Integer.toString(state);
             String p2 = Integer.toString(gain);
