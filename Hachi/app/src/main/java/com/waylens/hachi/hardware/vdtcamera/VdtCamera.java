@@ -163,10 +163,9 @@ public class VdtCamera {
 
     private InetSocketAddress mPreviewAddress;
 
-    private CameraState mStates = new CameraState();
+
     private BtState mBtStates = new BtState();
     private GpsState mGpsStates = new GpsState();
-    private WifiState mWifiStates = new WifiState();
 
     private OnScanHostListener mOnScanHostListener;
 
@@ -244,14 +243,7 @@ public class VdtCamera {
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
-        mStates.setOnStateChangeListener(new CameraState.OnStateChangeListener() {
-            @Override
-            public void onStateChange() {
-                if (mOnStateChangeListener != null) {
-                    mOnStateChangeListener.onStateChanged(VdtCamera.this);
-                }
-            }
-        });
+
         mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
 
     }
@@ -373,9 +365,7 @@ public class VdtCamera {
     }
 
 
-    public CameraState getState() {
-        return mStates;
-    }
+
 
     public int getRecordState() {
         return mRecordState;
@@ -384,12 +374,6 @@ public class VdtCamera {
     public BtState getBtStates() {
         return mBtStates;
     }
-
-    public WifiState getWifiStates() {
-        return mWifiStates;
-    }
-
-
 
 
     public int getVideoResolution() {
@@ -706,7 +690,7 @@ public class VdtCamera {
 
         private final BtState mBtStates = new BtState();
         private final GpsState mGpsStates = new GpsState();
-        private final WifiState mWifiStates = new WifiState();
+
 
 
         public VdtCameraController(InetAddress host, int port) {
@@ -1617,7 +1601,7 @@ public class VdtCamera {
                 while (!thread.isInterrupted()) {
 
                     mGpsStates.mbSchedule = false;
-                    mWifiStates.mbSchedule = false;
+
                     mBtStates.mbSchedule = false;
 
                     sis.clear();
@@ -1654,11 +1638,6 @@ public class VdtCamera {
                     if (mGpsStates.mbSchedule) {
                         mGpsStates.mbSchedule = false;
 //                    mQueue.scheduleUpdate(Queue.SCHEDULE_GPS_UPDATE);
-                    }
-
-                    if (mWifiStates.mbSchedule) {
-                        mWifiStates.mbSchedule = false;
-//                    mQueue.scheduleUpdate(Queue.SCHEDULE_WIFI_UPDATE);
                     }
 
                     if (mBtStates.mbSchedule) {

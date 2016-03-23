@@ -9,7 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.CameraState;
+
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
 import butterknife.Bind;

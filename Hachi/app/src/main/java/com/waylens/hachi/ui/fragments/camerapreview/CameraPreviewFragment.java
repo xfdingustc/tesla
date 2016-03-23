@@ -26,10 +26,8 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.CameraState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.hardware.vdtcamera.WifiState;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -237,7 +235,7 @@ public class CameraPreviewFragment extends BaseFragment {
         }
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver,
-                new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
+            new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
         super.onStop();
     }
@@ -330,7 +328,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 mVdtCamera.setOnRecStateChangeListener(new VdtCamera.OnRecStateChangeListener() {
                     @Override
                     public void onRecStateChanged(int newState, boolean isStill) {
-                        updateCameraState(mVdtCamera.getState());
+                        updateCameraState();
                     }
 
                     @Override
@@ -351,7 +349,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mVdtCamera.getAudioMicState();
             mVdtCamera.getRecordResolutionList();
             mVdtCamera.GetSetup();
-            updateCameraState(mVdtCamera.getState());
+            updateCameraState();
 
         }
 
@@ -361,7 +359,7 @@ public class CameraPreviewFragment extends BaseFragment {
     private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
         @Override
         public void onStateChanged(VdtCamera vdtCamera) {
-            updateCameraState(vdtCamera.getState());
+            updateCameraState();
         }
 
         @Override
@@ -381,13 +379,13 @@ public class CameraPreviewFragment extends BaseFragment {
     };
 
 
-    private void updateCameraState(final CameraState state) {
+    private void updateCameraState() {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                updateCameraStatusInfo(state);
-                updateFloatActionButton(state);
-                toggleRecordDot(state);
+                updateCameraStatusInfo();
+                updateFloatActionButton();
+                toggleRecordDot();
             }
         });
 
@@ -411,33 +409,33 @@ public class CameraPreviewFragment extends BaseFragment {
     void registerMessageHandler() {
 
         ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
-                new VdbResponse.Listener<ClipActionInfo>() {
-                    @Override
-                    public void onResponse(ClipActionInfo response) {
-                        Logger.t(TAG).e(response.toString());
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        Logger.t(TAG).e("ClipInfoMsgHandler ERROR", error);
-                    }
-                });
+            new VdbResponse.Listener<ClipActionInfo>() {
+                @Override
+                public void onResponse(ClipActionInfo response) {
+                    Logger.t(TAG).e(response.toString());
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("ClipInfoMsgHandler ERROR", error);
+                }
+            });
         mVdbRequestQueue.registerMessageHandler(clipInfoMsgHandler);
 
         MarkLiveMsgHandler markLiveMsgHandler = new MarkLiveMsgHandler(
-                new VdbResponse.Listener<ClipActionInfo>() {
-                    @Override
-                    public void onResponse(ClipActionInfo response) {
-                        Logger.t(TAG).e(response.toString());
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        Logger.t(TAG).e("MarkLiveMsgHandler ERROR", error);
-                    }
-                });
+            new VdbResponse.Listener<ClipActionInfo>() {
+                @Override
+                public void onResponse(ClipActionInfo response) {
+                    Logger.t(TAG).e(response.toString());
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("MarkLiveMsgHandler ERROR", error);
+                }
+            });
         mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
     }
 
@@ -451,12 +449,12 @@ public class CameraPreviewFragment extends BaseFragment {
 
     void closeLiveRawData() {
         LiveRawDataRequest request = new LiveRawDataRequest(0, new
-                VdbResponse.Listener<Integer>() {
-                    @Override
-                    public void onResponse(Integer response) {
-                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
-                    }
-                }, new VdbResponse.ErrorListener() {
+            VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                }
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
                 Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
@@ -471,14 +469,14 @@ public class CameraPreviewFragment extends BaseFragment {
     private void handleOnFabClicked() {
         switch (mVdtCamera.getRecordState()) {
             case VdtCamera.STATE_RECORD_RECORDING:
-                if (isInCarMode(mVdtCamera.getState())) {
+                if (isInCarMode()) {
                     mVdtCamera.markLiveVideo();
                     mBookmarkClickCount++;
                     showMessage();
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            updateCameraStatusInfo(mVdtCamera.getState());
+                            updateCameraStatusInfo();
                             hideMessage();
                         }
                     }, 1000 * 3);
@@ -492,13 +490,9 @@ public class CameraPreviewFragment extends BaseFragment {
         }
     }
 
-    boolean isInCarMode(CameraState state) {
-        if (state != null) {
-            boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
-            return isInCarMode;
-        }
-
-        return false;
+    boolean isInCarMode() {
+        boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
+        return isInCarMode;
     }
 
 
@@ -514,7 +508,7 @@ public class CameraPreviewFragment extends BaseFragment {
         mBookmarkMsgView.setVisibility(View.VISIBLE);
     }
 
-    private void updateCameraStatusInfo(CameraState state) {
+    private void updateCameraStatusInfo() {
         int recState = mVdtCamera.getRecordState();
         switch (recState) {
             case VdtCamera.STATE_RECORD_UNKNOWN:
@@ -530,12 +524,12 @@ public class CameraPreviewFragment extends BaseFragment {
                 mTvCameraStatus.setText(R.string.record_starting);
                 break;
             case VdtCamera.STATE_RECORD_RECORDING:
-                if (isInCarMode(state)) {
+                if (isInCarMode()) {
                     mTvCameraStatus.setText(R.string.continuous_recording);
                     if (mBookmarkCount != -1) {
                         updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
-                                mBookmarkCount + mBookmarkClickCount,
-                                mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
+                            mBookmarkCount + mBookmarkClickCount,
+                            mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
                         mTvStatusAdditional.setVisibility(View.VISIBLE);
 
                     }
@@ -567,7 +561,7 @@ public class CameraPreviewFragment extends BaseFragment {
         mBookmarkMsgView.setVisibility(View.GONE);
     }
 
-    private void updateFloatActionButton(CameraState state) {
+    private void updateFloatActionButton() {
         switch (mVdtCamera.getRecordState()) {
             case VdtCamera.STATE_RECORD_UNKNOWN:
                 break;
@@ -583,7 +577,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 break;
             case VdtCamera.STATE_RECORD_RECORDING:
                 mFabBookmark.setEnabled(true);
-                if (isInCarMode(state)) {
+                if (isInCarMode()) {
                     mFabBookmark.setImageResource(R.drawable.camera_control_bookmark);
                 } else {
                     mFabBookmark.setImageResource(R.drawable.camera_control_stop);
@@ -598,7 +592,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
-    private void toggleRecordDot(CameraState state) {
+    private void toggleRecordDot() {
         if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
             mRecordDot.setVisibility(View.VISIBLE);
         } else {
