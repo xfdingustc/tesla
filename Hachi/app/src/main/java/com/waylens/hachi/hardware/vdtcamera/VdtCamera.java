@@ -1329,7 +1329,7 @@ public class VdtCamera {
         }
 
         private void ack_Rec_GetMarkTime(String p1, String p2) {
-            Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2));
+//            Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2));
             try {
                 mMarkBeforeTime = Integer.parseInt(p1);
                 mMarkAfterTime = Integer.parseInt(p2);

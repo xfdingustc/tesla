@@ -174,7 +174,9 @@ public class CameraPreviewFragment extends BaseFragment {
             mSharpView.setVisibility(View.INVISIBLE);
         } else {
             mIsGaugeVisible = false;
-            hideOverlay();
+            mWvGauge.setVisibility(View.INVISIBLE);
+            mBtnShowOverlay.clearColorFilter();
+
         }
     }
 
@@ -234,7 +236,19 @@ public class CameraPreviewFragment extends BaseFragment {
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         registerMessageHandler();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        closeLiveRawData();
     }
 
     @Override
@@ -254,7 +268,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
         mTimer.cancel();
 
-        closeLiveRawData();
+
     }
 
     @Override
@@ -331,8 +345,6 @@ public class CameraPreviewFragment extends BaseFragment {
         // Start record red dot indicator animation
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
-
-
         initGaugeWebView();
     }
 
@@ -425,13 +437,13 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    void registerMessageHandler() {
+    private void registerMessageHandler() {
         LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
             RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
             VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+//                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -488,14 +500,10 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    void hideOverlay() {
-        mWvGauge.setVisibility(View.INVISIBLE);
-        mBtnShowOverlay.clearColorFilter();
-
-    }
 
 
-    void closeLiveRawData() {
+
+    private void closeLiveRawData() {
         LiveRawDataRequest request = new LiveRawDataRequest(0, new
             VdbResponse.Listener<Integer>() {
                 @Override
