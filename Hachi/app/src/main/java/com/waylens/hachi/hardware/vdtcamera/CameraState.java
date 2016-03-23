@@ -95,10 +95,7 @@ public class CameraState {
     private OnStateChangeListener mListener = null;
 
 
-    private String mCameraName = new String();
-    private String mFirmwareVersion = new String();
-    private int mApiVersion = 0;
-    private String mBuild = new String();
+
 
 
 
@@ -148,35 +145,9 @@ public class CameraState {
         return (mVideoResolutionList & (1 << VIDEO_RESOLUTION_STILL)) != 0;
     }
 
-    public boolean version12() {
-        return mApiVersion >= makeVersion(1, 2);
-    }
 
-    private int makeVersion(int main, int sub) {
-        return (main << 16) | sub;
-    }
 
-    public String versionString() {
-        int main = (mApiVersion >> 16) & 0xff;
-        int sub = mApiVersion & 0xffff;
-        return String.format(Locale.US, "%d.%d.%s", main, sub, mBuild);
-    }
 
-    synchronized public void setCameraName(String name) {
-        if (name.equals("No Named")) {
-            // use empty string for unnamed camera
-            name = "";
-        }
-        if (!mCameraName.equals(name)) {
-            Logger.t(TAG).d("setCameraName: " + name);
-            mCameraName = name;
-            notifyStateChanged();
-        }
-    }
-
-    public String getName() {
-        return mCameraName;
-    }
 
     public int getBatteryState() {
         return mBatteryState;
@@ -198,24 +169,7 @@ public class CameraState {
         return mStorageFreeSpace;
     }
 
-    public void setFirmwareVersion(String version) {
-        if (!mFirmwareVersion.equals(version)) {
-            Logger.t(TAG).d("setFirmwareVersion: " + version);
 
-            mFirmwareVersion = version;
-            notifyStateChanged();
-        }
-    }
-
-    public void setApiVersion(int main, int sub, String build) {
-        int version = makeVersion(main, sub);
-        if (mApiVersion != version || !mBuild.equals(build)) {
-            Logger.t(TAG).d("setApiVersion: " + version);
-            mApiVersion = version;
-            mBuild = build;
-            notifyStateChanged();
-        }
-    }
 
 //    public void setRecordState(int state, boolean is_still) {
 //        if (mRecordState != state || mbIsStill != is_still) {

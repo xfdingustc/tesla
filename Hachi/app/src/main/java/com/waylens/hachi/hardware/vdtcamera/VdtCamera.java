@@ -39,6 +39,11 @@ public class VdtCamera {
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
+    private String mCameraName = new String();
+    private String mFirmwareVersion = new String();
+    private int mApiVersion = 0;
+    private String mBuild = new String();
+
     private int mRecordState = STATE_RECORD_UNKNOWN;
 
 
@@ -47,7 +52,7 @@ public class VdtCamera {
 
     private InetSocketAddress mPreviewAddress;
 
-    private CameraState mState = new CameraState();
+    private CameraState mStates = new CameraState();
     private BtState mBtStates = new BtState();
     private GpsState mGpsStates = new GpsState();
     private WifiState mWifiStates = new WifiState();
@@ -62,7 +67,7 @@ public class VdtCamera {
         public final String serverName;
         public final String serviceName;
         public final boolean bPcServer;
-        public int sessionCounter;
+
 
 
         public ServiceInfo(InetAddress inetAddr, int port, String serverName, String serviceName, boolean bPcServer) {
@@ -128,7 +133,7 @@ public class VdtCamera {
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
-        mState.setOnStateChangeListener(new CameraState.OnStateChangeListener() {
+        mStates.setOnStateChangeListener(new CameraState.OnStateChangeListener() {
             @Override
             public void onStateChange() {
                 if (mOnStateChangeListener != null) {
@@ -136,94 +141,52 @@ public class VdtCamera {
                 }
             }
         });
-        mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port, mState);
-//        mController.setListener(new VdtCameraController.Listener() {
-//            @Override
-//            public void onConnected() {
-//                initCameraState();
-//                onCameraConnected();
-//
-//            }
-//
-//            @Override
-//            public void onDisconnected() {
-//                onCameraDisconnected();
-//            }
-//
-//            @Override
-//            public void onRecStateChanged(int state, boolean isStill) {
-//                mRecordState = state;
-//                if (mOnRecStateChangeListener != null) {
-//                    mOnRecStateChangeListener.onRecStateChanged(state, isStill);
-//                }
-//            }
-//
-//            @Override
-//            public void onRecDurationChanged(int duration) {
-//
-//            }
-//
-//            @Override
-//            public void onBtStateChanged() {
-//                syncBtState();
-//
-//            }
-//
-//            @Override
-//            public void onGpsStateChanged() {
-//                syncGpsState();
-//
-//            }
-//
-//            @Override
-//            public void onWifiStateChanged() {
-//                syncWifiState();
-//
-//            }
-//
-//            @Override
-//            public void onStartRecordError(final int error) {
-//
-//            }
-//
-//            @Override
-//            public void onHostSSIDFetched(final String ssid) {
-//
-//            }
-//
-//            @Override
-//            public void onScanBtDone() {
-//
-//            }
-//
-//            @Override
-//            public void onBtDevInfo(final int type, final String mac, final String name) {
-//
-//            }
-//
-//            @Override
-//            public void onStillCaptureStarted(final boolean bOneShot) {
-//
-//            }
-//
-//            @Override
-//            public void onStillPictureInfo(final boolean bCapturing, final int numPictures,
-//                                           final int burstTicks) {
-//
-//            }
-//
-//            @Override
-//            public void onStillCaptureDone() {
-//
-//            }
-//
-//            @Override
-//            public void onScanHostResult(List<NetworkItemBean> networkList) {
-//                if (mOnScanHostListener != null) {
-//                    mOnScanHostListener.OnScanHostResult(networkList);
-//                }
-//            }
-//        });
+        mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
+
+    }
+
+    public void setCameraName(String name) {
+        if (name.equals("No Named")) {
+            // use empty string for unnamed camera
+            name = "";
+        }
+        if (!mCameraName.equals(name)) {
+            Logger.t(TAG).d("setCameraName: " + name);
+            mCameraName = name;
+
+        }
+    }
+
+    public String versionString() {
+        int main = (mApiVersion >> 16) & 0xff;
+        int sub = mApiVersion & 0xffff;
+        return String.format(Locale.US, "%d.%d.%s", main, sub, mBuild);
+    }
+
+    public void setFirmwareVersion(String version) {
+        if (!mFirmwareVersion.equals(version)) {
+            Logger.t(TAG).d("setFirmwareVersion: " + version);
+
+            mFirmwareVersion = version;
+
+        }
+    }
+    public boolean version12() {
+        return mApiVersion >= makeVersion(1, 2);
+    }
+
+    private int makeVersion(int main, int sub) {
+        return (main << 16) | sub;
+    }
+
+    public void setApiVersion(int main, int sub, String build) {
+        int version = makeVersion(main, sub);
+        if (mApiVersion != version || !mBuild.equals(build)) {
+            Logger.t(TAG).d("setApiVersion: " + version);
+            mApiVersion = version;
+            mBuild = build;
+
+        }
     }
 
     // API
@@ -242,11 +205,11 @@ public class VdtCamera {
     }
 
     public int getBatteryState() {
-        return mState.getBatteryState();
+        return mStates.getBatteryState();
     }
 
     public int getBatterVolume() {
-        return mState.getBatteryVolume();
+        return mStates.getBatteryVolume();
     }
 
     public InetAddress getAddress() {
@@ -276,7 +239,7 @@ public class VdtCamera {
 
 
     public CameraState getState() {
-        return mState;
+        return mStates;
     }
 
     public int getRecordState() {
@@ -425,7 +388,7 @@ public class VdtCamera {
 
     public String getName() {
         mController.cmd_Cam_get_Name();
-        return mState.getName();
+        return mCameraName;
     }
 
     public void setRecordResolution(int resolutionIndex) {
@@ -542,7 +505,7 @@ public class VdtCamera {
     }
 
     public boolean isMicEnabled() {
-        int micState = mState.getMicState();
+        int micState = mStates.getMicState();
         return micState == CameraState.STATE_MIC_ON;
     }
 
@@ -553,8 +516,8 @@ public class VdtCamera {
 
     public StorageInfo getStorageInfo() {
         StorageInfo storageInfo = new StorageInfo();
-        storageInfo.totalSpace = (int) (mState.getStorageTotalSpace() / 1024);
-        storageInfo.freeSpace = (int) (mState.getStorageFreeSpace() / 1024);
+        storageInfo.totalSpace = (int) (mStates.getStorageTotalSpace() / 1024);
+        storageInfo.freeSpace = (int) (mStates.getStorageFreeSpace() / 1024);
         return storageInfo;
     }
 
@@ -566,57 +529,14 @@ public class VdtCamera {
 
     class VdtCameraController implements VdtCameraCmdConsts {
 
-
-//        public interface Listener {
-//            void onConnected();
-//
-//            void onDisconnected();
-//
-//            void onRecStateChanged(int state, boolean isStill);
-//
-//            void onRecDurationChanged(int duration);
-//
-//            void onBtStateChanged();
-//
-//            void onGpsStateChanged();
-//
-//            void onWifiStateChanged();
-//
-//            void onStartRecordError(int error);
-//
-//            void onHostSSIDFetched(String ssid);
-//
-//            void onScanBtDone();
-//
-//            void onBtDevInfo(int type, String mac, String name);
-//
-//            void onStillCaptureStarted(boolean bOneShot);
-//
-//            void onStillPictureInfo(boolean bCapturing, int numPictures, int burstTicks);
-//
-//            void onStillCaptureDone();
-//
-//            void onScanHostResult(List<NetworkItemBean> networkList);
-//        }
-
-
-//        private Listener mListener;
-//
-//        public void setListener(Listener listener) {
-//            mListener = listener;
-//        }
-
-
-        private final CameraState mStates;
         private final BtState mBtStates = new BtState();
         private final GpsState mGpsStates = new GpsState();
         private final WifiState mWifiStates = new WifiState();
 
 
-        public VdtCameraController(InetAddress host, int port, CameraState state) {
+        public VdtCameraController(InetAddress host, int port) {
             InetSocketAddress address = new InetSocketAddress(host, port);
             mConnection = new MyTcpConnection("ccam", address);
-            this.mStates = state;
         }
 
 
@@ -718,7 +638,7 @@ public class VdtCamera {
                     build = p1.substring(i_sub);
                 }
             }
-            mStates.setApiVersion(main, sub, build);
+            setApiVersion(main, sub, build);
         }
 
 
@@ -727,7 +647,7 @@ public class VdtCamera {
         }
 
         private void ack_Cam_get_Name_result(String p1, String p2) {
-            mStates.setCameraName(p1);
+            setCameraName(p1);
         }
 
         public void cmd_Cam_set_Name(String name) {
@@ -739,9 +659,7 @@ public class VdtCamera {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_STATE);
         }
 
-        // ========================================================
-        // CMD_CAM_GET_STATE_RESULT
-        // ========================================================
+
         private void ack_Cam_get_State_result(String p1, String p2) {
             int state = Integer.parseInt(p1);
             boolean is_still = p2.length() > 0 ? Integer.parseInt(p2) != 0 : false;
@@ -752,9 +670,7 @@ public class VdtCamera {
 
         }
 
-        // ========================================================
-        // CMD_CAM_START_REC
-        // ========================================================
+
         public void cmd_Cam_start_rec() {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_START_REC);
         }
@@ -805,9 +721,8 @@ public class VdtCamera {
 
         private void ack_Cam_msg_power_infor(String p1, String p2) {
             if (p1.length() == 0 || p2.length() == 0) {
-                // workaround: request again after 1 s
                 Logger.t(TAG).d("bad power info, schedule update");
-//            mQueue.scheduleGetAllInfo();
+
             } else {
                 int batteryState = CameraState.STATE_BATTERY_UNKNOWN;
                 if (p1.equals("Full")) {
@@ -955,14 +870,14 @@ public class VdtCamera {
         }
 
         private void ack_fw_getVersion(String p1, String p2) {
-            mStates.setFirmwareVersion(p2);
+            setFirmwareVersion(p2);
         }
 
         // ========================================================
         // CMD_CAM_BT_IS_SUPPORTED
         // ========================================================
         public void cmd_CAM_BT_isSupported() {
-            if (mStates.version12() && mBtStates.mBtSupport == BtState.BT_SUPPORT_UNKNOWN) {
+            if (version12() && mBtStates.mBtSupport == BtState.BT_SUPPORT_UNKNOWN) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_SUPPORTED);
             }
         }
@@ -975,7 +890,7 @@ public class VdtCamera {
         // CMD_CAM_BT_IS_ENABLED
         // ========================================================
         public void cmd_CAM_BT_isEnabled() {
-            if (mStates.version12()) {
+            if (version12()) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
             }
         }
@@ -993,7 +908,7 @@ public class VdtCamera {
         // CMD_CAM_BT_ENABLE
         // ========================================================
         public void cmd_CAM_BT_Enable(boolean bEnable) {
-            if (mStates.version12()) {
+            if (version12()) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_ENABLE, bEnable ? 1 : 0);
             }
         }
@@ -1002,7 +917,7 @@ public class VdtCamera {
         // CMD_CAM_BT_GET_DEV_STATUS
         // ========================================================
         public void cmd_CAM_BT_getDEVStatus(int type) {
-            if (mStates.version12()) {
+            if (version12()) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
             }
         }
@@ -1071,7 +986,7 @@ public class VdtCamera {
         // CMD_CAM_BT_DO_SCAN
         // ========================================================
         public void cmd_CAM_BT_doScan() {
-            if (mStates.version12()) {
+            if (version12()) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_SCAN);
             }
         }
