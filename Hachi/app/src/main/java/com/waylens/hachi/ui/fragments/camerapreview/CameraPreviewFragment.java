@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,13 +37,20 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
+import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
 import com.waylens.hachi.ui.activities.LiveViewSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.ClipActionInfo;
+import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.RawDataItem;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,7 +67,6 @@ public class CameraPreviewFragment extends BaseFragment {
     int mBookmarkClickCount;
 
     private Handler mHandler;
-    private LiveRawDataAdapter mRawDataAdapter;
 
     private Timer mTimer;
     private UpdateRecordTimeTask mRecordTimeTask;
@@ -164,7 +171,6 @@ public class CameraPreviewFragment extends BaseFragment {
             mIsGaugeVisible = true;
             mWvGauge.setVisibility(View.VISIBLE);
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
-            requestLiveRawData();
             mSharpView.setVisibility(View.INVISIBLE);
         } else {
             mIsGaugeVisible = false;
@@ -228,10 +234,12 @@ public class CameraPreviewFragment extends BaseFragment {
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+        registerMessageHandler();
     }
 
     @Override
     public void onStop() {
+        super.onStop();
         if (mVdtCamera != null) {
             mVdtCamera.setOnStateChangeListener(null);
         }
@@ -243,8 +251,10 @@ public class CameraPreviewFragment extends BaseFragment {
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver,
             new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
-        super.onStop();
+
         mTimer.cancel();
+
+        closeLiveRawData();
     }
 
     @Override
@@ -415,11 +425,36 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    void requestLiveRawData() {
-        registerMessageHandler();
-    }
-
     void registerMessageHandler() {
+        LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
+            RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
+            VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                }
+            }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e(TAG, "LiveRawDataResponse ERROR", error);
+            }
+        });
+
+        mVdbRequestQueue.add(request);
+        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
+            @Override
+            public void onResponse(RawDataItem response) {
+                updateGaugeView(response);
+            }
+
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e(TAG, "RawDataMsgHandler ERROR", error);
+            }
+        });
+        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
+
 
         ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
             new VdbResponse.Listener<ClipActionInfo>() {
@@ -456,7 +491,7 @@ public class CameraPreviewFragment extends BaseFragment {
     void hideOverlay() {
         mWvGauge.setVisibility(View.INVISIBLE);
         mBtnShowOverlay.clearColorFilter();
-        closeLiveRawData();
+
     }
 
 
@@ -515,7 +550,6 @@ public class CameraPreviewFragment extends BaseFragment {
         mWvGauge.setBackgroundColor(Color.TRANSPARENT);
         mWvGauge.setVisibility(View.INVISIBLE);
         mWvGauge.loadUrl("file:///android_asset/api.html");
-        mRawDataAdapter = new LiveRawDataAdapter(mVdbRequestQueue, mWvGauge);
     }
 
     void showMessage() {
@@ -689,5 +723,48 @@ public class CameraPreviewFragment extends BaseFragment {
         public void run() {
             mVdtCamera.getRecordTime();
         }
+    }
+
+    private void updateGaugeView(RawDataItem item) {
+        JSONObject state = new JSONObject();
+        String data = null;
+        try {
+            switch (item.getType()) {
+                case RawDataItem.DATA_TYPE_ACC:
+                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
+                    state.put("roll", -accData.euler_roll);
+                    state.put("pitch", -accData.euler_pitch);
+                    state.put("gforceBA", accData.accX);
+                    state.put("gforceLR", accData.accZ);
+                    break;
+                case RawDataItem.DATA_TYPE_GPS:
+                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                    state.put("lng", gpsData.coord.lng);
+                    state.put("lat", gpsData.coord.lat);
+                    break;
+                case RawDataItem.DATA_TYPE_OBD:
+                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+                    state.put("rpm", obdData.rpm);
+                    state.put("mph", obdData.speed);
+                    break;
+            }
+//            state.put("rpm", 5000);
+//            state.put("roll", -2000);
+//            state.put("pitch", -50);
+            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
+            String date = format.format(System.currentTimeMillis());
+            data = "numericMonthDate('" + date + "')";
+            //Log.e("test", "date: " + data);
+            //state.put("time", data);
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+        String callJS1 = "javascript:setState(" + state.toString() + ")";
+        String callJS2 = "javascript:setState(" + "{time:" + data + "})";
+//        Logger.t(TAG).d("callJS: " + callJS1);
+        mWvGauge.loadUrl(callJS1);
+        mWvGauge.loadUrl(callJS2);
+        mWvGauge.loadUrl("javascript:update()");
     }
 }
