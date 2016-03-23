@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,12 +44,11 @@ import com.waylens.hachi.utils.VolleyUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 
 /**
@@ -57,19 +57,15 @@ import butterknife.OnTextChanged;
 public class SignInFragment extends BaseFragment {
     private static final String TAG = "SignInFragment";
 
-    private static final String TAG_REQUEST_VERIFY_EMAIL = "SignInFragment.request.verify.email";
-
-    private static final String TAG_REQUEST_SIGN_UP = "SignInFragment.request.sign.up";
+    private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
     private static final int PASSWORD_MIN_LENGTH = 6;
+
     @Bind(R.id.login_button)
     LoginButton mFBLoginButton;
 
     @Bind(R.id.button_animator)
     ViewAnimator mButtonAnimator;
-
-    @Bind(R.id.input_animator)
-    ViewAnimator mInputAnimator;
 
     @Bind(R.id.sign_up_email)
     AutoCompleteTextView mTvSignUpEmail;
@@ -97,6 +93,9 @@ public class SignInFragment extends BaseFragment {
 
     PasswordTransformationMethod mTransformationMethod;
 
+    String mEmail;
+    String mPassword;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +107,7 @@ public class SignInFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_login, savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_signin, savedInstanceState);
         initViews();
         return view;
     }
@@ -128,8 +127,7 @@ public class SignInFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         if (mVolleyRequestQueue != null) {
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_VERIFY_EMAIL);
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_UP);
+            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_IN);
         }
     }
 
@@ -184,22 +182,15 @@ public class SignInFragment extends BaseFragment {
         mEvPassword.setTransformationMethod(view.isSelected() ? null : mTransformationMethod);
     }
 
-    @OnClick(R.id.sign_up_next)
-    public void signUpNext() {
-        String email = mTvSignUpEmail.getText().toString();
-        if (TextUtils.isEmpty(email)) {
-            mTextInputEmail.setError(getString(R.string.the_field_is_required));
-            return;
-        }
-
-        boolean isValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
-        if (!isValid) {
-            mTextInputEmail.setError(getString(R.string.email_invalid));
+    @OnClick(R.id.btn_sign_in)
+    public void onClickSignIn() {
+        if (!validateEmail() || !validatePassword()) {
             return;
         }
         mTextInputEmail.setError(null);
-        verifyEmail();
+        mTextInputPassword.setError(null);
         mButtonAnimator.setDisplayedChild(1);
+        performSignIn();
     }
 
     @OnTextChanged(R.id.sign_up_email)
@@ -210,91 +201,84 @@ public class SignInFragment extends BaseFragment {
 
     @OnTextChanged(R.id.sign_up_password)
     public void inputPassword(CharSequence text) {
+        mTextInputPassword.setError(null);
         mPasswordControls.setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
     }
 
-    @OnClick(R.id.sign_up_done)
-    void signUpDone() {
-        String password = mEvPassword.getText().toString();
-        if (TextUtils.isEmpty(password) || password.length() < PASSWORD_MIN_LENGTH) {
-            mTextInputPassword.setError(getString(R.string.password_min_error, PASSWORD_MIN_LENGTH));
+    @OnFocusChange(R.id.sign_up_email)
+    public void onValidateSignUpEmail(boolean hasFocus) {
+        if (mTvSignUpEmail == null || hasFocus) {
             return;
         }
-        mEvPassword.setError(null);
-        mButtonAnimator.setDisplayedChild(1);
-        performSignUp(mTvSignUpEmail.getText().toString(), password);
+        validateEmail();
     }
 
-    void performSignUp(String email, String password) {
+    boolean validateEmail() {
+        mEmail = mTvSignUpEmail.getText().toString();
+        if (TextUtils.isEmpty(mEmail)) {
+            mTextInputEmail.setError(getString(R.string.the_field_is_required));
+            return false;
+        }
+
+        boolean isValid = Patterns.EMAIL_ADDRESS.matcher(mEmail).matches();
+        if (!isValid) {
+            mTextInputEmail.setError(getString(R.string.email_invalid));
+            return false;
+        }
+        mTextInputEmail.setError(null);
+        return true;
+    }
+
+    @OnFocusChange(R.id.sign_up_password)
+    void onValidatePassword(boolean hasFocus) {
+        if (mEvPassword == null || hasFocus) {
+            return;
+        }
+        Log.e("test", "validatePassword in onValidatePassword");
+        validatePassword();
+    }
+
+    boolean validatePassword() {
+        mPassword = mEvPassword.getText().toString();
+        if (TextUtils.isEmpty(mPassword) || mPassword.length() < PASSWORD_MIN_LENGTH) {
+            mTextInputPassword.setError(getString(R.string.password_min_error, PASSWORD_MIN_LENGTH));
+            return false;
+        }
+        mEvPassword.setError(null);
+        return true;
+    }
+
+    void performSignIn() {
         JSONObject params = new JSONObject();
         try {
-            params.put(JsonKey.EMAIL, email);
-            params.put(JsonKey.NICK_NAME, email.substring(0, email.indexOf("@")));
-            params.put(JsonKey.PASSWORD, password);
+            params.put(JsonKey.EMAIL, mEmail);
+            params.put(JsonKey.PASSWORD, mPassword);
         } catch (JSONException e) {
             Logger.t(TAG).e(e, "");
         }
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_UP, params,
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_IN, params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        onSignUpSuccessful(response);
+                        onSignInSuccessful(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        onSignUpFailed(error);
+                        onSignInFailed(error);
                     }
-                }).setTag(TAG_REQUEST_SIGN_UP));
+                }).setTag(TAG_REQUEST_SIGN_IN));
     }
 
-    void onSignUpFailed(VolleyError error) {
-        Log.e("test", "Error: " + ServerMessage.parseServerError(error));
-
+    void onSignInFailed(VolleyError error) {
+        showMessage(ServerMessage.parseServerError(error).msgResID);
     }
 
-    void onSignUpSuccessful(JSONObject response) {
-        Log.e("test", "SignUp successfully.");
-    }
-
-    private void verifyEmail() {
-        String url = Constants.API_CHECK_EMAIL;
-        final String email = mTvSignUpEmail.getText().toString();
-        try {
-            url = url + URLEncoder.encode(email, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            Logger.t(TAG).e(e, "");
-        }
-
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                onValidEmail(email, response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                onInvalidEmail(error);
-            }
-        }).setTag(TAG_REQUEST_VERIFY_EMAIL));
-    }
-
-    void onInvalidEmail(VolleyError error) {
-        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.msgResID);
-        mButtonAnimator.setDisplayedChild(0);
-    }
-
-    void onValidEmail(String email, JSONObject response) {
-        if (response.optBoolean("result")) {
-            PreferenceUtils.putString(PreferenceUtils.KEY_SIGN_UP_EMAIL, email);
-            mInputAnimator.setDisplayedChild(1);
-            mButtonAnimator.setDisplayedChild(2);
-        } else {
-            mTextInputEmail.setError(getString(R.string.email_has_been_used));
-            mButtonAnimator.setDisplayedChild(0);
-        }
+    void onSignInSuccessful(JSONObject response) {
+        SessionManager.getInstance().saveLoginInfo(response);
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().finish();
     }
 
     void signUpWithFacebook(final AccessToken accessToken) {

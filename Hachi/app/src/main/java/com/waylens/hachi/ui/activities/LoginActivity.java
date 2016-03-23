@@ -25,12 +25,17 @@ public class LoginActivity extends BaseActivity {
         startActivity.startActivity(intent);
     }
 
+    public static void launchForResult(Activity startActivity, int requestCode) {
+        Intent intent = new Intent(startActivity, LoginActivity.class);
+        startActivity.startActivityForResult(intent, requestCode);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getFragmentManager().beginTransaction()
-                .add(R.id.fragment_content, new SignInFragment())
+                .replace(R.id.fragment_content, new SignUpFragment())
                 .commit();
     }
 
@@ -44,21 +49,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
-        if (fragment != null && fragment instanceof SignUpFragment) {
-            getFragmentManager().beginTransaction().remove(fragment).commit();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public void setupToolbar() {
         if (mToolbar == null) {
             return;
         }
-        mToolbar.setTitle(R.string.sign_up);
+        setTitle(R.string.sign_up);
+        setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.navbar_close);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -25,6 +25,7 @@ public class MomentFragment extends BaseFragment {
 
     @Bind(R.id.viewpager)
     ViewPager mViewPager;
+    private SimpleFragmentPagerAdapter mFeedPageAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class MomentFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_moment,
-            savedInstanceState);
+                savedInstanceState);
 
         setupViewPager();
         return view;
@@ -55,23 +56,28 @@ public class MomentFragment extends BaseFragment {
     }
 
     private void setupViewPager() {
-        SimpleFragmentPagerAdapter adapter = new FeedPageAdapter(getChildFragmentManager());
-
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R
-            .string.me));
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LIKES), getString(R.string
-            .likes));
-        adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string
-            .staff_picks));
+        mFeedPageAdapter = new FeedPageAdapter(getChildFragmentManager());
+        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
+        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R
+                .string.me));
+        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LIKES), getString(R.string
+                .likes));
+        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string
+                .staff_picks));
         //adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ALL), getString(R.string
         //        .all));
-        mViewPager.setAdapter(adapter);
+        mViewPager.setAdapter(mFeedPageAdapter);
         if (mTabLayout != null) {
             mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
             mTabLayout.setupWithViewPager(mViewPager);
         }
 
+    }
+
+    public void notifyDateChanged() {
+        if (mFeedPageAdapter != null) {
+            mFeedPageAdapter.notifyDataSetChanged();
+        }
     }
 
 }

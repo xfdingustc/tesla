@@ -12,8 +12,11 @@ import com.waylens.hachi.ui.fragments.SignUpEntryFragment;
  */
 public class FeedPageAdapter extends SimpleFragmentPagerAdapter {
 
+    boolean mOriginalLoginStatus;
+
     public FeedPageAdapter(FragmentManager fm) {
         super(fm);
+        mOriginalLoginStatus = SessionManager.getInstance().isLoggedIn();
     }
 
     @Override
@@ -24,5 +27,13 @@ public class FeedPageAdapter extends SimpleFragmentPagerAdapter {
         } else {
             return fragment;
         }
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        if (!mOriginalLoginStatus && SessionManager.getInstance().isLoggedIn()) {
+            return POSITION_NONE;
+        }
+        return super.getItemPosition(object);
     }
 }

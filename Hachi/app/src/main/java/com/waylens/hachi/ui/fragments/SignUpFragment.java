@@ -1,53 +1,56 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ViewAnimator;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
-import com.soundcloud.android.crop.Crop;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.utils.ContentUploader;
-import com.waylens.hachi.utils.ImageUtils;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.util.regex.Pattern;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Richard on 8/20/15.
@@ -56,74 +59,57 @@ public class SignUpFragment extends BaseFragment {
 
     private static final String TAG = "SignUpFragment";
 
-    public static final String ARG_KEY_EMAIL = "arg.sign.up.email";
+    private static final String TAG_REQUEST_VERIFY_EMAIL = "SignInFragment.request.verify.email";
 
-    private static final int TAKE_PHOTO = 0;
-    private static final int CHOOSE_FROM_GALLERY = 1;
-
-    private static final int REQUEST_IMAGE_CAPTURE = 100;
-
-    private static final int REQUEST_IMAGE_PICK = 101;
-
-    private static final int REQUEST_IMAGE_CROP = 102;
+    private static final String TAG_REQUEST_SIGN_UP = "SignInFragment.request.sign.up";
+    private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
     private static final int PASSWORD_MIN_LENGTH = 6;
 
-    private static final String PATTERN_USER_NAME = "[A-Za-z0-9_\\.]{1,32}";
+    @Bind(R.id.login_button)
+    LoginButton mFBLoginButton;
 
-    String mPreSetEmail;
+    @Bind(R.id.button_animator)
+    ViewAnimator mButtonAnimator;
+
+    @Bind(R.id.input_animator)
+    ViewAnimator mInputAnimator;
 
     @Bind(R.id.sign_up_email)
-    EditText mEtEmail;
-
-    @Bind(R.id.sign_up_animator)
-    ViewAnimator mSignUpAnimator;
-
-    @Bind(R.id.sign_up_user_name)
-    EditText mEtUserName;
+    AutoCompleteTextView mTvSignUpEmail;
 
     @Bind(R.id.sign_up_password)
-    EditText mEtPassword;
-
-    @Bind(R.id.sign_up_avatar)
-    CircleImageView mAvatarView;
-
-    @Bind(R.id.sign_up_avatar_plus)
-    View mViewSignUpPlus;
-
-    @Bind(R.id.sign_up_avatar_message)
-    View mViewSignUpMessage;
-
-    @Bind(R.id.email_progress)
-    ProgressBar mEmailProgressBar;
-
-    @Bind(R.id.user_name_progress)
-    ProgressBar mUserNameProgressBar;
+    AppCompatEditText mEvPassword;
 
     @Bind(R.id.text_input_email)
     TextInputLayout mTextInputEmail;
 
-    @Bind(R.id.text_input_user_name)
-    TextInputLayout mTextInputUserName;
-
     @Bind(R.id.text_input_password)
     TextInputLayout mTextInputPassword;
 
-    private RequestQueue mRequestQueue;
+    @Bind(R.id.btn_clean_input)
+    View mBtnCleanEmail;
 
-    private File mImageFile;
+    @Bind(R.id.password_controls)
+    View mPasswordControls;
 
-    private Uri mAvatarFileUri;
+    CallbackManager mCallbackManager;
 
+    RequestQueue mVolleyRequestQueue;
+
+    ArrayAdapter<String> mAccountAdapter;
+
+    PasswordTransformationMethod mTransformationMethod;
+
+    String mEmail;
+    String mPassword;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            mPreSetEmail = args.getString(ARG_KEY_EMAIL, "");
-        }
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        mCallbackManager = CallbackManager.Factory.create();
+        mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        mTransformationMethod = new PasswordTransformationMethod();
     }
 
     @Nullable
@@ -135,40 +121,86 @@ public class SignUpFragment extends BaseFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        if (TextUtils.isEmpty(SessionManager.getInstance().getToken())
+                && AccessToken.getCurrentAccessToken() != null
+                && !AccessToken.getCurrentAccessToken().isExpired()) {
+            signUpWithFacebook(AccessToken.getCurrentAccessToken());
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mVolleyRequestQueue != null) {
+            mVolleyRequestQueue.cancelAll(TAG_REQUEST_VERIFY_EMAIL);
+            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_UP);
+            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_IN);
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_IMAGE_CAPTURE:
-                if (resultCode == Activity.RESULT_OK) {
-                    beginCrop(data.getData());
-                }
-                break;
-            case REQUEST_IMAGE_PICK:
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
-                break;
-            case Crop.REQUEST_CROP:
-                handleCrop(data);
-                break;
+    void initViews() {
+        mRootView.requestFocus();
+        mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends");
+        mFBLoginButton.registerCallback(mCallbackManager, new FBCallback());
+        mBtnCleanEmail.setVisibility(View.GONE);
+        mPasswordControls.setVisibility(View.GONE);
+        String email = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, null);
+        if (email != null) {
+            mTvSignUpEmail.setText(email);
+        }
+        initAccountsView();
+    }
+
+    void initAccountsView() {
+        AccountManager accountManager = AccountManager.get(getActivity());
+        Account[] accounts = accountManager.getAccounts();
+        ArrayList<String> selectedAccounts = new ArrayList<>();
+        for (Account account : accounts) {
+            if (account.name.contains("@")) {
+                selectedAccounts.add(account.name);
+            }
+        }
+        mAccountAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, selectedAccounts);
+        mTvSignUpEmail.setAdapter(mAccountAdapter);
+        if (mAccountAdapter.getCount() > 0) {
+            mTvSignUpEmail.setText(mAccountAdapter.getItem(0));
         }
     }
 
-    private void initViews() {
-        if (!TextUtils.isEmpty(mPreSetEmail)) {
-            mEtEmail.setText(mPreSetEmail);
-            mEtEmail.setTextColor(getResources().getColor(R.color.material_green_600));
-        }
-        mTextInputEmail.setErrorEnabled(true);
-        mTextInputUserName.setErrorEnabled(true);
+    @OnClick(R.id.btn_sign_in)
+    void onClickSignIn() {
+        getActivity().setTitle(R.string.login);
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
     }
 
-    @OnFocusChange(R.id.sign_up_email)
-    public void validateSignUpEmail(boolean hasFocus) {
-        if (mEtEmail == null || hasFocus) {
-            return;
-        }
+    @OnClick(R.id.btn_clean_input)
+    void cleanInputText() {
+        mTvSignUpEmail.getText().clear();
+    }
 
+    @OnClick(R.id.btn_clean_password)
+    void cleanPassword() {
+        mEvPassword.getText().clear();
+    }
 
-        String email = mEtEmail.getText().toString();
+    @OnClick(R.id.btn_show_password)
+    void showPassword(View view) {
+        view.setSelected(!view.isSelected());
+        mEvPassword.setTransformationMethod(view.isSelected() ? null : mTransformationMethod);
+    }
+
+    @OnClick(R.id.sign_up_next)
+    public void signUpNext() {
+        String email = mTvSignUpEmail.getText().toString();
         if (TextUtils.isEmpty(email)) {
             mTextInputEmail.setError(getString(R.string.the_field_is_required));
             return;
@@ -180,126 +212,45 @@ public class SignUpFragment extends BaseFragment {
             return;
         }
         mTextInputEmail.setError(null);
-        if (!email.equals(mPreSetEmail)) {
-            validateEmailOnCloud(email);
-        }
+        verifyEmail();
+        mButtonAnimator.setDisplayedChild(1);
     }
 
-    private void validateEmailOnCloud(String email) {
-        mEmailProgressBar.setVisibility(View.VISIBLE);
-        String url = Constants.API_CHECK_EMAIL + email;
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (response.optBoolean("result")) {
-                            mTextInputEmail.setError(null);
-                            mEtEmail.setTextColor(getResources().getColor(R.color.material_green_600));
-                        } else {
-                            mTextInputEmail.setError(getString(R.string.server_msg_email_has_been_used));
-                            mEtEmail.setTextColor(Color.BLACK);
-                        }
-                        mEmailProgressBar.setVisibility(View.GONE);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                        showMessage(errorInfo.msgResID);
-                        mEmailProgressBar.setVisibility(View.GONE);
-                    }
-                }));
+    @OnTextChanged(R.id.sign_up_email)
+    public void inputEmail(CharSequence text) {
+        mTextInputEmail.setError(null);
+        mBtnCleanEmail.setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
     }
 
-    @OnFocusChange(R.id.sign_up_user_name)
-    public void validateSignUpUserName(boolean hasFocus) {
-        if (mEtUserName == null || hasFocus) {
-            return;
-        }
-
-        if (TextUtils.isEmpty(mEtUserName.getText())) {
-            mTextInputUserName.setError(getString(R.string.the_field_is_required));
-            return;
-        }
-
-        String userName = mEtUserName.getText().toString();
-        Pattern pattern = Pattern.compile(PATTERN_USER_NAME);
-        boolean isValid = pattern.matcher(userName).matches();
-        if (!isValid) {
-            mTextInputUserName.setError(getString(R.string.user_name_invalid));
-        }
-
-        mTextInputUserName.setError(null);
-        validateUserNameOnCloud(userName);
+    @OnTextChanged(R.id.sign_up_password)
+    public void inputPassword(CharSequence text) {
+        mPasswordControls.setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
     }
 
-    private void validateUserNameOnCloud(String userName) {
-        mUserNameProgressBar.setVisibility(View.VISIBLE);
-
-        String url = Constants.API_CHECK_USER_NAME + userName;
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (response.optBoolean("result")) {
-                            mTextInputUserName.setError(null);
-                            mEtUserName.setTextColor(getResources().getColor(R.color.material_green_600));
-                        } else {
-                            mTextInputUserName.setError(getString(R.string.server_msg_user_name_has_been_used));
-                            mEtUserName.setTextColor(Color.BLACK);
-                        }
-                        mUserNameProgressBar.setVisibility(View.GONE);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                        showMessage(errorInfo.msgResID);
-                        mUserNameProgressBar.setVisibility(View.GONE);
-                    }
-                }));
-    }
-
-    @OnFocusChange(R.id.sign_up_password)
-    public void validatePassword(boolean hasFocus) {
-        if (mEtPassword == null || hasFocus) {
-            return;
-        }
-
-        if (TextUtils.isEmpty(mEtPassword.getText()) || mEtPassword.getText().length() < PASSWORD_MIN_LENGTH) {
+    @OnClick(R.id.sign_up_done)
+    void signUpDone() {
+        mPassword = mEvPassword.getText().toString();
+        if (TextUtils.isEmpty(mPassword) || mPassword.length() < PASSWORD_MIN_LENGTH) {
             mTextInputPassword.setError(getString(R.string.password_min_error, PASSWORD_MIN_LENGTH));
             return;
         }
-        mTextInputPassword.setError(null);
+        mEvPassword.setError(null);
+        mButtonAnimator.setDisplayedChild(1);
+
+        mEmail = mTvSignUpEmail.getText().toString();
+        performSignUp();
     }
 
-    @OnClick(R.id.sign_up_next)
-    public void signUp() {
-        mEtEmail.clearFocus();
-        mEtUserName.clearFocus();
-        mEtPassword.clearFocus();
-
-        if (mTextInputEmail.getError() != null
-                || mTextInputUserName.getError() != null
-                || mTextInputPassword.getError() != null) {
-            showMessage(R.string.please_correct_errors);
-            return;
-        }
-
-        mSignUpAnimator.setDisplayedChild(1);
-
+    void performSignUp() {
         JSONObject params = new JSONObject();
         try {
-            params.put(JsonKey.USERNAME, mEtUserName.getText().toString());
-            params.put(JsonKey.EMAIL, mEtEmail.getText().toString());
-            params.put(JsonKey.PASSWORD, mEtPassword.getText().toString());
+            params.put(JsonKey.EMAIL, mEmail);
+            params.put(JsonKey.USERNAME, mEmail.substring(0, mEmail.indexOf("@")));
+            params.put(JsonKey.PASSWORD, mPassword);
         } catch (JSONException e) {
             Logger.t(TAG).e(e, "");
         }
-        mRequestQueue.start();
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_UP, params,
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_UP, params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -311,143 +262,164 @@ public class SignUpFragment extends BaseFragment {
                     public void onErrorResponse(VolleyError error) {
                         onSignUpFailed(error);
                     }
-                }));
+                }).setTag(TAG_REQUEST_SIGN_UP));
     }
 
-    @OnClick(R.id.sign_up_avatar)
-    void chooseAvatar() {
-        new MaterialDialog.Builder(getActivity())
-                .title("SET AVATAR")
-                .items(R.array.avatarSource)
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int which, CharSequence charSequence) {
-                        if (which == TAKE_PHOTO) {
-                            takePhoto();
-                        } else {
-                            chooseFromGallery();
-                        }
-                    }
-                }).show();
+    void onSignUpFailed(VolleyError error) {
+        showMessage(ServerMessage.parseServerError(error).msgResID);
     }
 
-    @OnTextChanged(R.id.sign_up_email)
-    public void inputEmail(CharSequence text) {
-        mTextInputEmail.setError(null);
-        if (text.toString().equals(mPreSetEmail)) {
-            mEtEmail.setTextColor(getResources().getColor(R.color.material_green_600));
+    void onSignUpSuccessful(JSONObject response) {
+        performSignIn();
+    }
+
+    private void verifyEmail() {
+        String url = Constants.API_CHECK_EMAIL;
+        final String email = mTvSignUpEmail.getText().toString();
+        try {
+            url = url + URLEncoder.encode(email, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            Logger.t(TAG).e(e, "");
+        }
+
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                onValidEmail(email, response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onInvalidEmail(error);
+            }
+        }).setTag(TAG_REQUEST_VERIFY_EMAIL));
+    }
+
+    void onInvalidEmail(VolleyError error) {
+        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        showMessage(errorInfo.msgResID);
+        mButtonAnimator.setDisplayedChild(0);
+    }
+
+    void onValidEmail(String email, JSONObject response) {
+        if (response.optBoolean("result")) {
+            PreferenceUtils.putString(PreferenceUtils.KEY_SIGN_UP_EMAIL, email);
+            mInputAnimator.setDisplayedChild(1);
+            mButtonAnimator.setDisplayedChild(2);
         } else {
-            mEtEmail.setTextColor(Color.BLACK);
+            mTextInputEmail.setError(getString(R.string.email_has_been_used));
+            mButtonAnimator.setDisplayedChild(0);
         }
     }
 
-    @OnTextChanged(R.id.sign_up_user_name)
-    public void inputUserName(CharSequence text) {
-        mTextInputUserName.setError(null);
-    }
-
-    @OnTextChanged(R.id.sign_up_password)
-    public void inputPassword(CharSequence text) {
-        mTextInputPassword.setError(null);
-    }
-
-    void takePhoto() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-            return;
+    void performSignIn() {
+        JSONObject params = new JSONObject();
+        try {
+            params.put(JsonKey.EMAIL, mEmail);
+            params.put(JsonKey.PASSWORD, mPassword);
+        } catch (JSONException e) {
+            Logger.t(TAG).e(e, "");
         }
-        if (!ImageUtils.isExternalStorageReady()) {
-            showMessage(R.string.no_sdcard);
-            return;
-        }
-        mImageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".png");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mImageFile));
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-    }
-
-    private void beginCrop(Uri source) {
-        File file = new File(ImageUtils.getStorageDir(getActivity(), "cropped"), "avatar.png");
-        Uri destination = Uri.fromFile(file);
-        Crop.of(Uri.fromFile(mImageFile), destination).asSquare().start(getActivity(), this);
-    }
-
-    private void handleCrop(Intent result) {
-        mAvatarFileUri = Crop.getOutput(result);
-        mAvatarView.setImageURI(mAvatarFileUri);
-        mViewSignUpPlus.setVisibility(View.GONE);
-        mViewSignUpMessage.setVisibility(View.GONE);
-    }
-
-    void chooseFromGallery() {
-        showMessage("Choose from Gallery");
-    }
-
-    void uploadAvatar() {
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, Constants.API_START_UPLOAD_AVATAR,
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_IN, params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        uploadAvatarImage(response);
+                        onSignInSuccessful(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        onSignInFailed(error);
                     }
-                }));
+                }).setTag(TAG_REQUEST_SIGN_IN));
     }
 
-    void uploadAvatarImage(final JSONObject token) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ContentUploader uploader = new ContentUploader(token, new File(mAvatarFileUri.getPath()));
-                uploader.setUploaderListener(new AvatarUploadListener());
-                uploader.upload();
-            }
-        }).start();
+    void onSignInFailed(VolleyError error) {
+        showMessage(ServerMessage.parseServerError(error).msgResID);
     }
 
-    void onSignUpSuccessful(JSONObject response) {
+    void onSignInSuccessful(JSONObject response) {
         SessionManager.getInstance().saveLoginInfo(response);
-        if (mAvatarFileUri == null) {
-            onFinishSignUp();
-        } else {
-            uploadAvatar();
-        }
-    }
-
-    void onSignUpFailed(VolleyError error) {
-        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.msgResID);
-        mSignUpAnimator.setDisplayedChild(0);
-    }
-
-    void onFinishSignUp() {
+        getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
     }
 
-    class AvatarUploadListener implements ContentUploader.UploadListener {
+    void signUpWithFacebook(final AccessToken accessToken) {
+        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("test", "Response: " + response);
+                        SessionManager.getInstance().saveLoginInfo(response, true);
+                        if (SessionManager.getInstance().needLinkAccount()) {
+                            suggestUserName(accessToken);
+                        } else {
+                            hideDialog();
+                            getActivity().finish();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                showMessage(errorInfo.msgResID);
+                hideDialog();
+            }
+        }));
+        mVolleyRequestQueue.start();
 
+        showDialog();
+    }
+
+    void suggestUserName(final AccessToken accessToken) {
+        GraphRequest request = GraphRequest.newMeRequest(
+                accessToken,
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(
+                            JSONObject object,
+                            GraphResponse response) {
+                        Bundle args = new Bundle();
+                        if (response.getError() == null) {
+                            String name = object.optString("name");
+                            if (!TextUtils.isEmpty(name)) {
+                                name = name.replaceAll(" ", "");
+                                args.putString(LinkAccountFragment.ARG_SUGGESTED_USER_NAME, name.toLowerCase());
+                            }
+
+                        }
+                        hideDialog();
+                        if (SessionManager.getInstance().needLinkAccount()) {
+                            LinkAccountFragment fragment = new LinkAccountFragment();
+                            fragment.setArguments(args);
+                            getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
+                        } else {
+                            getActivity().finish();
+                        }
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+    class FBCallback implements FacebookCallback<LoginResult> {
         @Override
-        public void onUploadStarted() {
-            Log.e("test", "onUploadStarted");
+        public void onSuccess(LoginResult loginResult) {
+            signUpWithFacebook(loginResult.getAccessToken());
         }
 
         @Override
-        public void onUploadProgress(float progress) {
-            Log.e("test", "onUploadProgress: " + progress);
+        public void onCancel() {
+            showMessage(R.string.login_cancelled);
         }
 
         @Override
-        public void onUploadFinished() {
-            getActivity().finish();
-        }
-
-        @Override
-        public void onUploadError(String error) {
-            Log.e("test", "onUploadError: " + error);
+        public void onError(FacebookException e) {
+            Log.e("test", "facebook login", e);
+            showMessage(R.string.login_error_facebook);
         }
     }
 }

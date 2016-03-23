@@ -51,6 +51,8 @@ public class MainActivity extends BaseActivity {
     public static final int TAB_TAG_MOMENTS = 2;
     public static final int TAB_TAG_SETTINGS = 3;
 
+    public static final int REQUEST_CODE_SIGN_UP_FROM_MOMENTS = 100;
+
     private int mCurrentNavMenuId;
 
     //private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
@@ -326,7 +328,19 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_UP_FROM_MOMENTS:
+                if (resultCode == RESULT_OK && (mCurrentFragment instanceof MomentFragment)) {
+                    Logger.t(TAG).e("test", "notifyDateChanged");
+                    ((MomentFragment)mCurrentFragment).notifyDateChanged();
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     @Override
     public void onBackPressed() {

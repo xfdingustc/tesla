@@ -24,11 +24,13 @@ import android.widget.ViewSwitcher;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -390,8 +392,12 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     };
 
     void toShare() {
-        ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-        EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
+        if (SessionManager.getInstance().isLoggedIn()) {
+            ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
+        } else {
+            LoginActivity.launch(getActivity());
+        }
     }
 
     BroadcastReceiver localReceiver = new BroadcastReceiver() {

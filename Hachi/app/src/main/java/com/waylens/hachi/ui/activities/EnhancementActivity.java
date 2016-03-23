@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.fragments.EnhanceFragment;
@@ -34,15 +35,16 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         android.support.v7.widget.Toolbar.OnMenuItemClickListener,
         ClipPlayFragment.ClipPlayFragmentContainer {
     private static final String TAG = EnhancementActivity.class.getSimpleName();
+    public static final int REQUEST_CODE_SIGN_UP_FROM_ENHANCE = 200;
 
     public static final String EXTRA_CLIPS_TO_ENHANCE = "extra.clips.to.enhance";
     public static final String EXTRA_CLIPS_TO_APPEND = "extra.clips.to.append";
-
     public static final String EXTRA_LAUNCH_MODE = "extra.launch.mode";
 
     public static final int LAUNCH_MODE_QUICK_VIEW = 0;
     public static final int LAUNCH_MODE_ENHANCE = 1;
     public static final int LAUNCH_MODE_SHARE = 2;
+    public static final int LAUNCH_MODE_MODIFY = 3;
 
     private ClipPlayFragment mClipPlayFragment;
 
@@ -96,7 +98,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     void switchToMode() {
-        setupToolbarImpl();
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:
                 mTopPlaceHolder.setVisibility(View.VISIBLE);
@@ -109,17 +110,24 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 switchFragment(mShareFragment, mEnhanceFragment);
                 break;
             case LAUNCH_MODE_SHARE:
-                mTopPlaceHolder.setVisibility(View.GONE);
-                if (mShareFragment == null) {
-                    mShareFragment = new ShareFragment();
+                if (!SessionManager.getInstance().isLoggedIn()) {
+                    LoginActivity.launchForResult(this, REQUEST_CODE_SIGN_UP_FROM_ENHANCE);
+                    return;
+                } else {
+                    mTopPlaceHolder.setVisibility(View.GONE);
+                    if (mShareFragment == null) {
+                        mShareFragment = new ShareFragment();
+                    }
+                    switchFragment(mEnhanceFragment, mShareFragment);
                 }
-                switchFragment(mEnhanceFragment, mShareFragment);
                 break;
         }
+        setupToolbarImpl();
     }
 
-
-    void setupToolbarImpl() {
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
         if (mToolbar == null) {
             return;
         }
@@ -131,6 +139,13 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             }
         });
         mToolbar.setOnMenuItemClickListener(this);
+    }
+
+    void setupToolbarImpl() {
+        if (mToolbar == null) {
+            return;
+        }
+
         mToolbar.getMenu().clear();
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:
@@ -146,8 +161,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 mToolbar.inflateMenu(R.menu.menu_share);
                 break;
         }
-
-        super.setupToolbar();
     }
 
     private void embedVideoPlayFragment() {
@@ -176,23 +189,37 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         switch (item.getItemId()) {
             case R.id.menu_to_enhance:
                 mLaunchMode = LAUNCH_MODE_ENHANCE;
-                switchToMode();
-                return true;
+                break;
             case R.id.menu_to_share:
                 mLaunchMode = LAUNCH_MODE_SHARE;
-                switchToMode();
-                return true;
+                break;
             case R.id.menu_to_modify:
+                mLaunchMode = LAUNCH_MODE_MODIFY;
                 //TODO
-                return true;
+                break;
             case R.id.menu_to_delete:
                 //TODO
-                return true;
+                break;
             case R.id.menu_to_download:
                 //TODO
-                return true;
+                break;
         }
-        return false;
+        switchToMode();
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_UP_FROM_ENHANCE:
+                if (resultCode == RESULT_OK) {
+                    mLaunchMode = LAUNCH_MODE_SHARE;
+                    switchToMode();
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     void switchFragment(Fragment currentFragment, Fragment newFragment) {

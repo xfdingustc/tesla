@@ -7,7 +7,6 @@ public class JsonKey {
     public static final String USERNAME = "userName";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
-    public static final String NICK_NAME = "name";
 
     public static final String USER_ID = "userID";
     public static final String USER = "user";

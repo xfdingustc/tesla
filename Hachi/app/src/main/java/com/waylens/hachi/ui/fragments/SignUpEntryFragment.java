@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.LoginActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
 
 import butterknife.OnClick;
 
@@ -25,7 +26,7 @@ public class SignUpEntryFragment extends BaseFragment {
 
     @OnClick(R.id.btn_sign_up)
     void clickSignUp() {
-        LoginActivity.launch(getActivity());
+        LoginActivity.launchForResult(getActivity(), MainActivity.REQUEST_CODE_SIGN_UP_FROM_MOMENTS);
     }
 }
 

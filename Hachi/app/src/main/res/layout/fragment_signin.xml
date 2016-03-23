@@ -6,15 +6,21 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    android:paddingTop="48dp">
+    android:paddingTop="24dp">
 
-    <ViewAnimator
-        android:id="@+id/input_animator"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:text="@string/welcome_back"
+        style="@style/TextAppearance.AppCompat.Title"
+        />
+    <include layout="@layout/layout_sign_up_email"/>
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <include layout="@layout/layout_sign_up_email" />
-        <include layout="@layout/layout_sign_up_password" />
-    </ViewAnimator>
+        android:layout_height="16dp"/>
+    <include layout="@layout/layout_sign_up_password"/>
 
     <ViewAnimator
         android:id="@+id/button_animator"
@@ -24,41 +30,18 @@
         android:layout_marginTop="48dp">
 
         <Button
-            android:id="@+id/sign_up_next"
+            android:id="@+id/btn_sign_in"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/next"/>
+            android:text="@string/login"/>
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
-
-        <Button
-            android:id="@+id/sign_up_done"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_done"/>
     </ViewAnimator>
 
-
-    <TextView
-        style="@style/Base.TextAppearance.AppCompat.Body1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="48dp"
-        android:text="@string/already_a_member"/>
-
-    <Button
-        android:id="@+id/btn_sign_in"
-        style="@style/Widget.AppCompat.Button.Hachi"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/login"/>
 
     <FrameLayout
         android:id="@+id/row_divider"
