@@ -71,44 +71,44 @@ public class LiveViewSettingActivity extends BaseActivity {
     @OnClick(R.id.btnContinuous)
     public void onBtnContinuousClicked() {
         mTvRecordModeInfo.setText(getText(R.string.continuous_info));
-        mChangedRecordMode |= CameraState.FLAG_LOOP_RECORD;
+        mChangedRecordMode |= VdtCamera.FLAG_LOOP_RECORD;
         checkIfChanged();
     }
 
     @OnClick(R.id.btnManual)
     public void onBtnManualClicked() {
         mTvRecordModeInfo.setText(getText(R.string.manual_info));
-        mChangedRecordMode &= ~CameraState.FLAG_LOOP_RECORD;
+        mChangedRecordMode &= ~VdtCamera.FLAG_LOOP_RECORD;
         checkIfChanged();
     }
 
     @OnClick(R.id.btn720p)
     public void onBtn720pClicked() {
-        mChangedVideoResolution = CameraState.VIDEO_RESOLUTION_720P;
+        mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_720P;
         checkIfChanged();
     }
 
     @OnClick(R.id.btn1080p)
     public void onBtn1080pClicked() {
-        mChangedVideoResolution = CameraState.VIDEO_RESOLUTION_1080P;
+        mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_1080P;
         checkIfChanged();
     }
 
     @OnClick(R.id.btn30fps)
     public void onBtn30fpsClicked() {
-        mChangedVideoFramerate = CameraState.VIDEO_FRAMERATE_30FPS;
+        mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_30FPS;
         checkIfChanged();
     }
 
     @OnClick(R.id.btn60fps)
     public void onBtn60fpsClicked() {
-        mChangedVideoFramerate = CameraState.VIDEO_FRAMERATE_60FPS;
+        mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_60FPS;
         checkIfChanged();
     }
 
     @OnClick(R.id.btn120fps)
     public void onBtn120fpsClicked() {
-        mChangedVideoFramerate = CameraState.VIDEO_FRAMERATE_120FPS;
+        mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_120FPS;
         checkIfChanged();
     }
 
@@ -128,9 +128,9 @@ public class LiveViewSettingActivity extends BaseActivity {
     protected void init() {
         super.init();
         mCamera = mSharedCamera;
-        mOriginRecordMode = mCamera.getState().getRecordMode();
-        mOriginVideoResolution = mCamera.getState().getVideoResolution();
-        mOriginVideoFramerate = mCamera.getState().getVideoFramerate();
+        mOriginRecordMode = mCamera.getRecordMode();
+        mOriginVideoResolution = mCamera.getVideoResolution();
+        mOriginVideoFramerate = mCamera.getVideoFramerate();
         mChangedRecordMode = mOriginRecordMode;
         initViews();
     }
@@ -146,8 +146,8 @@ public class LiveViewSettingActivity extends BaseActivity {
 
 
     private void updateRecordMode() {
-        int recordMode = mCamera.getState().getRecordMode();
-        if ((recordMode & CameraState.FLAG_LOOP_RECORD) > 0) {
+        int recordMode = mCamera.getRecordMode();
+        if ((recordMode & VdtCamera.FLAG_LOOP_RECORD) > 0) {
             mBtnContinuous.setChecked(true);
             mTvRecordModeInfo.setText(getText(R.string.continuous_info));
         } else {
@@ -157,17 +157,17 @@ public class LiveViewSettingActivity extends BaseActivity {
     }
 
     private void updateRecordQuality() {
-        int quality = mCamera.getState().getVideoResolution();
-        if (quality == CameraState.VIDEO_RESOLUTION_1080P) {
+        int quality = mCamera.getVideoResolution();
+        if (quality == VdtCamera.VIDEO_RESOLUTION_1080P) {
             mBtn1080p.setChecked(true);
         } else {
             mBtn720p.setChecked(true);
         }
 
-        int fps = mCamera.getState().getVideoFramerate();
-        if (fps == CameraState.VIDEO_FRAMERATE_30FPS) {
+        int fps = mCamera.getVideoFramerate();
+        if (fps == VdtCamera.VIDEO_FRAMERATE_30FPS) {
             mBtn30fps.setChecked(true);
-        } else if (fps == CameraState.VIDEO_FRAMERATE_60FPS) {
+        } else if (fps == VdtCamera.VIDEO_FRAMERATE_60FPS) {
             mBtn60fps.setChecked(true);
         } else {
             mBtn120fps.setChecked(true);

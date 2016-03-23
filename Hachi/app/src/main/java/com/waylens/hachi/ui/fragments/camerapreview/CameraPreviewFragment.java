@@ -494,7 +494,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     boolean isInCarMode(CameraState state) {
         if (state != null) {
-            boolean isInCarMode = (state.getRecordMode() == CameraState.REC_MODE_AUTOSTART_LOOP);
+            boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
             return isInCarMode;
         }
 

@@ -62,6 +62,53 @@ public class VdtCamera {
     public static final int OVERLAY_FLAG_GPS = 0x04;
     public static final int OVERLAY_FLAG_SPEED = 0x08;
 
+    public static final int VIDEO_RESOLUTION_UNKNOWN = -1;
+    public static final int VIDEO_RESOLUTION_1080P30 = 0;
+    public static final int VIDEO_RESOLUTION_1080P60 = 1;
+    public static final int VIDEO_RESOLUTION_720P30 = 2;
+    public static final int VIDEO_RESOLUTION_720P60 = 3;
+    public static final int VIDEO_RESOLUTION_4KP30 = 4;
+    public static final int VIDEO_RESOLUTION_4KP60 = 5;
+    public static final int VIDEO_RESOLUTION_480P30 = 6;
+    public static final int VIDEO_RESOLUTION_480P60 = 7;
+    public static final int VIDEO_RESOLUTION_720P120 = 8;
+    public static final int VIDEO_RESOLUTION_STILL = 9;
+    public static final int VIDEO_RESOLUTION_NUM = 10;
+
+    public static final int VIDEO_RESOLUTION_720P = 0;
+    public static final int VIDEO_RESOLUTION_1080P = 1;
+
+    public static final int VIDEO_FRAMERATE_30FPS = 0;
+    public static final int VIDEO_FRAMERATE_60FPS = 1;
+    public static final int VIDEO_FRAMERATE_120FPS = 2;
+
+    public static final int VIDEO_QUALITY_UNKNOWN = -1;
+    public static final int VIDEO_QUALITY_SUPPER = 0;
+    public static final int VIDEO_QUALITY_HI = 1;
+    public static final int VIDEO_QUALITY_MID = 2;
+    public static final int VIDEO_QUALITY_LOW = 3;
+    public static final int VIDEO_QUALITY_NUM = 4;
+
+    public static final int REC_MODE_UNKNOWN = -1;
+    public static final int FLAG_AUTO_RECORD = 1 << 0;
+    public static final int FLAG_LOOP_RECORD = 1 << 1;
+    public static final int REC_MODE_MANUAL = 0;
+    public static final int REC_MODE_AUTOSTART = FLAG_AUTO_RECORD;
+    public static final int REC_MODE_MANUAL_LOOP = FLAG_LOOP_RECORD;
+    public static final int REC_MODE_AUTOSTART_LOOP = (FLAG_AUTO_RECORD | FLAG_LOOP_RECORD);
+
+    public static final int COLOR_MODE_UNKNOWN = -1;
+    public static final int COLOR_MODE_NORMAL = 0;
+    public static final int COLOR_MODE_SPORT = 1;
+    public static final int COLOR_MODE_CARDV = 2;
+    public static final int COLOR_MODE_SCENE = 3;
+    public static final int COLOR_MODE_NUM = 4;
+
+    public static final int ERROR_START_RECORD_OK = 0;
+    public static final int ERROR_START_RECORD_NO_CARD = 1;
+    public static final int ERROR_START_RECORD_CARD_FULL = 2;
+    public static final int ERROR_START_RECORD_CARD_ERROR = 3;
+
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
@@ -82,6 +129,24 @@ public class VdtCamera {
     private long mStorageFreeSpace = 0;
 
     private int mRecordState = STATE_RECORD_UNKNOWN;
+
+
+    private int mOverlayFlags = -1;
+
+    private int mVideoResolutionList = 0;
+    private int mVideoResolutionIndex = VIDEO_RESOLUTION_UNKNOWN;
+
+    private int mVideoQualityList = 0;
+    private int mVideoQualityIndex = VIDEO_QUALITY_UNKNOWN;
+
+    private int mRecordModeList = 0;
+    private int mRecordModeIndex = REC_MODE_UNKNOWN;
+
+    private int mColorModeList = 0;
+    private int mColorModeIndex = COLOR_MODE_UNKNOWN;
+
+    private int mMarkBeforeTime = -1;
+    private int mMarkAfterTime = -1;
 
 
     private final ServiceInfo mServiceInfo;
@@ -310,6 +375,56 @@ public class VdtCamera {
     public WifiState getWifiStates() {
         return mWifiStates;
     }
+
+
+
+
+
+
+    public int getVideoResolution() {
+        switch (mVideoQualityIndex) {
+            case VIDEO_RESOLUTION_1080P30:
+            case VIDEO_RESOLUTION_1080P60:
+
+                return VIDEO_RESOLUTION_1080P;
+            default:
+                return VIDEO_RESOLUTION_720P;
+        }
+    }
+
+    public int getVideoFramerate() {
+        switch (mVideoQualityIndex) {
+            case VIDEO_RESOLUTION_1080P30:
+            case VIDEO_RESOLUTION_4KP30:
+            case VIDEO_RESOLUTION_480P30:
+            case VIDEO_RESOLUTION_720P30:
+                return VIDEO_FRAMERATE_30FPS;
+
+            case VIDEO_RESOLUTION_1080P60:
+            case VIDEO_RESOLUTION_720P60:
+            case VIDEO_RESOLUTION_4KP60:
+            case VIDEO_RESOLUTION_480P60:
+                return VIDEO_FRAMERATE_60FPS;
+
+
+            case VIDEO_RESOLUTION_720P120:
+                return VIDEO_FRAMERATE_120FPS;
+            default:
+                return VIDEO_FRAMERATE_30FPS;
+
+        }
+    }
+
+
+
+
+
+
+
+    public int getRecordMode() {
+        return mRecordModeIndex;
+    }
+
 
     // API
     public InetSocketAddress getInetSocketAddress() {
@@ -1105,32 +1220,19 @@ public class VdtCamera {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_WANT_IDLE);
         }
 
-        // ========================================================
-        // CMD_CAM_WANT_PREVIEW
-        // ========================================================
+
         public void cmd_CAM_WantPreview() {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_WANT_PREVIEW);
         }
 
-        // /////////////////////////////////////////////////////////
 
-        // ========================================================
-        // CMD_REC_START - not used
-        // ========================================================
-        // ========================================================
-        // CMD_REC_STOP - not used
-        // ========================================================
-
-        // ========================================================
-        // CMD_REC_LIST_RESOLUTIONS
-        // ========================================================
         public void cmd_Rec_List_Resolutions() {
             postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_RESOLUTIONS);
         }
 
         private void ack_Rec_List_Resolutions(String p1, String p2) {
             int list = Integer.parseInt(p1);
-            mStates.setVideoResolutionList(list);
+            mVideoResolutionList = list;
         }
 
         // ========================================================
@@ -1149,7 +1251,7 @@ public class VdtCamera {
 
         private void ack_Rec_get_Resolution(String p1, String p2) {
             int index = Integer.parseInt(p1);
-            mStates.setVideoResolution(index);
+            mVideoResolutionIndex = index;
         }
 
         // ========================================================
@@ -1161,7 +1263,7 @@ public class VdtCamera {
 
         private void ack_Rec_List_Qualities(String p1, String p2) {
             int list = Integer.parseInt(p1);
-            mStates.setVideoQualityList(list);
+            mVideoQualityList = list;
         }
 
         // ========================================================
@@ -1180,7 +1282,7 @@ public class VdtCamera {
 
         private void ack_Rec_get_Quality(String p1, String p2) {
             int index = Integer.parseInt(p1);
-            mStates.setVideoQuality(index);
+            mVideoQualityIndex = index;
         }
 
         // ========================================================
@@ -1192,43 +1294,34 @@ public class VdtCamera {
 
         private void ack_Rec_List_RecModes(String p1, String p2) {
             int list = Integer.parseInt(p1);
-            mStates.setRecordModeList(list);
+            mRecordModeList = list;
         }
 
-        // ========================================================
-        // CMD_REC_SET_REC_MODE
-        // ========================================================
+
         public void cmd_Rec_Set_RecMode(int index) {
             postRequest(CMD_DOMAIN_REC, CMD_REC_SET_REC_MODE, index);
         }
 
-        // ========================================================
-        // CMD_REC_GET_REC_MODE
-        // ========================================================
+
         public void cmd_Rec_get_RecMode() {
             postRequest(CMD_DOMAIN_REC, CMD_REC_GET_REC_MODE);
         }
 
         private void ack_Rec_get_RecMode(String p1, String p2) {
             int index = Integer.parseInt(p1);
-            mStates.setRecordMode(index);
+            mRecordModeIndex = index;
         }
 
-        // ========================================================
-        // CMD_REC_LIST_COLOR_MODES
-        // ========================================================
+
         public void cmd_Rec_List_ColorModes() {
             postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_COLOR_MODES);
         }
 
         private void ack_Rec_List_ColorModes(String p1, String p2) {
             int list = Integer.parseInt(p1);
-            mStates.setColorModeList(list);
+            mColorModeList = list;
         }
 
-        // ========================================================
-        // CMD_REC_SET_COLOR_MODE
-        // ========================================================
         public void cmd_Rec_Set_ColorMode(int index) {
             postRequest(CMD_DOMAIN_REC, CMD_REC_SET_COLOR_MODE, index);
         }
@@ -1242,7 +1335,7 @@ public class VdtCamera {
 
         private void ack_Rec_get_ColorMode(String p1, String p2) {
             int index = Integer.parseInt(p1);
-            mStates.setColorMode(index);
+            mColorModeIndex = index;
         }
 
 
@@ -1259,7 +1352,7 @@ public class VdtCamera {
 
         private void ack_Rec_getOverlayState(String p1, String p2) {
             int flags = Integer.parseInt(p1);
-            mStates.setOverlayFlags(flags);
+            mOverlayFlags = flags;
         }
 
         // ========================================================
@@ -1326,7 +1419,8 @@ public class VdtCamera {
         private void ack_Rec_GetMarkTime(String p1, String p2) {
             Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2));
             try {
-                mStates.setMarkTime(Integer.parseInt(p1), Integer.parseInt(p2));
+                mMarkBeforeTime = Integer.parseInt(p1);
+                mMarkAfterTime = Integer.parseInt(p2);
             } catch (Exception e) {
                 Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2), e);
             }
@@ -1343,7 +1437,8 @@ public class VdtCamera {
         private void ack_Rec_SetMarkTime(String p1, String p2) {
             Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
             try {
-                mStates.setMarkTime(Integer.parseInt(p1), Integer.parseInt(p2));
+                mMarkBeforeTime = Integer.parseInt(p1);
+                mMarkAfterTime = Integer.parseInt(p2);
             } catch (Exception e) {
                 Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
             }
