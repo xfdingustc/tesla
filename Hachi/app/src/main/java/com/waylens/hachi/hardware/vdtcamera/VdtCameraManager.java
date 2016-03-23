@@ -260,17 +260,9 @@ public class VdtCameraManager {
             }
         });
 
-        vdtCamera.setOnStateChangeListener(new VdtCamera.OnStateChangeListener() {
-            @Override
-            public void onStateChanged(VdtCamera vdtCamera) {
 
-                for (WeakReference<Callback> callback : mCallbackList) {
-                    Callback strongCallback = callback.get();
-                    if (strongCallback != null) {
-                        strongCallback.onCameraStateChanged(vdtCamera);
-                    }
-                }
-            }
+
+        vdtCamera.setOnStateChangeListener(new VdtCamera.OnStateChangeListener() {
 
             @Override
             public void onBtStateChanged(VdtCamera vdtCamera) {
@@ -282,10 +274,6 @@ public class VdtCameraManager {
 
             }
 
-            @Override
-            public void onWifiStateChanged(VdtCamera vdtCamera) {
-
-            }
         });
 
 

@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +43,8 @@ import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.ClipActionInfo;
 
 import java.net.InetSocketAddress;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -57,6 +60,9 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private Handler mHandler;
     private LiveRawDataAdapter mRawDataAdapter;
+
+    private Timer mTimer;
+    private UpdateRecordTimeTask mRecordTimeTask;
 
     @Bind(R.id.cameraPreview)
     CameraLiveView mLiveView;
@@ -238,6 +244,7 @@ public class CameraPreviewFragment extends BaseFragment {
             new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
         super.onStop();
+        mTimer.cancel();
     }
 
     @Override
@@ -277,6 +284,10 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     protected void init() {
+        mTimer = new Timer();
+        mRecordTimeTask = new UpdateRecordTimeTask();
+        mTimer.schedule(mRecordTimeTask, 1000, 1000);
+
         mVdbRequestQueue = Snipe.newRequestQueue();
         mHandler = new Handler();
         if (VdtCameraManager.getManager().isConnected()) {
@@ -333,6 +344,15 @@ public class CameraPreviewFragment extends BaseFragment {
 
                     @Override
                     public void onRecDurationChanged(int duration) {
+                        final int recordTime = duration;
+                        if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING && !isInCarMode()) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mTvCameraStatus.setText(DateUtils.formatElapsedTime(recordTime));
+                                }
+                            });
+                        }
 
                     }
 
@@ -345,7 +365,7 @@ public class CameraPreviewFragment extends BaseFragment {
             }
 
             mVdtCamera.getRecordRecMode();
-            mVdtCamera.getCameraTime();
+            mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
             mVdtCamera.getRecordResolutionList();
             mVdtCamera.GetSetup();
@@ -357,10 +377,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
-        @Override
-        public void onStateChanged(VdtCamera vdtCamera) {
-            updateCameraState();
-        }
+
 
         @Override
         public void onBtStateChanged(VdtCamera vdtCamera) {
@@ -372,10 +389,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
         }
 
-        @Override
-        public void onWifiStateChanged(VdtCamera vdtCamera) {
-
-        }
     };
 
 
@@ -479,7 +492,7 @@ public class CameraPreviewFragment extends BaseFragment {
                             updateCameraStatusInfo();
                             hideMessage();
                         }
-                    }, 1000 * 3);
+                    }, 1000);
                 } else {
                     mVdtCamera.stopRecording();
                 }
@@ -489,6 +502,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 break;
         }
     }
+
 
     boolean isInCarMode() {
         boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
@@ -519,6 +533,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 break;
             case VdtCamera.STATE_RECORD_STOPPING:
                 mTvCameraStatus.setText(R.string.record_stopping);
+
                 break;
             case VdtCamera.STATE_RECORD_STARTING:
                 mTvCameraStatus.setText(R.string.record_starting);
@@ -534,9 +549,9 @@ public class CameraPreviewFragment extends BaseFragment {
 
                     }
                 } else {
-                    mTvCameraStatus.setText(R.string.record_recording);
                     mTvStatusAdditional.setVisibility(View.GONE);
                 }
+
                 break;
             case VdtCamera.STATE_RECORD_SWITCHING:
                 mTvCameraStatus.setText(R.string.record_switching);
@@ -548,6 +563,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mTvStatusAdditional.setVisibility(View.GONE);
         }
     }
+
 
     private void updateTvStatusAdditional(String text, int visible) {
         if (mTvStatusAdditional != null) {
@@ -666,4 +682,12 @@ public class CameraPreviewFragment extends BaseFragment {
             mIsGaugeVisible = intent.getBooleanExtra(LiveViewActivity.EXTRA_IS_GAUGE_VISIBLE, false);
         }
     };
+
+    private class UpdateRecordTimeTask extends TimerTask {
+
+        @Override
+        public void run() {
+            mVdtCamera.getRecordTime();
+        }
+    }
 }
