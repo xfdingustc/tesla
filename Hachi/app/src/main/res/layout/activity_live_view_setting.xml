@@ -1,68 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@android:color/black"
               android:orientation="vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:elevation="@dimen/default_elevation"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        >
+
+    </android.support.v7.widget.Toolbar>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_margin="24dp"
-        android:textColor="@color/text_enhance"
-        android:text="@string/recording_mode"/>
-
-
-    <info.hoang8f.android.segmented.SegmentedGroup
-        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/recordMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:orientation="horizontal"
-        segmentedgroup:sc_border_width="1dp"
-        segmentedgroup:sc_corner_radius="2dp"
-        segmentedgroup:sc_checked_text_color="@color/background_color"
-        segmentedgroup:sc_tint_color="@color/text_enhance">
+        android:text="@string/recording_mode"
+        android:textColor="@color/style_color_accent"
+        android:textSize="16sp"/>
+
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <RadioButton
             android:id="@+id/btnContinuous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:layout_margin="16dp"
             android:text="@string/continuous"
+            android:textColor="@color/text_camera_info"
+            android:buttonTint="@color/text_camera_info"
             android:textSize="16sp"
-            style="@style/MyRadioButton" />
+
+            />
 
         <RadioButton
             android:id="@+id/btnManual"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:layout_margin="16dp"
             android:text="@string/manual"
+            android:textColor="@color/text_camera_info"
+            android:buttonTint="@color/text_camera_info"
             android:textSize="16sp"
-            style="@style/MyRadioButton" />
-    </info.hoang8f.android.segmented.SegmentedGroup>
-
-
-    <TextView
-        android:id="@+id/tvRecordModeInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:textSize="14sp"
-        android:textColor="@color/text_enhance"/>
-
-
+            />
+    </RadioGroup>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -70,135 +59,46 @@
 
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_margin="24dp"
-        android:textColor="@color/text_enhance"
-        android:text="@string/recording_quality"/>
-
-    <info.hoang8f.android.segmented.SegmentedGroup
-        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/recordSize"
+        android:id="@+id/tvRecordModeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:orientation="horizontal"
-        segmentedgroup:sc_border_width="1dp"
-        segmentedgroup:sc_corner_radius="2dp"
-        segmentedgroup:sc_checked_text_color="@color/background_color"
-        segmentedgroup:sc_tint_color="@color/text_enhance">
-
-        <RadioButton
-            android:id="@+id/btn720p"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="720p"
-            android:textSize="16sp"
-            style="@style/MyRadioButton" />
-
-        <RadioButton
-            android:id="@+id/btn1080p"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="1080p"
-            android:textSize="16sp"
-            style="@style/MyRadioButton" />
-    </info.hoang8f.android.segmented.SegmentedGroup>
+        android:textColor="@color/text_camera_info"
+        android:textSize="14sp"/>
 
 
-
-    <info.hoang8f.android.segmented.SegmentedGroup
-        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/recordFps"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:orientation="horizontal"
-        segmentedgroup:sc_border_width="1dp"
-        segmentedgroup:sc_corner_radius="2dp"
-        segmentedgroup:sc_checked_text_color="@color/background_color"
-        segmentedgroup:sc_tint_color="@color/text_enhance">
+        android:text="@string/recording_quality"
+        android:textColor="@color/style_color_accent"
+        android:textSize="16sp"/>
 
-        <RadioButton
-            android:id="@+id/btn30fps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="30fps"
-            android:textSize="16sp"
-            style="@style/MyRadioButton" />
-
-        <RadioButton
-            android:id="@+id/btn60fps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="60fps"
-            android:textSize="16sp"
-            style="@style/MyRadioButton" />
-
-        <RadioButton
-            android:id="@+id/btn120fps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="120fps"
-            android:textSize="16sp"
-            style="@style/MyRadioButton" />
-    </info.hoang8f.android.segmented.SegmentedGroup>
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"></LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/background_color">
+        android:layout_margin="16dp"
+        android:text="@string/resolution_framerate"
+        android:textColor="@color/text_camera_info"/>
 
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/background_color"
-            android:text="@android:string/cancel"
-            android:textColor="@color/material_grey_700"
-            android:textSize="28sp"/>
+    <TextView
+        android:id="@+id/resolution_framerate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:textColor="@color/text_camera_info"/>
 
-        <Button
-            android:id="@+id/btnOk"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/background_color"
-            android:text="@android:string/ok"
-            android:textColor="@color/material_grey_700"
-            android:enabled="false"
-            android:textSize="28sp"/>
-    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
 
 </LinearLayout>
