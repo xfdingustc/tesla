@@ -4,18 +4,21 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.bigkoo.pickerview.OptionsPickerView;
 import com.waylens.hachi.R;
 
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.OnClick;
-import info.hoang8f.android.segmented.SegmentedGroup;
 
 /**
  * Created by Xiaofei on 2016/1/8.
@@ -23,7 +26,7 @@ import info.hoang8f.android.segmented.SegmentedGroup;
 public class LiveViewSettingActivity extends BaseActivity {
 
     private static VdtCamera mSharedCamera;
-    private static VdtCamera mCamera;
+    private VdtCamera mCamera;
 
     private int mOriginRecordMode;
     private int mOriginVideoResolution;
@@ -32,6 +35,11 @@ public class LiveViewSettingActivity extends BaseActivity {
     private int mChangedRecordMode;
     private int mChangedVideoResolution;
     private int mChangedVideoFramerate;
+
+    private OptionsPickerView mQualityPickerView;
+
+    private ArrayList<String> mResolutionList = new ArrayList<>();
+    private ArrayList<ArrayList<String>> mFrameRateList = new ArrayList<>();
 
 
 
@@ -53,29 +61,13 @@ public class LiveViewSettingActivity extends BaseActivity {
 
     @Bind(R.id.resolution_framerate)
     TextView mResolutionFramerate;
-//
-//    @Bind(R.id.btn720p)
-//    RadioButton mBtn720p;
-//
-//    @Bind(R.id.btn1080p)
-//    RadioButton mBtn1080p;
-//
-//    @Bind(R.id.btn30fps)
-//    RadioButton mBtn30fps;
-//
-//    @Bind(R.id.btn60fps)
-//    RadioButton mBtn60fps;
-//
-//    @Bind(R.id.btn120fps)
-//    RadioButton mBtn120fps;
-//
-//    @Bind(R.id.btnOk)
-//    Button mBtnOk;
+
 
     @OnClick(R.id.btnContinuous)
     public void onBtnContinuousClicked() {
         mTvRecordModeInfo.setText(getText(R.string.continuous_info));
         mChangedRecordMode |= VdtCamera.FLAG_LOOP_RECORD;
+        mChangedRecordMode |= VdtCamera.FLAG_AUTO_RECORD;
         checkIfChanged();
     }
 
@@ -83,51 +75,15 @@ public class LiveViewSettingActivity extends BaseActivity {
     public void onBtnManualClicked() {
         mTvRecordModeInfo.setText(getText(R.string.manual_info));
         mChangedRecordMode &= ~VdtCamera.FLAG_LOOP_RECORD;
+        mChangedRecordMode &= ~VdtCamera.FLAG_AUTO_RECORD;
         checkIfChanged();
     }
 
     @OnClick(R.id.resolution_framerate)
     public void onResolutionFramerateClicked() {
-
+        mQualityPickerView.show();
     }
 
-
-
-
-//    @OnClick(R.id.btn720p)
-//    public void onBtn720pClicked() {
-//        mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_720P;
-//        checkIfChanged();
-//    }
-//
-//    @OnClick(R.id.btn1080p)
-//    public void onBtn1080pClicked() {
-//        mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_1080P;
-//        checkIfChanged();
-//    }
-//
-//    @OnClick(R.id.btn30fps)
-//    public void onBtn30fpsClicked() {
-//        mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_30FPS;
-//        checkIfChanged();
-//    }
-//
-//    @OnClick(R.id.btn60fps)
-//    public void onBtn60fpsClicked() {
-//        mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_60FPS;
-//        checkIfChanged();
-//    }
-//
-//    @OnClick(R.id.btn120fps)
-//    public void onBtn120fpsClicked() {
-//        mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_120FPS;
-//        checkIfChanged();
-//    }
-//
-//    @OnClick(R.id.btnCancel)
-//    public void onBtnCancelClicked() {
-//        finish();
-//    }
 
 
     @Override
@@ -141,8 +97,8 @@ public class LiveViewSettingActivity extends BaseActivity {
         super.init();
         mCamera = mSharedCamera;
         mOriginRecordMode = mCamera.getRecordMode();
-        mOriginVideoResolution = mCamera.getVideoResolution();
-        mOriginVideoFramerate = mCamera.getVideoFramerate();
+        mOriginVideoResolution = mChangedVideoResolution = mCamera.getVideoResolution();
+        mOriginVideoFramerate = mChangedVideoFramerate = mCamera.getVideoFramerate();
         mChangedRecordMode = mOriginRecordMode;
         initViews();
     }
@@ -150,8 +106,11 @@ public class LiveViewSettingActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_live_view_setting);
         updateRecordMode();
-        mResolutionFramerate.setText(getRecordQuality());
+        updateRecordQuality();
+        initRecordQualityOptionPickerView();
     }
+
+
 
 
     @Override
@@ -178,28 +137,73 @@ public class LiveViewSettingActivity extends BaseActivity {
         }
     }
 
-    private String getRecordQuality() {
+    private void updateRecordQuality() {
         String resolution = null;
         String frameRate;
-        int quality = mCamera.getVideoResolution();
-        if (quality == VdtCamera.VIDEO_RESOLUTION_1080P) {
+
+        if (mChangedVideoResolution == VdtCamera.VIDEO_RESOLUTION_1080P) {
             resolution = "1080P";
-        } else if (quality == VdtCamera.VIDEO_RESOLUTION_720P) {
+        } else if (mChangedVideoResolution == VdtCamera.VIDEO_RESOLUTION_720P) {
             resolution = "720P";
         }
 
-        int fps = mCamera.getVideoFramerate();
-        if (fps == VdtCamera.VIDEO_FRAMERATE_30FPS) {
+
+        if (mChangedVideoFramerate == VdtCamera.VIDEO_FRAMERATE_30FPS) {
             frameRate = "30fps";
-        } else if (fps == VdtCamera.VIDEO_FRAMERATE_60FPS) {
+        } else if (mChangedVideoFramerate == VdtCamera.VIDEO_FRAMERATE_60FPS) {
             frameRate = "60fps";
         } else {
             frameRate = "120fps";
         }
 
-        return resolution + "/" + frameRate;
 
+        mResolutionFramerate.setText(resolution + "/" + frameRate);
 
+    }
+
+    private void initRecordQualityOptionPickerView() {
+        mQualityPickerView = new OptionsPickerView(this);
+
+        mResolutionList.add("1080P");
+        mResolutionList.add("720P");
+
+        ArrayList<String> framerateItem_01 = new ArrayList<>();
+        framerateItem_01.add("30fps");
+        framerateItem_01.add("60fps");
+        framerateItem_01.add("120fps");
+
+        ArrayList<String> framerateItem_02 = new ArrayList<>();
+        framerateItem_02.add("30fps");
+        framerateItem_02.add("60fps");
+        framerateItem_02.add("120fps");
+
+        mFrameRateList.add(framerateItem_01);
+        mFrameRateList.add(framerateItem_02);
+
+        mQualityPickerView.setPicker(mResolutionList, mFrameRateList, true);
+        mQualityPickerView.setCyclic(false, false, false);
+
+        mQualityPickerView.setOnoptionsSelectListener(new OptionsPickerView.OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int option2, int options3) {
+                if (options1 == 0) {
+                    mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_1080P;
+                } else {
+                    mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_720P;
+                }
+
+                if (option2 == 0) {
+                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_30FPS;
+                } else if (option2 == 1) {
+                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_60FPS;
+                } else {
+                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_120FPS;
+                }
+
+                updateRecordQuality();
+                checkIfChanged();
+            }
+        });
     }
 
     private void checkIfChanged() {
@@ -210,10 +214,38 @@ public class LiveViewSettingActivity extends BaseActivity {
             changed = true;
         }
 
+        mToolbar.getMenu().clear();
         if (changed) {
-//            mBtnOk.setEnabled(true);
+            mToolbar.inflateMenu(R.menu.recording_setting);
+            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.apply:
+                            doApplyChanges();
+                            finish();
+                            break;
+                    }
+                    return false;
+                }
+            });
         } else {
-//            mBtnOk.setEnabled(false);
+
+        }
+    }
+
+    // TODO: We need finish this logic
+    private void doApplyChanges() {
+        if (mOriginRecordMode != mChangedRecordMode) {
+            mCamera.setRecordRecMode(mChangedRecordMode);
+        }
+
+        if (mOriginVideoResolution != mChangedVideoResolution) {
+            mCamera.setVideoResolution(mChangedVideoResolution);
+        }
+
+        if (mOriginVideoFramerate != mChangedVideoFramerate) {
+
         }
     }
 }

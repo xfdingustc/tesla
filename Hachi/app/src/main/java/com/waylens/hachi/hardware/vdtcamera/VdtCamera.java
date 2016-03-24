@@ -376,6 +376,7 @@ public class VdtCamera {
 
 
     public int getVideoResolution() {
+        mController.cmd_Rec_get_Resolution();
         switch (mVideoQualityIndex) {
             case VIDEO_RESOLUTION_1080P30:
             case VIDEO_RESOLUTION_1080P60:
@@ -527,13 +528,7 @@ public class VdtCamera {
         mController.cmd_CAM_BT_doBind(type, mac);
     }
 
-    public void setRecordOverlay(int flags) {
-        mController.cmd_Rec_setOverlay(flags);
-    }
 
-    public void getRecordOverlayState() {
-        mController.cmd_Rec_getOverlayState();
-    }
 
     public void setRecordMarkTime(int markBeforeTime, int newMarkTime) {
         mController.cmd_Rec_SetMarkTime(markBeforeTime, newMarkTime);
@@ -548,15 +543,12 @@ public class VdtCamera {
         return mCameraName;
     }
 
-    public void setRecordResolution(int resolutionIndex) {
+    public void setVideoResolution(int resolutionIndex) {
         mController.cmd_Rec_Set_Resolution(resolutionIndex);
     }
 
-    public void getRecordResolution() {
-        mController.cmd_Rec_get_Resolution();
-    }
 
-    public void setRecordQuality(int qualityIndex) {
+    public void setVideoQuality(int qualityIndex) {
         mController.cmd_Rec_Set_Quality(qualityIndex);
     }
 

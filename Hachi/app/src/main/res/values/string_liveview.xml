@@ -2,4 +2,5 @@
 <resources>
     <string name="resolution_framerate">Resolution/Frame Rate</string>
     <string name="recording_settings">Recording Settings</string>
+    <string name="apply">APPLY</string>
 </resources>

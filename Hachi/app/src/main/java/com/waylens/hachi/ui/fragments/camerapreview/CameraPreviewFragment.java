@@ -508,7 +508,7 @@ public class CameraPreviewFragment extends BaseFragment {
             VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+//                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
                 }
             }, new VdbResponse.ErrorListener() {
             @Override
@@ -548,6 +548,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     boolean isInCarMode() {
+        Logger.t(TAG).d("record mode: " + mVdtCamera.getRecordMode());
         boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
         return isInCarMode;
     }
