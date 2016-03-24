@@ -115,8 +115,12 @@ public class ForgotPasswordFragment extends BaseFragment {
 
 
     void onSendFailed(VolleyError error) {
-        PreferenceUtils.remove(PreferenceUtils.KEY_RESET_EMAIL_SENT);
-        showMessage(ServerMessage.parseServerError(error).msgResID);
+        ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
+        if (errorMsg.errorCode != ServerMessage.EXCEED_MAX_RETRIES
+                && errorMsg.errorCode != ServerMessage.EMAIL_TOO_FREQUENT) {
+            PreferenceUtils.remove(PreferenceUtils.KEY_RESET_EMAIL_SENT);
+        }
+        showMessage(errorMsg.msgResID);
         mButtonAnimator.setDisplayedChild(0);
     }
 

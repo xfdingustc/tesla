@@ -64,15 +64,20 @@ public class ChangePasswordFragment extends BaseFragment {
     @Bind(R.id.tv_resend)
     TextView mTvResend;
 
+    @Bind(R.id.tv_change_password_hint)
+    TextView mTvChangePasswordHint;
+
     private String mPassword;
     private String mCode;
     private RequestQueue mVolleyRequestQueue;
+    private String mEmail;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        mEmail = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, "");
     }
 
     @Nullable
@@ -84,6 +89,7 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mTvChangePasswordHint.setText(getString(R.string.forgot_password_hint4, mEmail));
         SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forgot_password_hint5));
         int start = ssb.length();
         ssb.append(getString(R.string.forgot_password_hint6))
@@ -122,7 +128,7 @@ public class ChangePasswordFragment extends BaseFragment {
     void changePassword() {
         JSONObject params = new JSONObject();
         try {
-            params.put(JsonKey.EMAIL, PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, ""));
+            params.put(JsonKey.EMAIL, mEmail);
             params.put(JsonKey.TOKEN, mCode);
             params.put(JsonKey.NEW_PASSWORD, mPassword);
         } catch (JSONException e) {
@@ -149,6 +155,7 @@ public class ChangePasswordFragment extends BaseFragment {
     }
 
     private void onResetPasswordSuccessful(JSONObject response) {
+        PreferenceUtils.remove(PreferenceUtils.KEY_RESET_EMAIL_SENT);
         if (response.optBoolean("result", false)) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
         } else {

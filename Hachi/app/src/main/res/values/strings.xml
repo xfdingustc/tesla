@@ -238,7 +238,7 @@
     <string name="forgot_password_hint1">Forgot Password?&#160;</string>
     <string name="forgot_password_hint2">Find it Back</string>
     <string name="forgot_password_hint3">We will send you an email to validate your account.</string>
-    <string name="forgot_password_hint4">Input the code received in your email:</string>
+    <string name="forgot_password_hint4">Input the code received in your email: %s</string>
     <string name="forgot_password_hint5">Haven\'t received email?&#160;</string>
     <string name="forgot_password_hint6">Resend</string>
 
