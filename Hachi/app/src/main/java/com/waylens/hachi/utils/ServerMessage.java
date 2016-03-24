@@ -42,6 +42,7 @@ public class ServerMessage {
     public static final int EXCEED_MAX_RETRIES = 39;
     public static final int EMAIL_TOO_FREQUENT = 40;
     public static final int VERIFICATION_CODE_HAS_EXPIRED = 41;
+    public static final int VERIFICATION_CODE_INCORRECT = 42;
 
     private static SparseIntArray msgResourceIDs = new SparseIntArray();
 
@@ -62,6 +63,7 @@ public class ServerMessage {
             msgResourceIDs.put(EXCEED_MAX_RETRIES, R.string.server_msg_exceed_max_retries);
             msgResourceIDs.put(EMAIL_TOO_FREQUENT, R.string.server_msg_email_too_frequent);
             msgResourceIDs.put(VERIFICATION_CODE_HAS_EXPIRED, R.string.server_msg_code_has_expired);
+            msgResourceIDs.put(VERIFICATION_CODE_INCORRECT, R.string.server_msg_code_incorrect);
         }
     }
 

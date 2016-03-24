@@ -13,16 +13,11 @@
         app:elevation="@dimen/default_elevation"
         app:layout_scrollFlags="scroll"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-    <View
-        android:id="@+id/top_place_holder"
-        android:layout_width="match_parent"
-        android:layout_height="102dp"
-        tools:visibility="gone"/>
     <FrameLayout
         android:id="@+id/player_fragment_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="102dp"
         tools:layout_height="275dp"/>
 
     <include layout="@layout/layout_line_break" />

@@ -14,4 +14,5 @@
     <string name="server_msg_exceed_max_retries">You tried too many times.</string>
     <string name="server_msg_email_too_frequent">You tried too frequently.</string>
     <string name="server_msg_code_has_expired">Your verification code has expired</string>
+    <string name="server_msg_code_incorrect">Your verification code is incorrect.</string>
 </resources>

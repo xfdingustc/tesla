@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.TransitionManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -46,10 +49,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     public static final int LAUNCH_MODE_SHARE = 2;
     public static final int LAUNCH_MODE_MODIFY = 3;
 
-    private ClipPlayFragment mClipPlayFragment;
+    @Bind(R.id.player_fragment_content)
+    ViewGroup mPlayerContainer;
 
-    @Bind(R.id.top_place_holder)
-    View mTopPlaceHolder;
+    private ClipPlayFragment mClipPlayFragment;
 
     int mLaunchMode;
 
@@ -58,6 +61,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     EnhanceFragment mEnhanceFragment;
     ShareFragment mShareFragment;
+
+    int mOriginalTopMargin;
 
     public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
@@ -82,8 +87,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private void initViews() {
         setContentView(R.layout.activity_enhance);
-        ArrayList<Clip> mClipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
 
+        mOriginalTopMargin = ((ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams()).topMargin;
+
+        ArrayList<Clip> mClipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         ClipSet clipSetEditing = new ClipSet(Clip.TYPE_TEMP);
         for (Clip clip : mClipList) {
@@ -100,10 +107,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     void switchToMode() {
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:
-                mTopPlaceHolder.setVisibility(View.VISIBLE);
+                adjustPlayerPosition(true);
                 break;
             case LAUNCH_MODE_ENHANCE:
-                mTopPlaceHolder.setVisibility(View.GONE);
+                adjustPlayerPosition(false);
                 if (mEnhanceFragment == null) {
                     mEnhanceFragment = new EnhanceFragment();
                 }
@@ -114,7 +121,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                     LoginActivity.launchForResult(this, REQUEST_CODE_SIGN_UP_FROM_ENHANCE);
                     return;
                 } else {
-                    mTopPlaceHolder.setVisibility(View.GONE);
+                    adjustPlayerPosition(false);
                     if (mShareFragment == null) {
                         mShareFragment = new ShareFragment();
                     }
@@ -123,6 +130,18 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 break;
         }
         setupToolbarImpl();
+    }
+
+    void adjustPlayerPosition(boolean isQuickView) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            TransitionManager.beginDelayedTransition(mPlayerContainer);
+        }
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
+        if (isQuickView) {
+            layoutParams.topMargin = ((ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams()).topMargin;
+        } else {
+            layoutParams.topMargin = 0;
+        }
     }
 
     @Override
