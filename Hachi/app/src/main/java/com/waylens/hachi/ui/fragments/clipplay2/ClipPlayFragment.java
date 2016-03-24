@@ -271,7 +271,9 @@ public class ClipPlayFragment extends DialogFragment {
     private void initViews() {
         mBtnPlayPause.setEnabled(false);
         setupToolbar();
-
+        if (getClipSet() == null) {
+            return;
+        }
         Clip clip = getClipSet().getClip(0);
         ClipPos clipPos;
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {

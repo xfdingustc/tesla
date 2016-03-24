@@ -80,7 +80,7 @@
 
         <activity
             android:name=".ui.activities.EnhancementActivity"
-            android:screenOrientation="portrait"/>
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".ui.activities.ClipChooserActivity"
             android:screenOrientation="portrait"/>

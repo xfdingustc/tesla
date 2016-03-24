@@ -255,6 +255,9 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     }
 
     private void retrieveSharableClips() {
+        if (mVdbRequestQueue == null) {
+            return;
+        }
         mClipSetGroup.clear();
         mVdbRequestQueue.add(new ClipSetRequest(mClipSetType, ClipSetRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {

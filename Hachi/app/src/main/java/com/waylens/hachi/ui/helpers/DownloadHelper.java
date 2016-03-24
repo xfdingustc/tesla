@@ -53,6 +53,10 @@ public class DownloadHelper {
         }
     }
 
+    public void clearListener() {
+        mDownloadListener = null;
+    }
+
     void queryDownloadStatus() {
         DownloadManager.Query query = new DownloadManager.Query();
         long downloadId = PreferenceUtils.getLong(DOWNLOAD_ID, 0);
@@ -72,7 +76,7 @@ public class DownloadHelper {
                     log("File is downloaded.");
                     String downloadedFile = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
                     PreferenceUtils.remove(DOWNLOAD_ID);
-                    if (mDownloadListener != null) {
+                    if (mDownloadListener != null && mDownloadable != null) {
                         mDownloadListener.onSuccess(mDownloadable, downloadedFile);
                     }
                     break;

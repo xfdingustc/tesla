@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.TransitionManager;
@@ -63,6 +64,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     ShareFragment mShareFragment;
 
     int mOriginalTopMargin;
+    int mOriginalHeight;
 
     public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
@@ -78,6 +80,26 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mToolbar.setVisibility(View.GONE);
+            layoutParams.topMargin = 0;
+            layoutParams.width = ViewGroup.MarginLayoutParams.MATCH_PARENT;
+            layoutParams.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;
+            mPlayerContainer.setLayoutParams(layoutParams);
+        } else {
+            mToolbar.setVisibility(View.VISIBLE);
+            layoutParams.width = ViewGroup.MarginLayoutParams.MATCH_PARENT;
+            layoutParams.height = mOriginalHeight;
+            if (mLaunchMode == LAUNCH_MODE_QUICK_VIEW) {
+                layoutParams.topMargin = mOriginalTopMargin;
+            }
+        }
+    }
+
+    @Override
     protected void init() {
         super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
@@ -88,7 +110,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     private void initViews() {
         setContentView(R.layout.activity_enhance);
 
-        mOriginalTopMargin = ((ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams()).topMargin;
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
+        mOriginalTopMargin = layoutParams.topMargin;
+        mOriginalHeight = layoutParams.height;
 
         ArrayList<Clip> mClipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
@@ -185,7 +209,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
-
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, 0x100);
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE,
                 vdtUriProvider,

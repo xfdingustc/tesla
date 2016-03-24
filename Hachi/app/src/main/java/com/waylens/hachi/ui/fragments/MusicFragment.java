@@ -101,9 +101,10 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
         getActivity().unregisterReceiver(mDownloadHelper.broadcastReceiver);
+        mDownloadHelper.clearListener();
+        super.onStop();
     }
 
     @Override

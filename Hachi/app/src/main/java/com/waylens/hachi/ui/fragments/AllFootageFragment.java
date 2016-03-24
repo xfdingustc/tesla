@@ -137,6 +137,9 @@ public class AllFootageFragment extends BaseFragment {
 
 
     private void refreshAllFootageClipSet() {
+        if (mVdbRequestQueue == null) {
+            return;
+        }
         mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_BUFFERED, ClipSetRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
