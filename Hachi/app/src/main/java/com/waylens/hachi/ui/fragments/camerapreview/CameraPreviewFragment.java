@@ -155,6 +155,19 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
+    @Nullable
+    @Bind(R.id.errorPanel)
+    LinearLayout mErrorPanel;
+
+    @Nullable
+    @Bind(R.id.tvErrorMessage)
+    TextView mTvErrorMessage;
+
+    @Nullable
+    @Bind(R.id.tvErrorIndicator)
+    TextView mTvErrorIndicator;
+
+
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
@@ -414,8 +427,23 @@ public class CameraPreviewFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onRecError(int error) {
+                    public void onRecError(final int error) {
+                        Logger.t(TAG).d("On Rec Error: " + error);
+                        if (mErrorPanel != null) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mErrorPanel.setVisibility(View.VISIBLE);
+                                    mTvErrorIndicator.setText(R.string.recording_error);
+                                    switch (error) {
+                                        case VdtCamera.ERROR_START_RECORD_NO_CARD:
+                                            mTvErrorMessage.setText(R.string.error_msg_no_card);
+                                    }
+                                }
+                            });
 
+
+                        }
                     }
                 });
                 mLiveView.startStream(serverAddr, null, true);
@@ -434,8 +462,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private void stopCameraPreview() {
         mLiveView.stopStream();
-
-
     }
 
 
@@ -636,6 +662,9 @@ public class CameraPreviewFragment extends BaseFragment {
                 break;
             case VdtCamera.STATE_RECORD_STARTING:
                 mTvCameraStatus.setText(R.string.record_starting);
+                if (mErrorPanel != null) {
+                    mErrorPanel.setVisibility(View.GONE);
+                }
                 break;
             case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode()) {
@@ -755,7 +784,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
         // update Wifi info:
         //WifiState wifiState = mVdtCamera.getWifiStates();
-        Logger.t(TAG).d("WifiMode: " + mVdtCamera.getWifiMode());
+//        Logger.t(TAG).d("WifiMode: " + mVdtCamera.getWifiMode());
         int wifiMode = mVdtCamera.getWifiMode();
         if (wifiMode == VdtCamera.WIFI_MODE_AP) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_ap);
@@ -766,7 +795,7 @@ public class CameraPreviewFragment extends BaseFragment {
         // update storage info;
         VdtCamera.StorageInfo storageInfo = mVdtCamera.getStorageInfo();
 
-        Logger.t(TAG).d("totalSpace: " + storageInfo.totalSpace + " freeSpace: " + storageInfo.freeSpace);
+//        Logger.t(TAG).d("totalSpace: " + storageInfo.totalSpace + " freeSpace: " + storageInfo.freeSpace);
 
         mStorageView.setMax(storageInfo.totalSpace);
         mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);

@@ -3,4 +3,6 @@
     <string name="resolution_framerate">Resolution/Frame Rate</string>
     <string name="recording_settings">Recording Settings</string>
     <string name="apply">APPLY</string>
+    <string name="error_msg_no_card">"Can't find the memory card on this camera."</string>
+    <string name="recording_error">Record Error</string>
 </resources>
