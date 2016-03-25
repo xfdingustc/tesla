@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -161,6 +162,21 @@ public class ClientConnectFragment extends BaseFragment {
             NetworkItemViewHolder viewHolder = (NetworkItemViewHolder)holder;
             Logger.t(TAG).d("set ssid: " + networkItem.ssid);
             viewHolder.tvSsid.setText(networkItem.ssid);
+            if (networkItem.flags != null && !networkItem.flags.isEmpty()) {
+                viewHolder.ivWifiCipher.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.ivWifiCipher.setVisibility(View.INVISIBLE);
+            }
+
+            if (networkItem.singalLevel >= -30) {
+                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
+            } else if (networkItem.singalLevel >= -60) {
+                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_2);
+            } else if (networkItem.singalLevel >= -90) {
+                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_3);
+            } else {
+                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_4);
+            }
         }
 
 
@@ -178,6 +194,12 @@ public class ClientConnectFragment extends BaseFragment {
 
             @Bind(R.id.tvSsid)
             TextView tvSsid;
+
+            @Bind(R.id.ivWifiCipher)
+            ImageView ivWifiCipher;
+
+            @Bind(R.id.ivWifiSignal)
+            ImageView ivWifiSignal;
 
             public NetworkItemViewHolder(View itemView) {
                 super(itemView);
