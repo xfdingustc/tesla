@@ -248,6 +248,7 @@ public class VdtCamera {
     }
 
     public void setCameraName(String name) {
+        Logger.t(TAG).d("set Camera Name: " + name);
         if (name.equals("No Named")) {
             // use empty string for unnamed camera
             name = "";
@@ -410,23 +411,16 @@ public class VdtCamera {
         }
     }
 
-
-
-
-
-
-
     public int getRecordMode() {
         return mRecordModeIndex;
     }
 
 
-    // API
+
     public InetSocketAddress getInetSocketAddress() {
         return mController.getInetSocketAddress();
     }
 
-    // API
     public InetSocketAddress getPreviewAddress() {
         return mPreviewAddress;
     }

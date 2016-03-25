@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -19,11 +20,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
@@ -51,6 +55,8 @@ import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,16 +69,26 @@ import butterknife.OnClick;
 public class CameraPreviewFragment extends BaseFragment {
     private static final String TAG = CameraPreviewFragment.class.getSimpleName();
 
-    int mBookmarkCount = -1;
-    int mBookmarkClickCount;
+    private int mBookmarkCount = -1;
+    private int mBookmarkClickCount;
 
     private Handler mHandler;
 
     private Timer mTimer;
     private UpdateRecordTimeTask mRecordTimeTask;
 
+
+    private boolean mIsGaugeVisible;
+
+    private LocalBroadcastManager mLocalBroadcastManager;
+
+    private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
+
     @Bind(R.id.cameraPreview)
     CameraLiveView mLiveView;
+
+    @Bind(R.id.cameraSpinner)
+    Spinner mCameraSpinner;
 
     @Bind(R.id.tvCameraStatus)
     TextView mTvCameraStatus;
@@ -94,10 +110,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @Bind(R.id.btnShowOverlay)
     ImageButton mBtnShowOverlay;
-
-    @Bind(R.id.btnFullscreen)
-    ImageButton mBtnFullScreen;
-
 
     @Nullable
     @Bind(R.id.sharp_view)
@@ -142,16 +154,12 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
-    boolean mIsGaugeVisible;
-
-    LocalBroadcastManager mLocalBroadcastManager;
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             getActivity().finish();
         } else {
-            //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             LiveViewActivity.launch(getActivity(), mVdtCamera, mIsGaugeVisible);
         }
     }
@@ -166,19 +174,6 @@ public class CameraPreviewFragment extends BaseFragment {
         showOverlay(!mIsGaugeVisible);
     }
 
-    void showOverlay(boolean isGaugeVisible) {
-        if (isGaugeVisible) {
-            mIsGaugeVisible = true;
-            mWvGauge.setVisibility(View.VISIBLE);
-            mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
-            mSharpView.setVisibility(View.INVISIBLE);
-        } else {
-            mIsGaugeVisible = false;
-            mWvGauge.setVisibility(View.INVISIBLE);
-            mBtnShowOverlay.clearColorFilter();
-
-        }
-    }
 
     public static CameraPreviewFragment newInstance(VdtCamera vdtCamera) {
         CameraPreviewFragment fragment = new CameraPreviewFragment();
@@ -206,7 +201,19 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void setupToolbar() {
         if (mToolbar != null) {
-            mToolbar.setTitle(R.string.live_view);
+            if (mVdtCameraManager.getConnectedCameras().size() > 1) {
+                List<String> cameraNames = new ArrayList<>();
+                for (VdtCamera camera : mVdtCameraManager.getConnectedCameras()) {
+                    Logger.t(TAG).d("add one camera: " + camera.getName());
+                    cameraNames.add(camera.getName());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.item_spinner, cameraNames);
+                mCameraSpinner.setAdapter(adapter);
+
+            } else {
+                mToolbar.setTitle(R.string.live_view);
+            }
+
             mToolbar.getMenu().clear();
             if (VdtCameraManager.getManager().isConnected()) {
                 mToolbar.inflateMenu(R.menu.menu_live_view);
@@ -226,6 +233,8 @@ public class CameraPreviewFragment extends BaseFragment {
                     return false;
                 }
             });
+
+
         }
         super.setupToolbar();
     }
@@ -472,7 +481,7 @@ public class CameraPreviewFragment extends BaseFragment {
             new VdbResponse.Listener<ClipActionInfo>() {
                 @Override
                 public void onResponse(ClipActionInfo response) {
-                    Logger.t(TAG).e(response.toString());
+//                    Logger.t(TAG).e(response.toString());
                 }
             },
             new VdbResponse.ErrorListener() {
@@ -561,9 +570,24 @@ public class CameraPreviewFragment extends BaseFragment {
         mWvGauge.loadUrl("file:///android_asset/api.html");
     }
 
-    void showMessage() {
+    private void showMessage() {
         mBookmarkMsgView.setVisibility(View.VISIBLE);
     }
+
+    private void showOverlay(boolean isGaugeVisible) {
+        if (isGaugeVisible) {
+            mIsGaugeVisible = true;
+            mWvGauge.setVisibility(View.VISIBLE);
+            mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
+            mSharpView.setVisibility(View.INVISIBLE);
+        } else {
+            mIsGaugeVisible = false;
+            mWvGauge.setVisibility(View.INVISIBLE);
+            mBtnShowOverlay.clearColorFilter();
+
+        }
+    }
+
 
     private void updateCameraStatusInfo() {
         int recState = mVdtCamera.getRecordState();

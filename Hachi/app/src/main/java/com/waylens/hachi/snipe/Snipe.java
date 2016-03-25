@@ -67,7 +67,7 @@ public class Snipe {
         @Override
         public void onCameraVdbConnected(VdtCamera vdtCamera) {
             mVdbConnection = vdtCamera.getVdbConnection();
-            setOptions();
+            //setOptions();
         }
 
         @Override

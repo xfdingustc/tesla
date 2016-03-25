@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_color"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/background_color"
+              android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:elevation="@dimen/default_elevation"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <Spinner
+            android:id="@+id/cameraSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></Spinner>
+
+    </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,7 +64,7 @@
                                     android:layout_marginTop="20dp"
                                     android:textColor="@color/text_camera_info"
                                     android:textSize="16sp"
-                                    tools:text="Continuous Recording" />
+                                    tools:text="Continuous Recording"/>
 
                                 <View
                                     android:id="@+id/recordDot"
@@ -81,7 +88,7 @@
                                 android:layout_marginTop="10dp"
                                 android:textColor="@color/text_camera_info"
                                 android:textSize="12sp"
-                                tools:text="300 bookmarks remain" />
+                                tools:text="300 bookmarks remain"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -101,7 +108,7 @@
                             android:layout_centerInParent="true"
                             android:text="@string/confirm_bookmark_add"
                             android:textColor="#FE5000"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"/>
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -110,7 +117,7 @@
                             android:layout_marginRight="4dp"
                             android:layout_toLeftOf="@id/tvBookmarkHint"
                             android:background="@android:color/transparent"
-                            android:src="@drawable/bookmark_successfully" />
+                            android:src="@drawable/bookmark_successfully"/>
                     </RelativeLayout>
                 </FrameLayout>
 
@@ -144,14 +151,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="2dp"
                             android:gravity="center_vertical"
-                            android:src="@drawable/rec_info_battery_1" />
+                            android:src="@drawable/rec_info_battery_1"/>
 
                         <ImageView
                             android:id="@+id/ivIsChanging"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
-                            android:src="@drawable/rec_info_battery_charge" />
+                            android:src="@drawable/rec_info_battery_charge"/>
 
                         <TextView
                             android:id="@+id/tvBatteryVol"
@@ -161,14 +168,14 @@
                             android:gravity="center_vertical"
                             android:text="100%"
                             android:textColor="@color/text_camera_info"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                         <ImageView
                             android:id="@+id/wifiMode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
-                            android:src="@drawable/rec_info_camera_mode_ap" />
+                            android:src="@drawable/rec_info_camera_mode_ap"/>
 
 
                         <View
@@ -182,7 +189,7 @@
                             android:layout_marginLeft="8dp"
                             android:layout_marginRight="2dp"
                             android:rotation="90"
-                            android:src="@drawable/rec_info_remote_control_on" />
+                            android:src="@drawable/rec_info_remote_control_on"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -190,14 +197,14 @@
                             android:gravity="center_vertical"
                             android:text="ON"
                             android:textColor="@color/text_camera_info"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="4dp"
-                            android:background="@drawable/rec_info_obd_on" />
+                            android:background="@drawable/rec_info_obd_on"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -205,7 +212,7 @@
                             android:gravity="center_vertical"
                             android:text="ON"
                             android:textColor="@color/text_camera_info"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                     </LinearLayout>
 
@@ -235,14 +242,14 @@
                             android:layout_marginRight="20dp"
                             android:text="Used Space"
                             android:textColor="@color/text_camera_info"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Free Spaces"
                             android:textColor="@color/text_camera_info"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
@@ -257,7 +264,7 @@
                 <com.waylens.hachi.ui.views.camerapreview.CameraLiveView
                     android:id="@+id/cameraPreview"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"/>
 
                 <WebView
                     android:id="@+id/wvGauge"
@@ -273,16 +280,16 @@
                     android:id="@+id/sharp_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"/>
 
             </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:alpha="0.8"
-                android:background="#222428">
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:alpha="0.8"
+                            android:background="#222428">
 
                 <ImageButton
                     android:id="@+id/btnMicControl"
@@ -291,7 +298,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/btn_mic_on" />
+                    android:src="@drawable/btn_mic_on"/>
 
 
                 <ImageButton
@@ -302,17 +309,17 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="8dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/screen_full" />
+                    android:src="@drawable/screen_full"/>
 
                 <!--<ImageButton-->
-                    <!--android:id="@+id/btnWaterLine"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginRight="20dp"-->
-                    <!--android:layout_toLeftOf="@id/btnFullscreen"-->
-                    <!--android:background="@android:color/transparent"-->
-                    <!--android:src="@drawable/camera_control_grid" />-->
+                <!--android:id="@+id/btnWaterLine"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginRight="20dp"-->
+                <!--android:layout_toLeftOf="@id/btnFullscreen"-->
+                <!--android:background="@android:color/transparent"-->
+                <!--android:src="@drawable/camera_control_grid" />-->
 
 
                 <ImageButton
@@ -323,7 +330,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@id/btnFullscreen"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/btn_gauge_overlay" />
+                    android:src="@drawable/btn_gauge_overlay"/>
             </RelativeLayout>
 
             <View
@@ -341,11 +348,10 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="24dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/camera_control_bookmark" />
+            android:src="@drawable/camera_control_bookmark"/>
 
-        <include layout="@layout/fragment_camera_connect" />
+        <include layout="@layout/fragment_camera_connect"/>
     </RelativeLayout>
-
 
 
 </LinearLayout>

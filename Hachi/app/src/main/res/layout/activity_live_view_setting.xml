@@ -11,8 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:elevation="@dimen/default_elevation"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        >
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+
 
     </android.support.v7.widget.Toolbar>
 
@@ -34,9 +35,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:buttonTint="@color/text_camera_info"
             android:text="@string/continuous"
             android:textColor="@color/text_camera_info"
-            android:buttonTint="@color/text_camera_info"
             android:textSize="16sp"
 
             />
@@ -46,12 +47,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:buttonTint="@color/text_camera_info"
             android:text="@string/manual"
             android:textColor="@color/text_camera_info"
-            android:buttonTint="@color/text_camera_info"
             android:textSize="16sp"
             />
     </RadioGroup>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -88,17 +90,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:textColor="@color/text_camera_info"/>
-
-
-
-
-
-
-
-
-
-
-
 
 
 </LinearLayout>
