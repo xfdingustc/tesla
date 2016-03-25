@@ -5,7 +5,6 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -16,7 +15,6 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -36,8 +34,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
@@ -327,57 +323,27 @@ public class SignInFragment extends BaseFragment {
                     public void onResponse(JSONObject response) {
                         Log.e("test", "Response: " + response);
                         SessionManager.getInstance().saveLoginInfo(response, true);
-                        if (SessionManager.getInstance().needLinkAccount()) {
-                            suggestUserName(accessToken);
-                        } else {
-                            hideDialog();
-                            getActivity().finish();
-                        }
+                        hideDialog();
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
                     }
-                }, new Response.ErrorListener() {
+                }
+
+                , new Response.ErrorListener()
+
+        {
             @Override
             public void onErrorResponse(VolleyError error) {
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                 showMessage(errorInfo.msgResID);
                 hideDialog();
             }
-        }));
+        }
+
+        ));
         mVolleyRequestQueue.start();
 
         showDialog();
-    }
-
-    void suggestUserName(final AccessToken accessToken) {
-        GraphRequest request = GraphRequest.newMeRequest(
-                accessToken,
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject object,
-                            GraphResponse response) {
-                        Bundle args = new Bundle();
-                        if (response.getError() == null) {
-                            String name = object.optString("name");
-                            if (!TextUtils.isEmpty(name)) {
-                                name = name.replaceAll(" ", "");
-                                args.putString(LinkAccountFragment.ARG_SUGGESTED_USER_NAME, name.toLowerCase());
-                            }
-
-                        }
-                        hideDialog();
-                        if (SessionManager.getInstance().needLinkAccount()) {
-                            LinkAccountFragment fragment = new LinkAccountFragment();
-                            fragment.setArguments(args);
-                            getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
-                        } else {
-                            getActivity().finish();
-                        }
-                    }
-                });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name");
-        request.setParameters(parameters);
-        request.executeAsync();
     }
 
     class FBCallback implements FacebookCallback<LoginResult> {

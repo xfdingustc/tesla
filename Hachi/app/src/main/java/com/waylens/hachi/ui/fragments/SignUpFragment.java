@@ -28,8 +28,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
@@ -149,7 +147,8 @@ public class SignUpFragment extends BaseFragment {
 
     void initViews() {
         mRootView.requestFocus();
-        mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends");
+        mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends", "user_location",
+                "user_birthday");
         mFBLoginButton.registerCallback(mCallbackManager, new FBCallback());
         mBtnCleanEmail.setVisibility(View.GONE);
         mPasswordControls.setVisibility(View.GONE);
@@ -352,12 +351,9 @@ public class SignUpFragment extends BaseFragment {
                     public void onResponse(JSONObject response) {
                         Log.e("test", "Response: " + response);
                         SessionManager.getInstance().saveLoginInfo(response, true);
-                        if (SessionManager.getInstance().needLinkAccount()) {
-                            suggestUserName(accessToken);
-                        } else {
-                            hideDialog();
-                            getActivity().finish();
-                        }
+                        hideDialog();
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -370,39 +366,6 @@ public class SignUpFragment extends BaseFragment {
         mVolleyRequestQueue.start();
 
         showDialog();
-    }
-
-    void suggestUserName(final AccessToken accessToken) {
-        GraphRequest request = GraphRequest.newMeRequest(
-                accessToken,
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject object,
-                            GraphResponse response) {
-                        Bundle args = new Bundle();
-                        if (response.getError() == null) {
-                            String name = object.optString("name");
-                            if (!TextUtils.isEmpty(name)) {
-                                name = name.replaceAll(" ", "");
-                                args.putString(LinkAccountFragment.ARG_SUGGESTED_USER_NAME, name.toLowerCase());
-                            }
-
-                        }
-                        hideDialog();
-                        if (SessionManager.getInstance().needLinkAccount()) {
-                            LinkAccountFragment fragment = new LinkAccountFragment();
-                            fragment.setArguments(args);
-                            getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();
-                        } else {
-                            getActivity().finish();
-                        }
-                    }
-                });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name");
-        request.setParameters(parameters);
-        request.executeAsync();
     }
 
     class FBCallback implements FacebookCallback<LoginResult> {

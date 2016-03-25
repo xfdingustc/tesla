@@ -390,4 +390,6 @@
     <string name="send">Send</string>
     <string name="verification_code">Verification Code</string>
     <string name="change_password">Change Password</string>
+    <string name="add_clip_hint1">Tap</string>
+    <string name="add_clip_hint2">to add a bookmark or footage</string>
 </resources>

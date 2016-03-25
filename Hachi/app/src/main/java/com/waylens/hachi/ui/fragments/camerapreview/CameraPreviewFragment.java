@@ -305,7 +305,7 @@ public class CameraPreviewFragment extends BaseFragment {
         }
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver,
-            new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
+                new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
         if (mTimer != null) {
             mTimer.cancel();
@@ -844,7 +844,9 @@ public class CameraPreviewFragment extends BaseFragment {
 
         @Override
         public void run() {
-            mVdtCamera.getRecordTime();
+            if (mVdtCamera != null) {
+                mVdtCamera.getRecordTime();
+            }
         }
     }
 

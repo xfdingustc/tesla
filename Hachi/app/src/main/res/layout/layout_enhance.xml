@@ -75,12 +75,14 @@
             android:visibility="gone"
             tools:layout_height="match_parent"
             tools:visibility="visible">
-
             <include layout="@layout/layout_enhance_gauge"/>
+
+            <include layout="@layout/layout_enhance_add_video" />
 
             <include layout="@layout/layout_enhance_music"/>
 
             <include layout="@layout/layout_enhance_remix"/>
+
         </ViewAnimator>
     </LinearLayout>
 </FrameLayout>

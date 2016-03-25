@@ -199,7 +199,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
             mAdapter.notifyItemRangeInserted(getClipSet().getCount() - size, size);
             updateClipCount(getClipSet().getCount());
             if (mOnClipEditListener != null) {
-                mOnClipEditListener.onClipsAppended(clips);
+                mOnClipEditListener.onClipsAppended(clips, mAdapter.getItemCount());
             }
         }
     }
@@ -244,7 +244,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
     void internalOnClipRemoved(Clip clip, int position) {
         updateClipCount(getClipSet().getCount());
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onClipRemoved(clip, position);
+            mOnClipEditListener.onClipRemoved(clip, position, mAdapter.getItemCount());
         }
 
         if (mSelectedPosition == position) {
@@ -423,9 +423,9 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
 
         void onClipMoved(int fromPosition, int toPosition, Clip clip);
 
-        void onClipsAppended(List<Clip> clips);
+        void onClipsAppended(List<Clip> clips, int clipCount);
 
-        void onClipRemoved(Clip clip, int position);
+        void onClipRemoved(Clip clip, int position, int clipCount);
 
         void onExitEditing();
 

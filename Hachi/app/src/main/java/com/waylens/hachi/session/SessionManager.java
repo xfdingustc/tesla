@@ -130,8 +130,7 @@ public class SessionManager {
     private void setLoginInternal() {
         if (mUserName != null
                 && mUserId != null
-                && mToken != null
-                && !needLinkAccount()) {
+                && mToken != null) {
             setIsLoggedIn(true);
         } else {
             setIsLoggedIn(false);

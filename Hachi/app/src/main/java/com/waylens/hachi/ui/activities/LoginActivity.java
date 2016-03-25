@@ -43,7 +43,7 @@ public class LoginActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
-        if (fragment instanceof SignInFragment) {
+        if (fragment instanceof SignInFragment || fragment instanceof SignUpFragment) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
     }

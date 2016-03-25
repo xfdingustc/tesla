@@ -53,6 +53,12 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
 
     public static final int DEFAULT_AUDIO_ID = -1;
 
+    private static final int ACTION_NONE = -1;
+    private static final int ACTION_OVERLAY = 0;
+    private static final int ACTION_ADD_VIDEO = 1;
+    private static final int ACTION_ADD_MUSIC = 2;
+    private static final int ACTION_SMART_REMIX = 3;
+
     @Bind(R.id.gauge_list_view)
     RecyclerView mGaugeListView;
 
@@ -172,7 +178,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         btnGauge.setSelected(false);
         btnRemix.setSelected(false);
         view.setSelected(!view.isSelected());
-        configureActionUI(1, view.isSelected());
+        configureActionUI(ACTION_ADD_MUSIC, view.isSelected());
         updateMusicUI();
     }
 
@@ -205,7 +211,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         btnRemix.setSelected(false);
         mClipPlayFragment.showGaugeView(true);
         view.setSelected(!view.isSelected());
-        configureActionUI(0, view.isSelected());
+        configureActionUI(ACTION_OVERLAY, view.isSelected());
     }
 
     @OnClick(R.id.btnThemeOff)
@@ -224,7 +230,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     }
 
     void configureActionUI(int child, boolean isShow) {
-        if (isShow) {
+        if (isShow && (child != ACTION_NONE)) {
             mViewAnimator.setVisibility(View.VISIBLE);
             mViewAnimator.setDisplayedChild(child);
             mClipsEditView.setVisibility(View.GONE);
@@ -235,12 +241,14 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     }
 
 
-    @OnClick(R.id.btn_add_video)
+    @OnClick({R.id.btn_add_video, R.id.btn_add_video_extra})
     void showClipChooser() {
         btnMusic.setSelected(false);
         btnRemix.setSelected(false);
         btnGauge.setSelected(false);
-        configureActionUI(0, false);
+        if (mViewAnimator.getDisplayedChild() != ACTION_ADD_VIDEO) {
+            configureActionUI(ACTION_NONE, false);
+        }
         Intent intent = new Intent(getActivity(), ClipChooserActivity.class);
         startActivityForResult(intent, REQUEST_CODE_ENHANCE);
     }
@@ -250,7 +258,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         btnMusic.setSelected(false);
         btnGauge.setSelected(false);
         view.setSelected(!view.isSelected());
-        configureActionUI(2, view.isSelected());
+        configureActionUI(ACTION_SMART_REMIX, view.isSelected());
         if (mThemeAdapter == null) {
             mThemeAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.theme_remix,
@@ -311,7 +319,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             }
         });
         mGaugeListView.setAdapter(mGaugeListAdapter);
-        configureActionUI(0, false);
+        configureActionUI(ACTION_NONE, false);
     }
 
 
@@ -375,7 +383,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     }
 
     @Override
-    public void onClipsAppended(List<Clip> clips) {
+    public void onClipsAppended(List<Clip> clips, int clipCount) {
         if (clips == null) {
             return;
         }
@@ -385,16 +393,27 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
                 mClipPlayFragment.notifyClipSetChanged();
             }
         });
+        if (clipCount > 0
+                && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
+            btnGauge.setEnabled(true);
+            btnMusic.setEnabled(true);
+            configureActionUI(ACTION_NONE, false);
+        }
     }
 
     @Override
-    public void onClipRemoved(Clip clip, int position) {
+    public void onClipRemoved(Clip clip, int position, int clipCount) {
         mPlaylistEditor.delete(position, new PlaylistEditor.OnDeleteCompleteListener() {
             @Override
             public void onDeleteComplete() {
                 mClipPlayFragment.notifyClipSetChanged();
             }
         });
+        if (clipCount == 0) {
+            btnGauge.setEnabled(false);
+            btnMusic.setEnabled(false);
+            configureActionUI(ACTION_ADD_VIDEO, true);
+        }
     }
 
     @Override
