@@ -81,25 +81,6 @@ public class VdtCameraManager {
         mPasswordList = new PasswordList();
     }
 
-    public VdtCamera getCamera(int position) {
-
-        int index = position;
-        if (index < 0)
-            return null;
-
-        if (index < mConnectedVdtCameras.size()) {
-            return mConnectedVdtCameras.get(index);
-        }
-
-        index -= mConnectedVdtCameras.size();
-        if (index < mConnectingVdtCameras.size()) {
-            return mConnectingVdtCameras.get(index);
-        }
-
-        return null;
-    }
-
-
     public void addCallback(Callback callback) {
         mCallbackList.add(new WeakReference<Callback>(callback));
     }
@@ -306,9 +287,6 @@ public class VdtCameraManager {
     }
 
 
-    public int getTotalItems() {
-        return mConnectedVdtCameras.size() + mConnectingVdtCameras.size() + mWifiList.size();
-    }
 
     public List<VdtCamera> getConnectedCameras() {
         return mConnectedVdtCameras;

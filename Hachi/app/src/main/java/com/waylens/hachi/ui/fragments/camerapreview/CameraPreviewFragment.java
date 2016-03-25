@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -203,15 +204,31 @@ public class CameraPreviewFragment extends BaseFragment {
         if (mToolbar != null) {
             if (mVdtCameraManager.getConnectedCameras().size() > 1) {
                 List<String> cameraNames = new ArrayList<>();
-                for (VdtCamera camera : mVdtCameraManager.getConnectedCameras()) {
-                    Logger.t(TAG).d("add one camera: " + camera.getName());
+                List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
+                for (int i = 0; i < connectedCameras.size(); i++) {
+                    VdtCamera camera = connectedCameras.get(i);
+                    Logger.t(TAG).d("add one camera: " + camera.getName() );
                     cameraNames.add(camera.getName());
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.item_spinner, cameraNames);
                 mCameraSpinner.setAdapter(adapter);
 
+                mCameraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        Logger.t(TAG).d("Item Position clicked: " + position);
+                        changeCurrentCamera(position);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
             } else {
                 mToolbar.setTitle(R.string.live_view);
+                mCameraSpinner.setVisibility(View.GONE);
             }
 
             mToolbar.getMenu().clear();
@@ -238,6 +255,8 @@ public class CameraPreviewFragment extends BaseFragment {
         }
         super.setupToolbar();
     }
+
+
 
     @Override
     public void onStart() {
@@ -314,6 +333,13 @@ public class CameraPreviewFragment extends BaseFragment {
                 showConnectingStatus();
             }
         });
+    }
+
+    private void changeCurrentCamera(int position) {
+        stopCameraPreview();
+        mVdtCamera = mVdtCameraManager.getConnectedCameras().get(position);
+        Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
+        initCameraPreview();
     }
 
     protected void init() {
@@ -403,6 +429,12 @@ public class CameraPreviewFragment extends BaseFragment {
             updateCameraState();
 
         }
+
+    }
+
+    private void stopCameraPreview() {
+        mLiveView.stopStream();
+
 
     }
 
@@ -557,7 +589,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     boolean isInCarMode() {
-        Logger.t(TAG).d("record mode: " + mVdtCamera.getRecordMode());
+//        Logger.t(TAG).d("record mode: " + mVdtCamera.getRecordMode());
         boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
         return isInCarMode;
     }
