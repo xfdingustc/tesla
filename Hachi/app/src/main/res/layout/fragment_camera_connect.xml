@@ -1,61 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/cameraConnecting"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_color"
-
-    android:orientation="vertical"
-    android:paddingBottom="?attr/actionBarSize">
-
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/connectingLayout"
+        android:id="@+id/noSignal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background_color"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cannotFindcamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="32dp"
+            android:text="@string/cannot_find_camera"
+            android:textColor="@color/text_camera_info"/>
+
+        <TextView
+            android:id="@+id/tvNoSignal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/cannotFindcamera"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="32dp"
+            android:text="@string/no_signal"
+            android:textColor="@color/text_camera_info"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/tvNoSignal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/camera_lost_connection"/>
+
+        <TextView
+            android:id="@+id/tvInfo1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/cannotFindcamera"
+            android:layout_below="@+id/cannotFindcamera"
+            android:layout_marginTop="16dp"
+            android:text="@string/camera_power_is_on"
+            android:textColor="@color/text_camera_info"/>
+
+        <TextView
+            android:id="@+id/tvInfo2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/cannotFindcamera"
+            android:layout_below="@+id/tvInfo1"
+            android:layout_marginTop="16dp"
+            android:text="@string/mobile_wifi_is_on"
+            android:textColor="@color/text_camera_info"/>
+
+        <TextView
+            android:id="@+id/tvInfo3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/cannotFindcamera"
+            android:layout_below="@+id/tvInfo2"
+            android:layout_marginTop="16dp"
+            android:text="@string/distance_restrict"
+            android:textColor="@color/text_camera_info"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="48dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:background="@color/style_color_accent"
+
+            android:text="@string/try_again"/>
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/cameraConnecting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_color"
+        android:orientation="vertical"
+        android:paddingBottom="?attr/actionBarSize"
+        tools:visibility="gone">
+
 
         <RelativeLayout
+            android:id="@+id/connectingLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/connectIndicator"
-                android:layout_width="44dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/ivConnectStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@id/connectIndicator"
-                android:background="@android:color/transparent"
-                android:src="@drawable/camera_connecting_phone" />
+                <ImageView
+                    android:id="@+id/connectIndicator"
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"/>
+
+                <ImageView
+                    android:id="@+id/ivConnectStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@id/connectIndicator"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/camera_connecting_phone"/>
 
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:layout_toRightOf="@id/connectIndicator"
-                android:background="@android:color/transparent"
-                android:src="@drawable/camera_connecting_camera" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/connectIndicator"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/camera_connecting_camera"/>
 
-            <Button
-                android:id="@+id/btnEnterPreview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/connectIndicator"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="56dp"
-                android:text="Preview"
-                android:visibility="gone" />
+                <Button
+                    android:id="@+id/btnEnterPreview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/connectIndicator"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="56dp"
+                    android:text="Preview"
+                    android:visibility="gone"/>
 
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
 
 
-</LinearLayout>
+    </LinearLayout>
+</FrameLayout>

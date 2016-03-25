@@ -88,7 +88,7 @@ public class BaseFragment extends Fragment  {
     private VdtCameraManager.Callback mVdtCameraMangerCallback = new VdtCameraManager.Callback() {
         @Override
         public void onCameraConnecting(VdtCamera vdtCamera) {
-
+            BaseFragment.this.onCameraConnecting(vdtCamera);
         }
 
         @Override
@@ -116,6 +116,10 @@ public class BaseFragment extends Fragment  {
 
         }
     };
+
+    protected  void onCameraConnecting(VdtCamera vdtCamera) {
+
+    }
 
     protected void onCameraDisconnected(VdtCamera vdtCamera) {
         //

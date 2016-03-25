@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -27,8 +26,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
@@ -152,6 +151,10 @@ public class CameraPreviewFragment extends BaseFragment {
     LinearLayout mCameraConnecting;
 
     @Nullable
+    @Bind(R.id.noSignal)
+    RelativeLayout mCameraNoSignal;
+
+    @Nullable
     @Bind(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
@@ -166,7 +169,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @Nullable
     @Bind(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
-
 
 
     @OnClick(R.id.btnFullscreen)
@@ -220,7 +222,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
                 for (int i = 0; i < connectedCameras.size(); i++) {
                     VdtCamera camera = connectedCameras.get(i);
-                    Logger.t(TAG).d("add one camera: " + camera.getName() );
+                    Logger.t(TAG).d("add one camera: " + camera.getName());
                     cameraNames.add(camera.getName());
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.item_spinner, cameraNames);
@@ -270,7 +272,6 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -306,10 +307,9 @@ public class CameraPreviewFragment extends BaseFragment {
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver,
             new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
-
-        mTimer.cancel();
-
-
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
     }
 
     @Override
@@ -338,14 +338,16 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     @Override
+    protected void onCameraConnecting(VdtCamera vdtCamera) {
+        super.onCameraConnecting(vdtCamera);
+        handleOnCameraConnecting();
+    }
+
+    @Override
     protected void onCameraDisconnected(VdtCamera vdtCamera) {
         super.onCameraDisconnected(vdtCamera);
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                showConnectingStatus();
-            }
-        });
+        handleOnCameraDisconnected();
+
     }
 
     private void changeCurrentCamera(int position) {
@@ -355,20 +357,50 @@ public class CameraPreviewFragment extends BaseFragment {
         initCameraPreview();
     }
 
+    private void handleOnCameraConnected() {
+        if (mCameraNoSignal != null) {
+            mCameraNoSignal.setVisibility(View.GONE);
+            mCameraConnecting.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void handleOnCameraConnecting() {
+        if (mCameraNoSignal != null) {
+            mCameraNoSignal.setVisibility(View.GONE);
+            mCameraConnecting.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void handleOnCameraDisconnected() {
+        if (mCameraConnecting != null) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCameraNoSignal.setVisibility(View.VISIBLE);
+                    mCameraConnecting.setVisibility(View.GONE);
+                    mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+                    AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+                    animationDrawable.start();
+                    mToolbar.getMenu().clear();
+                }
+            });
+        }
+    }
+
     protected void init() {
-        mTimer = new Timer();
-        mRecordTimeTask = new UpdateRecordTimeTask();
-        mTimer.schedule(mRecordTimeTask, 1000, 1000);
+
 
         mVdbRequestQueue = Snipe.newRequestQueue();
         mHandler = new Handler();
         if (VdtCameraManager.getManager().isConnected()) {
             mVdtCamera = VdtCameraManager.getManager().getConnectedCameras().get(0);
-            if (mCameraConnecting != null) {
+            if (mCameraNoSignal != null) {
+                mCameraNoSignal.setVisibility(View.GONE);
                 mCameraConnecting.setVisibility(View.GONE);
             }
         } else {
-            showConnectingStatus();
+            handleOnCameraDisconnected();
         }
 
         if (mVdtCamera != null) {
@@ -377,22 +409,16 @@ public class CameraPreviewFragment extends BaseFragment {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
     }
 
-    void showConnectingStatus() {
-        if (mCameraConnecting == null) {
-            return;
-        }
-        mCameraConnecting.setVisibility(View.VISIBLE);
-        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
-        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
-        animationDrawable.start();
-        mToolbar.getMenu().clear();
-    }
-
     private void initViews() {
+        mTimer = new Timer();
+        mRecordTimeTask = new UpdateRecordTimeTask();
+        mTimer.schedule(mRecordTimeTask, 1000, 1000);
+
         updateMicControlButton();
         // Start record red dot indicator animation
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
+        handleOnCameraConnected();
         initGaugeWebView();
     }
 
@@ -565,9 +591,6 @@ public class CameraPreviewFragment extends BaseFragment {
             });
         mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
     }
-
-
-
 
 
     private void closeLiveRawData() {
