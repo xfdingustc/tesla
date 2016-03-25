@@ -20,6 +20,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.ui.activities.WelcomeActivity;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
 
 import java.util.List;
@@ -65,6 +66,8 @@ public class ClientConnectFragment extends BaseFragment {
         return view;
     }
 
+
+
     private void init() {
         mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
     }
@@ -99,7 +102,8 @@ public class ClientConnectFragment extends BaseFragment {
     @Override
     public void onCameraVdbConnected(VdtCamera camera) {
         super.onCameraVdbConnected(camera);
-        refreshWifiList();
+        //refreshWifiList();
+        WelcomeActivity.launch(getActivity());
     }
 
     private void refreshWifiList() {

@@ -84,6 +84,7 @@ public class MainActivity extends BaseActivity {
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activity.startActivity(intent);
     }
 

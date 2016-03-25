@@ -367,8 +367,14 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private void handleOnCameraConnecting() {
         if (mCameraNoSignal != null) {
-            mCameraNoSignal.setVisibility(View.GONE);
-            mCameraConnecting.setVisibility(View.VISIBLE);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCameraNoSignal.setVisibility(View.GONE);
+                    mCameraConnecting.setVisibility(View.VISIBLE);
+                }
+            });
+
         }
     }
 

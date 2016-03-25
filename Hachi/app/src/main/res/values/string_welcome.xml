@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="welcome">Welcome to Waylens</string>
+    <string name="please_register">You can still register your Home Wi-Fi in the Bookmark Homepage!</string>
+    <string name="create_new_account">Create New Account</string>
 </resources>

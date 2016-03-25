@@ -62,7 +62,7 @@
         <activity android:name=".ui.activities.AccountActivity"/>
         <activity android:name=".ui.activities.SmartConfigActivity"/>
         <activity android:name=".ui.activities.StartupActivity"/>
-
+        <activity android:name=".ui.activities.WelcomeActivity"/>
 
         <activity
             android:name=".ui.activities.LiveViewActivity"

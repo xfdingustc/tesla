@@ -27,9 +27,9 @@
             android:id="@+id/tvSsid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:layout_gravity="center_vertical"
-            android:textColor="@color/text_color_title"/>
+            android:textColor="@color/text_color_title"
+            tools:text="wifi"/>
 
         <LinearLayout
             android:layout_width="0dp"
