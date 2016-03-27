@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:cev="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
@@ -12,8 +13,22 @@
         android:id="@+id/input_animator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <include layout="@layout/layout_sign_up_email" />
-        <include layout="@layout/layout_sign_up_password" />
+        <com.waylens.hachi.ui.views.CompoundEditView
+            android:id="@+id/sign_up_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cev:cevType="email"
+            cev:cevInvalidFormatMessage="@string/email_error"
+            cev:cevHint="@string/email"/>
+        <com.waylens.hachi.ui.views.CompoundEditView
+            android:id="@+id/sign_up_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cev:cevType="password"
+            cev:cevHint="@string/password"
+            cev:cevValidPattern="@string/password_pattern"
+            cev:cevInvalidFormatMessage="@string/password_error"/>
+
     </ViewAnimator>
 
     <ViewAnimator

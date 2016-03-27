@@ -2,11 +2,8 @@ package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.AppCompatEditText;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
@@ -24,6 +21,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -40,23 +38,13 @@ import butterknife.OnClick;
 public class ChangePasswordFragment extends BaseFragment {
     private static final String TAG = "ChangePasswordFragment";
 
-    private static final int PASSWORD_MIN_LENGTH = 6;
-    private static final int CODE_MIN_LENGTH = 6;
-
     private static final String TAG_REQUEST_RESET_PASSWORD = "request.reset.password";
 
-
-    @Bind(R.id.text_input_code)
-    TextInputLayout mTextInputCode;
-
     @Bind(R.id.forgot_password_code)
-    AppCompatEditText mEvCode;
+    CompoundEditView mEvCode;
 
-    @Bind(R.id.text_input_password)
-    TextInputLayout mTextInputPassword;
-
-    @Bind(R.id.sign_up_password)
-    AppCompatEditText mEvPassword;
+    @Bind(R.id.new_password)
+    CompoundEditView mEvPassword;
 
     @Bind(R.id.button_animator)
     ViewAnimator mButtonAnimator;
@@ -118,7 +106,10 @@ public class ChangePasswordFragment extends BaseFragment {
 
     @OnClick(R.id.btn_change_password)
     void onClickChangePassword() {
-        if (!validateCode() || !validatePassword()) {
+        mCode = mEvCode.getText().toString();
+        mPassword = mEvPassword.getText().toString();
+
+        if (!mEvCode.isValid() || !mEvPassword.isValid()) {
             return;
         }
         mButtonAnimator.setDisplayedChild(1);
@@ -162,26 +153,5 @@ public class ChangePasswordFragment extends BaseFragment {
             mButtonAnimator.setDisplayedChild(0);
         }
     }
-
-    boolean validateCode() {
-        mCode = mEvCode.getText().toString();
-        if (TextUtils.isEmpty(mCode) || mCode.length() < PASSWORD_MIN_LENGTH) {
-            mTextInputCode.setError(getString(R.string.code_min_error, CODE_MIN_LENGTH));
-            return false;
-        }
-        mTextInputCode.setError(null);
-        return true;
-    }
-
-    boolean validatePassword() {
-        mPassword = mEvPassword.getText().toString();
-        if (TextUtils.isEmpty(mPassword) || mPassword.length() < PASSWORD_MIN_LENGTH) {
-            mTextInputPassword.setError(getString(R.string.password_min_error, PASSWORD_MIN_LENGTH));
-            return false;
-        }
-        mEvPassword.setError(null);
-        return true;
-    }
-
 
 }

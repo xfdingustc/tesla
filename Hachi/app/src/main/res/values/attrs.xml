@@ -12,8 +12,8 @@
         <attr name="thumbWidth" format="dimension"/>
         <attr name="progressBarWidth" format="dimension"/>
         <attr name="boardWidth" format="dimension"/>
-        <attr name="leftThumb" format="reference" />
-        <attr name="rightThumb" format="reference" />
+        <attr name="leftThumb" format="reference"/>
+        <attr name="rightThumb" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="ClipPlayFragment">
@@ -30,4 +30,14 @@
         <attr name="circleColor" format="color"/>
     </declare-styleable>
 
+    <declare-styleable name="CompoundEditView">
+        <attr name="cevType" format="enum">
+            <enum name="email" value="0"/>
+            <enum name="password" value="1"/>
+            <enum name="verification_code" value="2" />
+        </attr>
+        <attr name="cevHint" format="string|reference" />
+        <attr name="cevInvalidFormatMessage" format="string|reference" />
+        <attr name="cevValidPattern" format="string|reference"/>
+    </declare-styleable>
 </resources>

@@ -25,10 +25,10 @@ android {
         //ldLibs "log"
         //    abiFilters "armeabi", "armeabi-v7a"
         //}
-        ndk {
+        //ndk {
             //设置支持的SO库架构
-            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
-        }
+        //    abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        //}
     }
 
     dexOptions {

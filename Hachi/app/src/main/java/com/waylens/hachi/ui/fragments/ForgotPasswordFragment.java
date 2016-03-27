@@ -2,13 +2,9 @@ package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
-import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
@@ -19,6 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -41,10 +38,7 @@ public class ForgotPasswordFragment extends BaseFragment {
 
 
     @Bind(R.id.sign_up_email)
-    AutoCompleteTextView mTvSignUpEmail;
-
-    @Bind(R.id.text_input_email)
-    TextInputLayout mTextInputEmail;
+    CompoundEditView mTvSignUpEmail;
 
     @Bind(R.id.button_animator)
     ViewAnimator mButtonAnimator;
@@ -82,10 +76,9 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     @OnClick(R.id.btn_send)
     void onClickSend() {
-        if (!validateEmail()) {
+        if (!mTvSignUpEmail.isValid()) {
             return;
         }
-        mTextInputEmail.setError(null);
         mButtonAnimator.setDisplayedChild(1);
         sendEmail();
     }
@@ -134,21 +127,5 @@ public class ForgotPasswordFragment extends BaseFragment {
             showMessage(R.string.server_msg_reset_email_not_sent);
             mButtonAnimator.setDisplayedChild(0);
         }
-    }
-
-    boolean validateEmail() {
-        mEmail = mTvSignUpEmail.getText().toString();
-        if (TextUtils.isEmpty(mEmail)) {
-            mTextInputEmail.setError(getString(R.string.the_field_is_required));
-            return false;
-        }
-
-        boolean isValid = Patterns.EMAIL_ADDRESS.matcher(mEmail).matches();
-        if (!isValid) {
-            mTextInputEmail.setError(getString(R.string.email_invalid));
-            return false;
-        }
-        mTextInputEmail.setError(null);
-        return true;
     }
 }
