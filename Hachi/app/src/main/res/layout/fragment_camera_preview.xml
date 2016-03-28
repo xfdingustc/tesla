@@ -65,11 +65,6 @@
 
                 </WebView>
 
-                <com.waylens.hachi.ui.views.SharpView
-                    android:id="@+id/sharp_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="invisible"/>
 
             </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 

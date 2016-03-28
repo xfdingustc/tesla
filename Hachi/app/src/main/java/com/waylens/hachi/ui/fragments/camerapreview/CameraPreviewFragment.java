@@ -112,9 +112,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.btnShowOverlay)
     ImageButton mBtnShowOverlay;
 
-    @Nullable
-    @Bind(R.id.sharp_view)
-    View mSharpView;
 
     @Bind(R.id.bookmark_message_view)
     View mBookmarkMsgView;
@@ -306,7 +303,7 @@ public class CameraPreviewFragment extends BaseFragment {
         }
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver,
-                new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
+            new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
         if (mTimer != null) {
             mTimer.cancel();
@@ -667,7 +664,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mIsGaugeVisible = true;
             mWvGauge.setVisibility(View.VISIBLE);
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
-            mSharpView.setVisibility(View.INVISIBLE);
+            
         } else {
             mIsGaugeVisible = false;
             mWvGauge.setVisibility(View.INVISIBLE);
