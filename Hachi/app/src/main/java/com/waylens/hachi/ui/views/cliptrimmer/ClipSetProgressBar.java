@@ -35,9 +35,6 @@ import com.waylens.hachi.vdb.ClipSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
@@ -378,14 +375,15 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         //ArrayList<ClipPos> mItems = new ArrayList<>();
         private int mClipFragmentDruation = DEFAULT_PERIOD_MS;
 
-        private class ClipFragmentItem {
+        private class CellItem {
             static final int ITEM_TYPE_CLIP_FRAGMENT = 0;
-            static final int ITEM_TYPE_CLIP_DIVIDER = 1;
+            static final int ITEM_TYPE_DIVIDER = 1;
+            static final int ITEM_TYPE_MARGIN = 2;
             int type;
             Object item;
         }
 
-        List<ClipFragmentItem> mItems = new ArrayList<>();
+        List<CellItem> mItems = new ArrayList<>();
 
         public RecyclerListAdapter(VdbImageLoader imageLoader, ClipSet clipSet, int screenWidth, int itemWidth, int itemHeight) {
             mImageLoader = imageLoader;
@@ -399,6 +397,12 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         void generateClipPosList() {
             mItems.clear();
             List<Clip> clipList = mClipSet.getClipList();
+
+
+            CellItem headerMarginItem = new CellItem();
+            headerMarginItem.type = CellItem.ITEM_TYPE_MARGIN;
+            mItems.add(headerMarginItem);
+
             for (int i = 0; i < clipList.size(); i++) {
                 Clip clip = clipList.get(i);
                 int itemCount = clip.getDurationMs() / mClipFragmentDruation;
@@ -419,16 +423,20 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                         posTime = endMs - 10; //magic number.
                     }
 
-                    ClipFragmentItem oneItem = new ClipFragmentItem();
-                    oneItem.type = ClipFragmentItem.ITEM_TYPE_CLIP_FRAGMENT;
+                    CellItem oneItem = new CellItem();
+                    oneItem.type = CellItem.ITEM_TYPE_CLIP_FRAGMENT;
                     oneItem.item = new ClipFragment(clip, startTime, posTime);
                     mItems.add(oneItem);
                 }
 
                 if (i != (clipList.size() - 1)) {
-                    ClipFragmentItem dividerItem = new ClipFragmentItem();
-                    dividerItem.type = ClipFragmentItem.ITEM_TYPE_CLIP_DIVIDER;
+                    CellItem dividerItem = new CellItem();
+                    dividerItem.type = CellItem.ITEM_TYPE_DIVIDER;
                     mItems.add(dividerItem);
+                } else {
+                    CellItem tailItem = new CellItem();
+                    tailItem.type = CellItem.ITEM_TYPE_MARGIN;
+                    mItems.add(tailItem);
                 }
             }
         }
@@ -440,9 +448,9 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ClipFragmentItem clipFragmentItem = mItems.get(viewType);
-            if (clipFragmentItem.type == ClipFragmentItem.ITEM_TYPE_CLIP_FRAGMENT) {
-                ClipFragment clipFragment = (ClipFragment)clipFragmentItem.item;
+            CellItem cellItem = mItems.get(viewType);
+            if (cellItem.type == CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
+                ClipFragment clipFragment = (ClipFragment)cellItem.item;
                 ImageView imageView = new ImageView(parent.getContext());
                 int imageViewWidth = mRecyclerView.getHeight() * 16 / 9;
 
@@ -452,27 +460,28 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                 imageView.setLayoutParams(params);
 
                 return new ItemViewHolder(imageView);
-            } else {
+            } else if (cellItem.type == CellItem.ITEM_TYPE_DIVIDER){
                 LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.item_clip_fragment_divider, parent, false);
                 return new DividerViewHolder(view);
+            } else  {
+                View view = new View(parent.getContext());
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mScreenWidth/2, ViewGroup.LayoutParams.MATCH_PARENT);
+                view.setLayoutParams(params);
+                return new MarginViewHolder(view);
             }
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-            ClipFragmentItem clipFragmentItem = mItems.get(position);
-            if (clipFragmentItem.type == ClipFragmentItem.ITEM_TYPE_CLIP_FRAGMENT) {
+            CellItem clipFragmentItem = mItems.get(position);
+            if (clipFragmentItem.type == CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
                 ItemViewHolder viewHolder = (ItemViewHolder)holder;
                 ClipFragment clipFragment = (ClipFragment)clipFragmentItem.item;
                 ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-
-
                 mImageLoader.displayVdbImage(clipPos, viewHolder.clipFragmentThumbnail, mItemWidth, mItemHeight);
             }
-
-
 
         }
 
@@ -501,6 +510,13 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     public static class DividerViewHolder extends RecyclerView.ViewHolder {
 
         public DividerViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public static class MarginViewHolder extends RecyclerView.ViewHolder {
+
+        public MarginViewHolder(View itemView) {
             super(itemView);
         }
     }
