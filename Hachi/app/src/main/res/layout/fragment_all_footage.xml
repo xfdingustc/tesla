@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewSwitcher xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/vsRoot"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:toolsNs="http://schemas.android.com/apk/res-auto"
               android:background="?attr/defaultBgColor"
-              android:orientation="vertical">
+              >
 
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 
         <ImageButton
@@ -20,13 +23,39 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="16dp"
-            android:src="@drawable/btn_enhance_addbookmark"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_enhance_addbookmark"/>
 
 
-    <com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar
-        android:id="@+id/clipSetPrgressBar"
+        <com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar
+            android:id="@+id/clipSetPrgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"></com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar>
+
+    </LinearLayout>
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"></com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/noAllfootage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bookmark_no_footages"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Video Clips"
+            android:textColor="?attr/appTextColorPrimary"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="32dp"
+            android:layout_below="@id/noAllfootage"/>
+
+    </RelativeLayout>
+
+</ViewSwitcher>

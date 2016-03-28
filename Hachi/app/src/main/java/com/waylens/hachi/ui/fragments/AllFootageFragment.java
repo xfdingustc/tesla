@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ViewAnimator;
+import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -45,6 +47,9 @@ public class AllFootageFragment extends BaseFragment {
 
         return fragment;
     }
+
+    @Bind(R.id.vsRoot)
+    ViewSwitcher mVsRoot;
 
     @Bind(R.id.clipSetPrgressBar)
     ClipSetProgressBar mClipSetProgressBar;
@@ -93,7 +98,10 @@ public class AllFootageFragment extends BaseFragment {
 
 
     private void onHandleEmptyCamera() {
-
+        if (mVsRoot.getDisplayedChild() == 0) {
+            Logger.t(TAG).d("show empty camera");
+            mVsRoot.showNext();
+        }
     }
 
     private void setupClipPlayFragment(ClipSet clipSet) {
@@ -148,6 +156,7 @@ public class AllFootageFragment extends BaseFragment {
                     //setupClipSetGroupView();
                     if (clipSet.getCount() == 0) {
                         onHandleEmptyCamera();
+                        return;
                     }
                     setupClipPlayFragment(clipSet);
                     setupClipProgressBar(clipSet);
