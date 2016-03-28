@@ -17,8 +17,12 @@
         <item name="colorAccent">@color/style_color_primary</item>
         <item name="toolbarColor">@color/style_color_primary_dark</item>
         <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="defaultBgColor">@color/background_color</item>
-        <item name="defaultBgColorDark">@color/background_color_dark</item>
+        <item name="defaultBgColor">@color/windowBackground</item>
+        <item name="defaultBgColorDark">@color/windowBackgroundDark</item>
+        <item name="defaultDialogBgColor">@color/dialogBackground</item>
+        <item name="appTextColorPrimary">@color/app_text_color_primary</item>
+        <item name="appTextColorSecondary">@color/app_text_color_secondary</item>
+        <item name="appTextColorDisabled">@color/app_text_color_disabled</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeCloseDrawable">@drawable/navbar_close</item>
         <item name="actionModeStyle">@style/Styled.ActionMode</item>

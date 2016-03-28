@@ -3,7 +3,7 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@android:color/black"
+              android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -35,9 +35,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:buttonTint="@color/text_camera_info"
+            android:buttonTint="?attr/appTextColorPrimary"
             android:text="@string/continuous"
-            android:textColor="@color/text_camera_info"
+            android:textColor="?attr/appTextColorPrimary"
             android:textSize="16sp"
 
             />
@@ -47,9 +47,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:buttonTint="@color/text_camera_info"
+            android:buttonTint="?attr/appTextColorPrimary"
             android:text="@string/manual"
-            android:textColor="@color/text_camera_info"
+            android:textColor="?attr/appTextColorPrimary"
             android:textSize="16sp"
             />
     </RadioGroup>
@@ -57,7 +57,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/text_camera_info"></View>
+        android:background="?attr/appTextColorDisabled"></View>
 
 
     <TextView
@@ -82,14 +82,14 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="@string/resolution_framerate"
-        android:textColor="@color/text_camera_info"/>
+        android:textColor="?attr/appTextColorPrimary"/>
 
     <TextView
         android:id="@+id/resolution_framerate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:textColor="@color/text_camera_info"/>
+        android:textColor="?attr/appTextColorPrimary"/>
 
 
 </LinearLayout>

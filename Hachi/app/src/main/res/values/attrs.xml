@@ -7,6 +7,10 @@
     <attr name="hachiTextColorPrimary" format="color"/>
     <attr name="hachiTextColorSecondary" format="color"/>
     <attr name="hachiTextColorDisabled" format="color"/>
+    <attr name="defaultDialogBgColor" format="color"/>
+    <attr name="appTextColorPrimary" format="color"/>
+    <attr name="appTextColorSecondary" format="color"/>
+    <attr name="appTextColorDisabled" format="color"/>
 
     <declare-styleable name="VideoTrimmer">
         <attr name="thumbWidth" format="dimension"/>
