@@ -398,7 +398,9 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         void generateClipPosList() {
             mItems.clear();
-            for (Clip clip : mClipSet.getClipList()) {
+            List<Clip> clipList = mClipSet.getClipList();
+            for (int i = 0; i < clipList.size(); i++) {
+                Clip clip = clipList.get(i);
                 int itemCount = clip.getDurationMs() / mClipFragmentDruation;
                 if (clip.getDurationMs() % mClipFragmentDruation != 0) {
                     itemCount++;
@@ -406,9 +408,9 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
                 long endMs = clip.getStartTimeMs() + clip.getDurationMs();
 
-                for (int i = 0; i < itemCount; i++) {
-                    long startTime = clip.getStartTimeMs() + mClipFragmentDruation * i;
-                    long posTime = clip.getStartTimeMs() + mClipFragmentDruation * (i + 1);
+                for (int j = 0; j < itemCount; j++) {
+                    long startTime = clip.getStartTimeMs() + mClipFragmentDruation * j;
+                    long posTime = clip.getStartTimeMs() + mClipFragmentDruation * (j + 1);
                     if (startTime >= endMs) {
                         break;
                     }
@@ -421,12 +423,13 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     oneItem.type = ClipFragmentItem.ITEM_TYPE_CLIP_FRAGMENT;
                     oneItem.item = new ClipFragment(clip, startTime, posTime);
                     mItems.add(oneItem);
-//                    mItems.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
                 }
 
-                ClipFragmentItem dividerItem = new ClipFragmentItem();
-                dividerItem.type = ClipFragmentItem.ITEM_TYPE_CLIP_DIVIDER;
-                mItems.add(dividerItem);
+                if (i != (clipList.size() - 1)) {
+                    ClipFragmentItem dividerItem = new ClipFragmentItem();
+                    dividerItem.type = ClipFragmentItem.ITEM_TYPE_CLIP_DIVIDER;
+                    mItems.add(dividerItem);
+                }
             }
         }
 
