@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -134,13 +135,15 @@ public class BaseFragment extends Fragment  {
 
     public void setupToolbar() {
         if (mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+            mToolbar.setNavigationIcon(R.drawable.ic_menu_grey600_24dp);
+            
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ((MainActivity)getActivity()).showDrawer();
                 }
             });
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
         }
     }
 

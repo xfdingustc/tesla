@@ -23,5 +23,5 @@
                  android:layout_width="match_parent"
                  android:layout_height="48dp"
                  android:ellipsize="marquee"
-                 android:textColor="@color/text_camera_info"
+                 android:textColor="?attr/appTextColorPrimary"
                  android:singleLine="true"/>

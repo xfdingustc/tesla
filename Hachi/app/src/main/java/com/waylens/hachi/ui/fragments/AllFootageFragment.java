@@ -99,7 +99,6 @@ public class AllFootageFragment extends BaseFragment {
 
     private void onHandleEmptyCamera() {
         if (mVsRoot.getDisplayedChild() == 0) {
-            Logger.t(TAG).d("show empty camera");
             mVsRoot.showNext();
         }
     }

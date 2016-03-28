@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.cache.DiskLruCache;
 import com.waylens.hachi.snipe.cache.MemoryLurCache;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
@@ -144,7 +145,7 @@ public class VdbImageLoader {
     public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean isIgnorable, boolean useCache) {
         mUseCache = useCache;
         VdbImageListener listener = VdbImageLoader.getImageListener(imageView, 0, 0);
-        get(clipPos, listener, 0, 0, ImageView.ScaleType.CENTER_INSIDE, isIgnorable);
+        get(clipPos, listener, imageView.getWidth(), imageView.getHeight(), ImageView.ScaleType.CENTER_INSIDE, isIgnorable);
     }
 
     VdbImageContainer get(final ClipPos clipPos,

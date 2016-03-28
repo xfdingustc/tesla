@@ -13,6 +13,13 @@
         <item>480p60</item>
         <item>720p120</item>
     </string-array>
+
+    <string-array name="videoOptions">
+        <item>Bookmarks</item>
+        <item>All Footage</item>
+    </string-array>
+
+
     <string-array name="quality">
         <item>Unknown</item>
         <item>Super</item>

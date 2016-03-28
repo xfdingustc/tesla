@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -26,17 +25,19 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
  */
 public class ClipSetProgressBar extends FrameLayout implements Progressive {
-
+    private static final String TAG = ClipSetProgressBar.class.getSimpleName();
     public RecyclerView mRecyclerView;
     private MarkView mMarkView;
     private SelectView mSelectingView;
@@ -63,7 +64,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     private int mStartSelectPosition;
     private int mEndSelectPosition;
-    private Clip mSelectedClip ;
+    private Clip mSelectedClip;
     private ClipSet mClipSet;
     private ClipSet mBookmarkClipSet;
 
@@ -82,11 +83,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         initChildren();
     }
 
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//    public ClipSetProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-//        super(context, attrs, defStyleAttr, defStyleRes);
-//        initChildren();
-//    }
 
     private void initChildren() {
         mScreenWidth = getScreenWidth();
@@ -164,8 +160,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
 
-
-
     public void setClipSet(ClipSet clipSet, VdbImageLoader imageLoader) {
         mClipSet = clipSet;
         mVideoLength = clipSet.getTotalLengthMs();
@@ -230,10 +224,9 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         //int clipIndex = mClipSet.findClipIndex(clip.cid);
         double offset = (1.0f * time) / mVideoLength * getLength();
 
-        return (int)offset;
+        return (int) offset;
 
     }
-
 
 
     int getScreenWidth() {
@@ -365,8 +358,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
 
-
-
     public static class RecyclerListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         private static final int TYPE_NORMAL = 0;
         private static final int TYPE_HEADER_TAIL = 1;
@@ -378,7 +369,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         private ClipSet mClipSet;
         int mItemWidth;
         int mItemHeight;
-        ArrayList<ClipPos> mItems = new ArrayList<>();
+        //ArrayList<ClipPos> mItems = new ArrayList<>();
+        private int mClipFragmentDruation = DEFAULT_PERIOD_MS;
+
+        List<ClipFragment> mItems = new ArrayList<>();
 
         public RecyclerListAdapter(VdbImageLoader imageLoader, ClipSet clipSet, int
             screenWidth, int itemWidth, int itemHeight) {
@@ -393,19 +387,25 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         void generateClipPosList() {
             mItems.clear();
             for (Clip clip : mClipSet.getClipList()) {
-                int itemCount = clip.getDurationMs() / DEFAULT_PERIOD_MS;
-                if (clip.getDurationMs() % DEFAULT_PERIOD_MS != 0) {
+                int itemCount = clip.getDurationMs() / mClipFragmentDruation;
+                if (clip.getDurationMs() % mClipFragmentDruation != 0) {
                     itemCount++;
                 }
 
                 long endMs = clip.getStartTimeMs() + clip.getDurationMs();
 
                 for (int i = 0; i < itemCount; i++) {
-                    long posTime = clip.getStartTimeMs() + DEFAULT_PERIOD_MS * i;
+                    long startTime = clip.getStartTimeMs() + mClipFragmentDruation * i;
+                    long posTime = clip.getStartTimeMs() + mClipFragmentDruation * (i + 1);
+                    if (startTime >= endMs) {
+                        break;
+                    }
+
                     if (posTime >= endMs) {
                         posTime = endMs - 10; //magic number.
                     }
-                    mItems.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
+                    mItems.add(new ClipFragment(clip, startTime, posTime));
+//                    mItems.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
                 }
             }
         }
@@ -427,6 +427,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                 ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mItemWidth, mItemHeight);
                 view.setLayoutParams(params);
             } else {
+                Logger.t(TAG).d("tails:");
                 view = new ImageView(parent.getContext());
                 ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mScreenWidth / 2, ViewGroup.LayoutParams.MATCH_PARENT);
                 view.setLayoutParams(params);
@@ -436,14 +437,17 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            if (getItemViewType(position) == TYPE_NORMAL) {
-                mImageLoader.displayVdbImage(mItems.get(position - 1), holder.imageView, mItemWidth, mItemHeight);
-            }
+
+            ClipFragment clipFragment = mItems.get(position);
+            ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+
+            mImageLoader.displayVdbImage(clipPos, holder.imageView, mItemWidth, mItemHeight);
+
         }
 
         @Override
         public int getItemCount() {
-            return mItems.size() + 2;
+            return mItems.size() ;
         }
     }
 

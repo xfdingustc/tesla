@@ -6,6 +6,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
@@ -19,63 +22,56 @@ import butterknife.Bind;
 public class VideoFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = VideoFragment.class.getSimpleName();
 
-    @Bind(R.id.clipListViewPager)
-    ViewPager mViewPager;
 
-    private SimpleFragmentPagerAdapter mAdapter;
+    @Bind(R.id.videoSpinner)
+    Spinner mVideoSpinner;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_video,
-                savedInstanceState);
-        setupViewPager();
+        View view = createFragmentView(inflater, container, R.layout.fragment_video, savedInstanceState);
+
+        setupVideoSpinner();
         return view;
     }
 
 
-    @Override
-    public void onDestroyView() {
-        mViewPager.setAdapter(null);
-        super.onDestroyView();
-    }
 
-    @Override
-    public void setupToolbar() {
-        mToolbar.setTitle(R.string.video);
-        super.setupToolbar();
-    }
 
-    private void setupViewPager() {
-        mAdapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
-        mAdapter.addFragment(BookmarkFragment.newInstance(Clip.TYPE_MARKED), getString(R.string
-                .bookmark));
-        mAdapter.addFragment(AllFootageFragment.newInstance(), getString(R.string
-            .all_footage));
-        mViewPager.setAdapter(mAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    private void setupVideoSpinner() {
+        String[] items = getResources().getStringArray(R.array.videoOptions);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.item_spinner, items);
+        mVideoSpinner.setAdapter(adapter);
+
+        mVideoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        Logger.t(TAG).d("Item Position clicked: " + position);
+                //changeCurrentCamera(position);
+                BaseFragment fragment;
+                if (position == 0) {
+                    fragment = BookmarkFragment.newInstance(Clip.TYPE_MARKED);
+                } else {
+                    fragment = AllFootageFragment.newInstance();
+                }
 
+                getChildFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
             }
 
             @Override
-            public void onPageSelected(int position) {
-                BaseFragment fragment = mAdapter.getItem(position);
-                fragment.onFragmentFocused(true);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
     }
 
+
+
+
     @Override
     public boolean onInterceptBackPressed() {
-        BookmarkFragment fragment = (BookmarkFragment) mAdapter.getItem(mViewPager.getCurrentItem());
-        return fragment.onInterceptBackPressed();
+        //BookmarkFragment fragment = (BookmarkFragment) mAdapter.getItem(mViewPager.getCurrentItem());
+        return false;
     }
 }
