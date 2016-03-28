@@ -16,18 +16,17 @@
     </FrameLayout>
 
 
-
-
-
     <android.support.design.widget.NavigationView
         android:id="@+id/navView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        android:background="#141618"
         android:alpha="0.9"
+        android:background="?attr/defaultBgColorDark"
+        android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
+        app:itemIconTint="@drawable/nav_menu_item_tintlist"
+        app:itemTextColor="@drawable/nav_menu_item_tintlist"
         app:menu="@menu/nav_view_menu">
 
     </android.support.design.widget.NavigationView>
