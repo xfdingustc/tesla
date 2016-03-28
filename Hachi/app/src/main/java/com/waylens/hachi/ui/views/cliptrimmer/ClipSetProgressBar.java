@@ -14,13 +14,16 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
@@ -31,6 +34,9 @@ import com.waylens.hachi.vdb.ClipSet;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * VideoPlayerProgressBar
@@ -358,7 +364,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
 
-    public static class RecyclerListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
+    public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private static final int TYPE_NORMAL = 0;
         private static final int TYPE_HEADER_TAIL = 1;
 
@@ -372,10 +378,16 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         //ArrayList<ClipPos> mItems = new ArrayList<>();
         private int mClipFragmentDruation = DEFAULT_PERIOD_MS;
 
-        List<ClipFragment> mItems = new ArrayList<>();
+        private class ClipFragmentItem {
+            static final int ITEM_TYPE_CLIP_FRAGMENT = 0;
+            static final int ITEM_TYPE_CLIP_DIVIDER = 1;
+            int type;
+            Object item;
+        }
 
-        public RecyclerListAdapter(VdbImageLoader imageLoader, ClipSet clipSet, int
-            screenWidth, int itemWidth, int itemHeight) {
+        List<ClipFragmentItem> mItems = new ArrayList<>();
+
+        public RecyclerListAdapter(VdbImageLoader imageLoader, ClipSet clipSet, int screenWidth, int itemWidth, int itemHeight) {
             mImageLoader = imageLoader;
             mScreenWidth = screenWidth;
             mClipSet = clipSet;
@@ -404,62 +416,90 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     if (posTime >= endMs) {
                         posTime = endMs - 10; //magic number.
                     }
-                    mItems.add(new ClipFragment(clip, startTime, posTime));
+
+                    ClipFragmentItem oneItem = new ClipFragmentItem();
+                    oneItem.type = ClipFragmentItem.ITEM_TYPE_CLIP_FRAGMENT;
+                    oneItem.item = new ClipFragment(clip, startTime, posTime);
+                    mItems.add(oneItem);
 //                    mItems.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
                 }
+
+                ClipFragmentItem dividerItem = new ClipFragmentItem();
+                dividerItem.type = ClipFragmentItem.ITEM_TYPE_CLIP_DIVIDER;
+                mItems.add(dividerItem);
             }
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position == 0 || position == (mItems.size() + 1)) {
-                return TYPE_HEADER_TAIL;
+            return position;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            ClipFragmentItem clipFragmentItem = mItems.get(viewType);
+            if (clipFragmentItem.type == ClipFragmentItem.ITEM_TYPE_CLIP_FRAGMENT) {
+                ClipFragment clipFragment = (ClipFragment)clipFragmentItem.item;
+                ImageView imageView = new ImageView(parent.getContext());
+                int imageViewWidth = mRecyclerView.getHeight() * 16 / 9;
+
+                imageViewWidth = imageViewWidth * clipFragment.getDurationMs() / mClipFragmentDruation;
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageViewWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setLayoutParams(params);
+
+                return new ItemViewHolder(imageView);
             } else {
-                return TYPE_NORMAL;
+                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+                View view = inflater.inflate(R.layout.item_clip_fragment_divider, parent, false);
+                return new DividerViewHolder(view);
             }
         }
 
         @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view;
-            if (viewType == TYPE_NORMAL) {
-                view = new ImageView(parent.getContext());
-                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mItemWidth, mItemHeight);
-                view.setLayoutParams(params);
-            } else {
-                Logger.t(TAG).d("tails:");
-                view = new ImageView(parent.getContext());
-                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mScreenWidth / 2, ViewGroup.LayoutParams.MATCH_PARENT);
-                view.setLayoutParams(params);
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+            ClipFragmentItem clipFragmentItem = mItems.get(position);
+            if (clipFragmentItem.type == ClipFragmentItem.ITEM_TYPE_CLIP_FRAGMENT) {
+                ItemViewHolder viewHolder = (ItemViewHolder)holder;
+                ClipFragment clipFragment = (ClipFragment)clipFragmentItem.item;
+                ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+
+
+                mImageLoader.displayVdbImage(clipPos, viewHolder.clipFragmentThumbnail, mItemWidth, mItemHeight);
             }
-            return new ItemViewHolder(view);
-        }
 
-        @Override
-        public void onBindViewHolder(ItemViewHolder holder, int position) {
 
-            ClipFragment clipFragment = mItems.get(position);
-            ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-
-            mImageLoader.displayVdbImage(clipPos, holder.imageView, mItemWidth, mItemHeight);
 
         }
 
         @Override
         public int getItemCount() {
-            return mItems.size() ;
+            return mItems.size();
         }
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        public final ImageView imageView;
+//        @Bind(R.id.root)
+//        FrameLayout rootView;
+
+        //@Bind(R.id.clipFragmentThumbnail)
+        ImageView clipFragmentThumbnail;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView;
+            //ButterKnife.bind(this, itemView);
+            clipFragmentThumbnail = (ImageView)itemView;
         }
 
+    }
+
+    public static class DividerViewHolder extends RecyclerView.ViewHolder {
+
+        public DividerViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 
     public interface OnSeekBarChangeListener {

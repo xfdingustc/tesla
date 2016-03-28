@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
@@ -70,7 +69,6 @@ public class AllFootageFragment extends BaseFragment {
     }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +77,7 @@ public class AllFootageFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_all_footage,
-            savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_all_footage, savedInstanceState);
         refreshAllFootageClipSet();
 
         return view;
@@ -93,8 +90,6 @@ public class AllFootageFragment extends BaseFragment {
             refreshBookmarkClipSet();
         }
     }
-
-
 
 
     private void onHandleEmptyCamera() {
@@ -192,15 +187,15 @@ public class AllFootageFragment extends BaseFragment {
         long startTimeMs = mClipSetProgressBar.getSelectStartTimeMs();
         long endTimeMs = mClipSetProgressBar.getSelectEndTimeMs();
 
-        ClipPos clipPos = getClipSet().findClipPosByTimePosition((int)startTimeMs);
+        ClipPos clipPos = getClipSet().findClipPosByTimePosition((int) startTimeMs);
 
         AddBookmarkRequest request = new AddBookmarkRequest(clipPos.cid, startTimeMs, endTimeMs, new
             VdbResponse.Listener<Integer>() {
-            @Override
-            public void onResponse(Integer response) {
-                refreshBookmarkClipSet();
-            }
-        }, new VdbResponse.ErrorListener() {
+                @Override
+                public void onResponse(Integer response) {
+                    refreshBookmarkClipSet();
+                }
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
@@ -209,6 +204,7 @@ public class AllFootageFragment extends BaseFragment {
 
         mVdbRequestQueue.add(request);
     }
+
     private ClipSet getClipSet() {
         return mClipSetManager.getClipSet(mClipSetIndex);
     }
