@@ -31,4 +31,8 @@ public class ClipFragment {
     public int getDurationMs() {
         return (int)(mEndTimeMs - mStartTimeMs);
     }
+
+    public long getEndTimeMs() {
+        return mEndTimeMs;
+    }
 }

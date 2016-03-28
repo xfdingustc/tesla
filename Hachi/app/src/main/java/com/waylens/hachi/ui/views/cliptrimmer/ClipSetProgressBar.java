@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.views.cliptrimmer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -45,7 +44,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private MarkView mMarkView;
     private SelectView mSelectingView;
 
-    private BookmarkView mBookmarkView;
+//    private BookmarkView mBookmarkView;
+
 
     private LinearLayoutManager mLayoutManager;
 
@@ -92,7 +92,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         mRecyclerView = new RecyclerView(getContext());
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.gravity = Gravity.BOTTOM;
+//        layoutParams.topMargin = layoutParams.bottomMargin = ViewUtils.dp2px(4, getResources());
+        layoutParams.gravity = Gravity.CENTER_VERTICAL;
         addView(mRecyclerView, layoutParams);
 
         mRecyclerView.setHasFixedSize(true);
@@ -100,9 +101,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mBookmarkView = new BookmarkView(getContext());
-        layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        addView(mBookmarkView, layoutParams);
+
+//        mBookmarkView = new BookmarkView(getContext());
+//        layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//        addView(mBookmarkView, layoutParams);
 
 
         mScrollListener = new RecyclerView.OnScrollListener() {
@@ -147,10 +149,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     mSelectingView.setWidth(mEndSelectPosition - mStartSelectPosition);
                 }
 
-                mBookmarkView.mOffset = getWidth() / 2 - getCurrentOffset();
-//                Logger.t("FFFFF").d("Offset: " + getCurrentOffset());
-
-                mBookmarkView.invalidate();
+//                mBookmarkView.mOffset = getWidth() / 2 - getCurrentOffset();
+////                Logger.t("FFFFF").d("Offset: " + getCurrentOffset());
+//
+//                mBookmarkView.invalidate();
             }
         };
 
@@ -179,7 +181,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     public void setBookmarkClipSet(ClipSet clipSet) {
         this.mBookmarkClipSet = clipSet;
-        mBookmarkView.invalidate();
+        invalidate();
     }
 
     public void toggleSelectMode(boolean isSelectMode) {
@@ -324,7 +326,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         public BookmarkView(Context context) {
             super(context);
             mPaintMark = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaintMark.setColor(Color.RED);
+            mPaintMark.setColor(0x7AD502);
+            mPaintMark.setAlpha(77);
             mPaintMark.setAlpha(125);
         }
 
@@ -448,25 +451,69 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Context context = parent.getContext();
             CellItem cellItem = mItems.get(viewType);
             if (cellItem.type == CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
-                ClipFragment clipFragment = (ClipFragment)cellItem.item;
+                ClipFragment clipFragment = (ClipFragment) cellItem.item;
+
+                FrameLayout frameLayout = new FrameLayout(parent.getContext());
+                frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
                 ImageView imageView = new ImageView(parent.getContext());
-                int imageViewWidth = mRecyclerView.getHeight() * 16 / 9;
+                int imageViewWidth = (mRecyclerView.getHeight() - ViewUtils.dp2px(8, getResources())) * 16 / 9;
+                int cellWidth = imageViewWidth;
 
                 imageViewWidth = imageViewWidth * clipFragment.getDurationMs() / mClipFragmentDruation;
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageViewWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(imageViewWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+                params.gravity = Gravity.CENTER_VERTICAL;
+                params.topMargin = params.bottomMargin = ViewUtils.dp2px(4, getResources());
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setLayoutParams(params);
 
-                return new ItemViewHolder(imageView);
-            } else if (cellItem.type == CellItem.ITEM_TYPE_DIVIDER){
+                imageView.setTag("thumbnail");
+                frameLayout.addView(imageView);
+
+                View bookmarkView = new View(context);
+                bookmarkView.setBackgroundColor(0xFF7AD502);
+                bookmarkView.setAlpha(0.3f);
+                bookmarkView.setTag("bookmark");
+
+                if (mBookmarkClipSet != null) {
+
+                    List<Clip> bookmarkList = mBookmarkClipSet.getClipList();
+
+                    for (int i = 0; i < bookmarkList.size(); i++) {
+                        Clip clip = bookmarkList.get(i);
+                        if (clip.realCid.equals(clipFragment.getClip().cid)) {
+                            Logger.t(TAG).d("find bookmark real clip");
+                            if (clipFragment.getStartTimeMs() <= clip.getStartTimeMs() && clip.getStartTimeMs() <= clipFragment.getEndTimeMs()) {
+
+                                long endTims = Math.min(clipFragment.getEndTimeMs(), clip.getEndTimeMs());
+                                long bookmarkDurationInItem = endTims - clip.getStartTimeMs();
+
+                                int bookmarkWidth = (int)(cellWidth * bookmarkDurationInItem / mClipFragmentDruation);
+
+                                bookmarkView.setLayoutParams(new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT));
+                                frameLayout.addView(bookmarkView);
+                            }
+                        } else {
+                            Logger.t(TAG).d("bookmark cid: ");
+                        }
+
+                    }
+                }
+
+
+                return new ItemViewHolder(frameLayout);
+
+
+            } else if (cellItem.type == CellItem.ITEM_TYPE_DIVIDER) {
                 LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.item_clip_fragment_divider, parent, false);
                 return new DividerViewHolder(view);
-            } else  {
+            } else {
                 View view = new View(parent.getContext());
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mScreenWidth/2, ViewGroup.LayoutParams.MATCH_PARENT);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mScreenWidth / 2, ViewGroup.LayoutParams.MATCH_PARENT);
                 view.setLayoutParams(params);
                 return new MarginViewHolder(view);
             }
@@ -477,10 +524,11 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
             CellItem clipFragmentItem = mItems.get(position);
             if (clipFragmentItem.type == CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
-                ItemViewHolder viewHolder = (ItemViewHolder)holder;
-                ClipFragment clipFragment = (ClipFragment)clipFragmentItem.item;
+                ItemViewHolder viewHolder = (ItemViewHolder) holder;
+                ClipFragment clipFragment = (ClipFragment) clipFragmentItem.item;
                 ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
                 mImageLoader.displayVdbImage(clipPos, viewHolder.clipFragmentThumbnail, mItemWidth, mItemHeight);
+
             }
 
         }
@@ -492,17 +540,18 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-
-//        @Bind(R.id.root)
-//        FrameLayout rootView;
-
         //@Bind(R.id.clipFragmentThumbnail)
         ImageView clipFragmentThumbnail;
+
+        View bookmark;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             //ButterKnife.bind(this, itemView);
-            clipFragmentThumbnail = (ImageView)itemView;
+            FrameLayout container = (FrameLayout) itemView;
+            clipFragmentThumbnail = (ImageView) container.findViewWithTag("thumbnail");
+            bookmark = container.findViewWithTag("bookmark");
+//            clipFragmentThumbnail = (ImageView)itemView;
         }
 
     }

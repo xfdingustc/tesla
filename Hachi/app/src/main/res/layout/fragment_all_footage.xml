@@ -30,7 +30,7 @@
         <com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar
             android:id="@+id/clipSetPrgressBar"
             android:layout_width="match_parent"
-            android:layout_height="64dp"></com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar>
+            android:layout_height="72dp"></com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar>
 
     </LinearLayout>
 

@@ -79,7 +79,7 @@ public class AllFootageFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_all_footage, savedInstanceState);
         refreshAllFootageClipSet();
-
+        refreshBookmarkClipSet();
         return view;
 
     }
