@@ -189,15 +189,27 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    public static CameraPreviewFragment newInstance(VdtCamera vdtCamera) {
+    public static CameraPreviewFragment newInstance(VdtCamera vdtCamera, boolean isGaugeVisible) {
         CameraPreviewFragment fragment = new CameraPreviewFragment();
         Bundle bundle = new Bundle();
         bundle.putString("ssid", vdtCamera.getSSID());
         bundle.putString("hostString", vdtCamera.getHostString());
+        bundle.putBoolean("isGaugeVisible", isGaugeVisible);
         fragment.setArguments(bundle);
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        if (bundle == null) {
+            mIsGaugeVisible = false;
+        } else {
+            mIsGaugeVisible = bundle.getBoolean("isGaugeVisible", false);
+        }
+
+    }
 
     @Nullable
     @Override
@@ -664,7 +676,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mIsGaugeVisible = true;
             mWvGauge.setVisibility(View.VISIBLE);
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
-            
+
         } else {
             mIsGaugeVisible = false;
             mWvGauge.setVisibility(View.INVISIBLE);

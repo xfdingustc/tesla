@@ -20,6 +20,7 @@ import butterknife.Bind;
  * Created by Xiaofei on 2016/3/22.
  */
 public class LiveViewActivity extends BaseActivity {
+    private boolean mIsGaugeVisible;
 
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
@@ -54,6 +55,8 @@ public class LiveViewActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+        Intent intent = getIntent();
+        mIsGaugeVisible = intent.getBooleanExtra(EXTRA_IS_GAUGE_VISIBLE, false);
         initViews();
     }
 
@@ -65,7 +68,7 @@ public class LiveViewActivity extends BaseActivity {
         }
         setContentView(R.layout.activity_live_view);
         VdtCamera vdtCamera = VdtCameraManager.getManager().getConnectedCameras().get(0);
-        CameraPreviewFragment fragment = CameraPreviewFragment.newInstance(vdtCamera);
+        CameraPreviewFragment fragment = CameraPreviewFragment.newInstance(vdtCamera, mIsGaugeVisible);
         getFragmentManager().beginTransaction().add(R.id.fragmentContainer, fragment).commit();
     }
 
