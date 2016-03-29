@@ -76,7 +76,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         mRecyclerView = new RecyclerView(getContext());
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-//        layoutParams.topMargin = layoutParams.bottomMargin = ViewUtils.dp2px(4, getResources());
+
         layoutParams.gravity = Gravity.CENTER_VERTICAL;
         addView(mRecyclerView, layoutParams);
 
@@ -127,12 +127,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         mRecyclerView.addOnScrollListener(mScrollListener);
 
-//        mMarkView = new View(getContext());
-//        mMarkView.setBackgroundColor(Color.WHITE);
-//        layoutParams = new LayoutParams(ViewUtils.dp2px(1, getResources()), ViewGroup.LayoutParams.MATCH_PARENT);
-//        layoutParams.topMargin = layoutParams.bottomMargin = ViewUtils.dp2px(16, getResources());
-//        layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
-//        addView(mMarkView, layoutParams);
     }
 
 

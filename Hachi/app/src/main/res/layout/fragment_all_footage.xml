@@ -31,6 +31,15 @@
             android:layout_height="1dp"
             android:background="@color/app_text_color_secondary"/>
 
+        <TextView
+            android:id="@+id/tvClipPosTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textColor="?attr/appTextColorSecondary"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal"/>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -38,7 +47,7 @@
             <com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar
                 android:id="@+id/clipSetPrgressBar"
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center_vertical">
 
             </com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar>

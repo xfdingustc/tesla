@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
@@ -22,6 +23,8 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+
+import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -57,6 +60,9 @@ public class AllFootageFragment extends BaseFragment {
 
     @Bind(R.id.btnAddBookmark)
     ImageButton mBtnAddBookmark;
+
+    @Bind(R.id.tvClipPosTime)
+    TextView mTvClipPosTime;
 
     @OnClick(R.id.btnAddBookmark)
     public void onBtnAddBookmarkClicked() {
@@ -122,6 +128,8 @@ public class AllFootageFragment extends BaseFragment {
             public void onProgressChanged(ClipSetProgressBar progressBar, ClipPos clipPos, boolean fromUser) {
                 if (clipPos != null) {
                     mClipPlayFragment.showThumbnail(clipPos);
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
+                    mTvClipPosTime.setText(simpleDateFormat.format(clipPos.getClipTimeMs()));
                 }
             }
 
