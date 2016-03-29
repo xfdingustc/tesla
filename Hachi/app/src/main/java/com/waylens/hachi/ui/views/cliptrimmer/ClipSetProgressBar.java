@@ -165,8 +165,9 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
 
-    public void setClipSet(ClipSet clipSet, VdbImageLoader imageLoader) {
+    public void setClipSet(ClipSet clipSet, ClipSet bookmarkClipSet, VdbImageLoader imageLoader) {
         mClipSet = clipSet;
+        mBookmarkClipSet = bookmarkClipSet;
         mVideoLength = clipSet.getTotalLengthMs();
         int itemHeight = mRecyclerView.getHeight();
         if (mRecyclerView.getHeight() == 0) {
@@ -179,10 +180,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mRecyclerView.setAdapter(adapter);
     }
 
-    public void setBookmarkClipSet(ClipSet clipSet) {
-        this.mBookmarkClipSet = clipSet;
-        invalidate();
-    }
 
     public void toggleSelectMode(boolean isSelectMode) {
         this.mIsSelectMode = isSelectMode;
@@ -408,6 +405,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
             for (int i = 0; i < clipList.size(); i++) {
                 Clip clip = clipList.get(i);
+//                Logger.t(TAG).d("one clip: " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs());
                 int itemCount = clip.getDurationMs() / mClipFragmentDruation;
                 if (clip.getDurationMs() % mClipFragmentDruation != 0) {
                     itemCount++;
@@ -429,6 +427,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     CellItem oneItem = new CellItem();
                     oneItem.type = CellItem.ITEM_TYPE_CLIP_FRAGMENT;
                     oneItem.item = new ClipFragment(clip, startTime, posTime);
+
                     mItems.add(oneItem);
                 }
 
@@ -473,34 +472,56 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                 imageView.setTag("thumbnail");
                 frameLayout.addView(imageView);
 
-                View bookmarkView = new View(context);
-                bookmarkView.setBackgroundColor(0xFF7AD502);
-                bookmarkView.setAlpha(0.3f);
-                bookmarkView.setTag("bookmark");
 
-                if (mBookmarkClipSet != null) {
+//                Logger.t(TAG).d("create one Fragment: " + clipFragment.getStartTimeMs() + " ~ " + clipFragment.getEndTimeMs());
 
-                    List<Clip> bookmarkList = mBookmarkClipSet.getClipList();
 
-                    for (int i = 0; i < bookmarkList.size(); i++) {
-                        Clip clip = bookmarkList.get(i);
-                        if (clip.realCid.equals(clipFragment.getClip().cid)) {
-                            Logger.t(TAG).d("find bookmark real clip");
-                            if (clipFragment.getStartTimeMs() <= clip.getStartTimeMs() && clip.getStartTimeMs() <= clipFragment.getEndTimeMs()) {
+                List<Clip> bookmarkList = mBookmarkClipSet.getClipList();
 
-                                long endTims = Math.min(clipFragment.getEndTimeMs(), clip.getEndTimeMs());
-                                long bookmarkDurationInItem = endTims - clip.getStartTimeMs();
+                for (int i = 0; i < bookmarkList.size(); i++) {
+                    Clip clip = bookmarkList.get(i);
 
-                                int bookmarkWidth = (int)(cellWidth * bookmarkDurationInItem / mClipFragmentDruation);
+//                        Logger.t(TAG).d("bookmark " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs() + " clipFragment: " + clipFragment.getStartTimeMs() + " ~" + clipFragment.getEndTimeMs());
+                    if (clip.realCid.equals(clipFragment.getClip().cid)) {
 
-                                bookmarkView.setLayoutParams(new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT));
-                                frameLayout.addView(bookmarkView);
-                            }
-                        } else {
-                            Logger.t(TAG).d("bookmark cid: ");
+                        View bookmarkView = new View(context);
+                        bookmarkView.setBackgroundColor(0xFF7AD502);
+                        bookmarkView.setAlpha(0.3f);
+                        bookmarkView.setTag("bookmark");
+
+                        if (clipFragment.getStartTimeMs() <= clip.getStartTimeMs() && clip.getStartTimeMs() <= clipFragment.getEndTimeMs()) {
+
+                            long endTims = Math.min(clipFragment.getEndTimeMs(), clip.getEndTimeMs());
+                            long bookmarkDurationInItem = endTims - clip.getStartTimeMs();
+
+                            int bookmarkWidth = (int) (cellWidth * bookmarkDurationInItem / mClipFragmentDruation);
+
+                            int marginLeft = (int) (cellWidth * (clip.getStartTimeMs() - clipFragment.getStartTimeMs()) / mClipFragmentDruation);
+
+//                                Logger.t(TAG).d("Left Duration in this cell: " + bookmarkDurationInItem);
+
+                            FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+                            bookmarkLayoutParasm.leftMargin = marginLeft;
+                            bookmarkView.setLayoutParams(bookmarkLayoutParasm);
+                            frameLayout.addView(bookmarkView);
+                        } else if (clip.getStartTimeMs() <= clipFragment.getStartTimeMs() && clip.getEndTimeMs() >= clipFragment.getEndTimeMs()) {
+                            FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                            bookmarkView.setLayoutParams(bookmarkLayoutParasm);
+//                                Logger.t(TAG).d("Duration in this cell: " + clipFragment.getDurationMs());
+                            frameLayout.addView(bookmarkView);
+                        } else if (clipFragment.getStartTimeMs() <= clip.getEndTimeMs() && clip.getEndTimeMs() <= clipFragment.getEndTimeMs()) {
+                            long startTimeMs = Math.max(clipFragment.getStartTimeMs(), clip.getStartTimeMs());
+                            long bookmarkDurationInItem = clip.getEndTimeMs() - startTimeMs;
+                            int bookmarkWidth = (int) (cellWidth * bookmarkDurationInItem / mClipFragmentDruation);
+                            int marginLeft = (int) (cellWidth * (startTimeMs - clipFragment.getStartTimeMs()) / mClipFragmentDruation);
+                            FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+                            bookmarkLayoutParasm.leftMargin = marginLeft;
+                            bookmarkView.setLayoutParams(bookmarkLayoutParasm);
+//                                Logger.t(TAG).d("Right Duration in this cell: " + bookmarkDurationInItem);
+                            frameLayout.addView(bookmarkView);
                         }
-
                     }
+
                 }
 
 

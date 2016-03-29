@@ -41,6 +41,9 @@ public class AllFootageFragment extends BaseFragment {
 
     private boolean mIsAddingBookmark = false;
 
+    private ClipSet mAllFootageClipSet;
+    private ClipSet mBookmarkClipSet;
+
     public static AllFootageFragment newInstance() {
         AllFootageFragment fragment = new AllFootageFragment();
 
@@ -79,7 +82,7 @@ public class AllFootageFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_all_footage, savedInstanceState);
         refreshAllFootageClipSet();
-        refreshBookmarkClipSet();
+
         return view;
 
     }
@@ -112,8 +115,8 @@ public class AllFootageFragment extends BaseFragment {
 
     }
 
-    private void setupClipProgressBar(final ClipSet clipSet) {
-        mClipSetProgressBar.setClipSet(clipSet, mVdbImageLoader);
+    private void setupClipProgressBar() {
+        mClipSetProgressBar.setClipSet(mAllFootageClipSet, mBookmarkClipSet, mVdbImageLoader);
         mClipSetProgressBar.setOnSeekBarChangeListener(new ClipSetProgressBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(ClipSetProgressBar progressBar) {
@@ -146,15 +149,14 @@ public class AllFootageFragment extends BaseFragment {
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
-                    //calculateClipSetGroup(clipSet);
-                    //setupClipSetGroupView();
                     if (clipSet.getCount() == 0) {
                         onHandleEmptyCamera();
                         return;
                     }
+                    mAllFootageClipSet = clipSet;
                     setupClipPlayFragment(clipSet);
-                    setupClipProgressBar(clipSet);
-
+                    //setupClipProgressBar(clipSet);
+                    refreshBookmarkClipSet();
                 }
             },
             new VdbResponse.ErrorListener() {
@@ -171,7 +173,9 @@ public class AllFootageFragment extends BaseFragment {
             .FLAG_CLIP_EXTRA, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
-                mClipSetProgressBar.setBookmarkClipSet(response);
+//                mClipSetProgressBar.setBookmarkClipSet(response);
+                mBookmarkClipSet = response;
+                setupClipProgressBar();
             }
         }, new VdbResponse.ErrorListener() {
             @Override
