@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.views.cliptrimmer;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +37,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private static final String TAG = ClipSetProgressBar.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private ThumbnailListAdapter mAdapter;
-    private MarkView mMarkView;
+
 
 
     private LinearLayoutManager mLayoutManager;
@@ -126,10 +127,12 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         mRecyclerView.addOnScrollListener(mScrollListener);
 
-        mMarkView = new MarkView(getContext(), ViewUtils.dp2px(1, getResources()));
-        layoutParams = new LayoutParams(ViewUtils.dp2px(21, getResources()), ViewGroup.LayoutParams.MATCH_PARENT);
-        layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
-        addView(mMarkView, layoutParams);
+//        mMarkView = new View(getContext());
+//        mMarkView.setBackgroundColor(Color.WHITE);
+//        layoutParams = new LayoutParams(ViewUtils.dp2px(1, getResources()), ViewGroup.LayoutParams.MATCH_PARENT);
+//        layoutParams.topMargin = layoutParams.bottomMargin = ViewUtils.dp2px(16, getResources());
+//        layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+//        addView(mMarkView, layoutParams);
     }
 
 
