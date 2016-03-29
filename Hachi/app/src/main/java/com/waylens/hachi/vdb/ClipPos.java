@@ -25,6 +25,10 @@ public class ClipPos {
         this(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
     }
 
+    public ClipPos(Clip clip, long clipTimeMs) {
+        this(clip, clipTimeMs, ClipPos.TYPE_POSTER, false);
+    }
+
     public ClipPos(Clip clip, long clipTimeMs, int type, boolean bIsLast) {
         this(clip.getVdbId(), clip.cid, clip.clipDate, clipTimeMs, type, bIsLast);
     }

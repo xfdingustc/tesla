@@ -124,12 +124,10 @@ public class AllFootageFragment extends BaseFragment {
             }
 
             @Override
-            public void onProgressChanged(ClipSetProgressBar progressBar, long progress, boolean fromUser) {
-
-                ClipSet clipSet = getClipSet();
-                ClipPos clipPos = clipSet.findClipPosByTimePosition((int) progress);
-//                Logger.t(TAG).d("Progress is : " + progress + " clipPos: " + clipPos);
-                mClipPlayFragment.showThumbnail(clipPos);
+            public void onProgressChanged(ClipSetProgressBar progressBar, ClipPos clipPos, boolean fromUser) {
+                if (clipPos != null) {
+                    mClipPlayFragment.showThumbnail(clipPos);
+                }
             }
 
             @Override

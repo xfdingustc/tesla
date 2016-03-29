@@ -1,11 +1,7 @@
 package com.waylens.hachi.ui.views.cliptrimmer;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.views.Progressive;
@@ -40,11 +35,10 @@ import java.util.List;
  */
 public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private static final String TAG = ClipSetProgressBar.class.getSimpleName();
-    public RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
+    private ThumbnailListAdapter mAdapter;
     private MarkView mMarkView;
     private SelectView mSelectingView;
-
-//    private BookmarkView mBookmarkView;
 
 
     private LinearLayoutManager mLayoutManager;
@@ -58,7 +52,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private volatile int mScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
     private long mVideoLength;
-    private MediaPlayer mPlayer;
+
     private boolean mDragging;
     private ProgressHandler mHandler;
     private long mMinValue;
@@ -102,11 +96,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-//        mBookmarkView = new BookmarkView(getContext());
-//        layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-//        addView(mBookmarkView, layoutParams);
-
-
         mScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -118,9 +107,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
                 } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     mDragging = false;
-                    if (mPlayer != null) {
-                        updateProgress();
-                    }
+
                     if (mOnSeekBarChangeListener != null) {
                         mOnSeekBarChangeListener.onStopTrackingTouch(ClipSetProgressBar.this);
                     }
@@ -139,9 +126,11 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     return;
                 }
 
-                long progress = getCurrentTime();
+                //long progress = getCurrentTime();
+                ClipPos clipPos = getCurrentClipPos();
+                //View view = mRecyclerView.findChildViewUnder(mScreenWidth/2, 0);
                 if (mOnSeekBarChangeListener != null) {
-                    mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, progress, true);
+                    mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, clipPos, true);
                 }
 
                 if (mIsSelectMode) {
@@ -149,10 +138,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     mSelectingView.setWidth(mEndSelectPosition - mStartSelectPosition);
                 }
 
-//                mBookmarkView.mOffset = getWidth() / 2 - getCurrentOffset();
-////                Logger.t("FFFFF").d("Offset: " + getCurrentOffset());
-//
-//                mBookmarkView.invalidate();
             }
         };
 
@@ -175,9 +160,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         }
         int itemWidth = (int) (itemHeight * 16.0f / 9);
 
-        RecyclerListAdapter adapter = new RecyclerListAdapter(imageLoader, clipSet, mScreenWidth,
-            itemWidth, itemHeight);
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new ThumbnailListAdapter(imageLoader, clipSet, mScreenWidth, itemWidth, itemHeight);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
 
@@ -210,8 +194,21 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         return offset * mVideoLength / getLength();
     }
 
-    private long getCurrentTime() {
-        return getTimeByOffset(getCurrentOffset());
+
+    private ClipPos getCurrentClipPos() {
+        int centerPos = mScreenWidth / 2;
+        View view = mRecyclerView.findChildViewUnder(centerPos, 0);
+        int position = mLayoutManager.getPosition(view);
+        ThumbnailListAdapter.CellItem cellItem = mAdapter.getCellItem(position);
+        if (cellItem != null && cellItem.type == ThumbnailListAdapter.CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
+            ClipFragment clipFragment = (ClipFragment)cellItem.item;
+            int offset = centerPos - view.getLeft();
+            int timeOffset = offset * clipFragment.getDurationMs() / view.getWidth();
+            ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs() + timeOffset);
+            return clipPos;
+        }
+
+        return null;
     }
 
     public long getSelectStartTimeMs() {
@@ -253,23 +250,13 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mOnSeekBarChangeListener = listener;
     }
 
-    public void setMediaPlayer(MediaPlayer player) {
-        if (mHandler != null) {
-            mHandler.stop();
-        }
 
-        if (player != null) {
-            mHandler = new ProgressHandler(this);
-            mHandler.start();
-        }
-        mPlayer = player;
-    }
 
     @Override
     public int updateProgress() {
         int timeOffset;
         try {
-            timeOffset = mPlayer.getCurrentPosition();
+            timeOffset = 0;
         } catch (IllegalStateException e) {
             Log.e("test", "", e);
             return 0;
@@ -300,72 +287,15 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     @Override
     public boolean isInProgress() {
-        try {
-            return !mDragging && mPlayer != null && mPlayer.isPlaying();
-        } catch (Exception e) {
-            Log.e("test", "", e);
             return false;
-        }
-    }
-
-    public void setInitRangeValues(long minClipStartTimeMs, long maxClipEndTimeMs) {
-        mMinValue = minClipStartTimeMs;
-        mMaxValue = maxClipEndTimeMs;
     }
 
 
-    @SuppressLint("ViewConstructor")
-    private class BookmarkView extends View {
-        private Paint mPaintMark;
-
-        private int mOffset = getWidth() / 2;
-
-        public BookmarkView(Context context) {
-            super(context);
-            mPaintMark = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaintMark.setColor(0x7AD502);
-            mPaintMark.setAlpha(77);
-            mPaintMark.setAlpha(125);
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            if (mBookmarkClipSet == null) {
-                return;
-            }
-            for (int i = 0; i < mBookmarkClipSet.getCount(); i++) {
-                Clip clip = mBookmarkClipSet.getClip(i);
-                //ClipPos startClipPos = mClipSet.findClipPosByAbsTime(clip.getStartTimeMs());
-                //ClipPos endClipPos = mClipSet.findClipPosByAbsTime(clip.getEndTimeMs());
-
-                Clip realClip = mClipSet.findClip(clip.realCid);
-
-                Rect rect = new Rect(mOffset + getOffsetByTime(clip.getStartTimeMs()), 0,
-                    mOffset + getOffsetByTime(clip.getEndTimeMs()), getHeight());
-
-                canvas.drawRect(rect, mPaintMark);
-
-
-                Logger.t("FFFFF").d("bookstartTime: " + clip.getStartTimeMs());
-                //Logger.t("FFFFF").d("bookendTime: " + clip.getEndTimeMs());
-            }
-        }
-
-
-        private void getBookmarkClipRe(Clip clip) {
-            Clip realClip = mClipSet.findClip(clip.realCid);
-//            Logger.t("FFFFF").d("realClip startTime: " + realClip.getStartTimeMs());
-//            Logger.t("FFFFF").d("realClip endTime: " + realClip.getEndTimeMs());
-        }
-    }
-
-
-    public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private static final int TYPE_NORMAL = 0;
         private static final int TYPE_HEADER_TAIL = 1;
 
-        private static final int DEFAULT_PERIOD_MS = 1000 * 10;
+        private static final int DEFAULT_PERIOD_MS = 1000 * 60;
 
         VdbImageLoader mImageLoader;
         int mScreenWidth;
@@ -375,7 +305,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         //ArrayList<ClipPos> mItems = new ArrayList<>();
         private int mClipFragmentDruation = DEFAULT_PERIOD_MS;
 
-        private class CellItem {
+        public class CellItem {
             static final int ITEM_TYPE_CLIP_FRAGMENT = 0;
             static final int ITEM_TYPE_DIVIDER = 1;
             static final int ITEM_TYPE_MARGIN = 2;
@@ -385,7 +315,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         List<CellItem> mItems = new ArrayList<>();
 
-        public RecyclerListAdapter(VdbImageLoader imageLoader, ClipSet clipSet, int screenWidth, int itemWidth, int itemHeight) {
+        public ThumbnailListAdapter(VdbImageLoader imageLoader, ClipSet clipSet, int screenWidth, int itemWidth, int itemHeight) {
             mImageLoader = imageLoader;
             mScreenWidth = screenWidth;
             mClipSet = clipSet;
@@ -446,6 +376,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         @Override
         public int getItemViewType(int position) {
             return position;
+        }
+
+        public CellItem getCellItem(int position) {
+            return mItems.get(position);
         }
 
         @Override
@@ -594,7 +528,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     public interface OnSeekBarChangeListener {
         void onStartTrackingTouch(ClipSetProgressBar progressBar);
 
-        void onProgressChanged(ClipSetProgressBar progressBar, long progress, boolean fromUser);
+        void onProgressChanged(ClipSetProgressBar progressBar, ClipPos clipPos, boolean fromUser);
 
         void onStopTrackingTouch(ClipSetProgressBar progressBar);
     }
