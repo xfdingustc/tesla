@@ -30,7 +30,9 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
 
-        <activity android:name=".ui.activities.OvertureActivity">
+        <activity
+            android:name=".ui.activities.OvertureActivity"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -45,24 +47,47 @@
             android:name=".ui.activities.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
-            android:screenOrientation="nosensor"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
 
         </activity>
 
         <activity
             android:name=".ui.activities.LoginActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".ui.activities.UserProfileActivity"/>
-        <activity android:name=".ui.activities.FollowListActivity"/>
 
-        <activity android:name=".ui.activities.CommentsActivity"/>
+        <activity
+            android:name=".ui.activities.UserProfileActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activities.VersionCheckActivity"/>
-        <activity android:name=".ui.activities.AccountActivity"/>
-        <activity android:name=".ui.activities.SmartConfigActivity"/>
-        <activity android:name=".ui.activities.StartupActivity"/>
-        <activity android:name=".ui.activities.WelcomeActivity"/>
+        <activity
+            android:name=".ui.activities.FollowListActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.CommentsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.VersionCheckActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.AccountActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.SmartConfigActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.StartupActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.WelcomeActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.activities.LiveViewActivity"
@@ -71,21 +96,32 @@
 
         <activity
             android:name=".ui.activities.FullScreenPlayActivity"
-            android:screenOrientation="landscape"
-            />
-        <activity android:name=".ui.activities.LiveViewSettingActivity"/>
+            android:screenOrientation="landscape"/>
 
-        <activity android:name=".ui.activities.StoryEditActivity"/>
-        <activity android:name=".ui.activities.MenualSetupActivity"/>
+        <activity
+            android:name=".ui.activities.LiveViewSettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.StoryEditActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activities.MenualSetupActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.activities.EnhancementActivity"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ui.activities.ClipChooserActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
+        <activity
+            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.activities.ClipModifyActivity"
