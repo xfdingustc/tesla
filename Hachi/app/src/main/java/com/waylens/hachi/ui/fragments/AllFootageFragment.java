@@ -74,6 +74,8 @@ public class AllFootageFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_all_footage, savedInstanceState);
+        mClipSetProgressBar.init(mVdbImageLoader);
+
         refreshAllFootageClipSet();
 
         return view;
@@ -109,7 +111,7 @@ public class AllFootageFragment extends BaseFragment {
     }
 
     private void setupClipProgressBar() {
-        mClipSetProgressBar.setClipSet(mAllFootageClipSet, mBookmarkClipSet, mVdbImageLoader);
+        mClipSetProgressBar.setClipSet(mAllFootageClipSet, mBookmarkClipSet);
         mClipSetProgressBar.setOnSeekBarChangeListener(new ClipSetProgressBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(ClipSetProgressBar progressBar) {
@@ -165,7 +167,13 @@ public class AllFootageFragment extends BaseFragment {
             @Override
             public void onResponse(ClipSet response) {
                 mBookmarkClipSet = response;
-                setupClipProgressBar();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupClipProgressBar();
+                    }
+                });
+
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -182,8 +190,6 @@ public class AllFootageFragment extends BaseFragment {
         ClipPos clipPos = mClipSetProgressBar.getCurrentClipPos();
         long startTimeMs = clipPos.getClipTimeMs() - 15000;
         long endTimeMs = clipPos.getClipTimeMs() + 15000;
-
-        //ClipPos clipPos = getClipSet().findClipPosByTimePosition((int) startTimeMs);
 
         AddBookmarkRequest request = new AddBookmarkRequest(clipPos.cid, startTimeMs, endTimeMs, new
             VdbResponse.Listener<Integer>() {
