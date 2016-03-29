@@ -47,6 +47,7 @@ import com.waylens.hachi.vdb.urls.VdbUrl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -81,8 +82,10 @@ public class ClipPlayFragment extends DialogFragment {
 
     private RawDataLoader mRawDataLoader;
 
+
     private Timer mTimer;
-    
+    private UpdatePlayTimeTask mUpdatePlayTimeTask;
+
 
     private PositionAdjuster mPositionAdjuster;
 
@@ -248,12 +251,18 @@ public class ClipPlayFragment extends DialogFragment {
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
             getDialog().getWindow().setLayout(dm.widthPixels, getDialog().getWindow().getAttributes().height);
         }
+
+        mTimer = new Timer();
+        mUpdatePlayTimeTask = new UpdatePlayTimeTask();
+        mTimer.schedule(mUpdatePlayTimeTask, 1000, 1000);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         stopPlayer();
+        mTimer.cancel();
+
     }
 
     @Override
@@ -482,7 +491,7 @@ public class ClipPlayFragment extends DialogFragment {
 
                     changeState(STATE_PLAYING);
 
-                    refreshProgressBar();
+
                 }
             });
             mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -636,30 +645,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    private void refreshProgressBar() {
-        int currentPos = mMediaPlayer.getCurrentPosition();
-        if (mPositionAdjuster != null) {
-            currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
-        }
 
-        int duration = getClipSet().getTotalSelectedLengthMs();
-
-
-        setPlaybackPosition(currentPos, duration);
-
-        if (mRawDataLoader != null) {
-            mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
-        }
-
-        if (mMediaPlayer.isPlaying()) {
-            mUiHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    refreshProgressBar();
-                }
-            }, 50);
-        }
-    }
 
     private void setPlaybackPosition(int position, int duration) {
         String timeText = DateUtils.formatElapsedTime(position / 1000) + "/" + DateUtils
@@ -692,5 +678,32 @@ public class ClipPlayFragment extends DialogFragment {
 
     public interface ClipPlayFragmentContainer {
         ClipPlayFragment getClipPlayFragment();
+    }
+
+    public class UpdatePlayTimeTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                refreshProgressBar();
+            }
+        }
+
+        private void refreshProgressBar() {
+            int currentPos = mMediaPlayer.getCurrentPosition();
+            if (mPositionAdjuster != null) {
+                currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
+            }
+
+            int duration = getClipSet().getTotalSelectedLengthMs();
+
+
+            setPlaybackPosition(currentPos, duration);
+
+            if (mRawDataLoader != null) {
+                mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
+            }
+
+        }
     }
 }

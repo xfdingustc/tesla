@@ -9,21 +9,21 @@ import android.util.SparseIntArray;
 import android.view.View;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
-import com.waylens.hachi.vdb.Playlist;
-import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
-import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlRequest;
+import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
-import com.waylens.hachi.vdb.urls.PlaybackUrl;
+import com.waylens.hachi.vdb.Playlist;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.Vdb;
+import com.waylens.hachi.vdb.urls.PlaybackUrl;
+import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
 
 import java.io.IOException;
 
@@ -56,9 +56,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     boolean isAudioPrepared;
 
-    public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
-                                                      Clip clip,
-                                                      OnViewDragListener listener) {
+    public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue, Clip clip, OnViewDragListener listener) {
         Bundle args = new Bundle();
         CameraVideoPlayFragment fragment = new CameraVideoPlayFragment();
         fragment.setArguments(args);
@@ -72,9 +70,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         return fragment;
     }
 
-    public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue,
-                                                      Playlist mPlaylist,
-                                                      OnViewDragListener listener) {
+    public static CameraVideoPlayFragment newInstance(VdbRequestQueue vdbRequestQueue, Playlist mPlaylist, OnViewDragListener listener) {
         Bundle args = new Bundle();
         CameraVideoPlayFragment fragment = new CameraVideoPlayFragment();
         fragment.setArguments(args);

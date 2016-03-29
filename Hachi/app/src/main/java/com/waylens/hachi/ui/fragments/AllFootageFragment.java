@@ -191,6 +191,7 @@ public class AllFootageFragment extends BaseFragment {
                         return;
                     }
                     mAllFootageClipSet = clipSet;
+                    Logger.t(TAG).d("clip set count: " + clipSet.getCount());
                     setupClipPlayFragment(clipSet);
                     //setupClipProgressBar(clipSet);
                     refreshBookmarkClipSet();
