@@ -78,6 +78,8 @@ public class BaseFragment extends Fragment  {
         return mRootView;
     }
 
+
+
     @Override
     public void onDestroyView() {
         VdtCameraManager cameraManager = VdtCameraManager.getManager();

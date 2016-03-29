@@ -34,7 +34,6 @@ import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,7 +127,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                retrieveSharableClips();
+                doGetBookmarkClips();
             }
         });
         return view;
@@ -140,7 +139,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         mRefreshLayout.setRefreshing(true);
 
         if (getCamera() != null) {
-            retrieveSharableClips();
+            doGetBookmarkClips();
         }
 
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
@@ -181,7 +180,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                     mDeleteClipCount++;
                     Logger.t(TAG).d("" + mDeleteClipCount + " clips deleted");
                     if (mDeleteClipCount == toDeleteClipCount) {
-                        retrieveSharableClips();
+                        doGetBookmarkClips();
                     }
                 }
             }, new VdbResponse.ErrorListener() {
@@ -216,7 +215,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             public void run() {
 
                 mClipSetGroup.clear();
-                retrieveSharableClips();
+                doGetBookmarkClips();
             }
         });
 
@@ -247,15 +246,18 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
     }
 
-    private void retrieveSharableClips() {
+    private void doGetBookmarkClips() {
+
         if (mVdbRequestQueue == null) {
             return;
         }
         mClipSetGroup.clear();
+        Logger.t(TAG).d("get bookmark clips");
         mVdbRequestQueue.add(new ClipSetRequest(mClipSetType, ClipSetRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {
+                        Logger.t(TAG).d("get bookmark clips response");
                         mRefreshLayout.setRefreshing(false);
                         if (clipSet.getCount() == 0) {
                             if (mRootViewSwitcher.getDisplayedChild() == 0) {
@@ -399,7 +401,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     BroadcastReceiver localReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            retrieveSharableClips();
+            doGetBookmarkClips();
         }
     };
 }

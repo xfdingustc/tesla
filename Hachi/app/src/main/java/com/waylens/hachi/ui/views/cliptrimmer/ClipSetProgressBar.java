@@ -83,6 +83,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.setItemViewCacheSize(4);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mVdbImageLoader = vdbImageLoader;

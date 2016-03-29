@@ -100,7 +100,7 @@ public class VdbImageLoader {
 
 
     public static VdbImageListener getImageListener(final ImageView view, final int
-            defaultImageResId, final int errorImageResId) {
+        defaultImageResId, final int errorImageResId) {
         return new VdbImageListener() {
             @Override
             public void onResponse(VdbImageContainer imageContainer, boolean isImmediate) {
@@ -169,7 +169,7 @@ public class VdbImageLoader {
                     VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, listener);
                     showImage(imageContainer);
                     VdbImageRequest newRequest = makeVdbImageRequest(clipPos, maxWidth, maxHeight,
-                            scaleType, cacheKey);
+                        scaleType, cacheKey);
                     newRequest.setIgnorable(isIgnorable);
                     mRequestQueue.add(newRequest);
                     mInFlightRequest.put(cacheKey, new BatchedVdbImageRequest(newRequest, imageContainer));
@@ -195,13 +195,13 @@ public class VdbImageLoader {
 
         Bitmap bitmap = memoryLurCache.get(cacheKey);
         if (bitmap != null) {
-            //Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
+            Logger.t(TAG).d("Hit memory cache" + "; cacheKey: " + cacheKey);
             return bitmap;
         }
         if (diskLruCache != null) {
             bitmap = diskLruCache.get(cacheKey);
             if (bitmap != null) {
-                //Log.e(TAG, "Use mem cached Bitmap" + "; cacheKey: " + cacheKey);
+                Logger.t(TAG).d("Hit disk cache" + "; cacheKey: " + cacheKey);
                 return bitmap;
             }
         }
@@ -228,19 +228,19 @@ public class VdbImageLoader {
                                                   final String cacheKey) {
 
         return new VdbImageRequest(clipPos,
-                new VdbResponse.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        onGetImageSuccess(cacheKey, response);
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        onGetImageError(cacheKey, error);
-                    }
-                },
-                maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, cacheKey);
+            new VdbResponse.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap response) {
+                    onGetImageSuccess(cacheKey, response);
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    onGetImageError(cacheKey, error);
+                }
+            },
+            maxWidth, maxHeight, scaleType, Bitmap.Config.RGB_565, cacheKey);
     }
 
 
@@ -263,7 +263,7 @@ public class VdbImageLoader {
         private final ClipPos mClipPos;
 
         public VdbImageContainer(Bitmap bitmap, ClipPos clipPos, VdbImageListener
-                listener) {
+            listener) {
             this.mBitmap = bitmap;
             this.mClipPos = clipPos;
             this.mListener = listener;
@@ -346,10 +346,12 @@ public class VdbImageLoader {
         String clipId = clipPos.vdbId == null ? String.valueOf(clipPos.cid.hashCode()) : clipPos.vdbId;
         //Log.e("test", String.format("====== clipId[%s],clipTime[%d], w[%d], h[%d], scale[%d]",
         //        clipId, clipPos.getClipTimeMs(), maxWidth, maxHeight, scaleType.ordinal()));
+//        return DigitUtils.md5(clipId
+//                + "#T" + clipPos.getClipTimeMs()
+//                + "#W" + maxWidth
+//                + "#H" + maxHeight
+//                + "#S" + scaleType.ordinal());
         return DigitUtils.md5(clipId
-                + "#T" + clipPos.getClipTimeMs()
-                + "#W" + maxWidth
-                + "#H" + maxHeight
-                + "#S" + scaleType.ordinal());
+            + "#T" + clipPos.getClipTimeMs());
     }
 }

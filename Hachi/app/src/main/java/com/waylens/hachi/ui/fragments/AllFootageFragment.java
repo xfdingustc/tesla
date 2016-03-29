@@ -12,9 +12,12 @@ import android.widget.ViewSwitcher;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbRequest;
+import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
@@ -88,6 +91,23 @@ public class AllFootageFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.cancelAll(new VdbRequestQueue.RequestFilter() {
+                @Override
+                public boolean apply(VdbRequest<?> request) {
+                    if (request instanceof VdbImageRequest) {
+                        Logger.t(TAG).d("cancel image quest");
+                        return true;
+                    }
+
+                    return false;
+                }
+            });
+        }
+    }
 
     private void onHandleEmptyCamera() {
         if (mVsRoot.getDisplayedChild() == 0) {
