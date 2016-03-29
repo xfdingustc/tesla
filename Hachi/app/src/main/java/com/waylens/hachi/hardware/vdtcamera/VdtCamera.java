@@ -249,9 +249,9 @@ public class VdtCamera {
 
     public void setCameraName(String name) {
         Logger.t(TAG).d("set Camera Name: " + name);
-        if (name.equals("No Named")) {
+        if (name == null || name.isEmpty()) {
             // use empty string for unnamed camera
-            name = "";
+            name = "No name";
         }
         if (!mCameraName.equals(name)) {
             Logger.t(TAG).d("setCameraName: " + name);
