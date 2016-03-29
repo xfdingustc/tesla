@@ -38,7 +38,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private RecyclerView mRecyclerView;
     private ThumbnailListAdapter mAdapter;
     private MarkView mMarkView;
-    private SelectView mSelectingView;
+
 
 
     private LinearLayoutManager mLayoutManager;
@@ -53,15 +53,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     private long mVideoLength;
 
-    private boolean mDragging;
-    private ProgressHandler mHandler;
-    private long mMinValue;
-    private long mMaxValue;
-    private boolean mIsSelectMode;
-
-    private int mStartSelectPosition;
-    private int mEndSelectPosition;
-    private Clip mSelectedClip;
     private ClipSet mClipSet;
     private ClipSet mBookmarkClipSet;
 
@@ -100,13 +91,12 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    mDragging = true;
+
                     if (mOnSeekBarChangeListener != null) {
                         mOnSeekBarChangeListener.onStartTrackingTouch(ClipSetProgressBar.this);
                     }
 
                 } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    mDragging = false;
 
                     if (mOnSeekBarChangeListener != null) {
                         mOnSeekBarChangeListener.onStopTrackingTouch(ClipSetProgressBar.this);
@@ -133,10 +123,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, clipPos, true);
                 }
 
-                if (mIsSelectMode) {
-                    mEndSelectPosition = getCurrentOffset();
-                    mSelectingView.setWidth(mEndSelectPosition - mStartSelectPosition);
-                }
+
 
             }
         };
@@ -160,42 +147,17 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         }
         int itemWidth = (int) (itemHeight * 16.0f / 9);
 
-        mAdapter = new ThumbnailListAdapter(imageLoader, clipSet, mScreenWidth, itemWidth, itemHeight);
+        mAdapter = new ThumbnailListAdapter(imageLoader, mScreenWidth, itemWidth, itemHeight);
         mRecyclerView.setAdapter(mAdapter);
     }
 
 
-    public void toggleSelectMode(boolean isSelectMode) {
-        this.mIsSelectMode = isSelectMode;
-        if (mIsSelectMode == true) {
-
-            // add SelectView;
-            mSelectingView = new SelectView(getContext());
-            LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-            layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
-            addView(mSelectingView, layoutParams);
-            mStartSelectPosition = mEndSelectPosition = getCurrentOffset();
-        } else {
-            removeView(mSelectingView);
-        }
-    }
-
-    public int getCurrentOffset() {
-        int cellWidth = getCellUnit();
-        int centerPos = mScreenWidth / 2;
-        View view = mRecyclerView.findChildViewUnder(centerPos, 0);
-        int position = mLayoutManager.getPosition(view);
-        int offset = (position - 1) * cellWidth + (centerPos - view.getLeft());
-        return offset;
-    }
-
-    private long getTimeByOffset(int offset) {
-        return offset * mVideoLength / getLength();
-    }
 
 
-    private ClipPos getCurrentClipPos() {
+
+
+
+    public ClipPos getCurrentClipPos() {
         int centerPos = mScreenWidth / 2;
         View view = mRecyclerView.findChildViewUnder(centerPos, 0);
         int position = mLayoutManager.getPosition(view);
@@ -211,21 +173,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         return null;
     }
 
-    public long getSelectStartTimeMs() {
-        return getTimeByOffset(mStartSelectPosition);
-    }
-
-    public long getSelectEndTimeMs() {
-        return getTimeByOffset(mEndSelectPosition);
-    }
-
-    private int getOffsetByTime(long time) {
-        //int clipIndex = mClipSet.findClipIndex(clip.cid);
-        double offset = (1.0f * time) / mVideoLength * getLength();
-
-        return (int) offset;
-
-    }
 
 
     int getScreenWidth() {
@@ -273,17 +220,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         return (int) offset;
     }
 
-    public int setProgress(int currentPosition, int duration) {
-        double offset = (1.0f * currentPosition - mMinValue) / duration * getLength();
-        int cellWidth = getCellUnit();
-        if (cellWidth == 0) {
-            return (int) offset;
-        }
-        int position = (int) offset / cellWidth;
-        int remainder = (int) offset % cellWidth;
-        mLayoutManager.scrollToPositionWithOffset(position + 1, mScreenWidth / 2 - remainder);
-        return (int) offset;
-    }
+
 
     @Override
     public boolean isInProgress() {
@@ -292,14 +229,12 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
 
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private static final int TYPE_NORMAL = 0;
-        private static final int TYPE_HEADER_TAIL = 1;
 
         private static final int DEFAULT_PERIOD_MS = 1000 * 60;
 
         VdbImageLoader mImageLoader;
         int mScreenWidth;
-        private ClipSet mClipSet;
+
         int mItemWidth;
         int mItemHeight;
         //ArrayList<ClipPos> mItems = new ArrayList<>();
@@ -315,10 +250,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
         List<CellItem> mItems = new ArrayList<>();
 
-        public ThumbnailListAdapter(VdbImageLoader imageLoader, ClipSet clipSet, int screenWidth, int itemWidth, int itemHeight) {
+        public ThumbnailListAdapter(VdbImageLoader imageLoader, int screenWidth, int itemWidth, int itemHeight) {
             mImageLoader = imageLoader;
             mScreenWidth = screenWidth;
-            mClipSet = clipSet;
+
             mItemWidth = itemWidth;
             mItemHeight = itemHeight;
             generateClipPosList();
@@ -495,18 +430,18 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        //@Bind(R.id.clipFragmentThumbnail)
+
         ImageView clipFragmentThumbnail;
 
         View bookmark;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            //ButterKnife.bind(this, itemView);
+
             FrameLayout container = (FrameLayout) itemView;
             clipFragmentThumbnail = (ImageView) container.findViewWithTag("thumbnail");
             bookmark = container.findViewWithTag("bookmark");
-//            clipFragmentThumbnail = (ImageView)itemView;
+
         }
 
     }

@@ -39,7 +39,6 @@ public class AllFootageFragment extends BaseFragment {
 
     private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_ALLFOOTAGE;
 
-    private boolean mIsAddingBookmark = false;
 
     private ClipSet mAllFootageClipSet;
     private ClipSet mBookmarkClipSet;
@@ -61,14 +60,8 @@ public class AllFootageFragment extends BaseFragment {
 
     @OnClick(R.id.btnAddBookmark)
     public void onBtnAddBookmarkClicked() {
-        if (mIsAddingBookmark == false) {
-            mBtnAddBookmark.setImageDrawable(getResources().getDrawable(R.drawable.btn_enhance_addbookmark_s));
-        } else {
-            mBtnAddBookmark.setImageDrawable(getResources().getDrawable(R.drawable.btn_enhance_addbookmark_n));
-            doAddBookmark();
-        }
-        mIsAddingBookmark = !mIsAddingBookmark;
-        mClipSetProgressBar.toggleSelectMode(mIsAddingBookmark);
+        doAddBookmark();
+
     }
 
 
@@ -171,7 +164,6 @@ public class AllFootageFragment extends BaseFragment {
             .FLAG_CLIP_EXTRA, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
-//                mClipSetProgressBar.setBookmarkClipSet(response);
                 mBookmarkClipSet = response;
                 setupClipProgressBar();
             }
@@ -186,10 +178,12 @@ public class AllFootageFragment extends BaseFragment {
 
     private void doAddBookmark() {
         //Clip clip = mClipSetProgressBar.getSelectClip;
-        long startTimeMs = mClipSetProgressBar.getSelectStartTimeMs();
-        long endTimeMs = mClipSetProgressBar.getSelectEndTimeMs();
 
-        ClipPos clipPos = getClipSet().findClipPosByTimePosition((int) startTimeMs);
+        ClipPos clipPos = mClipSetProgressBar.getCurrentClipPos();
+        long startTimeMs = clipPos.getClipTimeMs() - 15000;
+        long endTimeMs = clipPos.getClipTimeMs() + 15000;
+
+        //ClipPos clipPos = getClipSet().findClipPosByTimePosition((int) startTimeMs);
 
         AddBookmarkRequest request = new AddBookmarkRequest(clipPos.cid, startTimeMs, endTimeMs, new
             VdbResponse.Listener<Integer>() {
