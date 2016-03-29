@@ -46,6 +46,7 @@ import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -79,6 +80,9 @@ public class ClipPlayFragment extends DialogFragment {
     private Config mConfig;
 
     private RawDataLoader mRawDataLoader;
+
+    private Timer mTimer;
+    
 
     private PositionAdjuster mPositionAdjuster;
 
@@ -148,7 +152,7 @@ public class ClipPlayFragment extends DialogFragment {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
             startPreparingClip(getSeekbarTimeMs(), false);
         } else {
-            startPreparingClip(0, true);
+            startPreparingClip(0, false);
         }
     }
 
@@ -180,9 +184,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex,
-                                               UrlProvider vdtUrlProvider,
-                                               Config config) {
+    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex, UrlProvider vdtUrlProvider, Config config) {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
         fragment.mClipSetIndex = clipSetIndex;
@@ -279,7 +281,7 @@ public class ClipPlayFragment extends DialogFragment {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
             clipPos = new ClipPos(getClipSet().getClip(0));
         } else {
-            clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+            clipPos = new ClipPos(clip);
         }
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
@@ -661,7 +663,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void setPlaybackPosition(int position, int duration) {
         String timeText = DateUtils.formatElapsedTime(position / 1000) + "/" + DateUtils
-                .formatElapsedTime(duration / 1000);
+            .formatElapsedTime(duration / 1000);
 //        Logger.t(TAG).d("duration: " + duration + " currentPos: " + position);
         mTvProgress.setText(timeText);
 

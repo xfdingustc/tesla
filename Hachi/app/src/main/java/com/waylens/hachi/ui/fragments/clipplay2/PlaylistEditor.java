@@ -90,7 +90,7 @@ public class PlaylistEditor {
     }
 
     void doGetPlaylistInfo(final int action) {
-        mVdbRequestQueue.add(new ClipSetRequest(0x100, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetRequest(mPlayListID, ClipSetRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {

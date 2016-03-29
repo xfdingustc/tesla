@@ -73,6 +73,8 @@ public class RawDataLoader {
             return;
         }
 
+
+        Logger.t(TAG).d("clipset count: " + getClipSet().getCount() + " loading index: " + mCurrentLoadingIndex);
         Clip clip = getClipSet().getClip(mCurrentLoadingIndex);
 
         ClipFragment clipFragment = new ClipFragment(clip);

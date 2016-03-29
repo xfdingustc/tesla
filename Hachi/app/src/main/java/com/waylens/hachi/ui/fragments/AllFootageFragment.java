@@ -20,6 +20,8 @@ import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.vdb.Clip;
@@ -48,6 +50,8 @@ public class AllFootageFragment extends BaseFragment {
 
     private ClipSet mAllFootageClipSet;
     private ClipSet mBookmarkClipSet;
+
+    private PlaylistEditor mPlaylistEditor;
 
     public static AllFootageFragment newInstance() {
         AllFootageFragment fragment = new AllFootageFragment();
@@ -117,16 +121,35 @@ public class AllFootageFragment extends BaseFragment {
 
     private void setupClipPlayFragment(ClipSet clipSet) {
         mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
-        UrlProvider urlProvider = new ClipUrlProvider(mVdbRequestQueue, getClipSet().getClip(0).cid,
-            getClipSet().getClip(0).getDurationMs());
+        UrlProvider urlProvider1 = new PlaylistUrlProvider(mVdbRequestQueue, 0x101);
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
-        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider,
+        config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
+        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             config);
 
         getChildFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
+        doMakePlaylist();
 
 
+
+
+    }
+
+    private void doMakePlaylist() {
+        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x101);
+        mPlaylistEditor.appendClips(getClipSet().getClipList(), new PlaylistEditor.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(ClipSet clipSet) {
+                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
+                mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
+                mClipPlayFragment.notifyClipSetChanged();
+
+//                UrlProvider urlProvider = new ClipUrlProvider(mVdbRequestQueue, getClipSet().getClip(0).cid,
+//                    getClipSet().getClip(0).getDurationMs());
+
+
+            }
+        });
     }
 
     private void setupClipProgressBar() {
@@ -139,7 +162,7 @@ public class AllFootageFragment extends BaseFragment {
 
             @Override
             public void onProgressChanged(ClipSetProgressBar progressBar, ClipPos clipPos, boolean fromUser) {
-                if (clipPos != null) {
+                if (clipPos != null && mClipPlayFragment != null) {
                     mClipPlayFragment.showThumbnail(clipPos);
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
                     mTvClipPosTime.setText(simpleDateFormat.format(clipPos.getClipTimeMs()));
