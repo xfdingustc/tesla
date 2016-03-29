@@ -88,13 +88,6 @@ public class AllFootageFragment extends BaseFragment {
 
     }
 
-    @Override
-    public void onFragmentFocused(boolean focused) {
-        if (focused) {
-            refreshBookmarkClipSet();
-        }
-    }
-
 
     private void onHandleEmptyCamera() {
         if (mVsRoot.getDisplayedChild() == 0) {

@@ -150,13 +150,6 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     }
 
     @Override
-    public void onFragmentFocused(boolean focused) {
-        if (focused == true) {
-            retrieveSharableClips();
-        }
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_add_clip, menu);
     }

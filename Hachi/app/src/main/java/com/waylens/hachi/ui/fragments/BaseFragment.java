@@ -203,8 +203,6 @@ public class BaseFragment extends Fragment  {
         return camera;
     }
 
-    public void onFragmentFocused(boolean focused) {
-        return;
-    }
+
 
 }
