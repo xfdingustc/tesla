@@ -12,7 +12,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipMoveRequest;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -90,7 +90,7 @@ public class PlaylistEditor {
     }
 
     void doGetPlaylistInfo(final int action) {
-        mVdbRequestQueue.add(new ClipSetRequest(mPlayListID, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetExRequest(mPlayListID, ClipSetExRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {
@@ -288,7 +288,7 @@ public class PlaylistEditor {
     }
 
     void tmpDoGetPlaylistInfo(final int position) {
-        mVdbRequestQueue.add(new ClipSetRequest(0x100, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetExRequest(0x100, ClipSetExRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {

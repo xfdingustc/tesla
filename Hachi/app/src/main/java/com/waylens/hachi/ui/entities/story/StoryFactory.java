@@ -4,10 +4,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistSetRequest;
 import com.waylens.hachi.vdb.Clip;
@@ -86,8 +85,8 @@ public class StoryFactory {
 
     private void doCreateStory() {
         int clipType = mStrategy.getClipType();
-        int flag = ClipSetRequest.FLAG_CLIP_EXTRA;
-        ClipSetRequest request = new ClipSetRequest(clipType, flag, new VdbResponse.Listener<ClipSet>() {
+        int flag = ClipSetExRequest.FLAG_CLIP_EXTRA;
+        ClipSetExRequest request = new ClipSetExRequest(clipType, flag, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
 

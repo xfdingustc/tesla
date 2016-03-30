@@ -28,7 +28,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
@@ -253,7 +253,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         }
         mClipSetGroup.clear();
         Logger.t(TAG).d("get bookmark clips");
-        mVdbRequestQueue.add(new ClipSetRequest(mClipSetType, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, ClipSetExRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {

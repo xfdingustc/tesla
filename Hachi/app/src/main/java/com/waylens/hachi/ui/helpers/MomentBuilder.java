@@ -17,7 +17,7 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.entities.LocalMoment;
@@ -106,7 +106,7 @@ public class MomentBuilder {
         }
 
         Logger.t(TAG).d("retrievePlayListInfo");
-        mVdbRequestQueue.add(new ClipSetRequest(mPlayListID, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetExRequest(mPlayListID, ClipSetExRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {

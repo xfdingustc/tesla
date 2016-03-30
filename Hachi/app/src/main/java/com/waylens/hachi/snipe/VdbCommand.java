@@ -1,7 +1,7 @@
 package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
@@ -233,10 +233,10 @@ public class VdbCommand {
         public static final int UPLOAD_GET_STREAM_1 = (UPLOAD_GET_V1 | UPLOAD_GET_RAW);
 
 
-        public static VdbCommand createCmdGetClipSetInfo(int type, int flag) {
+        public static VdbCommand createCmdGetClipSetInfoEx(int type, int flag) {
             Builder builder = new Builder();
 
-            if (flag != ClipSetRequest.FLAG_UNKNOWN) {
+            if (flag != ClipSetExRequest.FLAG_UNKNOWN) {
                 builder.writeCmdCode(VDB_CMD_GetClipSetInfoEx, 0);
                 builder.writeInt32(type);
                 builder.writeInt32(flag);
@@ -245,6 +245,13 @@ public class VdbCommand {
                 builder.writeInt32(type);
             }
             return builder.build();
+        }
+
+        public static VdbCommand createCmdGetClipSetInfo(int type) {
+            return new Builder()
+                .writeCmdCode(CMD_GetClipSetInfo, 0)
+                .writeInt32(type)
+                .build();
         }
 
         public static VdbCommand createCmdGetIndexPicture(ClipPos clipPos) {

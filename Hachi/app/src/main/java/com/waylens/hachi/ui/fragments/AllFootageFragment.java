@@ -16,10 +16,10 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
@@ -137,7 +137,7 @@ public class AllFootageFragment extends BaseFragment {
 
     private void doMakePlaylist() {
         mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x101);
-        mPlaylistEditor.appendClips(getClipSet().getClipList(), new PlaylistEditor.OnBuildCompleteListener() {
+        mPlaylistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
@@ -182,7 +182,7 @@ public class AllFootageFragment extends BaseFragment {
         if (mVdbRequestQueue == null) {
             return;
         }
-        mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_BUFFERED, ClipSetRequest.FLAG_CLIP_EXTRA,
+        mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_BUFFERED,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
@@ -207,7 +207,7 @@ public class AllFootageFragment extends BaseFragment {
     }
 
     private void refreshBookmarkClipSet() {
-        ClipSetRequest request = new ClipSetRequest(Clip.TYPE_MARKED, ClipSetRequest
+        ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_MARKED, ClipSetExRequest
             .FLAG_CLIP_EXTRA, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
