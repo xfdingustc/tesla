@@ -20,21 +20,26 @@ class Bar {
     private final float mY;
     private List<Clip> mClipList;
     private List<Line> mLineList;
-    private final float mDividerWidth;
+    private float mDividerWidth;
     private final float mLength;
     private int mActiveIndex = -1;
 
     private Paint mActivePaint;
     private Paint mInactivePaint;
+    private boolean mIsMulti = true;
 
     public Bar(Context context, float x, float y, float length, float barWeight, int barColor,
-               float dividerWidth, int activeColor, int inActiveColor, List<Clip> clipList) {
+               float dividerWidth, int activeColor, int inActiveColor, boolean isMulti, List<Clip> clipList) {
         mLeftX = x;
         mRightX = x + length;
         mLength = length;
         mY = y;
         mDividerWidth = dividerWidth;
         this.mClipList = clipList;
+        mIsMulti = isMulti;
+        if (mIsMulti == false) {
+            mDividerWidth = 0;
+        }
 
         mBarPaint = new Paint();
         mBarPaint.setColor(barColor);
@@ -54,7 +59,7 @@ class Bar {
     }
 
     public void draw(Canvas canvas, List<Clip> clipList) {
-        //canvas.drawLine(mLeftX, mY, mRightX, mY, mBarPaint);
+
         if (clipList == null) {
             return;
         }
@@ -62,30 +67,16 @@ class Bar {
         generateLineList();
 
         mClipList = clipList;
-//        long totalClipTimeMs = 0;
-//
-//        for (Clip clip : mClipList) {
-//            totalClipTimeMs += clip.editInfo.getSelectedLength();
-//        }
-//
-//
-//        float left = mLeftX;
-//        float right = mLeftX;
-//
-//        for (int i = 0; i < mClipList.size(); i++) {
-//            Clip clip = mClipList.get(i);
-//
-//            right = left + widthScale * clip.editInfo.getSelectedLength();
-//            if (i == mActiveIndex) {
-//                canvas.drawLine(left, mY, right, mY, mActivePaint);
-//            } else {
-//                canvas.drawLine(left, mY, right, mY, mInactivePaint);
-//            }
-//            left = right + mDividerWidth;
-//        }
 
         for (Line line : mLineList) {
             canvas.drawLine(line.startX, mY, line.endX, mY, mInactivePaint);
+        }
+    }
+
+    public void setMultiStyle(boolean isMulti) {
+        mIsMulti = isMulti;
+        if (mIsMulti == false) {
+            mDividerWidth = 0;
         }
     }
 

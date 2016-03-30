@@ -12,9 +12,7 @@
         android:layout_height="56dp">
 
 
-
     </android.support.v7.widget.Toolbar>
-
 
 
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
@@ -52,32 +50,13 @@
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-    <ViewSwitcher
-        android:id="@+id/vsBar"
+
+    <com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar
+        android:id="@+id/multiSegIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
-
-        <SeekBar
-            android:id="@+id/videoSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminateOnly="false"
-
-            />
-        <com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar
-            android:id="@+id/multiSegIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:barHeight="8dp"
-            app:circleColor="@android:color/white"/>
-
-
-
-    </ViewSwitcher>
-
-
+        app:barHeight="8dp"
+        app:circleColor="@android:color/white"/>
 
 
     <LinearLayout
@@ -90,8 +69,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/playbar_play"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:src="@drawable/playbar_play"/>
 
         <FrameLayout
             android:layout_width="0dp"
@@ -117,7 +96,6 @@
             android:src="@drawable/screen_full"/>
 
     </LinearLayout>
-
 
 
 </LinearLayout>

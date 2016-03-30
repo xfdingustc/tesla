@@ -52,6 +52,7 @@ public class MultiSegSeekbar extends View {
     private int mCircleColor;
     private int mDefaultWidth = 500;
     private int mDefaultHeight = 150;
+    private boolean mIsMulti = true;
 
     private static final int DEFAULT_BAR_COLOR = Color.LTGRAY;
     private static final float DEFAULT_BAR_WEIGHT_PX = 2;
@@ -116,11 +117,22 @@ public class MultiSegSeekbar extends View {
         setMeasuredDimension(width, height);
     }
 
+    public void setMultiStyle(boolean isMulti) {
+        mIsMulti = isMulti;
+
+        //mBar.setMultiStyle(isMulti);
+        invalidate();
+    }
+
     public void setActiveClip(int position) {
         // reset progress:
         setProgress(0);
         mBar.setActiveIndex(position);
         invalidate();
+    }
+
+    public void setClipPos(ClipPos clipPos) {
+
     }
 
     public int getActiveIndex() {
@@ -180,7 +192,7 @@ public class MultiSegSeekbar extends View {
         float marginLeft = mCircleSize;
         float barLength = w - (2 * marginLeft);
 
-        mBar = new Bar(context, marginLeft, yPos, barLength, mBarWeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, getClipSet().getClipList());
+        mBar = new Bar(context, marginLeft, yPos, barLength, mBarWeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mIsMulti, getClipSet().getClipList());
 
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor);

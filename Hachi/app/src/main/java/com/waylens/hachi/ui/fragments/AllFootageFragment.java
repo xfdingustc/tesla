@@ -123,7 +123,7 @@ public class AllFootageFragment extends BaseFragment {
         mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
         UrlProvider urlProvider1 = new PlaylistUrlProvider(mVdbRequestQueue, 0x101);
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
+        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             config);
 
