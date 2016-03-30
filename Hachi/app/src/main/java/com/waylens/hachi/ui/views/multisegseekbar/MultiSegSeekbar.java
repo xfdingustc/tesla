@@ -18,6 +18,7 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+import com.waylens.hachi.vdb.ClipSetPos;
 
 /**
  * Created by Xiaofei on 2016/2/29.
@@ -133,6 +134,10 @@ public class MultiSegSeekbar extends View {
         return mBar.getActiveIndex();
     }
 
+    public ClipSetPos getCurrentClipSetPos() {
+        return mBar.getClipSetPos(mThumb.getX());
+    }
+
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
         Resources resources = getResources();
         if (attrs != null) {
@@ -158,13 +163,7 @@ public class MultiSegSeekbar extends View {
         this.mListener = listener;
     }
 
-    public int getMax() {
-        return mMax;
-    }
 
-    public int getProgress() {
-        return mProgress;
-    }
 
 
     public void notifyDateSetChanged() {
@@ -249,7 +248,7 @@ public class MultiSegSeekbar extends View {
             mThumb.setX(x);
             if (mListener != null) {
                 //mProgress = (int)(x * mMax / mBar.getWidth() );
-                ClipPos clipPos = mBar.getClipPos(x);
+                ClipSetPos clipPos = mBar.getClipSetPos(x);
                 mListener.onProgressChanged(this, clipPos);
             }
             invalidate();
@@ -274,10 +273,18 @@ public class MultiSegSeekbar extends View {
         invalidate();
     }
 
+    public int getMax() {
+        return mMax;
+    }
+
+    public int getProgress() {
+        return mProgress;
+    }
+
     public interface OnMultiSegSeekBarChangeListener {
         void onStartTrackingTouch(MultiSegSeekbar seekBar);
 
-        void onProgressChanged(MultiSegSeekbar seekBar, ClipPos clipPos);
+        void onProgressChanged(MultiSegSeekbar seekBar, ClipSetPos clipPos);
 
         void onStopTrackingTouch(MultiSegSeekbar seekBar);
 

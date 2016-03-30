@@ -28,6 +28,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+import com.waylens.hachi.vdb.ClipSetPos;
 
 import java.text.SimpleDateFormat;
 
@@ -126,6 +127,18 @@ public class AllFootageFragment extends BaseFragment {
         config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             config);
+        mClipPlayFragment.setOnClipSetPosChangeListener(new ClipPlayFragment.OnClipSetPosChangeListener() {
+            @Override
+            public void onClipSetPosChanged(final ClipSetPos clipPos) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mClipSetProgressBar.scrollToClipSetPos(clipPos);
+                    }
+                });
+
+            }
+        });
 
         getChildFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
         doMakePlaylist();

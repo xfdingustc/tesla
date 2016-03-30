@@ -38,6 +38,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+import com.waylens.hachi.vdb.ClipSetPos;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import java.io.IOException;
@@ -84,6 +85,8 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private PositionAdjuster mPositionAdjuster;
+
+    private OnClipSetPosChangeListener mOnClipSetPosChangeListener;
 
     private final int STATE_NONE = 0;
     private final int STATE_PREPAREING = 1;
@@ -370,9 +373,9 @@ public class ClipPlayFragment extends DialogFragment {
             }
 
             @Override
-            public void onProgressChanged(MultiSegSeekbar seekBar, ClipPos clipPos) {
+            public void onProgressChanged(MultiSegSeekbar seekBar, ClipSetPos clipSetPos) {
                 if (mCurrentState == STATE_FAST_PREVIEW) {
-
+                    ClipPos clipPos = getClipSet().getClipPos(clipSetPos);
                     if (clipPos != null) {
                         mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
                     }
@@ -400,24 +403,7 @@ public class ClipPlayFragment extends DialogFragment {
         return mMultiSegSeekbar.getActiveIndex();
     }
 
-    public void setAudioUrl(String audioUrl) {
-        Logger.t(TAG).d("audio url: " + audioUrl);
-        mAudioUrl = audioUrl;
-        if (audioUrl == null && mAudioPlayer != null && mAudioPlayer.isPlaying()) {
-            mAudioPlayer.stop();
-        }
-    }
 
-    public void setGaugeTheme(String theme) {
-        Logger.t(TAG).d("set gauge theme as: " + theme);
-        mWvGauge.loadUrl("javascript:setTheme('" + theme + "')");
-    }
-
-    public void setAudioPlayerVolume(float volume) {
-        if (mAudioPlayer != null) {
-            mAudioPlayer.setVolume(volume, volume);
-        }
-    }
 
     public void showClipPosThumbnail(Clip clip, long timeMs) {
         changeState(STATE_FAST_PREVIEW);
@@ -621,6 +607,30 @@ public class ClipPlayFragment extends DialogFragment {
         return ((long) getClipSet().getTotalSelectedLengthMs() * mMultiSegSeekbar.getProgress()) / mMultiSegSeekbar.getMax();
     }
 
+
+    public void setAudioUrl(String audioUrl) {
+        Logger.t(TAG).d("audio url: " + audioUrl);
+        mAudioUrl = audioUrl;
+        if (audioUrl == null && mAudioPlayer != null && mAudioPlayer.isPlaying()) {
+            mAudioPlayer.stop();
+        }
+    }
+
+    public void setGaugeTheme(String theme) {
+        Logger.t(TAG).d("set gauge theme as: " + theme);
+        mWvGauge.loadUrl("javascript:setTheme('" + theme + "')");
+    }
+
+    public void setAudioPlayerVolume(float volume) {
+        if (mAudioPlayer != null) {
+            mAudioPlayer.setVolume(volume, volume);
+        }
+    }
+
+    public void setOnClipSetPosChangeListener(OnClipSetPosChangeListener listener) {
+        mOnClipSetPosChangeListener = listener;
+    }
+
     public void setUrlProvider(UrlProvider urlProvider) {
         mUrlProvider = urlProvider;
     }
@@ -636,6 +646,7 @@ public class ClipPlayFragment extends DialogFragment {
         public void run() {
             if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                 refreshProgressBar();
+
             }
         }
 
@@ -656,6 +667,10 @@ public class ClipPlayFragment extends DialogFragment {
                 }
             });
 
+            if (mOnClipSetPosChangeListener != null) {
+                mOnClipSetPosChangeListener.onClipSetPosChanged(getClipSet().getClipSetPosByTimeOffset(curPos));
+            }
+
 
             if (mRawDataLoader != null) {
                 mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
@@ -663,4 +678,10 @@ public class ClipPlayFragment extends DialogFragment {
 
         }
     }
+
+    public interface OnClipSetPosChangeListener {
+        void onClipSetPosChanged(ClipSetPos clipPos);
+    }
+
+
 }

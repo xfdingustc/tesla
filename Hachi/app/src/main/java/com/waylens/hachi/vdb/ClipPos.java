@@ -60,11 +60,15 @@ public class ClipPos {
         return mbIsLast;
     }
 
+    public Clip.ID getClipId() {
+        return cid;
+    }
+
     public final int getClipDate() {
         return mDate;
     }
 
-    public final long getClipTimeMs() {
+    public long getClipTimeMs() {
         return mClipTimeMs;
     }
 

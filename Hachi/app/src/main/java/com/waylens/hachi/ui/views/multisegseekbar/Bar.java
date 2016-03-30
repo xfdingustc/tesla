@@ -6,6 +6,7 @@ import android.graphics.Paint;
 
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSetPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,14 +117,14 @@ class Bar {
         return mRightX - mLeftX - (mClipList.size() - 1) * mDividerWidth;
     }
 
-    public ClipPos getClipPos(float x) {
+    public ClipSetPos getClipSetPos(float x) {
         for (int i = 0; i < mLineList.size(); i++) {
             Line line = mLineList.get(i);
             if (line.startX <= x && x <= line.endX) {
                 Clip clip = mClipList.get(i);
                 float offset = x - line.startX;
                 long timeOffset = (long)(offset * clip.editInfo.getSelectedLength() / (line.endX - line.startX));
-                return new ClipPos(clip, clip.getStartTimeMs() + timeOffset);
+                return new ClipSetPos(i, clip.getStartTimeMs() + timeOffset);
             }
         }
         return null;
