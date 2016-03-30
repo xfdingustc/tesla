@@ -82,6 +82,10 @@ public class Clip implements Parcelable {
             this.hash = -1;
         }
 
+        public String toString() {
+            return "Type: " + type + " subType: " + subType + " extra: " + extra;
+        }
+
     }
 
     // stream info: see StdMedia.java

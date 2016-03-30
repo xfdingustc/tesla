@@ -158,7 +158,7 @@ public class PlaylistEditor {
                     new VdbResponse.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + " " + "realId: ");
+//                            Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + " " + "realId: ");
                             mClipAdded++;
                             if (mClipAdded == clips.size() && mOnBuildCompleteListener != null) {
                                 doGetPlaylistInfo(ACTION_ADD);

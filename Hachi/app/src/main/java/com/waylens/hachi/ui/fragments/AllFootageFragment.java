@@ -133,7 +133,9 @@ public class AllFootageFragment extends BaseFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mClipSetProgressBar.scrollToClipSetPos(clipPos);
+                        if (mClipSetProgressBar != null) {
+                            mClipSetProgressBar.scrollToClipSetPos(clipPos);
+                        }
                     }
                 });
 
@@ -187,7 +189,7 @@ public class AllFootageFragment extends BaseFragment {
         if (mVdbRequestQueue == null) {
             return;
         }
-        mVdbRequestQueue.add(new ClipSetRequest(Clip.TYPE_BUFFERED,
+        mVdbRequestQueue.add(new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
@@ -195,8 +197,8 @@ public class AllFootageFragment extends BaseFragment {
                         onHandleEmptyCamera();
                         return;
                     }
+                    Logger.t(TAG).d("clipSet number: " + clipSet.getCount());
                     mAllFootageClipSet = clipSet;
-                    Logger.t(TAG).d("clip set count: " + clipSet.getCount());
                     setupClipPlayFragment(clipSet);
                     //setupClipProgressBar(clipSet);
                     refreshBookmarkClipSet();

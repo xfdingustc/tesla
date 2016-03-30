@@ -252,12 +252,11 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             return;
         }
         mClipSetGroup.clear();
-        Logger.t(TAG).d("get bookmark clips");
+
         mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, ClipSetExRequest.FLAG_CLIP_EXTRA,
                 new VdbResponse.Listener<ClipSet>() {
                     @Override
                     public void onResponse(ClipSet clipSet) {
-                        Logger.t(TAG).d("get bookmark clips response");
                         mRefreshLayout.setRefreshing(false);
                         if (clipSet.getCount() == 0) {
                             if (mRootViewSwitcher.getDisplayedChild() == 0) {

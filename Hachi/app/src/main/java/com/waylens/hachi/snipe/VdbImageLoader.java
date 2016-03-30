@@ -195,13 +195,13 @@ public class VdbImageLoader {
 
         Bitmap bitmap = memoryLurCache.get(cacheKey);
         if (bitmap != null) {
-            Logger.t(TAG).d("Hit memory cache" + "; cacheKey: " + cacheKey);
+//            Logger.t(TAG).d("Hit memory cache" + "; cacheKey: " + cacheKey);
             return bitmap;
         }
         if (diskLruCache != null) {
             bitmap = diskLruCache.get(cacheKey);
             if (bitmap != null) {
-                Logger.t(TAG).d("Hit disk cache" + "; cacheKey: " + cacheKey);
+//                Logger.t(TAG).d("Hit disk cache" + "; cacheKey: " + cacheKey);
                 return bitmap;
             }
         }
