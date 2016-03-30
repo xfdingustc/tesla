@@ -289,7 +289,6 @@ public class ClipPlayFragment extends DialogFragment {
         setupMultiSegSeekBar();
 
 
-
         initGaugeView();
 
     }
@@ -387,38 +386,6 @@ public class ClipPlayFragment extends DialogFragment {
         });
     }
 
-
-//    private void setupSeekBar() {
-//        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-////                Logger.t(TAG).d("onProgressChanged");
-//                if (mCurrentState == STATE_FAST_PREVIEW) {
-//                    long seekBarTimeMs = getSeekbarTimeMs();
-//                    ClipPos clipPos = new ClipPos(getClipSet().getClip(0), seekBarTimeMs, ClipPos.TYPE_POSTER, false);
-//                    mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//                Logger.t(TAG).d("onStartTrackingTouch");
-//                changeState(STATE_FAST_PREVIEW);
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//                Logger.t(TAG).d("onStopTrackingTouch");
-//                //startPreparingClip(getSeekbarTimeMs());
-//            }
-//        });
-//
-//        mSeekBar.setMax(getClipSet().getClip(0).getDurationMs());
-//        mSeekBar.getProgressDrawable().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
-//        mSeekBar.getThumb().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
-//    }
 
     public void setActiveClip(int position, Clip clip, boolean refreshThumbnail) {
         changeState(STATE_FAST_PREVIEW);
@@ -640,11 +607,9 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void setPlaybackPosition(int position, int duration) {
-        String timeText = DateUtils.formatElapsedTime(position / 1000) + "/" + DateUtils
-            .formatElapsedTime(duration / 1000);
+        String timeText = DateUtils.formatElapsedTime(position / 1000) + "/" + DateUtils.formatElapsedTime(duration / 1000);
 //        Logger.t(TAG).d("duration: " + duration + " currentPos: " + position);
         mTvProgress.setText(timeText);
-
 
         int progress = (int) ((float) position * mMultiSegSeekbar.getMax() / duration);
         mMultiSegSeekbar.setProgress(progress);
@@ -680,10 +645,17 @@ public class ClipPlayFragment extends DialogFragment {
                 currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
             }
 
-            int duration = getClipSet().getTotalSelectedLengthMs();
+            final int curPos = currentPos;
 
+            final int duration = getClipSet().getTotalSelectedLengthMs();
 
-            setPlaybackPosition(currentPos, duration);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setPlaybackPosition(curPos, duration);
+                }
+            });
+
 
             if (mRawDataLoader != null) {
                 mRawDataLoader.updateGaugeView(currentPos, mWvGauge);

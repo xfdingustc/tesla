@@ -122,7 +122,15 @@ class Bar {
     }
 
     public ClipPos getClipPos(float x) {
-
+        for (int i = 0; i < mLineList.size(); i++) {
+            Line line = mLineList.get(i);
+            if (line.startX <= x && x <= line.endX) {
+                Clip clip = mClipList.get(i);
+                float offset = x - line.startX;
+                long timeOffset = (long)(offset * clip.editInfo.getSelectedLength() / (line.endX - line.startX));
+                return new ClipPos(clip, clip.getStartTimeMs() + timeOffset);
+            }
+        }
         return null;
     }
 
