@@ -11,7 +11,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.cache.DiskLruCache;
 import com.waylens.hachi.snipe.cache.MemoryLurCache;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
@@ -148,35 +147,56 @@ public class VdbImageLoader {
         get(clipPos, listener, imageView.getWidth(), imageView.getHeight(), ImageView.ScaleType.CENTER_INSIDE, isIgnorable);
     }
 
-    VdbImageContainer get(final ClipPos clipPos,
-                          final VdbImageListener listener,
-                          final int maxWidth,
-                          final int maxHeight,
-                          final ScaleType scaleType,
-                          final boolean isIgnorable) {
+    VdbImageContainer get(final ClipPos clipPos, final VdbImageListener listener, final int maxWidth,
+                          final int maxHeight, final ScaleType scaleType, final boolean isIgnorable) {
 
         throwIfNotOnMainThread();
 
-        mBackgroundHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                final String cacheKey = getCacheKey(clipPos, maxWidth, maxHeight, scaleType);
-                Bitmap bitmap = loadImageFromCache(cacheKey);
-                if (bitmap != null && !bitmap.isRecycled()) {
-                    VdbImageContainer imageContainer = new VdbImageContainer(bitmap, clipPos, listener);
-                    showImage(imageContainer);
-                } else {
-                    VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, listener);
-                    showImage(imageContainer);
-                    VdbImageRequest newRequest = makeVdbImageRequest(clipPos, maxWidth, maxHeight,
-                        scaleType, cacheKey);
-                    newRequest.setIgnorable(isIgnorable);
-                    mRequestQueue.add(newRequest);
-                    mInFlightRequest.put(cacheKey, new BatchedVdbImageRequest(newRequest, imageContainer));
-                }
-            }
-        });
-        return null;
+//        mBackgroundHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                final String cacheKey = getCacheKey(clipPos, maxWidth, maxHeight, scaleType);
+//                Bitmap bitmap = loadImageFromCache(cacheKey);
+//                if (bitmap != null && !bitmap.isRecycled()) {
+//                    VdbImageContainer imageContainer = new VdbImageContainer(bitmap, clipPos, listener);
+//                    showImage(imageContainer);
+//                } else {
+//                    VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, listener);
+//                    showImage(imageContainer);
+//                    VdbImageRequest newRequest = makeVdbImageRequest(clipPos, maxWidth, maxHeight,
+//                        scaleType, cacheKey);
+//                    newRequest.setIgnorable(isIgnorable);
+//                    mRequestQueue.add(newRequest);
+//                    mInFlightRequest.put(cacheKey, new BatchedVdbImageRequest(newRequest, imageContainer));
+//                }
+//            }
+//        });
+        String cacheKey = getCacheKey(clipPos, maxWidth, maxHeight, scaleType);
+        Bitmap cachedBitmap = null; //mCache.getBitmap(cacheKey)
+        if (cachedBitmap != null) {
+            VdbImageContainer container = new VdbImageContainer(cachedBitmap, clipPos, null, null);
+            listener.onResponse(container, true);
+            return container;
+        }
+
+        VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, cacheKey, listener);
+
+        listener.onResponse(imageContainer, true);
+
+        BatchedVdbImageRequest request = mInFlightRequest.get(cacheKey);
+        if (request != null) {
+            request.addContainer(imageContainer);
+            return imageContainer;
+        }
+
+        VdbImageRequest newRequest = makeVdbImageRequest(clipPos, maxWidth, maxHeight, scaleType, cacheKey);
+//        newRequest.setIgnorable(isIgnorable);
+        mRequestQueue.add(newRequest);
+
+        mInFlightRequest.put(cacheKey, new BatchedVdbImageRequest(newRequest, imageContainer));
+        return imageContainer;
+
+
     }
 
     void showImage(final VdbImageContainer imageContainer) {
@@ -261,11 +281,12 @@ public class VdbImageLoader {
         private Bitmap mBitmap;
         private final VdbImageListener mListener;
         private final ClipPos mClipPos;
+        private final String mCacheKey;
 
-        public VdbImageContainer(Bitmap bitmap, ClipPos clipPos, VdbImageListener
-            listener) {
+        public VdbImageContainer(Bitmap bitmap, ClipPos clipPos, String cacheKey, VdbImageListener listener) {
             this.mBitmap = bitmap;
             this.mClipPos = clipPos;
+            this.mCacheKey = cacheKey;
             this.mListener = listener;
         }
 

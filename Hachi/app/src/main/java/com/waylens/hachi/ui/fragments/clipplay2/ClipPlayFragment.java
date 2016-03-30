@@ -413,7 +413,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     public void showThumbnail(ClipPos clipPos) {
         if (clipPos != null && mVdbImageLoader != null) {
-            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+            //mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
         }
     }
 
