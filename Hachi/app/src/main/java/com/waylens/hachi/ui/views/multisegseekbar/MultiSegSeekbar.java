@@ -6,24 +6,18 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.SeekBar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ViewUtils;
-import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
-
-import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/2/29.
@@ -85,7 +79,7 @@ public class MultiSegSeekbar extends View {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MultiSegSeekbar(Context context, AttributeSet attrs, int defStyleAttr, int
-            defStyleRes) {
+        defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initAttributes(context, attrs, defStyleRes);
     }
@@ -145,19 +139,16 @@ public class MultiSegSeekbar extends View {
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MultiSegSeekbar, defStyle, 0);
 
             mActiveColor = a.getColor(R.styleable.MultiSegSeekbar_segActiveColor, Color.WHITE);
-            mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color
-                    .GRAY);
-            mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth, ViewUtils
-                    .dp2px(DEFAULT_DIVIDER_WIDTH_DP, resources));
+            mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color.GRAY);
+            mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth,
+                ViewUtils.dp2px(DEFAULT_DIVIDER_WIDTH_DP, resources));
             mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barMinHeight,
-                    ViewUtils.dp2px(DEFAULT_BAR_HEIGHT, resources));
+                ViewUtils.dp2px(DEFAULT_BAR_HEIGHT, resources));
             mBarPaddingBottom = a.getDimension(R.styleable.MultiSegSeekbar_barPaddingBottom,
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                            DEFAULT_BAR_PADDING_BOTTOM_DP, getResources().getDisplayMetrics()));
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_BAR_PADDING_BOTTOM_DP, getResources().getDisplayMetrics()));
 
-            mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 24);
-            mCircleColor = a.getColor(R.styleable.MultiSegSeekbar_circleColor,
-                    0xff3f51b5);
+            mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 12);
+            mCircleColor = a.getColor(R.styleable.MultiSegSeekbar_circleColor, 0xff3f51b5);
             a.recycle();
         }
 
@@ -197,7 +188,7 @@ public class MultiSegSeekbar extends View {
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor);
 
-        mThumb.setX(0);
+        mThumb.setX(marginLeft);
     }
 
     @Override
@@ -233,8 +224,6 @@ public class MultiSegSeekbar extends View {
     }
 
 
-
-
     private void onActionDown(float x, float y) {
         if (!mThumb.isPressed() && mThumb.isInTargetZone(x, y)) {
             mThumb.press();
@@ -255,7 +244,7 @@ public class MultiSegSeekbar extends View {
 
     private void onActionMove(float x) {
         if (x < mBar.getLeftX() || x > mBar.getRightX()) {
-
+            Logger.t(TAG).d("X: " + x + " left: " + mBar.getLeftX() + " right: " + mBar.getRightX());
         } else {
             mThumb.setX(x);
             if (mListener != null) {
@@ -281,7 +270,7 @@ public class MultiSegSeekbar extends View {
     public void setProgress(int progress) {
         mProgress = progress;
         float thumbX = mProgress * mBar.getWidth() / mMax;
-        mThumb.setX(thumbX);
+        mThumb.setX(thumbX + mBar.getLeftX());
         invalidate();
     }
 

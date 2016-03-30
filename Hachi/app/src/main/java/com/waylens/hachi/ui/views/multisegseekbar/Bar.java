@@ -18,6 +18,7 @@ class Bar {
     private final float mLeftX;
     private final float mRightX;
     private final float mY;
+    private final float mBarHeight;
     private List<Clip> mClipList;
     private List<Line> mLineList;
     private float mDividerWidth;
@@ -34,6 +35,7 @@ class Bar {
         mRightX = x + length;
         mLength = length;
         mY = y;
+        mBarHeight = barWeight;
         mDividerWidth = dividerWidth;
         this.mClipList = clipList;
         mIsMulti = isMulti;
@@ -73,16 +75,9 @@ class Bar {
         }
     }
 
-    public void setMultiStyle(boolean isMulti) {
-        mIsMulti = isMulti;
-        if (mIsMulti == false) {
-            mDividerWidth = 0;
-        }
-    }
-
     private void generateLineList() {
         mLineList = new ArrayList<>();
-        float offset = 0;
+        float offset = mLeftX;
 
         long totalClipTimeMs = 0;
         for (Clip clip : mClipList) {
