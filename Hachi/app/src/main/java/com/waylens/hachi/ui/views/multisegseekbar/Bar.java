@@ -5,7 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +19,7 @@ class Bar {
     private final float mRightX;
     private final float mY;
     private List<Clip> mClipList;
+    private List<Line> mLineList;
     private final float mDividerWidth;
     private final float mLength;
     private int mActiveIndex = -1;
@@ -56,30 +59,54 @@ class Bar {
             return;
         }
 
-        mClipList = clipList;
-        long totalClipTimeMs = 0;
+        generateLineList();
 
+        mClipList = clipList;
+//        long totalClipTimeMs = 0;
+//
+//        for (Clip clip : mClipList) {
+//            totalClipTimeMs += clip.editInfo.getSelectedLength();
+//        }
+//
+//
+//        float left = mLeftX;
+//        float right = mLeftX;
+//
+//        for (int i = 0; i < mClipList.size(); i++) {
+//            Clip clip = mClipList.get(i);
+//
+//            right = left + widthScale * clip.editInfo.getSelectedLength();
+//            if (i == mActiveIndex) {
+//                canvas.drawLine(left, mY, right, mY, mActivePaint);
+//            } else {
+//                canvas.drawLine(left, mY, right, mY, mInactivePaint);
+//            }
+//            left = right + mDividerWidth;
+//        }
+
+        for (Line line : mLineList) {
+            canvas.drawLine(line.startX, mY, line.endX, mY, mInactivePaint);
+        }
+    }
+
+    private void generateLineList() {
+        mLineList = new ArrayList<>();
+        float offset = 0;
+
+        long totalClipTimeMs = 0;
         for (Clip clip : mClipList) {
             totalClipTimeMs += clip.editInfo.getSelectedLength();
         }
 
-        float widthScale = ((mLength - (mClipList.size() - 1) * mDividerWidth))
-                / totalClipTimeMs;
+        float widthScale = ((mLength - (mClipList.size() - 1) * mDividerWidth)) / totalClipTimeMs;
 
+        for (Clip clip : mClipList) {
+            Line line = new Line();
+            line.startX = offset;
+            line.endX = line.startX + widthScale * clip.editInfo.getSelectedLength();
 
-        float left = mLeftX;
-        float right = mLeftX;
-
-        for (int i = 0; i < mClipList.size(); i++) {
-            Clip clip = mClipList.get(i);
-
-            right = left + widthScale * clip.editInfo.getSelectedLength();
-            if (i == mActiveIndex) {
-                canvas.drawLine(left, mY, right, mY, mActivePaint);
-            } else {
-                canvas.drawLine(left, mY, right, mY, mInactivePaint);
-            }
-            left = right + mDividerWidth;
+            offset = line.endX + mDividerWidth;
+            mLineList.add(line);
         }
     }
 
@@ -101,5 +128,15 @@ class Bar {
 
     public float getWidth() {
         return mRightX - mLeftX - (mClipList.size() - 1) * mDividerWidth;
+    }
+
+    public ClipPos getClipPos(float x) {
+
+        return null;
+    }
+
+    public static class Line {
+        float startX;
+        float endX;
     }
 }

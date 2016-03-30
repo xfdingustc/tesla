@@ -285,13 +285,9 @@ public class ClipPlayFragment extends DialogFragment {
         if (getClipSet() == null) {
             return;
         }
-        Clip clip = getClipSet().getClip(0);
-        ClipPos clipPos;
-        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-            clipPos = new ClipPos(getClipSet().getClip(0));
-        } else {
-            clipPos = new ClipPos(clip);
-        }
+
+        ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
+
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
         if (mConfig.clipMode == Config.ClipMode.MULTI) {
@@ -368,7 +364,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void setupMultiSegSeekBar() {
-        mMultiSegSeekbar.setClipList(getClipSet().getClipList());
+        mMultiSegSeekbar.setClipList(mClipSetIndex);
         mMultiSegSeekbar.setOnMultiSegSeekbarChangListener(new MultiSegSeekbar.OnMultiSegSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(MultiSegSeekbar seekBar) {
@@ -376,10 +372,9 @@ public class ClipPlayFragment extends DialogFragment {
             }
 
             @Override
-            public void onProgressChanged(MultiSegSeekbar seekBar, int progress) {
+            public void onProgressChanged(MultiSegSeekbar seekBar, ClipPos clipPos) {
                 if (mCurrentState == STATE_FAST_PREVIEW) {
-                    int time = (int) (((float) progress * getClipSet().getTotalSelectedLengthMs()) / seekBar.getMax());
-                    ClipPos clipPos = getClipSet().findClipPosByTimePosition(time);
+
                     if (clipPos != null) {
                         mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
                     }
@@ -471,7 +466,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void notifyClipSetChanged() {
-        mMultiSegSeekbar.setClipList(getClipSet().getClipList());
+        mMultiSegSeekbar.setClipList(mClipSetIndex);
         mMultiSegSeekbar.notifyDateSetChanged();
         //refreshProgressBar();
     }

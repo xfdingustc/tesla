@@ -130,9 +130,6 @@ public class AllFootageFragment extends BaseFragment {
         getChildFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
         doMakePlaylist();
 
-
-
-
     }
 
     private void doMakePlaylist() {
@@ -140,14 +137,9 @@ public class AllFootageFragment extends BaseFragment {
         mPlaylistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
-                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
+//                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
                 mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
                 mClipPlayFragment.notifyClipSetChanged();
-
-//                UrlProvider urlProvider = new ClipUrlProvider(mVdbRequestQueue, getClipSet().getClip(0).cid,
-//                    getClipSet().getClip(0).getDurationMs());
-
-
             }
         });
     }

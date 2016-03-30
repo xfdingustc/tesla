@@ -19,6 +19,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class MultiSegSeekbar extends View {
 
     private int mDividerWidth = 0;
     private int mBarHeight = 0;
-    private List<Clip> mClipList;
+    private int mClipListIndex;
 
     private ThumbView mThumb;
     private Bar mBar;
@@ -177,7 +180,7 @@ public class MultiSegSeekbar extends View {
         float marginLeft = mCircleSize;
         float barLength = w - (2 * marginLeft);
 
-        mBar = new Bar(context, marginLeft, yPos, barLength, mBarWeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mClipList);
+        mBar = new Bar(context, marginLeft, yPos, barLength, mBarWeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, getClipSet().getClipList());
 
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor);
@@ -188,11 +191,11 @@ public class MultiSegSeekbar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        if (mClipList == null || mClipList.isEmpty()) {
+        if (getClipSet() == null) {
             return;
         }
 
-        mBar.draw(canvas, mClipList);
+        mBar.draw(canvas, getClipSet().getClipList());
         mThumb.draw(canvas);
     }
 
@@ -244,17 +247,23 @@ public class MultiSegSeekbar extends View {
         } else {
             mThumb.setX(x);
             if (mListener != null) {
-                mProgress = (int)(x * mMax / mBar.getWidth() );
-                mListener.onProgressChanged(this, mProgress);
+                //mProgress = (int)(x * mMax / mBar.getWidth() );
+                ClipPos clipPos = mBar.getClipPos(x);
+                mListener.onProgressChanged(this, clipPos);
             }
             invalidate();
         }
     }
 
 
-    public void setClipList(List<Clip> clipList) {
-        this.mClipList = clipList;
+    public void setClipList(int clipSetIndex) {
+        this.mClipListIndex = clipSetIndex;
         invalidate();
+    }
+
+
+    private ClipSet getClipSet() {
+        return ClipSetManager.getManager().getClipSet(mClipListIndex);
     }
 
     public void setProgress(int progress) {
@@ -267,7 +276,7 @@ public class MultiSegSeekbar extends View {
     public interface OnMultiSegSeekBarChangeListener {
         void onStartTrackingTouch(MultiSegSeekbar seekBar);
 
-        void onProgressChanged(MultiSegSeekbar seekBar, int progress);
+        void onProgressChanged(MultiSegSeekbar seekBar, ClipPos clipPos);
 
         void onStopTrackingTouch(MultiSegSeekbar seekBar);
 
