@@ -32,6 +32,7 @@ import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+import com.waylens.hachi.vdb.ClipSetPos;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -360,8 +361,11 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     public void onClipSelected(int position, Clip clip) {
         getActivity().setTitle(R.string.trim);
         mEnhanceActionBar.setVisibility(View.INVISIBLE);
-        mClipPlayFragment.setActiveClip(position, clip, true);
+        ClipSetPos clipSetPos = new ClipSetPos(position, clip.getStartTimeMs());
+//        mClipPlayFragment.setActiveClip(position, clip, true);
+        mClipPlayFragment.setClipSetPos(clipSetPos, true);
     }
+
 
     @Override
     public void onClipMoved(int fromPosition, final int toPosition, final Clip clip) {
@@ -371,7 +375,8 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             public void onMoveCompleted(ClipSet clipSet) {
                 int selectedPosition = mClipsEditView.getSelectedPosition();
                 if (selectedPosition != mClipPlayFragment.getActiveClipIndex()) {
-                    mClipPlayFragment.setActiveClip(selectedPosition, clip, false);
+                    ClipSetPos clipSetPos = new ClipSetPos(selectedPosition, clip.getStartTimeMs());
+                    mClipPlayFragment.setClipSetPos(clipSetPos, false);
                 }
                 if (selectedPosition == -1 && toPosition == 0) {
                     mClipPlayFragment.showClipPosThumbnail(clip, clip.getStartTimeMs());

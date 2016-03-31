@@ -84,6 +84,7 @@ public class ClipPlayFragment extends DialogFragment {
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
 
     private ClipPos mPreviousShownClipPos;
+    private long mPreviousShowThumbnailRequestTime;
 
 
     private PositionAdjuster mPositionAdjuster;
@@ -401,14 +402,14 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    public void setActiveClip(int position, Clip clip, boolean refreshThumbnail) {
-        changeState(STATE_FAST_PREVIEW);
-        if (refreshThumbnail) {
-            ClipPos clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
-        }
-        mMultiSegSeekbar.setActiveClip(position);
-    }
+//    public void setActiveClip(int position, Clip clip, boolean refreshThumbnail) {
+//        changeState(STATE_FAST_PREVIEW);
+//        if (refreshThumbnail) {
+//            ClipPos clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+//            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+//        }
+//        mMultiSegSeekbar.setActiveClip(position);
+//    }
 
     public int getActiveClipIndex() {
         return mMultiSegSeekbar.getActiveIndex();
@@ -430,11 +431,17 @@ public class ClipPlayFragment extends DialogFragment {
 //                    Logger.t(TAG).d("Ignore clippos request");
                     return;
                 }
+
+                long lastRequestOffset = System.currentTimeMillis() - mPreviousShowThumbnailRequestTime;
+                if (lastRequestOffset < 1000) {
+                    return;
+                }
             }
 
   //          Logger.t(TAG).d("show cilpPos");
             mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
             mPreviousShownClipPos = clipPos;
+            mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
         }
     }
 
