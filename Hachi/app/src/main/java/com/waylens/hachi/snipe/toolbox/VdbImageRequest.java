@@ -89,8 +89,10 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
         decodeOptions.inPreferredConfig = mDecoderConfig;
         Bitmap bitmap = null;
         if (mMaxWidth == 0 && mMaxHeight == 0) {
+            Logger.t(TAG).d("decode byte array");
             bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
         } else {
+            Logger.t(TAG).d("decode sample bitmap");
             bitmap = decodeSampledBitmap(data, mMaxWidth, mMaxHeight, decodeOptions);
         }
 

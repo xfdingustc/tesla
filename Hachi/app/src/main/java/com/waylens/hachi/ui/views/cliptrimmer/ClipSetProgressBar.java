@@ -416,7 +416,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 //                            int marginLeft = (int) (cellWidth * (clip.getStartTimeMs() - clipFragment.getStartTimeMs()) / mClipFragmentDruation);
                         int marginLeft = getPosOffset(clip.getStartTimeMs() - clipFragment.getStartTimeMs());
 
-                                Logger.t(TAG).d("Left Duration in this cell: " + bookmarkDurationInItem);
+//                                Logger.t(TAG).d("Left Duration in this cell: " + bookmarkDurationInItem);
                         FrameLayout.LayoutParams bookmarkLayoutParasm;
                         if (clipFragment.getEndTimeMs() <= clip.getEndTimeMs()) {
                             bookmarkLayoutParasm = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -430,7 +430,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     } else if (clip.getStartTimeMs() <= clipFragment.getStartTimeMs() && clip.getEndTimeMs() >= clipFragment.getEndTimeMs()) {
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                         bookmarkView.setLayoutParams(bookmarkLayoutParasm);
-                                Logger.t(TAG).d("Duration in this cell: " + clipFragment.getDurationMs());
+//                                Logger.t(TAG).d("Duration in this cell: " + clipFragment.getDurationMs());
                         bookmarkView.setVisibility(VISIBLE);
 
                     } else if (clipFragment.getStartTimeMs() <= clip.getEndTimeMs() && clip.getEndTimeMs() <= clipFragment.getEndTimeMs()) {
@@ -443,7 +443,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                         bookmarkLayoutParasm.leftMargin = marginLeft;
                         bookmarkView.setLayoutParams(bookmarkLayoutParasm);
-                                Logger.t(TAG).d("Right Duration in this cell: " + bookmarkDurationInItem);
+//                                Logger.t(TAG).d("Right Duration in this cell: " + bookmarkDurationInItem);
                         bookmarkView.setVisibility(VISIBLE);
 
                     }
