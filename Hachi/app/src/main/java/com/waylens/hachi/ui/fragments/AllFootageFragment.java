@@ -168,17 +168,23 @@ public class AllFootageFragment extends BaseFragment {
             }
 
             @Override
-            public void onProgressChanged(ClipSetProgressBar progressBar, ClipPos clipPos, boolean fromUser) {
-                if (clipPos != null && mClipPlayFragment != null) {
-                    mClipPlayFragment.showThumbnail(clipPos);
+            public void onProgressChanged(ClipSetProgressBar progressBar, ClipSetPos clipSetPos, boolean fromUser) {
+                if (clipSetPos != null && mClipPlayFragment != null) {
+
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
-                    mTvClipPosTime.setText(simpleDateFormat.format(clipPos.getClipTimeMs()));
+                    mTvClipPosTime.setText(simpleDateFormat.format(clipSetPos.getClipTimeMs()));
+                    mClipPlayFragment.setClipSetPos(clipSetPos, false);
                 }
             }
 
             @Override
-            public void onStopTrackingTouch(ClipSetProgressBar progressBar) {
-
+            public void onStopTrackingTouch(ClipSetProgressBar progressBar, ClipSetPos clipSetPos) {
+                if (clipSetPos != null && mClipPlayFragment != null) {
+//                    mClipPlayFragment.showThumbnail(clipPos);
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
+                    mTvClipPosTime.setText(simpleDateFormat.format(clipSetPos.getClipTimeMs()));
+                    mClipPlayFragment.setClipSetPos(clipSetPos, true);
+                }
             }
         });
 

@@ -138,6 +138,14 @@ public class MultiSegSeekbar extends View {
         return mBar.getClipSetPos(mThumb.getX());
     }
 
+    public void setClipSetPos(ClipSetPos clipSetPos) {
+        float newX = mBar.setClipSetPos(clipSetPos);
+//        Logger.t(TAG).d("newX: " + newX);
+        mThumb.setX(newX);
+        invalidate();
+
+    }
+
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
         Resources resources = getResources();
         if (attrs != null) {

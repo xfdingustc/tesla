@@ -76,6 +76,14 @@ class Bar {
         }
     }
 
+    public float setClipSetPos(ClipSetPos clipSetPos) {
+        Line activeLine = mLineList.get(clipSetPos.getClipIndex());
+        Clip activeClip = mClipList.get(clipSetPos.getClipIndex());
+        long timeOffset = clipSetPos.getClipTimeMs() - activeClip.editInfo.selectedStartValue;
+        float lineOffset = timeOffset * (activeLine.endX - activeLine.startX) / activeClip.editInfo.getSelectedLength();
+        return activeLine.startX + lineOffset;
+    }
+
     private void generateLineList() {
         mLineList = new ArrayList<>();
         float offset = mLeftX;

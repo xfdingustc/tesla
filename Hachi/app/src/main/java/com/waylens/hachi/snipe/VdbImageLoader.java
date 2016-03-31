@@ -92,7 +92,7 @@ public class VdbImageLoader {
         if (availableBytes < maxSize) {
             size = (int) availableBytes / 2;
         }
-        mCache = createDiskCache(context, new HashCodeFileNameGenerator(), 50 * 1024 * 1024, 50 * 1024);
+        mCache = createDiskCache(context, new HashCodeFileNameGenerator(), 1024 * 1024 * 1024, 50 * 1024);
         Log.e("test", "DiskLruCache is initialized.");
     }
 

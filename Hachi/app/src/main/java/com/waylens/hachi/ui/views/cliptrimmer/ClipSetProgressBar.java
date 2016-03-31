@@ -104,7 +104,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                 } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
 
                     if (mOnSeekBarChangeListener != null) {
-                        mOnSeekBarChangeListener.onStopTrackingTouch(ClipSetProgressBar.this);
+                        ClipSetPos clipSetPos = getCurrentClipSetPos();
+                        mOnSeekBarChangeListener.onStopTrackingTouch(ClipSetProgressBar.this, clipSetPos);
                     }
                 }
 
@@ -118,10 +119,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                     return;
                 }
 
-                ClipPos clipPos = getCurrentClipPos();
+                ClipSetPos clipSetPos = getCurrentClipSetPos();
 
                 if (mOnSeekBarChangeListener != null) {
-                    mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, clipPos, true);
+                    mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, clipSetPos, true);
                 }
 
 
@@ -141,6 +142,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
     public ClipPos getCurrentClipPos() {
+        return mClipSet.getClipPosByClipSetPos(getCurrentClipSetPos());
+    }
+
+    public ClipSetPos getCurrentClipSetPos() {
         int centerPos = mScreenWidth / 2;
         View view = mRecyclerView.findChildViewUnder(centerPos, 0);
         int position = mLayoutManager.getPosition(view);
@@ -149,12 +154,17 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
             ClipFragment clipFragment = (ClipFragment) cellItem.item;
             int offset = centerPos - view.getLeft();
             int timeOffset = offset * clipFragment.getDurationMs() / view.getWidth();
-            ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs() + timeOffset);
-            return clipPos;
+            //ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs() + timeOffset);
+            int clipIndex = cellItem.clipIndex;
+            long clipTimeMs = clipFragment.getStartTimeMs() + timeOffset;
+            ClipSetPos clipSetPos = new ClipSetPos(clipIndex, clipTimeMs);
+            return clipSetPos;
         }
 
         return null;
     }
+
+
 
 
     int getScreenWidth() {
@@ -487,9 +497,9 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     public interface OnSeekBarChangeListener {
         void onStartTrackingTouch(ClipSetProgressBar progressBar);
 
-        void onProgressChanged(ClipSetProgressBar progressBar, ClipPos clipPos, boolean fromUser);
+        void onProgressChanged(ClipSetProgressBar progressBar, ClipSetPos clipSetPos, boolean fromUser);
 
-        void onStopTrackingTouch(ClipSetProgressBar progressBar);
+        void onStopTrackingTouch(ClipSetProgressBar progressBar, ClipSetPos clipSetPos);
     }
 
 }

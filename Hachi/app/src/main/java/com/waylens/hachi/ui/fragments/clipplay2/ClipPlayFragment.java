@@ -83,6 +83,8 @@ public class ClipPlayFragment extends DialogFragment {
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
 
+    private ClipPos mPreviousShownClipPos;
+
 
     private PositionAdjuster mPositionAdjuster;
 
@@ -384,7 +386,7 @@ public class ClipPlayFragment extends DialogFragment {
             @Override
             public void onProgressChanged(MultiSegSeekbar seekBar, ClipSetPos clipSetPos) {
                 if (mCurrentState == STATE_FAST_PREVIEW) {
-                    ClipPos clipPos = getClipSet().getClipPos(clipSetPos);
+                    ClipPos clipPos = getClipSet().getClipPosByClipSetPos(clipSetPos);
                     if (clipPos != null) {
                         mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
                     }
@@ -422,7 +424,17 @@ public class ClipPlayFragment extends DialogFragment {
 
     public void showThumbnail(ClipPos clipPos) {
         if (clipPos != null && mVdbImageLoader != null) {
-            //mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+            if (mPreviousShownClipPos != null && mPreviousShownClipPos.getClipId().equals(clipPos.getClipId())) {
+                long timeDiff = Math.abs(mPreviousShownClipPos.getClipTimeMs() - clipPos.getClipTimeMs());
+                if (timeDiff < 1000) {
+//                    Logger.t(TAG).d("Ignore clippos request");
+                    return;
+                }
+            }
+
+  //          Logger.t(TAG).d("show cilpPos");
+            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+            mPreviousShownClipPos = clipPos;
         }
     }
 
@@ -642,6 +654,15 @@ public class ClipPlayFragment extends DialogFragment {
 
     public void setUrlProvider(UrlProvider urlProvider) {
         mUrlProvider = urlProvider;
+    }
+
+    public void setClipSetPos(ClipSetPos clipSetPos, boolean refreshThumbnail) {
+        ClipPos clipPos = getClipSet().getClipPosByClipSetPos(clipSetPos);
+        if (refreshThumbnail == true) {
+            showThumbnail(clipPos);
+        }
+
+        mMultiSegSeekbar.setClipSetPos(clipSetPos);
     }
 
 

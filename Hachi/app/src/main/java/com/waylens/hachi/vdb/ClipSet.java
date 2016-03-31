@@ -219,7 +219,7 @@ public class ClipSet {
     }
 
 
-    public ClipPos getClipPos(ClipSetPos clipSetPos) {
+    public ClipPos getClipPosByClipSetPos(ClipSetPos clipSetPos) {
         Clip clip = mClipList.get(clipSetPos.getClipIndex());
         return new ClipPos(clip, clipSetPos.getClipTimeMs());
     }
