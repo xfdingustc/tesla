@@ -13,11 +13,11 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.cache2.DiskCache;
-import com.waylens.hachi.snipe.cache2.impl.UnlimitedDiskCache;
-import com.waylens.hachi.snipe.cache2.impl.ext.LruDiskCache;
-import com.waylens.hachi.snipe.cache2.naming.FileNameGenerator;
-import com.waylens.hachi.snipe.cache2.naming.HashCodeFileNameGenerator;
+import com.waylens.hachi.snipe.cache.DiskCache;
+import com.waylens.hachi.snipe.cache.impl.UnlimitedDiskCache;
+import com.waylens.hachi.snipe.cache.impl.ext.LruDiskCache;
+import com.waylens.hachi.snipe.cache.naming.FileNameGenerator;
+import com.waylens.hachi.snipe.cache.naming.HashCodeFileNameGenerator;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.snipe.utils.StorageUtils;
 import com.waylens.hachi.utils.DigitUtils;

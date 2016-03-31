@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.waylens.hachi.snipe.cache2.impl;
+package com.waylens.hachi.snipe.cache.impl;
 
 
 
-import com.waylens.hachi.snipe.cache2.naming.FileNameGenerator;
+import com.waylens.hachi.snipe.cache.naming.FileNameGenerator;
 
 import java.io.File;
 

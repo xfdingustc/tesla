@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.waylens.hachi.snipe.cache2.naming;
-
-
+package com.waylens.hachi.snipe.cache.naming;
 
 /**
- * Names image file as image URI {@linkplain String#hashCode() hashcode}
+ * Generates names for files at disk cache
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
  * @since 1.3.1
  */
-public class HashCodeFileNameGenerator implements FileNameGenerator {
-	@Override
-	public String generate(String imageUri) {
-		return String.valueOf(imageUri.hashCode());
-	}
+public interface FileNameGenerator {
+
+	/** Generates unique file name for image defined by URI */
+	String generate(String imageUri);
 }

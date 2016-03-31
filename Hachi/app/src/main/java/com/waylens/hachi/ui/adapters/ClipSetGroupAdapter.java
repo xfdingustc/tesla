@@ -43,7 +43,6 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private VdbImageLoader mVdbImageLoader;
     private boolean mMultiSelectedMode = false;
 
-    private List<WeakReference<RecyclerView.ViewHolder>> mViewHolderList = new ArrayList<>();
 
     public interface OnClipClickListener {
         void onClipClicked(Clip clip);

@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.waylens.hachi.snipe.cache2.impl;
+package com.waylens.hachi.snipe.cache.impl;
 
 import android.graphics.Bitmap;
 
 
-import com.waylens.hachi.snipe.cache2.naming.FileNameGenerator;
-import com.waylens.hachi.snipe.cache2.naming.HashCodeFileNameGenerator;
+import com.waylens.hachi.snipe.cache.naming.FileNameGenerator;
+import com.waylens.hachi.snipe.cache.naming.HashCodeFileNameGenerator;
 import com.waylens.hachi.snipe.utils.IoUtils;
 
 import java.io.File;

@@ -13,43 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.waylens.hachi.snipe.cache2.naming;
+package com.waylens.hachi.snipe.cache.naming;
 
 
-
-import com.orhanobut.logger.Logger;
-
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
- * Names image file as MD5 hash of image URI
+ * Names image file as image URI {@linkplain String#hashCode() hashcode}
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.4.0
+ * @since 1.3.1
  */
-public class Md5FileNameGenerator implements FileNameGenerator {
-
-	private static final String HASH_ALGORITHM = "MD5";
-	private static final int RADIX = 10 + 26; // 10 digits + 26 letters
-
+public class HashCodeFileNameGenerator implements FileNameGenerator {
 	@Override
 	public String generate(String imageUri) {
-		byte[] md5 = getMD5(imageUri.getBytes());
-		BigInteger bi = new BigInteger(md5).abs();
-		return bi.toString(RADIX);
-	}
-
-	private byte[] getMD5(byte[] data) {
-		byte[] hash = null;
-		try {
-			MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
-			digest.update(data);
-			hash = digest.digest();
-		} catch (NoSuchAlgorithmException e) {
-			Logger.e("" + e);
-		}
-		return hash;
+		return String.valueOf(imageUri.hashCode());
 	}
 }

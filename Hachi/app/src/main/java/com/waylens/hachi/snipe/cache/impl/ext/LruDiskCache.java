@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.waylens.hachi.snipe.cache2.impl.ext;
+package com.waylens.hachi.snipe.cache.impl.ext;
 
 import android.graphics.Bitmap;
 
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.cache2.DiskCache;
-import com.waylens.hachi.snipe.cache2.naming.FileNameGenerator;
+import com.waylens.hachi.snipe.cache.DiskCache;
+import com.waylens.hachi.snipe.cache.naming.FileNameGenerator;
 import com.waylens.hachi.snipe.utils.IoUtils;
 
 import java.io.BufferedOutputStream;

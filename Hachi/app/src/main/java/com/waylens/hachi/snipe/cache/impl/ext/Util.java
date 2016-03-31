@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.waylens.hachi.snipe.cache2.impl.ext;
+package com.waylens.hachi.snipe.cache.impl.ext;
 
 import java.io.Closeable;
 import java.io.File;
