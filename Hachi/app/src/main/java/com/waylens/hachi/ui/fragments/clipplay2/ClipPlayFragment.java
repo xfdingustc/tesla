@@ -152,14 +152,23 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void updateGauge(GaugeInfoItem item) {
-        String jsApi = "javascript:";
-        if (item.isEnabled) {
-            jsApi += "showGauge";
+        String jsApi = "javascript:setGauge('" + item.title + "',";
+
+        if (!item.isEnabled) {
+            jsApi += "'')";
 
         } else {
-            jsApi += "hideGauge";
+            if (item.getOption().equals("large")) {
+                jsApi += "'L')";
+            } else if (item.getOption().equals("middle")) {
+                jsApi += "'M')";
+            } else if (item.getOption().equals("small")) {
+                jsApi += "'S')";
+            }
+
         }
-        jsApi += "('" + item.title + "')";
+
+        Logger.t(TAG).d("call api: " + jsApi);
         mWvGauge.loadUrl(jsApi);
     }
 

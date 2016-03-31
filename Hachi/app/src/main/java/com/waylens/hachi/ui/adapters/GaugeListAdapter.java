@@ -78,6 +78,9 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 updateOption(holder, checkedId);
+                if (mListener != null) {
+                    mListener.onGaugeItemChanged(gaugeItem);
+                }
             }
         });
     }
