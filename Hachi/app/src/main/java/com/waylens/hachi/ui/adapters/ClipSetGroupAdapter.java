@@ -19,6 +19,7 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +42,8 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
     private boolean mMultiSelectedMode = false;
+
+    private List<WeakReference<RecyclerView.ViewHolder>> mViewHolderList = new ArrayList<>();
 
     public interface OnClipClickListener {
         void onClipClicked(Clip clip);
@@ -97,13 +100,15 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == ITEM_TYPE_HEAD) {
-            return onCreateHeaderViewHolder(parent);
-        } else if (viewType == ITEM_TYPE_CLIPVIEW) {
-            return onCreateClipGridViewHolder(parent);
+        RecyclerView.ViewHolder viewHolder = null;
+        int type = getViewHolderType(viewType);
+        if (type == ITEM_TYPE_HEAD) {
+            viewHolder = onCreateHeaderViewHolder(parent);
+        } else if (type == ITEM_TYPE_CLIPVIEW) {
+            viewHolder = onCreateClipGridViewHolder(parent);
         }
 
-        return null;
+        return viewHolder;
 
 
     }
@@ -128,7 +133,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        int viewType = getItemViewType(position);
+        int viewType = getViewHolderType(position);
         if (ITEM_TYPE_HEAD == viewType) {
             onBindClipSetHeaderViewHolder(holder, position);
         } else if (ITEM_TYPE_CLIPVIEW == viewType) {
@@ -169,7 +174,10 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (mMultiSelectedMode == false) {
             for (ClipGridItem item : mClipGridItemList) {
                 item.isItemSelected = false;
+
             }
+
+
         }
         notifyDataSetChanged();
     }
@@ -191,6 +199,10 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
+        return position;
+    }
+
+    private int getViewHolderType(int position) {
         return mClipGridItemList.get(position).itemType;
     }
 
