@@ -156,7 +156,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND);
                     Log.e("test", "Clips: " + clips);
                     mClipsEditView.appendSharableClips(clips);
-                    mClipPlayFragment.setPosition(0);
+//                    mClipPlayFragment.setPosition(0);
                 }
                 break;
             case REQUEST_CODE_ADD_MUSIC:

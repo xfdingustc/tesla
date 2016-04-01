@@ -148,7 +148,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void start() {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-            startPreparingClip(getSeekbarTimeMs(), false);
+            startPreparingClip(0, false);
         } else {
             startPreparingClip(0, false);
         }
@@ -175,9 +175,9 @@ public class ClipPlayFragment extends DialogFragment {
         mWvGauge.loadUrl(jsApi);
     }
 
-    public void setPosition(int position) {
-        setPlaybackPosition(position, getClipSet().getTotalSelectedLengthMs());
-    }
+//    public void setPosition(int position) {
+//        setPlaybackPosition(position, getClipSet().getTotalSelectedLengthMs());
+//    }
 
 
     public static class Config {
@@ -387,10 +387,11 @@ public class ClipPlayFragment extends DialogFragment {
             @Override
             public void onProgressChanged(MultiSegSeekbar seekBar, ClipSetPos clipSetPos) {
                 if (mCurrentState == STATE_FAST_PREVIEW) {
-                    ClipPos clipPos = getClipSet().getClipPosByClipSetPos(clipSetPos);
-                    if (clipPos != null) {
-                        mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
-                    }
+                    setClipSetPos(clipSetPos, true);
+                }
+
+                if (mOnClipSetPosChangeListener != null) {
+                    mOnClipSetPosChangeListener.onClipSetPosChanged(clipSetPos);
                 }
             }
 
@@ -400,14 +401,6 @@ public class ClipPlayFragment extends DialogFragment {
             }
         });
     }
-
-
-
-
-    public int getActiveClipIndex() {
-        return mMultiSegSeekbar.getActiveIndex();
-    }
-
 
 
     public void showClipPosThumbnail(Clip clip, long timeMs) {
@@ -613,18 +606,9 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    private void setPlaybackPosition(int position, int duration) {
-        updateProgressTextView(position, duration);
-
-        int progress = (int) ((float) position * mMultiSegSeekbar.getMax() / duration);
-        mMultiSegSeekbar.setProgress(progress);
-    }
 
 
-    public long getSeekbarTimeMs() {
 
-        return ((long) getClipSet().getTotalSelectedLengthMs() * mMultiSegSeekbar.getProgress()) / mMultiSegSeekbar.getMax();
-    }
 
 
     public void setAudioUrl(String audioUrl) {
@@ -668,7 +652,23 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public ClipSetPos getClipSetPos() {
-        return mMultiSegSeekbar.getCurrentClipSetPos();
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            return getClipSet().getClipSetPosByTimeOffset(getCurrentPlayingTime());
+        } else {
+            return mMultiSegSeekbar.getCurrentClipSetPos();
+        }
+    }
+
+    public int getCurrentPlayingTime() {
+        if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+            return 0;
+        }
+
+        int currentPos = mMediaPlayer.getCurrentPosition();
+        if (mPositionAdjuster != null) {
+            currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
+        }
+        return currentPos;
     }
 
 
@@ -692,24 +692,21 @@ public class ClipPlayFragment extends DialogFragment {
         }
 
         private void refreshProgressBar() {
-            int currentPos = mMediaPlayer.getCurrentPosition();
-            if (mPositionAdjuster != null) {
-                currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
-            }
+            final int currentPos = getCurrentPlayingTime();
 
-            final int curPos = currentPos;
-
-            final int duration = getClipSet().getTotalSelectedLengthMs();
+//            final int duration = getClipSet().getTotalSelectedLengthMs();
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    setPlaybackPosition(curPos, duration);
+                    ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPos);
+                    setClipSetPos(clipSetPos, false);
+//                    setPlaybackPosition(currentPos, duration);
                 }
             });
 
             if (mOnClipSetPosChangeListener != null) {
-                mOnClipSetPosChangeListener.onClipSetPosChanged(getClipSet().getClipSetPosByTimeOffset(curPos));
+                mOnClipSetPosChangeListener.onClipSetPosChanged(getClipSet().getClipSetPosByTimeOffset(currentPos));
             }
 
 
