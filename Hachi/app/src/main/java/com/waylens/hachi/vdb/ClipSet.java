@@ -220,6 +220,9 @@ public class ClipSet {
 
 
     public ClipPos getClipPosByClipSetPos(ClipSetPos clipSetPos) {
+        if (clipSetPos == null) {
+            return null;
+        }
         Clip clip = mClipList.get(clipSetPos.getClipIndex());
         return new ClipPos(clip, clipSetPos.getClipTimeMs());
     }

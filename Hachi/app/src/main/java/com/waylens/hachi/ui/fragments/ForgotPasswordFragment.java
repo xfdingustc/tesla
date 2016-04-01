@@ -85,6 +85,7 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     void sendEmail() {
         String url = Constants.API_RESET_PASSWORD_MAIL;
+        mEmail = mTvSignUpEmail.getText().toString();
         try {
             url = url + URLEncoder.encode(mEmail, "utf-8");
         } catch (UnsupportedEncodingException e) {
