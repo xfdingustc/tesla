@@ -241,6 +241,22 @@ public class ClipSet {
         return null;
     }
 
+    public long getTimeOffsetByClipSetPos(ClipSetPos clipSetPos) {
+        long total = 0;
+        for (int i = 0; i < mClipList.size(); i++) {
+            Clip clip = mClipList.get(i);
+
+            if (i == clipSetPos.getClipIndex()) {
+                total += clipSetPos.getClipTimeMs() - clip.editInfo.selectedStartValue;
+                break;
+            }
+
+            total += clip.editInfo.getSelectedLength();
+        }
+
+        return total;
+    }
+
 
 
 }

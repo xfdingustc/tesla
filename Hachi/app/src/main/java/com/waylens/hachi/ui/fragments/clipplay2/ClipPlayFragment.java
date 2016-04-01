@@ -614,9 +614,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void setPlaybackPosition(int position, int duration) {
-        String timeText = DateUtils.formatElapsedTime(position / 1000) + "/" + DateUtils.formatElapsedTime(duration / 1000);
-//        Logger.t(TAG).d("duration: " + duration + " currentPos: " + position);
-        mTvProgress.setText(timeText);
+        updateProgressTextView(position, duration);
 
         int progress = (int) ((float) position * mMultiSegSeekbar.getMax() / duration);
         mMultiSegSeekbar.setProgress(progress);
@@ -662,6 +660,10 @@ public class ClipPlayFragment extends DialogFragment {
             showThumbnail(clipPos);
         }
 
+        long timeOffset = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
+
+        updateProgressTextView(timeOffset, getClipSet().getTotalSelectedLengthMs());
+
         mMultiSegSeekbar.setClipSetPos(clipSetPos);
     }
 
@@ -669,6 +671,11 @@ public class ClipPlayFragment extends DialogFragment {
         return mMultiSegSeekbar.getCurrentClipSetPos();
     }
 
+
+    private void updateProgressTextView(long currentPosition, long duration) {
+        String timeText = DateUtils.formatElapsedTime(currentPosition / 1000) + "/" + DateUtils.formatElapsedTime(duration / 1000);
+        mTvProgress.setText(timeText);
+    }
 
     public interface ClipPlayFragmentContainer {
         ClipPlayFragment getClipPlayFragment();
