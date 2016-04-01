@@ -374,9 +374,10 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             @Override
             public void onMoveCompleted(ClipSet clipSet) {
                 int selectedPosition = mClipsEditView.getSelectedPosition();
-                if (selectedPosition != mClipPlayFragment.getActiveClipIndex()) {
-                    ClipSetPos clipSetPos = new ClipSetPos(selectedPosition, clip.getStartTimeMs());
-                    mClipPlayFragment.setClipSetPos(clipSetPos, false);
+                ClipSetPos clipSetPos = mClipPlayFragment.getClipSetPos();
+                if (selectedPosition != clipSetPos.getClipIndex()) {
+                    ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.getStartTimeMs());
+                    mClipPlayFragment.setClipSetPos(newClipSetPos, false);
                 }
                 if (selectedPosition == -1 && toPosition == 0) {
                     mClipPlayFragment.showClipPosThumbnail(clip, clip.getStartTimeMs());

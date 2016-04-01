@@ -402,14 +402,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-//    public void setActiveClip(int position, Clip clip, boolean refreshThumbnail) {
-//        changeState(STATE_FAST_PREVIEW);
-//        if (refreshThumbnail) {
-//            ClipPos clipPos = new ClipPos(clip, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
-//            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
-//        }
-//        mMultiSegSeekbar.setActiveClip(position);
-//    }
+
 
     public int getActiveClipIndex() {
         return mMultiSegSeekbar.getActiveIndex();
@@ -670,6 +663,10 @@ public class ClipPlayFragment extends DialogFragment {
         }
 
         mMultiSegSeekbar.setClipSetPos(clipSetPos);
+    }
+
+    public ClipSetPos getClipSetPos() {
+        return mMultiSegSeekbar.getCurrentClipSetPos();
     }
 
 
