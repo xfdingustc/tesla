@@ -19,7 +19,6 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -85,7 +84,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         for (ClipSet clipSet : mClipSetGroup) {
             ClipGridItem headItem = new ClipGridItem();
             headItem.itemType = ITEM_TYPE_HEAD;
-            headItem.itemObject = clipSet.getClip(0).clipDate;
+            headItem.itemObject = clipSet.getClip(0).getDate();
             mClipGridItemList.add(headItem);
 
             for (Clip clip : clipSet.getClipList()) {

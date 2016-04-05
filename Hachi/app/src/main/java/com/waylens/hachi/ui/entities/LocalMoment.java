@@ -88,7 +88,7 @@ public class LocalMoment {
 
         public String getClipCaptureTime() {
             long offset = uploadURL.realTimeMs - clip.getStartTimeMs();
-            return DateTime.toString(clip.clipDate, offset);
+            return DateTime.toString(clip.getDate(), offset);
         }
     }
 }

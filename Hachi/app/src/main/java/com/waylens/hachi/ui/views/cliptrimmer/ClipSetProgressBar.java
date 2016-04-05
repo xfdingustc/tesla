@@ -53,7 +53,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     private RecyclerView.OnScrollListener mScrollListener;
 
-    private OnSeekBarChangeListener mOnSeekBarChangeListener;
+
 
     private int mScreenWidth;
     private VdbImageLoader mVdbImageLoader;
@@ -108,16 +108,11 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
 
-                    if (mOnSeekBarChangeListener != null) {
-                        mOnSeekBarChangeListener.onStartTrackingTouch(ClipSetProgressBar.this);
-                    }
+
 
                 } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
 
-                    if (mOnSeekBarChangeListener != null) {
-                        ClipSetPos clipSetPos = getCurrentClipSetPos();
-                        mOnSeekBarChangeListener.onStopTrackingTouch(ClipSetProgressBar.this, clipSetPos);
-                    }
+
                 }
 
             }
@@ -131,10 +126,13 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
                 }
 
                 ClipSetPos clipSetPos = getCurrentClipSetPos();
-
-                if (mOnSeekBarChangeListener != null) {
-                    mOnSeekBarChangeListener.onProgressChanged(ClipSetProgressBar.this, clipSetPos, true);
+                if (clipSetPos != null) {
+                    ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, TAG);
+                    mEventBus.post(event);
                 }
+
+
+
 
 
             }
@@ -196,9 +194,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         return view.getWidth();
     }
 
-    public void setOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
-        mOnSeekBarChangeListener = listener;
-    }
 
 
     @Override
@@ -230,6 +225,9 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipPosSetChangeMainThread(ClipSetPosChangeEvent event) {
+        if (event.getBroadcaster().equals(TAG)) {
+            return;
+        }
         ClipSetPos clipSetPos = event.getClipSetPos();
         List<ThumbnailListAdapter.CellItem> cellItems = mAdapter.getCellItemList();
         for (int i = 0; i < cellItems.size(); i++) {
@@ -515,12 +513,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         }
     }
 
-    public interface OnSeekBarChangeListener {
-        void onStartTrackingTouch(ClipSetProgressBar progressBar);
 
-        void onProgressChanged(ClipSetProgressBar progressBar, ClipSetPos clipSetPos, boolean fromUser);
-
-        void onStopTrackingTouch(ClipSetProgressBar progressBar, ClipSetPos clipSetPos);
-    }
 
 }

@@ -141,7 +141,7 @@ public class Clip implements Parcelable {
     public int index; // index in ClipSet
 
     // date when the clip is created
-    public final int clipDate;
+    private int mClipDate;
 
     public int gmtOffset;
 
@@ -169,7 +169,7 @@ public class Clip implements Parcelable {
             streams[i] = new StreamInfo();
         }
 
-        this.clipDate = clipDate;
+        this.mClipDate = clipDate;
         this.mStartTimeMs = statTimeMs;
         this.mDurationMs = duration;
         this.editInfo = new EditInfo();
@@ -182,23 +182,27 @@ public class Clip implements Parcelable {
 
 
     public final String getDateTimeString() {
-        return DateTime.toString(clipDate, 0);
+        return DateTime.toString(mClipDate, mStartTimeMs);
     }
 
     public String getDateString() {
-        return DateTime.getDateString(clipDate, 0);
+        return DateTime.getDateString(mClipDate, 0);
     }
 
     public final String getTimeString() {
-        return DateTime.getTimeString(clipDate, 0);
+        return DateTime.getTimeString(mClipDate, 0);
     }
 
     public final String getWeekDayString() {
-        return DateTime.getDayName(clipDate, 0);
+        return DateTime.getDayName(mClipDate, 0);
     }
 
     public Clip.StreamInfo getStream(int index) {
         return (index < 0 || index >= streams.length) ? null : streams[index];
+    }
+
+    public int getDate() {
+        return mClipDate;
     }
 
     public long getStartTimeMs() {
@@ -232,7 +236,7 @@ public class Clip implements Parcelable {
     }
 
     public long getStandardClipDate() {
-        return (clipDate - gmtOffset) * 1000l;
+        return (mClipDate - gmtOffset) * 1000l;
     }
 
 
@@ -248,7 +252,7 @@ public class Clip implements Parcelable {
         write(dest, streams);
         write(dest, editInfo);
         dest.writeInt(index);
-        dest.writeInt(clipDate);
+        dest.writeInt(mClipDate);
         dest.writeInt(gmtOffset);
         dest.writeLong(mStartTimeMs);
         dest.writeInt(mDurationMs);
@@ -312,7 +316,7 @@ public class Clip implements Parcelable {
         streams = readStreams(in);
         editInfo = readEditInfo(in);
         index = in.readInt();
-        clipDate = in.readInt();
+        mClipDate = in.readInt();
         gmtOffset = in.readInt();
         mStartTimeMs = in.readLong();
         mDurationMs = in.readInt();

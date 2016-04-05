@@ -95,7 +95,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     private PositionAdjuster mPositionAdjuster;
 
-    private OnClipSetPosChangeListener mOnClipSetPosChangeListener;
+
 
     private final int STATE_NONE = 0;
     private final int STATE_PREPAREING = 1;
@@ -408,9 +408,7 @@ public class ClipPlayFragment extends DialogFragment {
                     setClipSetPos(clipSetPos, true);
                 }
 
-                if (mOnClipSetPosChangeListener != null) {
-                    mOnClipSetPosChangeListener.onClipSetPosChanged(clipSetPos);
-                }
+                mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
             }
 
             @Override
@@ -643,9 +641,7 @@ public class ClipPlayFragment extends DialogFragment {
         }
     }
 
-    public void setOnClipSetPosChangeListener(OnClipSetPosChangeListener listener) {
-        mOnClipSetPosChangeListener = listener;
-    }
+
 
     public void setUrlProvider(UrlProvider urlProvider) {
         mUrlProvider = urlProvider;
@@ -661,7 +657,6 @@ public class ClipPlayFragment extends DialogFragment {
 
         updateProgressTextView(timeOffset, getClipSet().getTotalSelectedLengthMs());
 
-//        mMultiSegSeekbar.setClipSetPos(clipSetPos);
     }
 
     public ClipSetPos getClipSetPos() {
@@ -721,10 +716,5 @@ public class ClipPlayFragment extends DialogFragment {
 
         }
     }
-
-    public interface OnClipSetPosChangeListener {
-        void onClipSetPosChanged(ClipSetPos clipPos);
-    }
-
 
 }

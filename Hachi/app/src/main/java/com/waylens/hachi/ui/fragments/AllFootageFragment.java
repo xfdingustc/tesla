@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.fragments;
 
-import android.app.usage.UsageEvents;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
-
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -20,13 +18,13 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar;
+import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
@@ -34,8 +32,11 @@ import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -104,7 +105,17 @@ public class AllFootageFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mEventBus.register(this);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
+    }
 
     @Override
     public void onPause() {
@@ -138,14 +149,6 @@ public class AllFootageFragment extends BaseFragment {
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             config);
 
-        mClipPlayFragment.setOnClipSetPosChangeListener(new ClipPlayFragment.OnClipSetPosChangeListener() {
-            @Override
-            public void onClipSetPosChanged(final ClipSetPos clipSetPos) {
-                mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
-
-            }
-        });
-
         getChildFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
         doMakePlaylist();
 
@@ -163,34 +166,19 @@ public class AllFootageFragment extends BaseFragment {
         });
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
+        ClipSetPos clipSetPos = event.getClipSetPos();
+        Clip clip = getClipSet().getClip(clipSetPos.getClipIndex());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
+
+        mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getDate(), clipSetPos.getClipTimeMs())));
+    }
+
     private void setupClipProgressBar() {
         mClipSetProgressBar.setClipSet(mAllFootageClipSet, mBookmarkClipSet);
-        mClipSetProgressBar.setOnSeekBarChangeListener(new ClipSetProgressBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStartTrackingTouch(ClipSetProgressBar progressBar) {
 
-            }
-
-            @Override
-            public void onProgressChanged(ClipSetProgressBar progressBar, ClipSetPos clipSetPos, boolean fromUser) {
-                if (clipSetPos != null && mClipPlayFragment != null) {
-
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
-                    mTvClipPosTime.setText(simpleDateFormat.format(clipSetPos.getClipTimeMs()));
-                    mClipPlayFragment.setClipSetPos(clipSetPos, false);
-                }
-            }
-
-            @Override
-            public void onStopTrackingTouch(ClipSetProgressBar progressBar, ClipSetPos clipSetPos) {
-                if (clipSetPos != null && mClipPlayFragment != null) {
-//                    mClipPlayFragment.showThumbnail(clipPos);
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
-                    mTvClipPosTime.setText(simpleDateFormat.format(clipSetPos.getClipTimeMs()));
-                    mClipPlayFragment.setClipSetPos(clipSetPos, true);
-                }
-            }
-        });
 
     }
 

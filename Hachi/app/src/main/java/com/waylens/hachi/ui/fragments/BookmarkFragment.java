@@ -311,7 +311,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         Collections.sort(clipSetGroup, new Comparator<ClipSet>() {
             @Override
             public int compare(ClipSet lhs, ClipSet rhs) {
-                return rhs.getClip(0).clipDate - lhs.getClip(0).clipDate;
+                return rhs.getClip(0).getDate() - lhs.getClip(0).getDate();
             }
         });
 

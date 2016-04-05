@@ -30,7 +30,7 @@ public class ClipPos {
     }
 
     public ClipPos(Clip clip, long clipTimeMs, int type, boolean bIsLast) {
-        this(clip.getVdbId(), clip.cid, clip.clipDate, clipTimeMs, type, bIsLast);
+        this(clip.getVdbId(), clip.cid, clip.getDate(), clipTimeMs, type, bIsLast);
     }
 
     public ClipPos(String vdbId, Clip.ID cid, int date, long timeMs, int type, boolean bIsLast) {

@@ -55,7 +55,7 @@ public class SharableClip {
 
     public ClipPos getThumbnailClipPos(long timeMs) {
         return new ClipPos(clip.getVdbId(),
-                realCid, clip.clipDate, timeMs, ClipPos.TYPE_POSTER, false);
+                realCid, clip.getDate(), timeMs, ClipPos.TYPE_POSTER, false);
     }
 
     public int getSelectedLength() {

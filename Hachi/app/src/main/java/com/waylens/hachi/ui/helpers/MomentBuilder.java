@@ -47,10 +47,10 @@ public class MomentBuilder {
     private static final String TAG = "MomentBuilder";
 
     private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1
-            | VdbCommand.Factory.UPLOAD_GET_RAW;
+        | VdbCommand.Factory.UPLOAD_GET_RAW;
 
     private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW
-            | CrsCommand.VIDIT_RAW_DATA;
+        | CrsCommand.VIDIT_RAW_DATA;
 
 
     LocalMoment mLocalMoment;
@@ -107,25 +107,25 @@ public class MomentBuilder {
 
         Logger.t(TAG).d("retrievePlayListInfo");
         mVdbRequestQueue.add(new ClipSetExRequest(mPlayListID, ClipSetExRequest.FLAG_CLIP_EXTRA,
-                new VdbResponse.Listener<ClipSet>() {
-                    @Override
-                    public void onResponse(ClipSet clipSet) {
-                        if (clipSet == null || clipSet.getCount() == 0) {
-                            mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_CLIP_SET, 0);
-                        } else {
-                            mClipSet = clipSet;
-                            mSegmentList.clear();
-                            requestCounter = 0;
-                            retrieveUploadURL();
-                        }
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet clipSet) {
+                    if (clipSet == null || clipSet.getCount() == 0) {
                         mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_CLIP_SET, 0);
+                    } else {
+                        mClipSet = clipSet;
+                        mSegmentList.clear();
+                        requestCounter = 0;
+                        retrieveUploadURL();
                     }
-                }));
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_CLIP_SET, 0);
+                }
+            }));
     }
 
     void retrieveUploadURL() {
@@ -148,21 +148,21 @@ public class MomentBuilder {
         parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, DEFAULT_DATA_TYPE_CAM);
 
         ClipUploadUrlRequest request = new ClipUploadUrlRequest(clip.cid, parameters,
-                new VdbResponse.Listener<UploadUrl>() {
-                    @Override
-                    public void onResponse(UploadUrl uploadUrl) {
-                        requestCounter++;
-                        LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, DEFAULT_DATA_TYPE_CLOUD);
-                        mSegmentList.add(segment);
-                        retrieveUploadURL();
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_UPLOAD_URL, 0);
-                    }
-                });
+            new VdbResponse.Listener<UploadUrl>() {
+                @Override
+                public void onResponse(UploadUrl uploadUrl) {
+                    requestCounter++;
+                    LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, DEFAULT_DATA_TYPE_CLOUD);
+                    mSegmentList.add(segment);
+                    retrieveUploadURL();
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_UPLOAD_URL, 0);
+                }
+            });
         mVdbRequestQueue.add(request);
     }
 
@@ -174,40 +174,39 @@ public class MomentBuilder {
 
         Logger.t(TAG).d("getClipThumbnail");
         final Clip clip = mClipSet.getClip(0);
-        ClipPos clipPos = new ClipPos(clip.getVdbId(),
-                clip.cid, clip.clipDate, clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        ClipPos clipPos = new ClipPos(clip.getVdbId(), clip.cid, clip.getDate(), clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         VdbImageRequest request = new VdbImageRequest(
-                clipPos,
-                new VdbResponse.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap Bitmap) {
-                        File file = new File(cacheDir, "t" + clip.getStartTimeMs() + ".jpg");
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream(file);
-                            Bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, fos);
-                            mThumbnailPath = file.getAbsolutePath();
-                            createMoment();
-                        } catch (FileNotFoundException e) {
-                            mOnBuildListener.onBuildError(MomentShareHelper.ERROR_CACHE_THUMBNAIL, 0);
-                        } finally {
-                            if (fos != null) {
-                                try {
-                                    fos.close();
-                                } catch (IOException e) {
-                                    //
-                                }
+            clipPos,
+            new VdbResponse.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap Bitmap) {
+                    File file = new File(cacheDir, "t" + clip.getStartTimeMs() + ".jpg");
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                        Bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, fos);
+                        mThumbnailPath = file.getAbsolutePath();
+                        createMoment();
+                    } catch (FileNotFoundException e) {
+                        mOnBuildListener.onBuildError(MomentShareHelper.ERROR_CACHE_THUMBNAIL, 0);
+                    } finally {
+                        if (fos != null) {
+                            try {
+                                fos.close();
+                            } catch (IOException e) {
+                                //
                             }
                         }
                     }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_THUMBNAIL, 0);
-                    }
-                },
-                0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.RGB_565, null
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_THUMBNAIL, 0);
+                }
+            },
+            0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.RGB_565, null
         );
         mVdbRequestQueue.add(request);
     }
@@ -251,24 +250,24 @@ public class MomentBuilder {
         }
 
         mVolleyRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENTS, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject momentInfo) {
-                        JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
-                        String ip = uploadServer.optString("ip");
-                        int port = uploadServer.optInt("port");
-                        String privateKey = uploadServer.optString("privateKey");
-                        long momentID = momentInfo.optLong("momentID");
-                        mLocalMoment.updateUploadInfo(momentID, ip, port, privateKey);
-                        prepareUpload();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        mOnBuildListener.onBuildError(MomentShareHelper.ERROR_CREATE_MOMENT, 0);
-                    }
-                }));
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject momentInfo) {
+                    JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
+                    String ip = uploadServer.optString("ip");
+                    int port = uploadServer.optInt("port");
+                    String privateKey = uploadServer.optString("privateKey");
+                    long momentID = momentInfo.optLong("momentID");
+                    mLocalMoment.updateUploadInfo(momentID, ip, port, privateKey);
+                    prepareUpload();
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    mOnBuildListener.onBuildError(MomentShareHelper.ERROR_CREATE_MOMENT, 0);
+                }
+            }));
     }
 
     public void cancel() {
