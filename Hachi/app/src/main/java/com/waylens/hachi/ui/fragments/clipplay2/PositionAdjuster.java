@@ -6,7 +6,7 @@ package com.waylens.hachi.ui.fragments.clipplay2;
 public abstract class PositionAdjuster {
     private long mInitPosition;
 
-    int getAdjustedPostion(int position) {
+    public int getAdjustedPostion(int position) {
         int adjustedPosition = position;
 
         if (mInitPosition == 0 && position != 0) {

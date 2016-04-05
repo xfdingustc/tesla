@@ -6,10 +6,8 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
@@ -28,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
-
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -100,7 +97,6 @@ public class ClipPlayFragment extends DialogFragment {
     private PositionAdjuster mPositionAdjuster;
 
     private BannerAdapter mBannerAdapter;
-
 
 
     private final int STATE_NONE = 0;
@@ -178,11 +174,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void start() {
-        if (mConfig.clipMode == Config.ClipMode.SINGLE) {
-            startPreparingClip(0, false);
-        } else {
-            startPreparingClip(0, false);
-        }
+        startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), false);
     }
 
     public void updateGauge(GaugeInfoItem item) {
@@ -206,12 +198,13 @@ public class ClipPlayFragment extends DialogFragment {
         mWvGauge.loadUrl(jsApi);
     }
 
-//    public void setPosition(int position) {
-//        setPlaybackPosition(position, getClipSet().getTotalSelectedLengthMs());
-//    }
-
 
     public static class Config {
+        public enum UrlMode {
+            CLIP,
+            PLAYLIST,
+        }
+
         public enum ClipMode {
             SINGLE,
             MULTI
@@ -224,6 +217,7 @@ public class ClipPlayFragment extends DialogFragment {
 
         public ClipMode clipMode = ClipMode.SINGLE;
         public CoverMode coverMode = CoverMode.NORMAL;
+        public UrlMode urlMode = UrlMode.PLAYLIST;
 
     }
 
@@ -579,26 +573,27 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    private void startPreparingClip(final long clipTimeMs, boolean loadRawData) {
+    private void startPreparingClip(final ClipSetPos clipSetPos, boolean loadRawData) {
         if (mBtnPlayPause.isEnabled() == false) {
             return;
         }
         if (loadRawData == false) {
-            startLoadPlaybackUrl(clipTimeMs);
+            startLoadPlaybackUrl(clipSetPos);
         } else {
             mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
             mRawDataLoader.startLoad(new RawDataLoader.OnLoadCompleteListener() {
                 @Override
                 public void onLoadComplete() {
-                    startLoadPlaybackUrl(clipTimeMs);
+                    startLoadPlaybackUrl(clipSetPos);
                 }
             });
         }
         changeState(STATE_PREPAREING);
     }
 
-    private void startLoadPlaybackUrl(long clipTimeMs) {
-        mUrlProvider.getUri(clipTimeMs, new UrlProvider.OnUrlLoadedListener() {
+    private void startLoadPlaybackUrl(ClipSetPos clipSetPos) {
+        long startTimeMs = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
+        mUrlProvider.getUri(startTimeMs, new UrlProvider.OnUrlLoadedListener() {
 
             @Override
             public void onUrlLoaded(VdbUrl url) {
@@ -608,7 +603,7 @@ public class ClipPlayFragment extends DialogFragment {
                 }
                 Logger.t(TAG).d("Get playback url: " + url.url);
                 mVdbUrl = url;
-                if (mConfig.clipMode == Config.ClipMode.SINGLE) {
+                if (mConfig.urlMode == Config.UrlMode.CLIP) {
                     mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), url);
                 } else {
                     mPositionAdjuster = new PlaylistPositionAdjuster(url);
@@ -623,14 +618,14 @@ public class ClipPlayFragment extends DialogFragment {
     private void changeState(int targetState) {
         switch (targetState) {
             case STATE_PREPAREING:
-                mClipCover.setVisibility(View.VISIBLE);
+                mVsCover.setVisibility(View.VISIBLE);
                 mProgressLoading.setVisibility(View.VISIBLE);
                 break;
             case STATE_PREPARED:
                 mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PLAYING:
-                mClipCover.setVisibility(View.INVISIBLE);
+                mVsCover.setVisibility(View.INVISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
                 startPlayer();
                 mProgressLoading.setVisibility(View.GONE);
@@ -640,7 +635,7 @@ public class ClipPlayFragment extends DialogFragment {
                 pausePlayer();
                 break;
             case STATE_FAST_PREVIEW:
-                mClipCover.setVisibility(View.VISIBLE);
+                mVsCover.setVisibility(View.VISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_play);
                 stopPlayer();
                 break;
@@ -690,7 +685,6 @@ public class ClipPlayFragment extends DialogFragment {
             mAudioPlayer.setVolume(volume, volume);
         }
     }
-
 
 
     public void setUrlProvider(UrlProvider urlProvider) {

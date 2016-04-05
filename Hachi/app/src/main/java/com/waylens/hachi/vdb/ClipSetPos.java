@@ -19,4 +19,8 @@ public class ClipSetPos {
         return mClipTimeMs;
     }
 
+    public String toString() {
+        return "Index: " + mClipIndex  + " TimeMs: " + mClipTimeMs;
+    }
+
 }

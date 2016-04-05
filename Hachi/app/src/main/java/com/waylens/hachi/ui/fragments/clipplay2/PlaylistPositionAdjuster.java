@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
