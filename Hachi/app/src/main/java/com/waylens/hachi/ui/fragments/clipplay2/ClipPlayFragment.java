@@ -154,7 +154,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(ClipSetPosChangeEvent event) {
+    public void onEventClipSetChanged(ClipSetPosChangeEvent event) {
         final ClipSetPos clipSetPos = event.getClipSetPos();
         boolean refreshThumbnail = false;
         if (!event.getBroadcaster().equals("clipplay")) {
@@ -281,6 +281,7 @@ public class ClipPlayFragment extends DialogFragment {
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 1000, 1000);
         mEventBus.register(this);
+        mEventBus.register(mMultiSegSeekbar);
     }
 
     @Override
@@ -289,7 +290,7 @@ public class ClipPlayFragment extends DialogFragment {
         stopPlayer();
         mTimer.cancel();
         mEventBus.unregister(this);
-
+        mEventBus.unregister(mMultiSegSeekbar);
     }
 
     @Override
@@ -317,12 +318,6 @@ public class ClipPlayFragment extends DialogFragment {
 
         mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
 
-//        if (mConfig.clipMode == Config.ClipMode.MULTI) {
-//            mVsBar.showNext();
-//            setupMultiSegSeekBar();
-//        } else {
-//            setupSeekBar();
-//        }
 
         setupMultiSegSeekBar();
 
@@ -666,7 +661,7 @@ public class ClipPlayFragment extends DialogFragment {
 
         updateProgressTextView(timeOffset, getClipSet().getTotalSelectedLengthMs());
 
-        mMultiSegSeekbar.setClipSetPos(clipSetPos);
+//        mMultiSegSeekbar.setClipSetPos(clipSetPos);
     }
 
     public ClipSetPos getClipSetPos() {
@@ -718,19 +713,6 @@ public class ClipPlayFragment extends DialogFragment {
                 ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, "clipplay");
                 mEventBus.post(event);
             }
-
-//            getActivity().runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                    setClipSetPos(clipSetPos, false);
-////                    setPlaybackPosition(currentPos, duration);
-//                }
-//            });
-
-//            if (mOnClipSetPosChangeListener != null) {
-//                mOnClipSetPosChangeListener.onClipSetPosChanged(getClipSet().getClipSetPosByTimeOffset(currentPos));
-//            }
 
 
             if (mRawDataLoader != null) {

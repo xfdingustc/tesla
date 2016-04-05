@@ -14,11 +14,15 @@ import android.view.View;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by Xiaofei on 2016/2/29.
@@ -119,28 +123,18 @@ public class MultiSegSeekbar extends View {
         invalidate();
     }
 
-    public void setActiveClip(int position) {
-        // reset progress:
-        setProgress(0);
-        mBar.setActiveIndex(position);
-        invalidate();
-    }
 
-    public void setClipPos(ClipPos clipPos) {
 
-    }
-
-    public int getActiveIndex() {
-        return mBar.getActiveIndex();
-    }
 
     public ClipSetPos getCurrentClipSetPos() {
         return mBar.getClipSetPos(mThumb.getX());
     }
 
-    public void setClipSetPos(ClipSetPos clipSetPos) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
+        ClipSetPos clipSetPos = event.getClipSetPos();
         float newX = mBar.setClipSetPos(clipSetPos);
-//        Logger.t(TAG).d("newX: " + newX);
         mThumb.setX(newX);
         invalidate();
 
