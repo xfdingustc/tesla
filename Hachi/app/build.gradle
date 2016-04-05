@@ -123,5 +123,6 @@ dependencies {
     compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
     compile 'com.bugtags.library:bugtags-lib:latest.integration'
     compile 'com.tencent.bugly:crashreport:latest.release'
-    compile 'com.google.guava:guava:19.0'
+    //    compile 'com.google.guava:guava:19.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

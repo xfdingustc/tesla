@@ -6,6 +6,7 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -40,6 +42,10 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
 import com.waylens.hachi.vdb.urls.VdbUrl;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,7 +105,7 @@ public class ClipPlayFragment extends DialogFragment {
     private final int STATE_FAST_PREVIEW = 5;
 
     private int mCurrentState = STATE_NONE;
-
+    private EventBus mEventBus = EventBus.getDefault();
 
     @Bind(R.id.textureView)
     TextureView mTextureView;
@@ -145,6 +151,21 @@ public class ClipPlayFragment extends DialogFragment {
         }
 
     }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(ClipSetPosChangeEvent event) {
+        final ClipSetPos clipSetPos = event.getClipSetPos();
+        boolean refreshThumbnail = false;
+        if (!event.getBroadcaster().equals("clipplay")) {
+            refreshThumbnail = true;
+        }
+
+
+        setClipSetPos(clipSetPos, refreshThumbnail);
+
+    }
+
 
     private void start() {
         if (mConfig.clipMode == Config.ClipMode.SINGLE) {
@@ -259,6 +280,7 @@ public class ClipPlayFragment extends DialogFragment {
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 1000, 1000);
+        mEventBus.register(this);
     }
 
     @Override
@@ -266,6 +288,7 @@ public class ClipPlayFragment extends DialogFragment {
         super.onStop();
         stopPlayer();
         mTimer.cancel();
+        mEventBus.unregister(this);
 
     }
 
@@ -424,7 +447,7 @@ public class ClipPlayFragment extends DialogFragment {
                 }
             }
 
-  //          Logger.t(TAG).d("show cilpPos");
+            //          Logger.t(TAG).d("show cilpPos");
             mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
             mPreviousShownClipPos = clipPos;
             mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
@@ -606,11 +629,6 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-
-
-
-
-
     public void setAudioUrl(String audioUrl) {
         Logger.t(TAG).d("audio url: " + audioUrl);
         mAudioUrl = audioUrl;
@@ -695,19 +713,24 @@ public class ClipPlayFragment extends DialogFragment {
             final int currentPos = getCurrentPlayingTime();
 
 //            final int duration = getClipSet().getTotalSelectedLengthMs();
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPos);
-                    setClipSetPos(clipSetPos, false);
-//                    setPlaybackPosition(currentPos, duration);
-                }
-            });
-
-            if (mOnClipSetPosChangeListener != null) {
-                mOnClipSetPosChangeListener.onClipSetPosChanged(getClipSet().getClipSetPosByTimeOffset(currentPos));
+            if (mEventBus != null) {
+                ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPos);
+                ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, "clipplay");
+                mEventBus.post(event);
             }
+
+//            getActivity().runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    setClipSetPos(clipSetPos, false);
+////                    setPlaybackPosition(currentPos, duration);
+//                }
+//            });
+
+//            if (mOnClipSetPosChangeListener != null) {
+//                mOnClipSetPosChangeListener.onClipSetPosChanged(getClipSet().getClipSetPosByTimeOffset(currentPos));
+//            }
 
 
             if (mRawDataLoader != null) {

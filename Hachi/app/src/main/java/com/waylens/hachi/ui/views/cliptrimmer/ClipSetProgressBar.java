@@ -17,9 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import com.orhanobut.logger.Logger;
+
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -31,8 +29,14 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetPos;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 /**
  * VideoPlayerProgressBar
@@ -54,7 +58,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     private int mScreenWidth;
     private VdbImageLoader mVdbImageLoader;
 
-    private EventBus mEventBus;
+    private EventBus mEventBus = EventBus.getDefault();
 
     private volatile int mScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
@@ -79,6 +83,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
 
     public void init(VdbImageLoader vdbImageLoader) {
+        mEventBus.register(this);
+
         mScreenWidth = getScreenWidth();
 
         mRecyclerView = new RecyclerView(getContext());
@@ -222,7 +228,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         return false;
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipPosSetChangeMainThread(ClipSetPosChangeEvent event) {
         ClipSetPos clipSetPos = event.getClipSetPos();
         List<ThumbnailListAdapter.CellItem> cellItems = mAdapter.getCellItemList();
@@ -249,10 +255,14 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
 
-    public void setEventBus(EventBus eventBus) {
-        mEventBus = eventBus;
-        mEventBus.register(this);
-    }
+//    public void setEventBus(EventBus eventBus) {
+//        mEventBus = eventBus;
+//        if (mEventBus != null) {
+//            mEventBus.register(this);
+//        } else {
+//            mEventBus.unregister(this);
+//        }
+//    }
 
 
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

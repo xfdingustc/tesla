@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.usage.UsageEvents;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -9,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.google.common.eventbus.EventBus;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
@@ -32,10 +33,13 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+
 
 /**
  * Created by Xiaofei on 2016/3/16.
@@ -56,7 +60,7 @@ public class AllFootageFragment extends BaseFragment {
 
     private PlaylistEditor mPlaylistEditor;
 
-    private EventBus mEventBus;
+    private EventBus mEventBus = EventBus.getDefault();
 
     public static AllFootageFragment newInstance() {
         AllFootageFragment fragment = new AllFootageFragment();
@@ -100,20 +104,7 @@ public class AllFootageFragment extends BaseFragment {
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mEventBus = new EventBus("allfootage");
-        mEventBus.register(this);
-        mClipSetProgressBar.setEventBus(mEventBus);
 
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mEventBus.unregister(this);
-    }
 
     @Override
     public void onPause() {
@@ -123,7 +114,7 @@ public class AllFootageFragment extends BaseFragment {
                 @Override
                 public boolean apply(VdbRequest<?> request) {
                     if (request instanceof VdbImageRequest) {
-                        Logger.t(TAG).d("cancel image quest");
+//                        Logger.t(TAG).d("cancel image quest");
                         return true;
                     }
 
@@ -146,6 +137,7 @@ public class AllFootageFragment extends BaseFragment {
         config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             config);
+
         mClipPlayFragment.setOnClipSetPosChangeListener(new ClipPlayFragment.OnClipSetPosChangeListener() {
             @Override
             public void onClipSetPosChanged(final ClipSetPos clipSetPos) {
