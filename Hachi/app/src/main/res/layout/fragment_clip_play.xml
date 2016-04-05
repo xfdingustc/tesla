@@ -27,10 +27,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <ImageView
-            android:id="@+id/clipCover"
+        <ViewSwitcher
+            android:id="@+id/vsCover"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/clipCover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/coverBanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+        </ViewSwitcher>
+
+
+
 
         <ProgressBar
             android:id="@+id/progressLoading"

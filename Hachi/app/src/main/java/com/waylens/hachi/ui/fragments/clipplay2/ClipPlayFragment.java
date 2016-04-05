@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
@@ -25,6 +27,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
+
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -95,6 +99,8 @@ public class ClipPlayFragment extends DialogFragment {
 
     private PositionAdjuster mPositionAdjuster;
 
+    private BannerAdapter mBannerAdapter;
+
 
 
     private final int STATE_NONE = 0;
@@ -110,8 +116,14 @@ public class ClipPlayFragment extends DialogFragment {
     @Bind(R.id.textureView)
     TextureView mTextureView;
 
+    @Bind(R.id.vsCover)
+    ViewSwitcher mVsCover;
+
     @Bind(R.id.clipCover)
     ImageView mClipCover;
+
+    @Bind(R.id.coverBanner)
+    ViewPager mCoverBanner;
 
     @Bind(R.id.progressLoading)
     ProgressBar mProgressLoading;
@@ -160,8 +172,6 @@ public class ClipPlayFragment extends DialogFragment {
         if (!event.getBroadcaster().equals("clipplay")) {
             refreshThumbnail = true;
         }
-
-
         setClipSetPos(clipSetPos, refreshThumbnail);
 
     }
@@ -207,7 +217,13 @@ public class ClipPlayFragment extends DialogFragment {
             MULTI
         }
 
+        public enum CoverMode {
+            NORMAL,
+            BANNER,
+        }
+
         public ClipMode clipMode = ClipMode.SINGLE;
+        public CoverMode coverMode = CoverMode.NORMAL;
 
     }
 
@@ -316,7 +332,13 @@ public class ClipPlayFragment extends DialogFragment {
 
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
 
-        mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+
+        if (mConfig.coverMode == Config.CoverMode.NORMAL) {
+            mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+        } else {
+            mVsCover.showNext();
+            setupCoverBanner();
+        }
 
 
         setupMultiSegSeekBar();
@@ -324,6 +346,34 @@ public class ClipPlayFragment extends DialogFragment {
 
         initGaugeView();
 
+    }
+
+    private void setupCoverBanner() {
+        mBannerAdapter = new BannerAdapter(getActivity(), mVdbImageLoader);
+        final ClipSet clipSet = getClipSet();
+        for (int i = 0; i < clipSet.getCount(); i++) {
+            Clip clip = clipSet.getClip(i);
+            mBannerAdapter.addClipPos(new ClipPos(clip));
+        }
+
+        mCoverBanner.setAdapter(mBannerAdapter);
+        mCoverBanner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                ClipSetPos clipSetPos = new ClipSetPos(position, getClipSet().getClip(position).getStartTimeMs());
+                mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void initGaugeView() {

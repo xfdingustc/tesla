@@ -146,6 +146,8 @@ public class AllFootageFragment extends BaseFragment {
         UrlProvider urlProvider1 = new PlaylistUrlProvider(mVdbRequestQueue, 0x101);
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
         config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
+        config.coverMode = ClipPlayFragment.Config.CoverMode.BANNER;
+
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             config);
 
@@ -159,7 +161,7 @@ public class AllFootageFragment extends BaseFragment {
         mPlaylistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
-//                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
+                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
                 mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
                 mClipPlayFragment.notifyClipSetChanged();
             }
@@ -178,8 +180,6 @@ public class AllFootageFragment extends BaseFragment {
 
     private void setupClipProgressBar() {
         mClipSetProgressBar.setClipSet(mAllFootageClipSet, mBookmarkClipSet);
-
-
     }
 
 
