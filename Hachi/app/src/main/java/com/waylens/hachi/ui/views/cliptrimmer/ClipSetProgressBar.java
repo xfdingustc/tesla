@@ -17,8 +17,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
@@ -50,6 +53,8 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
     private int mScreenWidth;
     private VdbImageLoader mVdbImageLoader;
+
+    private EventBus mEventBus;
 
     private volatile int mScrollState = RecyclerView.SCROLL_STATE_IDLE;
 
@@ -217,9 +222,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         return false;
     }
 
-    public void scrollToClipSetPos(ClipSetPos clipSetPos) {
+    @Subscribe
+    public void onEventClipPosSetChangeMainThread(ClipSetPosChangeEvent event) {
+        ClipSetPos clipSetPos = event.getClipSetPos();
         List<ThumbnailListAdapter.CellItem> cellItems = mAdapter.getCellItemList();
-        int clipIndex = 0;
         for (int i = 0; i < cellItems.size(); i++) {
             ThumbnailListAdapter.CellItem cellItem = cellItems.get(i);
             if (cellItem.type == ThumbnailListAdapter.CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
@@ -237,10 +243,15 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
 
 
                 }
-                clipIndex++;
             }
 
         }
+    }
+
+
+    public void setEventBus(EventBus eventBus) {
+        mEventBus = eventBus;
+        mEventBus.register(this);
     }
 
 

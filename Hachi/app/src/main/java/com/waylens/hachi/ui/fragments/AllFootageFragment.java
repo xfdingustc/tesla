@@ -9,8 +9,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.google.common.eventbus.EventBus;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -53,6 +55,8 @@ public class AllFootageFragment extends BaseFragment {
     private ClipSet mBookmarkClipSet;
 
     private PlaylistEditor mPlaylistEditor;
+
+    private EventBus mEventBus;
 
     public static AllFootageFragment newInstance() {
         AllFootageFragment fragment = new AllFootageFragment();
@@ -97,6 +101,21 @@ public class AllFootageFragment extends BaseFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mEventBus = new EventBus("allfootage");
+        mEventBus.register(this);
+        mClipSetProgressBar.setEventBus(mEventBus);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (mVdbRequestQueue != null) {
@@ -129,15 +148,8 @@ public class AllFootageFragment extends BaseFragment {
             config);
         mClipPlayFragment.setOnClipSetPosChangeListener(new ClipPlayFragment.OnClipSetPosChangeListener() {
             @Override
-            public void onClipSetPosChanged(final ClipSetPos clipPos) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mClipSetProgressBar != null) {
-                            mClipSetProgressBar.scrollToClipSetPos(clipPos);
-                        }
-                    }
-                });
+            public void onClipSetPosChanged(final ClipSetPos clipSetPos) {
+                mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
 
             }
         });

@@ -97,12 +97,12 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile(name: 'rangeseekbar-release', ext: 'aar')
     compile project(':library')
-//    compile project(':mediatranscoder')
+    //    compile project(':mediatranscoder')
     compile 'com.android.support:support-v13:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.android.support:cardview-v7:23.2.1'
-//    compile 'com.android.support:multidex:1.0.1'
+    //    compile 'com.android.support:multidex:1.0.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.orhanobut:logger:1.11'
@@ -113,15 +113,15 @@ dependencies {
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'com.google.android.gms:play-services-gcm:7.8.0'
-//    compile 'com.google.android.gms:play-services-maps:7.8.0'
+    //    compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'im.fir:fir-sdk:latest.integration@aar'
     compile 'javax.jmdns:jmdns:3.4.1'
     compile 'com.bigkoo:pickerview:2.0.8'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'info.hoang8f:android-segmented:1.0.6'
-
     compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
     compile 'com.bugtags.library:bugtags-lib:latest.integration'
     compile 'com.tencent.bugly:crashreport:latest.release'
+    compile 'com.google.guava:guava:19.0'
 }
