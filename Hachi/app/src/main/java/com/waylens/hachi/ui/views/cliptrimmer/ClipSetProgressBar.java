@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -158,7 +159,18 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         int centerPos = mScreenWidth / 2;
         View view = mRecyclerView.findChildViewUnder(centerPos, 0);
         int position = mLayoutManager.getPosition(view);
-        ThumbnailListAdapter.CellItem cellItem = mAdapter.getCellItem(position);
+
+        
+        ThumbnailListAdapter.CellItem cellItem;
+
+        // scroll to the end:
+        if (position == mAdapter.getItemCount() - 1) {
+            cellItem = mAdapter.getCellItem(position - 1);
+            ClipFragment clipFragment = (ClipFragment)cellItem.item;
+            ClipSetPos clipSetPos = new ClipSetPos(cellItem.clipIndex, clipFragment.getEndTimeMs());
+            return clipSetPos;
+        }
+        cellItem = mAdapter.getCellItem(position);
         if (cellItem != null && cellItem.type == ThumbnailListAdapter.CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
             ClipFragment clipFragment = (ClipFragment) cellItem.item;
             int offset = centerPos - view.getLeft();
@@ -169,7 +181,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
             ClipSetPos clipSetPos = new ClipSetPos(clipIndex, clipTimeMs);
             return clipSetPos;
         }
-
         return null;
     }
 
