@@ -46,6 +46,16 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
                     return true;
                 }
             });
+            mToolbar.setNavigationIcon(R.drawable.navbar_close);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setupToolbar();
+                    mEventBus.post(new MenuItemSelectEvent(-1));
+                }
+            });
+
+            mVideoSpinner.setVisibility(View.GONE);
         } else {
 
         }
@@ -71,6 +81,14 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
+    }
+
+
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
+        mToolbar.getMenu().clear();
+        mVideoSpinner.setVisibility(View.VISIBLE);
     }
 
     private void setupVideoSpinner() {

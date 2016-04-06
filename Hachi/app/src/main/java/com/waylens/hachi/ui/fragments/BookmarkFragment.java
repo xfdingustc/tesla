@@ -104,6 +104,9 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             case R.id.menu_to_delete:
                 doDeleteSelectedClips();
                 break;
+            case -1:
+                toggleMultiMode(false);
+                break;
             default:
                 break;
         }
@@ -375,6 +378,12 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             return true;
         }
         return false;
+    }
+
+    private void toggleMultiMode(boolean isMultiMode) {
+        mIsMultipleMode = isMultiMode;
+        mAdapter.setMultiSelectedMode(mIsMultipleMode);
+
     }
 
     ActionMode.Callback mCABCallback = new ActionMode.Callback() {
