@@ -45,7 +45,23 @@ public class GaugeView extends FrameLayout {
 
     @Subscribe()
     public void onGaugeEvent(GaugeEvent event) {
-        GaugeInfoItem item = event.getGaugeInfoItem();
+        switch (event.getWhat()) {
+            case GaugeEvent.EVENT_WHAT_CHANGE_THEME:
+                changeGaugeTheme((String)event.getExtra());
+                break;
+            case GaugeEvent.EVENT_WHAT_UPDATE_SETTING:
+                updateGaugeSetting((GaugeInfoItem)event.getExtra());
+                break;
+        }
+
+    }
+
+    private void changeGaugeTheme(String theme) {
+        Logger.t(TAG).d("set gauge theme as: " + theme);
+        mWebView.loadUrl("javascript:setTheme('" + theme + "')");
+    }
+
+    private void updateGaugeSetting(GaugeInfoItem item) {
         String jsApi = "javascript:setGauge('" + item.title + "',";
 
         if (!item.isEnabled) {

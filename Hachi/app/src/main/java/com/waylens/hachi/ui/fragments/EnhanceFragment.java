@@ -154,17 +154,17 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
 
     @OnClick(R.id.btnThemeOff)
     public void onBtnThemeOffClicked() {
-        mClipPlayFragment.setGaugeTheme("NA");
+        mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "NA"));
     }
 
     @OnClick(R.id.btnThemeDefault)
     public void onBtnThemeDefaultClicked() {
-        mClipPlayFragment.setGaugeTheme("default");
+        mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "default"));
     }
 
     @OnClick(R.id.btnThemeNeo)
     public void onBtnThemeNeoClicked() {
-        mClipPlayFragment.setGaugeTheme("neo");
+        mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "neo"));
     }
 
     @OnClick({R.id.btn_add_video, R.id.btn_add_video_extra})
@@ -337,7 +337,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         mGaugeListAdapter = new GaugeListAdapter(supportedGauges, new GaugeListAdapter.OnGaugeItemChangedListener() {
             @Override
             public void onGaugeItemChanged(GaugeInfoItem item) {
-                mEventBus.post(new GaugeEvent(item));
+                mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_UPDATE_SETTING, item));
             }
         });
         mGaugeListView.setAdapter(mGaugeListAdapter);
