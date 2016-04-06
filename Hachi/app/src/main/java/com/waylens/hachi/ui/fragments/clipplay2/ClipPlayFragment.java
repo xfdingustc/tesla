@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.app.DialogFragment;
-import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -30,7 +28,6 @@ import android.widget.ViewSwitcher;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
-import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -101,14 +98,14 @@ public class ClipPlayFragment extends DialogFragment {
     private BannerAdapter mBannerAdapter;
 
 
-    private final int STATE_NONE = 0;
+    private final int STATE_IDLE = 0;
     private final int STATE_PREPAREING = 1;
     private final int STATE_PREPARED = 2;
     private final int STATE_PLAYING = 3;
     private final int STATE_PAUSE = 4;
     private final int STATE_FAST_PREVIEW = 5;
 
-    private int mCurrentState = STATE_NONE;
+    private int mCurrentState = STATE_IDLE;
     private EventBus mEventBus = EventBus.getDefault();
 
     @Bind(R.id.textureView)
@@ -145,7 +142,7 @@ public class ClipPlayFragment extends DialogFragment {
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
         switch (mCurrentState) {
-            case STATE_NONE:
+            case STATE_IDLE:
             case STATE_PREPARED:
             case STATE_FAST_PREVIEW:
                 start();
@@ -491,8 +488,14 @@ public class ClipPlayFragment extends DialogFragment {
                     changeState(STATE_PREPARED);
 
                     changeState(STATE_PLAYING);
-
-
+                }
+            });
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
+                    mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
+                    changeState(STATE_IDLE);
                 }
             });
             mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -597,6 +600,11 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void changeState(int targetState) {
         switch (targetState) {
+            case STATE_IDLE:
+                mVsCover.setVisibility(View.VISIBLE);
+                mProgressLoading.setVisibility(View.INVISIBLE);
+                mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+                break;
             case STATE_PREPAREING:
                 mVsCover.setVisibility(View.VISIBLE);
                 mProgressLoading.setVisibility(View.VISIBLE);
