@@ -20,6 +20,7 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.ClipChooserActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
@@ -242,17 +243,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         configEnhanceView();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        //mEventBus.unregister(this);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -383,8 +373,9 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         getActivity().setTitle(R.string.trim);
         mEnhanceActionBar.setVisibility(View.INVISIBLE);
         ClipSetPos clipSetPos = new ClipSetPos(position, clip.getStartTimeMs());
-//        mClipPlayFragment.setActiveClip(position, clip, true);
-        mClipPlayFragment.setClipSetPos(clipSetPos, true);
+
+//        mClipPlayFragment.setClipSetPos(clipSetPos, true);
+        mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
     }
 
 
