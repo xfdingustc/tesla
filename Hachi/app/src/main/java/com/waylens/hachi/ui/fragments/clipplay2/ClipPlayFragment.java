@@ -37,6 +37,7 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -137,8 +138,8 @@ public class ClipPlayFragment extends DialogFragment {
     @Bind(R.id.multiSegIndicator)
     MultiSegSeekbar mMultiSegSeekbar;
 
-    @Bind(R.id.wvGauge)
-    WebView mWvGauge;
+    @Bind(R.id.gaugeView)
+    GaugeView mWvGauge;
 
 
     @OnClick(R.id.btnPlayPause)
@@ -173,28 +174,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     }
 
-    @Subscribe()
-    public void onGaugeEvent(GaugeEvent event) {
-        GaugeInfoItem item = event.getGaugeInfoItem();
-        String jsApi = "javascript:setGauge('" + item.title + "',";
 
-        if (!item.isEnabled) {
-            jsApi += "'')";
-
-        } else {
-            if (item.getOption().equals("large")) {
-                jsApi += "'L')";
-            } else if (item.getOption().equals("middle")) {
-                jsApi += "'M')";
-            } else if (item.getOption().equals("small")) {
-                jsApi += "'S')";
-            }
-
-        }
-
-        Logger.t(TAG).d("call api: " + jsApi);
-        mWvGauge.loadUrl(jsApi);
-    }
 
 
     private void start() {
@@ -297,6 +277,7 @@ public class ClipPlayFragment extends DialogFragment {
         mTimer.schedule(mUpdatePlayTimeTask, 1000, 1000);
         mEventBus.register(this);
         mEventBus.register(mMultiSegSeekbar);
+        mEventBus.register(mWvGauge);
     }
 
     @Override
@@ -306,6 +287,7 @@ public class ClipPlayFragment extends DialogFragment {
         mTimer.cancel();
         mEventBus.unregister(this);
         mEventBus.unregister(mMultiSegSeekbar);
+        mEventBus.unregister(mWvGauge);
     }
 
     @Override
@@ -342,9 +324,6 @@ public class ClipPlayFragment extends DialogFragment {
 
         setupMultiSegSeekBar();
 
-
-        initGaugeView();
-
     }
 
     private void setupCoverBanner() {
@@ -375,11 +354,7 @@ public class ClipPlayFragment extends DialogFragment {
         });
     }
 
-    private void initGaugeView() {
-        mWvGauge.getSettings().setJavaScriptEnabled(true);
-        mWvGauge.setBackgroundColor(Color.TRANSPARENT);
-        mWvGauge.loadUrl("file:///android_asset/api.html");
-    }
+
 
     public void showGaugeView(boolean show) {
         if (show) {
@@ -682,7 +657,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     public void setGaugeTheme(String theme) {
         Logger.t(TAG).d("set gauge theme as: " + theme);
-        mWvGauge.loadUrl("javascript:setTheme('" + theme + "')");
+       //mWvGauge.loadUrl("javascript:setTheme('" + theme + "')");
     }
 
     public void setAudioPlayerVolume(float volume) {
@@ -760,7 +735,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
             if (mRawDataLoader != null) {
-                mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
+                //mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
             }
 
         }
