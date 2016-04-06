@@ -234,7 +234,23 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (mLaunchMode == LAUNCH_MODE_ENHANCE) {
+                    MaterialDialog dialog = new MaterialDialog.Builder(EnhancementActivity.this)
+                        .title(R.string.discard_the_enhance)
+                        .content(R.string.discard_enhance_confirm)
+                        .positiveText(R.string.discard)
+                        .negativeText(android.R.string.cancel)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                finish();
+                            }
+                        })
+                        .build();
+                    dialog.show();
+                } else {
+                    finish();
+                }
             }
         });
         mToolbar.setOnMenuItemClickListener(this);
