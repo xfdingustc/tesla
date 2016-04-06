@@ -203,6 +203,9 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             getActivity().finish();
         } else {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+            for (Clip clip : selectedList) {
+                Logger.t(TAG).d("clip stream info: " + clip.streams[0].toString());
+            }
             EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
         }
     }

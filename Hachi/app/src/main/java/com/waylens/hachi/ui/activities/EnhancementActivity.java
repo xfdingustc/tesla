@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.session.SessionManager;
@@ -29,6 +30,7 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 
@@ -115,6 +117,21 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         mOriginalHeight = layoutParams.height;
 
         ArrayList<Clip> mClipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
+
+        if (!checkIfResolutionUnity(mClipList)) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .content(R.string.resolution_not_correct)
+                .positiveText(android.R.string.ok)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        finish();
+                    }
+                })
+                .build();
+            dialog.show();
+        }
+
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         ClipSet clipSetEditing = new ClipSet(Clip.TYPE_TEMP);
         for (Clip clip : mClipList) {
@@ -126,6 +143,24 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
         embedVideoPlayFragment();
         switchToMode();
+    }
+
+    private boolean checkIfResolutionUnity(List<Clip> clipList) {
+        if (clipList.size() <= 1) {
+            return true;
+        }
+
+        int firstClipWidth = clipList.get(0).streams[0].video_width;
+        int firstClipHeight = clipList.get(0).streams[0].video_height;
+
+        for (int i = 1; i < clipList.size(); i++) {
+            Clip clip = clipList.get(i);
+            if (clip.streams[0].video_width != firstClipWidth || clip.streams[0].video_height != firstClipHeight) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     void switchToMode() {

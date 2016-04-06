@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.waylens.hachi.utils.DateTime;
+import com.waylens.hachi.utils.ToStringUtils;
 
 public class Clip implements Parcelable {
     public static final int TYPE_REAL = -1;
@@ -104,6 +105,10 @@ public class Clip implements Parcelable {
 
         public final boolean valid() {
             return version != 0;
+        }
+
+        public String toString() {
+            return ToStringUtils.getString(this);
         }
 
     }

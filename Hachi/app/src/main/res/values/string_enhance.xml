@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="resolution_not_correct">Video with other resolution cannot be added</string>
+
+</resources>
