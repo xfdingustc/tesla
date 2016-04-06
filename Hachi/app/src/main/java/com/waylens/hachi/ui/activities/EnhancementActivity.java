@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.session.SessionManager;
@@ -23,6 +24,7 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.ShareFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.vdb.Clip;
@@ -141,8 +143,23 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
-        embedVideoPlayFragment();
+        doBuildPlaylist();
+
         switchToMode();
+    }
+
+    private void doBuildPlaylist() {
+        PlaylistEditor playlistEditor = new PlaylistEditor(this, mVdtCamera, 0x100);
+        playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(ClipSet clipSet) {
+//                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
+                ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+//                mClipPlayFragment.notifyClipSetChanged();
+                embedVideoPlayFragment();
+            }
+        });
+
     }
 
     private boolean checkIfResolutionUnity(List<Clip> clipList) {
@@ -243,6 +260,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private void embedVideoPlayFragment() {
         ClipPlayFragment.Config config = new ClipPlayFragment.Config();
+
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, 0x100);
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE,

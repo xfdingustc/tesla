@@ -234,12 +234,13 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         }
         mClipsEditView.setVisibility(View.INVISIBLE);
         mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x100);
-        mPlaylistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, new PlaylistEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                mClipsEditView.setVisibility(View.VISIBLE);
-            }
-        });
+        mClipsEditView.setVisibility(View.VISIBLE);
+//        mPlaylistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, new PlaylistEditor.OnBuildCompleteListener() {
+//            @Override
+//            public void onBuildComplete(ClipSet clipSet) {
+//
+//            }
+//        });
         configEnhanceView();
     }
 
