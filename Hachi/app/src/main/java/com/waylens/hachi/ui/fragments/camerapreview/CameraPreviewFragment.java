@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -45,6 +44,7 @@ import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
 import com.waylens.hachi.ui.activities.LiveViewSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.RawDataBlock;
@@ -103,8 +103,8 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.fabBookmark)
     ImageButton mFabBookmark;
 
-    @Bind(R.id.wvGauge)
-    WebView mWvGauge;
+    @Bind(R.id.gaugeView)
+    GaugeView mGaugeView;
 
     @Bind(R.id.liveViewLayout)
     FrameLayout mLiveViewLayout;
@@ -433,7 +433,7 @@ public class CameraPreviewFragment extends BaseFragment {
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
         handleOnCameraConnected();
-        initGaugeWebView();
+
     }
 
     private void initCameraPreview() {
@@ -563,7 +563,7 @@ public class CameraPreviewFragment extends BaseFragment {
         RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
             @Override
             public void onResponse(RawDataItem response) {
-                updateGaugeView(response);
+                mGaugeView.updateRawDateItem(response);
             }
 
         }, new VdbResponse.ErrorListener() {
@@ -658,13 +658,6 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    private void initGaugeWebView() {
-        mWvGauge.getSettings().setJavaScriptEnabled(true);
-        mWvGauge.setBackgroundColor(Color.TRANSPARENT);
-        mWvGauge.setVisibility(View.INVISIBLE);
-        mWvGauge.loadUrl("file:///android_asset/api.html");
-    }
-
     private void showMessage() {
         mBookmarkMsgView.setVisibility(View.VISIBLE);
     }
@@ -672,15 +665,12 @@ public class CameraPreviewFragment extends BaseFragment {
     private void showOverlay(boolean isGaugeVisible) {
         if (isGaugeVisible) {
             mIsGaugeVisible = true;
-            mWvGauge.setVisibility(View.VISIBLE);
             mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
-
         } else {
             mIsGaugeVisible = false;
-            mWvGauge.setVisibility(View.INVISIBLE);
             mBtnShowOverlay.clearColorFilter();
-
         }
+        mGaugeView.showGauge(mIsGaugeVisible);
     }
 
 
@@ -859,45 +849,6 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void updateGaugeView(RawDataItem item) {
-        JSONObject state = new JSONObject();
-        String data = null;
-        try {
-            switch (item.getType()) {
-                case RawDataItem.DATA_TYPE_ACC:
-                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
-                    state.put("roll", -accData.euler_roll);
-                    state.put("pitch", -accData.euler_pitch);
-                    state.put("gforceBA", accData.accX);
-                    state.put("gforceLR", accData.accZ);
-                    break;
-                case RawDataItem.DATA_TYPE_GPS:
-                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
-                    state.put("lng", gpsData.coord.lng);
-                    state.put("lat", gpsData.coord.lat);
-                    break;
-                case RawDataItem.DATA_TYPE_OBD:
-                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
-                    state.put("rpm", obdData.rpm);
-                    state.put("mph", obdData.speed);
-                    break;
-            }
-//            state.put("rpm", 5000);
-//            state.put("roll", -2000);
-//            state.put("pitch", -50);
-            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
-            String date = format.format(System.currentTimeMillis());
-            data = "numericMonthDate('" + date + "')";
-            //Log.e("test", "date: " + data);
-            //state.put("time", data);
-        } catch (JSONException e) {
-            Log.e("test", "", e);
-        }
 
-        String callJS1 = "javascript:setState(" + state.toString() + ")";
-        String callJS2 = "javascript:setState(" + "{time:" + data + "})";
-//        Logger.t(TAG).d("callJS: " + callJS1);
-        mWvGauge.loadUrl(callJS1);
-        mWvGauge.loadUrl(callJS2);
-        mWvGauge.loadUrl("javascript:update()");
     }
 }

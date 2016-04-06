@@ -17,12 +17,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <WebView
-            android:id="@+id/wvGauge"
+        <com.waylens.hachi.ui.views.GaugeView
+            android:id="@+id/gaugeView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:visibility="gone"></WebView>
+            android:layout_height="match_parent">
+        </com.waylens.hachi.ui.views.GaugeView>
 
 
     </FrameLayout>

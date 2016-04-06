@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -12,8 +13,13 @@ import android.widget.FrameLayout;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.fragments.clipplay2.GaugeInfoItem;
+import com.waylens.hachi.vdb.RawDataItem;
 
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Created by Xiaofei on 2016/4/6.
@@ -60,7 +66,7 @@ public class GaugeView extends FrameLayout {
 
     }
 
-    private void showGauge(Boolean show) {
+    public void showGauge(Boolean show) {
         if (show) {
             mWebView.setVisibility(View.VISIBLE);
         } else {
@@ -93,6 +99,50 @@ public class GaugeView extends FrameLayout {
 
         Logger.t(TAG).d("call api: " + jsApi);
         mWebView.loadUrl(jsApi);
+    }
+
+
+    public void updateRawDateItem(RawDataItem item) {
+        JSONObject state = new JSONObject();
+        String data = null;
+        try {
+            switch (item.getType()) {
+                case RawDataItem.DATA_TYPE_ACC:
+                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
+                    state.put("roll", -accData.euler_roll);
+                    state.put("pitch", -accData.euler_pitch);
+                    state.put("gforceBA", accData.accX);
+                    state.put("gforceLR", accData.accZ);
+                    break;
+                case RawDataItem.DATA_TYPE_GPS:
+                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                    state.put("lng", gpsData.coord.lng);
+                    state.put("lat", gpsData.coord.lat);
+                    break;
+                case RawDataItem.DATA_TYPE_OBD:
+                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+                    state.put("rpm", obdData.rpm);
+                    state.put("mph", obdData.speed);
+                    break;
+            }
+//            state.put("rpm", 5000);
+//            state.put("roll", -2000);
+//            state.put("pitch", -50);
+            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
+            String date = format.format(System.currentTimeMillis());
+            data = "numericMonthDate('" + date + "')";
+            //Log.e("test", "date: " + data);
+            //state.put("time", data);
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+
+        String callJS1 = "javascript:setState(" + state.toString() + ")";
+        String callJS2 = "javascript:setState(" + "{time:" + data + "})";
+//        Logger.t(TAG).d("callJS: " + callJS1);
+        mWebView.loadUrl(callJS1);
+        mWebView.loadUrl(callJS2);
+        mWebView.loadUrl("javascript:update()");
     }
 
 
