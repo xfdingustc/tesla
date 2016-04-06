@@ -86,8 +86,6 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     ViewSwitcher mRootViewSwitcher;
 
 
-
-
     public static BookmarkFragment newInstance(int clipSetType) {
         return newInstance(clipSetType, false, false);
     }
@@ -121,7 +119,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_bookmark,
-                savedInstanceState);
+            savedInstanceState);
         mUiThreadHandler = new Handler();
         setupClipSetGroup();
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -138,13 +136,18 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         super.onViewCreated(view, savedInstanceState);
         mRefreshLayout.setRefreshing(true);
 
-        if (getCamera() != null) {
-            doGetBookmarkClips();
-        }
-
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         if (mBroadcastManager != null) {
             mBroadcastManager.registerReceiver(localReceiver, new IntentFilter(ACTION_RETRIEVE_CLIPS));
+        }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getCamera() != null) {
+            doGetBookmarkClips();
         }
     }
 
@@ -197,8 +200,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     private void toEnhance() {
         if (mIsAddMore) {
             Intent intent = new Intent();
-            intent.putParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND,
-                    mAdapter.getSelectedClipList());
+            intent.putParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         } else {
@@ -260,32 +262,32 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         mClipSetGroup.clear();
 
         mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, ClipSetExRequest.FLAG_CLIP_EXTRA,
-                new VdbResponse.Listener<ClipSet>() {
-                    @Override
-                    public void onResponse(ClipSet clipSet) {
-                        mRefreshLayout.setRefreshing(false);
-                        if (clipSet.getCount() == 0) {
-                            if (mRootViewSwitcher.getDisplayedChild() == 0) {
-                                mRootViewSwitcher.showNext();
-                            }
-                        } else {
-                            if (mRootViewSwitcher.getDisplayedChild() == 1) {
-                                Logger.t(TAG).d("show previous");
-                                mRootViewSwitcher.showPrevious();
-                            }
-                            calculateClipSetGroup(clipSet);
-                            setupClipSetGroupView();
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet clipSet) {
+                    mRefreshLayout.setRefreshing(false);
+                    if (clipSet.getCount() == 0) {
+                        if (mRootViewSwitcher.getDisplayedChild() == 0) {
+                            mRootViewSwitcher.showNext();
                         }
-
+                    } else {
+                        if (mRootViewSwitcher.getDisplayedChild() == 1) {
+                            Logger.t(TAG).d("show previous");
+                            mRootViewSwitcher.showPrevious();
+                        }
+                        calculateClipSetGroup(clipSet);
+                        setupClipSetGroupView();
                     }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        Logger.t(TAG).e("", error);
 
-                    }
-                }));
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("", error);
+
+                }
+            }));
 
     }
 

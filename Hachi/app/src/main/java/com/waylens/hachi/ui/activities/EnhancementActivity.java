@@ -18,7 +18,10 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
+import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.ui.fragments.EnhanceFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.ShareFragment;
@@ -141,6 +144,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             clipSetEditing.addClip(clip);
         }
 
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_BOOKMARK, clipSet);
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
         doBuildPlaylist();
@@ -267,7 +271,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
-        Logger.t(TAG).d("clip play fragment: " + mClipPlayFragment);
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
 
@@ -294,7 +297,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 //TODO
                 break;
             case R.id.menu_to_delete:
-                //TODO
+                doDeleteClip();
+
                 break;
             case R.id.menu_to_download:
                 //TODO
@@ -302,6 +306,24 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }
         switchToMode();
         return true;
+    }
+
+    private void doDeleteClip() {
+        ClipSet clipSet = ClipSetManager.getManager().getClipSet(ClipSetManager.CLIP_SET_TYPE_BOOKMARK);
+        Clip clip = clipSet.getClip(0);
+        Logger.t(TAG).d("Delete clip: " + clip.cid.toString());
+        ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, new VdbResponse.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                finish();
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
     }
 
     @Override
