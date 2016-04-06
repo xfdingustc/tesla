@@ -3,10 +3,11 @@ package com.waylens.hachi.ui.activities;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.utils.PreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +118,7 @@ public class FirstInstallActivity extends BaseActivity {
             }
             startActivity(intent);
             getActivity().finish();
+            writeVersionName();
         }
 
         @Override
@@ -128,6 +131,18 @@ public class FirstInstallActivity extends BaseActivity {
                 mBtnEnter.setVisibility(View.GONE);
             }
             return view;
+        }
+
+        private void writeVersionName() {
+            PackageInfo pi = null;
+            try {
+                pi = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+                PreferenceUtils.putInt(PreferenceUtils.VERSION_CODE, pi.versionCode);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
         }
     }
 }
