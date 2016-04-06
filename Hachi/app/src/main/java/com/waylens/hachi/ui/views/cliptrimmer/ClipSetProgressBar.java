@@ -160,7 +160,7 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         View view = mRecyclerView.findChildViewUnder(centerPos, 0);
         int position = mLayoutManager.getPosition(view);
 
-        
+
         ThumbnailListAdapter.CellItem cellItem;
 
         // scroll to the end:
@@ -263,15 +263,6 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         }
     }
 
-
-//    public void setEventBus(EventBus eventBus) {
-//        mEventBus = eventBus;
-//        if (mEventBus != null) {
-//            mEventBus.register(this);
-//        } else {
-//            mEventBus.unregister(this);
-//        }
-//    }
 
 
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

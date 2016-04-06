@@ -405,12 +405,10 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     protected void init() {
-
-
         mVdbRequestQueue = Snipe.newRequestQueue();
         mHandler = new Handler();
         if (VdtCameraManager.getManager().isConnected()) {
-            mVdtCamera = VdtCameraManager.getManager().getConnectedCameras().get(0);
+            mVdtCamera = getCamera();
             if (mCameraNoSignal != null) {
                 mCameraNoSignal.setVisibility(View.GONE);
                 mCameraConnecting.setVisibility(View.GONE);

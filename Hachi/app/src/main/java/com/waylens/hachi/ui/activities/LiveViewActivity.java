@@ -67,7 +67,7 @@ public class LiveViewActivity extends BaseActivity {
             hideSystemUI();
         }
         setContentView(R.layout.activity_live_view);
-        VdtCamera vdtCamera = VdtCameraManager.getManager().getConnectedCameras().get(0);
+        VdtCamera vdtCamera = getCameraFromIntent(getIntent().getExtras());
         CameraPreviewFragment fragment = CameraPreviewFragment.newInstance(vdtCamera, mIsGaugeVisible);
         getFragmentManager().beginTransaction().add(R.id.fragmentContainer, fragment).commit();
     }

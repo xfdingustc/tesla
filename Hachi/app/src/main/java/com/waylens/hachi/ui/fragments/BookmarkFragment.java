@@ -221,6 +221,12 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
     }
 
+    @Override
+    protected void onCameraDisconnected(VdtCamera vdtCamera) {
+        super.onCameraDisconnected(vdtCamera);
+        Logger.t(TAG).d("onCameraDisconnected");
+    }
+
     private void setupClipSetGroup() {
         mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
 
