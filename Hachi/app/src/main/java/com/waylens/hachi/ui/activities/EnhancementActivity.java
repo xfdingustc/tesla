@@ -267,6 +267,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 vdtUriProvider,
                 config);
         mClipPlayFragment.setShowsDialog(false);
+        Logger.t(TAG).d("clip play fragment: " + mClipPlayFragment);
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
 

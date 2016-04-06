@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.ClipPos;
@@ -138,6 +139,13 @@ public class MultiSegSeekbar extends View {
         mThumb.setX(newX);
         invalidate();
 
+    }
+
+    @Subscribe
+    public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        if (mClipListIndex == event.getIndex()) {
+            invalidate();
+        }
     }
 
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {

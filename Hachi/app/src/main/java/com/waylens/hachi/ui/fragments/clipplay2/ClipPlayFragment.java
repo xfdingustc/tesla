@@ -353,14 +353,6 @@ public class ClipPlayFragment extends DialogFragment {
 
 
 
-    public void showGaugeView(boolean show) {
-        if (show) {
-            mWvGauge.setVisibility(View.VISIBLE);
-        } else {
-            mWvGauge.setVisibility(View.GONE);
-        }
-    }
-
 
     private void setupToolbar() {
         mToolbar.setNavigationIcon(R.drawable.navbar_close);
@@ -469,7 +461,7 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
     public void notifyClipSetChanged() {
-        mMultiSegSeekbar.setClipList(mClipSetIndex);
+        //mMultiSegSeekbar.setClipList(mClipSetIndex);
         mMultiSegSeekbar.notifyDateSetChanged();
         //refreshProgressBar();
     }

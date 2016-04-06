@@ -11,6 +11,7 @@ import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequest;
@@ -163,7 +164,7 @@ public class AllFootageFragment extends BaseFragment {
             public void onBuildComplete(ClipSet clipSet) {
                 Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
                 mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
-                mClipPlayFragment.notifyClipSetChanged();
+                mEventBus.post(new ClipSetChangeEvent(mClipSetIndex));
             }
         });
     }

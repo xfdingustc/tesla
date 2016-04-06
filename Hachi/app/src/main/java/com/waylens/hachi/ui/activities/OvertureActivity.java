@@ -45,10 +45,6 @@ public class OvertureActivity extends BaseActivity {
     }
 
     private boolean isUpdated() {
-//        SharedPreferences preference = getSharedPreferences(PerferenceConstant.PERFERENCE,
-//            Context.MODE_PRIVATE);
-//        int oldVersionCode = preference.getInt(PerferenceConstant.VERSION_CODE, 0);
-
         int oldVersionCode = PreferenceUtils.getInt(PreferenceUtils.VERSION_CODE, 0);
 
         int newVersionCode;

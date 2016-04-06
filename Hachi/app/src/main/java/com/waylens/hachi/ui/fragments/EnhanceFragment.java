@@ -20,6 +20,7 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.ClipChooserActivity;
@@ -72,7 +73,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     ArrayAdapter<CharSequence> mLengthAdapter;
     ArrayAdapter<CharSequence> mClipSrcAdapter;
 
-    ClipPlayFragment mClipPlayFragment;
+//    ClipPlayFragment mClipPlayFragment;
 
     private PlaylistEditor mPlaylistEditor;
 
@@ -140,7 +141,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @OnClick(R.id.btn_remove)
     void removeMusic() {
         mMusicItem = null;
-        mClipPlayFragment.setAudioUrl(null);
+        getClipPlayFragment().setAudioUrl(null);
         updateMusicUI();
     }
 
@@ -148,7 +149,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     void showGauge(View view) {
         btnMusic.setSelected(false);
         btnRemix.setSelected(false);
-        mClipPlayFragment.showGaugeView(true);
+        mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_SHOW, true));
         view.setSelected(!view.isSelected());
         configureActionUI(ACTION_OVERLAY, view.isSelected());
     }
@@ -230,7 +231,8 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         super.onViewCreated(view, savedInstanceState);
         Activity activity = getActivity();
         if (activity instanceof ClipPlayFragment.ClipPlayFragmentContainer) {
-            mClipPlayFragment = ((ClipPlayFragment.ClipPlayFragmentContainer) activity).getClipPlayFragment();
+//            mClipPlayFragment = ((ClipPlayFragment.ClipPlayFragmentContainer) activity).getClipPlayFragment();
+//            Logger.t(TAG).d("clip play fragment: " + mClipPlayFragment);
         }
         mClipsEditView.setVisibility(View.INVISIBLE);
         mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x100);
@@ -260,7 +262,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     mMusicItem = MusicItem.fromBundle(data.getBundleExtra("music.item"));
                     updateMusicUI();
-                    mClipPlayFragment.setAudioUrl(mMusicItem.localPath);
+                    getClipPlayFragment().setAudioUrl(mMusicItem.localPath);
                 }
                 break;
             default:
@@ -369,6 +371,10 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         }
     }
 
+    public ClipPlayFragment getClipPlayFragment() {
+        return ((ClipPlayFragment.ClipPlayFragmentContainer) getActivity()).getClipPlayFragment();
+    }
+
     @Override
     public void onClipSelected(int position, Clip clip) {
         getActivity().setTitle(R.string.trim);
@@ -387,15 +393,15 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             @Override
             public void onMoveCompleted(ClipSet clipSet) {
                 int selectedPosition = mClipsEditView.getSelectedPosition();
-                ClipSetPos clipSetPos = mClipPlayFragment.getClipSetPos();
+                ClipSetPos clipSetPos = getClipPlayFragment().getClipSetPos();
                 if (selectedPosition != clipSetPos.getClipIndex()) {
                     ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.getStartTimeMs());
-                    mClipPlayFragment.setClipSetPos(newClipSetPos, false);
+                    getClipPlayFragment().setClipSetPos(newClipSetPos, false);
                 }
                 if (selectedPosition == -1 && toPosition == 0) {
-                    mClipPlayFragment.showClipPosThumbnail(clip, clip.getStartTimeMs());
+                    getClipPlayFragment().showClipPosThumbnail(clip, clip.getStartTimeMs());
                 }
-                mClipPlayFragment.notifyClipSetChanged();
+                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
             }
         });
 
@@ -409,7 +415,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         mPlaylistEditor.appendClips(clips, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
-                mClipPlayFragment.notifyClipSetChanged();
+                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
             }
         });
         if (clipCount > 0
@@ -425,7 +431,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         mPlaylistEditor.delete(position, new PlaylistEditor.OnDeleteCompleteListener() {
             @Override
             public void onDeleteComplete() {
-                mClipPlayFragment.notifyClipSetChanged();
+                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
             }
         });
         if (clipCount == 0) {
@@ -448,9 +454,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
 
     @Override
     public void onTrimming(Clip clip, int flag, long value) {
-//        Logger.t("test").d("Clip selected time" + mPlaylistEditor.getClipSet().getTotalSelectedLengthMs());
-        mClipPlayFragment.showClipPosThumbnail(clip, value);
-        mClipPlayFragment.notifyClipSetChanged();
+        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
     }
 
     @Override
@@ -463,7 +467,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
                 new PlaylistEditor.OnTrimCompletedListener() {
                     @Override
                     public void onTrimCompleted(ClipSet clipSet) {
-                        mClipPlayFragment.notifyClipSetChanged();
+                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
                     }
                 });
 

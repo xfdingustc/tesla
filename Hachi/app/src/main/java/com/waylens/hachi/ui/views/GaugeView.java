@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
@@ -46,6 +47,9 @@ public class GaugeView extends FrameLayout {
     @Subscribe()
     public void onGaugeEvent(GaugeEvent event) {
         switch (event.getWhat()) {
+            case GaugeEvent.EVENT_WHAT_SHOW:
+                showGauge((Boolean)event.getExtra());
+                break;
             case GaugeEvent.EVENT_WHAT_CHANGE_THEME:
                 changeGaugeTheme((String)event.getExtra());
                 break;
@@ -55,6 +59,15 @@ public class GaugeView extends FrameLayout {
         }
 
     }
+
+    private void showGauge(Boolean show) {
+        if (show) {
+            mWebView.setVisibility(View.VISIBLE);
+        } else {
+            mWebView.setVisibility(View.GONE);
+        }
+    }
+
 
     private void changeGaugeTheme(String theme) {
         Logger.t(TAG).d("set gauge theme as: " + theme);
