@@ -20,6 +20,7 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.ClipChooserActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.MusicDownloadActivity;
@@ -34,6 +35,7 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +61,21 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     private static final int ACTION_ADD_VIDEO = 1;
     private static final int ACTION_ADD_MUSIC = 2;
     private static final int ACTION_SMART_REMIX = 3;
+
+    String[] supportedGauges;
+    GaugeListAdapter mGaugeListAdapter;
+
+    MusicItem mMusicItem;
+
+    ArrayAdapter<CharSequence> mThemeAdapter;
+    ArrayAdapter<CharSequence> mLengthAdapter;
+    ArrayAdapter<CharSequence> mClipSrcAdapter;
+
+    ClipPlayFragment mClipPlayFragment;
+
+    private PlaylistEditor mPlaylistEditor;
+
+    private EventBus mEventBus = EventBus.getDefault();
 
     @Bind(R.id.gauge_list_view)
     RecyclerView mGaugeListView;
@@ -105,75 +122,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @Bind(R.id.style_radio_group)
     RadioGroup mStyleRadioGroup;
 
-    String[] supportedGauges;
-    GaugeListAdapter mGaugeListAdapter;
-
-    MusicItem mMusicItem;
-
-    ArrayAdapter<CharSequence> mThemeAdapter;
-    ArrayAdapter<CharSequence> mLengthAdapter;
-    ArrayAdapter<CharSequence> mClipSrcAdapter;
-
-    ClipPlayFragment mClipPlayFragment;
-
-    private PlaylistEditor mPlaylistEditor;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        supportedGauges = getResources().getStringArray(R.array.supported_gauges);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return createFragmentView(inflater, container, R.layout.layout_enhance, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Activity activity = getActivity();
-        if (activity instanceof ClipPlayFragment.ClipPlayFragmentContainer) {
-            mClipPlayFragment = ((ClipPlayFragment.ClipPlayFragmentContainer) activity).getClipPlayFragment();
-        }
-        mClipsEditView.setVisibility(View.INVISIBLE);
-        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x100);
-        mPlaylistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, new PlaylistEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                mClipsEditView.setVisibility(View.VISIBLE);
-            }
-        });
-        configEnhanceView();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CODE_ENHANCE:
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Clip> clips = data.getParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND);
-                    Log.e("test", "Clips: " + clips);
-                    mClipsEditView.appendSharableClips(clips);
-//                    mClipPlayFragment.setPosition(0);
-                }
-                break;
-            case REQUEST_CODE_ADD_MUSIC:
-                Logger.t(TAG).d("Resultcode: " + resultCode + " data: " + data);
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    mMusicItem = MusicItem.fromBundle(data.getBundleExtra("music.item"));
-                    updateMusicUI();
-                    Log.e("test", "item: " + mMusicItem.localPath);
-                    mClipPlayFragment.setAudioUrl(mMusicItem.localPath);
-                }
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-        }
-
-    }
-
     @OnClick(R.id.btn_music)
     void onClickMusic(View view) {
         btnGauge.setSelected(false);
@@ -181,17 +129,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         view.setSelected(!view.isSelected());
         configureActionUI(ACTION_ADD_MUSIC, view.isSelected());
         updateMusicUI();
-    }
-
-    void updateMusicUI() {
-        if (mMusicItem == null) {
-            btnAddMusic.setText(R.string.add_music);
-            btnRemove.setVisibility(View.GONE);
-        } else {
-            btnAddMusic.setText(R.string.btn_swap);
-            btnRemove.setVisibility(View.VISIBLE);
-        }
-
     }
 
     @OnClick(R.id.btn_add_music)
@@ -230,18 +167,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         mClipPlayFragment.setGaugeTheme("neo");
     }
 
-    void configureActionUI(int child, boolean isShow) {
-        if (isShow && (child != ACTION_NONE)) {
-            mViewAnimator.setVisibility(View.VISIBLE);
-            mViewAnimator.setDisplayedChild(child);
-            mClipsEditView.setVisibility(View.GONE);
-        } else {
-            mViewAnimator.setVisibility(View.GONE);
-            mClipsEditView.setVisibility(View.VISIBLE);
-        }
-    }
-
-
     @OnClick({R.id.btn_add_video, R.id.btn_add_video_extra})
     void showClipChooser() {
         btnMusic.setSelected(false);
@@ -262,28 +187,124 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         configureActionUI(ACTION_SMART_REMIX, view.isSelected());
         if (mThemeAdapter == null) {
             mThemeAdapter = ArrayAdapter.createFromResource(getActivity(),
-                    R.array.theme_remix,
-                    R.layout.layout_remix_spinner);
+                R.array.theme_remix,
+                R.layout.layout_remix_spinner);
             mThemeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mThemeSpinner.setAdapter(mThemeAdapter);
         }
 
         if (mLengthAdapter == null) {
             mLengthAdapter = ArrayAdapter.createFromResource(getActivity(),
-                    R.array.theme_length,
-                    R.layout.layout_remix_spinner);
+                R.array.theme_length,
+                R.layout.layout_remix_spinner);
             mLengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mLengthSpinner.setAdapter(mLengthAdapter);
         }
 
         if (mClipSrcAdapter == null) {
             mClipSrcAdapter = ArrayAdapter.createFromResource(getActivity(),
-                    R.array.theme_clip_src,
-                    R.layout.layout_remix_spinner);
+                R.array.theme_clip_src,
+                R.layout.layout_remix_spinner);
             mClipSrcAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mClipSrcSpinner.setAdapter(mClipSrcAdapter);
         }
     }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        supportedGauges = getResources().getStringArray(R.array.supported_gauges);
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return createFragmentView(inflater, container, R.layout.layout_enhance, savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Activity activity = getActivity();
+        if (activity instanceof ClipPlayFragment.ClipPlayFragmentContainer) {
+            mClipPlayFragment = ((ClipPlayFragment.ClipPlayFragmentContainer) activity).getClipPlayFragment();
+        }
+        mClipsEditView.setVisibility(View.INVISIBLE);
+        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x100);
+        mPlaylistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, new PlaylistEditor.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(ClipSet clipSet) {
+                mClipsEditView.setVisibility(View.VISIBLE);
+            }
+        });
+        configEnhanceView();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //mEventBus.unregister(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_ENHANCE:
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    ArrayList<Clip> clips = data.getParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND);
+                    mClipsEditView.appendSharableClips(clips);
+//                    mClipPlayFragment.setPosition(0);
+                }
+                break;
+            case REQUEST_CODE_ADD_MUSIC:
+                Logger.t(TAG).d("Resultcode: " + resultCode + " data: " + data);
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    mMusicItem = MusicItem.fromBundle(data.getBundleExtra("music.item"));
+                    updateMusicUI();
+                    mClipPlayFragment.setAudioUrl(mMusicItem.localPath);
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
+
+    }
+
+
+    void updateMusicUI() {
+        if (mMusicItem == null) {
+            btnAddMusic.setText(R.string.add_music);
+            btnRemove.setVisibility(View.GONE);
+        } else {
+            btnAddMusic.setText(R.string.btn_swap);
+            btnRemove.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+
+
+    void configureActionUI(int child, boolean isShow) {
+        if (isShow && (child != ACTION_NONE)) {
+            mViewAnimator.setVisibility(View.VISIBLE);
+            mViewAnimator.setDisplayedChild(child);
+            mClipsEditView.setVisibility(View.GONE);
+        } else {
+            mViewAnimator.setVisibility(View.GONE);
+            mClipsEditView.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+
 
     void configEnhanceView() {
         mClipsEditView.setClipIndex(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
@@ -316,7 +337,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         mGaugeListAdapter = new GaugeListAdapter(supportedGauges, new GaugeListAdapter.OnGaugeItemChangedListener() {
             @Override
             public void onGaugeItemChanged(GaugeInfoItem item) {
-                mClipPlayFragment.updateGauge(item);
+                mEventBus.post(new GaugeEvent(item));
             }
         });
         mGaugeListView.setAdapter(mGaugeListAdapter);

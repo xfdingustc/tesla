@@ -324,6 +324,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     private void popClipPreviewFragment(Clip clip) {
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
+        Logger.t(TAG).d("clip id: " + clip.cid.toString());
         EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_QUICK_VIEW);
     }
 

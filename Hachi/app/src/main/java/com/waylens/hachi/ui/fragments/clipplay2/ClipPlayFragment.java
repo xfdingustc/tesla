@@ -30,6 +30,7 @@ import android.widget.ViewSwitcher;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
+import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -172,12 +173,9 @@ public class ClipPlayFragment extends DialogFragment {
 
     }
 
-
-    private void start() {
-        startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), false);
-    }
-
-    public void updateGauge(GaugeInfoItem item) {
+    @Subscribe()
+    public void onGaugeEvent(GaugeEvent event) {
+        GaugeInfoItem item = event.getGaugeInfoItem();
         String jsApi = "javascript:setGauge('" + item.title + "',";
 
         if (!item.isEnabled) {
@@ -197,6 +195,13 @@ public class ClipPlayFragment extends DialogFragment {
         Logger.t(TAG).d("call api: " + jsApi);
         mWvGauge.loadUrl(jsApi);
     }
+
+
+    private void start() {
+        startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), false);
+    }
+
+
 
 
     public static class Config {
