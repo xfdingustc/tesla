@@ -3,7 +3,9 @@ package com.waylens.hachi.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -11,8 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
+import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.Bind;
 
@@ -22,22 +29,49 @@ import butterknife.Bind;
 public class VideoFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = VideoFragment.class.getSimpleName();
 
+    private EventBus mEventBus = EventBus.getDefault();
 
     @Bind(R.id.videoSpinner)
     Spinner mVideoSpinner;
+
+    @Subscribe
+    public void onEventMultiSelect(MultiSelectEvent event) {
+        if (event.getIsMultiSeleted()) {
+            mToolbar.getMenu().clear();
+            mToolbar.inflateMenu(R.menu.menu_clip_list);
+            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    mEventBus.post(new MenuItemSelectEvent(item.getItemId()));
+                    return true;
+                }
+            });
+        } else {
+
+        }
+    }
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_video, savedInstanceState);
-
         setupVideoSpinner();
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mEventBus.register(this);
+    }
 
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
+    }
 
     private void setupVideoSpinner() {
         String[] items = getResources().getStringArray(R.array.videoOptions);

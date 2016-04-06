@@ -23,6 +23,8 @@ import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
+import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
@@ -34,6 +36,9 @@ import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,6 +79,8 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
     private LocalBroadcastManager mBroadcastManager;
 
+    private EventBus mEventBus = EventBus.getDefault();
+
 
     @Bind(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
@@ -84,6 +91,23 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
     @Bind(R.id.rootViewSwitcher)
     ViewSwitcher mRootViewSwitcher;
+
+    @Subscribe
+    public void onEventMenuItemSelected(MenuItemSelectEvent event) {
+        switch (event.getMenuItemId()) {
+            case R.id.menu_to_enhance:
+                toEnhance();
+                break;
+            case R.id.menu_to_upload:
+                toShare();
+                break;
+            case R.id.menu_to_delete:
+                doDeleteSelectedClips();
+                break;
+            default:
+                break;
+        }
+    }
 
 
     public static BookmarkFragment newInstance(int clipSetType) {
@@ -149,6 +173,13 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         if (getCamera() != null) {
             doGetBookmarkClips();
         }
+        mEventBus.register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
     }
 
     @Override
@@ -242,9 +273,11 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             public void onClipLongClicked(Clip clip) {
                 mIsMultipleMode = true;
                 mAdapter.setMultiSelectedMode(true);
-                if (mActionMode == null) {
-                    mActionMode = getActivity().startActionMode(mCABCallback);
-                }
+//                if (mActionMode == null) {
+//                    mActionMode = getActivity().startActionMode(mCABCallback);
+//                }
+
+                mEventBus.post(new MultiSelectEvent(true));
             }
         });
 
