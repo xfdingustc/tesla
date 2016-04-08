@@ -77,8 +77,8 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             setFollowButton(viewHolder, false);
 
         }
-        viewHolder.mBtnFollow.setTag(viewHolder);
-        viewHolder.mBtnFollow.setOnClickListener(this);
+        viewHolder.mTvFollow.setTag(viewHolder);
+        viewHolder.mTvFollow.setOnClickListener(this);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     Logger.t(TAG).d("Follow user: " + userID);
                     setFollowButton(viewHolder, true);
                     setUserIsFollowing(viewHolder, true);
-                    viewHolder.mBtnFollow.setEnabled(true);
+                    viewHolder.mTvFollow.setEnabled(true);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -127,7 +127,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             });
             mRequestQueue.add(request);
-            viewHolder.mBtnFollow.setEnabled(false);
+            viewHolder.mTvFollow.setEnabled(false);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -147,7 +147,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     setFollowButton(viewHolder, false);
                     setUserIsFollowing(viewHolder, false);
                     Logger.t(TAG).d("Unfollow user: " + userID);
-                    viewHolder.mBtnFollow.setEnabled(true);
+                    viewHolder.mTvFollow.setEnabled(true);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -156,7 +156,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             });
             mRequestQueue.add(request);
-            viewHolder.mBtnFollow.setEnabled(false);
+            viewHolder.mTvFollow.setEnabled(false);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -165,13 +165,13 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void setFollowButton(UserListViewHolder viewHolder, boolean isFollowing) {
         if (isFollowing) {
-            viewHolder.mBtnFollow.setText(R.string.following);
-            viewHolder.mBtnFollow.setTextColor(mContext.getResources().getColor(android.R.color.white));
-            viewHolder.mBtnFollow.setBackgroundResource(R.color.style_color_primary);
+            viewHolder.mTvFollow.setText(R.string.following);
+            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.windowBackground));
+            viewHolder.mTvFollow.setBackgroundResource(R.color.app_text_color_primary);
         } else {
-            viewHolder.mBtnFollow.setText(R.string.add_follow);
-            viewHolder.mBtnFollow.setTextColor(mContext.getResources().getColor(R.color.style_color_primary));
-            viewHolder.mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
+            viewHolder.mTvFollow.setText(R.string.add_follow);
+            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.app_text_color_primary));
+            viewHolder.mTvFollow.setBackgroundResource(R.drawable.button_with_stroke);
         }
     }
 
@@ -190,7 +190,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView mTvUserName;
 
         @Bind(R.id.btnFollow)
-        Button mBtnFollow;
+        TextView mTvFollow;
 
         public UserListViewHolder(View itemView) {
             super(itemView);

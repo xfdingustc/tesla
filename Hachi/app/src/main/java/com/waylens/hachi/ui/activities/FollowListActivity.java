@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -84,6 +85,13 @@ public class FollowListActivity extends BaseActivity {
             String title = mIsFollowers ? getString(R.string.followers) : getString(R.string
                 .following);
             mToolbar.setTitle(title);
+            mToolbar.setNavigationIcon(R.drawable.navbar_back);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }
     }
 

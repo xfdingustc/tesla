@@ -1,11 +1,20 @@
 package com.waylens.hachi.ui.entities;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.ToStringUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Richard on 8/26/15.
@@ -74,5 +83,29 @@ public class User {
 
     public void setIsFollowing(boolean isFollowing) {
         mIsFollowing = isFollowing;
+    }
+
+
+    public static List<User> parseUserListFromJson(JSONObject response) {
+        try {
+            JSONArray userArray = response.getJSONArray("friends");
+            List<User> userList;
+
+            Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
+
+            Type type = new TypeToken<ArrayList<User>>() {}.getType();
+
+            userList = gson.fromJson(userArray.toString(), type);
+
+
+            return userList;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

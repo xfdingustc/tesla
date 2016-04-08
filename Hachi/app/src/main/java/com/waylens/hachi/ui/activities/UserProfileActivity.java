@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -23,7 +22,6 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
-import com.waylens.hachi.ui.adapters.UserProfileFeedAdapter;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.utils.ImageUtils;
@@ -49,6 +47,7 @@ public class UserProfileActivity extends BaseActivity {
     private MomentsRecyclerAdapter mMomentRvAdapter;
     private User mUser;
 
+
     private ArrayList<Moment> mMomentList;
 
     @Bind(R.id.rvUserMomentList)
@@ -60,10 +59,10 @@ public class UserProfileActivity extends BaseActivity {
 
 
     @Bind(R.id.btnFollowersCount)
-    TextView mBtnFollowersCount;
+    TextView mTvFollowersCount;
 
     @Bind(R.id.btnFollowingCount)
-    TextView mBtnFollowingCount;
+    TextView mTvFollowingCount;
 
     @Bind(R.id.btnFollow)
     TextView mBtnFollow;
@@ -113,9 +112,29 @@ public class UserProfileActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
         setupUserProfile();
-
+        doGetUserList();
     }
 
+    private void doGetUserList() {
+        String requestUrl = Constants.API_FRIENDS + mUserID;
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest(requestUrl, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Logger.t(TAG).json(response.toString());
+                int followerCount = response.optInt("followers", 0);
+                int followingCount = response.optInt("followings", 0);
+//                mFollowerUserList = User.parseUserListFromJson(response);
+                mTvFollowersCount.setText(getString(R.string.followers) + " " + followerCount);
+                mTvFollowingCount.setText(getString(R.string.following) + " " + followingCount);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        mRequestQueue.add(request);
+    }
 
 
     private void setupUserProfile() {
@@ -163,8 +182,8 @@ public class UserProfileActivity extends BaseActivity {
             mBtnFollow.setVisibility(View.VISIBLE);
         }
 
-        mBtnFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
-        mBtnFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
+//        mTvFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
+//        mTvFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
 
         setFollowButton(userInfo.getIsFollowing());
     }
@@ -256,6 +275,7 @@ public class UserProfileActivity extends BaseActivity {
                     setFollowButton(true);
                     mUser.setIsFollowing(true);
                     mBtnFollow.setEnabled(true);
+                    doGetUserList();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -285,6 +305,7 @@ public class UserProfileActivity extends BaseActivity {
                     mUser.setIsFollowing(false);
                     Logger.t(TAG).d("Unfollow user: " + userID);
                     mBtnFollow.setEnabled(true);
+                    doGetUserList();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -299,4 +320,6 @@ public class UserProfileActivity extends BaseActivity {
         }
 
     }
+
+
 }
