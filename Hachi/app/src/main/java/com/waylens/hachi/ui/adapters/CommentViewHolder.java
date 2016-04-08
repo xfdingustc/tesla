@@ -19,6 +19,9 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.user_avatar)
     CircleImageView avatarView;
 
+    @Bind(R.id.tvUserName)
+    TextView tvUserName;
+
     @Bind(R.id.comment_content)
     TextView commentContentViews;
 

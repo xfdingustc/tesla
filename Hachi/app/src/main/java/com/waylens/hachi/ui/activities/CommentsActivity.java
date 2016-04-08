@@ -50,7 +50,7 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     public static final String ARG_MOMENT_POSITION = "arg.moment.mPosition";
 
 
-    CommentsRecyclerAdapter mAdapter;
+    private CommentsRecyclerAdapter mAdapter;
     private long mMomentID = Moment.INVALID_MOMENT_ID;
 
     private int mPosition = 0;
@@ -165,12 +165,14 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     @Override
     public void setupToolbar() {
         mToolbar.setTitle(R.string.comments);
+        mToolbar.setNavigationIcon(R.drawable.navbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+
         super.setupToolbar();
     }
 

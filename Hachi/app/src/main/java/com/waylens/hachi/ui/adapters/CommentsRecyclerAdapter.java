@@ -100,6 +100,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             CommentViewHolder vh = (CommentViewHolder) holder;
             final Comment comment = mComments.get(position);
             ImageLoader.getInstance().displayImage(comment.author.avatarUrl, vh.avatarView, ImageUtils.getAvatarOptions());
+            vh.tvUserName.setText(comment.author.userName);
             vh.commentContentViews.setText(comment.toSpannable());
             vh.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
             if (comment.commentID == Comment.UNASSIGNED_ID) {

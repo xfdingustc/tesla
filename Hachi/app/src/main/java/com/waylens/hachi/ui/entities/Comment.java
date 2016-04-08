@@ -46,17 +46,18 @@ public class Comment {
     public SpannableStringBuilder toSpannable() {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         int start = ssb.length();
-        ssb.append(author.userName);
-        ssb.setSpan(new StyleSpan(Typeface.BOLD), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ssb.setSpan(new UserNameSpan(), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        ssb.append(author.userName);
+//        ssb.setSpan(new StyleSpan(Typeface.BOLD), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        ssb.setSpan(new UserNameSpan(), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (replyTo != null) {
-            ssb.append(" ");
+//            ssb.append(" ");
             start = ssb.length();
             ssb.append("@").append(replyTo.userName);
             ssb.setSpan(new StyleSpan(Typeface.BOLD), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             ssb.setSpan(new UserNameSpan(), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.append(" ");
         }
-        ssb.append(" ").append(content);
+        ssb.append(content);
         return ssb;
     }
 
