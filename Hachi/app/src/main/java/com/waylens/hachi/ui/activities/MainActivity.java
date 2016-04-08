@@ -26,7 +26,7 @@ import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.fragments.MomentFragment;
+import com.waylens.hachi.ui.fragments.CommunityFragment;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.VideoFragment;
 import com.waylens.hachi.ui.fragments.camerapreview.CameraPreviewFragment;
@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
     private BaseFragment[] mFragmentList = new BaseFragment[]{
             new VideoFragment(),
             new CameraPreviewFragment(),
-            new MomentFragment(),
+            new CommunityFragment(),
             new SettingsFragment()
     };
 
@@ -333,9 +333,9 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_SIGN_UP_FROM_MOMENTS:
-                if (resultCode == RESULT_OK && (mCurrentFragment instanceof MomentFragment)) {
+                if (resultCode == RESULT_OK && (mCurrentFragment instanceof CommunityFragment)) {
                     Logger.t(TAG).e("test", "notifyDateChanged");
-                    ((MomentFragment)mCurrentFragment).notifyDateChanged();
+                    ((CommunityFragment)mCurrentFragment).notifyDateChanged();
                 }
                 break;
             default:

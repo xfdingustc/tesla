@@ -8,103 +8,102 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/defaultBgColorDark"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/material_grey_800"
             app:expandedTitleMarginStart="64dp"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
-            <RelativeLayout
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:elevation="@dimen/default_elevation"
+                    app:layout_scrollFlags="scroll"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/userAvatar"
                     android:layout_width="128dp"
                     android:layout_height="128dp"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="24dp"
-                    app:civ_border_color="@color/material_grey_200"
+                    android:layout_gravity="center_horizontal"
+                    app:civ_border_color="@color/app_text_color_primary"
                     app:civ_border_width="2dp"/>
 
-                <Button
-                    android:id="@+id/btnFollow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@id/userAvatar"
-                    android:layout_toRightOf="@id/userAvatar"
-                    android:layout_marginLeft="32dp"/>
 
-                <ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignBottom="@id/userAvatar"
-                    android:layout_marginRight="24dp"
-                    android:layout_toLeftOf="@id/userAvatar"
-                    android:background="@android:color/transparent"/>
 
-                <TextView
-                    android:id="@+id/userName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/userAvatar"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="16dp"
-                    android:textColor="@color/material_grey_200"
-                    android:textSize="24sp"/>
 
-                <ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignBottom="@id/userAvatar"
-                    android:layout_marginLeft="24dp"
-                    android:layout_toRightOf="@id/userAvatar"
-                    android:background="@android:color/transparent"/>
-
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="24dp"
+                    android:paddingBottom="24dp"
                     android:layout_alignParentBottom="true">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"></LinearLayout>
+
+                    <TextView
+                        android:id="@+id/btnFollowingCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="8dp"
+                        android:background="@android:color/transparent"
+                        android:textSize="14dp"
+                        android:textColor="@color/app_text_color_primary"/>
+
 
                     <View
                         android:id="@+id/vSplitter"
                         android:layout_width="2dp"
                         android:layout_height="match_parent"
-                        android:layout_centerInParent="true"
-                        android:layout_marginBottom="24dp"
-                        android:layout_marginTop="24dp"
-                        android:background="@color/material_grey_200"/>
+                        android:background="@color/app_text_color_primary"/>
 
-                    <Button
+
+
+                    <TextView
                         android:id="@+id/btnFollowersCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="16dp"
-                        android:layout_toRightOf="@id/vSplitter"
+                        android:layout_marginLeft="8dp"
                         android:background="@android:color/transparent"
-                        android:textAllCaps="false"
-                        android:textColor="@color/material_grey_200"/>
+                        android:textSize="14dp"
+                        android:textColor="@color/app_text_color_primary"/>
 
                     <Button
-                        android:id="@+id/btnFollowingCount"
+                        android:id="@+id/btnFollow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="16dp"
-                        android:layout_toLeftOf="@id/vSplitter"
-                        android:background="@android:color/transparent"
-                        android:textAllCaps="false"
-                        android:textColor="@color/material_grey_200"/>
+                        android:layout_alignTop="@id/userAvatar"
+                        android:layout_marginLeft="32dp"
+                        android:layout_toRightOf="@id/userAvatar"
+                        android:visibility="gone"/>
 
-                </RelativeLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"></LinearLayout>
 
-            </RelativeLayout>
+                </LinearLayout>
+
+            </LinearLayout>
 
 
         </android.support.design.widget.CollapsingToolbarLayout>

@@ -19,7 +19,7 @@ import butterknife.Bind;
 /**
  * Created by Xiaofei on 2016/1/22.
  */
-public class MomentFragment extends BaseFragment {
+public class CommunityFragment extends BaseFragment {
 
     RequestQueue mRequestQueue;
 
@@ -36,8 +36,7 @@ public class MomentFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_moment,
-                savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_moment, savedInstanceState);
 
         setupViewPager();
         return view;
@@ -59,16 +58,16 @@ public class MomentFragment extends BaseFragment {
         mFeedPageAdapter = new FeedPageAdapter(getChildFragmentManager());
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R
-                .string.me));
+            .string.me));
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LIKES), getString(R.string
-                .likes));
+            .likes));
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string
-                .staff_picks));
+            .staff_picks));
         //adapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ALL), getString(R.string
         //        .all));
         mViewPager.setAdapter(mFeedPageAdapter);
         if (mTabLayout != null) {
-            mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+            //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
             mTabLayout.setupWithViewPager(mViewPager);
         }
 

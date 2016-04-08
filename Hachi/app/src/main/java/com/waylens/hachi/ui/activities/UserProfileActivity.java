@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -54,14 +55,13 @@ public class UserProfileActivity extends BaseActivity {
     @Bind(R.id.userAvatar)
     CircleImageView mCivUserAvatar;
 
-    @Bind(R.id.userName)
-    TextView mTvUserName;
+
 
     @Bind(R.id.btnFollowersCount)
-    Button mBtnFollowersCount;
+    TextView mBtnFollowersCount;
 
     @Bind(R.id.btnFollowingCount)
-    Button mBtnFollowingCount;
+    TextView mBtnFollowingCount;
 
     @Bind(R.id.btnFollow)
     Button mBtnFollow;
@@ -112,8 +112,9 @@ public class UserProfileActivity extends BaseActivity {
         setContentView(R.layout.activity_user_profile);
         setupUserProfile();
         setupUserMomentsFeed();
-
     }
+
+
 
     private void setupUserProfile() {
         final String requestUrl = Constants.API_USERS + "/" + mUserID;
@@ -142,7 +143,15 @@ public class UserProfileActivity extends BaseActivity {
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(userInfo.avatarUrl, mCivUserAvatar, ImageUtils.getAvatarOptions());
 
-        mTvUserName.setText(userInfo.userName);
+
+        mToolbar.setTitle(userInfo.userName);
+        mToolbar.setNavigationIcon(R.drawable.navbar_back);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         mBtnFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
         mBtnFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
