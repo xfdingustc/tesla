@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/settings_item_bg_normal"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/settings_item_bg_normal"
+              android:orientation="vertical">
 
     <View
         android:layout_width="match_parent"
@@ -16,23 +16,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp">
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_avatar"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/settings_profile_photo_default"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/waylens_logo_76x86"
             />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -41,6 +41,7 @@
                 style="@style/TextAppearance.AppCompat.Subhead"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:textColor="#C4C5C5"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -60,8 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textSize="14sp"
             android:textColor="#76787A"
+            android:textSize="14sp"
             tools:text="5H"/>
 
     </LinearLayout>
@@ -105,8 +106,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:textColor="#A4A6A6"
             android:background="@drawable/round_rectangle_background"
+            android:textColor="#A4A6A6"
             tools:text="01:08"/>
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
@@ -118,13 +119,13 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
             android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            style="?android:attr/buttonBarButtonStyle">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btnLike"
@@ -145,13 +146,14 @@
 
         <LinearLayout
             android:id="@+id/btn_comment"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
             android:clickable="true"
             android:gravity="center_horizontal"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -164,10 +166,10 @@
 
         <LinearLayout
             android:id="@+id/btn_share"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
             android:clickable="true"
             android:gravity="center_horizontal"
             android:orientation="vertical">
@@ -183,6 +185,7 @@
         </LinearLayout>
 
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"

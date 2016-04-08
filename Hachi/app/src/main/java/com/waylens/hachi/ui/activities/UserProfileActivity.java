@@ -113,7 +113,7 @@ public class UserProfileActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
         setupUserProfile();
-        setupUserMomentsFeed();
+
     }
 
 
@@ -131,6 +131,7 @@ public class UserProfileActivity extends BaseActivity {
                     mUser = gson.fromJson(response.toString(), User.class);
                     Logger.t(TAG).d("userInfo: " + mUser.toString());
                     showUserInfo(mUser);
+                    setupUserMomentsFeed();
                 }
             }, new Response.ErrorListener() {
             @Override
@@ -191,10 +192,11 @@ public class UserProfileActivity extends BaseActivity {
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
+//                    Logger.t(TAG).json(response.toString());
                     mMomentList = parseMomentArray(response);
 //                    mMomentRvAdapter.setMomentList(mMomentList);
                     mMomentRvAdapter = new MomentsRecyclerAdapter(mMomentList, getFragmentManager(), mRequestQueue, getResources());
+                    mMomentRvAdapter.setUserInfo(mUser);
                     mRvUserMomentList.setAdapter(mMomentRvAdapter);
                 }
             },

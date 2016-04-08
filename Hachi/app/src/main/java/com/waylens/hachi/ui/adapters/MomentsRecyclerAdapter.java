@@ -25,6 +25,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
 
 import org.json.JSONException;
@@ -47,6 +48,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     Resources mResources;
     OnMomentActionListener mOnMomentActionListener;
 
+    private User mUser;
+
     private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
@@ -58,6 +61,10 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         mFragmentManager = fm;
         mRequestQueue = requestQueue;
         mResources = resources;
+    }
+
+    public void setUserInfo(User user) {
+        mUser = user;
     }
 
     public void setMoments(ArrayList<Moment> moments) {
@@ -91,6 +98,9 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         if (moment.owner != null && moment.owner.avatarUrl != null) {
             ImageLoader.getInstance().displayImage(moment.owner.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
             holder.userName.setText(moment.owner.userName);
+        } else if (mUser != null) {
+            ImageLoader.getInstance().displayImage(mUser.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
+            holder.userName.setText(mUser.userName);
         }
 
         holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
@@ -144,6 +154,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
             }
         });
     }
+
+
 
     private void doUpdateLikeStateAnimator(final MomentViewHolder holder, final Moment moment) {
 
