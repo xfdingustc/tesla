@@ -36,7 +36,7 @@ import butterknife.OnClick;
  * Created by Richard on 3/23/16.
  */
 public class ChangePasswordFragment extends BaseFragment {
-    private static final String TAG = "ChangePasswordFragment";
+    private static final String TAG = ChangePasswordFragment.class.getSimpleName();
 
     private static final String TAG_REQUEST_RESET_PASSWORD = "request.reset.password";
 
@@ -125,6 +125,8 @@ public class ChangePasswordFragment extends BaseFragment {
         } catch (JSONException e) {
             Logger.t(TAG).e(e, "");
         }
+
+        Logger.t(TAG).d("reset password: " + params.toString());
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_RESET_PASSWORD, params,
                 new Response.Listener<JSONObject>() {
                     @Override

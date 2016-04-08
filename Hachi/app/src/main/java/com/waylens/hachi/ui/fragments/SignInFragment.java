@@ -166,6 +166,8 @@ public class SignInFragment extends BaseFragment {
     }
 
     void performSignIn() {
+        mEmail = mTvSignInEmail.getText().toString();
+        mPassword = mTvPassword.getText().toString();
         JSONObject params = new JSONObject();
         try {
             params.put(JsonKey.EMAIL, mEmail);
@@ -173,6 +175,7 @@ public class SignInFragment extends BaseFragment {
         } catch (JSONException e) {
             Logger.t(TAG).e(e, "");
         }
+        Logger.t(TAG).d("signin : " + params.toString());
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_IN, params,
                 new Response.Listener<JSONObject>() {
                     @Override
