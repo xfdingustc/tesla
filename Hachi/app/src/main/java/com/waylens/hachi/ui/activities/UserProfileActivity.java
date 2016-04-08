@@ -214,7 +214,7 @@ public class UserProfileActivity extends BaseActivity {
 //                    Logger.t(TAG).json(response.toString());
                     mMomentList = parseMomentArray(response);
 //                    mMomentRvAdapter.setMomentList(mMomentList);
-                    mMomentRvAdapter = new MomentsRecyclerAdapter(mMomentList, getFragmentManager(), mRequestQueue, getResources());
+                    mMomentRvAdapter = new MomentsRecyclerAdapter(UserProfileActivity.this, mMomentList, getFragmentManager(), mRequestQueue, getResources());
                     mMomentRvAdapter.setUserInfo(mUser);
                     mRvUserMomentList.setAdapter(mMomentRvAdapter);
                 }

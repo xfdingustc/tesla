@@ -16,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -41,10 +42,23 @@ import butterknife.OnClick;
  */
 public class CommentsActivity extends BaseActivity implements CommentsRecyclerAdapter.OnCommentClickListener,
         CommentsRecyclerAdapter.OnLoadMoreListener{
+    private static final String TAG = CommentsActivity.class.getSimpleName();
     private static final int DEFAULT_COUNT = 10;
 
     public static final String ARG_MOMENT_ID = "arg.moment.id";
     public static final String ARG_MOMENT_POSITION = "arg.moment.mPosition";
+
+
+    CommentsRecyclerAdapter mAdapter;
+    private long mMomentID = Moment.INVALID_MOMENT_ID;
+
+    private int mPosition = 0;
+
+    User mReplyTo;
+
+    boolean hasUpdates;
+
+    int mCurrentCursor;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -113,18 +127,7 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     }
 
 
-    LinearLayoutManager mLinearLayoutManager;
 
-    CommentsRecyclerAdapter mAdapter;
-    private long mMomentID = Moment.INVALID_MOMENT_ID;
-
-    private int mPosition = 0;
-
-    User mReplyTo;
-
-    boolean hasUpdates;
-
-    int mCurrentCursor;
 
     public static void launch(Activity activity, long id, int position) {
         Intent intent = new Intent(activity, CommentsActivity.class);
@@ -134,8 +137,8 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         init();
     }
 
@@ -150,14 +153,17 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
 
     private void initViews() {
         setContentView(R.layout.activity_comments);
-        mCommentListView.setAdapter(mAdapter);
-        mCommentListView.setLayoutManager(mLinearLayoutManager);
-        mNewCommentView.requestFocus();
-
-        mLinearLayoutManager = new LinearLayoutManager(this);
+        mCommentListView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new CommentsRecyclerAdapter(null);
         mAdapter.setOnCommentClickListener(this);
         mAdapter.setOnLoadMoreListener(this);
+        mCommentListView.setAdapter(mAdapter);
+
+        mNewCommentView.requestFocus();
+
+
+
+
     }
 
     @Override
@@ -192,17 +198,28 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
         if (mMomentID == Moment.INVALID_MOMENT_ID) {
             return;
         }
+
+
         String url = Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING, mMomentID, cursor, DEFAULT_COUNT);
+        Logger.t(TAG).d("load commens: " + url);
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        onLoadCommentsSuccessful(response, isRefresh);
+                    public void onResponse(final JSONObject response) {
+                        //Logger.t(TAG).d("get response " + response.toString());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                onLoadCommentsSuccessful(response, isRefresh);
+                            }
+                        });
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Logger.t(TAG).d("Error");
                         onLoadCommentsFailed(error);
                     }
                 }).setTag(Constants.API_COMMENTS));
@@ -221,7 +238,9 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
         }
         ArrayList<Comment> commentList = new ArrayList<>();
         for (int i = jsonComments.length() - 1; i >= 0; i--) {
-            commentList.add(Comment.fromJson(jsonComments.optJSONObject(i)));
+            Comment comment = Comment.fromJson(jsonComments.optJSONObject(i));
+            commentList.add(comment);
+            Logger.t(TAG).d("Add comment: " + comment.toString());
         }
 
         boolean hasMore = response.optBoolean("hasMore");

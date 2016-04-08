@@ -87,6 +87,9 @@ public class BaseActivity extends AppCompatActivity {
 
     public void setupToolbar() {
         //
+        if (mToolbar != null) {
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
+        }
     }
 
     @Override

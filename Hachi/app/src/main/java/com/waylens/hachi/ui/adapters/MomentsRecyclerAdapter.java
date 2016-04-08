@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -24,6 +26,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.activities.CommentsActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
@@ -42,6 +45,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
 
     public ArrayList<Moment> mMoments;
 
+    private final Context mContext;
+
     PrettyTime mPrettyTime;
     FragmentManager mFragmentManager;
     RequestQueue mRequestQueue;
@@ -55,7 +60,8 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
 
-    public MomentsRecyclerAdapter(ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
+    public MomentsRecyclerAdapter(Context context, ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
+        this.mContext = context;
         mMoments = moments;
         mPrettyTime = new PrettyTime();
         mFragmentManager = fm;
@@ -136,14 +142,17 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
         holder.btnLike.setOnClickListener(this);
         holder.btnLike.setTag(holder);
 
-        holder.btnComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnMomentActionListener != null) {
-                    mOnMomentActionListener.onCommentMoment(moment, position);
-                }
-            }
-        });
+        holder.btnComment.setOnClickListener(this);
+        holder.btnComment.setTag(holder);
+
+//        holder.btnComment.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mOnMomentActionListener != null) {
+//                    mOnMomentActionListener.onCommentMoment(moment, position);
+//                }
+//            }
+//        });
 
         holder.videoControl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,11 +245,16 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
 
     @Override
     public void onClick(View v) {
+        MomentViewHolder holder = (MomentViewHolder) v.getTag();
+        Moment moment = mMoments.get(holder.getPosition());
         switch (v.getId()) {
             case R.id.btnLike:
-                MomentViewHolder holder = (MomentViewHolder) v.getTag();
-                Moment moment = mMoments.get(holder.getPosition());
+
                 doAddLike(holder, moment);
+                break;
+            case R.id.btn_comment:
+
+                CommentsActivity.launch((Activity)mContext, moment.id, 0);
                 break;
         }
 

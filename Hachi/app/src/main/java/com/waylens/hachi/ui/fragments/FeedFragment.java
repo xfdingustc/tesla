@@ -104,7 +104,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
             mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_MY_FEED);
         }
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
-        mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
+        mAdapter = new MomentsRecyclerAdapter(getActivity(), null, getFragmentManager(), mRequestQueue, getResources());
         mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }

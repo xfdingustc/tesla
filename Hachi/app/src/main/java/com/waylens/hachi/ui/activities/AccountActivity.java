@@ -114,7 +114,7 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
         mGreyColor = getResources().getColor(R.color.material_grey_500);
 
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(this);
-        mAdapter = new MomentsRecyclerAdapter(null, getFragmentManager(), mRequestQueue, getResources());
+        mAdapter = new MomentsRecyclerAdapter(this, null, getFragmentManager(), mRequestQueue, getResources());
         mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(this);
         initViews();

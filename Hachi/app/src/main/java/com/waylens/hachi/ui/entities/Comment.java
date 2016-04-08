@@ -7,6 +7,8 @@ import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
 
+import com.waylens.hachi.utils.ToStringUtils;
+
 import org.json.JSONObject;
 
 /**
@@ -56,6 +58,11 @@ public class Comment {
         }
         ssb.append(" ").append(content);
         return ssb;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringUtils.getString(this);
     }
 
     public static Comment createLoadMoreIndicator() {
