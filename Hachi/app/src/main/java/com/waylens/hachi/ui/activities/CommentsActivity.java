@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
@@ -27,7 +25,6 @@ import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +39,7 @@ import butterknife.OnClick;
  * Created by Xiaofei on 2016/3/9.
  */
 public class CommentsActivity extends BaseActivity implements CommentsRecyclerAdapter.OnCommentClickListener,
-        CommentsRecyclerAdapter.OnLoadMoreListener{
+    CommentsRecyclerAdapter.OnLoadMoreListener {
     private static final String TAG = CommentsActivity.class.getSimpleName();
     private static final int DEFAULT_COUNT = 10;
 
@@ -108,26 +105,24 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
         }
 
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_COMMENTS, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        long commentID = response.optLong("commentID");
-                        mAdapter.updateCommentID(position, commentID);
-                        if (!hasUpdates) {
-                            hasUpdates = true;
-                        }
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    long commentID = response.optLong("commentID");
+                    mAdapter.updateCommentID(position, commentID);
+                    if (!hasUpdates) {
+                        hasUpdates = true;
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                        showMessage(errorInfo.msgResID);
-                    }
-                }).setTag(Constants.API_COMMENTS));
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                    showMessage(errorInfo.msgResID);
+                }
+            }).setTag(Constants.API_COMMENTS));
     }
-
-
 
 
     public static void launch(Activity activity, long id, int position) {
@@ -213,26 +208,22 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
         String url = Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING, mMomentID, cursor, DEFAULT_COUNT);
         Logger.t(TAG).d("load commens: " + url);
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(final JSONObject response) {
-                        //Logger.t(TAG).d("get response " + response.toString());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                onLoadCommentsSuccessful(response, isRefresh);
-                            }
-                        });
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(final JSONObject response) {
+                    //Logger.t(TAG).d("get response " + response.toString());
 
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.t(TAG).d("Error");
-                        onLoadCommentsFailed(error);
-                    }
-                }).setTag(Constants.API_COMMENTS));
+                    onLoadCommentsSuccessful(response, isRefresh);
+
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d("Error");
+                    onLoadCommentsFailed(error);
+                }
+            }).setTag(Constants.API_COMMENTS));
 
     }
 

@@ -36,6 +36,8 @@
         android:paddingRight="16dp"
         android:paddingTop="8dp">
 
+
+
         <EditText
             android:id="@+id/comment_new"
             style="@style/TextAppearance.AppCompat.Body1"
@@ -46,6 +48,9 @@
             android:layout_weight="1"
             android:hint="@string/add_a_comment"
             android:inputType="text"
+            android:textCursorDrawable="@drawable/color_cursor"
+            android:minHeight="36dp"
+            android:background="@color/app_text_color_disabled"
             />
 
         <Button
@@ -53,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/send"
+            android:textColor="@color/background_color_dark"
             />
     </LinearLayout>
 
