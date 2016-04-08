@@ -88,9 +88,11 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     @Override
     public void onBindViewHolder(final MomentViewHolder holder, final int position) {
         final Moment moment = mMoments.get(position);
+        if (moment.owner != null && moment.owner.avatarUrl != null) {
+            ImageLoader.getInstance().displayImage(moment.owner.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
+            holder.userName.setText(moment.owner.userName);
+        }
 
-        ImageLoader.getInstance().displayImage(moment.owner.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
-        holder.userName.setText(moment.owner.userName);
         holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         holder.descView.setText(moment.description);
         ImageLoader.getInstance().displayImage(moment.thumbnail, holder.videoCover, ImageUtils.getVideoOptions());

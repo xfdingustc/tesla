@@ -21,6 +21,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.adapters.UserProfileFeedAdapter;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Moment;
@@ -44,10 +45,10 @@ public class UserProfileActivity extends BaseActivity {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private static final String USER_ID = "user_id";
     private String mUserID;
-    private UserProfileFeedAdapter mMomentRvAdapter;
+    private MomentsRecyclerAdapter mMomentRvAdapter;
     private User mUser;
 
-    private List<Moment> mMomentList;
+    private ArrayList<Moment> mMomentList;
 
     @Bind(R.id.rvUserMomentList)
     RecyclerView mRvUserMomentList;
@@ -122,7 +123,7 @@ public class UserProfileActivity extends BaseActivity {
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
+//                    Logger.t(TAG).json(response.toString());
                     Gson gson = new GsonBuilder()
                         .excludeFieldsWithoutExposeAnnotation()
                         .create();
@@ -161,8 +162,8 @@ public class UserProfileActivity extends BaseActivity {
 
     private void setupUserMomentsFeed() {
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
-        mMomentRvAdapter = new UserProfileFeedAdapter(this);
-        mRvUserMomentList.setAdapter(mMomentRvAdapter);
+        //mMomentRvAdapter = new UserProfileFeedAdapter(this);
+
 
 
         String requestUrl = Constants.API_USERS + "/" + mUserID + "/moments";
@@ -171,8 +172,11 @@ public class UserProfileActivity extends BaseActivity {
 
                 @Override
                 public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
                     mMomentList = parseMomentArray(response);
-                    mMomentRvAdapter.setMomentList(mMomentList);
+//                    mMomentRvAdapter.setMomentList(mMomentList);
+                    mMomentRvAdapter = new MomentsRecyclerAdapter(mMomentList, getFragmentManager(), mRequestQueue, getResources());
+                    mRvUserMomentList.setAdapter(mMomentRvAdapter);
                 }
             },
             new Response.ErrorListener() {
@@ -186,8 +190,8 @@ public class UserProfileActivity extends BaseActivity {
         mRequestQueue.add(request);
     }
 
-    private List<Moment> parseMomentArray(JSONObject response) {
-        List<Moment> moments = new ArrayList<>();
+    private ArrayList<Moment> parseMomentArray(JSONObject response) {
+        ArrayList<Moment> moments = new ArrayList<>();
         try {
             JSONArray momentArray = response.getJSONArray(JsonKey.MOMENTS);
             for (int i = 0; i < momentArray.length(); i++) {
@@ -197,6 +201,7 @@ public class UserProfileActivity extends BaseActivity {
                     .create();
                 Moment moment = gson.fromJson(momentObject.toString(), Moment.class);
                 moments.add(moment);
+//                Logger.t(TAG).d("Add one moment: " + moment.toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
