@@ -21,6 +21,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.adapters.UserProfileFeedAdapter;
 import com.waylens.hachi.ui.entities.User;
@@ -65,7 +66,7 @@ public class UserProfileActivity extends BaseActivity {
     TextView mBtnFollowingCount;
 
     @Bind(R.id.btnFollow)
-    Button mBtnFollow;
+    TextView mBtnFollow;
     
     @OnClick(R.id.btnFollowersCount)
     public void onBtnFollowerCountClicked() {
@@ -154,10 +155,28 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
 
+
+        if (isCurrentUser(userInfo)) {
+            mBtnFollow.setVisibility(View.GONE);
+        } else {
+            mBtnFollow.setVisibility(View.VISIBLE);
+        }
+
         mBtnFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
         mBtnFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
 
         setFollowButton(userInfo.getIsFollowing());
+    }
+
+
+    public boolean isCurrentUser(User userInfo) {
+        SessionManager sessionManager = SessionManager.getInstance();
+        String currentUserName = sessionManager.getUserName();
+        if (userInfo.userName.equals(currentUserName)) {
+            return true;
+        }
+
+        return false;
     }
 
     private void setupUserMomentsFeed() {
@@ -213,11 +232,11 @@ public class UserProfileActivity extends BaseActivity {
     private void setFollowButton(boolean isFollowing) {
         if (isFollowing) {
             mBtnFollow.setText(R.string.following);
-            mBtnFollow.setTextColor(getResources().getColor(android.R.color.white));
-            mBtnFollow.setBackgroundResource(R.color.style_color_primary);
+            mBtnFollow.setTextColor(getResources().getColor(R.color.windowBackgroundDark));
+            mBtnFollow.setBackgroundResource(R.color.app_text_color_primary);
         } else {
             mBtnFollow.setText(R.string.add_follow);
-            mBtnFollow.setTextColor(getResources().getColor(R.color.style_color_primary));
+            mBtnFollow.setTextColor(getResources().getColor(R.color.app_text_color_primary));
             mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
         }
     }
