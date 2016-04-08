@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ViewAnimator;
 
@@ -158,12 +159,19 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
         mAdapter.setOnCommentClickListener(this);
         mAdapter.setOnLoadMoreListener(this);
         mCommentListView.setAdapter(mAdapter);
-
         mNewCommentView.requestFocus();
+    }
 
-
-
-
+    @Override
+    public void setupToolbar() {
+        mToolbar.setTitle(R.string.comments);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        super.setupToolbar();
     }
 
     @Override

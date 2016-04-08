@@ -44,9 +44,9 @@ public class ImageUtils {
 
     public static DisplayImageOptions getAvatarOptions() {
         return new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.settings_profile_photo_default)
-                .showImageForEmptyUri(R.drawable.settings_profile_photo_default)
-                .showImageOnFail(R.drawable.settings_profile_photo_default)
+                .showImageOnLoading(R.drawable.waylens_logo_76x86)
+                .showImageForEmptyUri(R.drawable.waylens_logo_76x86)
+                .showImageOnFail(R.drawable.waylens_logo_76x86)
                 .cacheInMemory(true)
                 .cacheOnDisc(true)
                 .build();
