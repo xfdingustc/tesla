@@ -31,7 +31,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    @Bind(R.id.videoSpinner)
+    @Bind(R.id.spinner)
     Spinner mVideoSpinner;
 
     @Subscribe

@@ -88,7 +88,7 @@ public class CameraPreviewFragment extends BaseFragment {
     CameraLiveView mLiveView;
 
     @Nullable
-    @Bind(R.id.cameraSpinner)
+    @Bind(R.id.spinner)
     Spinner mCameraSpinner;
 
     @Bind(R.id.tvCameraStatus)
