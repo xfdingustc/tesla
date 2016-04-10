@@ -238,6 +238,14 @@ public class LiveViewSettingActivity extends BaseActivity {
     private void doApplyChanges() {
         if (mOriginRecordMode != mChangedRecordMode) {
             mCamera.setRecordRecMode(mChangedRecordMode);
+
+            if (mChangedRecordMode == VdtCamera.REC_MODE_AUTOSTART_LOOP) {
+                mCamera.startRecording();
+            } else if (mChangedRecordMode == VdtCamera.REC_MODE_MANUAL) {
+                mCamera.stopRecording();
+            }
+
+
         }
 
         if (mOriginVideoResolution != mChangedVideoResolution) {
