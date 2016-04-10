@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -178,6 +180,18 @@ public class UserProfileActivity extends BaseActivity {
 
         if (isCurrentUser(userInfo)) {
             mBtnFollow.setVisibility(View.GONE);
+            mToolbar.inflateMenu(R.menu.menu_profile_edit);
+            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.editProfile:
+                            AccountActivity.launch(UserProfileActivity.this);
+                            break;
+                    }
+                    return true;
+                }
+            });
         } else {
             mBtnFollow.setVisibility(View.VISIBLE);
         }
