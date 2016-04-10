@@ -148,7 +148,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         View view = createFragmentView(inflater, container, R.layout.fragment_bookmark,
             savedInstanceState);
         mUiThreadHandler = new Handler();
-        setupClipSetGroup();
+        //setupClipSetGroup();
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -312,6 +312,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                             mRootViewSwitcher.showPrevious();
                         }
                         calculateClipSetGroup(clipSet);
+                        setupClipSetGroup();
                         setupClipSetGroupView();
                     }
 
