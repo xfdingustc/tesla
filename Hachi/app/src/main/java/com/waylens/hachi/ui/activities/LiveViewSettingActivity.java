@@ -253,7 +253,7 @@ public class LiveViewSettingActivity extends BaseActivity {
         }
 
         if (mOriginVideoFramerate != mChangedVideoFramerate) {
-
+//            mCamera.setV
         }
     }
 }

@@ -50,11 +50,7 @@ import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.RawDataBlock;
 import com.waylens.hachi.vdb.RawDataItem;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.InetSocketAddress;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -92,7 +88,7 @@ public class CameraPreviewFragment extends BaseFragment {
     Spinner mCameraSpinner;
 
     @Bind(R.id.tvCameraStatus)
-    TextView mTvCameraStatus;
+    TextView mTvCameraRecStatus;
 
     @Bind(R.id.tv_status_additional)
     TextView mTvStatusAdditional;
@@ -455,11 +451,11 @@ public class CameraPreviewFragment extends BaseFragment {
                     @Override
                     public void onRecDurationChanged(int duration) {
                         final int recordTime = duration;
-                        if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING && !isInCarMode()) {
+                        if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mTvCameraStatus.setText(DateUtils.formatElapsedTime(recordTime));
+                                    mTvCameraRecStatus.setText(DateUtils.formatElapsedTime(recordTime));
                                 }
                             });
                         }
@@ -652,8 +648,8 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     boolean isInCarMode() {
-//        Logger.t(TAG).d("record mode: " + mVdtCamera.getRecordMode());
         boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
+//        Logger.t(TAG).d("record mode: " + mVdtCamera.getRecordMode() + " isInCarMode: " + isInCarMode);
         return isInCarMode;
     }
 
@@ -678,30 +674,28 @@ public class CameraPreviewFragment extends BaseFragment {
         int recState = mVdtCamera.getRecordState();
         switch (recState) {
             case VdtCamera.STATE_RECORD_UNKNOWN:
-                mTvCameraStatus.setText(R.string.record_unknown);
+                mTvCameraRecStatus.setText(R.string.record_unknown);
                 break;
             case VdtCamera.STATE_RECORD_STOPPED:
-                mTvCameraStatus.setText(R.string.record_stopped);
+                mTvCameraRecStatus.setText(R.string.record_stopped);
                 break;
             case VdtCamera.STATE_RECORD_STOPPING:
-                mTvCameraStatus.setText(R.string.record_stopping);
-
+                mTvCameraRecStatus.setText(R.string.record_stopping);
                 break;
             case VdtCamera.STATE_RECORD_STARTING:
-                mTvCameraStatus.setText(R.string.record_starting);
+                mTvCameraRecStatus.setText(R.string.record_starting);
                 if (mErrorPanel != null) {
                     mErrorPanel.setVisibility(View.GONE);
                 }
                 break;
             case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode()) {
-                    mTvCameraStatus.setText(R.string.continuous_recording);
+                    mTvCameraRecStatus.setText(R.string.continuous_recording);
                     if (mBookmarkCount != -1) {
                         updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
                             mBookmarkCount + mBookmarkClickCount,
                             mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
                         mTvStatusAdditional.setVisibility(View.VISIBLE);
-
                     }
                 } else {
                     mTvStatusAdditional.setVisibility(View.GONE);
@@ -709,7 +703,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
                 break;
             case VdtCamera.STATE_RECORD_SWITCHING:
-                mTvCameraStatus.setText(R.string.record_switching);
+                mTvCameraRecStatus.setText(R.string.record_switching);
                 break;
             default:
                 break;
