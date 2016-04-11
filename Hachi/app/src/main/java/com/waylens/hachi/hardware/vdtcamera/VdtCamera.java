@@ -376,12 +376,13 @@ public class VdtCamera {
     }
 
 
+
     public int getVideoResolution() {
         mController.cmd_Rec_get_Resolution();
-        switch (mVideoQualityIndex) {
+        Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
+        switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
             case VIDEO_RESOLUTION_1080P60:
-
                 return VIDEO_RESOLUTION_1080P;
             default:
                 return VIDEO_RESOLUTION_720P;
@@ -389,7 +390,9 @@ public class VdtCamera {
     }
 
     public int getVideoFramerate() {
-        switch (mVideoQualityIndex) {
+        mController.cmd_Rec_get_Resolution();
+        Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
+        switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
             case VIDEO_RESOLUTION_4KP30:
             case VIDEO_RESOLUTION_480P30:
@@ -478,27 +481,7 @@ public class VdtCamera {
     }
 
 
-    private void syncBtState() {
-        if (mController.syncBtState(mBtStates)) {
-            if (mOnStateChangeListener != null) {
-                mOnStateChangeListener.onBtStateChanged(this);
-            }
-        }
-    }
 
-    private void syncGpsState() {
-        if (mController.syncGpsState(mGpsStates)) {
-            if (mOnStateChangeListener != null) {
-                mOnStateChangeListener.onGpsStateChanged(this);
-            }
-        }
-    }
-
-
-    private void onScanBtDone() {
-        mController.syncBtState(mBtStates);
-
-    }
 
 
     // Control APIs
@@ -535,6 +518,32 @@ public class VdtCamera {
     public String getName() {
         mController.cmd_Cam_get_Name();
         return mCameraName;
+    }
+
+    public void setVideoResolution(int resolution, int frameRate) {
+        int videoResulution = VIDEO_RESOLUTION_1080P30;
+        if (resolution == VIDEO_RESOLUTION_1080P) {
+            switch (frameRate) {
+                case VIDEO_FRAMERATE_30FPS:
+                    videoResulution = VIDEO_RESOLUTION_1080P30;
+                    break;
+                case VIDEO_FRAMERATE_60FPS:
+                    videoResulution = VIDEO_RESOLUTION_1080P60;
+                    break;
+            }
+        } else if (resolution == VIDEO_RESOLUTION_720P) {
+            switch (frameRate) {
+                case VIDEO_FRAMERATE_30FPS:
+                    videoResulution = VIDEO_RESOLUTION_720P30;
+                    break;
+                case VIDEO_FRAMERATE_60FPS:
+                    videoResulution = VIDEO_RESOLUTION_720P60;
+                    break;
+
+            }
+        }
+        Logger.t(TAG).d("set video resolution: " + videoResulution);
+        setVideoResolution(videoResulution);
     }
 
     public void setVideoResolution(int resolutionIndex) {
@@ -1157,6 +1166,7 @@ public class VdtCamera {
 
         private void ack_Rec_get_Resolution(String p1, String p2) {
             int index = Integer.parseInt(p1);
+            Logger.t(TAG).d("set video resolution index: " + index);
             mVideoResolutionIndex = index;
         }
 
@@ -1186,6 +1196,7 @@ public class VdtCamera {
 
         private void ack_Rec_get_Quality(String p1, String p2) {
             int index = Integer.parseInt(p1);
+
             mVideoQualityIndex = index;
         }
 

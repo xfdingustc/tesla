@@ -23,7 +23,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/1/8.
  */
-public class LiveViewSettingActivity extends BaseActivity {
+public class VdtCameraSettingActivity extends BaseActivity {
 
     private static VdtCamera mSharedCamera;
     private VdtCamera mCamera;
@@ -44,7 +44,7 @@ public class LiveViewSettingActivity extends BaseActivity {
 
 
     public static void launch(Activity startActivity, VdtCamera camera) {
-        Intent intent = new Intent(startActivity, LiveViewSettingActivity.class);
+        Intent intent = new Intent(startActivity, VdtCameraSettingActivity.class);
         mSharedCamera = camera;
         startActivity.startActivity(intent);
     }
@@ -248,8 +248,8 @@ public class LiveViewSettingActivity extends BaseActivity {
 
         }
 
-        if (mOriginVideoResolution != mChangedVideoResolution) {
-            mCamera.setVideoResolution(mChangedVideoResolution);
+        if (mOriginVideoResolution != mChangedVideoResolution || mOriginVideoFramerate != mChangedVideoFramerate) {
+            mCamera.setVideoResolution(mChangedVideoResolution, mChangedVideoFramerate);
         }
 
         if (mOriginVideoFramerate != mChangedVideoFramerate) {

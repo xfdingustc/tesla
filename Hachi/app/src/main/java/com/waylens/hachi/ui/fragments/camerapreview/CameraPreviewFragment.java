@@ -42,7 +42,7 @@ import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
-import com.waylens.hachi.ui.activities.LiveViewSettingActivity;
+import com.waylens.hachi.ui.activities.VdtCameraSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
@@ -265,7 +265,7 @@ public class CameraPreviewFragment extends BaseFragment {
                             toggleInfoView();
                             break;
                         case R.id.cameraSetting:
-                            LiveViewSettingActivity.launch(getActivity(), mVdtCamera);
+                            VdtCameraSettingActivity.launch(getActivity(), mVdtCamera);
                             break;
                     }
                     return false;
