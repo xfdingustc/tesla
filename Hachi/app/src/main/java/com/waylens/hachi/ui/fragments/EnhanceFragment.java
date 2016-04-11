@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
@@ -253,7 +253,13 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             case REQUEST_CODE_ENHANCE:
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND);
-                    mClipsEditView.appendSharableClips(clips);
+                    if (!mClipsEditView.appendSharableClips(clips)) {
+                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                            .content(R.string.resolution_not_correct)
+                            .positiveText(android.R.string.ok)
+                            .build();
+                        dialog.show();
+                    }
 //                    mClipPlayFragment.setPosition(0);
                 }
                 break;
@@ -284,7 +290,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     }
 
 
-
     void configureActionUI(int child, boolean isShow) {
         if (isShow && (child != ACTION_NONE)) {
             mViewAnimator.setVisibility(View.VISIBLE);
@@ -295,8 +300,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             mClipsEditView.setVisibility(View.VISIBLE);
         }
     }
-
-
 
 
     void configEnhanceView() {
@@ -419,7 +422,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             }
         });
         if (clipCount > 0
-                && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
+            && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
             btnGauge.setEnabled(true);
             btnMusic.setEnabled(true);
             configureActionUI(ACTION_NONE, false);
@@ -464,12 +467,14 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             return;
         }
         mPlaylistEditor.trimClip(selectedPosition, clip,
-                new PlaylistEditor.OnTrimCompletedListener() {
-                    @Override
-                    public void onTrimCompleted(ClipSet clipSet) {
-                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-                    }
-                });
+            new PlaylistEditor.OnTrimCompletedListener() {
+                @Override
+                public void onTrimCompleted(ClipSet clipSet) {
+                    mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+                }
+            });
 
     }
+
+
 }

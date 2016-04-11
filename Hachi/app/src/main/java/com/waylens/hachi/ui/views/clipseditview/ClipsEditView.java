@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -42,6 +43,7 @@ import butterknife.ButterKnife;
  */
 public class ClipsEditView extends LinearLayout implements View.OnClickListener,
         RecyclerView.OnItemTouchListener, RangeSeekBar.OnRangeSeekBarChangeListener<Long> {
+    private static final String TAG = ClipsEditView.class.getSimpleName();
     final static float HALF_ALPHA = 0.5f;
     final static float FULL_ALPHA = 1.0f;
 
@@ -186,13 +188,10 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
     }
 
 
-    public void appendSharableClip(Clip clip) {
-        ArrayList<Clip> clips = new ArrayList<>();
-        clips.add(clip);
-        appendSharableClips(clips);
-    }
-
-    public void appendSharableClips(List<Clip> clips) {
+    public boolean appendSharableClips(List<Clip> clips) {
+        if (!checkIfResolutionUnity(clips)) {
+            return false;
+        }
         if (mAdapter != null && getClipSet() != null && clips != null) {
             getClipSet().getClipList().addAll(clips);
             int size = clips.size();
@@ -202,6 +201,35 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
                 mOnClipEditListener.onClipsAppended(clips, mAdapter.getItemCount());
             }
         }
+
+        return true;
+    }
+
+
+    private boolean checkIfResolutionUnity(List<Clip> clipList) {
+        int firstClipWidth;
+        int firstClipHeight;
+        int startIndex;
+        if (getClipSet() == null || getClipSet().getCount() == 0) {
+            firstClipWidth = clipList.get(0).streams[0].video_width;
+            firstClipHeight = clipList.get(0).streams[0].video_height;
+            startIndex = 1;
+        } else {
+            firstClipWidth = getClipSet().getClip(0).streams[0].video_width;
+            firstClipHeight = getClipSet().getClip(0).streams[0].video_height;
+            startIndex = 0;
+        }
+
+        for (int i = startIndex; i < clipList.size(); i++) {
+
+            Clip clip = clipList.get(i);
+            Logger.t(TAG).d("orign width: " + firstClipWidth + " add Clip: " + clip.streams[0].video_width);
+            if (clip.streams[0].video_width != firstClipWidth || clip.streams[0].video_height != firstClipHeight) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public int getSelectedPosition() {
