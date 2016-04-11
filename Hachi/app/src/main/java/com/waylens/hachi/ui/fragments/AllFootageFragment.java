@@ -53,6 +53,8 @@ public class AllFootageFragment extends BaseFragment {
 
     private ClipSetManager mClipSetManager = ClipSetManager.getManager();
 
+    private static final int DEFAULT_BOOKMARK_LENGTH = 30000;
+
 
     private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_ALLFOOTAGE;
 
@@ -239,8 +241,15 @@ public class AllFootageFragment extends BaseFragment {
         //Clip clip = mClipSetProgressBar.getSelectClip;
 
         ClipPos clipPos = mClipSetProgressBar.getCurrentClipPos();
-        long startTimeMs = clipPos.getClipTimeMs() - 15000;
-        long endTimeMs = clipPos.getClipTimeMs() + 15000;
+        ClipSetPos clipSetPos = mClipSetProgressBar.getCurrentClipSetPos();
+        Clip clip = getClipSet().getClip(clipSetPos.getClipIndex());
+
+        long startTimeMs = clipPos.getClipTimeMs() - DEFAULT_BOOKMARK_LENGTH / 2;
+        long endTimeMs = clipPos.getClipTimeMs() + DEFAULT_BOOKMARK_LENGTH / 2;
+
+
+        startTimeMs = Math.max(startTimeMs, clip.getStartTimeMs());
+        endTimeMs = Math.min(endTimeMs, clip.getEndTimeMs());
 
         AddBookmarkRequest request = new AddBookmarkRequest(clipPos.cid, startTimeMs, endTimeMs, new
             VdbResponse.Listener<Integer>() {
