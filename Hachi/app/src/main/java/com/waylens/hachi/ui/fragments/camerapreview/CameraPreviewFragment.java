@@ -690,7 +690,10 @@ public class CameraPreviewFragment extends BaseFragment {
                 break;
             case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode()) {
-                    mTvCameraRecStatus.setText(R.string.continuous_recording);
+                    String recStatusText = mTvCameraRecStatus.getText().toString();
+                    if (recStatusText == null || recStatusText.isEmpty()) {
+                        mTvCameraRecStatus.setText(R.string.continuous_recording);
+                    }
                     if (mBookmarkCount != -1) {
                         updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
                             mBookmarkCount + mBookmarkClickCount,
@@ -838,11 +841,10 @@ public class CameraPreviewFragment extends BaseFragment {
         public void run() {
             if (mVdtCamera != null) {
                 mVdtCamera.getRecordTime();
+                updateCameraState();
             }
         }
     }
 
-    private void updateGaugeView(RawDataItem item) {
 
-    }
 }
