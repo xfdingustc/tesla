@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
+import com.waylens.hachi.ui.activities.SmartRemixActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
 
@@ -88,6 +89,18 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     public void setupToolbar() {
         super.setupToolbar();
         mToolbar.getMenu().clear();
+        mToolbar.inflateMenu(R.menu.menu_smart_remix);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.smart_remix:
+                        SmartRemixActivity.launch(getActivity());
+                        break;
+                }
+                return true;
+            }
+        });
         mVideoSpinner.setVisibility(View.VISIBLE);
     }
 
