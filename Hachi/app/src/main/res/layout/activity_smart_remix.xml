@@ -13,4 +13,11 @@
         android:layout_gravity="center"
         android:text="@string/create_smart_remix"/>
 
+    <ProgressBar
+        android:id="@+id/rawdata"
+        style="?android:progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"/>
+
 </LinearLayout>

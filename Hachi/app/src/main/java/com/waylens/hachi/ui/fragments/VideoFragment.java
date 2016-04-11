@@ -95,7 +95,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.smart_remix:
-                        SmartRemixActivity.launch(getActivity());
+                        SmartRemixActivity.launch(getActivity(), mVdtCamera);
                         break;
                 }
                 return true;
