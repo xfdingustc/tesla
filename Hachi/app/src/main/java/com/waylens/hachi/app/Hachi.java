@@ -9,6 +9,7 @@ import com.bugtags.library.BugtagsOptions;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.waylens.hachi.dao.RawDataItemDao;
 import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -77,6 +78,8 @@ public class Hachi extends Application {
 
         SessionManager.initialize(this);
         SessionManager.getInstance().reloadLoginInfo();
+
+        RawDataItemDao.initialize(this);
 
         initCameraManager();
 

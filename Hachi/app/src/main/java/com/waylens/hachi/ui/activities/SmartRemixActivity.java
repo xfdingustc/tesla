@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.dao.RawDataItemDao;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
@@ -44,6 +45,8 @@ public class SmartRemixActivity extends BaseActivity {
     private static final String HOST_STRING = "hostString";
     private int mCurrentLoadingIndex;
 
+    private RawDataItemDao mRawDataItemDao;
+
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
 
     public static void launch(Activity activity, VdtCamera camera) {
@@ -77,6 +80,7 @@ public class SmartRemixActivity extends BaseActivity {
         super.init();
         mVdtCamera = getCameraFromIntent(getIntent().getExtras());
         mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera);
+        mRawDataItemDao = new RawDataItemDao("rawdata.db");
         initViews();
     }
 
@@ -190,6 +194,7 @@ public class SmartRemixActivity extends BaseActivity {
                 break;
             case RawDataItem.DATA_TYPE_ACC:
                 rawDataBlockAll.accDataBlock = block;
+//                saveAccRawData(block);
                 loadRawData(RawDataItem.DATA_TYPE_GPS);
                 break;
             case RawDataItem.DATA_TYPE_GPS:
@@ -206,6 +211,13 @@ public class SmartRemixActivity extends BaseActivity {
 
 
                 break;
+        }
+    }
+
+    private void saveAccRawData(RawDataBlock block) {
+        List<RawDataItem> items = block.getItemList();
+        for (RawDataItem item : items) {
+            mRawDataItemDao.addAccRawDataItem(item);
         }
     }
 

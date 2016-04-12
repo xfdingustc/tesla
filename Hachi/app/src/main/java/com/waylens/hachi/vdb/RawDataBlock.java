@@ -45,6 +45,10 @@ public class RawDataBlock {
         this.header = header;
     }
 
+    public List<RawDataItem> getItemList() {
+        return mRawDataItems;
+    }
+
     public RawDataItem getRawDataItem(int index) {
         return mRawDataItems.get(index);
     }
