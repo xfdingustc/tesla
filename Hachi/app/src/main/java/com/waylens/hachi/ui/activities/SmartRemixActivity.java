@@ -20,8 +20,8 @@ import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -190,9 +190,9 @@ public class SmartRemixActivity extends BaseActivity {
         switch (dataType) {
             case RawDataItem.DATA_TYPE_OBD:
                 rawDataBlockAll.obdDataBlock = block;
-                loadRawData(RawDataItem.DATA_TYPE_ACC);
+                loadRawData(RawDataItem.DATA_TYPE_IIO);
                 break;
-            case RawDataItem.DATA_TYPE_ACC:
+            case RawDataItem.DATA_TYPE_IIO:
                 rawDataBlockAll.accDataBlock = block;
 //                saveAccRawData(block);
                 loadRawData(RawDataItem.DATA_TYPE_GPS);

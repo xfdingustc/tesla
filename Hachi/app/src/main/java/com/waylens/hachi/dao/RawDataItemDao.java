@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 
 /**
@@ -66,13 +66,13 @@ public class RawDataItemDao {
             "euler_heading, euler_roll, euler_pitch, " +
             "quaternion_w, quaternion_x, quaternion_y, quaternion_z) " +
             "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
-        Object[] params = {item.getPtsMs(), accData.accX, accData.accY, accData.accZ,
-            accData.gyro_x, accData.gyro_y, accData.gyro_z,
-            accData.magn_x, accData.magn_y, accData.magn_z,
-            accData.euler_heading, accData.euler_roll, accData.euler_pitch,
-            accData.quaternion_w, accData.quaternion_x, accData.quaternion_y, accData.quaternion_z};
-        exeSqlCommand(command, params);
+//        RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
+//        Object[] params = {item.getPtsMs(), accData.accX, accData.accY, accData.accZ,
+//            accData.gyro_x, accData.gyro_y, accData.gyro_z,
+//            accData.magn_x, accData.magn_y, accData.magn_z,
+//            accData.euler_heading, accData.euler_roll, accData.euler_pitch,
+//            accData.quaternion_w, accData.quaternion_x, accData.quaternion_y, accData.quaternion_z};
+        //exeSqlCommand(command, params);
     }
 
     private void exeSqlCommand(String command) {

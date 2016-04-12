@@ -17,15 +17,11 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
-import com.waylens.hachi.vdb.RawDataItem;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Play Moment video
@@ -285,7 +281,7 @@ public class MomentPlayFragment extends VideoPlayFragment {
 //                               int eulerHeading, int eulerRoll, int eulerPitch,
 //                               int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
 //                               int pressure) {
-//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_ACC, captureTime);
+//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_IIO, captureTime);
 //            RawDataItem.AccData data = new RawDataItem.AccData();
 //
 //            data.accX = accX;

@@ -19,8 +19,8 @@ import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.Playlist;
-import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.vdb.Vdb;
 import com.waylens.hachi.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
@@ -64,7 +64,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.mClip = clip;
         fragment.mPlayMode = MODE_SINGLE_CLIP;
         fragment.mTypedState.put(RawDataItem.DATA_TYPE_OBD, RAW_DATA_STATE_UNKNOWN);
-        fragment.mTypedState.put(RawDataItem.DATA_TYPE_ACC, RAW_DATA_STATE_UNKNOWN);
+        fragment.mTypedState.put(RawDataItem.DATA_TYPE_IIO, RAW_DATA_STATE_UNKNOWN);
         fragment.mTypedState.put(RawDataItem.DATA_TYPE_GPS, RAW_DATA_STATE_UNKNOWN);
         fragment.mDragListener = listener;
         return fragment;
@@ -80,7 +80,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
         fragment.mOverlayShouldDisplay = false;
 //        fragment.mSharableClip = clip;
 //        fragment.mTypedState.put(RawDataItem.DATA_TYPE_OBD, RAW_DATA_STATE_UNKNOWN);
-//        fragment.mTypedState.put(RawDataItem.DATA_TYPE_ACC, RAW_DATA_STATE_UNKNOWN);
+//        fragment.mTypedState.put(RawDataItem.DATA_TYPE_IIO, RAW_DATA_STATE_UNKNOWN);
 //        fragment.mTypedState.put(RawDataItem.DATA_TYPE_GPS, RAW_DATA_STATE_UNKNOWN);
         fragment.mDragListener = listener;
         return fragment;
@@ -279,7 +279,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             return true;
         }
         return mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_READY
-            && mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_READY
+            && mTypedState.get(RawDataItem.DATA_TYPE_IIO) == RAW_DATA_STATE_READY
             && mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_READY;
     }
 
@@ -289,8 +289,8 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             loadRawData(RawDataItem.DATA_TYPE_OBD);
         }
 
-        if (mTypedState.get(RawDataItem.DATA_TYPE_ACC) != RAW_DATA_STATE_READY) {
-            loadRawData(RawDataItem.DATA_TYPE_ACC);
+        if (mTypedState.get(RawDataItem.DATA_TYPE_IIO) != RAW_DATA_STATE_READY) {
+            loadRawData(RawDataItem.DATA_TYPE_IIO);
         }
         if (mTypedState.get(RawDataItem.DATA_TYPE_GPS) != RAW_DATA_STATE_READY) {
             loadRawData(RawDataItem.DATA_TYPE_GPS);
@@ -332,7 +332,7 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
 
     void onLoadRawDataFinished() {
         if (mTypedState.get(RawDataItem.DATA_TYPE_OBD) == RAW_DATA_STATE_UNKNOWN
-            || mTypedState.get(RawDataItem.DATA_TYPE_ACC) == RAW_DATA_STATE_UNKNOWN
+            || mTypedState.get(RawDataItem.DATA_TYPE_IIO) == RAW_DATA_STATE_UNKNOWN
             || mTypedState.get(RawDataItem.DATA_TYPE_GPS) == RAW_DATA_STATE_UNKNOWN) {
             return;
         }

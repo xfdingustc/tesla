@@ -12,8 +12,8 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import java.util.ArrayList;
 
@@ -124,7 +124,7 @@ public class RawDataFactory {
             loadRawData(RawDataItem.DATA_TYPE_GPS);
         }
         if ((options & RawDataBlock.F_RAW_DATA_ACC) == RawDataBlock.F_RAW_DATA_ACC) {
-            loadRawData(RawDataItem.DATA_TYPE_ACC);
+            loadRawData(RawDataItem.DATA_TYPE_IIO);
         }
         if ((options & RawDataBlock.F_RAW_DATA_ODB) == RawDataBlock.F_RAW_DATA_ODB) {
             loadRawData(RawDataItem.DATA_TYPE_OBD);

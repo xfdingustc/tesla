@@ -2,9 +2,6 @@ package com.waylens.hachi.ui.fragments.clipplay2;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
-import android.view.View;
 import android.webkit.WebView;
 
 import com.orhanobut.logger.Logger;
@@ -17,8 +14,11 @@ import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
-import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.GpsData;
+import com.waylens.hachi.vdb.rawdata.IioData;
+import com.waylens.hachi.vdb.rawdata.ObdData;
+import com.waylens.hachi.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -107,9 +107,9 @@ public class RawDataLoader {
         switch (dataType) {
             case RawDataItem.DATA_TYPE_OBD:
                 rawDataBlockAll.obdDataBlock = block;
-                loadRawData(RawDataItem.DATA_TYPE_ACC);
+                loadRawData(RawDataItem.DATA_TYPE_IIO);
                 break;
-            case RawDataItem.DATA_TYPE_ACC:
+            case RawDataItem.DATA_TYPE_IIO:
                 rawDataBlockAll.accDataBlock = block;
                 loadRawData(RawDataItem.DATA_TYPE_GPS);
                 break;
@@ -166,20 +166,20 @@ public class RawDataLoader {
         String data = null;
         try {
             switch (item.getType()) {
-                case RawDataItem.DATA_TYPE_ACC:
-                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
-                    state.put("roll", -accData.euler_roll);
-                    state.put("pitch", -accData.euler_pitch);
-                    state.put("gforceBA", accData.accX);
-                    state.put("gforceLR", accData.accZ);
+                case RawDataItem.DATA_TYPE_IIO:
+                    IioData iioData = (IioData) item.data;
+                    state.put("roll", -iioData.euler_roll);
+                    state.put("pitch", -iioData.euler_pitch);
+                    state.put("gforceBA", iioData.accX);
+                    state.put("gforceLR", iioData.accZ);
                     break;
                 case RawDataItem.DATA_TYPE_GPS:
-                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                    GpsData gpsData = (GpsData) item.data;
                     state.put("lng", gpsData.coord.lng);
                     state.put("lat", gpsData.coord.lat);
                     break;
                 case RawDataItem.DATA_TYPE_OBD:
-                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+                    ObdData obdData = (ObdData) item.data;
                     state.put("rpm", obdData.rpm);
                     state.put("mph", obdData.speed);
                     break;

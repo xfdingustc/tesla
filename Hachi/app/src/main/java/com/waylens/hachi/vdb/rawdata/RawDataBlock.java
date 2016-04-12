@@ -1,4 +1,6 @@
-package com.waylens.hachi.vdb;
+package com.waylens.hachi.vdb.rawdata;
+
+import com.waylens.hachi.vdb.Clip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 public class RawDataBlock {
 
     public static final byte F_RAW_DATA_GPS = (1 << RawDataItem.DATA_TYPE_GPS);
-    public static final byte F_RAW_DATA_ACC = (1 << RawDataItem.DATA_TYPE_ACC);
+    public static final byte F_RAW_DATA_ACC = (1 << RawDataItem.DATA_TYPE_IIO);
     public static final byte F_RAW_DATA_ODB = (1 << RawDataItem.DATA_TYPE_OBD);
 
     public static class RawDataBlockHeader {

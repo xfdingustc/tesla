@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.views;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -13,7 +12,10 @@ import android.widget.FrameLayout;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.fragments.clipplay2.GaugeInfoItem;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.GpsData;
+import com.waylens.hachi.vdb.rawdata.IioData;
+import com.waylens.hachi.vdb.rawdata.ObdData;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
@@ -107,20 +109,20 @@ public class GaugeView extends FrameLayout {
         String data = null;
         try {
             switch (item.getType()) {
-                case RawDataItem.DATA_TYPE_ACC:
-                    RawDataItem.AccData accData = (RawDataItem.AccData) item.data;
-                    state.put("roll", -accData.euler_roll);
-                    state.put("pitch", -accData.euler_pitch);
-                    state.put("gforceBA", accData.accX);
-                    state.put("gforceLR", accData.accZ);
+                case RawDataItem.DATA_TYPE_IIO:
+                    IioData iioData = (IioData) item.data;
+                    state.put("roll", -iioData.euler_roll);
+                    state.put("pitch", -iioData.euler_pitch);
+                    state.put("gforceBA", iioData.accX);
+                    state.put("gforceLR", iioData.accZ);
                     break;
                 case RawDataItem.DATA_TYPE_GPS:
-                    RawDataItem.GpsData gpsData = (RawDataItem.GpsData) item.data;
+                    GpsData gpsData = (GpsData) item.data;
                     state.put("lng", gpsData.coord.lng);
                     state.put("lat", gpsData.coord.lat);
                     break;
                 case RawDataItem.DATA_TYPE_OBD:
-                    RawDataItem.OBDData obdData = (RawDataItem.OBDData) item.data;
+                    ObdData obdData = (ObdData) item.data;
                     state.put("rpm", obdData.rpm);
                     state.put("mph", obdData.speed);
                     break;

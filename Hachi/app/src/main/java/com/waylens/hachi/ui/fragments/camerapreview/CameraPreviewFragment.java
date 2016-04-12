@@ -47,8 +47,8 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

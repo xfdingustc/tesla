@@ -4,7 +4,10 @@ import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbMessageHandler;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.GpsData;
+import com.waylens.hachi.vdb.rawdata.IioData;
+import com.waylens.hachi.vdb.rawdata.ObdData;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 
 /**
@@ -26,13 +29,13 @@ public class RawDataMsgHandler extends VdbMessageHandler<RawDataItem> {
         RawDataItem rawDataItem = new RawDataItem(dataType, 0);
         switch (dataType) {
             case RawDataItem.DATA_TYPE_OBD:
-                rawDataItem.data = RawDataItem.OBDData.fromBinary(data);
+                rawDataItem.data = ObdData.fromBinary(data);
                 break;
-            case RawDataItem.DATA_TYPE_ACC:
-                rawDataItem.data = RawDataItem.AccData.fromBinary(data);
+            case RawDataItem.DATA_TYPE_IIO:
+                rawDataItem.data = IioData.fromBinary(data);
                 break;
             case RawDataItem.DATA_TYPE_GPS:
-                rawDataItem.data = RawDataItem.GpsData.fromBinary(data);
+                rawDataItem.data = GpsData.fromBinary(data);
                 break;
             default:
                 return null;

@@ -14,7 +14,7 @@ import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipFragment;
-import com.waylens.hachi.vdb.RawDataBlock;
+import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 
 
 public class DownloadIntentService extends IntentService {

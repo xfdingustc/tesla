@@ -8,8 +8,11 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.RawDataBlock;
-import com.waylens.hachi.vdb.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.GpsData;
+import com.waylens.hachi.vdb.rawdata.IioData;
+import com.waylens.hachi.vdb.rawdata.ObdData;
+import com.waylens.hachi.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 /**
  * Created by Xiaofei on 2015/9/11.
@@ -76,11 +79,11 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
 
             byte[] data = response.readByteArray(block.dataSize[i]);
             if (header.mDataType == RawDataItem.DATA_TYPE_OBD) {
-                item.data = RawDataItem.OBDData.fromBinary(data);
-            } else if (header.mDataType == RawDataItem.DATA_TYPE_ACC) {
-                item.data = RawDataItem.AccData.fromBinary(data);
+                item.data = ObdData.fromBinary(data);
+            } else if (header.mDataType == RawDataItem.DATA_TYPE_IIO) {
+                item.data = IioData.fromBinary(data);
             } else if (header.mDataType == RawDataItem.DATA_TYPE_GPS) {
-                item.data = RawDataItem.GpsData.fromBinary(data);
+                item.data = GpsData.fromBinary(data);
             }
 
             block.addRawDataItem(item);
