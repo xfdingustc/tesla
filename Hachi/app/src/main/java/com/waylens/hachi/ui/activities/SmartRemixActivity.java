@@ -15,11 +15,15 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipSetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.rawdata.GpsData;
+import com.waylens.hachi.vdb.rawdata.IioData;
+import com.waylens.hachi.vdb.rawdata.ObdData;
+import com.waylens.hachi.vdb.rawdata.RawData;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
@@ -48,6 +52,7 @@ public class SmartRemixActivity extends BaseActivity {
     private RawDataItemDao mRawDataItemDao;
 
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
+    private List<List<RawData>> mRawDataList = new ArrayList<>();
 
     public static void launch(Activity activity, VdtCamera camera) {
         Intent intent = new Intent(activity, SmartRemixActivity.class);
@@ -66,7 +71,6 @@ public class SmartRemixActivity extends BaseActivity {
     public void onBtnSmartRemixClicked() {
         startLoadingRawData();
     }
-
 
 
     @Override
@@ -106,13 +110,14 @@ public class SmartRemixActivity extends BaseActivity {
     }
 
     private void doGetBookmarkClips() {
-        ClipSetRequest request = new ClipSetRequest(Clip.TYPE_MARKED, new VdbResponse.Listener<ClipSet>() {
-            @Override
-            public void onResponse(ClipSet response) {
-                mAllClipSet = response;
-                doGetBufferedClips();
-            }
-        }, new VdbResponse.ErrorListener() {
+        ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_MARKED, ClipSetExRequest.FLAG_CLIP_EXTRA,
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet response) {
+                    mAllClipSet = response;
+                    doGetBufferedClips();
+                }
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
@@ -122,18 +127,19 @@ public class SmartRemixActivity extends BaseActivity {
     }
 
     private void doGetBufferedClips() {
-        ClipSetRequest request = new ClipSetRequest(Clip.TYPE_BUFFERED, new VdbResponse.Listener<ClipSet>() {
-            @Override
-            public void onResponse(ClipSet response) {
-                for (int i = 0; i < response.getCount(); i++) {
-                    Clip clip = response.getClip(i);
-                    mAllClipSet.addClip(clip);
+        ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA,
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet response) {
+                    for (int i = 0; i < response.getCount(); i++) {
+                        Clip clip = response.getClip(i);
+                        mAllClipSet.addClip(clip);
+                    }
+
+                    doLoadRawData();
+
                 }
-
-                doLoadRawData();
-
-            }
-        }, new VdbResponse.ErrorListener() {
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
@@ -193,16 +199,20 @@ public class SmartRemixActivity extends BaseActivity {
                 loadRawData(RawDataItem.DATA_TYPE_IIO);
                 break;
             case RawDataItem.DATA_TYPE_IIO:
-                rawDataBlockAll.accDataBlock = block;
+                rawDataBlockAll.iioDataBlock = block;
 //                saveAccRawData(block);
                 loadRawData(RawDataItem.DATA_TYPE_GPS);
                 break;
             case RawDataItem.DATA_TYPE_GPS:
                 rawDataBlockAll.gpsDataBlock = block;
 
+                List<RawData> rawDataList = remixAllRawData(rawDataBlockAll);
+
+                mRawDataList.add(rawDataList);
+
                 if (++mCurrentLoadingIndex == mAllClipSet.getCount()) {
                     Logger.t(TAG).d("load finished!!!!!");
-
+                    analyseRawData();
 
                 } else {
                     loadRawData(RawDataItem.DATA_TYPE_OBD);
@@ -214,15 +224,99 @@ public class SmartRemixActivity extends BaseActivity {
         }
     }
 
-    private void saveAccRawData(RawDataBlock block) {
-        List<RawDataItem> items = block.getItemList();
-        for (RawDataItem item : items) {
-            mRawDataItemDao.addAccRawDataItem(item);
+    private List<ClipFragment> analyseRawData() {
+
+        List<ClipFragment> clipFragmentList = new ArrayList<>();
+
+
+//        for (List<RawData> rawDataList : mRawDataList) {
+        for (int i = 0; i < mRawDataList.size(); i++) {
+
+            boolean startFound = false;
+            List<RawData> rawDataList = mRawDataList.get(i);
+
+            Clip clip = mAllClipSet.getClip(i);
+            ClipFragment clipFragment = null;
+            for (RawData rawData : rawDataList) {
+
+                if (!startFound && ifMeetThreshold(rawData)) {
+//                    Logger.t(TAG).d("start Hit!!!!!! " + rawData.getObdData().speed + " pts: " + rawData.getPts());
+                    startFound = true;
+                    clipFragment = new ClipFragment(clip);
+                    clipFragment.setStartTime(rawData.getPts());
+//                    Logger.t(TAG).d("set start: " + clipFragment.toString());
+                }
+
+                if (startFound && !ifMeetThreshold(rawData)) {
+//                    Logger.t(TAG).d("end Hit!!!!!! "  );
+                    startFound = false;
+                    clipFragment.setEndTime(rawData.getPts());
+//                    Logger.t(TAG).d("Found one ClipFragment: " + clipFragment.toString());
+                    clipFragmentList.add(clipFragment);
+                }
+            }
+        }
+
+        Logger.t(TAG).d("Found clip Fragment: " + clipFragmentList.size());
+
+        return clipFragmentList;
+    }
+
+
+    private boolean ifMeetThreshold(RawData rawData) {
+        if (rawData.getObdData() != null && rawData.getObdData().speed >= 90) {
+            return true;
+        } else {
+            return false;
         }
     }
 
+    private List<RawData> remixAllRawData(RawDataBlockAll rawDataBlock) {
+        List<RawDataItem> iioItemList = rawDataBlock.iioDataBlock == null ? null : rawDataBlock.iioDataBlock.getItemList();
+        List<RawDataItem> gpsItemList = rawDataBlock.gpsDataBlock == null ? null : rawDataBlock.gpsDataBlock.getItemList();
+        List<RawDataItem> obdItemList = rawDataBlock.obdDataBlock == null ? null : rawDataBlock.obdDataBlock.getItemList();
+
+
+        List<RawData> rawDataList = new ArrayList<>();
+
+        int gpsItemIndex = 0;
+        int obdItemIndex = 0;
+
+//        Logger.t(TAG).d("iio item list size: " + iioItemList.size());
+
+        for (RawDataItem iioItem : iioItemList) {
+            RawData rawData = new RawData();
+            long iioPts = iioItem.getPtsMs();
+            rawData.setPts(iioPts);
+            rawData.setIioData((IioData) iioItem.data);
+
+            if (gpsItemList != null && gpsItemIndex < gpsItemList.size()) {
+                RawDataItem gpsItem = gpsItemList.get(gpsItemIndex);
+                if (gpsItem.getPtsMs() <= iioPts) {
+                    gpsItemIndex++;
+                    rawData.setGpsData((GpsData) gpsItem.data);
+                }
+            }
+
+            if (obdItemList != null && obdItemIndex < obdItemList.size()) {
+                RawDataItem obdItem = obdItemList.get(obdItemIndex);
+                if (obdItem.getPtsMs() <= iioPts) {
+                    obdItemIndex++;
+                    rawData.setObdData((ObdData) obdItem.data);
+                }
+            }
+
+            rawDataList.add(rawData);
+
+
+        }
+
+        return rawDataList;
+    }
+
+
     private class RawDataBlockAll {
-        private RawDataBlock accDataBlock = null;
+        private RawDataBlock iioDataBlock = null;
         private RawDataBlock gpsDataBlock = null;
         private RawDataBlock obdDataBlock = null;
     }

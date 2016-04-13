@@ -9,6 +9,17 @@ class ByteStream {
         this.mPos = 0;
     }
 
+    public int getLength() {
+        return mData.length;
+    }
+
+    public int readInt16() {
+        int result = (int) mData[mPos] & 0xFF;
+        result |= ((int) mData[mPos + 1] & 0xFF) << 8;
+        mPos += 2;
+        return result;
+    }
+
     public int readInt32() {
         int result = (int) mData[mPos] & 0xFF;
         result |= ((int) mData[mPos + 1] & 0xFF) << 8;

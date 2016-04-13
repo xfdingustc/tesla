@@ -4,9 +4,9 @@ package com.waylens.hachi.vdb;
  * Created by Xiaofei on 2015/8/27.
  */
 public class ClipFragment {
-    private final Clip mClip;
-    private final long mStartTimeMs;
-    private final long mEndTimeMs;
+    private Clip mClip;
+    private long mStartTimeMs;
+    private long mEndTimeMs;
 
     public ClipFragment(Clip clip) {
         this.mClip = clip;
@@ -34,5 +34,23 @@ public class ClipFragment {
 
     public long getEndTimeMs() {
         return mEndTimeMs;
+    }
+
+    public void setClip(Clip clip) {
+        mClip = clip;
+    }
+
+    public void setStartTime(long startTimeMs) {
+        mStartTimeMs = startTimeMs;
+    }
+
+    public void setEndTime(long endTimeMs) {
+        mEndTimeMs = endTimeMs;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Clip: " + mClip.toString() + " start time: " + mStartTimeMs + " end time: " + mEndTimeMs;
     }
 }

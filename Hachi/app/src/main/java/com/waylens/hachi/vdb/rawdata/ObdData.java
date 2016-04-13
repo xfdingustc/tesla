@@ -2,12 +2,15 @@ package com.waylens.hachi.vdb.rawdata;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.utils.Utils;
+
+import java.io.Serializable;
 
 /**
  * Created by Xiaofei on 2016/4/12.
  */
-public class ObdData {
+public class ObdData implements Serializable {
     public static final int OBD_VERSION_1 = 1;
     public static final int OBD_VERSION_2 = 2;
 
@@ -71,7 +74,7 @@ public class ObdData {
 
     public static ObdData fromBinary(byte[] data) {
         if (data == null) {
-            Log.e("OBDData", "Invalid OBD data.");
+            Logger.e("OBDData", "Invalid OBD data.");
             return null;
         }
 

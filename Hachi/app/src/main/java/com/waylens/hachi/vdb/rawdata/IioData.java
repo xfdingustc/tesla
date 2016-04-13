@@ -1,9 +1,11 @@
 package com.waylens.hachi.vdb.rawdata;
 
+import java.io.Serializable;
+
 /**
  * Created by Xiaofei on 2016/4/12.
  */
-public class IioData {
+public class IioData implements Serializable {
     public int accX;
     public int accY;
     public int accZ;
@@ -40,7 +42,6 @@ public class IioData {
     public int pressure;
 
     public static final int ACC_DATA_LENGTH_V0 = 12;
-    private int mPos;
 
     @Override
     public String toString() {
@@ -54,58 +55,44 @@ public class IioData {
         return accData;
     }
 
-    void parseData(byte[] data) {
-        mPos = 0;
+    private void parseData(byte[] data) {
+
         ByteStream stream = new ByteStream(data);
-        accX = readi32(data);
-        accY = readi32(data);
-        accZ = readi32(data);
+        accX = stream.readInt32();
+        accY = stream.readInt32();
+        accZ = stream.readInt32();
 
         if (data.length == ACC_DATA_LENGTH_V0) {
             return;
         }
 
-        version = readi16(data);
-        size = readi16(data);
+        version = stream.readInt16();
+        size = stream.readInt16();
         if (size != data.length) {
             version = 0;
             return;
         }
-        flags = readi32(data);
+        flags = stream.readInt32();
 
-        gyro_x = readi32(data);
-        gyro_y = readi32(data);
-        gyro_z = readi32(data);
+        gyro_x = stream.readInt32();
+        gyro_y = stream.readInt32();
+        gyro_z = stream.readInt32();
 
-        magn_x = readi32(data);
-        magn_y = readi32(data);
-        magn_z = readi32(data);
+        magn_x = stream.readInt32();
+        magn_y = stream.readInt32();
+        magn_z = stream.readInt32();
 
-        euler_heading = readi32(data);
-        euler_roll = readi32(data);
-        euler_pitch = readi32(data);
+        euler_heading = stream.readInt32();
+        euler_roll = stream.readInt32();
+        euler_pitch = stream.readInt32();
 
-        quaternion_w = readi32(data);
-        quaternion_x = readi32(data);
-        quaternion_y = readi32(data);
-        quaternion_z = readi32(data);
+        quaternion_w = stream.readInt32();
+        quaternion_x = stream.readInt32();
+        quaternion_y = stream.readInt32();
+        quaternion_z = stream.readInt32();
 
-        pressure = readi32(data);
+        pressure = stream.readInt32();
     }
 
-    int readi32(byte[] data) {
-        int result = (int) data[mPos] & 0xFF;
-        result |= ((int) data[mPos + 1] & 0xFF) << 8;
-        result |= ((int) data[mPos + 2] & 0xFF) << 16;
-        result |= ((int) data[mPos + 3] & 0xFF) << 24;
-        mPos += 4;
-        return result;
-    }
 
-    int readi16(byte[] data) {
-        int result = (int) data[mPos] & 0xFF;
-        result |= ((int) data[mPos + 1] & 0xFF) << 8;
-        mPos += 2;
-        return result;
-    }
 }

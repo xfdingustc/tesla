@@ -1,9 +1,11 @@
 package com.waylens.hachi.vdb.rawdata;
 
+import java.io.Serializable;
+
 /**
  * Created by Xiaofei on 2016/4/12.
  */
-public class GpsData {
+public class GpsData implements Serializable {
 
     public static final int GPS_F_LATLON = (1 << 0);
     public static final int GPS_F_ALTITUDE = (1 << 1);
@@ -11,7 +13,7 @@ public class GpsData {
     public static final int GPS_F_TIME = (1 << 3);
     public static final int GPS_F_TRACK = (1 << 4);
 
-    public static class Coord {
+    public static class Coord implements Serializable {
         public double lat;
         public double lng;
         public double lat_orig;

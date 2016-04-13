@@ -237,7 +237,7 @@ public class Clip implements Parcelable {
     }
 
     public String toString() {
-        return "Clip id: " + cid;
+        return "Clip id: " + cid.toString();
     }
 
     public long getStandardClipDate() {
