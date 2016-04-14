@@ -150,9 +150,9 @@ public class Clip implements Parcelable {
 
     public int gmtOffset;
 
-    private final long mStartTimeMs;
+    private long mStartTimeMs;
 
-    private final int mDurationMs;
+    private int mDurationMs;
 
     // clip size in bytes
     public long clipSize = -1;
@@ -208,6 +208,16 @@ public class Clip implements Parcelable {
 
     public int getDate() {
         return mClipDate;
+    }
+
+    public void setStartTime(long startTimeMs) {
+        mStartTimeMs = startTimeMs;
+        editInfo.selectedStartValue = Math.max(editInfo.selectedStartValue, mStartTimeMs);
+    }
+
+    public void setEndTime(long endTime) {
+        mDurationMs = (int)(endTime - mStartTimeMs);
+        editInfo.selectedEndValue = Math.min(editInfo.selectedEndValue, getEndTimeMs());
     }
 
     public long getStartTimeMs() {

@@ -212,7 +212,8 @@ public class SmartRemixActivity extends BaseActivity {
 
                 if (++mCurrentLoadingIndex == mAllClipSet.getCount()) {
                     Logger.t(TAG).d("load finished!!!!!");
-                    analyseRawData();
+
+                    launchEnhanceActivity(analyseRawData());
 
                 } else {
                     loadRawData(RawDataItem.DATA_TYPE_OBD);
@@ -222,6 +223,23 @@ public class SmartRemixActivity extends BaseActivity {
 
                 break;
         }
+    }
+
+    private void launchEnhanceActivity(List<ClipFragment> clipFragments) {
+        ArrayList<Clip> selectedList = new ArrayList<>();
+        int total = 0;
+        for (ClipFragment clipFragment : clipFragments) {
+            Clip clip = clipFragment.getClip();
+//            clip.editInfo.selectedStartValue = clipFragment.getStartTimeMs();
+//            clip.editInfo.selectedEndValue = clipFragment.getEndTimeMs();
+            clip.setStartTime(clipFragment.getStartTimeMs());
+            clip.setEndTime(clipFragment.getEndTimeMs());
+            selectedList.add(clip);
+            if (++total >= 5) {
+                break;
+            }
+        }
+        EnhancementActivity.launch(this, selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
     }
 
     private List<ClipFragment> analyseRawData() {
@@ -257,14 +275,16 @@ public class SmartRemixActivity extends BaseActivity {
             }
         }
 
-        Logger.t(TAG).d("Found clip Fragment: " + clipFragmentList.size());
-
+//        Logger.t(TAG).d("Found clip Fragment: " + clipFragmentList.size());
+        for (ClipFragment clipFragment : clipFragmentList) {
+            Logger.t(TAG).d("add one Clip Fragment: " + clipFragment.toString());
+        }
         return clipFragmentList;
     }
 
 
     private boolean ifMeetThreshold(RawData rawData) {
-        if (rawData.getObdData() != null && rawData.getObdData().speed >= 90) {
+        if (rawData.getGpsData() != null && rawData.getGpsData().speed >= 60) {
             return true;
         } else {
             return false;

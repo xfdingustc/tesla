@@ -8,6 +8,7 @@ import com.bugtags.library.Bugtags;
 import com.bugtags.library.BugtagsOptions;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
+import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.waylens.hachi.dao.RawDataItemDao;
 import com.waylens.hachi.hardware.CameraDiscovery;
@@ -72,6 +73,8 @@ public class Hachi extends Application {
     private void init() {
         mSharedContext = getApplicationContext();
 
+        LeakCanary.install(this);
+        
         initLogger();
 
         PreferenceUtils.initialize(this);
