@@ -201,6 +201,11 @@
     <string name="simulation">Simulation</string>
     <string name="real">Real</string>
     <string name="mode">Data Mode</string>
+    <string name="speed">Speed</string>
+    <string name="accel">Accel</string>
+    <string name="brake">Brake</string>
+    <string name="turn">Turn</string>
+    <string name="bump">Bump</string>
     <string name="gps_provider">Location Provider</string>
     <string name="gps_device">Device GPS</string>
     <string name="gps_camera">Camera GPS</string>
