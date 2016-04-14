@@ -33,6 +33,16 @@ public class ClipSet {
         this.mClipList = other.mClipList;
     }
 
+    @Override
+    public String toString() {
+        String ret = "";
+        for (Clip clip : mClipList) {
+            ret += clip.toString();
+            ret += "\n";
+        }
+
+        return ret;
+    }
 
     public void clear() {
         mClipList.clear();

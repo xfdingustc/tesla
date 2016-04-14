@@ -47,7 +47,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
     @Override
     protected VdbResponse<RawDataBlock> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
-            Logger.t(TAG).d("response: " + response.getRetCode());
+//            Logger.t(TAG).d("response: " + response.getRetCode());
             return null;
         }
 

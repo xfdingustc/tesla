@@ -191,7 +191,7 @@ public class SmartRemixActivity extends BaseActivity {
     private void onLoadRawDataFinished(int dataType, RawDataBlock block) {
         RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(mCurrentLoadingIndex);
 
-        Logger.t(TAG).d("Load finished type: " + dataType + " index: " + mCurrentLoadingIndex);
+//        Logger.t(TAG).d("Load finished type: " + dataType + " index: " + mCurrentLoadingIndex);
 
         switch (dataType) {
             case RawDataItem.DATA_TYPE_OBD:
@@ -229,9 +229,10 @@ public class SmartRemixActivity extends BaseActivity {
         ArrayList<Clip> selectedList = new ArrayList<>();
         int total = 0;
         for (ClipFragment clipFragment : clipFragments) {
-            Clip clip = clipFragment.getClip();
+            Clip clip = new Clip(clipFragment.getClip());
 //            clip.editInfo.selectedStartValue = clipFragment.getStartTimeMs();
 //            clip.editInfo.selectedEndValue = clipFragment.getEndTimeMs();
+
             clip.setStartTime(clipFragment.getStartTimeMs());
             clip.setEndTime(clipFragment.getEndTimeMs());
             selectedList.add(clip);
@@ -247,7 +248,7 @@ public class SmartRemixActivity extends BaseActivity {
         List<ClipFragment> clipFragmentList = new ArrayList<>();
 
 
-//        for (List<RawData> rawDataList : mRawDataList) {
+
         for (int i = 0; i < mRawDataList.size(); i++) {
 
             boolean startFound = false;
@@ -277,7 +278,7 @@ public class SmartRemixActivity extends BaseActivity {
 
 //        Logger.t(TAG).d("Found clip Fragment: " + clipFragmentList.size());
         for (ClipFragment clipFragment : clipFragmentList) {
-            Logger.t(TAG).d("add one Clip Fragment: " + clipFragment.toString());
+//            Logger.t(TAG).d("add one Clip Fragment: " + clipFragment.toString());
         }
         return clipFragmentList;
     }

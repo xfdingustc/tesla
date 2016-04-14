@@ -162,6 +162,10 @@ public class Clip implements Parcelable {
 
     public EditInfo editInfo;
 
+    public Clip(Clip clip) {
+        this(clip.cid.type, clip.cid.subType, clip.cid.extra, clip.mClipDate, clip.mStartTimeMs, clip.mDurationMs);
+    }
+
 
     public Clip(int type, int subType, String extra, int clipDate, long startTimeMs, int duration) {
         this(type, subType, extra, 2, clipDate, startTimeMs, duration);
@@ -247,7 +251,7 @@ public class Clip implements Parcelable {
     }
 
     public String toString() {
-        return "Clip id: " + cid.toString();
+        return "Clip id: " + cid.toString() + " start time: " + mStartTimeMs + " end time: " + getEndTimeMs();
     }
 
     public long getStandardClipDate() {

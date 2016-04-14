@@ -145,6 +145,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }
 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_BOOKMARK, clipSet);
+
+        Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
+
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
         doBuildPlaylist();
@@ -160,6 +163,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 //                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
                 ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
 //                mClipPlayFragment.notifyClipSetChanged();
+                Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
                 embedVideoPlayFragment();
             }
         });

@@ -74,7 +74,7 @@ public class Hachi extends Application {
         mSharedContext = getApplicationContext();
 
         LeakCanary.install(this);
-        
+
         initLogger();
 
         PreferenceUtils.initialize(this);
