@@ -46,23 +46,23 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.addNewCamera)
     public void onAddNewCameraClicked() {
-        MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity())
-            .items(R.array.setup_items)
-            .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
-                @Override
-                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                    Logger.t(TAG).d("which: " + which + " text: " + text);
-                    switch (which) {
-                        case 0:
-                            SmartConfigActivity.launch(getActivity());
-                            break;
-                        case 1:
-                            MenualSetupActivity.launch(getActivity());
-                            break;
-                    }
-                    return true;
-                }
-            }).show();
-//        MenualSetupActivity.launch(getActivity());
+//        MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity())
+//            .items(R.array.setup_items)
+//            .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+//                @Override
+//                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+//                    Logger.t(TAG).d("which: " + which + " text: " + text);
+//                    switch (which) {
+//                        case 0:
+//                            SmartConfigActivity.launch(getActivity());
+//                            break;
+//                        case 1:
+//                            MenualSetupActivity.launch(getActivity());
+//                            break;
+//                    }
+//                    return true;
+//                }
+//            }).show();
+        MenualSetupActivity.launch(getActivity());
     }
 }

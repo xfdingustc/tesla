@@ -94,14 +94,16 @@ public class SmartRemixActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.smart_remix);
-        mToolbar.setNavigationIcon(R.drawable.navbar_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        if (mToolbar != null) {
+            mToolbar.setTitle(R.string.smart_remix);
+            mToolbar.setNavigationIcon(R.drawable.navbar_back);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
         super.setupToolbar();
     }
 
