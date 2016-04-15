@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include layout="@layout/toolbar_default"/>
+    <include layout="@layout/toolbar_default" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,10 +16,10 @@
             android:id="@+id/iconSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_search_speed"
-            android:layout_margin="16dp"
             android:layout_gravity="center_vertical"
-            android:background="@android:color/transparent"/>
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_speed" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,12 +35,12 @@
                 <TextView
                     android:layout_width="56dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
                     android:text="@string/speed"
                     android:textColor="?attr/appTextColorPrimary"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
 
                 <com.appyvet.rangebar.RangeBar
@@ -48,13 +48,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
                     custom:connectingLineColor="@color/app_text_color_primary"
-                    custom:selectorColor="@color/app_text_color_primary"
-                    custom:tickColor="@color/app_text_color_primary"
                     custom:pinColor="@color/app_text_color_primary"
                     custom:rangeBarColor="@color/app_text_color_primary"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"/>
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary"
+                    custom:tickEnd="120"
+                    custom:tickInterval="10"
+                    custom:tickStart="0" />
 
             </LinearLayout>
 
@@ -67,7 +70,6 @@
 
 
     </LinearLayout>
-
 
 
     <LinearLayout
@@ -79,10 +81,10 @@
             android:id="@+id/iconAccel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_search_accel"
-            android:layout_margin="16dp"
             android:layout_gravity="center_vertical"
-            android:background="@android:color/transparent"/>
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_accel" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -98,12 +100,12 @@
                 <TextView
                     android:layout_width="56dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
                     android:text="@string/accel"
                     android:textColor="?attr/appTextColorPrimary"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
 
                 <com.appyvet.rangebar.RangeBar
@@ -111,13 +113,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
                     custom:connectingLineColor="@color/app_text_color_primary"
-                    custom:selectorColor="@color/app_text_color_primary"
-                    custom:tickColor="@color/app_text_color_primary"
                     custom:pinColor="@color/app_text_color_primary"
                     custom:rangeBarColor="@color/app_text_color_primary"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"/>
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
 
             </LinearLayout>
 
@@ -132,7 +134,6 @@
     </LinearLayout>
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -142,10 +143,10 @@
             android:id="@+id/iconBrake"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_search_brake"
-            android:layout_margin="16dp"
             android:layout_gravity="center_vertical"
-            android:background="@android:color/transparent"/>
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_brake" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -161,12 +162,12 @@
                 <TextView
                     android:layout_width="56dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
                     android:text="@string/brake"
                     android:textColor="?attr/appTextColorPrimary"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
 
                 <com.appyvet.rangebar.RangeBar
@@ -174,13 +175,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
                     custom:connectingLineColor="@color/app_text_color_primary"
-                    custom:selectorColor="@color/app_text_color_primary"
-                    custom:tickColor="@color/app_text_color_primary"
                     custom:pinColor="@color/app_text_color_primary"
                     custom:rangeBarColor="@color/app_text_color_primary"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"/>
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
 
             </LinearLayout>
 
@@ -203,10 +204,10 @@
             android:id="@+id/iconTurn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_search_turn"
-            android:layout_margin="16dp"
             android:layout_gravity="center_vertical"
-            android:background="@android:color/transparent"/>
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_turn" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -222,12 +223,12 @@
                 <TextView
                     android:layout_width="56dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
                     android:text="@string/turn"
                     android:textColor="?attr/appTextColorPrimary"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
 
                 <com.appyvet.rangebar.RangeBar
@@ -235,13 +236,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
                     custom:connectingLineColor="@color/app_text_color_primary"
-                    custom:selectorColor="@color/app_text_color_primary"
-                    custom:tickColor="@color/app_text_color_primary"
                     custom:pinColor="@color/app_text_color_primary"
                     custom:rangeBarColor="@color/app_text_color_primary"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"/>
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
 
             </LinearLayout>
 
@@ -265,10 +266,10 @@
             android:id="@+id/iconBump"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_search_bump"
-            android:layout_margin="16dp"
             android:layout_gravity="center_vertical"
-            android:background="@android:color/transparent"/>
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_bump" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -284,12 +285,12 @@
                 <TextView
                     android:layout_width="56dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
                     android:text="@string/bump"
                     android:textColor="?attr/appTextColorPrimary"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
 
                 <com.appyvet.rangebar.RangeBar
@@ -297,13 +298,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
                     custom:connectingLineColor="@color/app_text_color_primary"
-                    custom:selectorColor="@color/app_text_color_primary"
-                    custom:tickColor="@color/app_text_color_primary"
                     custom:pinColor="@color/app_text_color_primary"
                     custom:rangeBarColor="@color/app_text_color_primary"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"/>
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
 
             </LinearLayout>
 
@@ -323,15 +324,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="32dp"
-        android:text="@string/create_smart_remix"
         android:background="@color/style_color_accent"
-        />
+        android:text="@string/create_smart_remix" />
 
     <ProgressBar
         android:id="@+id/rawdata"
         style="?android:progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="32dp"/>
+        android:layout_margin="32dp" />
 
 </LinearLayout>

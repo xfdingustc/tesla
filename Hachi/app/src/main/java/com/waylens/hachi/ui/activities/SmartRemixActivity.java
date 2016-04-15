@@ -357,11 +357,18 @@ public class SmartRemixActivity extends BaseActivity {
 
 
     private boolean ifMeetThreshold(RawData rawData) {
-        if (rawData.getGpsData() != null && rawData.getGpsData().speed >= 60) {
-            return true;
-        } else {
+        // check speed:
+        if (mRangeBarSpeed.isEnabled()) {
+            if (rawData.getGpsData() != null ) {
+                Logger.t(TAG).d("mRangeBarSpeed: left: " + mRangeBarSpeed.getLeft() + " ~ " + mRangeBarSpeed.getRight());
+                if (mRangeBarSpeed.getLeft() <= rawData.getGpsData().speed && rawData.getGpsData().speed <= mRangeBarSpeed.getRight())
+                return true;
+            }
+
             return false;
         }
+
+        return false;
     }
 
     private List<RawData> remixAllRawData(RawDataBlockAll rawDataBlock) {
