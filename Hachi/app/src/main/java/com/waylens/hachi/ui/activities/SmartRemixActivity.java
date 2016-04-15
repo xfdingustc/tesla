@@ -1,9 +1,14 @@
 package com.waylens.hachi.ui.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -18,6 +23,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.ui.fragments.ScanQrCodeFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipSet;
@@ -42,6 +48,9 @@ public class SmartRemixActivity extends BaseActivity {
     private static final String IS_PC_SERVER = "isPcServer";
     private static final String SSID = "ssid";
     private static final String HOST_STRING = "hostString";
+
+    private static final int PERMISSION_REQUEST_STORAGE = 0;
+
     @Bind(R.id.rawdata)
     ProgressBar mLoadingProgressBar;
     @Bind(R.id.iconSpeed)
@@ -118,7 +127,14 @@ public class SmartRemixActivity extends BaseActivity {
 
     @OnClick(R.id.btnCreateRemix)
     public void onBtnSmartRemixClicked() {
-        startLoadingRawData();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Logger.t(TAG).d("storage permission not granted");
+            startLoadingRawData();
+        } else {
+            Logger.t(TAG).d("storage permission is already granted");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
+        }
+
     }
 
 
@@ -126,6 +142,17 @@ public class SmartRemixActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startLoadingRawData();
+                }
+                break;
+        }
     }
 
     @Override
