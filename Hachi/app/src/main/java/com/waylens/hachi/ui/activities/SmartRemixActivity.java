@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import com.appyvet.rangebar.RangeBar;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -42,11 +44,30 @@ public class SmartRemixActivity extends BaseActivity {
     private static final String HOST_STRING = "hostString";
     @Bind(R.id.rawdata)
     ProgressBar mLoadingProgressBar;
+    @Bind(R.id.iconSpeed)
+    ImageButton mIconSpeed;
+    @Bind(R.id.iconAccel)
+    ImageButton mIconAccel;
+    @Bind(R.id.iconBrake)
+    ImageButton mIconBrake;
+    @Bind(R.id.iconTurn)
+    ImageButton mIconTurn;
+    @Bind(R.id.iconBump)
+    ImageButton mIconBump;
+    @Bind(R.id.rangeBarSpeed)
+    RangeBar mRangeBarSpeed;
+    @Bind(R.id.rangeBarAccel)
+    RangeBar mRangeBarAccel;
+    @Bind(R.id.rangeBarBrake)
+    RangeBar mRangeBarBrake;
+    @Bind(R.id.rangeBarTurn)
+    RangeBar mRangeBarTurn;
+    @Bind(R.id.rangeBarBump)
+    RangeBar mRangeBarBump;
     private ClipSet mAllClipSet;
     private VdtCamera mVdtCamera;
     private VdbRequestQueue mVdbRequestQueue;
     private int mCurrentLoadingIndex;
-
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
     private List<List<RawData>> mRawDataList = new ArrayList<>();
 
@@ -58,6 +79,41 @@ public class SmartRemixActivity extends BaseActivity {
         bundle.putString(HOST_STRING, camera.getHostString());
         intent.putExtras(bundle);
         activity.startActivity(intent);
+    }
+
+    @OnClick(R.id.iconSpeed)
+    public void onIconSpeedClicked() {
+        boolean isIconSpeedSelected = !mIconSpeed.isSelected();
+        mIconSpeed.setSelected(isIconSpeedSelected);
+        mRangeBarSpeed.setEnabled(isIconSpeedSelected);
+    }
+
+    @OnClick(R.id.iconAccel)
+    public void onIconAccelClicked() {
+        boolean isIconAccelSelected = !mIconAccel.isSelected();
+        mIconAccel.setSelected(isIconAccelSelected);
+        mRangeBarAccel.setEnabled(isIconAccelSelected);
+    }
+
+    @OnClick(R.id.iconBrake)
+    public void onIconBrakeClicked() {
+        boolean isIconBrakeSelected = !mIconBrake.isSelected();
+        mIconBrake.setSelected(isIconBrakeSelected);
+        mRangeBarBrake.setEnabled(isIconBrakeSelected);
+    }
+
+    @OnClick(R.id.iconTurn)
+    public void onIconTurnClicked() {
+        boolean isIconTurnSelected = !mIconTurn.isSelected();
+        mIconTurn.setSelected(isIconTurnSelected);
+        mRangeBarTurn.setEnabled(isIconTurnSelected);
+    }
+
+    @OnClick(R.id.iconBump)
+    public void onIconBumpClicked() {
+        boolean isIconBumpSelected = !mIconBump.isSelected();
+        mIconBump.setSelected(isIconBumpSelected);
+        mRangeBarTurn.setEnabled(isIconBumpSelected);
     }
 
     @OnClick(R.id.btnCreateRemix)

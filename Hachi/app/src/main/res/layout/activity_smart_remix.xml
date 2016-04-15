@@ -13,6 +13,7 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/iconSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/btn_search_speed"
@@ -43,6 +44,7 @@
 
 
                 <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarSpeed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -74,6 +76,7 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/iconAccel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/btn_search_accel"
@@ -104,6 +107,7 @@
 
 
                 <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarAccel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -135,6 +139,7 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/iconBrake"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/btn_search_brake"
@@ -165,6 +170,7 @@
 
 
                 <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarBrake"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -194,6 +200,7 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/iconTurn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/btn_search_turn"
@@ -224,6 +231,7 @@
 
 
                 <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarTurn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -254,6 +262,7 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/iconBump"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/btn_search_bump"
@@ -284,6 +293,7 @@
 
 
                 <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarBump"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

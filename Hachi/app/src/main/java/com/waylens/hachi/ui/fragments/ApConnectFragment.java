@@ -29,15 +29,19 @@ import butterknife.Bind;
  */
 public class ApConnectFragment extends BaseFragment {
     private static final String TAG = ApConnectFragment.class.getSimpleName();
-
+    @Bind(R.id.tvSsid)
+    TextView mTvSsid;
+    @Bind(R.id.tvPassword)
+    TextView mTvPassword;
+    @Bind(R.id.vsRootView)
+    ViewSwitcher mVsRootView;
+    @Bind(R.id.cameraLiveView)
+    CameraLiveView mCameraLiveView;
     private String mSSID;
     private String mPassword;
-
     private WifiManager mWifiManager;
     private BroadcastReceiver mWifiStateReceiver;
-
     private Handler mUiHandler;
-
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
 
     public static ApConnectFragment newInstance(String ssid, String password) {
@@ -48,19 +52,6 @@ public class ApConnectFragment extends BaseFragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
-    @Bind(R.id.tvSsid)
-    TextView mTvSsid;
-
-    @Bind(R.id.tvPassword)
-    TextView mTvPassword;
-
-    @Bind(R.id.vsRootView)
-    ViewSwitcher mVsRootView;
-
-    @Bind(R.id.cameraLiveView)
-    CameraLiveView mCameraLiveView;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,13 +76,13 @@ public class ApConnectFragment extends BaseFragment {
             toggleCameraConnectView();
         } else {
             WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
-                (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
-                    @Override
-                    public void onAudoConnectStarted() {
-                    }
-                });
+                    (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
+                        @Override
+                        public void onAudoConnectStarted() {
+                        }
+                    });
             wifiAutoConnectManager.connect(mSSID, mPassword, WifiAutoConnectManager
-                .WifiCipherType.WIFICIPHER_WPA);
+                    .WifiCipherType.WIFICIPHER_WPA);
             registerReceiver();
         }
     }
