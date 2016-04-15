@@ -181,7 +181,7 @@ public class SmartRemixActivity extends BaseActivity {
         super.init();
         mVdtCamera = getCameraFromIntent(getIntent().getExtras());
         mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera);
-        mDiskCache = createDiskCache(this, new HashCodeFileNameGenerator(), 1024 * 1024 * 1024, 50 * 1024);
+//        mDiskCache = createDiskCache(this, new HashCodeFileNameGenerator(), 1024 * 1024 * 1024, 50 * 1024);
         initViews();
     }
 
@@ -202,34 +202,11 @@ public class SmartRemixActivity extends BaseActivity {
 
 
 
-    public DiskCache createDiskCache(Context context, FileNameGenerator diskCacheFileNameGenerator,
-                                            long diskCacheSize, int diskCacheFileCount) {
-        File reserveCacheDir = createReserveDiskCacheDir(context);
-        if (diskCacheSize > 0 || diskCacheFileCount > 0) {
-            File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
-            try {
-                return new LruDiskCache(individualCacheDir, reserveCacheDir, diskCacheFileNameGenerator, diskCacheSize,
-                    diskCacheFileCount);
-            } catch (IOException e) {
-                Logger.e("" + e);
-                // continue and create unlimited cache
-            }
-        }
-        File cacheDir = StorageUtils.getCacheDirectory(context);
-        return new UnlimitedDiskCache(cacheDir, reserveCacheDir, diskCacheFileNameGenerator);
-    }
 
-    private File createReserveDiskCacheDir(Context context) {
-        File cacheDir = StorageUtils.getCacheDirectory(context, false);
-        File individualDir = new File(cacheDir, "raw-data");
-        if (individualDir.exists() || individualDir.mkdir()) {
-            cacheDir = individualDir;
-        }
-        return cacheDir;
-    }
 
     @Override
     public void setupToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null) {
             mToolbar.setTitle(R.string.smart_remix);
             mToolbar.setNavigationIcon(R.drawable.navbar_back);
@@ -404,7 +381,9 @@ public class SmartRemixActivity extends BaseActivity {
 
             Clip clip = mAllClipSet.getClip(i);
             ClipFragment clipFragment = null;
-            for (RawData rawData : rawDataList) {
+            for (int j = 0; j < rawDataList.size(); j++) {
+                RawData rawData = rawDataList.get(j);
+//            for (RawData rawData : rawDataList) {
 
                 if (!startFound && ifMeetThreshold(rawData)) {
 //                    Logger.t(TAG).d("start Hit!!!!!! " + rawData.getObdData().speed + " pts: " + rawData.getPts());
@@ -414,11 +393,11 @@ public class SmartRemixActivity extends BaseActivity {
 //                    Logger.t(TAG).d("set start: " + clipFragment.toString());
                 }
 
-                if (startFound && !ifMeetThreshold(rawData)) {
+                if (startFound && (!ifMeetThreshold(rawData) || j == rawDataList.size() - 1)) {
 //                    Logger.t(TAG).d("end Hit!!!!!! "  );
                     startFound = false;
                     clipFragment.setEndTime(rawData.getPts());
-//                    Logger.t(TAG).d("Found one ClipFragment: " + clipFragment.toString());
+                    Logger.t(TAG).d("Found one ClipFragment: " + clipFragment.toString());
                     clipFragmentList.add(clipFragment);
                 }
             }
