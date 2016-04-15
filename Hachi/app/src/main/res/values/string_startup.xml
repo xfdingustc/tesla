@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="grant">Grant</string>
+    <string name="grant_camera_permission">Please grant the camera permission to scan the Qr code</string>
     <string name="steps">"3 Steps to Wake up Your Camera"</string>
     <string name="step1">"1.Scan QR code on your camera."</string>
     <string name="step2">"2.Connect your phone to the camera."</string>
