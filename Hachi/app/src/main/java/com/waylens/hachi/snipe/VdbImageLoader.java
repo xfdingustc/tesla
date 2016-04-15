@@ -115,7 +115,7 @@ public class VdbImageLoader {
     }
 
     private static File createReserveDiskCacheDir(Context context) {
-        File cacheDir = com.nostra13.universalimageloader.utils.StorageUtils.getCacheDirectory(context, false);
+        File cacheDir = StorageUtils.getCacheDirectory(context, false);
         File individualDir = new File(cacheDir, "uil-images");
         if (individualDir.exists() || individualDir.mkdir()) {
             cacheDir = individualDir;

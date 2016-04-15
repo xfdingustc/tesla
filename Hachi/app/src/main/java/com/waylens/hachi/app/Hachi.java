@@ -8,7 +8,6 @@ import com.bugtags.library.Bugtags;
 import com.bugtags.library.BugtagsOptions;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.waylens.hachi.dao.RawDataItemDao;
 import com.waylens.hachi.hardware.CameraDiscovery;
@@ -41,13 +40,13 @@ public class Hachi extends Application {
          * inti Bugtags
          */
         BugtagsOptions options = new BugtagsOptions.Builder().
-                trackingLocation(true).
-                trackingCrashLog(true).
-                trackingConsoleLog(true).
-                trackingUserSteps(true).
-                versionName("0.38").
-                versionCode(1).
-                build();
+            trackingLocation(true).
+            trackingCrashLog(true).
+            trackingConsoleLog(true).
+            trackingUserSteps(true).
+            versionName("0.38").
+            versionCode(1).
+            build();
         Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
 
         /**
@@ -73,7 +72,7 @@ public class Hachi extends Application {
     private void init() {
         mSharedContext = getApplicationContext();
 
-        LeakCanary.install(this);
+//        LeakCanary.install(this);
 
         initLogger();
 
@@ -99,9 +98,9 @@ public class Hachi extends Application {
                 String serviceName = cameraService.getServiceName();
                 boolean bIsPcServer = serviceName.equals("Vidit Studio");
                 final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-                        cameraService.getHost(),
-                        cameraService.getPort(),
-                        "", serviceName, bIsPcServer);
+                    cameraService.getHost(),
+                    cameraService.getPort(),
+                    "", serviceName, bIsPcServer);
 //                Logger.t("testconnect").d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
                 VdtCameraManager.getManager().connectCamera(serviceInfo);
             }
@@ -139,9 +138,9 @@ public class Hachi extends Application {
 
     private void initLogger() {
         Logger
-                .init(TAG)
-                .setMethodCount(1)
-                .hideThreadInfo();
+            .init(TAG)
+            .setMethodCount(1)
+            .hideThreadInfo();
     }
 
 

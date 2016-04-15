@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,9 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.appyvet.rangebar.RangeBar;
 import com.orhanobut.logger.Logger;
@@ -21,8 +25,14 @@ import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.cache.DiskCache;
+import com.waylens.hachi.snipe.cache.impl.UnlimitedDiskCache;
+import com.waylens.hachi.snipe.cache.impl.ext.LruDiskCache;
+import com.waylens.hachi.snipe.cache.naming.FileNameGenerator;
+import com.waylens.hachi.snipe.cache.naming.HashCodeFileNameGenerator;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.snipe.utils.StorageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipSet;
@@ -33,6 +43,8 @@ import com.waylens.hachi.vdb.rawdata.RawData;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,12 +84,22 @@ public class SmartRemixActivity extends BaseActivity {
     RangeBar mRangeBarTurn;
     @Bind(R.id.rangeBarBump)
     RangeBar mRangeBarBump;
+
+    @Bind(R.id.tvClipSelected)
+    TextView mTvClipSelected;
+
     private ClipSet mAllClipSet;
     private VdtCamera mVdtCamera;
     private VdbRequestQueue mVdbRequestQueue;
     private int mCurrentLoadingIndex;
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
     private List<List<RawData>> mRawDataList = new ArrayList<>();
+
+    private List<ClipFragment> mSelectedClipFragment = null;
+
+    private boolean mRawDataLoaded = false;
+
+    private DiskCache mDiskCache;
 
     public static void launch(Activity activity, VdtCamera camera) {
         Intent intent = new Intent(activity, SmartRemixActivity.class);
@@ -159,24 +181,65 @@ public class SmartRemixActivity extends BaseActivity {
         super.init();
         mVdtCamera = getCameraFromIntent(getIntent().getExtras());
         mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera);
+        mDiskCache = createDiskCache(this, new HashCodeFileNameGenerator(), 1024 * 1024 * 1024, 50 * 1024);
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_smart_remix);
+        mRangeBarSpeed.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                if (mRawDataLoaded) {
+                    mSelectedClipFragment = analyseRawData();
+
+                    mTvClipSelected.setText("" + mSelectedClipFragment.size() + " clips is selected");
+
+                }
+            }
+        });
+    }
+
+
+
+    public DiskCache createDiskCache(Context context, FileNameGenerator diskCacheFileNameGenerator,
+                                            long diskCacheSize, int diskCacheFileCount) {
+        File reserveCacheDir = createReserveDiskCacheDir(context);
+        if (diskCacheSize > 0 || diskCacheFileCount > 0) {
+            File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
+            try {
+                return new LruDiskCache(individualCacheDir, reserveCacheDir, diskCacheFileNameGenerator, diskCacheSize,
+                    diskCacheFileCount);
+            } catch (IOException e) {
+                Logger.e("" + e);
+                // continue and create unlimited cache
+            }
+        }
+        File cacheDir = StorageUtils.getCacheDirectory(context);
+        return new UnlimitedDiskCache(cacheDir, reserveCacheDir, diskCacheFileNameGenerator);
+    }
+
+    private File createReserveDiskCacheDir(Context context) {
+        File cacheDir = StorageUtils.getCacheDirectory(context, false);
+        File individualDir = new File(cacheDir, "raw-data");
+        if (individualDir.exists() || individualDir.mkdir()) {
+            cacheDir = individualDir;
+        }
+        return cacheDir;
     }
 
     @Override
     public void setupToolbar() {
-
-        mToolbar.setTitle(R.string.smart_remix);
-        mToolbar.setNavigationIcon(R.drawable.navbar_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        if (mToolbar != null) {
+            mToolbar.setTitle(R.string.smart_remix);
+            mToolbar.setNavigationIcon(R.drawable.navbar_back);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
         super.setupToolbar();
     }
 
@@ -287,7 +350,8 @@ public class SmartRemixActivity extends BaseActivity {
 
                 if (++mCurrentLoadingIndex == mAllClipSet.getCount()) {
                     Logger.t(TAG).d("load finished!!!!!");
-                    launchEnhanceActivity(analyseRawData());
+                    onHandleLoadRawDataFinished();
+
                 } else {
                     loadRawData(RawDataItem.DATA_TYPE_OBD);
                 }
@@ -296,20 +360,34 @@ public class SmartRemixActivity extends BaseActivity {
         }
     }
 
+    private void onHandleLoadRawDataFinished() {
+        mRawDataLoaded = true;
+        mTvClipSelected.setVisibility(View.VISIBLE);
+        mToolbar.getMenu().clear();
+        mToolbar.inflateMenu(R.menu.menu_smart_remix_to_enhance);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.to_enhance:
+                        launchEnhanceActivity(mSelectedClipFragment);
+                        break;
+                }
+                return true;
+            }
+        });
+
+    }
+
     private void launchEnhanceActivity(List<ClipFragment> clipFragments) {
         ArrayList<Clip> selectedList = new ArrayList<>();
         int total = 0;
         for (ClipFragment clipFragment : clipFragments) {
             Clip clip = new Clip(clipFragment.getClip());
-//            clip.editInfo.selectedStartValue = clipFragment.getStartTimeMs();
-//            clip.editInfo.selectedEndValue = clipFragment.getEndTimeMs();
 
             clip.setStartTime(clipFragment.getStartTimeMs());
             clip.setEndTime(clipFragment.getEndTimeMs());
             selectedList.add(clip);
-            if (++total >= 5) {
-                break;
-            }
         }
         EnhancementActivity.launch(this, selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
     }
@@ -346,10 +424,7 @@ public class SmartRemixActivity extends BaseActivity {
             }
         }
 
-//        Logger.t(TAG).d("Found clip Fragment: " + clipFragmentList.size());
-        for (ClipFragment clipFragment : clipFragmentList) {
-//            Logger.t(TAG).d("add one Clip Fragment: " + clipFragment.toString());
-        }
+
         return clipFragmentList;
     }
 
@@ -358,7 +433,7 @@ public class SmartRemixActivity extends BaseActivity {
         // check speed:
         if (mRangeBarSpeed.isEnabled()) {
             if (rawData.getGpsData() != null) {
-                Logger.t(TAG).d("mRangeBarSpeed: left: " + mRangeBarSpeed.getLeftPinValue() + " ~ " + mRangeBarSpeed.getRightPinValue());
+//                Logger.t(TAG).d("mRangeBarSpeed: left: " + mRangeBarSpeed.getLeftPinValue() + " ~ " + mRangeBarSpeed.getRightPinValue());
                 int left = Integer.parseInt(mRangeBarSpeed.getLeftPinValue());
                 int right = Integer.parseInt(mRangeBarSpeed.getRightPinValue());
                 if (left <= rawData.getGpsData().speed && rawData.getGpsData().speed <= right) {
@@ -406,10 +481,7 @@ public class SmartRemixActivity extends BaseActivity {
                     rawData.setObdData((ObdData) obdItem.data);
                 }
             }
-
             rawDataList.add(rawData);
-
-
         }
 
         return rawDataList;

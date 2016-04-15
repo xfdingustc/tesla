@@ -331,7 +331,18 @@
         android:id="@+id/rawdata"
         style="?android:progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="32dp" />
+
+    <TextView
+        android:id="@+id/tvClipSelected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0 clip selected"
+        android:textColor="?attr/appTextColorPrimary"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        />
 
 </LinearLayout>
