@@ -23,7 +23,6 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.ui.fragments.ScanQrCodeFragment;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipSet;
@@ -169,16 +168,15 @@ public class SmartRemixActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        if (mToolbar != null) {
-            mToolbar.setTitle(R.string.smart_remix);
-            mToolbar.setNavigationIcon(R.drawable.navbar_back);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
-        }
+
+        mToolbar.setTitle(R.string.smart_remix);
+        mToolbar.setNavigationIcon(R.drawable.navbar_back);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         super.setupToolbar();
     }
 
@@ -188,13 +186,13 @@ public class SmartRemixActivity extends BaseActivity {
 
     private void doGetBookmarkClips() {
         ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_MARKED, ClipSetExRequest.FLAG_CLIP_EXTRA,
-                new VdbResponse.Listener<ClipSet>() {
-                    @Override
-                    public void onResponse(ClipSet response) {
-                        mAllClipSet = response;
-                        doGetBufferedClips();
-                    }
-                }, new VdbResponse.ErrorListener() {
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet response) {
+                    mAllClipSet = response;
+                    doGetBufferedClips();
+                }
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
@@ -205,18 +203,18 @@ public class SmartRemixActivity extends BaseActivity {
 
     private void doGetBufferedClips() {
         ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA,
-                new VdbResponse.Listener<ClipSet>() {
-                    @Override
-                    public void onResponse(ClipSet response) {
-                        for (int i = 0; i < response.getCount(); i++) {
-                            Clip clip = response.getClip(i);
-                            mAllClipSet.addClip(clip);
-                        }
-
-                        doLoadRawData();
-
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet response) {
+                    for (int i = 0; i < response.getCount(); i++) {
+                        Clip clip = response.getClip(i);
+                        mAllClipSet.addClip(clip);
                     }
-                }, new VdbResponse.ErrorListener() {
+
+                    doLoadRawData();
+
+                }
+            }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
 
@@ -250,18 +248,18 @@ public class SmartRemixActivity extends BaseActivity {
         params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
 
         RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,
-                new VdbResponse.Listener<RawDataBlock>() {
-                    @Override
-                    public void onResponse(RawDataBlock response) {
-                        onLoadRawDataFinished(dataType, response);
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        onLoadRawDataFinished(dataType, null);
-                    }
-                });
+            new VdbResponse.Listener<RawDataBlock>() {
+                @Override
+                public void onResponse(RawDataBlock response) {
+                    onLoadRawDataFinished(dataType, response);
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    onLoadRawDataFinished(dataType, null);
+                }
+            });
         mVdbRequestQueue.add(obdRequest);
     }
 
@@ -359,10 +357,13 @@ public class SmartRemixActivity extends BaseActivity {
     private boolean ifMeetThreshold(RawData rawData) {
         // check speed:
         if (mRangeBarSpeed.isEnabled()) {
-            if (rawData.getGpsData() != null ) {
-                Logger.t(TAG).d("mRangeBarSpeed: left: " + mRangeBarSpeed.getLeft() + " ~ " + mRangeBarSpeed.getRight());
-                if (mRangeBarSpeed.getLeft() <= rawData.getGpsData().speed && rawData.getGpsData().speed <= mRangeBarSpeed.getRight())
-                return true;
+            if (rawData.getGpsData() != null) {
+                Logger.t(TAG).d("mRangeBarSpeed: left: " + mRangeBarSpeed.getLeftPinValue() + " ~ " + mRangeBarSpeed.getRightPinValue());
+                int left = Integer.parseInt(mRangeBarSpeed.getLeftPinValue());
+                int right = Integer.parseInt(mRangeBarSpeed.getRightPinValue());
+                if (left <= rawData.getGpsData().speed && rawData.getGpsData().speed <= right) {
+                    return true;
+                }
             }
 
             return false;
