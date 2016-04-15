@@ -73,6 +73,12 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        setupToolbar();
+    }
+
+    @Override
     public void setContentView(int layoutResID) {
         String theme = PreferenceUtils.getString(PreferenceUtils.APP_THEME, "dark");
         if (theme.equals("dark")) {
@@ -82,12 +88,10 @@ public class BaseActivity extends AppCompatActivity {
         }
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
-        setupToolbar();
+        //setupToolbar();
     }
 
     public void setupToolbar() {
-        //
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null) {
             mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
         }
