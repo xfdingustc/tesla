@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.transition.TransitionManager;
 import android.view.MenuItem;
 import android.view.View;
@@ -231,6 +232,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Override
     public void setupToolbar() {
         super.setupToolbar();
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         if (mToolbar == null) {
             return;
         }

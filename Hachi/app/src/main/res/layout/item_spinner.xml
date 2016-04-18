@@ -24,4 +24,5 @@
                  android:layout_height="48dp"
                  android:ellipsize="marquee"
                  android:textColor="?attr/appTextColorPrimary"
+                 android:textSize="18sp"
                  android:singleLine="true"/>
