@@ -22,6 +22,12 @@
 
     <include layout="@layout/layout_line_break" />
 
+    <com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer
+        android:id="@+id/clipTrimmer"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        />
+
     <FrameLayout
         android:id="@+id/enhance_fragment_content"
         android:layout_width="match_parent"

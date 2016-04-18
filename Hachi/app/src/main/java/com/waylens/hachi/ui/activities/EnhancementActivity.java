@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +22,26 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
+import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.EnhanceFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.ShareFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
+import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
+import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
@@ -44,8 +54,8 @@ import butterknife.Bind;
  * Created by Richard on 12/18/15.
  */
 public class EnhancementActivity extends BaseActivity implements FragmentNavigator,
-        android.support.v7.widget.Toolbar.OnMenuItemClickListener,
-        ClipPlayFragment.ClipPlayFragmentContainer {
+    android.support.v7.widget.Toolbar.OnMenuItemClickListener,
+    ClipPlayFragment.ClipPlayFragmentContainer {
     private static final String TAG = EnhancementActivity.class.getSimpleName();
     public static final int REQUEST_CODE_SIGN_UP_FROM_ENHANCE = 200;
 
@@ -61,18 +71,25 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Bind(R.id.player_fragment_content)
     ViewGroup mPlayerContainer;
 
+    @Bind(R.id.clipTrimmer)
+    VideoTrimmer mClipTrimmer;
+
     private ClipPlayFragment mClipPlayFragment;
 
     int mLaunchMode;
 
     private VdbRequestQueue mVdbRequestQueue;
     private VdtCamera mVdtCamera;
+    private VdbImageLoader mVdbImageLoader;
 
     EnhanceFragment mEnhanceFragment;
     ShareFragment mShareFragment;
 
     int mOriginalTopMargin;
     int mOriginalHeight;
+
+    private SharableClip mSharableClip;
+
 
     public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
@@ -111,6 +128,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     protected void init() {
         super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
+        mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         mLaunchMode = getIntent().getIntExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_QUICK_VIEW);
         initViews();
     }
@@ -189,7 +207,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         return true;
     }
 
-    void switchToMode() {
+    private void switchToMode() {
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:
                 adjustPlayerPosition(true);
@@ -213,6 +231,12 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                     switchFragment(mEnhanceFragment, mShareFragment);
                 }
                 break;
+            case LAUNCH_MODE_MODIFY:
+                mClipTrimmer.setVisibility(View.VISIBLE);
+                Clip clip = getClipSet().getClip(0);
+                mSharableClip = new SharableClip(clip);
+                getClipExtent();
+                break;
         }
         setupToolbarImpl();
     }
@@ -232,7 +256,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar == null) {
             return;
         }
@@ -281,6 +305,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 mToolbar.setTitle(R.string.share);
                 mToolbar.inflateMenu(R.menu.menu_share);
                 break;
+            case LAUNCH_MODE_MODIFY:
+                mToolbar.inflateMenu(R.menu.menu_clip_modify);
+                break;
         }
     }
 
@@ -290,8 +317,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, 0x100);
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE,
-                vdtUriProvider,
-                config);
+            vdtUriProvider,
+            config);
         mClipPlayFragment.setShowsDialog(false);
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
@@ -325,9 +352,99 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             case R.id.menu_to_download:
                 //TODO
                 break;
+            case R.id.save:
+                doSaveClipTrimInfo();
+                break;
         }
         switchToMode();
         return true;
+    }
+
+    private void initClipTrimmer() {
+        int defaultHeight = ViewUtils.dp2px(64, getResources());
+
+        mClipTrimmer.setBackgroundClip(mVdbImageLoader, mSharableClip.clip, defaultHeight);
+        mClipTrimmer.setEditing(true);
+        mClipTrimmer.setInitRangeValues(mSharableClip.minExtensibleValue, mSharableClip.maxExtensibleValue);
+        mClipTrimmer.setLeftValue(mSharableClip.selectedStartValue);
+        mClipTrimmer.setRightValue(mSharableClip.selectedEndValue);
+        mClipTrimmer.setOnChangeListener(new VideoTrimmer.OnTrimmerChangeListener() {
+            @Override
+            public void onStartTrackingTouch(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag) {
+            }
+
+            @Override
+            public void onProgressChanged(VideoTrimmer trimmer, VideoTrimmer.DraggingFlag flag, long start, long end, long progress) {
+                long currentTimeMs = 0;
+                if (flag == VideoTrimmer.DraggingFlag.LEFT) {
+                    currentTimeMs = start;
+                    mSharableClip.selectedStartValue = start;
+                } else if (flag == VideoTrimmer.DraggingFlag.RIGHT) {
+                    currentTimeMs = end;
+                    mSharableClip.selectedEndValue = end;
+                } else {
+                    currentTimeMs = progress;
+                }
+                mClipPlayFragment.showClipPosThumbnail(mSharableClip.clip, currentTimeMs);
+            }
+
+            @Override
+            public void onStopTrackingTouch(VideoTrimmer trimmer) {
+                UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
+                    mSharableClip.bufferedCid,
+                    mSharableClip.getSelectedLength());
+                mClipPlayFragment.setUrlProvider(vdtUriProvider);
+            }
+        });
+
+
+    }
+
+
+    private void doSaveClipTrimInfo() {
+        if (mSharableClip.selectedStartValue == mSharableClip.clip.getStartTimeMs() &&
+            mSharableClip.getSelectedLength() == mSharableClip.clip.getDurationMs()) {
+            return;
+        }
+        mVdbRequestQueue.add(new ClipExtentUpdateRequest(mSharableClip.clip.cid,
+            mClipTrimmer.getLeftValue(),
+            mClipTrimmer.getRightValue(),
+            new VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+//                    hasUpdated = true;
+//                    Snackbar.make(mRootView, R.string.bookmark_update_successful, Snackbar.LENGTH_SHORT).show();
+                    mLaunchMode = LAUNCH_MODE_QUICK_VIEW;
+                    switchToMode();
+
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+//                    Snackbar.make(mRootView, R.string.bookmark_update_error, Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        ));
+    }
+    void getClipExtent() {
+        if (mSharableClip == null) {
+            return;
+        }
+        mVdbRequestQueue.add(new ClipExtentGetRequest(mSharableClip.clip, new VdbResponse.Listener<ClipExtent>() {
+            @Override
+            public void onResponse(ClipExtent clipExtent) {
+                if (clipExtent != null) {
+                    mSharableClip.calculateExtension(clipExtent);
+                    initClipTrimmer();
+                }
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e("test", "", error);
+            }
+        }));
     }
 
     private void doDeleteClip() {
@@ -394,5 +511,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         } else {
             return "";
         }
+    }
+
+    private ClipSet getClipSet() {
+        return ClipSetManager.getManager().getClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
     }
 }
