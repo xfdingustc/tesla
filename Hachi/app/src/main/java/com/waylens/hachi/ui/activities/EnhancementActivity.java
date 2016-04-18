@@ -35,6 +35,7 @@ import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.utils.ViewUtils;
@@ -130,19 +131,17 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         mVdbRequestQueue = Snipe.newRequestQueue();
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
 
-        initViews();
-    }
 
-    private void initViews() {
-        setContentView(R.layout.activity_enhance);
+        ArrayList<Clip> clipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
+        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
 
-        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
-        mOriginalTopMargin = layoutParams.topMargin;
-        mOriginalHeight = layoutParams.height;
+        for (Clip clip : clipList) {
+            clipSet.addClip(clip);
+        }
 
-        ArrayList<Clip> mClipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
+        Logger.t(TAG).d("clip set size: " + clipSet.getCount() + " clip: " + clipSet.getClip(0).toString());
 
-        if (!checkIfResolutionUnity(mClipList)) {
+        if (!checkIfResolutionUnity(clipList)) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .content(R.string.resolution_not_correct)
                 .positiveText(android.R.string.ok)
@@ -156,21 +155,20 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             dialog.show();
         }
 
-        ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
-//        ClipSet clipSetEditing = new ClipSet(Clip.TYPE_TEMP);
-        for (Clip clip : mClipList) {
-            clipSet.addClip(clip);
-//            clipSetEditing.addClip(clip);
-        }
-
-        Logger.t(TAG).d("clip set size: " + clipSet.getCount() + " clip: " + clipSet.getClip(0).toString());
-
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_BOOKMARK, clipSet);
 
-//        Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
-
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-//        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
+
+        initViews();
+    }
+
+    private void initViews() {
+        setContentView(R.layout.activity_enhance);
+
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
+        mOriginalTopMargin = layoutParams.topMargin;
+        mOriginalHeight = layoutParams.height;
+
         //doBuildPlaylist();
         embedVideoPlayFragment();
 
@@ -186,8 +184,14 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 //                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
                 ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
 //                mClipPlayFragment.notifyClipSetChanged();
+                PlaylistUrlProvider urlProvider = new PlaylistUrlProvider(mVdbRequestQueue, PLAYLIST_INDEX);
+                mClipPlayFragment.setUrlProvider(urlProvider);
                 Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
-                embedVideoPlayFragment();
+//                embedVideoPlayFragment();
+                if (mEnhanceFragment == null) {
+                    mEnhanceFragment = new EnhanceFragment();
+                }
+                switchFragment(mShareFragment, mEnhanceFragment);
             }
         });
 
@@ -224,10 +228,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             case LAUNCH_MODE_ENHANCE:
                 mClipTrimmer.setVisibility(View.GONE);
                 adjustPlayerPosition(false);
-                if (mEnhanceFragment == null) {
-                    mEnhanceFragment = new EnhanceFragment();
-                }
-                switchFragment(mShareFragment, mEnhanceFragment);
+                doBuildPlaylist();
                 break;
             case LAUNCH_MODE_SHARE:
                 mClipTrimmer.setVisibility(View.GONE);
