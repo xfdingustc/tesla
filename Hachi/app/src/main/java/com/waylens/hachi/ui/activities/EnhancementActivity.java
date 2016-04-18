@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -76,7 +75,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private ClipPlayFragment mClipPlayFragment;
 
-    int mLaunchMode;
+    private int mLaunchMode = -1;
 
     private VdbRequestQueue mVdbRequestQueue;
     private VdtCamera mVdtCamera;
@@ -129,7 +128,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         super.init();
         mVdbRequestQueue = Snipe.newRequestQueue();
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
-        mLaunchMode = getIntent().getIntExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_QUICK_VIEW);
+
         initViews();
     }
 
@@ -157,21 +156,24 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }
 
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
-        ClipSet clipSetEditing = new ClipSet(Clip.TYPE_TEMP);
+//        ClipSet clipSetEditing = new ClipSet(Clip.TYPE_TEMP);
         for (Clip clip : mClipList) {
             clipSet.addClip(clip);
-            clipSetEditing.addClip(clip);
+//            clipSetEditing.addClip(clip);
         }
+
+        Logger.t(TAG).d("clip set size: " + clipSet.getCount() + " clip: " + clipSet.getClip(0).toString());
 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_BOOKMARK, clipSet);
 
-        Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
+//        Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
+//        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
         doBuildPlaylist();
 
-        switchToMode();
+        int launchMode = getIntent().getIntExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_QUICK_VIEW);
+        switchToMode(launchMode);
     }
 
     private void doBuildPlaylist() {
@@ -207,12 +209,18 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         return true;
     }
 
-    private void switchToMode() {
+    private void switchToMode(int launchMode) {
+        if (mLaunchMode == launchMode) {
+            return;
+        }
+        mLaunchMode = launchMode;
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:
                 adjustPlayerPosition(true);
+                mClipTrimmer.setVisibility(View.GONE);
                 break;
             case LAUNCH_MODE_ENHANCE:
+                mClipTrimmer.setVisibility(View.GONE);
                 adjustPlayerPosition(false);
                 if (mEnhanceFragment == null) {
                     mEnhanceFragment = new EnhanceFragment();
@@ -220,6 +228,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 switchFragment(mShareFragment, mEnhanceFragment);
                 break;
             case LAUNCH_MODE_SHARE:
+                mClipTrimmer.setVisibility(View.GONE);
                 if (!SessionManager.getInstance().isLoggedIn()) {
                     LoginActivity.launchForResult(this, REQUEST_CODE_SIGN_UP_FROM_ENHANCE);
                     return;
@@ -233,9 +242,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 break;
             case LAUNCH_MODE_MODIFY:
                 mClipTrimmer.setVisibility(View.VISIBLE);
-                Clip clip = getClipSet().getClip(0);
+                Clip clip = getBookmarkClipSet().getClip(0);
                 mSharableClip = new SharableClip(clip);
-                getClipExtent();
+                doGetClipExtension();
                 break;
         }
         setupToolbarImpl();
@@ -336,18 +345,17 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_to_enhance:
-                mLaunchMode = LAUNCH_MODE_ENHANCE;
+                switchToMode(LAUNCH_MODE_ENHANCE);
                 break;
             case R.id.menu_to_share:
-                mLaunchMode = LAUNCH_MODE_SHARE;
+                switchToMode(LAUNCH_MODE_SHARE);
                 break;
             case R.id.menu_to_modify:
-                mLaunchMode = LAUNCH_MODE_MODIFY;
+                switchToMode(LAUNCH_MODE_MODIFY);
                 //TODO
                 break;
             case R.id.menu_to_delete:
                 doDeleteClip();
-
                 break;
             case R.id.menu_to_download:
                 //TODO
@@ -356,7 +364,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 doSaveClipTrimInfo();
                 break;
         }
-        switchToMode();
         return true;
     }
 
@@ -406,6 +413,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             mSharableClip.getSelectedLength() == mSharableClip.clip.getDurationMs()) {
             return;
         }
+
+        Logger.t(TAG).d("LeftValue: " + mClipTrimmer.getLeftValue() + " RightValue: " + mClipTrimmer.getRightValue());
         mVdbRequestQueue.add(new ClipExtentUpdateRequest(mSharableClip.clip.cid,
             mClipTrimmer.getLeftValue(),
             mClipTrimmer.getRightValue(),
@@ -414,8 +423,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 public void onResponse(Integer response) {
 //                    hasUpdated = true;
 //                    Snackbar.make(mRootView, R.string.bookmark_update_successful, Snackbar.LENGTH_SHORT).show();
-                    mLaunchMode = LAUNCH_MODE_QUICK_VIEW;
-                    switchToMode();
+                    switchToMode(LAUNCH_MODE_QUICK_VIEW);
 
                 }
             },
@@ -427,7 +435,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             }
         ));
     }
-    void getClipExtent() {
+    private void doGetClipExtension() {
         if (mSharableClip == null) {
             return;
         }
@@ -470,8 +478,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         switch (requestCode) {
             case REQUEST_CODE_SIGN_UP_FROM_ENHANCE:
                 if (resultCode == RESULT_OK) {
-                    mLaunchMode = LAUNCH_MODE_SHARE;
-                    switchToMode();
+                    switchToMode(LAUNCH_MODE_SHARE);
                 }
                 break;
             default:
@@ -515,5 +522,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private ClipSet getClipSet() {
         return ClipSetManager.getManager().getClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
+    }
+
+    private ClipSet getBookmarkClipSet() {
+        return ClipSetManager.getManager().getClipSet(ClipSetManager.CLIP_SET_TYPE_BOOKMARK);
     }
 }
