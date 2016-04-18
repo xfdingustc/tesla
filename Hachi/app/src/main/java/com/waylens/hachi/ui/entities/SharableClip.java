@@ -90,8 +90,8 @@ public class SharableClip {
         selectedStartValue = clipExtent.clipStartTimeMs;
         selectedEndValue = clipExtent.clipEndTimeMs;
 
-        bufferedCid = clipExtent.bufferedCid;
-        realCid = clipExtent.realCid;
+//        bufferedCid = clipExtent.bufferedCid;
+//        realCid = clipExtent.realCid;
 
         if (clipExtent.bufferedCid != null) {
             bufferedCid = clipExtent.bufferedCid;

@@ -159,6 +159,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
 
+        Clip clip = getBookmarkClipSet().getClip(0);
+        mSharableClip = new SharableClip(clip);
+        Logger.t(TAG).d("buffered cid: " + mSharableClip.bufferedCid);
         initViews();
     }
 
@@ -181,13 +184,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
-//                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
                 ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-//                mClipPlayFragment.notifyClipSetChanged();
                 PlaylistUrlProvider urlProvider = new PlaylistUrlProvider(mVdbRequestQueue, PLAYLIST_INDEX);
                 mClipPlayFragment.setUrlProvider(urlProvider);
                 Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
-//                embedVideoPlayFragment();
                 if (mEnhanceFragment == null) {
                     mEnhanceFragment = new EnhanceFragment();
                 }
@@ -245,8 +245,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 break;
             case LAUNCH_MODE_MODIFY:
                 mClipTrimmer.setVisibility(View.VISIBLE);
-                Clip clip = getBookmarkClipSet().getClip(0);
-                mSharableClip = new SharableClip(clip);
+
                 doGetClipExtension();
                 break;
         }
@@ -299,6 +298,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     void setupToolbarImpl() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar == null) {
             return;
         }
@@ -398,10 +398,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
             @Override
             public void onStopTrackingTouch(VideoTrimmer trimmer) {
-//                UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
-//                    mSharableClip.bufferedCid,
-//                    mSharableClip.getSelectedLength());
-//                mClipPlayFragment.setUrlProvider(vdtUriProvider);
+                UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
+                    mSharableClip.bufferedCid, mSharableClip.selectedStartValue,
+                    mSharableClip.getSelectedLength());
+                mClipPlayFragment.setUrlProvider(vdtUriProvider);
             }
         });
 
@@ -445,7 +445,14 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             @Override
             public void onResponse(ClipExtent clipExtent) {
                 if (clipExtent != null) {
+//                    Logger.t(TAG).d("buffered cid: " + mSharableClip.bufferedCid);
                     mSharableClip.calculateExtension(clipExtent);
+                    Logger.t(TAG).d("buffered cid: " + mSharableClip.bufferedCid);
+                    Clip clip = getBookmarkClipSet().getClip(0);
+                    UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
+                        mSharableClip.bufferedCid, mSharableClip.selectedStartValue,
+                        mSharableClip.getSelectedLength());
+                    mClipPlayFragment.setUrlProvider(vdtUriProvider);
                     initClipTrimmer();
                 }
             }
