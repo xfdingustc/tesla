@@ -153,11 +153,9 @@ public class ClipModifyActivity extends BaseActivity {
     }
 
     private void embedVideoPlayFragment() {
-        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
 
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
-                mSharableClip.bufferedCid,
+                mSharableClip.bufferedCid, 0,
                 mSharableClip.getSelectedLength());
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         clipSet.addClip(mSharableClip.clip);
@@ -165,7 +163,7 @@ public class ClipModifyActivity extends BaseActivity {
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE, vdtUriProvider,
-                config);
+            ClipPlayFragment.ClipMode.SINGLE);
         mClipPlayFragment.setShowsDialog(false);
         getFragmentManager().beginTransaction().replace(R.id.clipPlayFragment, mClipPlayFragment).commit();
     }
@@ -220,7 +218,7 @@ public class ClipModifyActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(VideoTrimmer trimmer) {
                 UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
-                        mSharableClip.bufferedCid,
+                        mSharableClip.bufferedCid, 0,
                         mSharableClip.getSelectedLength());
                 mClipPlayFragment.setUrlProvider(vdtUriProvider);
             }

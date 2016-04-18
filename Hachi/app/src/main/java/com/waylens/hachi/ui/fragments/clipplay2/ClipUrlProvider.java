@@ -20,18 +20,20 @@ public class ClipUrlProvider implements UrlProvider {
     private VdbRequestQueue mVdbRequestQueue;
     private OnUrlLoadedListener mListener;
     private Clip.ID mCid;
+    private long mStartTime;
 
     private int maxLength;
 
-    public ClipUrlProvider(@NonNull VdbRequestQueue requestQueue, Clip.ID cid, int maxLength) {
+    public ClipUrlProvider(@NonNull VdbRequestQueue requestQueue, Clip.ID cid, long startTime, int maxLength) {
         this.mVdbRequestQueue = requestQueue;
         this.mCid = cid;
+        this.mStartTime = startTime;
         this.maxLength = maxLength;
     }
 
     @Override
     public void getUri(long clipTimeMs, OnUrlLoadedListener listener) {
-        Logger.t(TAG).d("Start load clip url clipTimeMs: " + clipTimeMs);
+        Logger.t(TAG).d("Start load clip url clipTimeMs: " + (clipTimeMs + mStartTime));
 
         mListener = listener;
 
@@ -40,7 +42,7 @@ public class ClipUrlProvider implements UrlProvider {
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_URL_TYPE, Vdb.URL_TYPE_HLS);
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_STREAM, Vdb.STREAM_SUB_1);
         parameters.putBoolean(ClipPlaybackUrlExRequest.PARAMETER_MUTE_AUDIO, false);
-        parameters.putLong(ClipPlaybackUrlExRequest.PARAMETER_CLIP_TIME_MS, clipTimeMs);
+        parameters.putLong(ClipPlaybackUrlExRequest.PARAMETER_CLIP_TIME_MS, clipTimeMs + mStartTime);
         parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, maxLength);
 
         ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(mCid,

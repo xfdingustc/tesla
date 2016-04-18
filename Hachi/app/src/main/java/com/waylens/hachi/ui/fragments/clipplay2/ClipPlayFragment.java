@@ -81,7 +81,6 @@ public class ClipPlayFragment extends DialogFragment {
 
     private Handler mUiHandler;
 
-    private Config mConfig;
 
     private RawDataLoader mRawDataLoader;
 
@@ -172,44 +171,42 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-
-
     private void start() {
         startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), false);
     }
 
 
 
-
-    public static class Config {
-        public enum UrlMode {
-            CLIP,
-            PLAYLIST,
-        }
-
-        public enum ClipMode {
-            SINGLE,
-            MULTI
-        }
-
-        public enum CoverMode {
-            NORMAL,
-            BANNER,
-        }
-
-        public ClipMode clipMode = ClipMode.SINGLE;
-        public CoverMode coverMode = CoverMode.NORMAL;
-        public UrlMode urlMode = UrlMode.PLAYLIST;
-
+    public enum ClipMode {
+        SINGLE,
+        MULTI
     }
 
+    public enum CoverMode {
+        NORMAL,
+        BANNER,
+    }
 
-    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex, UrlProvider vdtUrlProvider, Config config) {
+    public ClipMode mClipMode = ClipMode.SINGLE;
+    public CoverMode mCoverMode = CoverMode.NORMAL;
+
+
+
+    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex, UrlProvider urlProvider) {
+        return newInstance(camera, clipSetIndex, urlProvider, ClipMode.SINGLE, CoverMode.NORMAL);
+    }
+
+    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex, UrlProvider urlProvider, ClipMode clipMode) {
+        return newInstance(camera, clipSetIndex, urlProvider, clipMode, CoverMode.NORMAL);
+    }
+
+    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex, UrlProvider urlProvider, ClipMode clipMode, CoverMode coverMode) {
         ClipPlayFragment fragment = new ClipPlayFragment();
         fragment.mVdtCamera = camera;
         fragment.mClipSetIndex = clipSetIndex;
-        fragment.mUrlProvider = vdtUrlProvider;
-        fragment.mConfig = config;
+        fragment.mUrlProvider = urlProvider;
+        fragment.mClipMode = clipMode;
+        fragment.mCoverMode = coverMode;
         return fragment;
     }
 
@@ -311,7 +308,7 @@ public class ClipPlayFragment extends DialogFragment {
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
 
 
-        if (mConfig.coverMode == Config.CoverMode.NORMAL) {
+        if (mCoverMode == CoverMode.NORMAL) {
             mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
         } else {
             mVsCover.showNext();
@@ -350,8 +347,6 @@ public class ClipPlayFragment extends DialogFragment {
             }
         });
     }
-
-
 
 
     private void setupToolbar() {
@@ -404,7 +399,7 @@ public class ClipPlayFragment extends DialogFragment {
     private void setupMultiSegSeekBar() {
         mMultiSegSeekbar.setClipList(mClipSetIndex);
 
-        if (mConfig.clipMode == Config.ClipMode.MULTI) {
+        if (mClipMode == ClipMode.MULTI) {
             mMultiSegSeekbar.setMultiStyle(true);
         } else {
             mMultiSegSeekbar.setMultiStyle(false);
@@ -578,7 +573,7 @@ public class ClipPlayFragment extends DialogFragment {
                 }
                 Logger.t(TAG).d("Get playback url: " + url.url);
                 mVdbUrl = url;
-                if (mConfig.urlMode == Config.UrlMode.CLIP) {
+                if (mUrlProvider instanceof ClipUrlProvider) {
                     mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), url);
                 } else {
                     mPositionAdjuster = new PlaylistPositionAdjuster(url);

@@ -35,7 +35,6 @@ import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.utils.ViewUtils;
@@ -66,6 +65,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     public static final int LAUNCH_MODE_ENHANCE = 1;
     public static final int LAUNCH_MODE_SHARE = 2;
     public static final int LAUNCH_MODE_MODIFY = 3;
+
+    public static final int PLAYLIST_INDEX = 0x100;
 
     @Bind(R.id.player_fragment_content)
     ViewGroup mPlayerContainer;
@@ -170,14 +171,15 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
 //        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING, clipSetEditing);
-        doBuildPlaylist();
+        //doBuildPlaylist();
+        embedVideoPlayFragment();
 
         int launchMode = getIntent().getIntExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_QUICK_VIEW);
         switchToMode(launchMode);
     }
 
     private void doBuildPlaylist() {
-        PlaylistEditor playlistEditor = new PlaylistEditor(this, mVdtCamera, 0x100);
+        PlaylistEditor playlistEditor = new PlaylistEditor(this, mVdtCamera, PLAYLIST_INDEX);
         playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
@@ -321,13 +323,11 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     private void embedVideoPlayFragment() {
-        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
 
-        config.clipMode = ClipPlayFragment.Config.ClipMode.MULTI;
-        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, 0x100);
-        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE,
-            vdtUriProvider,
-            config);
+        Clip clip = getClipSet().getClip(0);
+        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip.cid, clip.getStartTimeMs(), clip.getDurationMs());
+
+        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE, vdtUriProvider, ClipPlayFragment.ClipMode.MULTI);
         mClipPlayFragment.setShowsDialog(false);
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
@@ -397,10 +397,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
             @Override
             public void onStopTrackingTouch(VideoTrimmer trimmer) {
-                UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
-                    mSharableClip.bufferedCid,
-                    mSharableClip.getSelectedLength());
-                mClipPlayFragment.setUrlProvider(vdtUriProvider);
+//                UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
+//                    mSharableClip.bufferedCid,
+//                    mSharableClip.getSelectedLength());
+//                mClipPlayFragment.setUrlProvider(vdtUriProvider);
             }
         });
 
@@ -435,6 +435,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             }
         ));
     }
+
     private void doGetClipExtension() {
         if (mSharableClip == null) {
             return;

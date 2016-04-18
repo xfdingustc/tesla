@@ -147,12 +147,10 @@ public class AllFootageFragment extends BaseFragment {
     private void setupClipPlayFragment(ClipSet clipSet) {
         mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
         UrlProvider urlProvider1 = new PlaylistUrlProvider(mVdbRequestQueue, 0x101);
-        ClipPlayFragment.Config config = new ClipPlayFragment.Config();
-        config.clipMode = ClipPlayFragment.Config.ClipMode.SINGLE;
-        config.coverMode = ClipPlayFragment.Config.CoverMode.BANNER;
+
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
-            config);
+            ClipPlayFragment.ClipMode.SINGLE, ClipPlayFragment.CoverMode.BANNER);
 
         getChildFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
         doMakePlaylist();
