@@ -18,15 +18,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.CommunityFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.VideoFragment;
 import com.waylens.hachi.ui.fragments.camerapreview.CameraPreviewFragment;
@@ -60,10 +59,10 @@ public class MainActivity extends BaseActivity {
     private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
     private BaseFragment[] mFragmentList = new BaseFragment[]{
-            new VideoFragment(),
-            new CameraPreviewFragment(),
-            new CommunityFragment(),
-            new SettingsFragment()
+        new VideoFragment(),
+        new CameraPreviewFragment(),
+        new CommunityFragment(),
+        new SettingsFragment()
     };
 
     private BaseFragment mCurrentFragment = null;
@@ -200,37 +199,30 @@ public class MainActivity extends BaseActivity {
          */
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         boolean mUseHideAndShow = true;
-        if (mUseHideAndShow) {
-            if (mCurrentFragment == null) {
-                transaction.add(R.id.fragment_content, fragment).commit();
 
-            } else {
-                if (!fragment.isAdded()) {
-                    transaction.hide(mCurrentFragment).add(R.id.fragment_content, fragment).commit();
-                    stopLiveView();
-                } else {
-                    transaction.hide(mCurrentFragment).show(fragment).commit();
-                    stopLiveView();
-                    startLiveView(fragment);
-                }
+        if (mCurrentFragment == null) {
+            transaction.add(R.id.fragment_content, fragment).commit();
 
-            }
         } else {
-            if (mCurrentFragment != null) {
-                transaction.detach(mCurrentFragment);
+            if (!fragment.isAdded()) {
+                transaction.hide(mCurrentFragment).add(R.id.fragment_content, fragment).commit();
+                stopLiveView();
+            } else {
+                transaction.hide(mCurrentFragment).show(fragment).commit();
+                stopLiveView();
+                startLiveView(fragment);
             }
-            transaction.replace(R.id.fragment_content, fragment)
-                    .attach(fragment)
-                    //.addToBackStack(null)
-                    .commit();
+
+
         }
         mCurrentFragment = fragment;
+
     }
 
     /**
      * The following 2 methods do something trick, because we use fragment hide/show,
      * instead of replace/backStack.
-     * */
+     */
     void stopLiveView() {
         if (mCurrentFragment instanceof CameraPreviewFragment) {
             mCurrentFragment.onStop();
@@ -297,18 +289,18 @@ public class MainActivity extends BaseActivity {
 
     private void onToggleAppThemeClicked() {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .content(getText(R.string.change_theme_hint))
-                .negativeText(android.R.string.cancel)
-                .positiveText(android.R.string.ok)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
-                        toggleAppTheme();
-                        finish();
-                    }
-                })
-                .show();
+            .content(getText(R.string.change_theme_hint))
+            .negativeText(android.R.string.cancel)
+            .positiveText(android.R.string.ok)
+            .callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    super.onPositive(dialog);
+                    toggleAppTheme();
+                    finish();
+                }
+            })
+            .show();
 
     }
 
@@ -335,7 +327,7 @@ public class MainActivity extends BaseActivity {
             case REQUEST_CODE_SIGN_UP_FROM_MOMENTS:
                 if (resultCode == RESULT_OK && (mCurrentFragment instanceof CommunityFragment)) {
                     Logger.t(TAG).e("test", "notifyDateChanged");
-                    ((CommunityFragment)mCurrentFragment).notifyDateChanged();
+                    ((CommunityFragment) mCurrentFragment).notifyDateChanged();
                 }
                 break;
             default:
@@ -351,14 +343,14 @@ public class MainActivity extends BaseActivity {
         }
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
 
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
@@ -367,7 +359,7 @@ public class MainActivity extends BaseActivity {
             super.onBackPressed();
         } else {
             mReturnSnackBar = Snackbar.make(mDrawerLayout, getText(R.string.backpressed_hint),
-                    Snackbar.LENGTH_LONG);
+                Snackbar.LENGTH_LONG);
             mReturnSnackBar.show();
         }
 

@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
@@ -139,6 +140,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
                 }
 
                 getChildFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
+
             }
 
             @Override

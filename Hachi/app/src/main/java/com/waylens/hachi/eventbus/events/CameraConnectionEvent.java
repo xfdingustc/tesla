@@ -12,6 +12,7 @@ public class CameraConnectionEvent {
     public static final int VDT_CAMERA_CONNECTED = 0;
     public static final int VDT_CAMERA_CONNECTING = 1;
     public static final int VDT_CAMERA_DISCONNECTED = 2;
+    public static final int VDT_CAMERA_SELECTED_CHANGED = 3;
 
     public CameraConnectionEvent(int what, VdtCamera camera) {
         this.mWhat = what;

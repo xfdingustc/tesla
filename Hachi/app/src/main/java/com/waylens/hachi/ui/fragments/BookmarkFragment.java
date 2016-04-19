@@ -24,6 +24,7 @@ import android.widget.ViewSwitcher;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -121,6 +122,16 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                 toggleMultiMode(false);
                 break;
             default:
+                break;
+        }
+    }
+
+    @Subscribe
+    public void onEventCameraConnection(CameraConnectionEvent event) {
+        switch (event.getWhat()) {
+            case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
+                initCamera();
+                doGetBookmarkClips();
                 break;
         }
     }

@@ -12,6 +12,7 @@ import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
@@ -90,6 +91,16 @@ public class AllFootageFragment extends BaseFragment {
     public void onBtnAddBookmarkClicked() {
         doAddBookmark();
 
+    }
+
+    @Subscribe
+    public void onEventCameraConnection(CameraConnectionEvent event) {
+        switch (event.getWhat()) {
+            case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
+                initCamera();
+                refreshAllFootageClipSet();
+                break;
+        }
     }
 
 

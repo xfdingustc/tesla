@@ -95,6 +95,7 @@ public class BaseFragment extends Fragment  {
     }
 
 
+
     public void onCameraVdbConnected(VdtCamera camera) {
         mVdtCamera = camera;
         mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), camera);

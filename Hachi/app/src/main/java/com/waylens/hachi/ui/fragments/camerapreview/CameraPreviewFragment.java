@@ -371,10 +371,13 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
+
+
     private void changeCurrentCamera(int position) {
         stopCameraPreview();
         mVdtCameraManager.setCurrentCamera(position);
         mVdtCamera = mVdtCameraManager.getCurrentCamera();
+        mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED, null));
         Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
         initCameraPreview();
     }
