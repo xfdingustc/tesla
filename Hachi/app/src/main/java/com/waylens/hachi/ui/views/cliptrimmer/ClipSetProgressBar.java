@@ -39,7 +39,7 @@ import java.util.List;
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
  */
-public class ClipSetProgressBar extends FrameLayout implements Progressive {
+public class ClipSetProgressBar extends FrameLayout  {
     private static final String TAG = ClipSetProgressBar.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private ThumbnailListAdapter mAdapter;
@@ -141,6 +141,11 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         mAdapter.notifyDataSetChanged();
     }
 
+    private int getCellUnit() {
+        View view = mRecyclerView.getChildAt(1);
+        return view.getWidth();
+    }
+
     public ClipPos getCurrentClipPos() {
         return mClipSet.getClipPosByClipSetPos(getCurrentClipSetPos());
     }
@@ -175,7 +180,13 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
     }
 
 
-    int getScreenWidth() {
+
+    private int getLength() {
+        View view = mRecyclerView.getChildAt(1);
+        return view.getWidth() * (mRecyclerView.getAdapter().getItemCount() - 2);
+    }
+
+    private int getScreenWidth() {
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -183,43 +194,10 @@ public class ClipSetProgressBar extends FrameLayout implements Progressive {
         return size.x;
     }
 
-    int getLength() {
-        View view = mRecyclerView.getChildAt(1);
-        return view.getWidth() * (mRecyclerView.getAdapter().getItemCount() - 2);
-    }
-
-    int getCellUnit() {
-        View view = mRecyclerView.getChildAt(1);
-        return view.getWidth();
-    }
 
 
-    @Override
-    public int updateProgress() {
-        int timeOffset;
-        try {
-            timeOffset = 0;
-        } catch (IllegalStateException e) {
-            Log.e("test", "", e);
-            return 0;
-        }
-        double offset = (1.0f * timeOffset);
-
-        int cellWidth = getCellUnit();
-        if (cellWidth == 0) {
-            return (int) offset;
-        }
-        int position = (int) offset / cellWidth;
-        int remainder = (int) offset % cellWidth;
-        mLayoutManager.scrollToPositionWithOffset(position + 1, mScreenWidth / 2 - remainder);
-        return (int) offset;
-    }
 
 
-    @Override
-    public boolean isInProgress() {
-        return false;
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipPosSetChangeMainThread(ClipSetPosChangeEvent event) {
