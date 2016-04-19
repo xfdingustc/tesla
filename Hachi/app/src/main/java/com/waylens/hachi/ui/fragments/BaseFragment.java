@@ -73,8 +73,6 @@ public class BaseFragment extends Fragment  {
         ButterKnife.bind(this, mRootView);
         setupToolbar();
 
-        VdtCameraManager cameraManager = VdtCameraManager.getManager();
-        cameraManager.addCallback(mVdtCameraMangerCallback);
 
         return mRootView;
     }
@@ -84,42 +82,12 @@ public class BaseFragment extends Fragment  {
     @Override
     public void onDestroyView() {
         VdtCameraManager cameraManager = VdtCameraManager.getManager();
-        cameraManager.removeCallback(mVdtCameraMangerCallback);
+
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
     
-    private VdtCameraManager.Callback mVdtCameraMangerCallback = new VdtCameraManager.Callback() {
-        @Override
-        public void onCameraConnecting(VdtCamera vdtCamera) {
-            BaseFragment.this.onCameraConnecting(vdtCamera);
-        }
 
-        @Override
-        public void onCameraConnected(VdtCamera vdtCamera) {
-
-        }
-
-        @Override
-        public void onCameraVdbConnected(VdtCamera vdtCamera) {
-            BaseFragment.this.onCameraVdbConnected(vdtCamera);
-        }
-
-        @Override
-        public void onCameraDisconnected(VdtCamera vdtCamera) {
-            BaseFragment.this.onCameraDisconnected(vdtCamera);
-        }
-
-        @Override
-        public void onCameraStateChanged(VdtCamera vdtCamera) {
-
-        }
-
-        @Override
-        public void onWifiListChanged() {
-
-        }
-    };
 
     protected  void onCameraConnecting(VdtCamera vdtCamera) {
 

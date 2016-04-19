@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.Snipe;
@@ -49,6 +50,10 @@ import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -79,6 +84,8 @@ public class CameraPreviewFragment extends BaseFragment {
     private LocalBroadcastManager mLocalBroadcastManager;
 
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
+
+    private EventBus mEventBus = EventBus.getDefault();
 
     @Bind(R.id.cameraPreview)
     CameraLiveView mLiveView;
@@ -184,6 +191,30 @@ public class CameraPreviewFragment extends BaseFragment {
         showOverlay(!mIsGaugeVisible);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventCameraConnection(CameraConnectionEvent event) {
+        switch (event.getWhat()) {
+            case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
+                setupToolbar();
+                initViews();
+                initCameraPreview();
+                break;
+            case CameraConnectionEvent.VDT_CAMERA_CONNECTING:
+                mCameraNoSignal.setVisibility(View.GONE);
+                mCameraConnecting.setVisibility(View.VISIBLE);
+                break;
+            case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
+                mCameraNoSignal.setVisibility(View.VISIBLE);
+                mCameraConnecting.setVisibility(View.GONE);
+                mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+                AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+                animationDrawable.start();
+                mToolbar.getMenu().clear();
+                break;
+        }
+
+    }
+
 
     public static CameraPreviewFragment newInstance(VdtCamera vdtCamera, boolean isGaugeVisible) {
         CameraPreviewFragment fragment = new CameraPreviewFragment();
@@ -284,6 +315,7 @@ public class CameraPreviewFragment extends BaseFragment {
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+        mEventBus.register(this);
 
     }
 
@@ -310,12 +342,13 @@ public class CameraPreviewFragment extends BaseFragment {
             mLiveView.stopStream();
         }
 
-        mLocalBroadcastManager.registerReceiver(mBroadcastReceiver,
-            new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
+        mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
         if (mTimer != null) {
             mTimer.cancel();
         }
+
+        mEventBus.unregister(this);
     }
 
     @Override
@@ -324,24 +357,24 @@ public class CameraPreviewFragment extends BaseFragment {
         super.onDestroyView();
     }
 
-    @Override
-    public void onCameraVdbConnected(VdtCamera camera) {
-        super.onCameraVdbConnected(camera);
-
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mCameraConnecting == null) {
-                    return;
-                }
-                mCameraConnecting.setVisibility(View.GONE);
-                mToolbar.getMenu().clear();
-                mToolbar.inflateMenu(R.menu.menu_live_view);
-                initViews();
-                initCameraPreview();
-            }
-        });
-    }
+//    @Override
+//    public void onCameraVdbConnected(VdtCamera camera) {
+//        super.onCameraVdbConnected(camera);
+//
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mCameraConnecting == null) {
+//                    return;
+//                }
+//                mCameraConnecting.setVisibility(View.GONE);
+//                mToolbar.getMenu().clear();
+//                mToolbar.inflateMenu(R.menu.menu_live_view);
+//                initViews();
+//                initCameraPreview();
+//            }
+//        });
+//    }
 
     @Override
     protected void onCameraConnecting(VdtCamera vdtCamera) {

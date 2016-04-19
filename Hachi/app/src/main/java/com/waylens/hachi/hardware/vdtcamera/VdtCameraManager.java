@@ -6,9 +6,12 @@ import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.NetworkStateReceiver;
 import com.waylens.hachi.hardware.smartconfig.NetworkUtil;
 import com.waylens.hachi.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
@@ -25,6 +28,8 @@ public class VdtCameraManager {
     private PasswordList mPasswordList;
     private boolean mPasswordLoaded;
 
+    private EventBus mEventBus = EventBus.getDefault();
+
     private static final int TAG_SHOULD_REMOVE = 0;
     private static final int TAG_SHOULD_KEEP = 1;
     private static final int TAG_ADDED = 2;
@@ -39,7 +44,7 @@ public class VdtCameraManager {
 
     // note: CameraManager is a global data,
     // we have to track each callback even they are installed by the same activity.
-    private List<WeakReference<Callback>> mCallbackList = new ArrayList<>();
+
 
     // cameras: connected + connecting + wifi-ap
     private final List<VdtCamera> mConnectedVdtCameras = new ArrayList<>();
@@ -47,19 +52,6 @@ public class VdtCameraManager {
     private final List<WifiItem> mWifiList = new ArrayList<>();
 
 
-    public interface Callback {
-        void onCameraConnecting(VdtCamera vdtCamera);
-
-        void onCameraConnected(VdtCamera vdtCamera);
-
-        void onCameraVdbConnected(VdtCamera vdtCamera);
-
-        void onCameraDisconnected(VdtCamera vdtCamera);
-
-        void onCameraStateChanged(VdtCamera vdtCamera);
-
-        void onWifiListChanged();
-    }
 
 
     public static class WifiItem {
@@ -81,14 +73,7 @@ public class VdtCameraManager {
         mPasswordList = new PasswordList();
     }
 
-    public void addCallback(Callback callback) {
-        mCallbackList.add(new WeakReference<Callback>(callback));
-    }
 
-
-    public void removeCallback(Callback callback) {
-        mCallbackList.remove(callback);
-    }
 
     public void filterScanResult(List<ScanResult> list) {
 
@@ -141,16 +126,6 @@ public class VdtCameraManager {
             index++;
         }
 
-        //Logger.t(TAG).d("wifi list: removed " + nRemoved + ", added " + nAdded);
-
-        if (nRemoved + nAdded > 0) {
-            for (WeakReference<Callback> callback : mCallbackList) {
-                Callback strongCallback = callback.get();
-                if (strongCallback != null) {
-                    strongCallback.onWifiListChanged();
-                }
-            }
-        }
     }
 
     private boolean isPossibleCamera(String ssid) {
@@ -232,7 +207,8 @@ public class VdtCameraManager {
 
             @Override
             public void onVdbConnected(VdtCamera vdtCamera) {
-                onCameraVdbConnected(vdtCamera);
+
+                mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_CONNECTED, vdtCamera));
             }
 
             @Override
@@ -265,16 +241,8 @@ public class VdtCameraManager {
             vdtCamera.startClient();
         }
 
-        for (WeakReference<Callback> callback : mCallbackList) {
-            Callback strongCallback = callback.get();
-            if (strongCallback != null) {
-                if (serviceInfo.bPcServer) {
-                    strongCallback.onCameraConnected(vdtCamera);
-                } else {
-                    strongCallback.onCameraConnecting(vdtCamera);
-                }
-            }
-        }
+
+        mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_CONNECTING, vdtCamera));
     }
 
     private boolean cameraExistsIn(InetAddress inetAddr, int port, List<VdtCamera> list) {
@@ -395,12 +363,7 @@ public class VdtCameraManager {
                 mConnectingVdtCameras.remove(index);
                 mConnectedVdtCameras.add(vdtCamera);
                 Logger.t(TAG).d("camera connected: " + vdtCamera.getInetSocketAddress());
-                for (WeakReference<Callback> callback : mCallbackList) {
-                    Callback strongCallback = callback.get();
-                    if (strongCallback != null) {
-                        strongCallback.onCameraConnected(vdtCamera);
-                    }
-                }
+
                 return;
             }
             index++;
@@ -422,14 +385,7 @@ public class VdtCameraManager {
     }
 
 
-    private void onCameraVdbConnected(VdtCamera vdtCamera) {
-        for (WeakReference<Callback> callback : mCallbackList) {
-            Callback strongCallback = callback.get();
-            if (strongCallback != null) {
-                strongCallback.onCameraVdbConnected(vdtCamera);
-            }
-        }
-    }
+
 
     private void onCameraDisconnected(VdtCamera vdtCamera) {
         // disconnect msg may be sent from msg thread,
@@ -452,13 +408,7 @@ public class VdtCameraManager {
                 break;
             }
         }
-        for (WeakReference<Callback> callback : mCallbackList) {
-            Callback strongCallback = callback.get();
-            if (strongCallback != null) {
-                strongCallback.onCameraDisconnected(vdtCamera);
-            }
-
-        }
+        mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_DISCONNECTED, vdtCamera));
 
         if (!NetworkUtil.isWifiConnected(mContext)) {
             enableNetworkStateReceiver(true);
