@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -21,18 +20,12 @@ import com.appyvet.rangebar.RangeBar;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.cache.DiskCache;
-import com.waylens.hachi.snipe.cache.impl.UnlimitedDiskCache;
-import com.waylens.hachi.snipe.cache.impl.ext.LruDiskCache;
-import com.waylens.hachi.snipe.cache.naming.FileNameGenerator;
-import com.waylens.hachi.snipe.cache.naming.HashCodeFileNameGenerator;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.snipe.utils.StorageUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
 import com.waylens.hachi.vdb.ClipSet;
@@ -43,8 +36,6 @@ import com.waylens.hachi.vdb.rawdata.RawData;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

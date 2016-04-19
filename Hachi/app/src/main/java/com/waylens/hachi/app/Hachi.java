@@ -16,7 +16,6 @@ import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -91,7 +90,6 @@ public class Hachi extends Application {
         VdbImageLoader.getImageLoader(null).init(this, 1024 * 64);
 //        FIR.init(this);
 
-        Snipe.init();
 
         CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
             @Override

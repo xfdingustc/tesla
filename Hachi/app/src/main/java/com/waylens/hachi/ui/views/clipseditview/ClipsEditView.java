@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
@@ -30,7 +29,6 @@ import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

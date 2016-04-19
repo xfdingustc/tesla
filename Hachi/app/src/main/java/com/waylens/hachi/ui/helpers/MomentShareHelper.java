@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.DataUploaderV2;

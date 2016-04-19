@@ -6,7 +6,6 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.Snipe;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
