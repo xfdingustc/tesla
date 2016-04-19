@@ -2,11 +2,9 @@ package com.waylens.hachi.ui.views.cliptrimmer;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,7 +19,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipFragment;
@@ -41,7 +38,7 @@ import java.util.List;
  * VideoPlayerProgressBar
  * Created by Richard on 9/21/15.
  */
-public class ClipSetProgressBar extends FrameLayout  {
+public class ClipSetProgressBar extends FrameLayout {
     private static final String TAG = ClipSetProgressBar.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private ThumbnailListAdapter mAdapter;
@@ -187,7 +184,6 @@ public class ClipSetProgressBar extends FrameLayout  {
     }
 
 
-
     private int getLength() {
         View view = mRecyclerView.getChildAt(1);
         return view.getWidth() * (mRecyclerView.getAdapter().getItemCount() - 2);
@@ -200,10 +196,6 @@ public class ClipSetProgressBar extends FrameLayout  {
         display.getSize(size);
         return size.x;
     }
-
-
-
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -235,6 +227,11 @@ public class ClipSetProgressBar extends FrameLayout  {
         }
     }
 
+    @Subscribe
+    public void onEventClipSelectEvent(ClipSelectEvent event) {
+        mAdapter.mSelectedClip = event.getClip();
+        mAdapter.notifyDataSetChanged();
+    }
 
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -403,7 +400,7 @@ public class ClipSetProgressBar extends FrameLayout  {
         private View.OnClickListener mOnBookmarkViewClickListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Clip clip = (Clip)v.getTag();
+                Clip clip = (Clip) v.getTag();
                 mSelectedClip = clip;
                 mEventBus.post(new ClipSelectEvent(clip));
                 notifyDataSetChanged();

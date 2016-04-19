@@ -12,6 +12,7 @@ import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.SnipeError;
@@ -106,6 +107,12 @@ public class AllFootageFragment extends BaseFragment {
             public void onBookmarkClick(Clip clip) {
                 BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
                 dialog.show();
+            }
+        });
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEventBus.post(new ClipSelectEvent(null));
             }
         });
 

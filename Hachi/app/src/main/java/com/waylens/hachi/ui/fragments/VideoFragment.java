@@ -66,7 +66,9 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     @Subscribe
     public void onEventClipSelectEvent(ClipSelectEvent event) {
         mToolbar.getMenu().clear();
-        mToolbar.inflateMenu(R.menu.menu_clip_list);
+        if (event.getClip() != null) {
+            mToolbar.inflateMenu(R.menu.menu_clip_list);
+        }
 
     }
 
