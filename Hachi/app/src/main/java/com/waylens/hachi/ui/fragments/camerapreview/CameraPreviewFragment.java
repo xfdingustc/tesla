@@ -218,14 +218,16 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventCameraInfoChanged(CameraStateChangeEvent event) {
+        if (event.getWhat() == CameraStateChangeEvent.CAMERA_STATE_INFO) {
+            setupToolbar();
+            return;
+        }
+
         if (mVdtCamera != event.getCamera()) {
             return;
         }
 
         switch (event.getWhat()) {
-            case CameraStateChangeEvent.CAMERA_STATE_INFO:
-                setupToolbar();
-                break;
             case CameraStateChangeEvent.CAMERA_STATE_REC:
                 updateCameraState();
                 break;
@@ -524,11 +526,9 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void updateCameraState() {
-
         updateCameraStatusInfo();
         updateFloatActionButton();
         toggleRecordDot();
-
     }
 
 
@@ -649,7 +649,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    boolean isInCarMode() {
+    private boolean isInCarMode() {
         boolean isInCarMode = (mVdtCamera.getRecordMode() == VdtCamera.REC_MODE_AUTOSTART_LOOP);
 //        Logger.t(TAG).d("record mode: " + mVdtCamera.getRecordMode() + " isInCarMode: " + isInCarMode);
         return isInCarMode;
@@ -674,6 +674,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private void updateCameraStatusInfo() {
         int recState = mVdtCamera.getRecordState();
+        Logger.t(TAG).d("rec state: " + recState);
         switch (recState) {
             case VdtCamera.STATE_RECORD_UNKNOWN:
                 mTvCameraRecStatus.setText(R.string.record_unknown);

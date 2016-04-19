@@ -200,13 +200,6 @@ public class VdtCamera {
         }
     }
 
-    public interface OnRecStateChangeListener {
-        void onRecStateChanged(int newState, boolean isStill);
-
-        void onRecDurationChanged(int duration);
-
-        void onRecError(int error);
-    }
 
     public interface OnConnectionChangeListener {
         void onConnected(VdtCamera vdtCamera);
@@ -465,6 +458,7 @@ public class VdtCamera {
         mController.cmd_fw_getVersion();
 //        mController.getName();
         mController.getNameAsync();
+        mController.cmd_Rec_get_RecMode();
         mController.cmd_Rec_List_Resolutions(); // see if still capture is supported
         mController.cmd_Cam_get_getAllInfor();
         mController.cmd_Cam_get_State();
@@ -1209,7 +1203,10 @@ public class VdtCamera {
 
         private void ack_Rec_get_RecMode(String p1, String p2) {
             int index = Integer.parseInt(p1);
-            mRecordModeIndex = index;
+            if (mRecordModeIndex != index) {
+                mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
+                mRecordModeIndex = index;
+            }
         }
 
 
