@@ -129,7 +129,9 @@ public class VdtCameraManager {
 
             @Override
             public void onVdbConnected(VdtCamera vdtCamera) {
-
+                if (mCurrentCamera == null) {
+                    mCurrentCamera = vdtCamera;
+                }
                 mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_CONNECTED, vdtCamera));
             }
 
