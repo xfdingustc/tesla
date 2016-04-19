@@ -255,6 +255,8 @@ public class ClipSetProgressBar extends FrameLayout  {
 
         private int mCellWidth;
 
+        private Clip mSelectedClip = null;
+
 
         private void generateClipPosList() {
             mItems.clear();
@@ -402,8 +404,9 @@ public class ClipSetProgressBar extends FrameLayout  {
             @Override
             public void onClick(View v) {
                 Clip clip = (Clip)v.getTag();
-
+                mSelectedClip = clip;
                 mEventBus.post(new ClipSelectEvent(clip));
+                notifyDataSetChanged();
             }
         };
 
@@ -416,6 +419,9 @@ public class ClipSetProgressBar extends FrameLayout  {
 
                 if (clip.realCid.equals(clipFragment.getClip().cid)) {
 //                    Logger.t(TAG).d("bookmark " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs() + " clipFragment: " + clipFragment.getStartTimeMs() + " ~" + clipFragment.getEndTimeMs());
+                    boolean isSelected = mSelectedClip == null ? false : mSelectedClip.cid.equals(clip.cid);
+
+
                     if (clipFragment.getStartTimeMs() <= clip.getStartTimeMs() && clip.getStartTimeMs() <= clipFragment.getEndTimeMs()) {
                         long endTims = Math.min(clipFragment.getEndTimeMs(), clip.getEndTimeMs());
                         long bookmarkDurationInItem = endTims - clip.getStartTimeMs();
@@ -429,12 +435,12 @@ public class ClipSetProgressBar extends FrameLayout  {
                             bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                         }
                         bookmarkLayoutParasm.leftMargin = marginLeft;
-                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, mOnBookmarkViewClickListener);
+                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, isSelected, mOnBookmarkViewClickListener);
 
                     } else if (clip.getStartTimeMs() <= clipFragment.getStartTimeMs() && clip.getEndTimeMs() >= clipFragment.getEndTimeMs()) {
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 //                                Logger.t(TAG).d("Duration in this cell: " + clipFragment.getDurationMs());
-                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, mOnBookmarkViewClickListener);
+                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, isSelected, mOnBookmarkViewClickListener);
 
                     } else if (clipFragment.getStartTimeMs() <= clip.getEndTimeMs() && clip.getEndTimeMs() <= clipFragment.getEndTimeMs()) {
                         long startTimeMs = Math.max(clipFragment.getStartTimeMs(), clip.getStartTimeMs());
@@ -444,7 +450,7 @@ public class ClipSetProgressBar extends FrameLayout  {
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                         bookmarkLayoutParasm.leftMargin = marginLeft;
 //                                Logger.t(TAG).d("Right Duration in this cell: " + bookmarkDurationInItem);
-                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, mOnBookmarkViewClickListener);
+                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, isSelected, mOnBookmarkViewClickListener);
 
                     }
                 }
