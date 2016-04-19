@@ -175,7 +175,6 @@ public class VdtCamera {
     private VdbRequestQueue mVdbRequestQueue;
 
 
-
     public static class ServiceInfo {
         public String ssid;
         public final InetAddress inetAddr;
@@ -183,7 +182,6 @@ public class VdtCamera {
         public final String serverName;
         public final String serviceName;
         public final boolean bPcServer;
-
 
 
         public ServiceInfo(InetAddress inetAddr, int port, String serverName, String serviceName, boolean bPcServer) {
@@ -279,6 +277,7 @@ public class VdtCamera {
 
         }
     }
+
     public boolean version12() {
         return mApiVersion >= makeVersion(1, 2);
     }
@@ -345,9 +344,6 @@ public class VdtCamera {
     }
 
 
-
-
-
     public InetAddress getAddress() {
         return mServiceInfo.inetAddr;
     }
@@ -374,8 +370,6 @@ public class VdtCamera {
     }
 
 
-
-
     public int getRecordState() {
         return mRecordState;
     }
@@ -383,7 +377,6 @@ public class VdtCamera {
     public BtState getBtStates() {
         return mBtStates;
     }
-
 
 
     public int getVideoResolution() {
@@ -428,7 +421,6 @@ public class VdtCamera {
     }
 
 
-
     public InetSocketAddress getInetSocketAddress() {
         return mController.getInetSocketAddress();
     }
@@ -446,24 +438,20 @@ public class VdtCamera {
             }
         }
         mVdbConnection = new VdbConnection(getHostString());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mVdbConnection.connect();
-                    mIsVdbConnected = true;
-                    VdbSocket vdbSocket = new BasicVdbSocket(getVdbConnection());
-                    mVdbRequestQueue = new VdbRequestQueue(vdbSocket);
-                    mVdbRequestQueue.start();
-                    mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        try {
+            mVdbConnection.connect();
+            mIsVdbConnected = true;
+            VdbSocket vdbSocket = new BasicVdbSocket(getVdbConnection());
+            mVdbRequestQueue = new VdbRequestQueue(vdbSocket);
+            mVdbRequestQueue.start();
+            mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         mIsConnected = true;
     }
@@ -493,9 +481,6 @@ public class VdtCamera {
     }
 
 
-
-
-
     // Control APIs
     public void setBtEnable(boolean enable) {
         mController.cmd_CAM_BT_Enable(enable);
@@ -516,7 +501,6 @@ public class VdtCamera {
     public void doBind(int type, String mac) {
         mController.cmd_CAM_BT_doBind(type, mac);
     }
-
 
 
     public void setRecordMarkTime(int markBeforeTime, int newMarkTime) {
@@ -698,7 +682,6 @@ public class VdtCamera {
         private final GpsState mGpsStates = new GpsState();
 
 
-
         public VdtCameraController(InetAddress host, int port) {
             InetSocketAddress address = new InetSocketAddress(host, port);
             mConnection = new MyTcpConnection("ccam", address);
@@ -712,7 +695,6 @@ public class VdtCamera {
         public boolean syncGpsState(GpsState user) {
             return mGpsStates.syncStates(user);
         }
-
 
 
         public InetSocketAddress getInetSocketAddress() {
@@ -1178,7 +1160,7 @@ public class VdtCamera {
 
         private void ack_Rec_get_Resolution(String p1, String p2) {
             int index = Integer.parseInt(p1);
-            Logger.t(TAG).d("set video resolution index: " + index);
+//            Logger.t(TAG).d("set video resolution index: " + index);
             mVideoResolutionIndex = index;
         }
 

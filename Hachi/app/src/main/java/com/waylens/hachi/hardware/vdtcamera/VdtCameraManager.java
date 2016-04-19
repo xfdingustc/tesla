@@ -25,7 +25,7 @@ public class VdtCameraManager {
     private static VdtCameraManager mSharedManager = new VdtCameraManager();
 
     private static Context mContext;
-    private PasswordList mPasswordList;
+
     private boolean mPasswordLoaded;
 
     private EventBus mEventBus = EventBus.getDefault();
@@ -49,54 +49,8 @@ public class VdtCameraManager {
     // cameras: connected + connecting + wifi-ap
     private final List<VdtCamera> mConnectedVdtCameras = new ArrayList<>();
     private final List<VdtCamera> mConnectingVdtCameras = new ArrayList<>();
-    private final List<WifiItem> mWifiList = new ArrayList<>();
 
     private VdtCamera mCurrentCamera;
-
-
-
-
-    public static class WifiItem {
-        public String mSSID;
-        public String mPassword; // may be null
-        private int mTag;
-
-        public WifiItem(String ssid, String password, int tag) {
-            mSSID = ssid;
-            mPassword = password;
-            mTag = tag;
-        }
-    }
-
-
-
-
-    private VdtCameraManager() {
-        mPasswordList = new PasswordList();
-    }
-
-
-    //
-    private boolean removeWifi(String ssid) {
-        int index = 0;
-        for (WifiItem item : mWifiList) {
-            if (ssid.equals(item.mSSID)) {
-                mWifiList.remove(index);
-                return true;
-            }
-            index++;
-        }
-        return false;
-    }
-
-    //
-    private WifiItem findWifi(String ssid) {
-        for (WifiItem item : mWifiList) {
-            if (ssid.equals(item.mSSID))
-                return item;
-        }
-        return null;
-    }
 
 
     // API
@@ -110,12 +64,6 @@ public class VdtCameraManager {
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectingVdtCameras)) {
             // already connecting
             return;
-        }
-
-        WifiItem item = findWifi(serviceInfo.ssid);
-        if (item != null) {
-            Logger.t(TAG).d("connecting wifi " + serviceInfo.ssid);
-            removeWifi(serviceInfo.ssid);
         }
 
         VdtCamera vdtCamera = new VdtCamera(serviceInfo);
@@ -216,21 +164,6 @@ public class VdtCameraManager {
 
     public VdtCamera getCurrentCamera() {
         return mCurrentCamera;
-    }
-
-
-
-    private final void loadPassword() {
-        if (!mPasswordLoaded) {
-            mPasswordList.load(mContext, PASSWORD_FILE);
-            mPasswordLoaded = true;
-        }
-    }
-
-    // API
-    public String getPassword(String ssid) {
-        loadPassword();
-        return mPasswordList.getPassword(ssid);
     }
 
     private void onCameraConnected(VdtCamera vdtCamera) {

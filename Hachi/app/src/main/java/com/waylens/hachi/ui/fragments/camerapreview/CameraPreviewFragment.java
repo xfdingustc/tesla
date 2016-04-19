@@ -194,6 +194,7 @@ public class CameraPreviewFragment extends BaseFragment {
     public void onEventCameraConnection(CameraConnectionEvent event) {
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
+                Logger.t(TAG).d("on Camera connected");
                 setupToolbar();
                 initViews();
                 initCameraPreview();
@@ -276,6 +277,8 @@ public class CameraPreviewFragment extends BaseFragment {
 
                     }
                 });
+                mToolbar.setTitle("");
+                mCameraSpinner.setVisibility(View.VISIBLE);
 
             } else {
                 mToolbar.setTitle(R.string.live_view);
@@ -378,7 +381,7 @@ public class CameraPreviewFragment extends BaseFragment {
         mVdtCameraManager.setCurrentCamera(position);
         mVdtCamera = mVdtCameraManager.getCurrentCamera();
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED, null));
-        Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
+//        Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
         initCameraPreview();
     }
 
