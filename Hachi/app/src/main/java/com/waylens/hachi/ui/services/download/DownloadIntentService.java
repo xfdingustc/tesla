@@ -84,7 +84,7 @@ public class DownloadIntentService extends IntentService {
     }
 
     private void init() {
-        mVdbRequestQueue = Snipe.newRequestQueue(this);
+        mVdbRequestQueue = Snipe.newRequestQueue(this, null);
         mVdbRequestQueue.start();
     }
 

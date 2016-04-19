@@ -7,13 +7,18 @@ import java.io.IOException;
  */
 public class BasicVdbSocket implements VdbSocket {
     private final static String TAG = BasicVdbSocket.class.getSimpleName();
+    private final VdbConnection mConnection;
+
+    public BasicVdbSocket(VdbConnection connection) {
+        this.mConnection = connection;
+    }
 
     @Override
     public void performRequest(VdbRequest<?> vdbRequest) throws SnipeError {
         try {
             VdbCommand vdbCommand = vdbRequest.createVdbCommand();
             vdbCommand.setSequence(vdbRequest.getSequence());
-            Snipe.getVdbConnect().sendCommnd(vdbCommand);
+            mConnection.sendCommnd(vdbCommand);
         } catch (Exception e) {
             throw new SnipeError();
         }
@@ -21,6 +26,6 @@ public class BasicVdbSocket implements VdbSocket {
 
     @Override
     public VdbAcknowledge retrieveAcknowledge() throws IOException {
-        return new VdbAcknowledge(0, Snipe.getVdbConnect());
+        return new VdbAcknowledge(0, mConnection);
     }
 }

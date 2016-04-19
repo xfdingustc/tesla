@@ -323,7 +323,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
 
         RecyclerViewAdapter(LinearLayoutManager layoutManager) {
             mLayoutManager = layoutManager;
-            mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
+//            mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
         }
 
         @Override

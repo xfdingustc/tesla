@@ -113,10 +113,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.StoryEditActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity
             android:name=".ui.activities.MenualSetupActivity"
             android:screenOrientation="portrait"/>
 

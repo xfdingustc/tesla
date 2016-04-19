@@ -80,7 +80,7 @@ public class ClipModifyActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        mVdbRequestQueue = Snipe.newRequestQueue(this);
+//        mVdbRequestQueue = Snipe.newRequestQueue(this);
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         Bundle bundle = getIntent().getExtras();
         Clip clip = bundle.getParcelable("clip");

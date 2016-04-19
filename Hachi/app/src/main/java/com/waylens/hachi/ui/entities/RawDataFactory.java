@@ -46,7 +46,7 @@ public class RawDataFactory {
     Handler mHandler;
 
     public RawDataFactory(Clip clip, Handler handler) {
-        mVdbRequestQueue = Snipe.newRequestQueue();
+        mVdbRequestQueue = Snipe.newRequestQueue(null, null);
         mClip = clip;
         mHandler = handler;
 

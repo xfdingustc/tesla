@@ -128,7 +128,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Override
     protected void init() {
         super.init();
-        mVdbRequestQueue = Snipe.newRequestQueue();
+        mVdbRequestQueue = Snipe.newRequestQueue(this, getCameraFromIntent(getIntent().getExtras()));
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
 
 

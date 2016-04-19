@@ -279,7 +279,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     private void setupClipSetGroup() {
         mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ClipSetGroupAdapter(getActivity(), null, new ClipSetGroupAdapter.OnClipClickListener() {
+        mAdapter = new ClipSetGroupAdapter(getActivity(), mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
                 popClipPreviewFragment(clip);

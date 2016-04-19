@@ -11,47 +11,61 @@ import com.waylens.hachi.snipe.toolbox.SetOptionsRequest;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Xiaofei on 2015/8/17.
  */
 public class Snipe {
     private static VdbConnection mVdbConnection;
 
-    private static volatile VdbRequestQueue _REQUEST_QUEUE_SINGLETON;
+    private static Map<VdtCamera, VdbRequestQueue> mVdbRequestQueueMap = new HashMap<>();
 
     private static EventBus mEventBus = EventBus.getDefault();
 
-    public static VdbRequestQueue newRequestQueue() {
-        if (_REQUEST_QUEUE_SINGLETON == null) {
-            synchronized (VdbRequestQueue.class) {
-                if (_REQUEST_QUEUE_SINGLETON == null) {
-                    VdbSocket vdbSocket = new BasicVdbSocket();
-                    _REQUEST_QUEUE_SINGLETON = new VdbRequestQueue(vdbSocket);
-                    _REQUEST_QUEUE_SINGLETON.start();
-                }
-            }
-        }
-        return _REQUEST_QUEUE_SINGLETON;
-    }
-
-    public static VdbRequestQueue newRequestQueue(Context context) {
-        if (_REQUEST_QUEUE_SINGLETON == null) {
-            synchronized (VdbRequestQueue.class) {
-                if (_REQUEST_QUEUE_SINGLETON == null) {
-                    VdbSocket vdbSocket = new BasicVdbSocket();
-                    _REQUEST_QUEUE_SINGLETON = new VdbRequestQueue(vdbSocket);
-                    _REQUEST_QUEUE_SINGLETON.start();
-                }
-            }
-        }
-        return _REQUEST_QUEUE_SINGLETON;
-    }
+//    public static VdbRequestQueue newRequestQueue() {
+//        if (_REQUEST_QUEUE_SINGLETON == null) {
+//            synchronized (VdbRequestQueue.class) {
+//                if (_REQUEST_QUEUE_SINGLETON == null) {
+//                    VdbSocket vdbSocket = new BasicVdbSocket();
+//                    _REQUEST_QUEUE_SINGLETON = new VdbRequestQueue(vdbSocket);
+//                    _REQUEST_QUEUE_SINGLETON.start();
+//                }
+//            }
+//        }
+//        return _REQUEST_QUEUE_SINGLETON;
+//    }
+//
+//    public static VdbRequestQueue newRequestQueue(Context context) {
+//        if (_REQUEST_QUEUE_SINGLETON == null) {
+//            synchronized (VdbRequestQueue.class) {
+//                if (_REQUEST_QUEUE_SINGLETON == null) {
+//                    VdbSocket vdbSocket = new BasicVdbSocket();
+//                    _REQUEST_QUEUE_SINGLETON = new VdbRequestQueue(vdbSocket);
+//                    _REQUEST_QUEUE_SINGLETON.start();
+//                }
+//            }
+//        }
+//        return _REQUEST_QUEUE_SINGLETON;
+//    }
 
     // TODO: We will add multi camera support later, we need implement different request queue for
     //       different vdt camera;
     public static VdbRequestQueue newRequestQueue(Context context, VdtCamera camera) {
-        mVdbConnection = camera.getVdbConnection();
-        return newRequestQueue();
+        VdbRequestQueue requestQueue = mVdbRequestQueueMap.get(camera);
+        if (requestQueue != null) {
+            return requestQueue;
+        }
+
+        VdbSocket vdbSocket = new BasicVdbSocket(camera.getVdbConnection());
+        requestQueue = new VdbRequestQueue(vdbSocket);
+        requestQueue.start();
+        mVdbRequestQueueMap.put(camera, requestQueue);
+
+        return requestQueue;
+//        mVdbConnection = camera.getVdbConnection();
+//        return newRequestQueue();
     }
 
     public static void init() {
@@ -60,44 +74,11 @@ public class Snipe {
 //        manager.addCallback(mCallback);
     }
 
-//    @Subscribe
-//
-//    private static VdtCameraManager.Callback mCallback = new VdtCameraManager.Callback() {
-//        @Override
-//        public void onCameraConnecting(VdtCamera vdtCamera) {
-//
-//        }
-//
-//        @Override
-//        public void onCameraConnected(VdtCamera vdtCamera) {
-//
-//        }
-//
-//        @Override
-//        public void onCameraVdbConnected(VdtCamera vdtCamera) {
-//            mVdbConnection = vdtCamera.getVdbConnection();
-//            //setOptions();
-//        }
-//
-//        @Override
-//        public void onCameraDisconnected(VdtCamera vdtCamera) {
-//
-//        }
-//
-//        @Override
-//        public void onCameraStateChanged(VdtCamera vdtCamera) {
-//
-//        }
-//
-//        @Override
-//        public void onWifiListChanged() {
-//
-//        }
-//    };
 
-    public static VdbConnection getVdbConnect() {
-        return mVdbConnection;
-    }
+
+//    public static VdbConnection getVdbConnect() {
+//        return mVdbConnection;
+//    }
 
     /**
      * Still cannot play HLS smoothly on Samsung Galaxy Note 3, even set the

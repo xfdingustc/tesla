@@ -58,12 +58,12 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<ClipGridItem> mClipGridItemList = new ArrayList<>();
 
 
-    public ClipSetGroupAdapter(Context context, List<ClipSet> clipSetGroup, ClipSetGroupAdapter.OnClipClickListener listener) {
+    public ClipSetGroupAdapter(Context context, VdbRequestQueue requestQueue, List<ClipSet> clipSetGroup, ClipSetGroupAdapter.OnClipClickListener listener) {
         this.mContext = context;
         this.mClipSetGroup = clipSetGroup;
         recalculateGridItemList();
         this.mClipClickListener = listener;
-        this.mVdbRequestQueue = Snipe.newRequestQueue(mContext);
+        this.mVdbRequestQueue = requestQueue;
         this.mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
     }
 

@@ -48,7 +48,7 @@ public class MomentShareHelper implements DataUploaderV2.OnUploadListener,
 
 
     public MomentShareHelper(Context context, @NonNull OnShareMomentListener listener) {
-        mVdbRequestQueue = Snipe.newRequestQueue();
+        mVdbRequestQueue = null;//Snipe.newRequestQueue();
         mShareListener = listener;
         mHandler = new Handler(Looper.getMainLooper());
         mContext = context;
