@@ -67,7 +67,7 @@ public class VdtCameraManager {
         }
 
         VdtCamera vdtCamera = new VdtCamera(serviceInfo);
-        Logger.t(TAG).d("camera is created");
+
         //vdtCamera.addCallback(mCameraCallback);
         vdtCamera.setOnConnectionChangeListener(new VdtCamera.OnConnectionChangeListener() {
             @Override
@@ -91,19 +91,7 @@ public class VdtCameraManager {
 
 
 
-        vdtCamera.setOnStateChangeListener(new VdtCamera.OnStateChangeListener() {
 
-            @Override
-            public void onBtStateChanged(VdtCamera vdtCamera) {
-
-            }
-
-            @Override
-            public void onGpsStateChanged(VdtCamera vdtCamera) {
-
-            }
-
-        });
 
 
         if (serviceInfo.bPcServer) {

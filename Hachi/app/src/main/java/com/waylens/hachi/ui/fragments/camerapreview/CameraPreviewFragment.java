@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
@@ -215,6 +216,44 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventCameraInfoChanged(CameraStateChangeEvent event) {
+        if (mVdtCamera != event.getCamera()) {
+            return;
+        }
+
+        switch (event.getWhat()) {
+            case CameraStateChangeEvent.CAMERA_STATE_INFO:
+                setupToolbar();
+                break;
+            case CameraStateChangeEvent.CAMERA_STATE_REC:
+                updateCameraState();
+                break;
+            case CameraStateChangeEvent.CAMERA_STATE_REC_DURATION:
+                int recordTime = (Integer) event.getExtra();
+                if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
+                    mTvCameraRecStatus.setText(DateUtils.formatElapsedTime(recordTime));
+                }
+                break;
+            case CameraStateChangeEvent.CAMERA_STATE_REC_ERROR:
+                int error = (Integer) event.getExtra();
+                Logger.t(TAG).d("On Rec Error: " + error);
+                if (mErrorPanel != null) {
+
+                    mErrorPanel.setVisibility(View.VISIBLE);
+                    mTvErrorIndicator.setText(R.string.recording_error);
+                    switch (error) {
+                        case VdtCamera.ERROR_START_RECORD_NO_CARD:
+                            mTvErrorMessage.setText(R.string.error_msg_no_card);
+                    }
+
+                }
+                break;
+
+        }
+
+    }
+
 
     public static CameraPreviewFragment newInstance(VdtCamera vdtCamera, boolean isGaugeVisible) {
         CameraPreviewFragment fragment = new CameraPreviewFragment();
@@ -336,9 +375,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (mVdtCamera != null) {
-            mVdtCamera.setOnStateChangeListener(null);
-        }
+
 
         if (mLiveView != null) {
             mLiveView.stopStream();
@@ -360,7 +397,6 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-
     @Override
     protected void onCameraConnecting(VdtCamera vdtCamera) {
         super.onCameraConnecting(vdtCamera);
@@ -373,7 +409,6 @@ public class CameraPreviewFragment extends BaseFragment {
         handleOnCameraDisconnected();
 
     }
-
 
 
     private void changeCurrentCamera(int position) {
@@ -463,47 +498,6 @@ public class CameraPreviewFragment extends BaseFragment {
                 return;
             } else {
                 mVdtCamera.startPreview();
-                mVdtCamera.setOnStateChangeListener(mOnStateChangeListener);
-                mVdtCamera.setOnRecStateChangeListener(new VdtCamera.OnRecStateChangeListener() {
-                    @Override
-                    public void onRecStateChanged(int newState, boolean isStill) {
-                        updateCameraState();
-                    }
-
-                    @Override
-                    public void onRecDurationChanged(int duration) {
-                        final int recordTime = duration;
-                        if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mTvCameraRecStatus.setText(DateUtils.formatElapsedTime(recordTime));
-                                }
-                            });
-                        }
-
-                    }
-
-                    @Override
-                    public void onRecError(final int error) {
-                        Logger.t(TAG).d("On Rec Error: " + error);
-                        if (mErrorPanel != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mErrorPanel.setVisibility(View.VISIBLE);
-                                    mTvErrorIndicator.setText(R.string.recording_error);
-                                    switch (error) {
-                                        case VdtCamera.ERROR_START_RECORD_NO_CARD:
-                                            mTvErrorMessage.setText(R.string.error_msg_no_card);
-                                    }
-                                }
-                            });
-
-
-                        }
-                    }
-                });
                 mLiveView.startStream(serverAddr, null, true);
             }
 
@@ -512,7 +506,13 @@ public class CameraPreviewFragment extends BaseFragment {
             mVdtCamera.getAudioMicState();
             mVdtCamera.getRecordResolutionList();
             mVdtCamera.GetSetup();
-            updateCameraState();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateCameraState();
+                }
+            });
+
 
         }
 
@@ -523,31 +523,11 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    private final VdtCamera.OnStateChangeListener mOnStateChangeListener = new VdtCamera.OnStateChangeListener() {
-
-
-        @Override
-        public void onBtStateChanged(VdtCamera vdtCamera) {
-
-        }
-
-        @Override
-        public void onGpsStateChanged(VdtCamera vdtCamera) {
-
-        }
-
-    };
-
-
     private void updateCameraState() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                updateCameraStatusInfo();
-                updateFloatActionButton();
-                toggleRecordDot();
-            }
-        });
+
+        updateCameraStatusInfo();
+        updateFloatActionButton();
+        toggleRecordDot();
 
     }
 
@@ -863,7 +843,7 @@ public class CameraPreviewFragment extends BaseFragment {
         public void run() {
             if (mVdtCamera != null) {
                 mVdtCamera.getRecordTime();
-                updateCameraState();
+//                updateCameraState();
             }
         }
     }

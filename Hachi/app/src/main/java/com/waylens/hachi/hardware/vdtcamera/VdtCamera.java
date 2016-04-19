@@ -4,12 +4,15 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
+
+import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.snipe.BasicVdbSocket;
 import com.waylens.hachi.snipe.VdbConnection;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbSocket;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,6 +124,8 @@ public class VdtCamera {
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
+    private EventBus mEventBus = EventBus.getDefault();
+
     private String mCameraName = new String();
     private String mFirmwareVersion = new String();
     private int mApiVersion = 0;
@@ -175,6 +180,7 @@ public class VdtCamera {
     private VdbRequestQueue mVdbRequestQueue;
 
 
+
     public static class ServiceInfo {
         public String ssid;
         public final InetAddress inetAddr;
@@ -210,31 +216,19 @@ public class VdtCamera {
         void onDisconnected(VdtCamera vdtCamera);
     }
 
-    public interface OnStateChangeListener {
-
-        void onBtStateChanged(VdtCamera vdtCamera);
-
-        void onGpsStateChanged(VdtCamera vdtCamera);
-
-    }
 
 
     private OnConnectionChangeListener mOnConnectionChangeListener = null;
-    private OnStateChangeListener mOnStateChangeListener = null;
-    private OnRecStateChangeListener mOnRecStateChangeListener = null;
+
+
 
 
     public void setOnConnectionChangeListener(OnConnectionChangeListener listener) {
         mOnConnectionChangeListener = listener;
     }
 
-    public void setOnStateChangeListener(OnStateChangeListener listener) {
-        mOnStateChangeListener = listener;
-    }
 
-    public void setOnRecStateChangeListener(OnRecStateChangeListener listener) {
-        mOnRecStateChangeListener = listener;
-    }
+
 
     private VdbConnection mVdbConnection;
 
@@ -259,7 +253,7 @@ public class VdtCamera {
         if (!mCameraName.equals(name)) {
             Logger.t(TAG).d("setCameraName: " + name);
             mCameraName = name;
-
+            mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_INFO, this, null));
         }
     }
 
@@ -469,8 +463,8 @@ public class VdtCamera {
     private void initCameraState() {
         mController.cmd_Cam_getApiVersion();
         mController.cmd_fw_getVersion();
-        mController.cmd_fw_getVersion();
-        mController.cmd_Cam_get_Name();
+//        mController.getName();
+        mController.getNameAsync();
         mController.cmd_Rec_List_Resolutions(); // see if still capture is supported
         mController.cmd_Cam_get_getAllInfor();
         mController.cmd_Cam_get_State();
@@ -512,7 +506,7 @@ public class VdtCamera {
     }
 
     public String getName() {
-        mController.cmd_Cam_get_Name();
+        mController.getNameAsync();
         return mCameraName;
     }
 
@@ -629,17 +623,7 @@ public class VdtCamera {
         mController.cmd_Cam_start_rec();
     }
 
-    public void startStillCapture(boolean oneShot) {
-        mController.cmd_Rec_StartStillCapture(oneShot);
-    }
 
-    public void stopStillCapture() {
-        mController.cmd_Rec_StopStillCapture();
-    }
-
-    public void setRecordStillMode(boolean stillMode) {
-        mController.cmd_Rec_SetStillMode(stillMode);
-    }
 
     public void getNetworkHostHum() {
         mController.cmd_Network_GetHostNum();
@@ -785,12 +769,18 @@ public class VdtCamera {
         }
 
 
-        public void cmd_Cam_get_Name() {
+        public void getNameAsync() {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME);
         }
 
+
+
+
         private void ack_Cam_get_Name_result(String p1, String p2) {
             setCameraName(p1);
+            Logger.t(TAG).d("get name resulut");
+
+
         }
 
         public void cmd_Cam_set_Name(String name) {
@@ -806,10 +796,11 @@ public class VdtCamera {
         private void ack_Cam_get_State_result(String p1, String p2) {
             int state = Integer.parseInt(p1);
             boolean is_still = p2.length() > 0 ? Integer.parseInt(p2) != 0 : false;
-            mRecordState = state;
-            if (mOnRecStateChangeListener != null) {
-                mOnRecStateChangeListener.onRecStateChanged(state, is_still);
+            if (mRecordState != state) {
+                mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
+                mRecordState = state;
             }
+
 
         }
 
@@ -829,10 +820,12 @@ public class VdtCamera {
 
         private void ack_Cam_get_time_result(String p1, String p2) {
             int duration = Integer.parseInt(p1);
-            mRecordTime = duration;
-            if (mOnRecStateChangeListener != null) {
-                mOnRecStateChangeListener.onRecDurationChanged(duration);
+
+            if (mRecordTime != duration) {
+                mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_DURATION, VdtCamera.this, duration));
+                mRecordTime = duration;
             }
+
 
         }
 
@@ -972,9 +965,7 @@ public class VdtCamera {
 
         private void ack_Rec_error(String p1, String p2) {
             int error = Integer.parseInt(p1);
-            if (mOnRecStateChangeListener != null) {
-                mOnRecStateChangeListener.onRecError(error);
-            }
+            mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_ERROR, VdtCamera.this, error));
         }
 
         public void cmd_audio_setMic(int state, int gain) {
@@ -1264,49 +1255,8 @@ public class VdtCamera {
             mOverlayFlags = flags;
         }
 
-        // ========================================================
-        // CMD_REC_SET_STILL_MODE
-        // ========================================================
-        public void cmd_Rec_SetStillMode(boolean bStillMode) {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_STILL_MODE, bStillMode ? 1 : 0);
-        }
-
-        // ========================================================
-        // CMD_REC_START_STILL_CAPTURE
-        // ========================================================
-        public void cmd_Rec_StartStillCapture(boolean bOneShot) {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_START_STILL_CAPTURE, bOneShot ? 1 : 0);
-        }
-
-        private void ack_Rec_StartStillCapture(String p1, String p2) {
-            boolean bOneShot = p1.length() > 0 ? Integer.parseInt(p1) != 0 : false;
-//            if (mListener != null) {
-//                mListener.onStillCaptureStarted(bOneShot);
-//            }
-        }
 
 
-        public void cmd_Rec_StopStillCapture() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_STOP_STILL_CAPTURE);
-        }
-
-
-        private void ack_Rec_StillPictureInfo(String p1, String p2) {
-            int value_p1 = p1.length() > 0 ? Integer.parseInt(p1) : 0;
-            boolean bCapturing = (value_p1 & 1) != 0;
-            int numPictures = p2.length() > 0 ? Integer.parseInt(p2) : 0;
-            int burstTicks = value_p1 >>> 1;
-//            if (mListener != null) {
-//                mListener.onStillPictureInfo(bCapturing, numPictures, burstTicks);
-//            }
-        }
-
-
-        private void ack_Rec_StillCaptureDone() {
-//            if (mListener != null) {
-//                mListener.onStillCaptureDone();
-//            }
-        }
 
         /**
          * This cmd does not have response.
@@ -1852,18 +1802,10 @@ public class VdtCamera {
                 case CMD_REC_SET_STILL_MODE:
                     ackNotHandled("CMD_REC_SET_STILL_MODE", p1, p2);
                     break;
-                case CMD_REC_START_STILL_CAPTURE:
-                    ack_Rec_StartStillCapture(p1, p2);
-                    break;
                 case CMD_REC_STOP_STILL_CAPTURE:
                     ackNotHandled("CMD_REC_STOP_STILL_CAPTURE", p1, p2);
                     break;
-                case MSG_REC_STILL_PICTURE_INFO:
-                    ack_Rec_StillPictureInfo(p1, p2);
-                    break;
-                case MSG_REC_STILL_CAPTURE_DONE:
-                    ack_Rec_StillCaptureDone();
-                    break;
+
                 case CMD_REC_GET_MARK_TIME:
                     ack_Rec_GetMarkTime(p1, p2);
                     break;
