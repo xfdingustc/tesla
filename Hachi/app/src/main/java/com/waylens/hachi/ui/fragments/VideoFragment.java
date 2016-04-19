@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.ui.activities.SmartRemixActivity;
@@ -60,6 +61,13 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
         } else {
 
         }
+    }
+
+    @Subscribe
+    public void onEventClipSelectEvent(ClipSelectEvent event) {
+        mToolbar.getMenu().clear();
+        mToolbar.inflateMenu(R.menu.menu_clip_list);
+
     }
 
 

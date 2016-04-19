@@ -24,17 +24,21 @@ public class BookmarkView extends FrameLayout {
     }
 
 
-    public void addBookmark(Clip.ID cid, LayoutParams params) {
-        int viewId = Math.abs(cid.hashCode());
+    public void addBookmark(Clip clip, LayoutParams params, OnClickListener listener) {
+        int viewId = Math.abs(clip.cid.hashCode());
         View view = findViewById(viewId);
         if (view == null) {
             view = new View(getContext());
             view.setBackgroundColor(0xFF7AD502);
             view.setAlpha(0.3f);
             view.setId(viewId);
+            view.setTag(clip);
+            view.setOnClickListener(listener);
             addView(view, params);
         } else {
             view.setLayoutParams(params);
+            view.setTag(clip);
+            view.setOnClickListener(listener);
         }
 
     }

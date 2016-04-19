@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.views.cliptrimmer;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.views.Progressive;
@@ -48,6 +50,7 @@ public class ClipSetProgressBar extends FrameLayout  {
     private LinearLayoutManager mLayoutManager;
 
     private RecyclerView.OnScrollListener mScrollListener;
+    private OnBookmarkClickListener mBookmarkClickListener;
 
 
     private int mScreenWidth;
@@ -76,10 +79,14 @@ public class ClipSetProgressBar extends FrameLayout  {
 
     }
 
+    public interface OnBookmarkClickListener {
+        void onBookmarkClick(Clip clip);
+    }
 
-    public void init(VdbImageLoader vdbImageLoader) {
+
+    public void init(VdbImageLoader vdbImageLoader, OnBookmarkClickListener listener) {
         mEventBus.register(this);
-
+        mBookmarkClickListener = listener;
         mScreenWidth = getScreenWidth();
 
         mRecyclerView = new RecyclerView(getContext());
@@ -249,7 +256,7 @@ public class ClipSetProgressBar extends FrameLayout  {
         private int mCellWidth;
 
 
-        void generateClipPosList() {
+        private void generateClipPosList() {
             mItems.clear();
             if (mClipSet == null || mBookmarkClipSet == null) {
                 return;
@@ -391,6 +398,15 @@ public class ClipSetProgressBar extends FrameLayout  {
             return mItems.size();
         }
 
+        private View.OnClickListener mOnBookmarkViewClickListener = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Clip clip = (Clip)v.getTag();
+
+                mEventBus.post(new ClipSelectEvent(clip));
+            }
+        };
+
         private void setupBookmarkView(ClipFragment clipFragment, BookmarkView bookmarkView) {
             List<Clip> bookmarkList = mBookmarkClipSet.getClipList();
 
@@ -413,12 +429,12 @@ public class ClipSetProgressBar extends FrameLayout  {
                             bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                         }
                         bookmarkLayoutParasm.leftMargin = marginLeft;
-                        bookmarkView.addBookmark(clip.cid, bookmarkLayoutParasm);
+                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, mOnBookmarkViewClickListener);
 
                     } else if (clip.getStartTimeMs() <= clipFragment.getStartTimeMs() && clip.getEndTimeMs() >= clipFragment.getEndTimeMs()) {
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 //                                Logger.t(TAG).d("Duration in this cell: " + clipFragment.getDurationMs());
-                        bookmarkView.addBookmark(clip.cid, bookmarkLayoutParasm);
+                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, mOnBookmarkViewClickListener);
 
                     } else if (clipFragment.getStartTimeMs() <= clip.getEndTimeMs() && clip.getEndTimeMs() <= clipFragment.getEndTimeMs()) {
                         long startTimeMs = Math.max(clipFragment.getStartTimeMs(), clip.getStartTimeMs());
@@ -428,7 +444,7 @@ public class ClipSetProgressBar extends FrameLayout  {
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                         bookmarkLayoutParasm.leftMargin = marginLeft;
 //                                Logger.t(TAG).d("Right Duration in this cell: " + bookmarkDurationInItem);
-                        bookmarkView.addBookmark(clip.cid, bookmarkLayoutParasm);
+                        bookmarkView.addBookmark(clip, bookmarkLayoutParasm, mOnBookmarkViewClickListener);
 
                     }
                 }
@@ -436,6 +452,7 @@ public class ClipSetProgressBar extends FrameLayout  {
             }
         }
     }
+
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 

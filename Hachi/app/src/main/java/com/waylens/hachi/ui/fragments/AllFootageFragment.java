@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +101,13 @@ public class AllFootageFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_all_footage, savedInstanceState);
-        mClipSetProgressBar.init(mVdbImageLoader);
+        mClipSetProgressBar.init(mVdbImageLoader, new ClipSetProgressBar.OnBookmarkClickListener() {
+            @Override
+            public void onBookmarkClick(Clip clip) {
+                BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
+                dialog.show();
+            }
+        });
 
         refreshAllFootageClipSet();
 
