@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewSwitcher;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
@@ -102,7 +103,19 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                 toShare();
                 break;
             case R.id.menu_to_delete:
-                doDeleteSelectedClips();
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .content(R.string.delete_bookmark_confirm)
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            doDeleteSelectedClips();
+                        }
+                    })
+                    .build();
+                dialog.show();
+
                 break;
             case -1:
                 toggleMultiMode(false);
