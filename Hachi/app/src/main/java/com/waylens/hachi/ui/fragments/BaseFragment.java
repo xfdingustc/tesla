@@ -46,13 +46,9 @@ public class BaseFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mVdtCamera = getCamera();
-        if (mVdtCamera != null) {
-            mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
-            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
-        }
+        initCamera();
     }
+
 
     @NonNull
     protected View createFragmentView(LayoutInflater inflater, ViewGroup container, @LayoutRes int layoutResId,
@@ -69,7 +65,6 @@ public class BaseFragment extends Fragment  {
         ButterKnife.bind(this, mRootView);
         setupToolbar();
 
-
         return mRootView;
     }
 
@@ -77,12 +72,18 @@ public class BaseFragment extends Fragment  {
 
     @Override
     public void onDestroyView() {
-        VdtCameraManager cameraManager = VdtCameraManager.getManager();
-
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
-    
+
+
+    protected void initCamera() {
+        mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
+        if (mVdtCamera != null) {
+            mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
+            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+        }
+    }
 
 
     protected  void onCameraConnecting(VdtCamera vdtCamera) {

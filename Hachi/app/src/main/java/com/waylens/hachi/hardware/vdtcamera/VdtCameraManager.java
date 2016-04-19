@@ -51,6 +51,8 @@ public class VdtCameraManager {
     private final List<VdtCamera> mConnectingVdtCameras = new ArrayList<>();
     private final List<WifiItem> mWifiList = new ArrayList<>();
 
+    private VdtCamera mCurrentCamera;
+
 
 
 
@@ -74,79 +76,6 @@ public class VdtCameraManager {
     }
 
 
-
-    public void filterScanResult(List<ScanResult> list) {
-
-        // mark all wifi as to remove
-        for (WifiItem item : mWifiList) {
-            item.mTag = TAG_SHOULD_REMOVE;
-        }
-
-        if (list != null) {
-            for (ScanResult result : list) {
-
-                String ssid = Utils.normalizeNetworkName(result.SSID);
-
-                if (ssid == null || !isPossibleCamera(ssid)) {
-                    continue;
-                }
-
-                if (wifiExistsInCameraLists(ssid)) {
-                    //Logger.t(TAG).d(ssid + " already in camera list");
-                    continue;
-                }
-
-                WifiItem item = findWifi(ssid);
-                if (item != null) {
-                    item.mTag = TAG_SHOULD_KEEP; // keep
-                    continue;
-                }
-
-                String password = getPassword(ssid);
-                item = new WifiItem(ssid, password, TAG_ADDED);
-                mWifiList.add(item);
-                Logger.t(TAG).d("add wifi cam " + item.mSSID);
-            }
-        }
-
-        // manage the list
-        int nRemoved = 0;
-        int nAdded = 0;
-        int index = 0;
-        while (index < mWifiList.size()) {
-            WifiItem item = mWifiList.get(index);
-            if (item.mTag == TAG_SHOULD_REMOVE) {
-                mWifiList.remove(index);
-                nRemoved++;
-                continue;
-            }
-            if (item.mTag == TAG_ADDED) {
-                nAdded++;
-            }
-            index++;
-        }
-
-    }
-
-    private boolean isPossibleCamera(String ssid) {
-        if (ssid.length() != 8) {
-            return false;
-        }
-        if (ssid.charAt(0) != 'C' || ssid.charAt(1) != '9' || ssid.charAt(2) != 'J') {
-            return false;
-        }
-        return true;
-    }
-
-    // in connected, connecting
-    private boolean wifiExistsInCameraLists(String ssid) {
-        if (wifiExistsIn(ssid, mConnectedVdtCameras))
-            return true;
-        if (wifiExistsIn(ssid, mConnectingVdtCameras))
-            return true;
-        return false;
-    }
-
     //
     private boolean removeWifi(String ssid) {
         int index = 0;
@@ -169,13 +98,6 @@ public class VdtCameraManager {
         return null;
     }
 
-    private boolean wifiExistsIn(String ssid, List<VdtCamera> list) {
-        for (VdtCamera c : list) {
-            if (ssid.equals(c.getSSID()))
-                return true;
-        }
-        return false;
-    }
 
     // API
     synchronized public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
@@ -260,35 +182,12 @@ public class VdtCameraManager {
         return mConnectedVdtCameras;
     }
 
-    public boolean removeConnectedCamera(VdtCamera vdtCamera) {
-        return mConnectedVdtCameras.remove(vdtCamera);
-    }
-
-    public List<VdtCamera> getConnectingCameras() {
-        return mConnectingVdtCameras;
-    }
-
-    public List<WifiItem> getWifiList() {
-        return mWifiList;
-    }
 
     public VdtCamera findConnectedCamera(String ssid, String hostString) {
         return findCameraInList(ssid, hostString, mConnectedVdtCameras);
     }
 
-    // API
-    public VdtCamera findCameraById(String ssid, String hostString) {
-        VdtCamera vdtCamera;
-        vdtCamera = findCameraInList(ssid, hostString, mConnectedVdtCameras);
-        if (vdtCamera != null) {
-            return vdtCamera;
-        }
-        vdtCamera = findCameraInList(ssid, hostString, mConnectingVdtCameras);
-        if (vdtCamera != null) {
-            return vdtCamera;
-        }
-        return null;
-    }
+
 
     private VdtCamera findCameraInList(String ssid, String hostString, List<VdtCamera> list) {
         for (VdtCamera c : list) {
@@ -298,22 +197,6 @@ public class VdtCameraManager {
         return null;
     }
 
-    // API
-    public int findCameraIndex(VdtCamera vdtCamera) {
-        int count = mConnectedVdtCameras.size();
-        for (int i = 0; i < count; i++) {
-            if (vdtCamera == mConnectedVdtCameras.get(i)) {
-                return i;
-            }
-        }
-        count = mConnectingVdtCameras.size();
-        for (int i = 0; i < count; i++) {
-            if (vdtCamera == mConnectingVdtCameras.get(i)) {
-                return i + mConnectedVdtCameras.size();
-            }
-        }
-        return -1;
-    }
 
 
     public boolean isConnected() {
@@ -323,25 +206,17 @@ public class VdtCameraManager {
         return false;
     }
 
-    // API
-    public void clearAll() {
-        clearCameras(mConnectedVdtCameras);
-        clearCameras(mConnectingVdtCameras);
-        mWifiList.clear();
+
+    public void setCurrentCamera(int position) {
+        this.mCurrentCamera = mConnectedVdtCameras.get(position);
     }
 
-    // API
-    public void setPassword(String ssid, String password) {
-        loadPassword();
-        mPasswordList.setPassword(ssid, password);
+
+    public VdtCamera getCurrentCamera() {
+        return mCurrentCamera;
     }
 
-    private void clearCameras(List<VdtCamera> list) {
-        for (VdtCamera c : list) {
-            c.stopClient();
-        }
-        list.clear();
-    }
+
 
     private final void loadPassword() {
         if (!mPasswordLoaded) {

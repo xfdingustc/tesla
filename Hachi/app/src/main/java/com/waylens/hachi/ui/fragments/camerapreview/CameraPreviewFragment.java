@@ -314,20 +314,20 @@ public class CameraPreviewFragment extends BaseFragment {
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
-        mEventBus.register(this);
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
         registerMessageHandler();
+        mEventBus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         closeLiveRawData();
+        mEventBus.unregister(this);
     }
 
     @Override
@@ -347,7 +347,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mTimer.cancel();
         }
 
-        mEventBus.unregister(this);
+
     }
 
     @Override
@@ -356,24 +356,7 @@ public class CameraPreviewFragment extends BaseFragment {
         super.onDestroyView();
     }
 
-//    @Override
-//    public void onCameraVdbConnected(VdtCamera camera) {
-//        super.onCameraVdbConnected(camera);
-//
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mCameraConnecting == null) {
-//                    return;
-//                }
-//                mCameraConnecting.setVisibility(View.GONE);
-//                mToolbar.getMenu().clear();
-//                mToolbar.inflateMenu(R.menu.menu_live_view);
-//                initViews();
-//                initCameraPreview();
-//            }
-//        });
-//    }
+
 
     @Override
     protected void onCameraConnecting(VdtCamera vdtCamera) {
@@ -390,7 +373,8 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private void changeCurrentCamera(int position) {
         stopCameraPreview();
-        mVdtCamera = mVdtCameraManager.getConnectedCameras().get(position);
+        mVdtCameraManager.setCurrentCamera(position);
+        mVdtCamera = mVdtCameraManager.getCurrentCamera();
         Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
         initCameraPreview();
     }
@@ -436,7 +420,7 @@ public class CameraPreviewFragment extends BaseFragment {
         mHandler = new Handler();
         if (VdtCameraManager.getManager().isConnected()) {
             mVdtCamera = getCamera();
-            mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
+            mVdbRequestQueue = mVdtCamera.getRequestQueue();
             if (mCameraNoSignal != null) {
                 mCameraNoSignal.setVisibility(View.GONE);
                 mCameraConnecting.setVisibility(View.GONE);
