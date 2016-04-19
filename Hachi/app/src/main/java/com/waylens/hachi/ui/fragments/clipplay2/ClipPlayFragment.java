@@ -292,7 +292,7 @@ public class ClipPlayFragment extends DialogFragment {
 
     private void init() {
         mUiHandler = new Handler();
-        mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
+        mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
         mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
 
 

@@ -53,7 +53,7 @@ public class BaseFragment extends Fragment  {
 
         mVdtCamera = getCamera();
         if (mVdtCamera != null) {
-            mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), mVdtCamera);
+            mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
             mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         }
     }
@@ -100,7 +100,7 @@ public class BaseFragment extends Fragment  {
 
     public void onCameraVdbConnected(VdtCamera camera) {
         mVdtCamera = camera;
-        mVdbRequestQueue = Snipe.newRequestQueue(getActivity(), camera);
+        mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), camera);
     }
 
 

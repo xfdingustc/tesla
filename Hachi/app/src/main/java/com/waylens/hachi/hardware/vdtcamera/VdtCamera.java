@@ -4,7 +4,10 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.snipe.BasicVdbSocket;
 import com.waylens.hachi.snipe.VdbConnection;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbSocket;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
 
 import org.json.JSONArray;
@@ -168,6 +171,8 @@ public class VdtCamera {
     private GpsState mGpsStates = new GpsState();
 
     private OnScanHostListener mOnScanHostListener;
+
+    private VdbRequestQueue mVdbRequestQueue;
 
 
 
@@ -335,6 +340,10 @@ public class VdtCamera {
         return mWifiMode;
     }
 
+    public VdbRequestQueue getRequestQueue() {
+        return mVdbRequestQueue;
+    }
+
 
 
 
@@ -443,6 +452,9 @@ public class VdtCamera {
                 try {
                     mVdbConnection.connect();
                     mIsVdbConnected = true;
+                    VdbSocket vdbSocket = new BasicVdbSocket(getVdbConnection());
+                    mVdbRequestQueue = new VdbRequestQueue(vdbSocket);
+                    mVdbRequestQueue.start();
                     mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
 
                 } catch (IOException e) {

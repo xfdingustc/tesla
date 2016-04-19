@@ -47,7 +47,7 @@ public class PlaylistEditor {
     private ClipSetManager mClipSetManager = ClipSetManager.getManager();
 
     public PlaylistEditor(Context context, @NonNull VdtCamera vdtCamera, int playListID) {
-        this.mVdbRequestQueue = Snipe.newRequestQueue(context, vdtCamera);
+        this.mVdbRequestQueue = vdtCamera.getRequestQueue();//Snipe.newRequestQueue(context, vdtCamera);
         //this class should not modify the original clip list
         mPlayListID = playListID;
     }

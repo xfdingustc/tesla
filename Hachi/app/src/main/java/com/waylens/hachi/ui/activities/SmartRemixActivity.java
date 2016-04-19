@@ -180,7 +180,7 @@ public class SmartRemixActivity extends BaseActivity {
     protected void init() {
         super.init();
         mVdtCamera = getCameraFromIntent(getIntent().getExtras());
-        mVdbRequestQueue = Snipe.newRequestQueue(this, mVdtCamera);
+        mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(this, mVdtCamera);
 //        mDiskCache = createDiskCache(this, new HashCodeFileNameGenerator(), 1024 * 1024 * 1024, 50 * 1024);
         initViews();
     }
