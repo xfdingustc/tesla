@@ -157,7 +157,7 @@
     <string name="lable_version_name">Version:</string>
     <string name="lable_release_date">Release Date:</string>
     <string name="lable_auto_preview">Auto Enter Preview</string>
-    <string name="lable_buffered_video">Recorded</string>
+    <string name="lable_buffered_video">Buffer</string>
     <string name="lable_marked_videos">Marked</string>
     <string name="lable_playlist_videos">Playlists</string>
     <string name="lable_input_server_ip">Server IP Address:</string>

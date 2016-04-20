@@ -19,6 +19,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
+import android.widget.StackView;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -33,19 +39,27 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
+import com.waylens.hachi.utils.Utils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -86,8 +100,22 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
     @Bind(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
 
-    @Bind(R.id.rootViewSwitcher)
-    ViewSwitcher mRootViewSwitcher;
+    @Bind(R.id.llNoBookmark)
+    LinearLayout mLlNoBookmark;
+
+    @Bind(R.id.bottomLayout)
+    LinearLayout mBottomLayout;
+
+    @Bind(R.id.svBuffer)
+    StackView mSvBufferClips;
+
+    @Bind(R.id.tvBufferTime)
+    TextView mTvBufferTime;
+
+    @OnClick(R.id.bottomLayout)
+    public void onBottomLayoutClicked() {
+
+    }
 
     @Subscribe
     public void onEventMenuItemSelected(MenuItemSelectEvent event) {
@@ -126,7 +154,7 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
                 initCamera();
-                doGetBookmarkClips();
+                initViews();
                 break;
         }
     }
@@ -171,11 +199,14 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                doGetBookmarkClips();
+                initViews();
             }
         });
+        initViews();
         return view;
     }
+
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -192,9 +223,6 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
     @Override
     public void onStart() {
         super.onStart();
-        if (mVdtCamera != null) {
-            doGetBookmarkClips();
-        }
         mEventBus.register(this);
     }
 
@@ -208,6 +236,19 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_add_clip, menu);
     }
+
+
+    private void initViews() {
+        if (mVdtCamera != null) {
+            doGetBookmarkClips();
+            if (mClipSetType != Clip.TYPE_MARKED) {
+                mBottomLayout.setVisibility(View.VISIBLE);
+                doGetBufferedClips();
+            }
+        }
+    }
+
+
 
     /**
      * Don't remove
@@ -262,19 +303,7 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         }
     }
 
-    @Override
-    public void onCameraVdbConnected(VdtCamera camera) {
-        super.onCameraVdbConnected(camera);
-        mUiThreadHandler.post(new Runnable() {
-            @Override
-            public void run() {
 
-//                mClipSetGroup.clear();
-                doGetBookmarkClips();
-            }
-        });
-
-    }
 
     @Override
     protected void onCameraDisconnected(VdtCamera vdtCamera) {
@@ -333,19 +362,14 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
                 public void onResponse(ClipSet clipSet) {
                     mRefreshLayout.setRefreshing(false);
                     if (clipSet.getCount() == 0) {
-                        if (mRootViewSwitcher.getDisplayedChild() == 0) {
-                            mRootViewSwitcher.showNext();
-                        }
+                        mLlNoBookmark.setVisibility(View.VISIBLE);
+                        mRvClipGroupList.setVisibility(View.GONE);
                     } else {
-                        if (mRootViewSwitcher.getDisplayedChild() == 1) {
-                            Logger.t(TAG).d("show previous");
-                            mRootViewSwitcher.showPrevious();
-                        }
-//                        calculateClipSetGroup(clipSet);
+                        mLlNoBookmark.setVisibility(View.GONE);
+                        mRvClipGroupList.setVisibility(View.VISIBLE);
                         setupClipSetGroup();
                         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
                         mAdapter.setClipSetGroup(helper.getClipSetGroup());
-//                        setupClipSetGroupView();
                     }
 
                 }
@@ -360,7 +384,35 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
 
     }
 
+    private void doGetBufferedClips() {
+        if (mVdbRequestQueue == null) {
+            return;
+        }
 
+        ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA, new VdbResponse.Listener<ClipSet>() {
+            @Override
+            public void onResponse(ClipSet response) {
+                BufferClipAdapter adapter = new BufferClipAdapter(response);
+                mSvBufferClips.setAdapter(adapter);
+
+                if (response.getCount() > 0) {
+                    Clip clip = response.getClip(0);
+                    Date date = new Date((long)clip.getDate() * 1000);
+                    PrettyTime t = new PrettyTime(new Date());
+
+                    mTvBufferTime.setText(t.format(date));
+                }
+
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+
+        mVdbRequestQueue.add(request);
+    }
 
 
 
@@ -457,4 +509,44 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
             doGetBookmarkClips();
         }
     };
+
+
+    private class BufferClipAdapter extends BaseAdapter {
+
+        private final ClipSet mClipSet;
+
+        public BufferClipAdapter(ClipSet clipSet) {
+            this.mClipSet = clipSet;
+        }
+
+        @Override
+        public int getCount() {
+            return mClipSet == null ? 0 : mClipSet.getCount();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mClipSet.getClip(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Clip clip = mClipSet.getClip(position);
+            ImageView iv = new ImageView(getContext());
+            int imageSize = (int)Utils.dp2px(getContext(), 64);
+            iv.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
+            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            ClipPos clipPos = new ClipPos(clip);
+
+            mVdbImageLoader.displayVdbImage(clipPos, iv);
+
+            return iv;
+        }
+    }
 }
