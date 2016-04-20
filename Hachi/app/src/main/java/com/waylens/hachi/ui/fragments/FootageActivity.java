@@ -1,8 +1,9 @@
 package com.waylens.hachi.ui.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
@@ -40,7 +42,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -49,8 +50,8 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/3/16.
  */
-public class AllFootageFragment extends BaseFragment {
-    private static final String TAG = AllFootageFragment.class.getSimpleName();
+public class FootageActivity extends BaseActivity {
+    private static final String TAG = FootageActivity.class.getSimpleName();
 
     private ClipPlayFragment mClipPlayFragment;
 
@@ -69,8 +70,8 @@ public class AllFootageFragment extends BaseFragment {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    public static AllFootageFragment newInstance() {
-        AllFootageFragment fragment = new AllFootageFragment();
+    public static FootageActivity newInstance() {
+        FootageActivity fragment = new FootageActivity();
 
         return fragment;
     }
@@ -104,28 +105,41 @@ public class AllFootageFragment extends BaseFragment {
     }
 
 
+    public static void launch(Activity activity, int ClipSetIndex) {
+        Intent intent = new Intent(activity, FootageActivity.class);
+        activity.startActivity(intent);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_all_footage, savedInstanceState);
+    protected void init() {
+        super.init();
+        initViews();
+    }
 
-        view.setOnClickListener(new View.OnClickListener() {
+    private void initViews() {
+        setContentView(R.layout.fragment_all_footage);
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mEventBus.post(new ClipSelectEvent(null));
+//            }
+//        });
+        mClipSetProgressBar.init(mVdbImageLoader, new ClipSetProgressBar.OnBookmarkClickListener() {
             @Override
-            public void onClick(View v) {
-                mEventBus.post(new ClipSelectEvent(null));
+            public void onBookmarkClick(Clip clip) {
+
             }
         });
-
         refreshAllFootageClipSet();
-
-        return view;
-
     }
+
+
 
     @Override
     public void onStart() {
@@ -171,13 +185,13 @@ public class AllFootageFragment extends BaseFragment {
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             ClipPlayFragment.ClipMode.SINGLE, ClipPlayFragment.CoverMode.BANNER);
 
-        getChildFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
+        getFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
         doMakePlaylist();
 
     }
 
     private void doMakePlaylist() {
-        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x101);
+        mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, 0x101);
         mPlaylistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
@@ -237,7 +251,7 @@ public class AllFootageFragment extends BaseFragment {
             @Override
             public void onResponse(ClipSet response) {
                 mBookmarkClipSet = response;
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         setupClipProgressBar();

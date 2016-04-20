@@ -88,6 +88,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.fragments.FootageActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.activities.StartupActivity"
             android:screenOrientation="portrait"/>
 

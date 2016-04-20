@@ -305,11 +305,7 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
 
 
 
-    @Override
-    protected void onCameraDisconnected(VdtCamera vdtCamera) {
-        super.onCameraDisconnected(vdtCamera);
-        Logger.t(TAG).d("onCameraDisconnected");
-    }
+
 
     private void setupClipSetGroup() {
         int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
@@ -319,7 +315,11 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                popClipPreviewFragment(clip);
+                if (mClipSetType == Clip.TYPE_MARKED) {
+                    popClipPreviewFragment(clip);
+                } else {
+                    launchFootageActivity(clip);
+                }
             }
 
             @Override
@@ -339,6 +339,8 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         mRvClipGroupList.setAdapter(mAdapter);
 
     }
+
+
 
     private void doGetBookmarkClips() {
         if (mVdbRequestQueue == null) {
@@ -424,6 +426,9 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_QUICK_VIEW);
     }
 
+    private void launchFootageActivity(Clip clip) {
+        FootageActivity.launch(getActivity(), 0);
+    }
 
     @Override
     public boolean onInterceptBackPressed() {
