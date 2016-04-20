@@ -42,7 +42,6 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
-import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.activities.LiveViewActivity;
 import com.waylens.hachi.ui.activities.VdtCameraSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -374,7 +373,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        registerMessageHandler();
+        openLiveViewData();
         mEventBus.register(this);
     }
 
@@ -434,7 +433,7 @@ public class CameraPreviewFragment extends BaseFragment {
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED, null));
 //        Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
         initCameraPreview();
-        registerMessageHandler();
+        openLiveViewData();
     }
 
     private void handleOnCameraConnected() {
@@ -557,7 +556,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    private void registerMessageHandler() {
+    private void openLiveViewData() {
         LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
             RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
             VdbResponse.Listener<Integer>() {
@@ -576,35 +575,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
 
-        ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
-            new VdbResponse.Listener<ClipActionInfo>() {
-                @Override
-                public void onResponse(ClipActionInfo response) {
-//                    Logger.t(TAG).e(response.toString());
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("ClipInfoMsgHandler ERROR", error);
-                }
-            });
-        mVdbRequestQueue.registerMessageHandler(clipInfoMsgHandler);
 
-        MarkLiveMsgHandler markLiveMsgHandler = new MarkLiveMsgHandler(
-            new VdbResponse.Listener<ClipActionInfo>() {
-                @Override
-                public void onResponse(ClipActionInfo response) {
-                    Logger.t(TAG).e(response.toString());
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("MarkLiveMsgHandler ERROR", error);
-                }
-            });
-        mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
     }
 
 

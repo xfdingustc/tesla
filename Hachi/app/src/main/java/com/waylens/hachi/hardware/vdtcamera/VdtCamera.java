@@ -13,8 +13,11 @@ import com.waylens.hachi.snipe.VdbConnection;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.VdbSocket;
+import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
+import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import org.greenrobot.eventbus.EventBus;
@@ -464,6 +467,36 @@ public class VdtCamera {
             }
         });
         mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
+
+        ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
+            new VdbResponse.Listener<ClipActionInfo>() {
+                @Override
+                public void onResponse(ClipActionInfo response) {
+//                    Logger.t(TAG).e(response.toString());
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("ClipInfoMsgHandler ERROR", error);
+                }
+            });
+        mVdbRequestQueue.registerMessageHandler(clipInfoMsgHandler);
+
+        MarkLiveMsgHandler markLiveMsgHandler = new MarkLiveMsgHandler(
+            new VdbResponse.Listener<ClipActionInfo>() {
+                @Override
+                public void onResponse(ClipActionInfo response) {
+                    Logger.t(TAG).d(response.toString());
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("MarkLiveMsgHandler ERROR", error);
+                }
+            });
+        mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
     }
 
     private void onCameraDisconnected() {
