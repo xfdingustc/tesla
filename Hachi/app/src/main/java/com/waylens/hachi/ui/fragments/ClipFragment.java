@@ -2,6 +2,8 @@ package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+
+import butterknife.Bind;
 
 /**
  * Created by Xiaofei on 2016/4/20.
@@ -30,6 +34,13 @@ public class ClipFragment extends BaseFragment {
         return fragment;
     }
 
+    @Bind(R.id.refreshLayout)
+    SwipeRefreshLayout mRefreshLayout;
+
+
+    @Bind(R.id.menualClipGroupList)
+    RecyclerView mMenualClipGroupList;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,20 +56,20 @@ public class ClipFragment extends BaseFragment {
             return;
         }
         mVdbRequestQueue.add(new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR,
-            new VdbResponse.Listener<ClipSet>() {
-                @Override
-                public void onResponse(ClipSet clipSet) {
-                    if (clipSet.getCount() == 0) {
+            Clip.CLIP_ATTR_MANUALLY, new VdbResponse.Listener<ClipSet>() {
+            @Override
+            public void onResponse(ClipSet clipSet) {
+                if (clipSet.getCount() == 0) {
 //                        onHandleEmptyCamera();
-                        return;
-                    }
-                    Logger.t(TAG).d("clipSet number: " + clipSet.getCount());
+                    return;
+                }
+                Logger.t(TAG).d("clipSet number: " + clipSet.getCount());
 //                    mAllFootageClipSet = clipSet;
 //                    setupClipPlayFragment(clipSet);
 //                    //setupClipProgressBar(clipSet);
 //                    refreshBookmarkClipSet();
-                }
-            },
+            }
+        },
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {

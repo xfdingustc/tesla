@@ -23,16 +23,23 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
     private static final int UUID_LENGTH = 36;
     private final int mClipType;
     private final int mFlag;
+    private final int mAttr;
 
     public ClipSetExRequest(int type, int flag, VdbResponse.Listener<ClipSet> listener,
                             VdbResponse.ErrorListener errorListener) {
-        this(METHOD_GET, type, flag, listener, errorListener);
+        this(METHOD_GET, type, flag, 0, listener, errorListener);
     }
 
-    public ClipSetExRequest(int method, int type, int flag, VdbResponse.Listener<ClipSet> listener,
+    public ClipSetExRequest(int type, int flag, int attr, VdbResponse.Listener<ClipSet> listener,
+                            VdbResponse.ErrorListener errorListener) {
+        this(METHOD_GET, type, flag, attr, listener, errorListener);
+    }
+
+    public ClipSetExRequest(int method, int type, int flag, int attr, VdbResponse.Listener<ClipSet> listener,
                             VdbResponse.ErrorListener errorListener) {
         super(method, listener, errorListener);
         this.mClipType = type;
+        this.mAttr = attr;
         this.mFlag = flag;
     }
 
@@ -129,7 +136,7 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
 //                Logger.t(TAG).d("flag : " + flag );
                 int attr = response.readi32();
                 offsetSize += 4;
-                if ((attr & Clip.CLIP_ATTR_MANUALLY) > 0) {
+                if ((attr & mAttr) > 0) {
                     clipSet.addClip(clip);
                 }
 

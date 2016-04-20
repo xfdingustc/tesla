@@ -36,6 +36,7 @@ import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
+import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
@@ -63,7 +64,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
 
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
-    private Map<String, ClipSet> mClipSetGroup = new HashMap<>();
+
 
     private ClipSetGroupAdapter mAdapter;
 
@@ -274,7 +275,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
             @Override
             public void run() {
 
-                mClipSetGroup.clear();
+//                mClipSetGroup.clear();
                 doGetBookmarkClips();
             }
         });
@@ -319,7 +320,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
         if (mVdbRequestQueue == null) {
             return;
         }
-        mClipSetGroup.clear();
+//        mClipSetGroup.clear();
 
         mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, ClipSetExRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
@@ -335,9 +336,11 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
                             Logger.t(TAG).d("show previous");
                             mRootViewSwitcher.showPrevious();
                         }
-                        calculateClipSetGroup(clipSet);
+//                        calculateClipSetGroup(clipSet);
                         setupClipSetGroup();
-                        setupClipSetGroupView();
+                        ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
+                        mAdapter.setClipSetGroup(helper.getClipSetGroup());
+//                        setupClipSetGroupView();
                     }
 
                 }
@@ -353,39 +356,9 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     }
 
 
-    private void calculateClipSetGroup(ClipSet clipSet) {
-        for (Clip clip : clipSet.getClipList()) {
 
-            String clipDataString = clip.getDateString();
-            ClipSet oneClipSet = mClipSetGroup.get(clipDataString);
-            if (oneClipSet == null) {
-                oneClipSet = new ClipSet(clipSet.getType());
-                mClipSetGroup.put(clipDataString, oneClipSet);
-            }
 
-            oneClipSet.addClip(clip);
 
-        }
-    }
-
-    private void setupClipSetGroupView() {
-
-        List<ClipSet> clipSetGroup = new ArrayList<>();
-        Iterator iter = mClipSetGroup.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            clipSetGroup.add((ClipSet) entry.getValue());
-        }
-
-        Collections.sort(clipSetGroup, new Comparator<ClipSet>() {
-            @Override
-            public int compare(ClipSet lhs, ClipSet rhs) {
-                return rhs.getClip(0).getDate() - lhs.getClip(0).getDate();
-            }
-        });
-
-        mAdapter.setClipSetGroup(clipSetGroup);
-    }
 
     private void popClipPreviewFragment(Clip clip) {
         ArrayList<Clip> clipList = new ArrayList<>();
