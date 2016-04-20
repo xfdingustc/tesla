@@ -828,9 +828,6 @@ public class VdtCamera {
 
         private void ack_Cam_get_Name_result(String p1, String p2) {
             setCameraName(p1);
-            Logger.t(TAG).d("get name resulut");
-
-
         }
 
         public void cmd_Cam_set_Name(String name) {

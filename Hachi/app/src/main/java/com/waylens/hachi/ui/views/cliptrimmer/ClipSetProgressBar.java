@@ -61,6 +61,41 @@ public class ClipSetProgressBar extends FrameLayout {
     private ClipSet mClipSet;
     private ClipSet mBookmarkClipSet;
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventClipPosSetChangeMainThread(ClipSetPosChangeEvent event) {
+        if (event.getBroadcaster().equals(TAG)) {
+            return;
+        }
+        ClipSetPos clipSetPos = event.getClipSetPos();
+        List<ThumbnailListAdapter.CellItem> cellItems = mAdapter.getCellItemList();
+        for (int i = 0; i < cellItems.size(); i++) {
+            ThumbnailListAdapter.CellItem cellItem = cellItems.get(i);
+            if (cellItem.type == ThumbnailListAdapter.CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
+
+                ClipSegment clipSegment = (ClipSegment) cellItem.item;
+                if (cellItem.clipIndex == clipSetPos.getClipIndex()) {
+
+                    if (clipSegment.getStartTimeMs() <= clipSetPos.getClipTimeMs() && clipSetPos.getClipTimeMs() <= clipSegment.getEndTimeMs()) {
+//                        Logger.t(TAG).d("clipPosTime  " + clipSetPos.getClipTimeMs());
+                        int offset = mAdapter.getPosOffset(clipSetPos.getClipTimeMs() - clipSegment.getStartTimeMs());
+//                        Logger.t(TAG).d("find clip Set position:  " + i + " Offset" + offset);
+                        mLayoutManager.scrollToPositionWithOffset(i, mScreenWidth / 2 - offset);
+                        break;
+                    }
+
+
+                }
+            }
+
+        }
+    }
+
+    @Subscribe
+    public void onEventClipSelectEvent(ClipSelectEvent event) {
+        mAdapter.mSelectedClip = event.getClip();
+        mAdapter.notifyDataSetChanged();
+    }
+
     public ClipSetProgressBar(Context context) {
         super(context);
 
@@ -82,7 +117,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
 
     public void init(VdbImageLoader vdbImageLoader, OnBookmarkClickListener listener) {
-        mEventBus.register(this);
+
         mBookmarkClickListener = listener;
         mScreenWidth = getScreenWidth();
 
@@ -198,40 +233,7 @@ public class ClipSetProgressBar extends FrameLayout {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventClipPosSetChangeMainThread(ClipSetPosChangeEvent event) {
-        if (event.getBroadcaster().equals(TAG)) {
-            return;
-        }
-        ClipSetPos clipSetPos = event.getClipSetPos();
-        List<ThumbnailListAdapter.CellItem> cellItems = mAdapter.getCellItemList();
-        for (int i = 0; i < cellItems.size(); i++) {
-            ThumbnailListAdapter.CellItem cellItem = cellItems.get(i);
-            if (cellItem.type == ThumbnailListAdapter.CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
 
-                ClipSegment clipSegment = (ClipSegment) cellItem.item;
-                if (cellItem.clipIndex == clipSetPos.getClipIndex()) {
-
-                    if (clipSegment.getStartTimeMs() <= clipSetPos.getClipTimeMs() && clipSetPos.getClipTimeMs() <= clipSegment.getEndTimeMs()) {
-//                        Logger.t(TAG).d("clipPosTime  " + clipSetPos.getClipTimeMs());
-                        int offset = mAdapter.getPosOffset(clipSetPos.getClipTimeMs() - clipSegment.getStartTimeMs());
-//                        Logger.t(TAG).d("find clip Set position:  " + i + " Offset" + offset);
-                        mLayoutManager.scrollToPositionWithOffset(i, mScreenWidth / 2 - offset);
-                        break;
-                    }
-
-
-                }
-            }
-
-        }
-    }
-
-    @Subscribe
-    public void onEventClipSelectEvent(ClipSelectEvent event) {
-        mAdapter.mSelectedClip = event.getClip();
-        mAdapter.notifyDataSetChanged();
-    }
 
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

@@ -20,9 +20,10 @@ public class ClipSetManager {
 
 
     public static final int CLIP_SET_TYPE_ENHANCE = 0x108;
-    public static final int CLIP_SET_TYPE_ALLFOOTAGE = 0x109;
-    public static final int CLIP_SET_TYPE_ENHANCE_EDITING = 0x110;
-    public static final int CLIP_SET_TYPE_BOOKMARK = 0x111;
+    public static final int CLIP_SET_TYPE_MENUAL = 0x109;
+    public static final int CLIP_SET_TYPE_ALLFOOTAGE = 0x10A;
+    public static final int CLIP_SET_TYPE_ENHANCE_EDITING = 0x10B;
+    public static final int CLIP_SET_TYPE_BOOKMARK = 0x10C;
 
     private static volatile ClipSetManager CLIP_SET_MANAGER;
 

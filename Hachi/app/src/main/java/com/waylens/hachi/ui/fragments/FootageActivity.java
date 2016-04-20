@@ -3,10 +3,7 @@ package com.waylens.hachi.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -14,7 +11,6 @@ import android.widget.ViewSwitcher;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
-import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.SnipeError;
@@ -60,7 +56,9 @@ public class FootageActivity extends BaseActivity {
     private static final int DEFAULT_BOOKMARK_LENGTH = 30000;
 
 
-    private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_ALLFOOTAGE;
+    private static final String CLIPSET_INDEX = "clipsetindex";
+
+    private int mClipSetIndex;
 
 
     private ClipSet mAllFootageClipSet;
@@ -105,8 +103,9 @@ public class FootageActivity extends BaseActivity {
     }
 
 
-    public static void launch(Activity activity, int ClipSetIndex) {
+    public static void launch(Activity activity, int clipSetIndex) {
         Intent intent = new Intent(activity, FootageActivity.class);
+        intent.putExtra(CLIPSET_INDEX, clipSetIndex);
         activity.startActivity(intent);
     }
 
@@ -119,17 +118,19 @@ public class FootageActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+        mClipSetIndex = getIntent().getIntExtra(CLIPSET_INDEX, ClipSetManager.CLIP_SET_TYPE_ALLFOOTAGE);
         initViews();
     }
 
     private void initViews() {
-        setContentView(R.layout.fragment_all_footage);
+        setContentView(R.layout.activity_footage);
 //        view.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                mEventBus.post(new ClipSelectEvent(null));
 //            }
 //        });
+        setupToolbar();
         mClipSetProgressBar.init(mVdbImageLoader, new ClipSetProgressBar.OnBookmarkClickListener() {
             @Override
             public void onBookmarkClick(Clip clip) {
@@ -145,12 +146,14 @@ public class FootageActivity extends BaseActivity {
     public void onStart() {
         super.onStart();
         mEventBus.register(this);
+        mEventBus.register(mClipSetProgressBar);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
+        mEventBus.unregister(mClipSetProgressBar);
     }
 
     @Override
@@ -175,6 +178,20 @@ public class FootageActivity extends BaseActivity {
         if (mVsRoot.getDisplayedChild() == 0) {
             mVsRoot.showNext();
         }
+    }
+
+    @Override
+    public void setupToolbar() {
+        if (mToolbar != null) {
+            mToolbar.setNavigationIcon(R.drawable.navbar_close);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+        super.setupToolbar();
     }
 
     private void setupClipPlayFragment(ClipSet clipSet) {
@@ -221,28 +238,12 @@ public class FootageActivity extends BaseActivity {
         if (mVdbRequestQueue == null) {
             return;
         }
-        mVdbRequestQueue.add(new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA,
-            new VdbResponse.Listener<ClipSet>() {
-                @Override
-                public void onResponse(ClipSet clipSet) {
-                    if (clipSet.getCount() == 0) {
-                        onHandleEmptyCamera();
-                        return;
-                    }
-                    Logger.t(TAG).d("clipSet number: " + clipSet.getCount());
-                    mAllFootageClipSet = clipSet;
-                    setupClipPlayFragment(clipSet);
-                    //setupClipProgressBar(clipSet);
-                    refreshBookmarkClipSet();
-                }
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("", error);
 
-                }
-            }));
+        mAllFootageClipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
+        setupClipPlayFragment(mAllFootageClipSet);
+        //setupClipProgressBar(clipSet);
+        refreshBookmarkClipSet();
+
     }
 
     private void refreshBookmarkClipSet() {

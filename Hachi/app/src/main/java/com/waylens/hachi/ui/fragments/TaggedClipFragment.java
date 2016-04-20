@@ -48,6 +48,7 @@ import com.waylens.hachi.utils.Utils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -427,7 +428,10 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
     }
 
     private void launchFootageActivity(Clip clip) {
-        FootageActivity.launch(getActivity(), 0);
+        ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
+        clipSet.addClip(clip);
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_MENUAL, clipSet);
+        FootageActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_MENUAL);
     }
 
     @Override
