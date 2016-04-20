@@ -33,6 +33,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
+import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
@@ -256,6 +257,16 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
+    @Subscribe
+    public void onEventRawDataItem(RawDataItemEvent event) {
+        if (mVdtCamera != event.getCamera()) {
+            return;
+        }
+
+        RawDataItem item = event.getRawDataItem();
+        mGaugeView.updateRawDateItem(item);
+    }
+
 
     public static CameraPreviewFragment newInstance(VdtCamera vdtCamera, boolean isGaugeVisible) {
         CameraPreviewFragment fragment = new CameraPreviewFragment();
@@ -414,12 +425,16 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void changeCurrentCamera(int position) {
+        closeLiveRawData();
         stopCameraPreview();
+
         mVdtCameraManager.setCurrentCamera(position);
         mVdtCamera = mVdtCameraManager.getCurrentCamera();
+        mVdbRequestQueue = mVdtCamera.getRequestQueue();
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED, null));
 //        Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
         initCameraPreview();
+        registerMessageHandler();
     }
 
     private void handleOnCameraConnected() {
@@ -558,19 +573,7 @@ public class CameraPreviewFragment extends BaseFragment {
         });
 
         mVdbRequestQueue.add(request);
-        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
-            @Override
-            public void onResponse(RawDataItem response) {
-                mGaugeView.updateRawDateItem(response);
-            }
 
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Log.e(TAG, "RawDataMsgHandler ERROR", error);
-            }
-        });
-        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
 
 
         ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
@@ -619,7 +622,7 @@ public class CameraPreviewFragment extends BaseFragment {
             }
         });
         mVdbRequestQueue.add(request);
-        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
+//        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
         mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_ClipInfo);
         mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
     }
@@ -674,7 +677,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private void updateCameraStatusInfo() {
         int recState = mVdtCamera.getRecordState();
-        Logger.t(TAG).d("rec state: " + recState);
+//        Logger.t(TAG).d("rec state: " + recState);
         switch (recState) {
             case VdtCamera.STATE_RECORD_UNKNOWN:
                 mTvCameraRecStatus.setText(R.string.record_unknown);

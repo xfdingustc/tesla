@@ -3,7 +3,6 @@ package com.waylens.hachi.snipe;
 import android.os.Handler;
 import android.os.Looper;
 
-import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,7 +24,7 @@ public class VdbRequestQueue {
     final ConcurrentHashMap<Integer, VdbMessageHandler<?>> mMessageHandlers = new ConcurrentHashMap<>();
 
     private final PriorityBlockingQueue<VdbRequest<?>> mVideoDatabaseQueue = new
-            PriorityBlockingQueue<VdbRequest<?>>();
+        PriorityBlockingQueue<VdbRequest<?>>();
 
     private final CircularQueue<VdbRequest<?>> mIgnorableRequestQueue = new CircularQueue<>(1);
 
@@ -43,11 +42,11 @@ public class VdbRequestQueue {
 
     public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize) {
         this(vdbSocket, threadPoolSize,
-                new ExecutorDelivery(new Handler(Looper.getMainLooper())));
+            new ExecutorDelivery(new Handler(Looper.getMainLooper())));
     }
 
     public VdbRequestQueue(VdbSocket vdbSocket, int threadPoolSize, ResponseDelivery
-            delivery) {
+        delivery) {
         mVdbSocket = vdbSocket;
         mVdbDispatchers = new VdbDispatcher[threadPoolSize];
         mVdbResponseDispatchers = new VdbResponseDispatcher[threadPoolSize];
@@ -62,8 +61,7 @@ public class VdbRequestQueue {
             VdbDispatcher vdbDispatcher = new VdbDispatcher(mVideoDatabaseQueue, mVdbSocket, mDelivery);
             mVdbDispatchers[i] = vdbDispatcher;
             vdbDispatcher.start();
-            VdbResponseDispatcher responseDispatcher = new VdbResponseDispatcher(
-                    mCurrentVdbRequests, mMessageHandlers, mVdbSocket, mDelivery);
+            VdbResponseDispatcher responseDispatcher = new VdbResponseDispatcher(mCurrentVdbRequests, mMessageHandlers, mVdbSocket, mDelivery);
             mVdbResponseDispatchers[i] = responseDispatcher;
             responseDispatcher.start();
         }

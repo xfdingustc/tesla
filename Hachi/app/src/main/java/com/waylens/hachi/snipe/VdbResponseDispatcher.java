@@ -1,10 +1,7 @@
 package com.waylens.hachi.snipe;
 
-import android.util.Log;
-
 import com.orhanobut.logger.Logger;
 
-import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -52,6 +49,7 @@ public class VdbResponseDispatcher extends Thread {
 
             VdbRequest<?> vdbRequest;
             if (vdbAcknowledge.isMessageAck()) {
+//                Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
                 if ((vdbRequest = mMessageHandlers.get(vdbAcknowledge.getMsgCode())) == null) {
 //                    Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
                     continue;
@@ -59,8 +57,8 @@ public class VdbResponseDispatcher extends Thread {
             } else {
                 vdbRequest = mVdbRequestQueue.get(vdbAcknowledge.getUser1());
                 if (vdbRequest == null || vdbRequest.getVdbCommand().getCommandCode() != vdbAcknowledge.getMsgCode()) {
-                    Logger.t(TAG).e(String.format("Fatal Error:msgCode[%d], " +  "cmdCode[%d], seq[%d]",
-                            vdbAcknowledge.getMsgCode(), vdbAcknowledge.getUser1(), vdbAcknowledge.getUser1()));
+                    Logger.t(TAG).e(String.format("Fatal Error:msgCode[%d], " + "cmdCode[%d], seq[%d]",
+                        vdbAcknowledge.getMsgCode(), vdbAcknowledge.getUser1(), vdbAcknowledge.getUser1()));
                     continue;
                 }
             }

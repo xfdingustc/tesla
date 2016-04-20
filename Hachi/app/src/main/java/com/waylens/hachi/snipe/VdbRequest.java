@@ -73,7 +73,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.finish(this);
         }
-        if (shouldClean  && !mIsMessageHandler) {
+        if (shouldClean && !mIsMessageHandler) {
             clean();
         }
     }
@@ -139,8 +139,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
         Priority left = this.getPriority();
         Priority right = another.getPriority();
 
-        return left == right ? this.mSequence - another.mSequence : right.ordinal() - left
-                .ordinal();
+        return left == right ? this.mSequence - another.mSequence : right.ordinal() - left.ordinal();
 
     }
 

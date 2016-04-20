@@ -1,9 +1,5 @@
 package com.waylens.hachi.snipe;
 
-import android.util.Log;
-
-import com.orhanobut.logger.Logger;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -85,8 +81,7 @@ public class VdbAcknowledge {
     }
 
     public boolean isMessageAck() {
-        return (mMsgCode >= VdbCommand.Factory.MSG_VdbReady)
-                && (mMsgCode <= VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
+        return (mMsgCode >= VdbCommand.Factory.MSG_VdbReady) && (mMsgCode <= VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
     }
 
     public int readi32() {

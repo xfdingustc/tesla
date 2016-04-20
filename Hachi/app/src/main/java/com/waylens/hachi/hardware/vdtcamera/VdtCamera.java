@@ -6,11 +6,16 @@ import android.util.Xml;
 import com.orhanobut.logger.Logger;
 
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
+import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.snipe.BasicVdbSocket;
+import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbConnection;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.VdbSocket;
+import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -433,6 +438,7 @@ public class VdtCamera {
             mVdbRequestQueue = new VdbRequestQueue(vdbSocket);
             mVdbRequestQueue.start();
             mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
+            registerMessageHandler();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -441,6 +447,23 @@ public class VdtCamera {
         }
 
         mIsConnected = true;
+    }
+
+    private void registerMessageHandler() {
+        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
+            @Override
+            public void onResponse(RawDataItem response) {
+//                mGaugeView.updateRawDateItem(response);
+                mEventBus.post(new RawDataItemEvent(VdtCamera.this, response));
+            }
+
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e(TAG, "RawDataMsgHandler ERROR", error);
+            }
+        });
+        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
     }
 
     private void onCameraDisconnected() {
@@ -1112,8 +1135,6 @@ public class VdtCamera {
             }
         }
 
-        public void cmd_CAM_BT_setOBDTypes() {
-        }
 
         public void cmd_CAM_WantIdle() {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_WANT_IDLE);

@@ -52,7 +52,7 @@ public class GaugeView extends FrameLayout {
         mWebView.loadUrl("file:///android_asset/api.html");
     }
 
-    @Subscribe()
+    @Subscribe
     public void onGaugeEvent(GaugeEvent event) {
         switch (event.getWhat()) {
             case GaugeEvent.EVENT_WHAT_SHOW:
