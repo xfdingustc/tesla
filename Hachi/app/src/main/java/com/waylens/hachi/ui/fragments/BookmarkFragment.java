@@ -198,7 +198,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     @Override
     public void onStart() {
         super.onStart();
-        if (getCamera() != null) {
+        if (mVdtCamera != null) {
             doGetBookmarkClips();
         }
         mEventBus.register(this);
@@ -291,7 +291,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     private void setupClipSetGroup() {
         mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ClipSetGroupAdapter(getActivity(), mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
+        mAdapter = new ClipSetGroupAdapter(getActivity(), R.layout.item_clip_set_grid, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
                 popClipPreviewFragment(clip);

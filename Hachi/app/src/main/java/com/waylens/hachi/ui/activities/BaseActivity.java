@@ -10,10 +10,13 @@ import android.view.MotionEvent;
 
 import com.android.volley.RequestQueue;
 import com.bugtags.library.Bugtags;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 
@@ -24,7 +27,18 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2015/7/29.
  */
 public class BaseActivity extends AppCompatActivity {
+    static final private String IS_LOCAL = "isLocal";
+    static final private String IS_PC_SERVER = "isPcServer";
+    static final private String SSID = "ssid";
+    static final private String HOST_STRING = "hostString";
 
+
+    public Hachi thisApp;
+
+    protected RequestQueue mRequestQueue;
+    protected VdtCamera mVdtCamera;
+    protected VdbRequestQueue mVdbRequestQueue;
+    protected VdbImageLoader mVdbImageLoader;
     /**
      * Bugtags call
      */
@@ -56,14 +70,12 @@ public class BaseActivity extends AppCompatActivity {
     @Bind(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
 
-    public Hachi thisApp;
 
-    protected RequestQueue mRequestQueue;
 
     protected void init() {
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(this);
         mRequestQueue.start();
-
+        initCamera();
     }
 
     @Override
@@ -137,13 +149,14 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    static final private String IS_LOCAL = "isLocal";
-    static final private String IS_PC_SERVER = "isPcServer";
-    static final private String SSID = "ssid";
-    static final private String HOST_STRING = "hostString";
-
-
-    // API
+    protected void initCamera() {
+        mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
+        Logger.t("EnhancementActivity").d("get current camera: " + mVdtCamera);
+        if (mVdtCamera != null) {
+            mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
+            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+        }
+    }
 
     protected boolean isServerActivity(Bundle bundle) {
         return bundle.getBoolean(IS_PC_SERVER, false);

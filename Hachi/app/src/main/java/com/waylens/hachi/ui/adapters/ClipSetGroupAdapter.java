@@ -1,6 +1,8 @@
 package com.waylens.hachi.ui.adapters;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.format.DateUtils;
@@ -30,6 +32,7 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2016/2/26.
  */
 public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final int mLayoutRes;
     private List<ClipSet> mClipSetGroup;
     private final Context mContext;
     private final OnClipClickListener mClipClickListener;
@@ -57,12 +60,13 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<ClipGridItem> mClipGridItemList = new ArrayList<>();
 
 
-    public ClipSetGroupAdapter(Context context, VdbRequestQueue requestQueue, List<ClipSet> clipSetGroup, ClipSetGroupAdapter.OnClipClickListener listener) {
+    public ClipSetGroupAdapter(Context context, @LayoutRes int layoutRes, VdbRequestQueue requestQueue, List<ClipSet> clipSetGroup, ClipSetGroupAdapter.OnClipClickListener listener) {
         this.mContext = context;
         this.mClipSetGroup = clipSetGroup;
         recalculateGridItemList();
         this.mClipClickListener = listener;
         this.mVdbRequestQueue = requestQueue;
+        this.mLayoutRes = layoutRes;
         this.mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
     }
 
@@ -120,7 +124,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private RecyclerView.ViewHolder onCreateClipGridViewHolder(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.item_clip_set_grid, parent, false);
+        View view = inflater.inflate(mLayoutRes, parent, false);
         StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams();
         layoutParams.setFullSpan(false);
         view.setLayoutParams(layoutParams);
@@ -156,12 +160,14 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover);
 
-        if (mMultiSelectedMode == true) {
-            viewHolder.mBtnSelect.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.mBtnSelect.setVisibility(View.INVISIBLE);
+        if (viewHolder.mBtnSelect != null) {
+            if (mMultiSelectedMode == true) {
+                viewHolder.mBtnSelect.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.mBtnSelect.setVisibility(View.INVISIBLE);
+            }
+            toggleItemSelectedView(viewHolder, gridItem.isItemSelected);
         }
-        toggleItemSelectedView(viewHolder, gridItem.isItemSelected);
 
     }
 
@@ -179,12 +185,14 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void toggleItemSelectedView(ClipGridViewHolder viewHolder, boolean isSelected) {
-        if (isSelected == false) {
-            viewHolder.mBtnSelect.setImageResource(R.drawable.edit_unselect);
-            viewHolder.mSelectedMask.setVisibility(View.GONE);
-        } else {
-            viewHolder.mBtnSelect.setImageResource(R.drawable.edit_select);
-            viewHolder.mSelectedMask.setVisibility(View.VISIBLE);
+        if (viewHolder.mBtnSelect != null) {
+            if (isSelected == false) {
+                viewHolder.mBtnSelect.setImageResource(R.drawable.edit_unselect);
+                viewHolder.mSelectedMask.setVisibility(View.GONE);
+            } else {
+                viewHolder.mBtnSelect.setImageResource(R.drawable.edit_select);
+                viewHolder.mSelectedMask.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -261,9 +269,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Bind(R.id.tvDuration)
         TextView tvDuration;
 
+        @Nullable
         @Bind(R.id.btnSelect)
         ImageButton mBtnSelect;
 
+        @Nullable
         @Bind(R.id.selectedMask)
         View mSelectedMask;
 
@@ -286,8 +296,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         mClipClickListener.onClipClicked((Clip) clipGridItem.itemObject);
                     } else {
                         clipGridItem.isItemSelected = !clipGridItem.isItemSelected;
-                        toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem
-                            .isItemSelected);
+                        toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem.isItemSelected);
                     }
 
                 }
@@ -296,12 +305,15 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ivClipCover.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (mClipClickListener == null) {
+                    if (mClipClickListener == null ) {
                         return true;
                     }
 
                     ClipGridViewHolder holder = (ClipGridViewHolder) v.getTag();
                     ClipGridItem clipGridItem = mClipGridItemList.get(holder.getPosition());
+                    if (holder.mBtnSelect == null) {
+                        return true;
+                    }
                     //holder.mBtnSelect.setImageResource(R.drawable.edit_select);
                     clipGridItem.isItemSelected = true;
                     holder.mBtnSelect.setImageResource(R.drawable.edit_select);

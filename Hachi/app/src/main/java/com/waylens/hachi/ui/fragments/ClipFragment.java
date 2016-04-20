@@ -4,17 +4,25 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
+import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.Bind;
 
@@ -24,13 +32,12 @@ import butterknife.Bind;
 public class ClipFragment extends BaseFragment {
     private static final String TAG = ClipFragment.class.getSimpleName();
 
+    private ClipSetGroupAdapter mAdapter;
+
+    private EventBus mEventBus = EventBus.getDefault();
+
     public static ClipFragment newInstance() {
         ClipFragment fragment = new ClipFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
-//        args.putBoolean(ARG_IS_MULTIPLE_MODE, isMultipleSelectionMode);
-//        args.putBoolean(ARG_IS_ADD_MORE, isAddMore);
-//        fragment.setArguments(args);
         return fragment;
     }
 
@@ -41,15 +48,44 @@ public class ClipFragment extends BaseFragment {
     @Bind(R.id.menualClipGroupList)
     RecyclerView mMenualClipGroupList;
 
+    @Subscribe
+    public void onEventCameraConnection(CameraConnectionEvent event) {
+        switch (event.getWhat()) {
+            case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
+                initCamera();
+                doGetAllMenualClipSet();
+                break;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        return super.onCreateView(inflater, container, savedInstanceState);
         View view = createFragmentView(inflater, container, R.layout.fragment_clip, savedInstanceState);
-        doGetAllMenualClipSet();
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doGetAllMenualClipSet();
+            }
+        });
+
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mVdtCamera != null) {
+            doGetAllMenualClipSet();
+        }
+        mEventBus.register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
+    }
 
     private void doGetAllMenualClipSet() {
         if (mVdbRequestQueue == null) {
@@ -68,6 +104,10 @@ public class ClipFragment extends BaseFragment {
 //                    setupClipPlayFragment(clipSet);
 //                    //setupClipProgressBar(clipSet);
 //                    refreshBookmarkClipSet();
+                mRefreshLayout.setRefreshing(false);
+                ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
+                setupClipSetGroup();
+                mAdapter.setClipSetGroup(helper.getClipSetGroup());
             }
         },
             new VdbResponse.ErrorListener() {
@@ -77,5 +117,26 @@ public class ClipFragment extends BaseFragment {
 
                 }
             }));
+    }
+
+    private void setupClipSetGroup() {
+        mMenualClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        mAdapter = new ClipSetGroupAdapter(getActivity(), R.layout.item_clip_set_card, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
+            @Override
+            public void onClipClicked(Clip clip) {
+//                popClipPreviewFragment(clip);
+            }
+
+            @Override
+            public void onClipLongClicked(Clip clip) {
+
+            }
+        });
+
+        mAdapter.setMultiSelectedMode(false);
+
+        mMenualClipGroupList.setAdapter(mAdapter);
+
     }
 }

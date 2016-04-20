@@ -78,9 +78,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private int mLaunchMode = -1;
 
-    private VdbRequestQueue mVdbRequestQueue;
-    private VdtCamera mVdtCamera;
-    private VdbImageLoader mVdbImageLoader;
 
     EnhanceFragment mEnhanceFragment;
     ShareFragment mShareFragment;
@@ -127,9 +124,12 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Override
     protected void init() {
         super.init();
-        mVdtCamera = getCameraFromIntent(getIntent().getExtras());
-        mVdbRequestQueue = mVdtCamera.getRequestQueue();
-        mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+//        mVdtCamera = getCameraFromIntent(getIntent().getExtras());
+//        mVdbRequestQueue = mVdtCamera.getRequestQueue();
+//
+//        mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+
+        Logger.t(TAG).d("mVdtcamera is : " + mVdtCamera);
 
 
         ArrayList<Clip> clipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);

@@ -20,7 +20,10 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -68,6 +71,10 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
     ItemTouchHelper mItemTouchHelper;
     OnClipEditListener mOnClipEditListener;
 
+    private VdtCamera mVdtCamera;
+    private VdbRequestQueue mVdbRequestQueue;
+    private VdbImageLoader mVdbImageLoader;
+
     int mSelectedPosition = POSITION_UNKNOWN;
 
     int mOriginalSize;
@@ -107,6 +114,14 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
         mRecyclerView.addOnItemTouchListener(this);
         mRangeSeekBar.setNotifyWhileDragging(true);
         mRangeSeekBar.setOnRangeSeekBarChangeListener(this);
+
+
+        mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
+        Logger.t("EnhancementActivity").d("get current camera: " + mVdtCamera);
+        if (mVdtCamera != null) {
+            mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
+            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+        }
     }
 
     @Override
@@ -317,11 +332,10 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
     }
 
     class RecyclerViewAdapter extends RecyclerView.Adapter<VH> implements ItemTouchListener {
-        VdbImageLoader mImageLoader;
+
 
         RecyclerViewAdapter(LinearLayoutManager layoutManager) {
             mLayoutManager = layoutManager;
-//            mImageLoader = VdbImageLoader.getImageLoader(Snipe.newRequestQueue());
         }
 
         @Override
@@ -334,7 +348,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
         public void onBindViewHolder(final VH holder, final int position) {
             final Clip clip = getClipSet().getClip(position);
             ClipPos clipPos = new ClipPos(clip);
-            mImageLoader.displayVdbImage(clipPos, holder.clipThumbnail);
+            mVdbImageLoader.displayVdbImage(clipPos, holder.clipThumbnail);
             holder.itemView.setTag(holder);
             holder.itemView.setOnClickListener(new OnClickListener() {
                 @Override
