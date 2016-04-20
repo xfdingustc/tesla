@@ -113,13 +113,7 @@ public class AllFootageFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_all_footage, savedInstanceState);
-        mClipSetProgressBar.init(mVdbImageLoader, new ClipSetProgressBar.OnBookmarkClickListener() {
-            @Override
-            public void onBookmarkClick(Clip clip) {
-                BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
-                dialog.show();
-            }
-        });
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

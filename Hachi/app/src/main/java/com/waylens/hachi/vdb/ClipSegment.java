@@ -3,18 +3,18 @@ package com.waylens.hachi.vdb;
 /**
  * Created by Xiaofei on 2015/8/27.
  */
-public class ClipFragment {
+public class ClipSegment {
     private Clip mClip;
     private long mStartTimeMs;
     private long mEndTimeMs;
 
-    public ClipFragment(Clip clip) {
+    public ClipSegment(Clip clip) {
         this.mClip = clip;
         this.mStartTimeMs = clip.getStartTimeMs();
         this.mEndTimeMs = clip.getStartTimeMs() + clip.getDurationMs();
     }
 
-    public ClipFragment(Clip clip, long startTimeMs, long endTimeMs) {
+    public ClipSegment(Clip clip, long startTimeMs, long endTimeMs) {
         this.mClip = clip;
         this.mStartTimeMs = startTimeMs;
         this.mEndTimeMs = endTimeMs;

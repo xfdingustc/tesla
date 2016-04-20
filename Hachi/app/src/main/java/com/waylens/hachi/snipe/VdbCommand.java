@@ -3,7 +3,7 @@ package com.waylens.hachi.snipe;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipPos;
 
 /**
@@ -289,7 +289,7 @@ public class VdbCommand {
 
         }
 
-        public static VdbCommand createCmdGetClipDownloadUrl(ClipFragment clipFragment, int downloadOption, boolean bFirstLoop) {
+        public static VdbCommand createCmdGetClipDownloadUrl(ClipSegment clipSegment, int downloadOption, boolean bFirstLoop) {
             int cmdTag = DOWNLOAD_FOR_FILE;
             if (bFirstLoop) {
                 cmdTag |= DOWNLOAD_FIRST_LOOP;
@@ -297,9 +297,9 @@ public class VdbCommand {
             //int duration = (int) (endMs - startMs);
             return new Builder()
                 .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
-                .writeClipId(clipFragment.getClip().cid)
-                .writeInt64(clipFragment.getStartTimeMs())
-                .writeInt32(clipFragment.getDurationMs())
+                .writeClipId(clipSegment.getClip().cid)
+                .writeInt64(clipSegment.getStartTimeMs())
+                .writeInt32(clipSegment.getDurationMs())
                 .writeInt32(downloadOption)
                 .build();
         }

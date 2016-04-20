@@ -10,7 +10,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
@@ -77,13 +77,13 @@ public class RawDataLoader {
         Logger.t(TAG).d("clipset count: " + getClipSet().getCount() + " loading index: " + mCurrentLoadingIndex);
         Clip clip = getClipSet().getClip(mCurrentLoadingIndex);
 
-        ClipFragment clipFragment = new ClipFragment(clip);
+        ClipSegment clipSegment = new ClipSegment(clip);
         Bundle params = new Bundle();
         params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
-        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
-        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipSegment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipSegment.getDurationMs());
 
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipSegment.getClip().cid, params,
                 new VdbResponse.Listener<RawDataBlock>() {
                     @Override
                     public void onResponse(RawDataBlock response) {

@@ -12,31 +12,28 @@ import com.waylens.hachi.vdb.ClipSet;
  * Created by Xiaofei on 2015/8/18.
  */
 public class ClipSetExRequest extends VdbRequest<ClipSet> {
-    private final static String TAG = ClipSetExRequest.class.getSimpleName();
-    private static final int UUID_LENGTH = 36;
-
     public static final int FLAG_UNKNOWN = -1;
     public static final int FLAG_CLIP_EXTRA = 1;
     public static final int FLAG_CLIP_VDB_ID = 1 << 1;
-
+    public static final int FLAG_CLIP_DESC = 1 << 2;
+    public static final int FLAG_CLIP_ATTR = 1 << 3;
     public static final int METHOD_GET = 0;
     public static final int METHOD_SET = 1;
-
-
-
+    private final static String TAG = ClipSetExRequest.class.getSimpleName();
+    private static final int UUID_LENGTH = 36;
     private final int mClipType;
     private final int mFlag;
+
+    public ClipSetExRequest(int type, int flag, VdbResponse.Listener<ClipSet> listener,
+                            VdbResponse.ErrorListener errorListener) {
+        this(METHOD_GET, type, flag, listener, errorListener);
+    }
 
     public ClipSetExRequest(int method, int type, int flag, VdbResponse.Listener<ClipSet> listener,
                             VdbResponse.ErrorListener errorListener) {
         super(method, listener, errorListener);
         this.mClipType = type;
         this.mFlag = flag;
-    }
-
-    public ClipSetExRequest(int type, int flag, VdbResponse.Listener<ClipSet> listener,
-                            VdbResponse.ErrorListener errorListener) {
-        this(METHOD_GET, type, flag, listener, errorListener);
     }
 
     @Override
@@ -102,7 +99,10 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
             }
             response.readi32(); //int clipType
             int extraSize = response.readi32(); //int extraSize
-            if (flag == FLAG_CLIP_EXTRA) {
+
+            int offsetSize = 0;
+
+            if ((flag & FLAG_CLIP_EXTRA) > 0) {
                 String guid = new String(response.readByteArray(UUID_LENGTH));
                 clip.cid.setExtra(guid);
 
@@ -111,18 +111,32 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
                 int realClipId = response.readi32(); //int real_clip_id
                 clip.realCid = new Clip.ID(Clip.TYPE_BUFFERED, realClipId, guid);
 
-                int offsetSize = UUID_LENGTH + 3 * 4;
-                response.skip(extraSize - offsetSize);
+                offsetSize += UUID_LENGTH + 3 * 4;
+//                response.skip(extraSize - offsetSize);
 
 
-            } else if (flag == FLAG_CLIP_VDB_ID){
+            }
+
+            if ((flag & FLAG_CLIP_VDB_ID) > 0) {
                 String extraString = new String();
-                int offsetSize = response.readStringAlignedReturnSize(extraString);
+                offsetSize += response.readStringAlignedReturnSize(extraString);
 
                 clip.cid.setExtra(extraString);
                 response.skip(extraSize - offsetSize);
             }
-            clipSet.addClip(clip);
+
+            if ((flag & FLAG_CLIP_ATTR) > 0) {
+//                Logger.t(TAG).d("flag : " + flag );
+                int attr = response.readi32();
+                offsetSize += 4;
+                if ((attr & Clip.CLIP_ATTR_MANUALLY) > 0) {
+                    clipSet.addClip(clip);
+                }
+
+            } else {
+                clipSet.addClip(clip);
+            }
+            response.skip(extraSize - offsetSize);
         }
         return VdbResponse.success(clipSet);
     }

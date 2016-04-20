@@ -13,6 +13,14 @@ public class Clip implements Parcelable {
 
     public static final int TYPE_TEMP = 0x108;
 
+    public static final int CLIP_ATTR_LIVE = (1 << 0);    // live clip
+    public static final int CLIP_ATTR_AUTO = (1 << 1);    // auto generated clip
+    public static final int CLIP_ATTR_MANUALLY = (1 << 2);    // manually generated clip
+    public static final int CLIP_ATTR_UPLOADED = (1 << 3);    // clip has been uploaded
+    public static final int CLIP_ATTR_LIVE_MARK = (1 << 4);    // created by avf_camera_mark_live_clip()
+    public static final int CLIP_ATTR_NO_AUTO_DELETE = (1 << 5);    // do not auto delete the clip is space is low
+
+
     // --------------------------------------------------------------
     // CAT_REMOTE:
     // 		type: clipType (buffered 0, marked 1, or plist_id >= 256)
@@ -130,6 +138,7 @@ public class Clip implements Parcelable {
             bufferedCid = cid;
             realCid = cid;
         }
+
         public int getSelectedLength() {
             return (int) (selectedEndValue - selectedStartValue);
         }
@@ -220,7 +229,7 @@ public class Clip implements Parcelable {
     }
 
     public void setEndTime(long endTime) {
-        mDurationMs = (int)(endTime - mStartTimeMs);
+        mDurationMs = (int) (endTime - mStartTimeMs);
         editInfo.selectedEndValue = Math.min(editInfo.selectedEndValue, getEndTimeMs());
     }
 

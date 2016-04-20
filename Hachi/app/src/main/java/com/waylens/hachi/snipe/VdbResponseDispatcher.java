@@ -57,8 +57,8 @@ public class VdbResponseDispatcher extends Thread {
             } else {
                 vdbRequest = mVdbRequestQueue.get(vdbAcknowledge.getUser1());
                 if (vdbRequest == null || vdbRequest.getVdbCommand().getCommandCode() != vdbAcknowledge.getMsgCode()) {
-                    Logger.t(TAG).e(String.format("Fatal Error:msgCode[%d], " + "cmdCode[%d], seq[%d]",
-                        vdbAcknowledge.getMsgCode(), vdbAcknowledge.getUser1(), vdbAcknowledge.getUser1()));
+//                    Logger.t(TAG).e(String.format("Fatal Error:msgCode[%d], " + "cmdCode[%d], seq[%d]",
+//                        vdbAcknowledge.getMsgCode(), vdbAcknowledge.getUser1(), vdbAcknowledge.getUser1()));
                     continue;
                 }
             }

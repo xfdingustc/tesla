@@ -17,7 +17,7 @@ import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.Playlist;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
@@ -303,13 +303,13 @@ public class CameraVideoPlayFragment extends VideoPlayFragment {
             return;
         }
 
-        ClipFragment clipFragment = new ClipFragment(mClip);
+        ClipSegment clipSegment = new ClipSegment(mClip);
         Bundle params = new Bundle();
         params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
-        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
-        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipSegment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipSegment.getDurationMs());
 
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipSegment.getClip().cid, params,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {

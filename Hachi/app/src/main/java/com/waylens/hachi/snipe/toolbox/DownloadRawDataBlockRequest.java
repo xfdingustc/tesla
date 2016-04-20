@@ -7,7 +7,7 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 
 /**
@@ -16,19 +16,19 @@ import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 public class DownloadRawDataBlockRequest extends VdbRequest<RawDataBlock.DownloadRawDataBlock> {
     private static final String TAG = DownloadRawDataBlockRequest.class.getSimpleName();
     private final Bundle mParameters;
-    private final ClipFragment mClipFragment;
+    private final ClipSegment mClipSegment;
 
     public static final String PARAMETER_CLIP_TIME_MS = "clip_time_ms";
     public static final String PARAMETER_LENGTH_MS = "length_ms";
     public static final String PARAMETER_DATA_TYPE = "data_type";
 
 
-    public DownloadRawDataBlockRequest(ClipFragment clipFragment, Bundle parameters,
+    public DownloadRawDataBlockRequest(ClipSegment clipSegment, Bundle parameters,
                                        VdbResponse.Listener<RawDataBlock.DownloadRawDataBlock> listener,
                                        VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         this.mParameters = parameters;
-        this.mClipFragment = clipFragment;
+        this.mClipSegment = clipSegment;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DownloadRawDataBlockRequest extends VdbRequest<RawDataBlock.Downloa
         long clipTimeMs = mParameters.getLong(PARAMETER_CLIP_TIME_MS);
         int lengthMs = mParameters.getInt(PARAMETER_LENGTH_MS);
         int dataType = mParameters.getInt(PARAMETER_DATA_TYPE);
-        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipFragment.getClip().cid, true, dataType, clipTimeMs, lengthMs);
+        mVdbCommand = VdbCommand.Factory.createCmdGetRawDataBlock(mClipSegment.getClip().cid, true, dataType, clipTimeMs, lengthMs);
         return mVdbCommand;
     }
 

@@ -27,7 +27,7 @@ import com.waylens.hachi.snipe.cache.DiskCache;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
@@ -86,7 +86,7 @@ public class SmartRemixActivity extends BaseActivity {
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
     private List<List<RawData>> mRawDataList = new ArrayList<>();
 
-    private List<ClipFragment> mSelectedClipFragment = null;
+    private List<ClipSegment> mSelectedClipSegment = null;
 
     private boolean mRawDataLoaded = false;
 
@@ -182,9 +182,9 @@ public class SmartRemixActivity extends BaseActivity {
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
                 if (mRawDataLoaded) {
-                    mSelectedClipFragment = analyseRawData();
+                    mSelectedClipSegment = analyseRawData();
 
-                    mTvClipSelected.setText("" + mSelectedClipFragment.size() + " clips is selected");
+                    mTvClipSelected.setText("" + mSelectedClipSegment.size() + " clips is selected");
 
                 }
             }
@@ -272,13 +272,13 @@ public class SmartRemixActivity extends BaseActivity {
         Logger.t(TAG).d("clipset count: " + mAllClipSet.getCount() + " loading index: " + mCurrentLoadingIndex);
         Clip clip = mAllClipSet.getClip(mCurrentLoadingIndex);
 
-        ClipFragment clipFragment = new ClipFragment(clip);
+        ClipSegment clipSegment = new ClipSegment(clip);
         Bundle params = new Bundle();
         params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
-        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipFragment.getStartTimeMs());
-        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipFragment.getDurationMs());
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipSegment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipSegment.getDurationMs());
 
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipFragment.getClip().cid, params,
+        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipSegment.getClip().cid, params,
             new VdbResponse.Listener<RawDataBlock>() {
                 @Override
                 public void onResponse(RawDataBlock response) {
@@ -338,7 +338,7 @@ public class SmartRemixActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.to_enhance:
-                        launchEnhanceActivity(mSelectedClipFragment);
+                        launchEnhanceActivity(mSelectedClipSegment);
                         break;
                 }
                 return true;
@@ -347,22 +347,22 @@ public class SmartRemixActivity extends BaseActivity {
 
     }
 
-    private void launchEnhanceActivity(List<ClipFragment> clipFragments) {
+    private void launchEnhanceActivity(List<ClipSegment> clipSegments) {
         ArrayList<Clip> selectedList = new ArrayList<>();
         int total = 0;
-        for (ClipFragment clipFragment : clipFragments) {
-            Clip clip = new Clip(clipFragment.getClip());
+        for (ClipSegment clipSegment : clipSegments) {
+            Clip clip = new Clip(clipSegment.getClip());
 
-            clip.setStartTime(clipFragment.getStartTimeMs());
-            clip.setEndTime(clipFragment.getEndTimeMs());
+            clip.setStartTime(clipSegment.getStartTimeMs());
+            clip.setEndTime(clipSegment.getEndTimeMs());
             selectedList.add(clip);
         }
         EnhancementActivity.launch(this, selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
     }
 
-    private List<ClipFragment> analyseRawData() {
+    private List<ClipSegment> analyseRawData() {
 
-        List<ClipFragment> clipFragmentList = new ArrayList<>();
+        List<ClipSegment> clipSegmentList = new ArrayList<>();
 
 
         for (int i = 0; i < mRawDataList.size(); i++) {
@@ -371,7 +371,7 @@ public class SmartRemixActivity extends BaseActivity {
             List<RawData> rawDataList = mRawDataList.get(i);
 
             Clip clip = mAllClipSet.getClip(i);
-            ClipFragment clipFragment = null;
+            ClipSegment clipSegment = null;
             for (int j = 0; j < rawDataList.size(); j++) {
                 RawData rawData = rawDataList.get(j);
 //            for (RawData rawData : rawDataList) {
@@ -379,23 +379,23 @@ public class SmartRemixActivity extends BaseActivity {
                 if (!startFound && ifMeetThreshold(rawData)) {
 //                    Logger.t(TAG).d("start Hit!!!!!! " + rawData.getObdData().speed + " pts: " + rawData.getPts());
                     startFound = true;
-                    clipFragment = new ClipFragment(clip);
-                    clipFragment.setStartTime(rawData.getPts());
+                    clipSegment = new ClipSegment(clip);
+                    clipSegment.setStartTime(rawData.getPts());
 //                    Logger.t(TAG).d("set start: " + clipFragment.toString());
                 }
 
                 if (startFound && (!ifMeetThreshold(rawData) || j == rawDataList.size() - 1)) {
 //                    Logger.t(TAG).d("end Hit!!!!!! "  );
                     startFound = false;
-                    clipFragment.setEndTime(rawData.getPts());
-                    Logger.t(TAG).d("Found one ClipFragment: " + clipFragment.toString());
-                    clipFragmentList.add(clipFragment);
+                    clipSegment.setEndTime(rawData.getPts());
+                    Logger.t(TAG).d("Found one ClipFragment: " + clipSegment.toString());
+                    clipSegmentList.add(clipSegment);
                 }
             }
         }
 
 
-        return clipFragmentList;
+        return clipSegmentList;
     }
 
 

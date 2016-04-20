@@ -12,7 +12,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 
 
@@ -21,7 +21,7 @@ public class DownloadIntentService extends IntentService {
 
 
     private static final String ACTION_DOWNLOAD = "com.waylens.hachi.ui.services.action.DOWNLOAD";
-    private static ClipFragment mSharedClipFragment;
+    private static ClipSegment mSharedClipSegment;
 
     private static final String EXTRA_CLIP = "com.waylens.hachi.ui.services.extra.CLIP";
 
@@ -36,7 +36,7 @@ public class DownloadIntentService extends IntentService {
 
 
     private VdbRequestQueue mVdbRequestQueue;
-    private ClipFragment mClipFragment;
+    private ClipSegment mClipSegment;
 
     private String mDownloadFilePath;
 
@@ -57,10 +57,10 @@ public class DownloadIntentService extends IntentService {
         super("DownloadIntentService");
     }
 
-    public static void startDownload(Context context, ClipFragment clipFragment) {
+    public static void startDownload(Context context, ClipSegment clipSegment) {
         Intent intent = new Intent(context, DownloadIntentService.class);
         intent.setAction(ACTION_DOWNLOAD);
-        mSharedClipFragment = clipFragment;
+        mSharedClipSegment = clipSegment;
         context.startService(intent);
     }
 
@@ -76,8 +76,8 @@ public class DownloadIntentService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_DOWNLOAD.equals(action)) {
-                mClipFragment = mSharedClipFragment;
-                handleActionDownloadClip(mClipFragment);
+                mClipSegment = mSharedClipSegment;
+                handleActionDownloadClip(mClipSegment);
             }
         }
     }
@@ -87,21 +87,21 @@ public class DownloadIntentService extends IntentService {
         mVdbRequestQueue.start();
     }
 
-    private void handleActionDownloadClip(ClipFragment clipFragment) {
-        requestDownloadUrl(clipFragment);
+    private void handleActionDownloadClip(ClipSegment clipSegment) {
+        requestDownloadUrl(clipSegment);
     }
 
-    private void requestDownloadUrl(final ClipFragment clipFragment) {
+    private void requestDownloadUrl(final ClipSegment clipSegment) {
 
 
-        DownloadUrlRequest request = new DownloadUrlRequest(clipFragment, new VdbResponse
+        DownloadUrlRequest request = new DownloadUrlRequest(clipSegment, new VdbResponse
             .Listener<ClipDownloadInfo>() {
             @Override
             public void onResponse(ClipDownloadInfo response) {
                 Logger.t(TAG).d("on response:!!!!: " + response.main.url);
                 Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
 
-                startDownload(response, 0, clipFragment.getClip().streams[0]);
+                startDownload(response, 0, clipSegment.getClip().streams[0]);
             }
         }, new VdbResponse.ErrorListener() {
             @Override

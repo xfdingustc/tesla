@@ -7,14 +7,14 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 
 /**
  * Created by Xiaofei on 2015/8/27.
  */
 public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
     private static final String TAG = DownloadUrlRequest.class.getSimpleName();
-    private final ClipFragment mClipFragment;
+    private final ClipSegment mClipSegment;
 
     public static final int DOWNLOAD_OPT_MAIN_STREAM = (1 << 0);
     public static final int DOWNLOAD_OPT_SUB_STREAM_1 = (1 << 1);
@@ -22,21 +22,21 @@ public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
     public static final int DOWNLOAD_OPT_PLAYLIST = (1 << 3);
     public static final int DOWNLOAD_OPT_MUTE_AUDIO = (1 << 4);
 
-    public DownloadUrlRequest(ClipFragment clipFragment, VdbResponse.Listener<ClipDownloadInfo> listener,
+    public DownloadUrlRequest(ClipSegment clipSegment, VdbResponse.Listener<ClipDownloadInfo> listener,
                               VdbResponse.ErrorListener errorListener) {
-        this(0, clipFragment, listener, errorListener);
+        this(0, clipSegment, listener, errorListener);
     }
 
-    public DownloadUrlRequest(int method, ClipFragment clipFragment, VdbResponse.Listener<ClipDownloadInfo>
+    public DownloadUrlRequest(int method, ClipSegment clipSegment, VdbResponse.Listener<ClipDownloadInfo>
         listener, VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
-        this.mClipFragment = clipFragment;
+        this.mClipSegment = clipSegment;
     }
 
     @Override
     protected VdbCommand createVdbCommand() {
         int downloadOption = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_INDEX_PICT;
-        mVdbCommand = VdbCommand.Factory.createCmdGetClipDownloadUrl(mClipFragment, downloadOption, true);
+        mVdbCommand = VdbCommand.Factory.createCmdGetClipDownloadUrl(mClipSegment, downloadOption, true);
         return mVdbCommand;
     }
 

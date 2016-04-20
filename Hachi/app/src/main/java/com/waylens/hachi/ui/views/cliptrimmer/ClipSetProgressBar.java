@@ -21,7 +21,7 @@ import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipFragment;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetPos;
@@ -165,18 +165,18 @@ public class ClipSetProgressBar extends FrameLayout {
         // scroll to the end:
         if (position == mAdapter.getItemCount() - 1) {
             cellItem = mAdapter.getCellItem(position - 1);
-            ClipFragment clipFragment = (ClipFragment) cellItem.item;
-            ClipSetPos clipSetPos = new ClipSetPos(cellItem.clipIndex, clipFragment.getEndTimeMs());
+            ClipSegment clipSegment = (ClipSegment) cellItem.item;
+            ClipSetPos clipSetPos = new ClipSetPos(cellItem.clipIndex, clipSegment.getEndTimeMs());
             return clipSetPos;
         }
         cellItem = mAdapter.getCellItem(position);
         if (cellItem != null && cellItem.type == ThumbnailListAdapter.CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
-            ClipFragment clipFragment = (ClipFragment) cellItem.item;
+            ClipSegment clipSegment = (ClipSegment) cellItem.item;
             int offset = centerPos - view.getLeft();
-            int timeOffset = offset * clipFragment.getDurationMs() / view.getWidth();
+            int timeOffset = offset * clipSegment.getDurationMs() / view.getWidth();
             //ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs() + timeOffset);
             int clipIndex = cellItem.clipIndex;
-            long clipTimeMs = clipFragment.getStartTimeMs() + timeOffset;
+            long clipTimeMs = clipSegment.getStartTimeMs() + timeOffset;
             ClipSetPos clipSetPos = new ClipSetPos(clipIndex, clipTimeMs);
             return clipSetPos;
         }
@@ -209,12 +209,12 @@ public class ClipSetProgressBar extends FrameLayout {
             ThumbnailListAdapter.CellItem cellItem = cellItems.get(i);
             if (cellItem.type == ThumbnailListAdapter.CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
 
-                ClipFragment clipFragment = (ClipFragment) cellItem.item;
+                ClipSegment clipSegment = (ClipSegment) cellItem.item;
                 if (cellItem.clipIndex == clipSetPos.getClipIndex()) {
 
-                    if (clipFragment.getStartTimeMs() <= clipSetPos.getClipTimeMs() && clipSetPos.getClipTimeMs() <= clipFragment.getEndTimeMs()) {
+                    if (clipSegment.getStartTimeMs() <= clipSetPos.getClipTimeMs() && clipSetPos.getClipTimeMs() <= clipSegment.getEndTimeMs()) {
 //                        Logger.t(TAG).d("clipPosTime  " + clipSetPos.getClipTimeMs());
-                        int offset = mAdapter.getPosOffset(clipSetPos.getClipTimeMs() - clipFragment.getStartTimeMs());
+                        int offset = mAdapter.getPosOffset(clipSetPos.getClipTimeMs() - clipSegment.getStartTimeMs());
 //                        Logger.t(TAG).d("find clip Set position:  " + i + " Offset" + offset);
                         mLayoutManager.scrollToPositionWithOffset(i, mScreenWidth / 2 - offset);
                         break;
@@ -291,7 +291,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
                     CellItem oneItem = new CellItem();
                     oneItem.type = CellItem.ITEM_TYPE_CLIP_FRAGMENT;
-                    oneItem.item = new ClipFragment(clip, startTime, posTime);
+                    oneItem.item = new ClipSegment(clip, startTime, posTime);
                     oneItem.clipIndex = i;
 
                     mItems.add(oneItem);
@@ -331,7 +331,7 @@ public class ClipSetProgressBar extends FrameLayout {
             Context context = parent.getContext();
             CellItem cellItem = mItems.get(viewType);
             if (cellItem.type == CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
-                ClipFragment clipFragment = (ClipFragment) cellItem.item;
+                ClipSegment clipSegment = (ClipSegment) cellItem.item;
 
                 FrameLayout frameLayout = new FrameLayout(parent.getContext());
                 frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -340,7 +340,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
                 mCellWidth = (mRecyclerView.getHeight() - ViewUtils.dp2px(8, getResources())) * 16 / 9;
 
-                int imageViewWidth = getPosOffset(clipFragment.getDurationMs());
+                int imageViewWidth = getPosOffset(clipSegment.getDurationMs());
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(imageViewWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                 params.gravity = Gravity.CENTER_VERTICAL;
@@ -383,11 +383,11 @@ public class ClipSetProgressBar extends FrameLayout {
             CellItem clipFragmentItem = mItems.get(position);
             if (clipFragmentItem.type == CellItem.ITEM_TYPE_CLIP_FRAGMENT) {
                 ItemViewHolder viewHolder = (ItemViewHolder) holder;
-                ClipFragment clipFragment = (ClipFragment) clipFragmentItem.item;
-                ClipPos clipPos = new ClipPos(clipFragment.getClip(), clipFragment.getStartTimeMs());
+                ClipSegment clipSegment = (ClipSegment) clipFragmentItem.item;
+                ClipPos clipPos = new ClipPos(clipSegment.getClip(), clipSegment.getStartTimeMs());
                 mVdbImageLoader.displayVdbImage(clipPos, viewHolder.clipFragmentThumbnail, false, true);
 
-                setupBookmarkView(clipFragment, viewHolder.bookmarkView);
+                setupBookmarkView(clipSegment, viewHolder.bookmarkView);
             }
 
         }
@@ -407,26 +407,26 @@ public class ClipSetProgressBar extends FrameLayout {
             }
         };
 
-        private void setupBookmarkView(ClipFragment clipFragment, BookmarkView bookmarkView) {
+        private void setupBookmarkView(ClipSegment clipSegment, BookmarkView bookmarkView) {
             List<Clip> bookmarkList = mBookmarkClipSet.getClipList();
 
             for (int i = 0; i < bookmarkList.size(); i++) {
                 Clip clip = bookmarkList.get(i);
 
 
-                if (clip.realCid.equals(clipFragment.getClip().cid)) {
+                if (clip.realCid.equals(clipSegment.getClip().cid)) {
 //                    Logger.t(TAG).d("bookmark " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs() + " clipFragment: " + clipFragment.getStartTimeMs() + " ~" + clipFragment.getEndTimeMs());
                     boolean isSelected = mSelectedClip == null ? false : mSelectedClip.cid.equals(clip.cid);
 
 
-                    if (clipFragment.getStartTimeMs() <= clip.getStartTimeMs() && clip.getStartTimeMs() <= clipFragment.getEndTimeMs()) {
-                        long endTims = Math.min(clipFragment.getEndTimeMs(), clip.getEndTimeMs());
+                    if (clipSegment.getStartTimeMs() <= clip.getStartTimeMs() && clip.getStartTimeMs() <= clipSegment.getEndTimeMs()) {
+                        long endTims = Math.min(clipSegment.getEndTimeMs(), clip.getEndTimeMs());
                         long bookmarkDurationInItem = endTims - clip.getStartTimeMs();
                         int bookmarkWidth = getPosOffset(bookmarkDurationInItem);
-                        int marginLeft = getPosOffset(clip.getStartTimeMs() - clipFragment.getStartTimeMs());
+                        int marginLeft = getPosOffset(clip.getStartTimeMs() - clipSegment.getStartTimeMs());
 //                                Logger.t(TAG).d("Left Duration in this cell: " + bookmarkDurationInItem);
                         FrameLayout.LayoutParams bookmarkLayoutParasm;
-                        if (clipFragment.getEndTimeMs() <= clip.getEndTimeMs()) {
+                        if (clipSegment.getEndTimeMs() <= clip.getEndTimeMs()) {
                             bookmarkLayoutParasm = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                         } else {
                             bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -434,16 +434,16 @@ public class ClipSetProgressBar extends FrameLayout {
                         bookmarkLayoutParasm.leftMargin = marginLeft;
                         bookmarkView.addBookmark(clip, bookmarkLayoutParasm, isSelected, mOnBookmarkViewClickListener);
 
-                    } else if (clip.getStartTimeMs() <= clipFragment.getStartTimeMs() && clip.getEndTimeMs() >= clipFragment.getEndTimeMs()) {
+                    } else if (clip.getStartTimeMs() <= clipSegment.getStartTimeMs() && clip.getEndTimeMs() >= clipSegment.getEndTimeMs()) {
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 //                                Logger.t(TAG).d("Duration in this cell: " + clipFragment.getDurationMs());
                         bookmarkView.addBookmark(clip, bookmarkLayoutParasm, isSelected, mOnBookmarkViewClickListener);
 
-                    } else if (clipFragment.getStartTimeMs() <= clip.getEndTimeMs() && clip.getEndTimeMs() <= clipFragment.getEndTimeMs()) {
-                        long startTimeMs = Math.max(clipFragment.getStartTimeMs(), clip.getStartTimeMs());
+                    } else if (clipSegment.getStartTimeMs() <= clip.getEndTimeMs() && clip.getEndTimeMs() <= clipSegment.getEndTimeMs()) {
+                        long startTimeMs = Math.max(clipSegment.getStartTimeMs(), clip.getStartTimeMs());
                         long bookmarkDurationInItem = clip.getEndTimeMs() - startTimeMs;
                         int bookmarkWidth = getPosOffset(bookmarkDurationInItem);
-                        int marginLeft = getPosOffset(startTimeMs - clipFragment.getStartTimeMs());
+                        int marginLeft = getPosOffset(startTimeMs - clipSegment.getStartTimeMs());
                         FrameLayout.LayoutParams bookmarkLayoutParasm = new FrameLayout.LayoutParams(bookmarkWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                         bookmarkLayoutParasm.leftMargin = marginLeft;
 //                                Logger.t(TAG).d("Right Duration in this cell: " + bookmarkDurationInItem);
