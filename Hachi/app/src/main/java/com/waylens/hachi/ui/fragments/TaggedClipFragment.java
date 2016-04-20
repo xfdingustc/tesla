@@ -44,20 +44,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 
 /**
  * Created by Xiaofei on 2016/2/18.
  */
-public class BookmarkFragment extends BaseFragment implements FragmentNavigator {
-    private static final String TAG = BookmarkFragment.class.getSimpleName();
+public class TaggedClipFragment extends BaseFragment implements FragmentNavigator {
+    private static final String TAG = TaggedClipFragment.class.getSimpleName();
     private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
     private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
     private static final String ARG_IS_ADD_MORE = "is.add.more";
@@ -138,12 +132,12 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     }
 
 
-    public static BookmarkFragment newInstance(int clipSetType) {
+    public static TaggedClipFragment newInstance(int clipSetType) {
         return newInstance(clipSetType, false, false);
     }
 
-    public static BookmarkFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
-        BookmarkFragment fragment = new BookmarkFragment();
+    public static TaggedClipFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
+        TaggedClipFragment fragment = new TaggedClipFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
         args.putBoolean(ARG_IS_MULTIPLE_MODE, isMultipleSelectionMode);
@@ -170,7 +164,7 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_bookmark,
+        View view = createFragmentView(inflater, container, R.layout.fragment_tagged_clip,
             savedInstanceState);
         mUiThreadHandler = new Handler();
         //setupClipSetGroup();

@@ -21,7 +21,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.BookmarkFragment;
+import com.waylens.hachi.ui.fragments.TaggedClipFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
@@ -108,7 +108,7 @@ public class ClipModifyActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (hasUpdated) {
-                    LocalBroadcastManager.getInstance(ClipModifyActivity.this).sendBroadcast(new Intent(BookmarkFragment.ACTION_RETRIEVE_CLIPS));
+                    LocalBroadcastManager.getInstance(ClipModifyActivity.this).sendBroadcast(new Intent(TaggedClipFragment.ACTION_RETRIEVE_CLIPS));
                 }
                 finish();
             }

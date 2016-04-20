@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,12 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.ui.activities.SmartRemixActivity;
-import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.vdb.Clip;
 
 import org.greenrobot.eventbus.EventBus;
@@ -134,9 +131,9 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
                 //changeCurrentCamera(position);
                 BaseFragment fragment;
                 if (position == 0) {
-                    fragment = BookmarkFragment.newInstance(Clip.TYPE_MARKED);
+                    fragment = TaggedClipFragment.newInstance(Clip.TYPE_MARKED);
                 } else {
-                    fragment = BookmarkFragment.newInstance(Clip.TYPE_BUFFERED);
+                    fragment = TaggedClipFragment.newInstance(Clip.TYPE_BUFFERED);
                 }
 
                 getChildFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
