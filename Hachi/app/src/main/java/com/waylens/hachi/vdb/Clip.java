@@ -11,6 +11,7 @@ public class Clip implements Parcelable {
     public static final int TYPE_BUFFERED = 0;
     public static final int TYPE_MARKED = 1;
 
+
     public static final int TYPE_TEMP = 0x108;
 
     public static final int CLIP_ATTR_LIVE = (1 << 0);    // live clip

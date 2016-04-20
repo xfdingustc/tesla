@@ -136,7 +136,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
                 if (position == 0) {
                     fragment = BookmarkFragment.newInstance(Clip.TYPE_MARKED);
                 } else {
-                    fragment = ClipFragment.newInstance();
+                    fragment = BookmarkFragment.newInstance(Clip.TYPE_BUFFERED);
                 }
 
                 getChildFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();

@@ -289,9 +289,11 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     }
 
     private void setupClipSetGroup() {
-        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
+        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
+        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new ClipSetGroupAdapter(getActivity(), R.layout.item_clip_set_grid, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
+        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
                 popClipPreviewFragment(clip);
@@ -316,13 +318,22 @@ public class BookmarkFragment extends BaseFragment implements FragmentNavigator 
     }
 
     private void doGetBookmarkClips() {
-
         if (mVdbRequestQueue == null) {
             return;
         }
-//        mClipSetGroup.clear();
 
-        mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, ClipSetExRequest.FLAG_CLIP_EXTRA,
+        int flag;
+        int attr;
+
+        if (mClipSetType == Clip.TYPE_MARKED) {
+            flag = ClipSetExRequest.FLAG_CLIP_EXTRA;
+            attr = 0;
+        } else {
+            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
+            attr = Clip.CLIP_ATTR_MANUALLY;
+        }
+
+        mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, flag, attr,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {

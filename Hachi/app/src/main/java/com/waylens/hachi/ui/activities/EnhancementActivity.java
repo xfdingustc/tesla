@@ -124,13 +124,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Override
     protected void init() {
         super.init();
-//        mVdtCamera = getCameraFromIntent(getIntent().getExtras());
-//        mVdbRequestQueue = mVdtCamera.getRequestQueue();
-//
-//        mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
 
         Logger.t(TAG).d("mVdtcamera is : " + mVdtCamera);
-
 
         ArrayList<Clip> clipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
