@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.SnipeError;
@@ -61,21 +61,15 @@ public class FootageActivity extends BaseActivity {
     private int mClipSetIndex;
 
 
-    private ClipSet mAllFootageClipSet;
+    private ClipSet mFootageClipSet;
     private ClipSet mBookmarkClipSet;
 
     private PlaylistEditor mPlaylistEditor;
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    public static FootageActivity newInstance() {
-        FootageActivity fragment = new FootageActivity();
-
-        return fragment;
-    }
-
     @Bind(R.id.vsRoot)
-    ViewSwitcher mVsRoot;
+    View mRootView;
 
     @Bind(R.id.clipSetPrgressBar)
     ClipSetProgressBar mClipSetProgressBar;
@@ -97,9 +91,18 @@ public class FootageActivity extends BaseActivity {
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
                 initCamera();
-                refreshAllFootageClipSet();
+                refreshFootageClipSet();
                 break;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
+        ClipSetPos clipSetPos = event.getClipSetPos();
+        Clip clip = getClipSet().getClip(clipSetPos.getClipIndex());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
+
+        mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getDate(), clipSetPos.getClipTimeMs())));
     }
 
 
@@ -124,12 +127,12 @@ public class FootageActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_footage);
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mEventBus.post(new ClipSelectEvent(null));
-//            }
-//        });
+        mRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEventBus.post(new ClipSelectEvent(null));
+            }
+        });
         setupToolbar();
         mClipSetProgressBar.init(mVdbImageLoader, new ClipSetProgressBar.OnBookmarkClickListener() {
             @Override
@@ -137,7 +140,7 @@ public class FootageActivity extends BaseActivity {
 
             }
         });
-        refreshAllFootageClipSet();
+        refreshFootageClipSet();
     }
 
 
@@ -174,11 +177,6 @@ public class FootageActivity extends BaseActivity {
         }
     }
 
-    private void onHandleEmptyCamera() {
-        if (mVsRoot.getDisplayedChild() == 0) {
-            mVsRoot.showNext();
-        }
-    }
 
     @Override
     public void setupToolbar() {
@@ -220,27 +218,20 @@ public class FootageActivity extends BaseActivity {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
-        ClipSetPos clipSetPos = event.getClipSetPos();
-        Clip clip = getClipSet().getClip(clipSetPos.getClipIndex());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
 
-        mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getDate(), clipSetPos.getClipTimeMs())));
-    }
 
     private void setupClipProgressBar() {
-        mClipSetProgressBar.setClipSet(mAllFootageClipSet, mBookmarkClipSet);
+        mClipSetProgressBar.setClipSet(mFootageClipSet, mBookmarkClipSet);
     }
 
 
-    private void refreshAllFootageClipSet() {
+    private void refreshFootageClipSet() {
         if (mVdbRequestQueue == null) {
             return;
         }
 
-        mAllFootageClipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
-        setupClipPlayFragment(mAllFootageClipSet);
+        mFootageClipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
+        setupClipPlayFragment(mFootageClipSet);
         //setupClipProgressBar(clipSet);
         refreshBookmarkClipSet();
 
