@@ -87,7 +87,7 @@ public class Hachi extends Application {
 
         initFacebookSDK();
         ImageUtils.initImageLoader(this);
-        VdbImageLoader.getImageLoader(null).init(this, 1024 * 64);
+        VdbImageLoader.init(this, 1024 * 64);
 //        FIR.init(this);
 
 

@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="0:00/0:00"
-                android:textColor="@color/material_grey_200"/>
+                android:textColor="?attr/appTextColorPrimary"/>
 
         </FrameLayout>
 

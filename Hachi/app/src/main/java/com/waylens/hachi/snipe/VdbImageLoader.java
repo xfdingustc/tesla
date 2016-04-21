@@ -46,29 +46,18 @@ public class VdbImageLoader {
     Runnable mRunnable;
 
 
-    private DiskCache mCache;
+    private static DiskCache mCache;
 
-    volatile static VdbImageLoader _INSTANCE;
+
 
     public static VdbImageLoader getImageLoader(VdbRequestQueue queue) {
-        if (_INSTANCE == null) {
-            synchronized (VdbImageLoader.class) {
-                if (_INSTANCE == null) {
-                    _INSTANCE = new VdbImageLoader();
-                }
-            }
-        }
+        VdbImageLoader imageLoader = new VdbImageLoader();
         if (queue != null) {
-            _INSTANCE.mRequestQueue = queue;
+            imageLoader.mRequestQueue = queue;
         }
-        return _INSTANCE;
+        return imageLoader;
     }
 
-    public interface ImageCache {
-        public Bitmap getBitmap(String url);
-
-        public void putBitmap(String url, Bitmap bitmap);
-    }
 
     protected VdbImageLoader() {
         HandlerThread backgroundThread = new HandlerThread("VdbImageLoader");
@@ -83,7 +72,7 @@ public class VdbImageLoader {
      * @param context - context
      * @param maxSize - size in KB;
      */
-    public void init(Context context, int maxSize) {
+    public static void init(Context context, int maxSize) {
 
 
         StatFs statFs = new StatFs(Environment.getExternalStorageDirectory().getPath());

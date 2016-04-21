@@ -67,8 +67,6 @@ public class ClipPlayFragment extends BaseFragment {
 
     private int mClipSetIndex;
 
-
-
     private UrlProvider mUrlProvider;
 
     private MediaPlayer mMediaPlayer = new MediaPlayer();
@@ -134,6 +132,9 @@ public class ClipPlayFragment extends BaseFragment {
     @Bind(R.id.gaugeView)
     GaugeView mWvGauge;
 
+    @Bind(R.id.btnFullscreen)
+    ImageButton mBtnFullscreen;
+
 
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
@@ -152,6 +153,10 @@ public class ClipPlayFragment extends BaseFragment {
             case STATE_PREPAREING:
                 break;
         }
+    }
+
+    @OnClick(R.id.btnFullscreen)
+    public void onBtnFullscreenClicked() {
 
     }
 
