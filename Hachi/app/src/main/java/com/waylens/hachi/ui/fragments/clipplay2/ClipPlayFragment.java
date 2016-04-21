@@ -570,7 +570,7 @@ public class ClipPlayFragment extends DialogFragment {
                     Snackbar.make(mBtnPlayPause, R.string.get_url_failed, Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-                Logger.t(TAG).d("Get playback url: " + url.url);
+//                Logger.t(TAG).d("Get playback url: " + url.url);
                 mVdbUrl = url;
                 if (mUrlProvider instanceof ClipUrlProvider) {
                     mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), url);

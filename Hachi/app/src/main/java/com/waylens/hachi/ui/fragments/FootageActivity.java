@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -180,6 +181,7 @@ public class FootageActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         if (mToolbar != null) {
             mToolbar.setNavigationIcon(R.drawable.navbar_close);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -201,6 +203,7 @@ public class FootageActivity extends BaseActivity {
             ClipPlayFragment.ClipMode.SINGLE, ClipPlayFragment.CoverMode.BANNER);
 
         getFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
+        Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
         doMakePlaylist();
 
     }
