@@ -40,6 +40,8 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
+import com.waylens.hachi.vdb.rawdata.RawData;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.vdb.urls.VdbUrl;
 
 import org.greenrobot.eventbus.EventBus;
@@ -48,6 +50,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -171,7 +174,7 @@ public class ClipPlayFragment extends DialogFragment {
 
 
     private void start() {
-        startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), false);
+        startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
     }
 
 
@@ -670,6 +673,11 @@ public class ClipPlayFragment extends DialogFragment {
         long timeOffset = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
 
         updateProgressTextView(timeOffset, getClipSet().getTotalSelectedLengthMs());
+
+        List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
+        for (RawDataItem item : rawDataItemList) {
+            mWvGauge.updateRawDateItem(item);
+        }
 
     }
 

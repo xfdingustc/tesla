@@ -59,7 +59,7 @@ public class RawDataBlock {
         mRawDataItems.add(item);
     }
 
-    public RawDataItem getRawDataItemByItem(int timeMs) {
+    public RawDataItem getRawDataItemByTime(long timeMs) {
         for (RawDataItem item : mRawDataItems) {
             if (item.getPtsMs() < timeMs) {
                 return item;

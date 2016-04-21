@@ -14,6 +14,7 @@ import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+import com.waylens.hachi.vdb.ClipSetPos;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;
@@ -69,7 +70,6 @@ public class RawDataLoader {
 
     private void loadRawData(final int dataType) {
         if (getClipSet() == null || mVdbRequestQueue == null) {
-
             return;
         }
 
@@ -106,7 +106,7 @@ public class RawDataLoader {
 
         switch (dataType) {
             case RawDataItem.DATA_TYPE_OBD:
-                rawDataBlockAll.obdDataBlock = block;
+                rawDataBlockAll.iioDataBlock = block;
                 loadRawData(RawDataItem.DATA_TYPE_IIO);
                 break;
             case RawDataItem.DATA_TYPE_IIO:
@@ -130,78 +130,34 @@ public class RawDataLoader {
         }
     }
 
-    public void updateGaugeView(int playTimeMs, WebView gaugeView) {
-        ClipSet clipSet = getClipSet();
-        int clipIndex = clipSet.getClipIndexByTimePosition(playTimeMs);
-        if (clipIndex == -1) {
-            return;
-        }
-        ClipPos clipPos = clipSet.findClipPosByTimePosition(playTimeMs);
-
-        //RawDataItem item = findRawDataItem()
+    public List<RawDataItem> getRawDataItemList(ClipSetPos clipSetPos) {
+        int clipIndex = clipSetPos.getClipIndex();
         RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(clipIndex);
 
+        List<RawDataItem> itemList = new ArrayList<>();
+
         if (rawDataBlockAll.gpsDataBlock != null) {
-            RawDataItem gpsItem = rawDataBlockAll.gpsDataBlock.getRawDataItemByItem(playTimeMs);
-            updateGaugeView(gpsItem, gaugeView);
+            RawDataItem gpsItem = rawDataBlockAll.gpsDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+            if (gpsItem != null) {
+                itemList.add(gpsItem);
+            }
         }
 
-        if (rawDataBlockAll.obdDataBlock != null) {
-            RawDataItem obdItem = rawDataBlockAll.obdDataBlock.getRawDataItemByItem(playTimeMs);
-            updateGaugeView(obdItem, gaugeView);
+        if (rawDataBlockAll.iioDataBlock != null) {
+            RawDataItem iioItem = rawDataBlockAll.iioDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+            if (iioItem != null) {
+                itemList.add(iioItem);
+            }
         }
 
         if (rawDataBlockAll.accDataBlock != null) {
-            RawDataItem accItem = rawDataBlockAll.accDataBlock.getRawDataItemByItem(playTimeMs);
-            updateGaugeView(accItem, gaugeView);
-        }
-
-    }
-
-    private void updateGaugeView(RawDataItem item, WebView gaugeView) {
-        if (item == null) {
-            return;
-        }
-        JSONObject state = new JSONObject();
-        String data = null;
-        try {
-            switch (item.getType()) {
-                case RawDataItem.DATA_TYPE_IIO:
-                    IioData iioData = (IioData) item.data;
-                    state.put("roll", -iioData.euler_roll);
-                    state.put("pitch", -iioData.euler_pitch);
-                    state.put("gforceBA", iioData.accX);
-                    state.put("gforceLR", iioData.accZ);
-                    break;
-                case RawDataItem.DATA_TYPE_GPS:
-                    GpsData gpsData = (GpsData) item.data;
-                    state.put("lng", gpsData.coord.lng);
-                    state.put("lat", gpsData.coord.lat);
-                    break;
-                case RawDataItem.DATA_TYPE_OBD:
-                    ObdData obdData = (ObdData) item.data;
-                    state.put("rpm", obdData.rpm);
-                    state.put("mph", obdData.speed);
-                    break;
+            RawDataItem accItem = rawDataBlockAll.accDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+            if (accItem != null) {
+                itemList.add(accItem);
             }
-            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
-            String date = format.format(System.currentTimeMillis());
-            data = "numericMonthDate('" + date + "')";
-        } catch (JSONException e) {
-            Log.e("test", "", e);
         }
 
-
-        String callJS1 = "javascript:setState(" + state.toString() + ")";
-        gaugeView.loadUrl(callJS1);
-        if (data != null) {
-            String callJS2 = "javascript:setState(" + "{time:" + data + "})";
-            gaugeView.loadUrl(callJS2);
-        }
-        //Logger.t(TAG).d("callJS: " + callJS);
-
-
-        gaugeView.loadUrl("javascript:update()");
+        return itemList;
     }
 
     public interface OnLoadCompleteListener {
@@ -211,6 +167,6 @@ public class RawDataLoader {
     private class RawDataBlockAll {
         private RawDataBlock accDataBlock = null;
         private RawDataBlock gpsDataBlock = null;
-        private RawDataBlock obdDataBlock = null;
+        private RawDataBlock iioDataBlock = null;
     }
 }
