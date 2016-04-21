@@ -115,7 +115,19 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
 
     @OnClick(R.id.bottomLayout)
     public void onBottomLayoutClicked() {
+        ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA,
+            new VdbResponse.Listener<ClipSet>() {
+                @Override
+                public void onResponse(ClipSet response) {
+                    launchFootageActivity(response);
+                }
+            }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
 
+            }
+        });
+        mVdbRequestQueue.add(request);
     }
 
     @Subscribe
@@ -319,7 +331,9 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
                 if (mClipSetType == Clip.TYPE_MARKED) {
                     popClipPreviewFragment(clip);
                 } else {
-                    launchFootageActivity(clip);
+                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
+                    clipSet.addClip(clip);
+                    launchFootageActivity(clipSet);
                 }
             }
 
@@ -427,12 +441,13 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_QUICK_VIEW);
     }
 
-    private void launchFootageActivity(Clip clip) {
-        ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
-        clipSet.addClip(clip);
+    private void launchFootageActivity(ClipSet clipSet) {
+
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_MENUAL, clipSet);
         FootageActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_MENUAL);
     }
+
+
 
     @Override
     public boolean onInterceptBackPressed() {
