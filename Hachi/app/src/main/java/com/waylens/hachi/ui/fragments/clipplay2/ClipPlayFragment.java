@@ -33,6 +33,7 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.ClipModifyActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
@@ -61,15 +62,12 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/2/22.
  */
-public class ClipPlayFragment extends DialogFragment {
+public class ClipPlayFragment extends BaseFragment {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
     private int mClipSetIndex;
 
-    private VdtCamera mVdtCamera;
 
-    private VdbRequestQueue mVdbRequestQueue;
-    private VdbImageLoader mVdbImageLoader;
 
     private UrlProvider mUrlProvider;
 
@@ -130,8 +128,7 @@ public class ClipPlayFragment extends DialogFragment {
     @Bind(R.id.playProgress)
     TextView mTvProgress;
 
-    @Bind(R.id.clipPlayFragToolbar)
-    Toolbar mToolbar;
+
 
     @Bind(R.id.multiSegIndicator)
     MultiSegSeekbar mMultiSegSeekbar;
@@ -222,9 +219,7 @@ public class ClipPlayFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (getShowsDialog()) {
-            getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        }
+
         View view = inflater.inflate(R.layout.fragment_clip_play, container, false);
         ButterKnife.bind(this, view);
         initViews();
@@ -262,11 +257,11 @@ public class ClipPlayFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (getShowsDialog()) {
-            DisplayMetrics dm = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-            getDialog().getWindow().setLayout(dm.widthPixels, getDialog().getWindow().getAttributes().height);
-        }
+//        if (getShowsDialog()) {
+//            DisplayMetrics dm = new DisplayMetrics();
+//            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+//            getDialog().getWindow().setLayout(dm.widthPixels, getDialog().getWindow().getAttributes().height);
+//        }
 
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
@@ -351,47 +346,47 @@ public class ClipPlayFragment extends DialogFragment {
     }
 
 
-    private void setupToolbar() {
-        mToolbar.setNavigationIcon(R.drawable.navbar_close);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-        mToolbar.inflateMenu(R.menu.menu_clip_play_fragment);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.menu_to_share:
-                        dismiss();
-                        //ShareActivity.launch(getActivity(), mClipSetIndex);
-                        return true;
-                    case R.id.menu_to_enhance:
-                        dismiss();
-                        ClipSet clipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
-                        ArrayList<Clip> clipList = new ArrayList<>();
-                        for (Clip clip : clipSet.getClipList()) {
-                            clipList.add(clip);
-                        }
-                        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
-                        return true;
-                    case R.id.menu_to_modify:
-                        dismiss();
-                        ClipModifyActivity.launch(getActivity(), getClipSet().getClip(0));
-                        return true;
-                }
-                return false;
-            }
-        });
-
-        if (getShowsDialog()) {
-            mToolbar.setVisibility(View.VISIBLE);
-        } else {
-            mToolbar.setVisibility(View.GONE);
-        }
-    }
+//    private void setupToolbar() {
+//        mToolbar.setNavigationIcon(R.drawable.navbar_close);
+//        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dismiss();
+//            }
+//        });
+//        mToolbar.inflateMenu(R.menu.menu_clip_play_fragment);
+//        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.menu_to_share:
+////                        dismiss();
+//                        //ShareActivity.launch(getActivity(), mClipSetIndex);
+//                        return true;
+//                    case R.id.menu_to_enhance:
+////                        dismiss();
+//                        ClipSet clipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
+//                        ArrayList<Clip> clipList = new ArrayList<>();
+//                        for (Clip clip : clipSet.getClipList()) {
+//                            clipList.add(clip);
+//                        }
+//                        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+//                        return true;
+//                    case R.id.menu_to_modify:
+////                        dismiss();
+//                        ClipModifyActivity.launch(getActivity(), getClipSet().getClip(0));
+//                        return true;
+//                }
+//                return false;
+//            }
+//        });
+//
+//        if (getShowsDialog()) {
+//            mToolbar.setVisibility(View.VISIBLE);
+//        } else {
+//            mToolbar.setVisibility(View.GONE);
+//        }
+//    }
 
     private ClipSet getClipSet() {
         return ClipSetManager.getManager().getClipSet(mClipSetIndex);

@@ -163,7 +163,7 @@ public class ClipModifyActivity extends BaseActivity {
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE, vdtUriProvider,
             ClipPlayFragment.ClipMode.SINGLE);
-        mClipPlayFragment.setShowsDialog(false);
+//        mClipPlayFragment.setShowsDialog(false);
         getFragmentManager().beginTransaction().replace(R.id.clipPlayFragment, mClipPlayFragment).commit();
     }
 

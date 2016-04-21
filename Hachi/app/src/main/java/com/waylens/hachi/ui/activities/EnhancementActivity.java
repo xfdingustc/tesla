@@ -125,8 +125,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     protected void init() {
         super.init();
 
-        Logger.t(TAG).d("mVdtcamera is : " + mVdtCamera);
-
         ArrayList<Clip> clipList = getIntent().getParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE);
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
 
@@ -324,7 +322,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip.cid, clip.getStartTimeMs(), clip.getDurationMs());
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE, vdtUriProvider, ClipPlayFragment.ClipMode.MULTI);
-        mClipPlayFragment.setShowsDialog(false);
+//        mClipPlayFragment.setShowsDialog(false);
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
 

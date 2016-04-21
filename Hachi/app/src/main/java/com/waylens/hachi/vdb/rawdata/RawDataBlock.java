@@ -14,6 +14,13 @@ public class RawDataBlock {
     public static final byte F_RAW_DATA_ACC = (1 << RawDataItem.DATA_TYPE_IIO);
     public static final byte F_RAW_DATA_ODB = (1 << RawDataItem.DATA_TYPE_OBD);
 
+    public final RawDataBlockHeader header;
+    public int[] timeOffsetMs;
+    public int[] dataSize;
+    public byte[] data;
+
+    private int mItemIndex = 0;
+
     public static class RawDataBlockHeader {
         public final Clip.ID cid;
         public int mClipDate;
@@ -36,10 +43,7 @@ public class RawDataBlock {
         }
     }
 
-    public final RawDataBlockHeader header;
-    public int[] timeOffsetMs;
-    public int[] dataSize;
-    public byte[] data;
+
 
     private List<RawDataItem> mRawDataItems = new ArrayList<>();
 
@@ -59,9 +63,13 @@ public class RawDataBlock {
         mRawDataItems.add(item);
     }
 
+
+
     public RawDataItem getRawDataItemByTime(long timeMs) {
-        for (RawDataItem item : mRawDataItems) {
+        for (int i = mItemIndex; i < mRawDataItems.size(); i++) {
+            RawDataItem item = mRawDataItems.get(i);
             if (item.getPtsMs() < timeMs) {
+                mItemIndex++;
                 return item;
             }
         }

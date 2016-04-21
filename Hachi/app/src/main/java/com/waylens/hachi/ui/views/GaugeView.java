@@ -131,7 +131,7 @@ public class GaugeView extends FrameLayout {
 //            state.put("roll", -2000);
 //            state.put("pitch", -50);
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
-            String date = format.format(System.currentTimeMillis());
+            String date = format.format(item.getPtsMs());
             data = "numericMonthDate('" + date + "')";
             //Log.e("test", "date: " + data);
             //state.put("time", data);
@@ -141,7 +141,7 @@ public class GaugeView extends FrameLayout {
 
         String callJS1 = "javascript:setState(" + state.toString() + ")";
         String callJS2 = "javascript:setState(" + "{time:" + data + "})";
-//        Logger.t(TAG).d("callJS: " + callJS1);
+        Logger.t(TAG).d("callJS: " + callJS1);
         mWebView.loadUrl(callJS1);
         mWebView.loadUrl(callJS2);
         mWebView.loadUrl("javascript:update()");
