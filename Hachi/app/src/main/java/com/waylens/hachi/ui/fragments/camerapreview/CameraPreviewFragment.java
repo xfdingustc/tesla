@@ -557,45 +557,45 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void openLiveViewData() {
-        LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
-            RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
-            VdbResponse.Listener<Integer>() {
-                @Override
-                public void onResponse(Integer response) {
+        if (mVdbRequestQueue != null) {
+            LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
+                RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
+                VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
 //                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                    }
+                }, new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Log.e(TAG, "LiveRawDataResponse ERROR", error);
                 }
-            }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Log.e(TAG, "LiveRawDataResponse ERROR", error);
-            }
-        });
+            });
 
-        mVdbRequestQueue.add(request);
-
-
-
-
+            mVdbRequestQueue.add(request);
+        }
     }
 
 
     private void closeLiveRawData() {
-        LiveRawDataRequest request = new LiveRawDataRequest(0, new
-            VdbResponse.Listener<Integer>() {
-                @Override
-                public void onResponse(Integer response) {
+        if (mVdbRequestQueue != null) {
+            LiveRawDataRequest request = new LiveRawDataRequest(0, new
+                VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
 //                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                    }
+                }, new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
                 }
-            }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
-            }
-        });
-        mVdbRequestQueue.add(request);
+            });
+            mVdbRequestQueue.add(request);
 //        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
-        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_ClipInfo);
-        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
+            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_ClipInfo);
+            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
+        }
     }
 
     private void handleOnFabClicked() {

@@ -5,6 +5,7 @@ import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+
 import java.util.List;
 
 /**
@@ -106,7 +107,8 @@ public class WifiAutoConnectManager {
 
         @Override
         public void run() {
-            openWifi();
+            boolean ret = openWifi();
+            Log.d(TAG, "open wifi: " + ret);
 
             while (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING) {
                 try {
@@ -114,6 +116,7 @@ public class WifiAutoConnectManager {
                 } catch (InterruptedException ie) {
                 }
             }
+            Log.d(TAG, "wifi is openned");
 
             WifiConfiguration wifiConfig = createWifiInfo(ssid, password, type);
 //
@@ -122,17 +125,31 @@ public class WifiAutoConnectManager {
                 return;
             }
 
+            Log.d(TAG, "WifiInfo is created");
+
             WifiConfiguration tempConfig = isExsits(ssid);
 
-            if (tempConfig != null) {
-                wifiManager.removeNetwork(tempConfig.networkId);
+            int netID;
+            if (tempConfig == null) {
+
+                netID = wifiManager.addNetwork(wifiConfig);
+            } else {
+                netID = tempConfig.networkId;
             }
 
-            int netID = wifiManager.addNetwork(wifiConfig);
+            Log.d(TAG, "current network info: " + wifiManager.getConnectionInfo().toString());
+            wifiManager.disableNetwork(wifiManager.getConnectionInfo().getNetworkId());
+
+
+            Log.d(TAG, "add network " + wifiConfig.toString());
+
+//            wifiManager.getConfiguredNetworks()
+
             boolean enabled = wifiManager.enableNetwork(netID, true);
             Log.d(TAG, "enableNetwork status enable=" + enabled);
             boolean connected = wifiManager.reconnect();
             Log.d(TAG, "enableNetwork connected=" + connected);
+            Log.d(TAG, "current network info: " + wifiManager.getConnectionInfo().toString());
             if (mListener != null) {
                 mListener.onAudoConnectStarted();
             }
@@ -143,7 +160,7 @@ public class WifiAutoConnectManager {
     private static boolean isHexWepKey(String wepKey) {
         final int len = wepKey.length();
 
-// WEP-40, WEP-104, and some vendors using 256-bit WEP (WEP-232?)
+
         if (len != 10 && len != 26 && len != 58) {
             return false;
         }
