@@ -141,7 +141,7 @@ public class GaugeView extends FrameLayout {
 
         String callJS1 = "javascript:setState(" + state.toString() + ")";
         String callJS2 = "javascript:setState(" + "{time:" + data + "})";
-        Logger.t(TAG).d("callJS: " + callJS1);
+//        Logger.t(TAG).d("callJS: " + callJS1);
         mWebView.loadUrl(callJS1);
         mWebView.loadUrl(callJS2);
         mWebView.loadUrl("javascript:update()");

@@ -128,8 +128,6 @@ public class ClipPlayFragment extends BaseFragment {
     @Bind(R.id.playProgress)
     TextView mTvProgress;
 
-
-
     @Bind(R.id.multiSegIndicator)
     MultiSegSeekbar mMultiSegSeekbar;
 
@@ -265,7 +263,7 @@ public class ClipPlayFragment extends BaseFragment {
 
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
-        mTimer.schedule(mUpdatePlayTimeTask, 1000, 1000);
+        mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
         mEventBus.register(this);
         mEventBus.register(mMultiSegSeekbar);
         mEventBus.register(mWvGauge);
