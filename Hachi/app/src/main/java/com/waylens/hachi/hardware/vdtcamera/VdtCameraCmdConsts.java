@@ -53,7 +53,10 @@ public interface VdtCameraCmdConsts {
     int CMD_NETWORK_RMV_HOST = 31;
     int CMD_NETWORK_CONNECT_HOST = 32;
 
+
+
     int CMD_NETWORK_SCANHOST = 74;
+    int CMD_NETWORK_CONNECTHOTSPOT  = 75;
 
     int CMD_NETWORK_SYNCTIME = 33;
     int CMD_NETWORK_GET_DEVICETIME = 34;

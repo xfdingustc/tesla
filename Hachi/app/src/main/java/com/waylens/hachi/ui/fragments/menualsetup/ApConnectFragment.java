@@ -98,13 +98,12 @@ public class ApConnectFragment extends BaseFragment {
             toggleCameraConnectView(mVdtCamera);
         } else {
             WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
-                    (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
-                        @Override
-                        public void onAudoConnectStarted() {
-                        }
-                    });
-            wifiAutoConnectManager.connect(mSSID, mPassword, WifiAutoConnectManager
-                    .WifiCipherType.WIFICIPHER_WPA);
+                (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
+                    @Override
+                    public void onAudoConnectStarted() {
+                    }
+                });
+            wifiAutoConnectManager.connect(mSSID, mPassword, WifiAutoConnectManager.WifiCipherType.WIFICIPHER_WPA);
             registerReceiver();
         }
     }
@@ -112,10 +111,10 @@ public class ApConnectFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
+        Logger.t(TAG).d("on stop");
         mEventBus.unregister(this);
         getActivity().unregisterReceiver(mWifiStateReceiver);
     }
-
 
 
     private void registerReceiver() {

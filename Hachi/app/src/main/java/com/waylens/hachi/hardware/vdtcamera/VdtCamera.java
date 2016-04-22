@@ -185,6 +185,8 @@ public class VdtCamera {
 
     private OnScanHostListener mOnScanHostListener;
 
+    private OnNetworkListener mOnNetworkListener;
+
     private VdbRequestQueue mVdbRequestQueue;
 
 
@@ -682,8 +684,13 @@ public class VdtCamera {
         mController.cmd_Network_RmvHost(ssid);
     }
 
-    public void addNetworkHost(String ssid, String password) {
+    public void addNetworkHost(String ssid, String password, OnNetworkListener listener) {
         mController.cmd_Network_AddHost(ssid, password);
+        mOnNetworkListener = listener;
+    }
+
+    public void connectNetworkHost(String ssid) {
+        mController.cmd_Network_ConnectHost(ssid);
     }
 
     public boolean isMicEnabled() {
@@ -706,6 +713,12 @@ public class VdtCamera {
 
     public interface OnScanHostListener {
         void OnScanHostResult(List<NetworkItemBean> networkList);
+    }
+
+    public interface OnNetworkListener {
+        void onNetworkAdded();
+
+        void onNetworkConnected();
     }
 
 
@@ -994,10 +1007,11 @@ public class VdtCamera {
             cmd_Network_GetHostNum();
         }
 
-        public void cmd_Network_ConnectHost(int mode, String apName) {
-            if (apName == null)
+        public void cmd_Network_ConnectHost(/*int mode,*/ String apName) {
+            if (apName == null) {
                 apName = "";
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECT_HOST, Integer.toString(mode), apName);
+            }
+            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECTHOTSPOT, /*Integer.toString(mode),*/ apName, "");
         }
 
         public void cmd_Network_Synctime(long time, int timezone) {
@@ -1669,16 +1683,21 @@ public class VdtCamera {
                     ack_Network_GetHostInfor(p1, p2);
                     break;
                 case CMD_NETWORK_ADD_HOST:
-                    ackNotHandled("CMD_NETWORK_ADD_HOST", p1, p2);
+//                    ackNotHandled("CMD_NETWORK_ADD_HOST", p1, p2);
+                    handleOnNetworkAddHost(p1, p2);
                     break;
                 case CMD_NETWORK_RMV_HOST:
                     ackNotHandled("CMD_NETWORK_RMV_HOST", p1, p2);
                     break;
                 case CMD_NETWORK_CONNECT_HOST:
                     ackNotHandled("CMD_NETWORK_CONNECT_HOST", p1, p2);
+                    //
                     break;
                 case CMD_NETWORK_SCANHOST:
                     handleNetWorkScanHostResult(p1, p2);
+                    break;
+                case CMD_NETWORK_CONNECTHOTSPOT:
+                    handleNetworkConnectHost(p1, p2);
                     break;
                 case CMD_NETWORK_SYNCTIME:
                     ackNotHandled("CMD_NETWORK_SYNCTIME", p1, p2);
@@ -1746,7 +1765,24 @@ public class VdtCamera {
             }
         }
 
+        private void handleNetworkConnectHost(String p1, String p2) {
+            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
+            if (mOnNetworkListener != null) {
+                mOnNetworkListener.onNetworkConnected();
+            }
+        }
+
+        private void handleOnNetworkAddHost(String p1, String p2) {
+            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
+            if (mOnNetworkListener != null) {
+                mOnNetworkListener.onNetworkAdded();
+            }
+        }
+
         private void handleNetWorkScanHostResult(String p1, String p2) {
+            if (p1 == null || p1.isEmpty()) {
+                return;
+            }
             Logger.t(TAG).json(p1);
             List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
             try {
