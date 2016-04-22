@@ -32,6 +32,10 @@ public class VdbConnection {
         //readFully(tmp, 0, 160);
     }
 
+    public void disconnect() throws IOException {
+        mSocket.close();
+    }
+
     public boolean isConnected() {
         return mSocket.isConnected();
     }

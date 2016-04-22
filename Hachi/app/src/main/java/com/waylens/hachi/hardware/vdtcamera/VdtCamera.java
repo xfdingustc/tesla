@@ -4,7 +4,6 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
-
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.snipe.BasicVdbSocket;
@@ -36,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -188,7 +188,6 @@ public class VdtCamera {
     private VdbRequestQueue mVdbRequestQueue;
 
 
-
     public static class ServiceInfo {
         public String ssid;
         public final InetAddress inetAddr;
@@ -218,17 +217,12 @@ public class VdtCamera {
     }
 
 
-
     private OnConnectionChangeListener mOnConnectionChangeListener = null;
-
-
 
 
     public void setOnConnectionChangeListener(OnConnectionChangeListener listener) {
         mOnConnectionChangeListener = listener;
     }
-
-
 
 
     private VdbConnection mVdbConnection;
@@ -242,11 +236,10 @@ public class VdtCamera {
         mServiceInfo = serviceInfo;
 
         mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
-
     }
 
     public void setCameraName(String name) {
-//        Logger.t(TAG).d("set Camera Name: " + name);
+        Logger.t(TAG).d("set Camera Name: " + name);
         if (name == null || name.isEmpty()) {
             // use empty string for unnamed camera
             name = "No name";
@@ -266,8 +259,7 @@ public class VdtCamera {
 
     public void setFirmwareVersion(String version) {
         if (!mFirmwareVersion.equals(version)) {
-            Logger.t(TAG).d("setFirmwareVersion: " + version);
-
+//            Logger.t(TAG).d("setFirmwareVersion: " + version);
             mFirmwareVersion = version;
 
         }
@@ -284,7 +276,7 @@ public class VdtCamera {
     public void setApiVersion(int main, int sub, String build) {
         int version = makeVersion(main, sub);
         if (mApiVersion != version || !mBuild.equals(build)) {
-            Logger.t(TAG).d("setApiVersion: " + version);
+//            Logger.t(TAG).d("setApiVersion: " + version);
             mApiVersion = version;
             mBuild = build;
 
@@ -500,6 +492,13 @@ public class VdtCamera {
     }
 
     private void onCameraDisconnected() {
+//        try {
+//            mVdbConnection.disconnect();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+//        mVdbRequestQueue.stop();
 
         if (mOnConnectionChangeListener != null) {
             mOnConnectionChangeListener.onDisconnected(this);
@@ -637,6 +636,7 @@ public class VdtCamera {
     }
 
     public void startClient() {
+        Logger.t(TAG).d("start client");
         mController.start();
     }
 
@@ -672,7 +672,6 @@ public class VdtCamera {
     public void startRecording() {
         mController.cmd_Cam_start_rec();
     }
-
 
 
     public void getNetworkHostHum() {
@@ -715,10 +714,16 @@ public class VdtCamera {
         private final BtState mBtStates = new BtState();
         private final GpsState mGpsStates = new GpsState();
 
+        private final TcpConnection mConnection;
+
+        private final BlockingQueue<Request> mCameraRequestQueue;
 
         public VdtCameraController(InetAddress host, int port) {
             InetSocketAddress address = new InetSocketAddress(host, port);
+
             mConnection = new MyTcpConnection("ccam", address);
+
+            mCameraRequestQueue = new LinkedBlockingQueue<>();
         }
 
 
@@ -760,9 +765,6 @@ public class VdtCamera {
         static final String XML_P1 = "p1";
         static final String XML_P2 = "p2";
 
-        private final TcpConnection mConnection;
-
-        private final BlockingQueue<Request> mCameraRequestQueue = new LinkedBlockingQueue<>();
 
         private void postRequest(int domain, int cmd) {
             postRequest(domain, cmd, "", "");
@@ -779,7 +781,8 @@ public class VdtCamera {
         }
 
         private void postRequest(Request request) {
-            mCameraRequestQueue.add(request);
+            boolean ret = mCameraRequestQueue.offer(request);
+//            Logger.t(TAG).d("add request: cmd: " + request.mCmd + " ret = " + ret + " vdtcamera:   " + VdtCamera.this);
         }
 
         // all info for setup
@@ -822,8 +825,6 @@ public class VdtCamera {
         public void getNameAsync() {
             postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME);
         }
-
-
 
 
         private void ack_Cam_get_Name_result(String p1, String p2) {
@@ -1304,8 +1305,6 @@ public class VdtCamera {
         }
 
 
-
-
         /**
          * This cmd does not have response.
          */
@@ -1441,7 +1440,9 @@ public class VdtCamera {
 
         private void cmdLoop(Thread thread) throws IOException, InterruptedException {
             while (!thread.isInterrupted()) {
+
                 Request request = mCameraRequestQueue.take();
+
                 if (request.mDomain == CMD_DOMAIN_USER) {
                     if (!createUserCmd(request)) {
                         break;
@@ -1746,6 +1747,7 @@ public class VdtCamera {
         }
 
         private void handleNetWorkScanHostResult(String p1, String p2) {
+            Logger.t(TAG).json(p1);
             List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
             try {
                 JSONObject object = new JSONObject(p1);

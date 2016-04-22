@@ -39,20 +39,20 @@ public class Hachi extends Application {
         /**
          * inti Bugtags
          */
-        BugtagsOptions options = new BugtagsOptions.Builder().
-            trackingLocation(true).
-            trackingCrashLog(true).
-            trackingConsoleLog(true).
-            trackingUserSteps(true).
-            versionName("0.38").
-            versionCode(1).
-            build();
-        Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
+//        BugtagsOptions options = new BugtagsOptions.Builder().
+//            trackingLocation(true).
+//            trackingCrashLog(true).
+//            trackingConsoleLog(true).
+//            trackingUserSteps(true).
+//            versionName("0.38").
+//            versionCode(1).
+//            build();
+//        Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
 
         /**
          * inti Burly
          */
-        CrashReport.initCrashReport(getApplicationContext(), "900022478", false);
+//        CrashReport.initCrashReport(getApplicationContext(), "900022478", false);
 
         init();
     }
@@ -91,24 +91,24 @@ public class Hachi extends Application {
 //        FIR.init(this);
 
 
-        CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
-            @Override
-            public void onCameraFound(NsdServiceInfo cameraService) {
-                String serviceName = cameraService.getServiceName();
-                boolean bIsPcServer = serviceName.equals("Vidit Studio");
-                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-                    cameraService.getHost(),
-                    cameraService.getPort(),
-                    "", serviceName, bIsPcServer);
-//                Logger.t("testconnect").d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-                VdtCameraManager.getManager().connectCamera(serviceInfo);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                Logger.t(TAG).e("errorCode: " + errorCode);
-            }
-        });
+//        CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
+//            @Override
+//            public void onCameraFound(NsdServiceInfo cameraService) {
+//                String serviceName = cameraService.getServiceName();
+//                boolean bIsPcServer = serviceName.equals("Vidit Studio");
+//                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
+//                    cameraService.getHost(),
+//                    cameraService.getPort(),
+//                    "", serviceName, bIsPcServer);
+////                Logger.t("testconnect").d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+//                VdtCameraManager.getManager().connectCamera(serviceInfo);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode) {
+//                Logger.t(TAG).e("errorCode: " + errorCode);
+//            }
+//        });
 
         startDeviceScanner();
     }

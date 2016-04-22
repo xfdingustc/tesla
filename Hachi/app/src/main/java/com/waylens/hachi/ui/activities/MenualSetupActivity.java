@@ -3,12 +3,8 @@ package com.waylens.hachi.ui.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,10 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.fragments.ScanQrCodeFragment;
+import com.waylens.hachi.ui.fragments.menualsetup.ScanQrCodeFragment;
 
 /**
  * Created by Xiaofei on 2016/3/21.

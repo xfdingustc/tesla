@@ -67,16 +67,16 @@ public class VdbRequestQueue {
         }
     }
 
-    private void stop() {
-        /*
+    public void stop() {
+
         for (int i = 0; i < mVdbDispatchers.length; i++) {
             if (mVdbDispatchers[i] != null) {
                 mVdbDispatchers[i].quit();
             }
         }
-        if (mVdbReceiver != null) {
-            mVdbReceiver.quit();
-        } */
+//        if (mVdbReceiver != null) {
+//            mVdbReceiver.quit();
+//        }
     }
 
     public <T> void registerMessageHandler(VdbMessageHandler<T> messageHandler) {

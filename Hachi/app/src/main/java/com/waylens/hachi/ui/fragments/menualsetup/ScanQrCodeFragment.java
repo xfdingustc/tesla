@@ -1,8 +1,6 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.fragments.menualsetup;
 
 import android.graphics.PointF;
-import android.graphics.Rect;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -16,9 +14,8 @@ import android.widget.ImageView;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

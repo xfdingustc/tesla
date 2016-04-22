@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.fragments.menualsetup;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -22,6 +22,7 @@ import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.ui.activities.WelcomeActivity;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 
 import java.util.List;
 
@@ -107,6 +108,8 @@ public class ClientConnectFragment extends BaseFragment {
     }
 
     private void refreshWifiList() {
+        Logger.t(TAG).d("start scan host: " );
+        initCamera();
         mVdtCamera.scanHost(mOnScanHostListener);
     }
 
@@ -187,7 +190,6 @@ public class ClientConnectFragment extends BaseFragment {
         @Override
         public int getItemCount() {
             int size = mNetworkList == null ? 0 : mNetworkList.size();
-            Logger.t(TAG).d("size: " + size);
             return size;
         }
 

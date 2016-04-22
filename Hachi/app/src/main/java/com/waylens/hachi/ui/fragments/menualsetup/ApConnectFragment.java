@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.fragments.menualsetup;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,10 +17,16 @@ import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.Bind;
 
@@ -29,20 +35,27 @@ import butterknife.Bind;
  */
 public class ApConnectFragment extends BaseFragment {
     private static final String TAG = ApConnectFragment.class.getSimpleName();
-    @Bind(R.id.tvSsid)
-    TextView mTvSsid;
-    @Bind(R.id.tvPassword)
-    TextView mTvPassword;
-    @Bind(R.id.vsRootView)
-    ViewSwitcher mVsRootView;
-    @Bind(R.id.cameraLiveView)
-    CameraLiveView mCameraLiveView;
+
     private String mSSID;
     private String mPassword;
     private WifiManager mWifiManager;
     private BroadcastReceiver mWifiStateReceiver;
     private Handler mUiHandler;
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
+    private EventBus mEventBus = EventBus.getDefault();
+
+
+    @Bind(R.id.tvSsid)
+    TextView mTvSsid;
+
+    @Bind(R.id.tvPassword)
+    TextView mTvPassword;
+
+    @Bind(R.id.vsRootView)
+    ViewSwitcher mVsRootView;
+
+    @Bind(R.id.cameraLiveView)
+    CameraLiveView mCameraLiveView;
 
     public static ApConnectFragment newInstance(String ssid, String password) {
         ApConnectFragment fragment = new ApConnectFragment();
@@ -59,6 +72,14 @@ public class ApConnectFragment extends BaseFragment {
         init();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventCameraConnection(CameraConnectionEvent event) {
+        switch (event.getWhat()) {
+            case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
+                toggleCameraConnectView(event.getVdtCamera());
+                break;
+        }
+    }
 
     @Nullable
     @Override
@@ -71,9 +92,10 @@ public class ApConnectFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        mEventBus.register(this);
         WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
         if (wifiInfo.getSSID() == mSSID) {
-            toggleCameraConnectView();
+            toggleCameraConnectView(mVdtCamera);
         } else {
             WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
                     (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
@@ -90,20 +112,11 @@ public class ApConnectFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
+        mEventBus.unregister(this);
         getActivity().unregisterReceiver(mWifiStateReceiver);
     }
 
-    @Override
-    public void onCameraVdbConnected(VdtCamera camera) {
-        super.onCameraVdbConnected(camera);
-        mUiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                toggleCameraConnectView();
-            }
-        });
 
-    }
 
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
@@ -115,7 +128,7 @@ public class ApConnectFragment extends BaseFragment {
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
                     WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-                    Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID());
+//                    Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID());
 
                 } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
                     Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION");
@@ -141,7 +154,7 @@ public class ApConnectFragment extends BaseFragment {
 
     }
 
-    private void toggleCameraConnectView() {
+    private void toggleCameraConnectView(final VdtCamera camera) {
         if (mVsRootView == null) {
             return;
         }

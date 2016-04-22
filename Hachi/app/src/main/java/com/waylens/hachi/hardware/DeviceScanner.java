@@ -106,7 +106,7 @@ public class DeviceScanner extends Thread {
             }
 
         } catch (Exception e) {
-            Logger.t("DeviceScanner").e(e, "DeviceScanner");
+            e.printStackTrace();
         } finally {
             if (mWifiManager != null) {
                 unlockWifi();
