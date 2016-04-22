@@ -201,6 +201,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 initCameraPreview();
                 break;
             case CameraConnectionEvent.VDT_CAMERA_CONNECTING:
+                Logger.t(TAG).d("on Camera connecting");
                 mCameraNoSignal.setVisibility(View.GONE);
                 mCameraConnecting.setVisibility(View.VISIBLE);
                 break;
@@ -365,6 +366,18 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (VdtCameraManager.getManager().isConnected()) {
+            mVdtCamera = getCamera();
+            mVdbRequestQueue = mVdtCamera.getRequestQueue();
+            if (mCameraNoSignal != null) {
+                mCameraNoSignal.setVisibility(View.GONE);
+                mCameraConnecting.setVisibility(View.GONE);
+            }
+            initViews();
+        } else {
+            handleOnCameraDisconnected();
+        }
+
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
@@ -475,20 +488,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     protected void init() {
         mHandler = new Handler();
-        if (VdtCameraManager.getManager().isConnected()) {
-            mVdtCamera = getCamera();
-            mVdbRequestQueue = mVdtCamera.getRequestQueue();
-            if (mCameraNoSignal != null) {
-                mCameraNoSignal.setVisibility(View.GONE);
-                mCameraConnecting.setVisibility(View.GONE);
-            }
-        } else {
-            handleOnCameraDisconnected();
-        }
 
-        if (mVdtCamera != null) {
-            initViews();
-        }
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
     }
 
@@ -547,11 +547,13 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void updateMicControlButton() {
-        boolean micEnabled = mVdtCamera.isMicEnabled();
-        if (micEnabled) {
-            mBtnMicControl.setColorFilter(getResources().getColor(R.color.style_color_primary));
-        } else {
-            mBtnMicControl.clearColorFilter();
+        if (mVdtCamera != null) {
+            boolean micEnabled = mVdtCamera.isMicEnabled();
+            if (micEnabled) {
+                mBtnMicControl.setColorFilter(getResources().getColor(R.color.style_color_primary));
+            } else {
+                mBtnMicControl.clearColorFilter();
+            }
         }
     }
 

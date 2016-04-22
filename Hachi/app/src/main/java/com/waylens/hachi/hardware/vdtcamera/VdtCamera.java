@@ -638,7 +638,6 @@ public class VdtCamera {
     }
 
     public void startClient() {
-        Logger.t(TAG).d("start client");
         mController.start();
     }
 

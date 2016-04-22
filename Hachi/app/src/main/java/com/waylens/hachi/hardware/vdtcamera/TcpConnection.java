@@ -43,10 +43,7 @@ abstract public class TcpConnection {
         if (mThread == null) {
             mThread = new CmdThread();
             mThread.start();
-            Logger.t(TAG).d("thread start");
-        } else {
-            Logger.t(TAG).d("mThread is not null");
-        }
+        } 
     }
 
     // API
