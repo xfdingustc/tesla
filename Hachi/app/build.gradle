@@ -16,8 +16,8 @@ android {
         applicationId "com.waylens.hachi"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 56
-        versionName "0.56"
+        versionCode 57
+        versionName "0.57"
         //multiDexEnabled true
 
         //ndk {

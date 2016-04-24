@@ -672,9 +672,11 @@ public class ClipPlayFragment extends BaseFragment {
 
         updateProgressTextView(timeOffset, getClipSet().getTotalSelectedLengthMs());
 
-        List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
-        for (RawDataItem item : rawDataItemList) {
-            mWvGauge.updateRawDateItem(item);
+        if (mRawDataLoader != null) {
+            List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
+            for (RawDataItem item : rawDataItemList) {
+                mWvGauge.updateRawDateItem(item);
+            }
         }
 
     }

@@ -8,6 +8,7 @@ import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.snipe.BasicVdbSocket;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbConnection;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -501,6 +502,11 @@ public class VdtCamera {
 //        }
 
 //        mVdbRequestQueue.stop();
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
+            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_ClipInfo);
+            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
+        }
 
         if (mOnConnectionChangeListener != null) {
             mOnConnectionChangeListener.onDisconnected(this);

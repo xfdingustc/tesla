@@ -417,6 +417,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
 
                 if (clip.realCid.equals(clipSegment.getClip().cid)) {
+                    bookmarkView.setVisibility(VISIBLE);
 //                    Logger.t(TAG).d("bookmark " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs() + " clipFragment: " + clipFragment.getStartTimeMs() + " ~" + clipFragment.getEndTimeMs());
                     boolean isSelected = mSelectedClip == null ? false : mSelectedClip.cid.equals(clip.cid);
 
@@ -452,6 +453,8 @@ public class ClipSetProgressBar extends FrameLayout {
                         bookmarkView.addBookmark(clip, bookmarkLayoutParasm, isSelected, mOnBookmarkViewClickListener);
 
                     }
+                } else {
+//                    bookmarkView.setVisibility(GONE);
                 }
 
             }

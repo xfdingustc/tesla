@@ -61,21 +61,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
         }
     }
 
-    @Subscribe
-    public void onEventClipSelectEvent(ClipSelectEvent event) {
-        mToolbar.getMenu().clear();
-        if (event.getClip() != null) {
-            mToolbar.inflateMenu(R.menu.menu_clip_list);
-            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    mEventBus.post(new MenuItemSelectEvent(item.getItemId()));
-                    return true;
-                }
-            });
-        }
 
-    }
 
 
     @Nullable

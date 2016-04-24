@@ -196,6 +196,7 @@ public class CameraPreviewFragment extends BaseFragment {
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 Logger.t(TAG).d("on Camera connected");
+                initCamera();
                 setupToolbar();
                 initViews();
                 initCameraPreview();
@@ -386,7 +387,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        openLiveViewData();
+
         mEventBus.register(this);
     }
 
@@ -529,7 +530,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 }
             });
 
-
+            openLiveViewData();
         }
 
     }
@@ -595,8 +596,7 @@ public class CameraPreviewFragment extends BaseFragment {
             });
             mVdbRequestQueue.add(request);
 //        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
-            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_ClipInfo);
-            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo);
+
         }
     }
 

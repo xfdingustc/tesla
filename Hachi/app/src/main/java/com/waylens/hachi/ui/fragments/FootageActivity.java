@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
@@ -19,9 +21,11 @@ import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
+import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
@@ -39,6 +43,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -106,6 +111,46 @@ public class FootageActivity extends BaseActivity {
         mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getDate(), clipSetPos.getClipTimeMs())));
     }
 
+    @Subscribe
+    public void onEventClipSelectEvent(final ClipSelectEvent event) {
+        mToolbar.getMenu().clear();
+        if (event.getClip() != null) {
+            mToolbar.inflateMenu(R.menu.menu_clip_list);
+            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.menu_to_enhance:
+                            toEnhance(event.getClip());
+                            break;
+                        case R.id.menu_to_upload:
+                            //toShare();
+                            break;
+                        case R.id.menu_to_delete:
+                            MaterialDialog dialog = new MaterialDialog.Builder(FootageActivity.this)
+                                .content(R.string.delete_bookmark_confirm)
+                                .positiveText(android.R.string.ok)
+                                .negativeText(android.R.string.cancel)
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        doDeleteSelectedClips(event.getClip());
+                                    }
+                                })
+                                .build();
+                            dialog.show();
+
+                            break;
+                        default:
+                            break;
+                    }
+                    return true;
+                }
+            });
+        }
+
+    }
+
 
     public static void launch(Activity activity, int clipSetIndex) {
         Intent intent = new Intent(activity, FootageActivity.class);
@@ -145,7 +190,6 @@ public class FootageActivity extends BaseActivity {
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -181,7 +225,7 @@ public class FootageActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null) {
             mToolbar.setNavigationIcon(R.drawable.navbar_close);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -219,8 +263,6 @@ public class FootageActivity extends BaseActivity {
             }
         });
     }
-
-
 
 
     private void setupClipProgressBar() {
@@ -297,5 +339,27 @@ public class FootageActivity extends BaseActivity {
         return mClipSetManager.getClipSet(mClipSetIndex);
     }
 
+    private void toEnhance(Clip clip) {
+        ArrayList<Clip> selectedList = new ArrayList<>();
+        selectedList.add(clip);
+        EnhancementActivity.launch(this, selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+    }
+
+    private void doDeleteSelectedClips(Clip clip) {
+        ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, new VdbResponse.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                Logger.t(TAG).d("clips deleted");
+                refreshBookmarkClipSet();
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+
+        mVdbRequestQueue.add(request);
+    }
 
 }

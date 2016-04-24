@@ -43,7 +43,7 @@ abstract public class TcpConnection {
         if (mThread == null) {
             mThread = new CmdThread();
             mThread.start();
-        } 
+        }
     }
 
     // API
