@@ -22,10 +22,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SimpleAdapter;
 import android.widget.StackView;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -33,14 +31,13 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.activities.FootageActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -56,8 +53,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;

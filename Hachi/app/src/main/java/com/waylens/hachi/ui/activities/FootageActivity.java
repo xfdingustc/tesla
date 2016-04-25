@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,8 +24,6 @@ import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
-import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;

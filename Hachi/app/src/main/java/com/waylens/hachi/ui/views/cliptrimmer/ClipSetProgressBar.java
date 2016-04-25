@@ -388,7 +388,6 @@ public class ClipSetProgressBar extends FrameLayout {
                 ClipSegment clipSegment = (ClipSegment) clipFragmentItem.item;
                 ClipPos clipPos = new ClipPos(clipSegment.getClip(), clipSegment.getStartTimeMs());
                 mVdbImageLoader.displayVdbImage(clipPos, viewHolder.clipFragmentThumbnail, false, true);
-
                 setupBookmarkView(clipSegment, viewHolder.bookmarkView);
             }
 
@@ -412,10 +411,10 @@ public class ClipSetProgressBar extends FrameLayout {
         private void setupBookmarkView(ClipSegment clipSegment, BookmarkView bookmarkView) {
             List<Clip> bookmarkList = mBookmarkClipSet.getClipList();
 
+            bookmarkView.removeAllViews();
+
             for (int i = 0; i < bookmarkList.size(); i++) {
                 Clip clip = bookmarkList.get(i);
-
-
                 if (clip.realCid.equals(clipSegment.getClip().cid)) {
                     bookmarkView.setVisibility(VISIBLE);
 //                    Logger.t(TAG).d("bookmark " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs() + " clipFragment: " + clipFragment.getStartTimeMs() + " ~" + clipFragment.getEndTimeMs());
@@ -453,8 +452,6 @@ public class ClipSetProgressBar extends FrameLayout {
                         bookmarkView.addBookmark(clip, bookmarkLayoutParasm, isSelected, mOnBookmarkViewClickListener);
 
                     }
-                } else {
-//                    bookmarkView.setVisibility(GONE);
                 }
 
             }
