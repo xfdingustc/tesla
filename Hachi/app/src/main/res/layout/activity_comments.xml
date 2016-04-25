@@ -46,7 +46,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
-            android:hint="@string/add_a_comment"
+            android:hint="@string/add_one_comment"
             android:inputType="text"
             android:textCursorDrawable="@drawable/color_cursor"
             android:minHeight="36dp"

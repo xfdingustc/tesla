@@ -27,7 +27,7 @@ public class RemuxHelper {
 	public static final int checkSpace(long needed) {
 
 		if (needed >= (1024 + 512) * 1024 * 1024) // 1.5 GB
-			return R.string.msg_too_long;
+			return R.string.msg_video_too_long;
 
 		if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
 			return R.string.msg_no_sdcard;

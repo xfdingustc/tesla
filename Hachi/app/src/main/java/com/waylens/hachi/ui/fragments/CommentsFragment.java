@@ -23,7 +23,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.activities.CommentsActivity;
 import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Comment;
@@ -188,7 +187,7 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
         if (mReplyTo != null) {
             comment.replyTo = mReplyTo;
             mReplyTo = null;
-            mNewCommentView.setHint(R.string.add_a_comment);
+            mNewCommentView.setHint(R.string.add_one_comment);
         }
         int position = mAdapter.addComment(comment);
         mCommentListView.scrollToPosition(position);

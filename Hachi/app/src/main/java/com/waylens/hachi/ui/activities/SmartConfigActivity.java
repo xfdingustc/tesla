@@ -96,7 +96,7 @@ public class SmartConfigActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.title_smartconfig);
+//        mToolbar.setTitle(R.string.title_smartconfig);
         mToolbar.setNavigationIcon(R.drawable.navbar_close);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -30,7 +30,7 @@
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/likes"/>
+            android:text="@string/like"/>
     </android.support.v7.widget.Toolbar>
 
 

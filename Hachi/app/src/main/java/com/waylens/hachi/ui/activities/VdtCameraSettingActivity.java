@@ -115,7 +115,7 @@ public class VdtCameraSettingActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.recording_settings);
+        mToolbar.setTitle(R.string.recording_setting);
         mToolbar.setNavigationIcon(R.drawable.navbar_close);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

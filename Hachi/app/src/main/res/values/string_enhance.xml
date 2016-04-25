@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="resolution_not_correct">Video with other resolution cannot be added</string>
-    <string name="discard_the_enhance">Discard This Enhance</string>
-    <string name="discard_enhance_confirm">"All your editing will not be saved. Do you want to proceed?</string>
-    <string name="discard">discard</string>
-</resources>

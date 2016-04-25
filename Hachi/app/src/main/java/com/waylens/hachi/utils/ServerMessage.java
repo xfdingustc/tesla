@@ -59,7 +59,7 @@ public class ServerMessage {
             msgResourceIDs.put(ACCOUNT_ALREADY_BOUND, R.string.server_msg_account_already_bound);
             msgResourceIDs.put(USER_NAME_HAS_BEEN_USED, R.string.server_msg_user_name_has_been_used);
             msgResourceIDs.put(EMAIL_HAS_BEEN_USED, R.string.server_msg_email_has_been_used);
-            msgResourceIDs.put(EMAIL_NOT_EXIST, R.string.server_msg_email_not_exist);
+            msgResourceIDs.put(EMAIL_NOT_EXIST, R.string.server_msg_email_not_existed);
             msgResourceIDs.put(EXCEED_MAX_RETRIES, R.string.server_msg_exceed_max_retries);
             msgResourceIDs.put(EMAIL_TOO_FREQUENT, R.string.server_msg_email_too_frequent);
             msgResourceIDs.put(VERIFICATION_CODE_HAS_EXPIRED, R.string.server_msg_code_has_expired);

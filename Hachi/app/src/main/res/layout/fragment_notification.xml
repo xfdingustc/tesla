@@ -22,7 +22,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:text="@string/comments"
+            android:text="@string/comment"
             />
 
         <ImageView
@@ -64,7 +64,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:text="@string/likes"
+            android:text="@string/like"
             />
 
         <ImageView

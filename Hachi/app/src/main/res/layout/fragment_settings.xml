@@ -43,7 +43,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/settings_general"
+                android:text="@string/general"
                 android:textColor="?attr/appTextColorPrimary"
                 android:textSize="18sp" />
 
@@ -127,7 +127,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/settings_waylens_cloud"
+                android:text="@string/waylens_cloud"
                 android:textColor="?attr/appTextColorPrimary"
                 android:textSize="18sp" />
 
@@ -176,7 +176,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/settings_camera"
+                android:text="@string/camera"
                 android:textColor="?attr/appTextColorPrimary"
                 android:textSize="18sp" />
 
@@ -220,7 +220,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/settings_add_new_camera"
+                android:text="@string/add_new_camera"
                 android:textColor="?attr/appTextColorPrimary"
                 android:textSize="18sp" />
 
@@ -272,7 +272,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/settings_help"
+                android:text="@string/help"
                 android:textColor="?attr/appTextColorPrimary"
                 android:textSize="18sp" />
 

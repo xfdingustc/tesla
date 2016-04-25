@@ -84,7 +84,7 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
         if (mReplyTo != null) {
             comment.replyTo = mReplyTo;
             mReplyTo = null;
-            mNewCommentView.setHint(R.string.add_a_comment);
+            mNewCommentView.setHint(R.string.add_one_comment);
         }
         int position = mAdapter.addComment(comment);
         mCommentListView.scrollToPosition(position);
@@ -159,7 +159,7 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.comments);
+        mToolbar.setTitle(R.string.comment);
         mToolbar.setNavigationIcon(R.drawable.navbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

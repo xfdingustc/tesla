@@ -30,7 +30,7 @@
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/comments"/>
+            android:text="@string/comment"/>
     </android.support.v7.widget.Toolbar>
 
 
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:hint="@string/add_a_comment"
+            android:hint="@string/add_one_comment"
             android:inputType="text"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"

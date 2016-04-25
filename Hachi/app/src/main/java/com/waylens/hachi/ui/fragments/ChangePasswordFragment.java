@@ -80,7 +80,7 @@ public class ChangePasswordFragment extends BaseFragment {
         mTvChangePasswordHint.setText(getString(R.string.forgot_password_hint4, mEmail));
         SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forgot_password_hint5));
         int start = ssb.length();
-        ssb.append(getString(R.string.forgot_password_hint6))
+        ssb.append(getString(R.string.resend))
                 .setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View widget) {

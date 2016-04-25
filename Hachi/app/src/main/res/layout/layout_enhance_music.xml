@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/video_volume"
+            android:text="@string/volume"
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
 
@@ -54,7 +54,7 @@
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:text="@string/btn_remove"
+            android:text="@string/remove"
             android:textColor="@android:color/white"
             android:textSize="20sp"/>
 

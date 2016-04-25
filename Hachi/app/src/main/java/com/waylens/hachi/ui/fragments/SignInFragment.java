@@ -96,7 +96,7 @@ public class SignInFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forgot_password_hint1));
+        SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forget_password_hint1));
         int start = ssb.length();
         ssb.append(getString(R.string.forgot_password_hint2))
                 .setSpan(new ClickableSpan() {
@@ -115,7 +115,7 @@ public class SignInFragment extends BaseFragment {
             getActivity().setTitle(R.string.change_password);
             fragment = new ChangePasswordFragment();
         } else {
-            getActivity().setTitle(R.string.forgot_password);
+            getActivity().setTitle(R.string.forget_password);
             fragment = new ForgotPasswordFragment();
         }
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, fragment).commit();

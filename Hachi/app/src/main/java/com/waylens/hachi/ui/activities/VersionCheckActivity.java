@@ -189,7 +189,7 @@ public class VersionCheckActivity extends BaseActivity {
         if (mInstallURL == null) {
             return;
         }
-        mFirVersionView.setText(R.string.now_downloading);
+        mFirVersionView.setText(R.string.downloading);
         downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(mInstallURL));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);

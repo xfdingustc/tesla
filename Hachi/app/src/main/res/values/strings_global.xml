@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="password_error">Password may contain 6 to 32 characters, numbers, and the following special characters &#033;&#035;&#036;&#037;&#038;&#042;&#043;&#045;&#064;&#094;&#095;&#046;&#126;</string>
+    <string name="password_pattern" translatable="false">^[A&#045;Za&#045;z0&#045;9&#033;&#035;&#036;&#037;&#038;&#042;\\&#043;\\&#045;&#064;&#094;&#095;&#046;&#126;]{6,64}</string>
+
+
+    <string name="facebook_app_id">400866993445789</string>
+
+    <plurals name="number_of_likes">
+        <item quantity="one">%d like</item>
+        <item quantity="other">%d likes</item>
+    </plurals>
+
+    <string name="reply_to">\@%s</string>
+    <string name="like_your_post">%s like your post</string>
+    <string name="current_version">Current Version: %s</string>
+    <string name="fir_version">The latest version is %s</string>
+    <string name="error_check_fir">Error to check version from FIR.</string>
+    <string name="change_theme_hint">Change app theme need restart the application</string>
+    <plurals name="numbers_of_clips">
+        <item quantity="one">%d Clip</item>
+        <item quantity="other">%d Clips</item>
+    </plurals>
+
+    <string name="length_of_remix">Length of Remix</string>
+    <string name="shuffle_remix">Shuffle Remix</string>
+    <string name="verification_code_pattern" translatable="false">[\\d]{6}</string>
+
+    <plurals name="number_of_bookmarks">
+        <item quantity="one">%d Bookmark</item>
+        <item quantity="other">%d Bookmarks</item>
+    </plurals>
+</resources>

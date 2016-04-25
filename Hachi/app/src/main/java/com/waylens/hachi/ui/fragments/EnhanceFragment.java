@@ -283,7 +283,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             btnAddMusic.setText(R.string.add_music);
             btnRemove.setVisibility(View.GONE);
         } else {
-            btnAddMusic.setText(R.string.btn_swap);
+            btnAddMusic.setText(R.string.swap);
             btnRemove.setVisibility(View.VISIBLE);
         }
 
