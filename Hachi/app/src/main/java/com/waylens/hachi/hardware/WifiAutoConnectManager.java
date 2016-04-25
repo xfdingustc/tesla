@@ -151,7 +151,7 @@ public class WifiAutoConnectManager {
             Log.d(TAG, "enableNetwork connected=" + connected);
             Log.d(TAG, "current network info: " + wifiManager.getConnectionInfo().toString());
             if (mListener != null) {
-                mListener.onAudoConnectStarted();
+                mListener.onAutoConnectStarted();
             }
 
         }
@@ -180,6 +180,6 @@ public class WifiAutoConnectManager {
     }
 
     public interface WifiAutoConnectListener {
-        void onAudoConnectStarted();
+        void onAutoConnectStarted();
     }
 }

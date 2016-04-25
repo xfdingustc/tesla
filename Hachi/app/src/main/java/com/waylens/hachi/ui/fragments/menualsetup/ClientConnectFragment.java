@@ -170,7 +170,7 @@ public class ClientConnectFragment extends BaseFragment {
                 WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
                     (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
                         @Override
-                        public void onAudoConnectStarted() {
+                        public void onAutoConnectStarted() {
                         }
                     });
                 wifiAutoConnectManager.connect(ssid, password, WifiAutoConnectManager

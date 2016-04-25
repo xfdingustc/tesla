@@ -100,7 +100,7 @@ public class ApConnectFragment extends BaseFragment {
             WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
                 (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
                     @Override
-                    public void onAudoConnectStarted() {
+                    public void onAutoConnectStarted() {
                     }
                 });
             wifiAutoConnectManager.connect(mSSID, mPassword, WifiAutoConnectManager.WifiCipherType.WIFICIPHER_WPA);
