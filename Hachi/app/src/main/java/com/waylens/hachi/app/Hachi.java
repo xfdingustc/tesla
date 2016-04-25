@@ -39,20 +39,20 @@ public class Hachi extends Application {
         /**
          * inti Bugtags
          */
-//        BugtagsOptions options = new BugtagsOptions.Builder().
-//            trackingLocation(true).
-//            trackingCrashLog(true).
-//            trackingConsoleLog(true).
-//            trackingUserSteps(true).
-//            versionName("0.38").
-//            versionCode(1).
-//            build();
-//        Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
+        BugtagsOptions options = new BugtagsOptions.Builder().
+            trackingLocation(true).
+            trackingCrashLog(true).
+            trackingConsoleLog(true).
+            trackingUserSteps(true).
+            versionName("0.38").
+            versionCode(1).
+            build();
+        Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
 
         /**
          * inti Burly
          */
-//        CrashReport.initCrashReport(getApplicationContext(), "900022478", false);
+        CrashReport.initCrashReport(getApplicationContext(), "900022478", false);
 
         init();
     }
