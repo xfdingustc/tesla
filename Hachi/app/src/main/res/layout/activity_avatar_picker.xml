@@ -6,9 +6,23 @@
 
     <include layout="@layout/toolbar_default"/>
 
-    <com.waylens.hachi.ui.views.ClipImageView
-        android:id="@+id/civ_cropper_preview"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <com.waylens.hachi.ui.views.ClipImageView
+            android:id="@+id/civ_cropper_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.waylens.hachi.ui.views.ClipView
+            android:id="@+id/cv_clipper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
+
+
+
 
 </LinearLayout>
