@@ -557,7 +557,7 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         public View getView(int position, View convertView, ViewGroup parent) {
             Clip clip = mClipSet.getClip(position);
             ImageView iv = new ImageView(getContext());
-            int imageSize = (int)Utils.dp2px(getContext(), 64);
+            int imageSize = (int)Utils.dp2px(64);
             iv.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 

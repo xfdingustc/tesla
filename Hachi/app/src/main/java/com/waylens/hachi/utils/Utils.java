@@ -11,6 +11,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewParent;
 
+import com.waylens.hachi.app.Hachi;
+
 import java.util.Locale;
 
 public final class Utils {
@@ -29,8 +31,8 @@ public final class Utils {
 		return context.getResources().getDisplayMetrics().density;
 	}
 
-	public static float dp2px(Context context, int dp) {
-		float scale = context.getResources().getDisplayMetrics().density;
+	public static float dp2px(int dp) {
+		float scale = Hachi.getContext().getResources().getDisplayMetrics().density;
 		return scale * dp;
 	}
 

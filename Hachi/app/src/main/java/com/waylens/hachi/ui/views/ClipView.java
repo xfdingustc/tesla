@@ -4,20 +4,22 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.utils.Utils;
 
 /**
  * Created by Xiaofei on 2016/4/26.
  */
 public class ClipView extends View {
 
-    /**
-     * 边框距左右边界距离，用于调整边框长度
-     */
-    public static final int BORDERDISTANCE = 50;
+    public static final int BORDERDISTANCE = (int)Utils.dp2px(16);
 
-    private Paint mPaint;
+
 
     public ClipView(Context context) {
         this(context, null);
@@ -29,7 +31,6 @@ public class ClipView extends View {
 
     public ClipView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mPaint = new Paint();
     }
 
     @Override
@@ -38,34 +39,18 @@ public class ClipView extends View {
         int width = this.getWidth();
         int height = this.getHeight();
 
-        // 边框长度，据屏幕左右边缘50px
         int borderlength = width - BORDERDISTANCE *2;
 
-        mPaint.setColor(0xaa000000);
+        canvas.clipRect(0, 0, width, height);
 
-        // 以下绘制透明暗色区域
-        // top
-        canvas.drawRect(0, 0, width, (height - borderlength) / 2, mPaint);
-        // bottom
-        canvas.drawRect(0, (height + borderlength) / 2, width, height, mPaint);
-        // left
-        canvas.drawRect(0, (height - borderlength) / 2, BORDERDISTANCE,
-            (height + borderlength) / 2, mPaint);
-        // right
-        canvas.drawRect(borderlength + BORDERDISTANCE, (height - borderlength) / 2, width,
-            (height + borderlength) / 2, mPaint);
+        Path path = new Path();
+        path.addCircle(width/2, height/2, borderlength/2, Path.Direction.CW);
 
-        // 以下绘制边框线
-        mPaint.setColor(Color.WHITE);
-        mPaint.setStrokeWidth(2.0f);
-        // top
-        canvas.drawLine(BORDERDISTANCE, (height - borderlength) / 2, width - BORDERDISTANCE, (height - borderlength) / 2, mPaint);
-        // bottom
-        canvas.drawLine(BORDERDISTANCE, (height + borderlength) / 2, width - BORDERDISTANCE, (height + borderlength) / 2, mPaint);
-        // left
-        canvas.drawLine(BORDERDISTANCE, (height - borderlength) / 2, BORDERDISTANCE, (height + borderlength) / 2, mPaint);
-        // right
-        canvas.drawLine(width - BORDERDISTANCE, (height - borderlength) / 2, width - BORDERDISTANCE, (height + borderlength) / 2, mPaint);
+
+        canvas.clipPath(path, Region.Op.DIFFERENCE);
+        canvas.drawColor(0xaa000000);
+
+
     }
 
 }
