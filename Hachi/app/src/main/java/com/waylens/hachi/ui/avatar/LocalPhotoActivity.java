@@ -36,9 +36,9 @@ public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.On
 
     private static final String TAG = LocalPhotoActivity.class.getSimpleName();
 
-    private TextView titleTextView;
-    private TextView tvLeftArrowBtn;
-    private TextView tvRightCancelBtn;
+//    private TextView titleTextView;
+//    private TextView tvLeftArrowBtn;
+//    private TextView tvRightCancelBtn;
 
     private AlbumFragment photoFolderFragment;
     private PhotoPickerFragment photoPickerFragment;
@@ -69,28 +69,6 @@ public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.On
         init();
 
 
-        titleTextView = (TextView) findViewById(R.id.tvTitleName);
-        titleTextView.setText("选择相册");
-        tvLeftArrowBtn = (TextView) findViewById(R.id.tvTitleArrowBtnLeft);
-        tvLeftArrowBtn.setText("相册");
-        tvLeftArrowBtn.setVisibility(View.GONE);
-        tvLeftArrowBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                showPhotoAlbumFragment();
-            }
-        });
-        tvRightCancelBtn = (TextView) findViewById(R.id.tvTitleBtnRightButton);
-        tvRightCancelBtn.setText(getString(android.R.string.cancel));
-        tvRightCancelBtn.setVisibility(View.VISIBLE);
-        tvRightCancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(RESULT_CANCELED);
-                LocalPhotoActivity.this.finish();
-            }
-        });
 
         manager = getFragmentManager();
 
@@ -124,6 +102,7 @@ public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.On
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -161,11 +140,12 @@ public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.On
     }
 
     private void showPhotoAlbumFragment() {
-        tvLeftArrowBtn.setVisibility(View.GONE);
+
         getToolbar().setTitle(R.string.choose_album);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -185,7 +165,7 @@ public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.On
     public void onOKClickListener(Photo selectedPhoto) {
         Intent data = new Intent();
         data.putExtra("photoPath", selectedPhoto.getPathAbsolute());
-        data.putExtra("albumName", titleTextView.getText());
+        data.putExtra("albumName", getToolbar().getTitle());
         setResult(RESULT_OK, data);
         finish();
     }

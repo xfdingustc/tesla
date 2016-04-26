@@ -7,12 +7,6 @@
               android:background="@color/settings_item_bg_normal"
               android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginTop="16dp"
-        android:background="@color/settings_line_separator"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,7 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                tools:text="Car info"/>
+                tools:text="Car info"
+                tools:visibility="visible"/>
         </LinearLayout>
 
         <TextView

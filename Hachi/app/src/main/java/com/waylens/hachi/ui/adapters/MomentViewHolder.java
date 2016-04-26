@@ -44,14 +44,14 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     ImageView videoCover;
 
     @Bind(R.id.video_control)
-    View videoControl;
+    ImageView videoControl;
 
     @Bind(R.id.btnLike)
     ImageButton btnLike;
 
 
     @Bind(R.id.btn_comment)
-    View btnComment;
+    LinearLayout btnComment;
 
     @Bind(R.id.video_fragment_container)
     FrameLayout fragmentContainer;

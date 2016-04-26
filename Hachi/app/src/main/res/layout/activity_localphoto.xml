@@ -8,11 +8,11 @@
 
     <include layout="@layout/toolbar_default"/>
 
-    <include
-        android:id="@+id/headview"
-        android:layout_width="match_parent"
-        android:layout_height="50dip"
-        layout="@layout/custom_title_bar" />
+    <!--<include-->
+        <!--android:id="@+id/headview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dip"-->
+        <!--layout="@layout/custom_title_bar" />-->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
