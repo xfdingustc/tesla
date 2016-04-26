@@ -21,4 +21,8 @@ public class GlobalVariables {
         picture_name += ".jpg";
         return picture_name;
     }
+
+    public static String getAvatarUrl() {
+        return Environment.getExternalStorageDirectory() + "/avatar/Images";
+    }
 }

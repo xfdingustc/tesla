@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
+import com.waylens.hachi.ui.views.ClipImageView;
 import com.waylens.hachi.utils.ImageUtils;
 
 
@@ -40,7 +41,7 @@ import butterknife.Bind;
 public class AvatarActivity extends BaseActivity {
     private final static String TAG = AvatarActivity.class.getSimpleName();
     private final static String PICK_FROM_CAMERA = "pick_from_camera";
-
+    private final String mImgCachePath = GlobalVariables.getAvatarUrl();
 
     private final static int TAKE_PHOTO = 1;
     private final static int FROM_LOCAL = 2;
@@ -53,8 +54,8 @@ public class AvatarActivity extends BaseActivity {
     private String albumName;
     private String mReturnImagePath = null;
 
-//    @Bind(R.id.civ_cropper_preview)
-//    ClipImageView mCivCropperPreview;
+    @Bind(R.id.civ_cropper_preview)
+    ClipImageView mCivCropperPreview;
 //
 //    @Bind(R.id.mcpb_upload_progress)
 //    MaterialCircularProgressBar mUploadProgressBar;
@@ -122,7 +123,7 @@ public class AvatarActivity extends BaseActivity {
         }
 
 //        getToolbar().inflateMenu(R.menu.menu_confirm);
-//        new ExtractThumbTask(mReturnImagePath, 1536, 2048).execute();
+        new ExtractThumbTask(mReturnImagePath, 1536, 2048).execute();
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -241,62 +242,62 @@ public class AvatarActivity extends BaseActivity {
 //        }
 //    }
 
-//    public class ExtractThumbTask extends AsyncTask<Object, Void, String> {
-//        String srcImgPath = null, dstImgPath = null;
-//        int reqWidth = 1536, reqHeight = 2048;
-//        Bitmap bmp = null;
-//
-//        public ExtractThumbTask(String srcImgPath, int width, int height) {
-//            this.reqWidth = width;
-//            this.reqHeight = height;
-//            this.srcImgPath = srcImgPath;
-//        }
-//
-//        protected void onPreExecute() {
-//
-//        }
-//
-//        @Override
-//        protected String doInBackground(Object... params) {
-//            long now = System.currentTimeMillis();
-//            String photoId = String.format("%d.%03d", now / 1000, now % 1000);
-//            String dstFileName = photoId + ".jpg";
-//            dstImgPath = mImgCachePath + "/" + dstFileName;
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inJustDecodeBounds = true;
-//
-//            BitmapFactory.decodeFile(srcImgPath, options);
-//            int w = options.outWidth;
-//            int h = options.outHeight;
-//            int newW = w, newH = h;
-//            float ratio = 1;
-//            if (w <= h) {
-//                ratio = Math.max((float) w / reqWidth, (float) h / reqHeight);
-//            } else {
-//                ratio = Math.max((float) h / reqWidth, (float) w / reqHeight);
-//            }
-//
-//            if (ratio < 1.0f) {
-//                ratio = 1;
-//            }
-//            newW = (int) (w / ratio);
-//            newH = (int) (h / ratio);
-//
-//            // Decode bitmap with inSampleSize set
-//            options.inJustDecodeBounds = false;
-//            options.inSampleSize = 1;
-//
-//            bmp = BitmapFactory.decodeFile(srcImgPath, options);
-//            if (ratio > 1.0f) {
-//                bmp = ImageUtils.zoomBitmap(bmp, newW, newH);
-//            }
-//
-//            return dstImgPath;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String thumbFullPath) {
-//            mCivCropperPreview.setImageBitmap(bmp);
-//        }
-//    }
+    public class ExtractThumbTask extends AsyncTask<Object, Void, String> {
+        String srcImgPath = null, dstImgPath = null;
+        int reqWidth = 1536, reqHeight = 2048;
+        Bitmap bmp = null;
+
+        public ExtractThumbTask(String srcImgPath, int width, int height) {
+            this.reqWidth = width;
+            this.reqHeight = height;
+            this.srcImgPath = srcImgPath;
+        }
+
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected String doInBackground(Object... params) {
+            long now = System.currentTimeMillis();
+            String photoId = String.format("%d.%03d", now / 1000, now % 1000);
+            String dstFileName = photoId + ".jpg";
+            dstImgPath = mImgCachePath + "/" + dstFileName;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+
+            BitmapFactory.decodeFile(srcImgPath, options);
+            int w = options.outWidth;
+            int h = options.outHeight;
+            int newW = w, newH = h;
+            float ratio = 1;
+            if (w <= h) {
+                ratio = Math.max((float) w / reqWidth, (float) h / reqHeight);
+            } else {
+                ratio = Math.max((float) h / reqWidth, (float) w / reqHeight);
+            }
+
+            if (ratio < 1.0f) {
+                ratio = 1;
+            }
+            newW = (int) (w / ratio);
+            newH = (int) (h / ratio);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = 1;
+
+            bmp = BitmapFactory.decodeFile(srcImgPath, options);
+            if (ratio > 1.0f) {
+                bmp = ImageUtils.zoomBitmap(bmp, newW, newH);
+            }
+
+            return dstImgPath;
+        }
+
+        @Override
+        protected void onPostExecute(String thumbFullPath) {
+            mCivCropperPreview.setImageBitmap(bmp);
+        }
+    }
 }
