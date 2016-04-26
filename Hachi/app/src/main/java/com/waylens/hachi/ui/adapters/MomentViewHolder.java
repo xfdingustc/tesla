@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     public View videoControl;
 
     @Bind(R.id.btnLike)
-    ImageView btnLike;
+    ImageButton btnLike;
 
 
     @Bind(R.id.btn_comment)
