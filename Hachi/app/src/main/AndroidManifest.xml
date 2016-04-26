@@ -84,6 +84,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.activities.AccountActivity2"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.activities.SmartConfigActivity"
             android:screenOrientation="portrait"/>
 
@@ -117,7 +121,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.MenualSetupActivity"
+            android:name=".ui.activities.ManualSetupActivity"
             android:screenOrientation="portrait"/>
 
         <activity

@@ -24,7 +24,7 @@ public class StartupActivity extends BaseActivity {
             .callback(new MaterialDialog.ButtonCallback() {
                 @Override
                 public void onPositive(MaterialDialog dialog) {
-                    MenualSetupActivity.launch(StartupActivity.this);
+                    ManualSetupActivity.launch(StartupActivity.this);
                     finish();
                     super.onPositive(dialog);
                 }

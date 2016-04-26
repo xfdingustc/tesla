@@ -186,7 +186,7 @@ public class UserProfileActivity extends BaseActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.editProfile:
-                            AccountActivity.launch(UserProfileActivity.this);
+                            AccountActivity2.launch(UserProfileActivity.this);
                             break;
                     }
                     return true;

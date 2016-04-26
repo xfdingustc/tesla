@@ -11,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -56,17 +55,10 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
     Refreshable, MomentsRecyclerAdapter.OnMomentActionListener, OnViewDragListener {
     static final int DEFAULT_COUNT = 10;
 
-    @Bind(R.id.btnAvatar)
+    @Bind(R.id.avatar)
     CircleImageView mBtnAvatar;
 
-    @Bind((R.id.login_status))
-    TextView mLoginStatus;
 
-    @Bind(R.id.profile_grid)
-    View mProfileGridView;
-
-    @Bind(R.id.profile_list)
-    View mProfileListView;
 
     @Bind(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -76,6 +68,15 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
 
     @Bind(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
+
+    @OnClick(R.id.avatar)
+    public void onBtnAvatarClicked() {
+        if (SessionManager.getInstance().isLoggedIn()) {
+            showLogoutDialog();
+        } else {
+            LoginActivity.launch(this);
+        }
+    }
 
     MomentsRecyclerAdapter mAdapter;
 
@@ -94,12 +95,12 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
 
     Fragment mVideoFragment;
 
-    public static void launch(Activity activity) {
-        Intent intent = new Intent(activity, AccountActivity.class);
-        activity.startActivity(intent);
-    }
+//    public static void launch(Activity activity) {
+//        Intent intent = new Intent(activity, AccountActivity.class);
+//        activity.startActivity(intent);
+//    }
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,8 +123,8 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
 
     private void initViews() {
         setContentView(R.layout.activity_account);
-        mProfileListView.getBackground().setColorFilter(mHighlightColor, PorterDuff.Mode.MULTIPLY);
-        mProfileGridView.getBackground().setColorFilter(mGreyColor, PorterDuff.Mode.MULTIPLY);
+//        mProfileListView.getBackground().setColorFilter(mHighlightColor, PorterDuff.Mode.MULTIPLY);
+//        mProfileGridView.getBackground().setColorFilter(mGreyColor, PorterDuff.Mode.MULTIPLY);
         mProfileStyle = 0;
         mVideoListView.setAdapter(mAdapter);
         mVideoListView.setLayoutManager(mLinearLayoutManager);
@@ -145,10 +146,7 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
             mBtnAvatar,
             ImageUtils.getAvatarOptions());
         if (SessionManager.getInstance().isLoggedIn()) {
-            mLoginStatus.setText(R.string.logout);
             onRefresh();
-        } else {
-            mLoginStatus.setText(R.string.login);
         }
     }
 
@@ -170,22 +168,9 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
     }
 
 
-    @OnClick(R.id.btnAvatar)
-    public void onBtnAvatarClicked() {
-        if (SessionManager.getInstance().isLoggedIn()) {
-            showLogoutDialog();
-        } else {
-            LoginActivity.launch(this);
-        }
-    }
 
-    @OnClick({R.id.profile_grid, R.id.profile_list})
-    public void changeProfileLayout(View view) {
-        long viewID = view.getId();
-        mProfileGridView.getBackground().setColorFilter(viewID == R.id.profile_grid ? mHighlightColor : mGreyColor, PorterDuff.Mode.MULTIPLY);
-        mProfileListView.getBackground().setColorFilter(viewID == R.id.profile_list ? mHighlightColor : mGreyColor, PorterDuff.Mode.MULTIPLY);
 
-    }
+
 
     void showLogoutDialog() {
         if (mLogoutDialog != null && mLogoutDialog.isShowing()) {
@@ -213,7 +198,7 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
                         PreferenceUtils.remove(PreferenceUtils.SEND_GCM_TOKEN_SERVER);
                         SessionManager.getInstance().logout();
                         mBtnAvatar.setImageResource(R.drawable.settings_profile_photo_default);
-                        mLoginStatus.setText(R.string.login);
+//                        mLoginStatus.setText(R.string.login);
                     }
                 }
             },
@@ -222,7 +207,7 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
                 public void onErrorResponse(VolleyError error) {
                     ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
                     //showMessage(errorMsg.msgResID);
-                    Snackbar.make(mLoginStatus, errorMsg.msgResID, Snackbar.LENGTH_SHORT).show();
+//                    Snackbar.make(mLoginStatus, errorMsg.msgResID, Snackbar.LENGTH_SHORT).show();
                 }
             }));
     }
@@ -280,7 +265,7 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
         mVideoListView.setIsLoadingMore(false);
         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
 
-        Snackbar.make(mLoginStatus, errorInfo.msgResID, Snackbar.LENGTH_SHORT).show();
+//        Snackbar.make(mLoginStatus, errorInfo.msgResID, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

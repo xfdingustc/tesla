@@ -6,12 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.AccountActivity;
-import com.waylens.hachi.ui.activities.MenualSetupActivity;
-import com.waylens.hachi.ui.activities.SmartConfigActivity;
+import com.waylens.hachi.ui.activities.AccountActivity2;
+import com.waylens.hachi.ui.activities.ManualSetupActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
 
 import butterknife.OnClick;
@@ -36,7 +34,7 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.settings_account)
     void clickAccount() {
-        AccountActivity.launch(getActivity());
+        AccountActivity2.launch(getActivity());
     }
 
     @OnClick(R.id.settings_help)
@@ -63,6 +61,6 @@ public class SettingsFragment extends BaseFragment {
 //                    return true;
 //                }
 //            }).show();
-        MenualSetupActivity.launch(getActivity());
+        ManualSetupActivity.launch(getActivity());
     }
 }

@@ -18,8 +18,8 @@ import com.waylens.hachi.ui.fragments.menualsetup.ScanQrCodeFragment;
 /**
  * Created by Xiaofei on 2016/3/21.
  */
-public class MenualSetupActivity extends BaseActivity {
-    private static final String TAG = MenualSetupActivity.class.getSimpleName();
+public class ManualSetupActivity extends BaseActivity {
+    private static final String TAG = ManualSetupActivity.class.getSimpleName();
     private BroadcastReceiver mWifiStateReceiver;
     private ScanQrCodeFragment mScanQrCodeFragment;
 
@@ -27,7 +27,7 @@ public class MenualSetupActivity extends BaseActivity {
 
 
     public static void launch(Activity activity) {
-        Intent intent = new Intent(activity, MenualSetupActivity.class);
+        Intent intent = new Intent(activity, ManualSetupActivity.class);
         activity.startActivity(intent);
     }
 
@@ -68,7 +68,7 @@ public class MenualSetupActivity extends BaseActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activity_menual_setup);
+        setContentView(R.layout.activity_manual_setup);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class MenualSetupActivity extends BaseActivity {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.launch(MenualSetupActivity.this);
+                MainActivity.launch(ManualSetupActivity.this);
             }
         });
         super.setupToolbar();
