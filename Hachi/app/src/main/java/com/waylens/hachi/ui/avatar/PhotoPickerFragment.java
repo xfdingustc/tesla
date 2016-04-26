@@ -1,8 +1,9 @@
 package com.waylens.hachi.ui.avatar;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,6 @@ import java.util.List;
  * Created by Xiaofei on 2015/6/29.
  */
 public class PhotoPickerFragment extends Fragment {
-  @SuppressWarnings("unused")
   private static final String TAG = PhotoPickerFragment.class.getSimpleName();
 
   public interface OnPhotoSelectClickListener {
@@ -33,7 +33,7 @@ public class PhotoPickerFragment extends Fragment {
   private OnPhotoSelectClickListener onPhotoSelectClickListener;
 
   protected ImageLoader imageLoader = ImageLoader.getInstance();
-  protected boolean pauseOnScroll = true; // 滚动时不异步取数据;
+  protected boolean pauseOnScroll = true;
   protected boolean pauseOnFling = true; // 滑动时不异步取数据;
 
   private GridView gridView;

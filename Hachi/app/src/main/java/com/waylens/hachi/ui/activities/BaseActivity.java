@@ -64,7 +64,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Nullable
     @Bind(R.id.toolbar)
-    public Toolbar mToolbar;
+    Toolbar mToolbar;
 
     @Nullable
     @Bind(R.id.app_bar_layout)

@@ -105,16 +105,15 @@ public class AvatarActivity extends BaseActivity {
     }
     @Override
     public void setupToolbar() {
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
-        mToolbar.setTitle(getString(R.string.avatar));
-        mToolbar.setNavigationIcon(R.drawable.navbar_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        super.setupToolbar();
+        getToolbar().setTitle(getString(R.string.avatar));
+        getToolbar().setNavigationIcon(R.drawable.navbar_back);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        super.setupToolbar();
     }
 
     @Override
@@ -132,8 +131,8 @@ public class AvatarActivity extends BaseActivity {
             mReturnImagePath = data.getStringExtra("photoPath");
         }
 
-        mToolbar.inflateMenu(R.menu.menu_confirm);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        getToolbar().inflateMenu(R.menu.menu_confirm);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {

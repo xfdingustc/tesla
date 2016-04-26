@@ -37,7 +37,7 @@ public class BaseFragment extends Fragment  {
 
     @Nullable
     @Bind(R.id.toolbar)
-    public Toolbar mToolbar;
+    Toolbar mToolbar;
 
     @Nullable
     @Bind(R.id.tabs)
@@ -114,6 +114,10 @@ public class BaseFragment extends Fragment  {
             });
             mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
         }
+    }
+
+    public Toolbar getToolbar() {
+        return mToolbar;
     }
 
 

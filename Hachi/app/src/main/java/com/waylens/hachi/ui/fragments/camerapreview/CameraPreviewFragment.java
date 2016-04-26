@@ -212,7 +212,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
                 AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
                 animationDrawable.start();
-                mToolbar.getMenu().clear();
+                getToolbar().getMenu().clear();
                 break;
         }
 
@@ -306,7 +306,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @Override
     public void setupToolbar() {
-        if (mToolbar != null) {
+        if (getToolbar() != null) {
             if (mVdtCameraManager.getConnectedCameras().size() > 1) {
                 List<String> cameraNames = new ArrayList<>();
                 List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
@@ -330,19 +330,19 @@ public class CameraPreviewFragment extends BaseFragment {
 
                     }
                 });
-                mToolbar.setTitle("");
+                getToolbar().setTitle("");
                 mCameraSpinner.setVisibility(View.VISIBLE);
 
             } else {
-                mToolbar.setTitle(R.string.live_view);
+                getToolbar().setTitle(R.string.live_view);
                 mCameraSpinner.setVisibility(View.GONE);
             }
 
-            mToolbar.getMenu().clear();
+            getToolbar().getMenu().clear();
             if (VdtCameraManager.getManager().isConnected()) {
-                mToolbar.inflateMenu(R.menu.menu_live_view);
+                getToolbar().inflateMenu(R.menu.menu_live_view);
             }
-            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
@@ -481,7 +481,7 @@ public class CameraPreviewFragment extends BaseFragment {
                     mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
                     AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
                     animationDrawable.start();
-                    mToolbar.getMenu().clear();
+                    getToolbar().getMenu().clear();
                 }
             });
         }

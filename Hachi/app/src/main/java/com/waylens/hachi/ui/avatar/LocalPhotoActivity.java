@@ -1,22 +1,23 @@
 package com.waylens.hachi.ui.avatar;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.avatar.serializables.AlbumInfo;
 import com.waylens.hachi.ui.avatar.serializables.AlbumSerializable;
 import com.waylens.hachi.ui.avatar.serializables.Photo;
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * Created by Xiaofei on 2015/6/29.
  */
-public class LocalPhotoActivity extends FragmentActivity implements AlbumFragment.OnAlbumClickedListener
+public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.OnAlbumClickedListener
     , PhotoPickerFragment.OnPhotoSelectClickListener {
 
     private static final String TAG = LocalPhotoActivity.class.getSimpleName();
@@ -50,6 +51,8 @@ public class LocalPhotoActivity extends FragmentActivity implements AlbumFragmen
 
     private String albumName = null;
 
+
+
     public static void launch(Activity activity, String albumName, int requestCode) {
         Intent intent = new Intent();
         intent.setClass(activity, LocalPhotoActivity.class);
@@ -63,8 +66,8 @@ public class LocalPhotoActivity extends FragmentActivity implements AlbumFragmen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_localphoto);
+        init();
+
 
         titleTextView = (TextView) findViewById(R.id.tvTitleName);
         titleTextView.setText("选择相册");
@@ -89,7 +92,7 @@ public class LocalPhotoActivity extends FragmentActivity implements AlbumFragmen
             }
         });
 
-        manager = getSupportFragmentManager();
+        manager = getFragmentManager();
 
         photoFolderFragment = new AlbumFragment();
         photoPickerFragment = new PhotoPickerFragment();
@@ -103,6 +106,28 @@ public class LocalPhotoActivity extends FragmentActivity implements AlbumFragmen
 
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        initViews();
+    }
+
+    private void initViews() {
+        setContentView(R.layout.activity_localphoto);
+        setupToolbar();
+    }
+
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
+        getToolbar().setTitle(R.string.choose_album);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
 
     @Override
     public void onAlbumClickedListener(String albumName, List<Photo> list) {

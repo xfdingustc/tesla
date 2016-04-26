@@ -44,7 +44,7 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     ImageView videoCover;
 
     @Bind(R.id.video_control)
-    public View videoControl;
+    View videoControl;
 
     @Bind(R.id.btnLike)
     ImageButton btnLike;
@@ -54,7 +54,7 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     View btnComment;
 
     @Bind(R.id.video_fragment_container)
-    public FrameLayout fragmentContainer;
+    FrameLayout fragmentContainer;
 
     public Fragment videoFragment;
 

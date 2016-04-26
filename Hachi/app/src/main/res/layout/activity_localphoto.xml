@@ -6,6 +6,8 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+    <include layout="@layout/toolbar_default"/>
+
     <include
         android:id="@+id/headview"
         android:layout_width="match_parent"

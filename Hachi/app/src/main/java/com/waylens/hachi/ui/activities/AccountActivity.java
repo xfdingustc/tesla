@@ -310,12 +310,12 @@ public class AccountActivity extends BaseActivity implements SwipeRefreshLayout.
             youTubeFragment.setVideoId(moment.videoID);
             vh.videoFragment = youTubeFragment;
             mVideoFragment = youTubeFragment;
-            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
+//            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
         } else {
             MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment, this);
             vh.videoFragment = videoPlayFragment;
             mVideoFragment = videoPlayFragment;
-            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
+//            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
         }
     }
 
