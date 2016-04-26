@@ -107,6 +107,8 @@
             android:name=".ui.activities.LiveViewActivity"
             android:screenOrientation="landscape"></activity>
 
+        <activity android:name=".ui.activities.AvatarActivity"
+                  android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".ui.activities.FullScreenPlayActivity"
