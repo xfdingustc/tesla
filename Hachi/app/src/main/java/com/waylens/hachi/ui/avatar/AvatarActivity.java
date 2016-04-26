@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.avatar;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -9,18 +9,20 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Menu;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.GlobalVariables;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
+import com.waylens.hachi.utils.ContentUploader;
 import com.waylens.hachi.utils.ImageUtils;
 
 
@@ -30,7 +32,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 
@@ -47,7 +48,7 @@ public class AvatarActivity extends BaseActivity {
     private final static int FROM_LOCAL = 2;
 
     private Uri mAvatarUri;
-    private RequestQueue mRequestQueue;
+
 
     private String mCroppedImagePath = null;
 
@@ -69,16 +70,17 @@ public class AvatarActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.gc();
+
         Intent intent = getIntent();
         boolean fromCamera = intent.getBooleanExtra(PICK_FROM_CAMERA, false);
         if (fromCamera) {
             jump2TakePhoto();
         } else {
-//            LocalPhotoActivity.launch(this, albumName, FROM_LOCAL);
+            LocalPhotoActivity.launch(this, albumName, FROM_LOCAL);
         }
 
-        initViews();
+        init();
+
     }
 
     private void jump2TakePhoto() {
@@ -92,10 +94,10 @@ public class AvatarActivity extends BaseActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
+    protected void init() {
+        super.init();
+        initViews();
     }
-
 
     private void initViews() {
         setContentView(R.layout.activity_avatar_picker);
@@ -103,6 +105,7 @@ public class AvatarActivity extends BaseActivity {
     }
     @Override
     public void setupToolbar() {
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         mToolbar.setTitle(getString(R.string.avatar));
         mToolbar.setNavigationIcon(R.drawable.navbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -129,7 +132,19 @@ public class AvatarActivity extends BaseActivity {
             mReturnImagePath = data.getStringExtra("photoPath");
         }
 
-//        getToolbar().inflateMenu(R.menu.menu_confirm);
+        mToolbar.inflateMenu(R.menu.menu_confirm);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.confirm:
+                        saveCroppedImage();
+                        uploadAvatar();
+                        break;
+                }
+                return false;
+            }
+        });
         new ExtractThumbTask(mReturnImagePath, 1536, 2048).execute();
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -137,63 +152,83 @@ public class AvatarActivity extends BaseActivity {
 
 
 
-//    private void saveCroppedImage() {
-//        Bitmap croppedImage = mCivCropperPreview.clip();
-//
-//        long now = System.currentTimeMillis();
-//        String photoId = String.format("%d.%03d", now / 1000, now % 1000);
-//        String fileName = photoId + ".jpg";
-//        mCroppedImagePath = mImgCachePath + "/" + fileName;
-//        try {
-//            FileOutputStream out = new FileOutputStream(mCroppedImagePath);
-//            Logger.t(TAG).d("try to compress file : " + mCroppedImagePath);
-//            if (croppedImage.compress(Bitmap.CompressFormat.JPEG, 60, out)) {
-//                out.flush();
-//            } else {
-//                ImageUtils.SaveBitmap(croppedImage, mCroppedImagePath);
-//                Logger.t(TAG).d("try to save file : " + mCroppedImagePath);
-//            }
-//            out.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        ImageUtils.SaveBitmap(croppedImage, mCroppedImagePath);
-//
-//    }
-//
-//    private void uploadAvatar() {
-//        String url = Constant.HOST_URL + Constant.UPLOAD_AVATAR;
-//        mRequestQueue.add(new TutuJsonObjectRequest(url, new uploadAvatarResponseListener(),
-//            new uploadAvatarErrorListener()));
-//
-//    }
+    private void saveCroppedImage() {
+        Bitmap croppedImage = mCivCropperPreview.clip();
 
-//    private class uploadAvatarResponseListener implements Response.Listener<JSONObject> {
-//
+        long now = System.currentTimeMillis();
+        String photoId = String.format("%d.%03d", now / 1000, now % 1000);
+        String fileName = photoId + ".jpg";
+        mCroppedImagePath = mImgCachePath + "/" + fileName;
+        try {
+            FileOutputStream out = new FileOutputStream(mCroppedImagePath);
+            Logger.t(TAG).d("try to compress file : " + mCroppedImagePath);
+            if (croppedImage.compress(Bitmap.CompressFormat.JPEG, 60, out)) {
+                out.flush();
+            } else {
+                ImageUtils.saveBitmap(croppedImage, mCroppedImagePath);
+                Logger.t(TAG).d("try to save file : " + mCroppedImagePath);
+            }
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ImageUtils.saveBitmap(croppedImage, mCroppedImagePath);
+
+    }
+
+    private void uploadAvatar() {
+        String url = Constants.API_START_UPLOAD_AVATAR;
+        mRequestQueue.add(new AuthorizedJsonRequest(url, new uploadAvatarResponseListener(),
+            new uploadAvatarErrorListener()));
+
+    }
+
+    private class uploadAvatarResponseListener implements Response.Listener<JSONObject> {
+
 //        private Content mAvatarContent;
-//        private JSONObject mResponse;
-//
-//        @Override
-//        public void onResponse(JSONObject response) {
-//            mResponse = response;
+        private JSONObject mResponse;
+
+        @Override
+        public void onResponse(JSONObject response) {
+            mResponse = response;
 //            mAvatarContent = new Content();
 //            mAvatarContent.setUri(Uri.fromFile(new File(mCroppedImagePath)).toString());
 //            mAvatarContent.setType(Constant.TRIP_CONTENT_TYPE_IMAGE);
-//            new Thread(new UploadTask()).start();
-//        }
-//
-//        private class UploadTask implements Runnable {
-//
-//            @Override
-//            public void run() {
-//                ContentUploader uploader = new ContentUploader(mAvatarContent, mResponse.toString());
-//                uploader.setUploaderListener(new uploadAvatarListener());
-//                uploader.upload();
-//            }
-//        }
-//    }
+            new Thread(new UploadTask()).start();
+        }
+
+        private class UploadTask implements Runnable {
+
+            @Override
+            public void run() {
+                ContentUploader uploader = new ContentUploader(mResponse, new File(mCroppedImagePath));
+                uploader.setUploaderListener(new ContentUploader.UploadListener() {
+                    @Override
+                    public void onUploadStarted() {
+                        Logger.t(TAG).d("upload started");
+                    }
+
+                    @Override
+                    public void onUploadProgress(float progress) {
+                        Logger.t(TAG).d("upload progress");
+                    }
+
+                    @Override
+                    public void onUploadFinished() {
+                        Logger.t(TAG).d("upload finished");
+                    }
+
+                    @Override
+                    public void onUploadError(String error) {
+                        Logger.t(TAG).d("upload error");
+                    }
+                });
+                uploader.upload();
+            }
+        }
+    }
 
 
     private class uploadAvatarErrorListener implements Response.ErrorListener {

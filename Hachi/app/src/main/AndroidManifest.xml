@@ -96,6 +96,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.avatar.LocalPhotoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.activities.StartupActivity"
             android:screenOrientation="portrait"/>
 
@@ -107,8 +111,9 @@
             android:name=".ui.activities.LiveViewActivity"
             android:screenOrientation="landscape"></activity>
 
-        <activity android:name=".ui.activities.AvatarActivity"
-                  android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.avatar.AvatarActivity"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".ui.activities.FullScreenPlayActivity"

@@ -104,6 +104,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void setupToolbar() {
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         if (mToolbar != null) {
             mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
         }

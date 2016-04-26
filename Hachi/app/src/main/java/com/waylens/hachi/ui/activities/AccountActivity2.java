@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.avatar.AvatarActivity;
 import com.waylens.hachi.utils.ImageUtils;
 
 import butterknife.Bind;
@@ -38,7 +39,7 @@ public class AccountActivity2 extends BaseActivity {
 
     @OnClick(R.id.btnAddPhoto)
     public void onBtnAddPhotoClick() {
-        AvatarActivity.start(this, true);
+        AvatarActivity.start(this, false);
     }
 
     public static void launch(Activity activity) {
@@ -75,7 +76,7 @@ public class AccountActivity2 extends BaseActivity {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+
         mToolbar.setNavigationIcon(R.drawable.navbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -28,7 +28,7 @@ import crs_svr.WaylensCommHead;
  * Created by Xiaofei on 2015/3/18.
  */
 public class ContentUploader {
-    private static final String TAG = "ContentUploader";
+    private static final String TAG = ContentUploader.class.getSimpleName();
 
     private static final String DEFAULT_CONTENT_TOKEN = "avatar";
 
@@ -117,6 +117,7 @@ public class ContentUploader {
 
         private void init() {
             mFileSha1 = HashUtils.SHA1(mFile);
+
             try {
                 mSocket = new Socket(mIpAddr, mPort);
                 mOutputStream = mSocket.getOutputStream();
@@ -221,7 +222,7 @@ public class ContentUploader {
             int ilen = CommWaylensParse.encode(comm_header, start_upload, data);
 
             sendData(data, ilen);
-
+            Logger.t(TAG).d("sha1: " + mFileSha1);
             int ret = receiveData();
 
 

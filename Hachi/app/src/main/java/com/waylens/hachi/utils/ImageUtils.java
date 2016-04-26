@@ -18,6 +18,7 @@ import com.nostra13.universalimageloader.utils.L;
 import com.waylens.hachi.R;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Created by Richard on 8/18/15.
@@ -79,6 +80,44 @@ public class ImageUtils {
     public static boolean isExternalStorageReady() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 && Environment.getExternalStorageDirectory().canWrite();
+    }
+
+
+    public static String saveBitmap(Bitmap bmp, String fullPath) {
+        int lastIndex = fullPath.lastIndexOf('/');
+        if (lastIndex == -1) {
+            return null;
+        }
+        String path = fullPath.substring(0, lastIndex);
+        String name = fullPath.substring(lastIndex + 1);
+        saveBitmap(bmp, path, name);
+        return fullPath;
+    }
+
+
+    public static String saveBitmap(Bitmap bmp, String path, String name) {
+        // File file = new File("mnt/sdcard/picture");
+        File file = new File(path);
+        String fullPath = null;
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        fullPath = file.getPath() + "/" + name;
+        if (new File(path + name).exists()) {
+            return fullPath;
+        }
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(fullPath);
+
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return fullPath;
     }
 
     public static Bitmap zoomBitmap(Bitmap bitmap, int w, int h) {
