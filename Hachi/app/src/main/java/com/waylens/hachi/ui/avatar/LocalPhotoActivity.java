@@ -135,8 +135,14 @@ public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.On
     }
 
     private void showPhotoPickerFragment(String albumName, List<Photo> list) {
-        tvLeftArrowBtn.setVisibility(View.VISIBLE);
-        titleTextView.setText(albumName);
+//        tvLeftArrowBtn.setVisibility(View.VISIBLE);
+        getToolbar().setTitle(albumName);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPhotoAlbumFragment();
+            }
+        });
 
         FragmentTransaction transaction = manager.beginTransaction().setTransition
             (FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
@@ -156,7 +162,13 @@ public class LocalPhotoActivity extends BaseActivity implements AlbumFragment.On
 
     private void showPhotoAlbumFragment() {
         tvLeftArrowBtn.setVisibility(View.GONE);
-        titleTextView.setText("选择相册");
+        getToolbar().setTitle(R.string.choose_album);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         FragmentTransaction transaction = manager.beginTransaction().setTransition
             (FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);

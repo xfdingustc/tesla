@@ -31,17 +31,12 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2015/6/29.
  */
 public class AlbumFragment extends BaseFragment implements View.OnClickListener {
-
-
-
     public interface OnAlbumClickedListener {
         void onAlbumClickedListener(String albumName, List<Photo> list);
     }
 
     private OnAlbumClickedListener onPageLodingClickListener;
-    private ListView listView;
-    private List<AlbumInfo> listAlbumInfo = new ArrayList<AlbumInfo>();
-    private AlbumAdapter listAdapter;
+
 
     private AlbumSerializable mPhotoAlbumSerializable;
 
