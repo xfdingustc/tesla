@@ -11,8 +11,8 @@ import java.io.IOException;
 public class CrsClientTranData extends CrsCommand {
     String jidExt;
     long momentID;
-    String fileSha1;
-    String blockSha1;
+    byte[] fileSha1;
+    byte[] blockSha1;
     int dataType;
     int seqNum;
     int blockNum;
@@ -22,8 +22,8 @@ public class CrsClientTranData extends CrsCommand {
     public CrsClientTranData(String userID,
                              String guid,
                              long momentID,
-                             String fileSha1,
-                             String blockSha1,
+                             byte[] fileSha1,
+                             byte[] blockSha1,
                              int dataType,
                              int seqNum,
                              int blockNum,
@@ -47,12 +47,12 @@ public class CrsClientTranData extends CrsCommand {
         write(jidExt, true);
         write(momentID);
         if (fileSha1 != null) {
-            write(fileSha1, false);
+            write(fileSha1);
         } else {
             write(new byte[20]);
         }
         if (blockSha1 != null) {
-            write(blockSha1, false);
+            write(blockSha1);
         } else {
             write(new byte[20]);
         }
@@ -69,8 +69,8 @@ public class CrsClientTranData extends CrsCommand {
         try {
             jidExt = readString(inputStream, 0);
             momentID = readLong(inputStream);
-            fileSha1 = readString(inputStream, 20);
-            blockSha1 = readString(inputStream, 20);
+            fileSha1 = readByteArray(inputStream, 20);
+            blockSha1 = readByteArray(inputStream, 20);
             dataType = readInt(inputStream);
             seqNum = readInt(inputStream);
             blockNum = readInt(inputStream);

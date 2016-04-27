@@ -19,7 +19,15 @@ public class CrsUserLogin extends CrsCommand {
         super(privateKey);
         jid = userID + "/" + WAYLENS_RESOURCE_TYPE_ANDROID;
         this.momentID = momentID;
-        deviceType = CrsCommand.DEVICE_VIDIT;
+        deviceType = CrsCommand.DEVICE_OTHER;
+        hash = HashUtils.MD5String(jid + momentID + deviceType + privateKey);
+    }
+
+    public CrsUserLogin(String userID, long momentID, String privateKey, byte deviceType) {
+        super(privateKey);
+        jid = userID + "/" + WAYLENS_RESOURCE_TYPE_ANDROID;
+        this.momentID = momentID;
+        this.deviceType = deviceType;
         hash = HashUtils.MD5String(jid + momentID + deviceType + privateKey);
     }
 

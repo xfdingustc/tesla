@@ -2,6 +2,8 @@ package com.waylens.hachi.utils;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.MessageDigest;
@@ -65,7 +67,7 @@ public class HashUtils {
         try {
             FileInputStream in = new FileInputStream(file);
             MessageDigest sha1Inst = MessageDigest.getInstance("SHA-1");
-            byte[] buffer = new byte[1024 * 1024 * 10];
+            byte[] buffer = new byte[1024 * 4];
             int len = 0;
             int cnt = 0;
             Log.i(TAG, "file length = " + file.length());
@@ -75,7 +77,9 @@ public class HashUtils {
                 //sha1Inst.update(buffer);
                 Log.i(TAG, "time = " + cnt++ + " len = " + len);
             }
-            return sha1Inst.digest();
+            byte[] ret = sha1Inst.digest();
+            Logger.t(TAG).d("sha1Inst: " + ret);
+            return ret;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

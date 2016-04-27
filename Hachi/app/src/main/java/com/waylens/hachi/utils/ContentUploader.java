@@ -44,7 +44,7 @@ public class ContentUploader {
         parseToken(token);
         mFile = file;
         CommWaylensParse.private_key = mPrivKey;
-        CommWaylensParse.encode_type = (byte) ProtocolConstMsg.ENCODE_TYPE_AES;
+        CommWaylensParse.encode_type = (byte) ProtocolConstMsg.ENCODE_TYPE_OPEN;
     }
 
     private byte getDataType() {
@@ -130,7 +130,7 @@ public class ContentUploader {
         public boolean upload() {
             try {
                 login();
-                Log.i(TAG, "Login finished!!!");
+                Logger.t(TAG).d("Login finished!!!");
                 if (!startUpload()) {
                     Log.i(TAG, "This file already exists");
                     return true;
@@ -222,7 +222,7 @@ public class ContentUploader {
             int ilen = CommWaylensParse.encode(comm_header, start_upload, data);
 
             sendData(data, ilen);
-            Logger.t(TAG).d("sha1: " + mFileSha1);
+            Logger.t(TAG).d("sha1: " + new String(mFileSha1) + " sha1 size: " + mFileSha1.length);
             int ret = receiveData();
 
 
@@ -341,7 +341,7 @@ public class ContentUploader {
             CrsCommResponse response = new CrsCommResponse();
             CommWaylensParse.decode(response_cmd, packet_size, comm_head, response);
 
-            Log.i(TAG, "return = " + response.ret + " comm type = " + comm_head.cmd);
+            Logger.t(TAG).d("return = " + response.ret + " comm type = " + comm_head.cmd);
             return response.ret;
         }
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 public class CrsUserStartUpload extends CrsCommand {
     String jidExt;
     long momentID;
-    String fileSha1;
+    byte[] fileSha1;
     int dataType;
     long fileSize;
     long startTime;
@@ -19,7 +19,7 @@ public class CrsUserStartUpload extends CrsCommand {
     public CrsUserStartUpload(String userID,
                        String guid,
                        long momentID,
-                       String fileSha1,
+                       byte[] fileSha1,
                        int dataType,
                        long fileSize,
                        long startTime,
@@ -42,7 +42,7 @@ public class CrsUserStartUpload extends CrsCommand {
         write(jidExt, true);
         write(momentID);
         if (fileSha1 != null) {
-            write(fileSha1, false);
+            write(fileSha1);
         } else {
             write(new byte[20]);
         }
@@ -59,7 +59,7 @@ public class CrsUserStartUpload extends CrsCommand {
         try {
             jidExt = readString(inputStream, 0);
             momentID = readLong(inputStream);
-            fileSha1 = readString(inputStream, 20);
+            fileSha1 = readByteArray(inputStream, 20);
             dataType = readInt(inputStream);
             fileSize = readLong(inputStream);
             startTime = readLong(inputStream);

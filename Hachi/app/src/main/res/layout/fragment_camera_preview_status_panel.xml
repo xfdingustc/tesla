@@ -54,6 +54,7 @@
                     android:layout_marginBottom="16dp"
                     android:layout_marginTop="10dp"
                     android:textColor="@color/text_camera_info"
+                    android:visibility="gone"
                     android:textSize="12sp"
                     tools:text="300 bookmarks remain"/>
             </LinearLayout>
@@ -74,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="@string/confirm_bookmark_add"
-                android:textColor="#FE5000"
+                android:textColor="@color/style_color_accent"
                 android:textSize="16sp"/>
 
             <ImageView
