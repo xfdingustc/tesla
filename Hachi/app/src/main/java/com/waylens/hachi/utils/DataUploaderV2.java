@@ -6,6 +6,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
+import com.waylens.hachi.upload.CloudInfo;
 import com.waylens.hachi.vdb.urls.UploadUrl;
 
 import java.io.File;
@@ -188,7 +189,7 @@ public class DataUploaderV2 {
 
             byte[] blockSha1 = HashUtils.SHA1(data, length);
 
-            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
+//            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
 
             CrsClientTranData tranData = new CrsClientTranData(mUserId,
                 guid,
@@ -339,7 +340,7 @@ public class DataUploaderV2 {
 
     }
 
-    void updateFile(File file) {
+    void updateFile(String file) {
         Logger.t(TAG).d("Start upload file: " + file.toString());
         try {
             init();
@@ -350,8 +351,8 @@ public class DataUploaderV2 {
                 return;
             }
             Logger.t(TAG).d("Login successful");
-            byte[] fileSha1 = HashUtils.SHA1(file);
-            ret = uploadAvatar(file.getPath(), (int)file.length(), fileSha1);
+            byte[] fileSha1 = HashUtils.SHA1(new File(file));
+            ret = uploadAvatar(file, (int)file.length(), fileSha1);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
                 mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_THUMBNAIL, ret);
@@ -376,18 +377,18 @@ public class DataUploaderV2 {
     }
 
     public void upload(LocalMoment localMoment, @NonNull OnUploadListener listener) {
-        mAddress = localMoment.cloudInfo.address;
-        mPort = localMoment.cloudInfo.port;
-        mPrivateKey = localMoment.cloudInfo.privateKey;
+        mAddress = localMoment.cloudInfo.getAddress();
+        mPort = localMoment.cloudInfo.getPort();
+        mPrivateKey = localMoment.cloudInfo.getPrivateKey();
         mUploadListener = listener;
         uploadClips(localMoment);
 
     }
 
-    public void upload(String address, int port, String privateKey, File file, @NonNull OnUploadListener listener) {
-        mAddress = address;
-        mPort = port;
-        mPrivateKey = privateKey;
+    public void upload(CloudInfo cloudInfo, String file, @NonNull OnUploadListener listener) {
+        mAddress = cloudInfo.getAddress();
+        mPort = cloudInfo.getPort();
+        mPrivateKey = cloudInfo.getPrivateKey();
         mUploadListener = listener;
         updateFile(file);
     }

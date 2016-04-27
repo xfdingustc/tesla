@@ -33,7 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -186,7 +185,7 @@ public class UserProfileActivity extends BaseActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.editProfile:
-                            AccountActivity2.launch(UserProfileActivity.this);
+                            AccountActivity.launch(UserProfileActivity.this);
                             break;
                     }
                     return true;

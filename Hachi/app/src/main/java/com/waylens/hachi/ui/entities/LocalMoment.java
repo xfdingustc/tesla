@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.entities;
 
+import com.waylens.hachi.upload.CloudInfo;
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.urls.UploadUrl;
@@ -61,17 +62,7 @@ public class LocalMoment {
         isReadyToUpload = isPrepared;
     }
 
-    public static class CloudInfo {
-        public String address;
-        public int port;
-        public String privateKey;
 
-        public CloudInfo(String address, int port, String privateKey) {
-            this.address = address;
-            this.port = port;
-            this.privateKey = privateKey;
-        }
-    }
 
     public static class Segment {
 

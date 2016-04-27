@@ -15,6 +15,8 @@ import android.view.View;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.config.Configuration;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -22,12 +24,10 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
-import com.waylens.hachi.utils.ContentUploader;
-import com.waylens.hachi.utils.DataUploaderV2;
+import com.waylens.hachi.upload.CloudInfo;
+import com.waylens.hachi.upload.UploadJob;
 import com.waylens.hachi.utils.ImageUtils;
 
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -105,6 +105,7 @@ public class AvatarActivity extends BaseActivity {
         setContentView(R.layout.activity_avatar_picker);
         setupToolbar();
     }
+
     @Override
     public void setupToolbar() {
         super.setupToolbar();
@@ -140,7 +141,6 @@ public class AvatarActivity extends BaseActivity {
                 switch (item.getItemId()) {
                     case R.id.confirm:
                         saveCroppedImage();
-                        Logger.t(TAG).d("upload avatar");
                         uploadAvatar();
                         break;
                 }
@@ -150,8 +150,6 @@ public class AvatarActivity extends BaseActivity {
         new ExtractThumbTask(mReturnImagePath, 1536, 2048).execute();
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
 
 
     private void saveCroppedImage() {
@@ -188,83 +186,22 @@ public class AvatarActivity extends BaseActivity {
     }
 
     private class uploadAvatarResponseListener implements Response.Listener<JSONObject> {
-
-//        private Content mAvatarContent;
-        private JSONObject mResponse;
-
         @Override
         public void onResponse(JSONObject response) {
-            mResponse = response;
             Logger.t(TAG).d("Get REsponse: " + response.toString());
-//            mAvatarContent = new Content();
-//            mAvatarContent.setUri(Uri.fromFile(new File(mCroppedImagePath)).toString());
-//            mAvatarContent.setType(Constant.TRIP_CONTENT_TYPE_IMAGE);
-            new Thread(new UploadTask()).start();
+
+
+//            UploadJob uploadJob = new UploadJob(mCroppedImagePath, CloudInfo.parseFromJson(response));
+            UploadJob uploadJob = new UploadJob(mCroppedImagePath, CloudInfo.parseFromJson(response));
+//            uploadJob.mCloudInfo = ;
+//            uploadJob.mFile = mCroppedImagePath;
+            JobManager jobManager = new JobManager(new Configuration.Builder(AvatarActivity.this).id("upload").build());
+            jobManager.addJobInBackground(uploadJob);
+
+
         }
 
-        private class UploadTask implements Runnable {
 
-            @Override
-            public void run() {
-//                ContentUploader uploader = new ContentUploader(mResponse, new File(mCroppedImagePath));
-//                uploader.setUploaderListener(new ContentUploader.UploadListener() {
-//                    @Override
-//                    public void onUploadStarted() {
-//                        Logger.t(TAG).d("upload started");
-//                    }
-//
-//                    @Override
-//                    public void onUploadProgress(float progress) {
-//                        Logger.t(TAG).d("upload progress");
-//                    }
-//
-//                    @Override
-//                    public void onUploadFinished() {
-//                        Logger.t(TAG).d("upload finished");
-//                    }
-//
-//                    @Override
-//                    public void onUploadError(String error) {
-//                        Logger.t(TAG).d("upload error");
-//                    }
-//                });
-//                uploader.upload();
-
-                DataUploaderV2 uploader = new DataUploaderV2();
-                JSONObject uploadServer = null;
-                try {
-                    uploadServer = mResponse.getJSONObject("uploadServer");
-                    String ipAddr = uploadServer.optString("ip");
-                    int port = uploadServer.optInt("port");
-                    String privKey = uploadServer.optString("privateKey");
-
-                    uploader.upload(ipAddr, port, privKey, new File(mCroppedImagePath), new DataUploaderV2.OnUploadListener() {
-                        @Override
-                        public void onUploadSuccessful() {
-                            Logger.t(TAG).d("upload listener");
-                        }
-
-                        @Override
-                        public void onUploadProgress(int percentage) {
-                            Logger.t(TAG).d("upload progress: " + percentage);
-                        }
-
-                        @Override
-                        public void onUploadError(int errorCode, int extraCode) {
-                            Logger.t(TAG).d("update error: " );
-                        }
-
-                        @Override
-                        public void onCancelUpload() {
-                            Logger.t(TAG).d("upload cancelled");
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
     }
 
 

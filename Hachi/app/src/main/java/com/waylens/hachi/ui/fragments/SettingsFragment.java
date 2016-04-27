@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.AccountActivity;
-import com.waylens.hachi.ui.activities.AccountActivity2;
 import com.waylens.hachi.ui.activities.ManualSetupActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
 
@@ -34,7 +33,7 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.settings_account)
     void clickAccount() {
-        AccountActivity2.launch(getActivity());
+        AccountActivity.launch(getActivity());
     }
 
     @OnClick(R.id.settings_help)
