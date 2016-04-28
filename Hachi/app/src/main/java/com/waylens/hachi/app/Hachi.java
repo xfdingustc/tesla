@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 
+import com.birbit.android.jobqueue.JobManager;
 import com.bugtags.library.Bugtags;
 import com.bugtags.library.BugtagsOptions;
 import com.facebook.FacebookSdk;
@@ -17,6 +18,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.upload.UploadJobManager;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -31,6 +33,8 @@ public class Hachi extends Application {
     private static Context mSharedContext = null;
 
     private DeviceScanner mScanner;
+
+
 
 
     @Override
@@ -76,6 +80,8 @@ public class Hachi extends Application {
 
         initLogger();
 
+        configureJobManager();
+
         PreferenceUtils.initialize(this);
 
         SessionManager.initialize(this);
@@ -113,6 +119,10 @@ public class Hachi extends Application {
         startDeviceScanner();
     }
 
+    private void configureJobManager() {
+        UploadJobManager.init(this);
+    }
+
     public void startDeviceScanner() {
         if (mScanner != null) {
             mScanner.stopWork();
@@ -141,6 +151,8 @@ public class Hachi extends Application {
             .setMethodCount(1)
             .hideThreadInfo();
     }
+
+
 
 
 }

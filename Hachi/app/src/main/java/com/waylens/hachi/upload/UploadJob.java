@@ -4,6 +4,7 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.utils.DataUploaderV2;
 
 /**

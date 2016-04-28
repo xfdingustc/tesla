@@ -70,12 +70,12 @@ public class HashUtils {
             byte[] buffer = new byte[1024 * 4];
             int len = 0;
             int cnt = 0;
-            Log.i(TAG, "file length = " + file.length());
+//            Log.i(TAG, "file length = " + file.length());
 
             while ((len = in.read(buffer)) > 0) {
                 sha1Inst.update(buffer, 0, len);
                 //sha1Inst.update(buffer);
-                Log.i(TAG, "time = " + cnt++ + " len = " + len);
+//                Log.i(TAG, "time = " + cnt++ + " len = " + len);
             }
             byte[] ret = sha1Inst.digest();
             Logger.t(TAG).d("sha1Inst: " + ret);
@@ -97,7 +97,6 @@ public class HashUtils {
             byte[] buffer = new byte[1024 * 4];
             int len = 0;
             int cnt = 0;
-            Log.i(TAG, "file length = " + file.length());
 
             while ((len = in.read(buffer)) > 0) {
                 sha1Inst.update(buffer, 0, len);

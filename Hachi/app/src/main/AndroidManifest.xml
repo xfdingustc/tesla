@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 
     <application
@@ -194,7 +195,11 @@
             android:name=".gcm.RegistrationIntentService"
             android:exported="false">
         </service>
-        <!-- [END gcm_receiver] -->
+
+        <service
+            android:name=".upload.UploadJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
 
         <meta-data
             android:name="BUG_HD_SDK_GENERAL_KEY"

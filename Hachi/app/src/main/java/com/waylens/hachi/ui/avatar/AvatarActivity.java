@@ -26,6 +26,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
 import com.waylens.hachi.upload.CloudInfo;
 import com.waylens.hachi.upload.UploadJob;
+import com.waylens.hachi.upload.UploadJobManager;
 import com.waylens.hachi.utils.ImageUtils;
 
 import org.json.JSONObject;
@@ -162,7 +163,7 @@ public class AvatarActivity extends BaseActivity {
         try {
             FileOutputStream out = new FileOutputStream(mCroppedImagePath);
             Logger.t(TAG).d("try to compress file : " + mCroppedImagePath);
-            if (false && croppedImage.compress(Bitmap.CompressFormat.JPEG, 60, out)) {
+            if (croppedImage.compress(Bitmap.CompressFormat.JPEG, 60, out)) {
                 out.flush();
             } else {
                 ImageUtils.saveBitmap(croppedImage, mCroppedImagePath);
@@ -189,13 +190,8 @@ public class AvatarActivity extends BaseActivity {
         @Override
         public void onResponse(JSONObject response) {
             Logger.t(TAG).d("Get REsponse: " + response.toString());
-
-
-//            UploadJob uploadJob = new UploadJob(mCroppedImagePath, CloudInfo.parseFromJson(response));
             UploadJob uploadJob = new UploadJob(mCroppedImagePath, CloudInfo.parseFromJson(response));
-//            uploadJob.mCloudInfo = ;
-//            uploadJob.mFile = mCroppedImagePath;
-            JobManager jobManager = new JobManager(new Configuration.Builder(AvatarActivity.this).id("upload").build());
+            JobManager jobManager = UploadJobManager.getManager();
             jobManager.addJobInBackground(uploadJob);
 
 
