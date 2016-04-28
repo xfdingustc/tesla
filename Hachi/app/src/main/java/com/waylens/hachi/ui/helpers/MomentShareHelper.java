@@ -8,13 +8,13 @@ import android.support.annotation.NonNull;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.utils.DataUploaderV2;
+import com.waylens.hachi.upload.DataUploader;
 
 /**
  * MomentShareHelper
  * Created by Richard on 1/5/16.
  */
-public class MomentShareHelper implements DataUploaderV2.OnUploadListener,
+public class MomentShareHelper implements DataUploader.OnUploadListener,
         MomentBuilder.OnBuildListener {
     private static final String TAG = "MomentShareHelper";
 
@@ -34,7 +34,7 @@ public class MomentShareHelper implements DataUploaderV2.OnUploadListener,
     OnShareMomentListener mShareListener;
 
     volatile Thread mUploadThread;
-    volatile DataUploaderV2 uploaderV2;
+    volatile DataUploader uploaderV2;
     volatile boolean isCancelled;
 
     MomentBuilder mMomentBuilder;
@@ -99,7 +99,7 @@ public class MomentShareHelper implements DataUploaderV2.OnUploadListener,
                         }
                         return;
                     }
-                    uploaderV2 = new DataUploaderV2();
+                    uploaderV2 = new DataUploader();
                     uploaderV2.upload(mLocalMoment, MomentShareHelper.this);
                 } catch (Exception e) {
                     Logger.t(TAG).e(e, "");

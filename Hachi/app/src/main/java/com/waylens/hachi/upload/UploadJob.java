@@ -4,8 +4,6 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.VdbRequest;
-import com.waylens.hachi.utils.DataUploaderV2;
 
 /**
  * Created by Xiaofei on 2016/4/27.
@@ -30,9 +28,9 @@ public class UploadJob extends Job {
     @Override
     public void onRun() throws Throwable {
         Logger.t(TAG).d("on Run file: " + file);
-        DataUploaderV2 uploader = new DataUploaderV2();
+        DataUploader uploader = new DataUploader();
 //        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
-        uploader.upload(mCloudInfo, file, new DataUploaderV2.OnUploadListener() {
+        uploader.upload(mCloudInfo, file, new DataUploader.OnUploadListener() {
             @Override
             public void onUploadSuccessful() {
                 Logger.t(TAG).d("upload listener");

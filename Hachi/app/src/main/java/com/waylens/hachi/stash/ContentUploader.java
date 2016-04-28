@@ -1,9 +1,11 @@
-package com.waylens.hachi.utils;
+package com.waylens.hachi.stash;
 
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.utils.DigitUtils;
+import com.waylens.hachi.utils.HashUtils;
 
 import org.json.JSONObject;
 

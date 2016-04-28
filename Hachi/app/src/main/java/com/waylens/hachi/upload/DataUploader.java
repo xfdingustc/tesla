@@ -1,4 +1,4 @@
-package com.waylens.hachi.utils;
+package com.waylens.hachi.upload;
 
 import android.support.annotation.NonNull;
 
@@ -7,6 +7,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.upload.CloudInfo;
+import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.urls.UploadUrl;
 
 import java.io.File;
@@ -33,8 +34,11 @@ import crs_svr.v2.EncodeCommandHeader;
  * DataUploaderV2
  * Created by Richard on 1/14/16.
  */
-public class DataUploaderV2 {
-    private static final String TAG = "DataUploaderV2";
+public class DataUploader {
+    private static final String TAG = DataUploader.class.getSimpleName();
+
+    private final int BLOCK_UPLOAD_FINISHED_RETURN_VAL = 1;
+    private final int FILE_UPLOAD_FINISHED_RETURN_VAL = 2;
 
     private String mAddress;
     private int mPort;
@@ -59,7 +63,7 @@ public class DataUploaderV2 {
         void onCancelUpload();
     }
 
-    public DataUploaderV2() {
+    public DataUploader() {
         mUserId = SessionManager.getInstance().getUserId();
         EncodeCommandHeader.CURRENT_ENCODE_TYPE = CrsCommand.ENCODE_TYPE_OPEN;
     }
@@ -211,9 +215,16 @@ public class DataUploaderV2 {
             int percentage = clipIndex * 100 / mClipTotalCount + percentageInThisClip;
 
             mUploadListener.onUploadProgress(percentage);
+
         }
 
         inputStream.close();
+        int serverRet = receiveData();
+        if (serverRet != CrsCommand.RES_FILE_TRANS_COMPLETE) {
+            throw new IOException("In upload content: upload file failed ret = " + serverRet);
+        }
+
+
 
         return stopUpload(guid);
     }
@@ -356,7 +367,7 @@ public class DataUploaderV2 {
             byte[] fileSha1 = HashUtils.SHA1(avatarFile);
             int fileSize = (int)avatarFile.length();
             ret = uploadAvatar(file, fileSize, fileSha1);
-            if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
+            if (ret != CrsCommand.RES_STATE_OK) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
                 mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_THUMBNAIL, ret);
                 return;
