@@ -1,109 +1,146 @@
 package com.waylens.hachi.ui.avatar;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
-
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.avatar.serializables.Photo;
 import com.waylens.hachi.ui.avatar.serializables.PhotoSerializable;
-
+import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.utils.ImageUtils;
+import com.waylens.hachi.utils.ThumbnailsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Xiaofei on 2015/6/29.
  */
-public class PhotoPickerFragment extends Fragment {
-  private static final String TAG = PhotoPickerFragment.class.getSimpleName();
+public class PhotoPickerFragment extends BaseFragment implements View.OnClickListener {
+    private static final String TAG = PhotoPickerFragment.class.getSimpleName();
 
-  public interface OnPhotoSelectClickListener {
-    public void onOKClickListener(Photo selectedPhoto);
-  }
 
-  private OnPhotoSelectClickListener onPhotoSelectClickListener;
-
-  protected ImageLoader imageLoader = ImageLoader.getInstance();
-  protected boolean pauseOnScroll = true;
-  protected boolean pauseOnFling = true; // 滑动时不异步取数据;
-
-  private GridView gridView;
-  private List<Photo> dataList;
-  private PhotoPickerAdapter gridImageAdapter;
-
-  @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    if (onPhotoSelectClickListener == null) {
-      onPhotoSelectClickListener = (OnPhotoSelectClickListener) activity;
+    public interface OnPhotoSelectClickListener {
+        public void onOKClickListener(Photo selectedPhoto);
     }
-  }
 
-  @Override
-  public void onStop() {
-    super.onStop();
-  }
+    private OnPhotoSelectClickListener onPhotoSelectClickListener;
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_photo_picker, container, false);
-    View unusedView = view.findViewById(R.id.bottom_layout);
-    unusedView.setVisibility(View.GONE);
-    return view;
-  }
+    protected ImageLoader imageLoader = ImageLoader.getInstance();
 
-  @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
+    private List<Photo> dataList;
 
-    Bundle args = getArguments();
+    @Bind(R.id.rvPhotoList)
+    RecyclerView mRvPhotoList;
 
-    // 文件夹照片列表;
-    PhotoSerializable photoSerializable = (PhotoSerializable) args.getSerializable("list");
-    dataList = new ArrayList<Photo>();
-    dataList.addAll(photoSerializable.getList());
-
-    init();
-  }
-
-  public void updateDataList(List<Photo> newList) {
-    if (dataList == newList) {
-      return;
-    }
-    dataList.clear();
-    dataList.addAll(newList);
-    gridImageAdapter.notifyDataSetChanged();
-  }
-
-  private void init() {
-    View v = getView();
-
-    gridView = (GridView) v.findViewById(R.id.myGrid);
-    gridImageAdapter = new PhotoPickerAdapter(getActivity(), dataList);
-    initListener();
-    gridView.setAdapter(gridImageAdapter);
-
-    gridView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
-  }
-
-  private void initListener() {
-    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (onPhotoSelectClickListener != null) {
-          onPhotoSelectClickListener.onOKClickListener(dataList.get(position));
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (onPhotoSelectClickListener == null) {
+            onPhotoSelectClickListener = (OnPhotoSelectClickListener) activity;
         }
-      }
-    });
-  }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = createFragmentView(inflater, container, R.layout.fragment_photo_picker, savedInstanceState);
+        return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Bundle args = getArguments();
+
+        // 文件夹照片列表;
+        PhotoSerializable photoSerializable = (PhotoSerializable) args.getSerializable("list");
+        dataList = new ArrayList<Photo>();
+        dataList.addAll(photoSerializable.getList());
+
+        init();
+    }
+
+    public void updateDataList(List<Photo> newList) {
+        if (dataList == newList) {
+            return;
+        }
+        dataList.clear();
+        dataList.addAll(newList);
+//        gridImageAdapter.notifyDataSetChanged();
+    }
+
+    private void init() {
+        initViews();
+    }
+
+    private void initViews() {
+        mRvPhotoList.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        PhotoListAdapter adapter = new PhotoListAdapter();
+        mRvPhotoList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        PhotoListViewHolder viewHolder = (PhotoListViewHolder) v.getTag();
+        int position = viewHolder.getLayoutPosition();
+        if (onPhotoSelectClickListener != null) {
+            onPhotoSelectClickListener.onOKClickListener(dataList.get(position));
+        }
+
+    }
+
+
+    private class PhotoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Context context = parent.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(R.layout.grid_item_img, parent, false);
+            return new PhotoListViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            PhotoListViewHolder viewHolder = (PhotoListViewHolder) holder;
+            Photo photo = dataList.get(position);
+            String displayItemUri = ThumbnailsUtil.MapgetHashValue(photo.getImageId(), photo.getUrl());
+            imageLoader.displayImage(displayItemUri, viewHolder.imageView, ImageUtils.getVideoOptions());
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return dataList == null ? 0 : dataList.size();
+        }
+    }
+
+    class PhotoListViewHolder extends RecyclerView.ViewHolder {
+
+        @Bind(R.id.image_view)
+        ImageView imageView;
+
+        public PhotoListViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            imageView.setTag(this);
+            imageView.setOnClickListener(PhotoPickerFragment.this);
+
+        }
+    }
 
 }

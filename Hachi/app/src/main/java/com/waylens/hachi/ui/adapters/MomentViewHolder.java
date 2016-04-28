@@ -49,7 +49,6 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.btnLike)
     ImageButton btnLike;
 
-
     @Bind(R.id.btn_comment)
     LinearLayout btnComment;
 
