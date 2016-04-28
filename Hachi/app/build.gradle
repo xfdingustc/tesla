@@ -9,7 +9,7 @@ bugtags {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23"
+    buildToolsVersion "23.0.3"
 
 
     defaultConfig {
@@ -18,6 +18,8 @@ android {
         targetSdkVersion 23
         versionCode 57
         versionName "0.57"
+        renderscriptTargetApi 22
+        renderscriptSupportModeEnabled true
         //multiDexEnabled true
 
         //ndk {
@@ -130,5 +132,6 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     compile 'com.appyvet:materialrangebar:1.3'
     compile 'com.birbit:android-priority-jobqueue:2.0.0-alpha2'
+    compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.5'
 
 }

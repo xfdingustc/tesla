@@ -16,7 +16,6 @@ import android.view.View;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
-import com.birbit.android.jobqueue.config.Configuration;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -194,10 +193,23 @@ public class AvatarActivity extends BaseActivity {
             JobManager jobManager = UploadJobManager.getManager();
             jobManager.addJobInBackground(uploadJob);
 
+            showUploadProgressDialog();
 
         }
 
 
+    }
+
+    private void showUploadProgressDialog() {
+        UploadProgressDialogFragment fragment = UploadProgressDialogFragment.newInstance(
+            9,
+            2.4f,
+            false,
+            false,
+            false,
+            true
+        );
+        fragment.show(getFragmentManager(), "upload");
     }
 
 
@@ -208,51 +220,6 @@ public class AvatarActivity extends BaseActivity {
         }
     }
 
-//    private class uploadAvatarListener implements ContentUploader.UploadListener {
-//        private float mProgress;
-//
-//        @Override
-//        public void onUploadStarted() {
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mUploadProgressBar.setVisibility(View.VISIBLE);
-//                }
-//            });
-//        }
-//
-//        @Override
-//        public void onUploadProgress(Content content, float progress) {
-//            mProgress = progress / 100;
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mUploadProgressBar.setProgress(mProgress);
-//                }
-//            });
-//        }
-//
-//        @Override
-//        public void onUploadFinished(Content content) {
-//            dismissProgressBar();
-//        }
-//
-//        @Override
-//        public void onUploadError(String error) {
-//            dismissProgressBar();
-//        }
-//
-//        private void dismissProgressBar() {
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mUploadProgressBar.setVisibility(View.GONE);
-//                }
-//            });
-//            SessionManager.getInstance().refreshUserProfile();
-//            finish();
-//        }
-//    }
 
     public class ExtractThumbTask extends AsyncTask<Object, Void, String> {
         String srcImgPath = null, dstImgPath = null;
