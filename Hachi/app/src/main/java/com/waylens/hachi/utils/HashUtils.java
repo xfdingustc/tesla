@@ -78,7 +78,6 @@ public class HashUtils {
 //                Log.i(TAG, "time = " + cnt++ + " len = " + len);
             }
             byte[] ret = sha1Inst.digest();
-            Logger.t(TAG).d("sha1Inst: " + ret);
             return ret;
         } catch (Exception e) {
             e.printStackTrace();

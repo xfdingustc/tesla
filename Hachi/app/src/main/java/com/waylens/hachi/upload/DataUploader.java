@@ -7,8 +7,11 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.upload.CloudInfo;
+import com.waylens.hachi.upload.event.UploadEvent;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.urls.UploadUrl;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +50,8 @@ public class DataUploader {
     private String mPrivateKey;
     String mUserId;
     long mMomentID;
+
+    private EventBus mEventBus = EventBus.getDefault();
 
     volatile boolean isCancelled;
     private int mClipTotalCount;
@@ -214,7 +219,8 @@ public class DataUploader {
 
             int percentage = clipIndex * 100 / mClipTotalCount + percentageInThisClip;
 
-            mUploadListener.onUploadProgress(percentage);
+//            mUploadListener.onUploadProgress(percentage);
+            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_PROGRESS, percentage));
 
         }
 
@@ -358,7 +364,8 @@ public class DataUploader {
             int ret = login();
             if (ret != 0) {
                 Logger.t(TAG).d("Login error");
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_LOGIN, ret);
+//                mUploadListener.onUploadError(MomentShareHelper.ERROR_LOGIN, ret);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_LOGIN));
                 return;
             }
             Logger.t(TAG).d("Login successful");
@@ -373,7 +380,7 @@ public class DataUploader {
                 return;
             }
             Logger.t(TAG).d("Upload thumbnail successful");
-            mUploadListener.onUploadSuccessful();
+            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_FINISHED));
         } catch (IOException e) {
             e.printStackTrace();
             if (isCancelled) {

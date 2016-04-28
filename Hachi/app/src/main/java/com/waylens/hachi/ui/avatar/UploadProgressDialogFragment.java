@@ -7,13 +7,15 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.views.CircularProgressView;
+import com.waylens.hachi.upload.event.UploadEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import fr.tvbarthel.lib.blurdialogfragment.BlurDialogFragment;
 
@@ -60,6 +62,10 @@ public class UploadProgressDialogFragment extends BlurDialogFragment {
     private boolean mBlurredActionBar;
     private boolean mUseRenderScript;
 
+    private CircularProgressView mProgressView;
+
+    private EventBus mEventBus = EventBus.getDefault();
+
     /**
      * Retrieve a new instance of the sample fragment.
      *
@@ -91,6 +97,19 @@ public class UploadProgressDialogFragment extends BlurDialogFragment {
         return fragment;
     }
 
+    @Subscribe
+    public void onEventUpload(UploadEvent event) {
+        switch (event.getWhat()) {
+            case UploadEvent.UPLOAD_WHAT_PROGRESS:
+                mProgressView.setCurrentProgress(event.getExtra());
+                break;
+            case UploadEvent.UPLOAD_WHAT_FINISHED:
+                dismiss();
+                getActivity().finish();
+                break;
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -114,9 +133,8 @@ public class UploadProgressDialogFragment extends BlurDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View view = getActivity().getLayoutInflater().inflate(R.layout.upload_dialog_fragment, null);
-        TextView label = ((TextView) view.findViewById(R.id.textView));
-        label.setMovementMethod(LinkMovementMethod.getInstance());
-        Linkify.addLinks(label, Linkify.WEB_URLS);
+        mProgressView = ((CircularProgressView) view.findViewById(R.id.progressView));
+
         builder.setView(view);
 
 
@@ -128,8 +146,15 @@ public class UploadProgressDialogFragment extends BlurDialogFragment {
     public void onStart() {
         super.onStart();
         Log.i("ddd", "ddd");
-        getDialog().getWindow().setBackgroundDrawable(new
-            ColorDrawable(Color.TRANSPARENT));
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mEventBus.register(this);
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
     }
 
     @Override

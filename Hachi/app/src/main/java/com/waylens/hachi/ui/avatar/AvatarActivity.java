@@ -210,6 +210,7 @@ public class AvatarActivity extends BaseActivity {
             true
         );
         fragment.show(getFragmentManager(), "upload");
+
     }
 
 
