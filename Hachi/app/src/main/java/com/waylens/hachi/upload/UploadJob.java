@@ -52,7 +52,7 @@ public class UploadJob extends Job {
                 Logger.t(TAG).d("upload cancelled");
             }
         });
-        Logger.t(TAG).d("Start upload");
+//        Logger.t(TAG).d("Start upload");
     }
 
     @Override

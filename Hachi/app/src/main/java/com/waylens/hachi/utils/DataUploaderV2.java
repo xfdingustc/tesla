@@ -351,8 +351,11 @@ public class DataUploaderV2 {
                 return;
             }
             Logger.t(TAG).d("Login successful");
-            byte[] fileSha1 = HashUtils.SHA1(new File(file));
-            ret = uploadAvatar(file, (int)file.length(), fileSha1);
+            File avatarFile = new File(file);
+
+            byte[] fileSha1 = HashUtils.SHA1(avatarFile);
+            int fileSize = (int)avatarFile.length();
+            ret = uploadAvatar(file, fileSize, fileSha1);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
                 mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_THUMBNAIL, ret);
