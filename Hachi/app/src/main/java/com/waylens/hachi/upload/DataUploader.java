@@ -39,14 +39,10 @@ import crs_svr.v2.EncodeCommandHeader;
 public class DataUploader {
     private static final String TAG = DataUploader.class.getSimpleName();
 
-    private final int BLOCK_UPLOAD_FINISHED_RETURN_VAL = 1;
-    private final int FILE_UPLOAD_FINISHED_RETURN_VAL = 2;
-
-    private String mAddress;
-    private int mPort;
+    private CloudInfo mCloudInfo;
     private Socket mSocket;
     private OutputStream mOutputStream;
-    private String mPrivateKey;
+
     String mUserId;
     long mMomentID;
 
@@ -55,17 +51,6 @@ public class DataUploader {
     volatile boolean isCancelled;
     private int mClipTotalCount;
 
-    private OnUploadListener mUploadListener;
-
-    public interface OnUploadListener {
-        void onUploadSuccessful();
-
-        void onUploadProgress(int percentage);
-
-        void onUploadError(int errorCode, int extraCode);
-
-        void onCancelUpload();
-    }
 
     public DataUploader() {
         mUserId = SessionManager.getInstance().getUserId();
@@ -73,25 +58,22 @@ public class DataUploader {
     }
 
     private void init() throws IOException {
-        mSocket = new Socket(mAddress, mPort);
+        mSocket = new Socket(mCloudInfo.getAddress(), mCloudInfo.getPort());
         mOutputStream = mSocket.getOutputStream();
     }
 
     private int login() throws IOException {
-        Logger.t(TAG).d("login");
-        CrsUserLogin loginCmd = new CrsUserLogin(mUserId, mMomentID, mPrivateKey);
-        Logger.t(TAG).d("buffer length: " + loginCmd.getEncodedCommand().length);
+        mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN));
+        CrsUserLogin loginCmd = new CrsUserLogin(mUserId, mMomentID, mCloudInfo.getPrivateKey());
         sendData(loginCmd.getEncodedCommand());
-        Logger.t(TAG).d("login data has send");
-        return receiveData();
+        int ret = receiveData();
+        mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN_SUCCEED));
+        return ret;
     }
 
     private int createMomentDesc(LocalMoment localMoment)
         throws IOException {
-        CrsMomentDescription momentDescription = new CrsMomentDescription(mUserId,
-            mMomentID,
-            "background music",
-            mPrivateKey);
+        CrsMomentDescription momentDescription = new CrsMomentDescription(mUserId, mMomentID, "background music", mCloudInfo.getPrivateKey());
         for (LocalMoment.Segment segment : localMoment.mSegments) {
             momentDescription.addFragment(new CrsFragment(segment.clip.getVdbId(),
                 segment.getClipCaptureTime(),
@@ -103,15 +85,10 @@ public class DataUploader {
                 segment.dataType
             ));
         }
-        momentDescription.addFragment(new CrsFragment(String.valueOf(mMomentID),
-            localMoment.mSegments.get(0).getClipCaptureTime(),
-            0,
-            0,
-            0,
-            (short) 0,
-            (short) 0,
-            CrsCommand.VIDIT_THUMBNAIL_JPG
-        ));
+        CrsFragment  crsFragment = new CrsFragment(String.valueOf(mMomentID),
+            localMoment.mSegments.get(0).getClipCaptureTime(), 0, 0, 0,
+            (short)0, (short) 0, CrsCommand.VIDIT_THUMBNAIL_JPG);
+        momentDescription.addFragment(crsFragment);
         sendData(momentDescription.getEncodedCommand());
         return receiveData();
     }
@@ -125,7 +102,7 @@ public class DataUploader {
             duration = uploadUrl.lengthMs;
         }
         CrsUserStartUpload startUpload = new CrsUserStartUpload(mUserId, guid, mMomentID, fileSha1,
-            dataType, fileSize, startTime, offset, duration, mPrivateKey);
+            dataType, fileSize, startTime, offset, duration, mCloudInfo.getPrivateKey());
         sendData(startUpload.getEncodedCommand());
         return receiveData();
     }
@@ -189,7 +166,7 @@ public class DataUploader {
 //            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
 
             CrsClientTranData tranData = new CrsClientTranData(mUserId, guid, mMomentID, fileSha1,
-                blockSha1, dataType, seqNum, 0, (short) length, data, mPrivateKey);
+                blockSha1, dataType, seqNum, 0, (short) length, data, mCloudInfo.getPrivateKey());
 
             sendData(tranData.getEncodedCommand());
             seqNum++;
@@ -215,7 +192,7 @@ public class DataUploader {
     }
 
     private int stopUpload(String guid) throws IOException {
-        CrsUserStopUpload crsUserStopUpload = new CrsUserStopUpload(mUserId, guid, mPrivateKey);
+        CrsUserStopUpload crsUserStopUpload = new CrsUserStopUpload(mUserId, guid, mCloudInfo.getPrivateKey());
         sendData(crsUserStopUpload.getEncodedCommand());
         return receiveData();
     }
@@ -242,7 +219,7 @@ public class DataUploader {
     }
 
     private void logOut() throws IOException {
-        CrsUserLogout logout = new CrsUserLogout(mUserId, mPrivateKey);
+        CrsUserLogout logout = new CrsUserLogout(mUserId, mCloudInfo.getPrivateKey());
         sendData(logout.getEncodedCommand());
     }
 
@@ -292,14 +269,14 @@ public class DataUploader {
             int ret = login();
             if (ret != 0) {
                 Logger.t(TAG).d("Login error");
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_LOGIN, ret);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_LOGIN));
                 return;
             }
             Logger.t(TAG).d("Login successful");
             ret = createMomentDesc(localMoment);
             if (ret != 0) {
                 Logger.t(TAG).d("createMoment error");
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_CREATE_MOMENT_DESC, ret);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_CREATE_MOMENT_DESC));
                 return;
             }
             Logger.t(TAG).d("createMoment successful");
@@ -307,24 +284,27 @@ public class DataUploader {
             ret = uploadMomentData(localMoment);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 Logger.t(TAG).d("Upload fragment error: " + ret);
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_VIDEO, ret);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_UPLOAD_VIDEO));
                 return;
             }
             Logger.t(TAG).d("Upload fragment successful");
             ret = uploadThumbnail(localMoment.thumbnailPath);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_THUMBNAIL, ret);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_UPLOAD_THUMBNAIL));
                 return;
             }
             Logger.t(TAG).d("Upload thumbnail successful");
-            mUploadListener.onUploadSuccessful();
+            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_FINISHED));
+
         } catch (IOException e) {
             Logger.t(TAG).e(e, "IOException");
             if (isCancelled) {
-                mUploadListener.onCancelUpload();
+
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_CANCELLED));
             } else {
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_IO, CrsCommand.RES_STATE_FAIL);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_IO));
+//                mUploadListener.onUploadError(MomentShareHelper.ERROR_IO, CrsCommand.RES_STATE_FAIL);
             }
         } finally {
             try {
@@ -355,7 +335,7 @@ public class DataUploader {
             ret = uploadAvatar(file, fileSize, fileSha1);
             if (ret != CrsCommand.RES_STATE_OK) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_UPLOAD_THUMBNAIL, ret);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_UPLOAD_THUMBNAIL));
                 return;
             }
             Logger.t(TAG).d("Upload thumbnail successful");
@@ -363,9 +343,9 @@ public class DataUploader {
         } catch (IOException e) {
             e.printStackTrace();
             if (isCancelled) {
-                mUploadListener.onCancelUpload();
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_CANCELLED));
             } else {
-                mUploadListener.onUploadError(MomentShareHelper.ERROR_IO, CrsCommand.RES_STATE_FAIL);
+                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_IO));
             }
         } finally {
             try {
@@ -376,20 +356,15 @@ public class DataUploader {
         }
     }
 
-    public void upload(LocalMoment localMoment, @NonNull OnUploadListener listener) {
-        mAddress = localMoment.cloudInfo.getAddress();
-        mPort = localMoment.cloudInfo.getPort();
-        mPrivateKey = localMoment.cloudInfo.getPrivateKey();
-        mUploadListener = listener;
+    public void upload(LocalMoment localMoment) {
+        mCloudInfo = localMoment.cloudInfo;
+
         uploadClips(localMoment);
 
     }
 
-    public void upload(CloudInfo cloudInfo, String file, @NonNull OnUploadListener listener) {
-        mAddress = cloudInfo.getAddress();
-        mPort = cloudInfo.getPort();
-        mPrivateKey = cloudInfo.getPrivateKey();
-        mUploadListener = listener;
+    public void upload(CloudInfo cloudInfo, String file) {
+        mCloudInfo = cloudInfo;
         updateFile(file);
     }
 

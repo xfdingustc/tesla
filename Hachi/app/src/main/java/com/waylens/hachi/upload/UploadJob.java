@@ -30,27 +30,7 @@ public class UploadJob extends Job {
         Logger.t(TAG).d("on Run file: " + file);
         DataUploader uploader = new DataUploader();
 //        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
-        uploader.upload(mCloudInfo, file, new DataUploader.OnUploadListener() {
-            @Override
-            public void onUploadSuccessful() {
-                Logger.t(TAG).d("upload listener");
-            }
-
-            @Override
-            public void onUploadProgress(int percentage) {
-                Logger.t(TAG).d("upload progress: " + percentage);
-            }
-
-            @Override
-            public void onUploadError(int errorCode, int extraCode) {
-                Logger.t(TAG).d("update error: ");
-            }
-
-            @Override
-            public void onCancelUpload() {
-                Logger.t(TAG).d("upload cancelled");
-            }
-        });
+        uploader.upload(mCloudInfo, file);
 //        Logger.t(TAG).d("Start upload");
     }
 

@@ -14,8 +14,7 @@ import com.waylens.hachi.upload.DataUploader;
  * MomentShareHelper
  * Created by Richard on 1/5/16.
  */
-public class MomentShareHelper implements DataUploader.OnUploadListener,
-        MomentBuilder.OnBuildListener {
+public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     private static final String TAG = "MomentShareHelper";
 
     public static final int ERROR_LOGIN = -1000;
@@ -68,7 +67,7 @@ public class MomentShareHelper implements DataUploader.OnUploadListener,
 
     /**
      * Share playList to Waylens cloud.
-     * <p>
+     * <p/>
      * Please make sure to call cancel() method to terminate the background thread.
      *
      * @param playListID
@@ -84,8 +83,8 @@ public class MomentShareHelper implements DataUploader.OnUploadListener,
                             String gaugeSettings) {
         mMomentBuilder = new MomentBuilder(mContext, mVdbRequestQueue);
         mMomentBuilder.forPlayList(playListID)
-                .asMoment(title, tags, accessLevel, audioID, gaugeSettings)
-                .build(this);
+            .asMoment(title, tags, accessLevel, audioID, gaugeSettings)
+            .build(this);
     }
 
     void uploadData() {
@@ -100,7 +99,7 @@ public class MomentShareHelper implements DataUploader.OnUploadListener,
                         return;
                     }
                     uploaderV2 = new DataUploader();
-                    uploaderV2.upload(mLocalMoment, MomentShareHelper.this);
+                    uploaderV2.upload(mLocalMoment);
                 } catch (Exception e) {
                     Logger.t(TAG).e(e, "");
                     if (mShareListener != null) {
@@ -114,53 +113,53 @@ public class MomentShareHelper implements DataUploader.OnUploadListener,
         mUploadThread.start();
     }
 
-    @Override
-    public void onUploadSuccessful() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mShareListener != null) {
-                    mShareListener.onShareSuccessful(mLocalMoment);
-                }
-            }
-        });
-    }
+//    @Override
+//    public void onUploadSuccessful() {
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mShareListener != null) {
+//                    mShareListener.onShareSuccessful(mLocalMoment);
+//                }
+//            }
+//        });
+//    }
 
-    @Override
-    public void onUploadProgress(final int percentage) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mShareListener != null) {
-                    mShareListener.onUploadProgress(percentage);
-                }
-            }
-        });
-    }
+//    @Override
+//    public void onUploadProgress(final int percentage) {
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mShareListener != null) {
+//                    mShareListener.onUploadProgress(percentage);
+//                }
+//            }
+//        });
+//    }
 
-    @Override
-    public void onUploadError(final int errorCode, final int extraCode) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mShareListener != null) {
-                    mShareListener.onShareError(errorCode, 0);
-                }
-            }
-        });
-    }
+//    @Override
+//    public void onUploadError(final int errorCode, final int extraCode) {
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mShareListener != null) {
+//                    mShareListener.onShareError(errorCode, 0);
+//                }
+//            }
+//        });
+//    }
 
-    @Override
-    public void onCancelUpload() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mShareListener != null) {
-                    mShareListener.onCancelShare();
-                }
-            }
-        });
-    }
+//    @Override
+//    public void onCancelUpload() {
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mShareListener != null) {
+//                    mShareListener.onCancelShare();
+//                }
+//            }
+//        });
+//    }
 
     @Override
     public void onBuildSuccessful(LocalMoment localMoment) {
