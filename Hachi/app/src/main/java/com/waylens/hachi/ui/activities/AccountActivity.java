@@ -36,9 +36,14 @@ public class AccountActivity extends BaseActivity {
     @Bind(R.id.email)
     TextView mTvEmail;
 
+    @OnClick(R.id.avatar)
+    public void onBtnAvatarClicked() {
+        AvatarActivity.start(this, false);
+    }
+
     @OnClick(R.id.btnAddPhoto)
     public void onBtnAddPhotoClick() {
-        AvatarActivity.start(this, false);
+        AvatarActivity.start(this, true);
     }
 
     public static void launch(Activity activity) {
