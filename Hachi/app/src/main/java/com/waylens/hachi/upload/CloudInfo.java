@@ -1,5 +1,7 @@
 package com.waylens.hachi.upload;
 
+import com.waylens.hachi.utils.ToStringUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,4 +48,8 @@ public class CloudInfo implements Serializable{
         return mPrivateKey;
     }
 
+    @Override
+    public String toString() {
+        return ToStringUtils.getString(this);
+    }
 }

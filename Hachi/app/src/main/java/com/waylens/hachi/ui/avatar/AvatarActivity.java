@@ -18,12 +18,9 @@ import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
-import com.waylens.hachi.upload.CloudInfo;
 import com.waylens.hachi.upload.UploadJob;
 import com.waylens.hachi.upload.UploadJobManager;
 import com.waylens.hachi.utils.ImageUtils;
@@ -179,26 +176,14 @@ public class AvatarActivity extends BaseActivity {
     }
 
     private void uploadAvatar() {
-        String url = Constants.API_START_UPLOAD_AVATAR;
-        mRequestQueue.add(new AuthorizedJsonRequest(url, new uploadAvatarResponseListener(),
-            new uploadAvatarErrorListener()));
+        UploadJob uploadJob = new UploadJob(mCroppedImagePath);
+        JobManager jobManager = UploadJobManager.getManager();
+        jobManager.addJobInBackground(uploadJob);
+        showUploadProgressDialog();
 
     }
 
-    private class uploadAvatarResponseListener implements Response.Listener<JSONObject> {
-        @Override
-        public void onResponse(JSONObject response) {
-            Logger.t(TAG).d("Get REsponse: " + response.toString());
-            UploadJob uploadJob = new UploadJob(mCroppedImagePath, CloudInfo.parseFromJson(response));
-            JobManager jobManager = UploadJobManager.getManager();
-            jobManager.addJobInBackground(uploadJob);
 
-            showUploadProgressDialog();
-
-        }
-
-
-    }
 
     private void showUploadProgressDialog() {
         UploadProgressDialogFragment fragment = UploadProgressDialogFragment.newInstance(9, 2.4f,
@@ -207,13 +192,6 @@ public class AvatarActivity extends BaseActivity {
 
     }
 
-
-    private class uploadAvatarErrorListener implements Response.ErrorListener {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-
-        }
-    }
 
 
     public class ExtractThumbTask extends AsyncTask<Object, Void, String> {

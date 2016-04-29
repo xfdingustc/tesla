@@ -177,6 +177,7 @@ public class DataUploader {
             int percentage = clipIndex * 100 / mClipTotalCount + percentageInThisClip;
 
 //            mUploadListener.onUploadProgress(percentage);
+            Logger.t(TAG).d("upload progress: " + percentage);
             mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_PROGRESS, percentage));
 
         }
@@ -332,6 +333,7 @@ public class DataUploader {
 
             byte[] fileSha1 = HashUtils.SHA1(avatarFile);
             int fileSize = (int) avatarFile.length();
+
             ret = uploadAvatar(file, fileSize, fileSha1);
             if (ret != CrsCommand.RES_STATE_OK) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
