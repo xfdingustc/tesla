@@ -1,47 +1,78 @@
 package com.waylens.hachi.ui.views;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.os.Build;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+
+import com.waylens.hachi.R;
 
 /**
  * Created by Xiaofei on 2015/5/25.
  */
 public class CircularProgressView extends View {
-    private static final String TAG = "CircularProgressView";
-    private int mProgressStokeSize = 10;
-    private Paint mProgressPaint;
-    private Paint mDoneBgPaint;
-    private Paint mCheckmarkPaint;
-    private Paint mMaskPaint;
-
-    public static final int STATE_NOT_STARTED = 0;
     public static final int STATE_PROGRESS_STARTED = 1;
     public static final int STATE_DONE_STARTED = 2;
     public static final int STATE_FINISHED = 3;
 
-    private int mState = STATE_NOT_STARTED;
+    private static final int PROGRESS_STROKE_SIZE = 10;
+    private static final int INNER_CIRCLE_PADDING = 30;
+    private static final int MAX_DONE_BG_OFFSET = 800;
+    private static final int MAX_DONE_IMG_OFFSET = 400;
 
-    private Bitmap mTempBitmap;
-    private Canvas mTempCanvas;
-    private RectF mProgressBounds;
-    private float mCurrentProgress = 0;
+    private int state = STATE_PROGRESS_STARTED;
+    private float currentProgress = 0;
+    private float currentDoneBgOffset = MAX_DONE_BG_OFFSET;
+    private float currentCheckmarkOffset = MAX_DONE_IMG_OFFSET;
 
+    private Paint progressPaint;
+    private Paint doneBgPaint;
+    private Paint maskPaint;
+
+    private RectF progressBounds;
+
+    private Bitmap checkmarkBitmap;
+    private Bitmap innerCircleMaskBitmap;
+
+    private int checkmarkXPosition = 0;
+    private int checkmarkYPosition = 0;
+
+    private Paint checkmarkPaint;
+    private Bitmap tempBitmap;
+    private Canvas tempCanvas;
+
+
+    private ObjectAnimator doneBgAnimator;
+    private ObjectAnimator checkmarkAnimator;
+
+    private OnLoadingFinishedListener onLoadingFinishedListener;
 
     public CircularProgressView(Context context) {
-        this(context, null);
+        super(context);
+        init();
     }
 
     public CircularProgressView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init();
     }
 
     public CircularProgressView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -49,96 +80,169 @@ public class CircularProgressView extends View {
         init();
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public CircularProgressView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
+
     private void init() {
         setupProgressPaint();
         setupDonePaints();
 
+        setupDoneAnimators();
     }
-
 
     private void setupProgressPaint() {
-        mProgressPaint = new Paint();
-        mProgressPaint.setAntiAlias(true);
-        mProgressPaint.setStyle(Paint.Style.STROKE);
-        mProgressPaint.setColor(Color.WHITE);
-        mProgressPaint.setStrokeWidth(mProgressStokeSize);
-
+        progressPaint = new Paint();
+        progressPaint.setAntiAlias(true);
+        progressPaint.setStyle(Paint.Style.STROKE);
+        progressPaint.setColor(getResources().getColor(R.color.style_color_accent));
+        progressPaint.setStrokeWidth(PROGRESS_STROKE_SIZE);
     }
 
+
     private void setupDonePaints() {
-        mDoneBgPaint = new Paint();
-        mDoneBgPaint.setAntiAlias(true);
-        mDoneBgPaint.setStyle(Paint.Style.FILL);
-        mDoneBgPaint.setColor(0xff39cb72);
-        mCheckmarkPaint = new Paint();
+        doneBgPaint = new Paint();
+        doneBgPaint.setAntiAlias(true);
+        doneBgPaint.setStyle(Paint.Style.FILL);
+        doneBgPaint.setColor(0xff39cb72);
 
-        mMaskPaint = new Paint();
-        mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        checkmarkPaint = new Paint();
 
+        maskPaint = new Paint();
+        maskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+    }
+
+    private void setupDoneAnimators() {
+        doneBgAnimator = ObjectAnimator.ofFloat(this, "currentDoneBgOffset", MAX_DONE_BG_OFFSET, 0).setDuration(300);
+        doneBgAnimator.setInterpolator(new DecelerateInterpolator());
+
+        checkmarkAnimator = ObjectAnimator.ofFloat(this, "currentCheckmarkOffset", MAX_DONE_IMG_OFFSET, 0).setDuration(300);
+        checkmarkAnimator.setInterpolator(new OvershootInterpolator());
+        checkmarkAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                changeState(STATE_FINISHED);
+            }
+        });
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         updateProgressBounds();
+        setupCheckmarkBitmap();
+        setupDoneMaskBitmap();
         resetTempCanvas();
     }
 
     private void updateProgressBounds() {
-        mProgressBounds = new RectF(mProgressStokeSize, mProgressStokeSize, getWidth() -
-            mProgressStokeSize, getWidth() - mProgressStokeSize);
+        progressBounds = new RectF(
+            PROGRESS_STROKE_SIZE, PROGRESS_STROKE_SIZE,
+            getWidth() - PROGRESS_STROKE_SIZE, getWidth() - PROGRESS_STROKE_SIZE
+        );
     }
 
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        if (mState == STATE_PROGRESS_STARTED) {
-            drawArForCurrentProgress();
-        }
-
-        canvas.drawBitmap(mTempBitmap, 0, 0, null);
+    private void setupCheckmarkBitmap() {
+        checkmarkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp);
+        checkmarkXPosition = getWidth() / 2 - checkmarkBitmap.getWidth() / 2;
+        checkmarkYPosition = getWidth() / 2 - checkmarkBitmap.getHeight() / 2;
     }
 
-
-    private void changeState(int state) {
-        if (this.mState == state) {
-            return;
-        }
-
-
-        mTempBitmap.recycle();
-        resetTempCanvas();
-
-        Log.i(TAG, "state is changed from " + mState + " to " + state);
-        this.mState = state;
-        if (state == STATE_PROGRESS_STARTED) {
-
-        } else if (state == STATE_DONE_STARTED) {
-
-        }
-    }
-
-    public void finished() {
-        changeState(STATE_DONE_STARTED);
+    private void setupDoneMaskBitmap() {
+        innerCircleMaskBitmap = Bitmap.createBitmap(getWidth(), getWidth(), Bitmap.Config.ARGB_8888);
+        Canvas srcCanvas = new Canvas(innerCircleMaskBitmap);
+        srcCanvas.drawCircle(getWidth() / 2, getWidth() / 2, getWidth() / 2 - INNER_CIRCLE_PADDING, new Paint());
     }
 
     private void resetTempCanvas() {
-        mTempBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-        mTempCanvas = new Canvas(mTempBitmap);
+        tempBitmap = Bitmap.createBitmap(getWidth(), getWidth(), Bitmap.Config.ARGB_8888);
+        tempCanvas = new Canvas(tempBitmap);
     }
 
-    public void setCurrentProgress(float currentProgress) {
-        if (mState == STATE_NOT_STARTED && currentProgress != 0) {
-            Log.i(TAG, "Change state!!!!!");
-            changeState(STATE_PROGRESS_STARTED);
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (state == STATE_PROGRESS_STARTED) {
+            drawArcForCurrentProgress();
+        } else if (state == STATE_DONE_STARTED) {
+            drawFrameForDoneAnimation();
+            postInvalidate();
+        } else if (state == STATE_FINISHED) {
+            drawFinishedState();
         }
-        this.mCurrentProgress = currentProgress;
+
+        canvas.drawBitmap(tempBitmap, 0, 0, null);
+    }
+
+    private void drawArcForCurrentProgress() {
+        tempCanvas.drawArc(progressBounds, -90f, 360 * currentProgress / 100, false, progressPaint);
+    }
+
+    private void drawFrameForDoneAnimation() {
+        tempCanvas.drawCircle(getWidth() / 2, getWidth() / 2 + currentDoneBgOffset, getWidth() / 2 - INNER_CIRCLE_PADDING, doneBgPaint);
+        tempCanvas.drawBitmap(checkmarkBitmap, checkmarkXPosition, checkmarkYPosition + currentCheckmarkOffset, checkmarkPaint);
+        tempCanvas.drawBitmap(innerCircleMaskBitmap, 0, 0, maskPaint);
+        tempCanvas.drawArc(progressBounds, 0, 360f, false, progressPaint);
+    }
+
+    private void drawFinishedState() {
+        tempCanvas.drawCircle(getWidth() / 2, getWidth() / 2, getWidth() / 2 - INNER_CIRCLE_PADDING, doneBgPaint);
+        tempCanvas.drawBitmap(checkmarkBitmap, checkmarkXPosition, checkmarkYPosition, checkmarkPaint);
+        tempCanvas.drawArc(progressBounds, 0, 360f, false, progressPaint);
+    }
+
+    private void changeState(int state) {
+        if (this.state == state) {
+            return;
+        }
+
+        tempBitmap.recycle();
+        resetTempCanvas();
+
+        this.state = state;
+        if (state == STATE_DONE_STARTED) {
+            setCurrentDoneBgOffset(MAX_DONE_BG_OFFSET);
+            setCurrentCheckmarkOffset(MAX_DONE_IMG_OFFSET);
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playSequentially(doneBgAnimator, checkmarkAnimator);
+            animatorSet.start();
+        } else if (state == STATE_FINISHED) {
+            if (onLoadingFinishedListener != null) {
+                onLoadingFinishedListener.onLoadingFinished();
+            }
+        }
+    }
+
+
+
+    public void setCurrentProgress(float currentProgress) {
+        this.currentProgress = currentProgress;
+        postInvalidate();
+
+    }
+
+    public void setProgressDone() {
+        changeState(STATE_DONE_STARTED);
+
+    }
+
+    public void setCurrentDoneBgOffset(float currentDoneBgOffset) {
+        this.currentDoneBgOffset = currentDoneBgOffset;
         postInvalidate();
     }
 
+    public void setCurrentCheckmarkOffset(float currentCheckmarkOffset) {
+        this.currentCheckmarkOffset = currentCheckmarkOffset;
+        postInvalidate();
+    }
 
-    private void drawArForCurrentProgress() {
-        Log.i(TAG, "Draw arc: " + mCurrentProgress);
-        mTempCanvas.drawArc(mProgressBounds, -90f, 360 * mCurrentProgress / 100, false, mProgressPaint);
+    public void setOnLoadingFinishedListener(OnLoadingFinishedListener onLoadingFinishedListener) {
+        this.onLoadingFinishedListener = onLoadingFinishedListener;
+    }
+
+    public interface OnLoadingFinishedListener {
+        public void onLoadingFinished();
     }
 }

@@ -6,7 +6,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
-import com.waylens.hachi.upload.CloudInfo;
 import com.waylens.hachi.upload.event.UploadEvent;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.urls.UploadUrl;
@@ -125,19 +124,8 @@ public class DataUploader {
             startTime = uploadUrl.realTimeMs;
             duration = uploadUrl.lengthMs;
         }
-        CrsUserStartUpload startUpload = new CrsUserStartUpload(
-            mUserId,
-            guid,
-            mMomentID,
-            fileSha1,
-            dataType,
-            fileSize,
-            startTime,
-            offset,
-            duration,
-            mPrivateKey
-
-        );
+        CrsUserStartUpload startUpload = new CrsUserStartUpload(mUserId, guid, mMomentID, fileSha1,
+            dataType, fileSize, startTime, offset, duration, mPrivateKey);
         sendData(startUpload.getEncodedCommand());
         return receiveData();
     }
@@ -182,8 +170,8 @@ public class DataUploader {
         return CrsCommand.RES_FILE_TRANS_COMPLETE;
     }
 
-    private int doUpload(String guid, int totalLength, int dataType, InputStream inputStream, int clipIndex, byte[] fileSha1)
-        throws IOException {
+    private int doUpload(String guid, int totalLength, int dataType, InputStream inputStream,
+                         int clipIndex, byte[] fileSha1) throws IOException {
         byte[] data = new byte[1024 * 4];
         int length;
         int seqNum = 0;
@@ -200,17 +188,9 @@ public class DataUploader {
 
 //            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
 
-            CrsClientTranData tranData = new CrsClientTranData(mUserId,
-                guid,
-                mMomentID,
-                fileSha1,
-                blockSha1,
-                dataType,
-                seqNum,
-                0,
-                (short) length,
-                data,
-                mPrivateKey);
+            CrsClientTranData tranData = new CrsClientTranData(mUserId, guid, mMomentID, fileSha1,
+                blockSha1, dataType, seqNum, 0, (short) length, data, mPrivateKey);
+
             sendData(tranData.getEncodedCommand());
             seqNum++;
             dataSend += length;
@@ -229,7 +209,6 @@ public class DataUploader {
         if (serverRet != CrsCommand.RES_FILE_TRANS_COMPLETE) {
             throw new IOException("In upload content: upload file failed ret = " + serverRet);
         }
-
 
 
         return stopUpload(guid);
@@ -372,7 +351,7 @@ public class DataUploader {
             File avatarFile = new File(file);
 
             byte[] fileSha1 = HashUtils.SHA1(avatarFile);
-            int fileSize = (int)avatarFile.length();
+            int fileSize = (int) avatarFile.length();
             ret = uploadAvatar(file, fileSize, fileSha1);
             if (ret != CrsCommand.RES_STATE_OK) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);

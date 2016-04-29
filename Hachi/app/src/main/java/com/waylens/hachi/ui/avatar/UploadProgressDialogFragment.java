@@ -16,6 +16,7 @@ import com.waylens.hachi.upload.event.UploadEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import fr.tvbarthel.lib.blurdialogfragment.BlurDialogFragment;
 
@@ -97,15 +98,22 @@ public class UploadProgressDialogFragment extends BlurDialogFragment {
         return fragment;
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventUpload(UploadEvent event) {
         switch (event.getWhat()) {
             case UploadEvent.UPLOAD_WHAT_PROGRESS:
                 mProgressView.setCurrentProgress(event.getExtra());
                 break;
             case UploadEvent.UPLOAD_WHAT_FINISHED:
-                dismiss();
-                getActivity().finish();
+                mProgressView.setProgressDone();
+                mProgressView.setOnLoadingFinishedListener(new CircularProgressView.OnLoadingFinishedListener() {
+                    @Override
+                    public void onLoadingFinished() {
+                        dismiss();
+                        getActivity().finish();
+                    }
+                });
+
                 break;
         }
     }
