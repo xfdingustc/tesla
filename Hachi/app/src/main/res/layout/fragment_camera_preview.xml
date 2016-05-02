@@ -19,6 +19,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <include layout="@layout/fragment_camera_preview_info_panel"/>
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -26,7 +28,7 @@
 
                 <include layout="@layout/fragment_camera_preview_status_panel"/>
 
-                <include layout="@layout/fragment_camera_preview_info_panel"/>
+
 
                 <include layout="@layout/fragment_camera_preview_error_panel"/>
 

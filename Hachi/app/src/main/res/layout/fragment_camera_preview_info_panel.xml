@@ -5,8 +5,7 @@
               android:layout_height="wrap_content"
               android:alpha="0.9"
               android:background="#141618"
-              android:orientation="vertical"
-              android:visibility="gone">
+              android:orientation="vertical"              >
 
 
     <LinearLayout
