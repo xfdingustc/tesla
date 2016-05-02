@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.cliptrimmer;
+package com.waylens.hachi.ui.clips.cliptrimmer;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -214,9 +214,7 @@ public class VideoTrimmer extends FrameLayout {
         return mVideoTrimmerController.mProgress;
     }
 
-    public void setMediaPlayer(MediaPlayer player) {
-        mVideoTrimmerController.setMediaPlayer(player);
-    }
+
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {

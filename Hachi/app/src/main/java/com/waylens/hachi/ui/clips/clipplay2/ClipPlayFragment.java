@@ -125,6 +125,12 @@ public class ClipPlayFragment extends BaseFragment {
     @Bind(R.id.btnFullscreen)
     ImageButton mBtnFullscreen;
 
+    @OnClick(R.id.btnShowOverlay)
+    public void onBtnShowOverlayClicked() {
+        int visibility = mWvGauge.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+        mWvGauge.setVisibility(visibility);
+    }
+
 
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {

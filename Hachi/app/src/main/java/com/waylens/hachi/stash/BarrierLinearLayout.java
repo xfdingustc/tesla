@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.stash;
 
 import android.annotation.TargetApi;
 import android.content.Context;

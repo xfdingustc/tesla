@@ -25,7 +25,7 @@ import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
-import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
+import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipExtent;

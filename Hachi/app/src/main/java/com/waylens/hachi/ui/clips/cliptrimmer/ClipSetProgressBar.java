@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.cliptrimmer;
+package com.waylens.hachi.ui.clips.cliptrimmer;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -237,7 +237,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private static final int DEFAULT_PERIOD_MS = 1000 * 60;
+        private static final int DEFAULT_PERIOD_MS = 1000 * 30;
 
         private int mClipFragmentDruation = DEFAULT_PERIOD_MS;
 

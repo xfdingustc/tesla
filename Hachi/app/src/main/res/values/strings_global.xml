@@ -35,7 +35,7 @@
     </string-array>
 
     <string-array name="videoOptions" translatable="false">
-        <item>Tagged</item>
+        <item>Tag</item>
         <item>Clip</item>
         <!--<item>All Footage</item>-->
     </string-array>

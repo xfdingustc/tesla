@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer
+        <com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer
             android:id="@+id/clip_film_view"
             android:layout_width="match_parent"
             android:layout_height="64dp"/>

@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.cliptrimmer;
+package com.waylens.hachi.ui.clips.cliptrimmer;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -10,23 +10,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.views.Progressive;
 import com.waylens.hachi.utils.ViewUtils;
 
-/**
- * TrimmerController
- * <p/>
- * Created by Richard on 9/28/15.
- */
-class VideoTrimmerController extends View implements Progressive {
+
+class VideoTrimmerController extends View {
 
     private static final float MAX_VALUE = 1000.0f;
 
@@ -69,8 +62,7 @@ class VideoTrimmerController extends View implements Progressive {
     private double mRangeValueLeft = 0;
     private double mRangeValueRight = MAX_VALUE;
 
-    private MediaPlayer mPlayer;
-    private ProgressHandler mHandler;
+
     private boolean showProgress = true;
 
     long mStart;
@@ -346,8 +338,8 @@ class VideoTrimmerController extends View implements Progressive {
         int height = getHeight();
 
         if (isDraggingLeft
-                && x >= mTouchDistLeft
-                && x < (mRightStartPos - mProgressBarWidth - mThumbWidth + mTouchDistLeft)) {
+            && x >= mTouchDistLeft
+            && x < (mRightStartPos - mProgressBarWidth - mThumbWidth + mTouchDistLeft)) {
             mLeftStartPos = x - mTouchDistLeft;
             if (mProgressLeft < (mLeftStartPos + mThumbWidth)) {
                 mProgressLeft = mLeftStartPos + mThumbWidth;
@@ -358,8 +350,8 @@ class VideoTrimmerController extends View implements Progressive {
             invalidate();
         }
         if (isDraggingRight
-                && x <= (getWidth() - mThumbWidth + mTouchDistRight)
-                && x > (mLeftStartPos + mThumbWidth + mProgressBarWidth + mTouchDistRight)) {
+            && x <= (getWidth() - mThumbWidth + mTouchDistRight)
+            && x > (mLeftStartPos + mThumbWidth + mProgressBarWidth + mTouchDistRight)) {
             mRightStartPos = x - mTouchDistRight;
             if (mProgressLeft > (mRightStartPos - mProgressBarWidth)) {
                 mProgressLeft = mRightStartPos - mProgressBarWidth;
@@ -371,8 +363,8 @@ class VideoTrimmerController extends View implements Progressive {
         }
 
         if (isDraggingProgressBar
-                && x >= (mLeftStartPos + mThumbWidth + mTouchDistProgress)
-                && x <= (mRightStartPos - mProgressBarWidth + mTouchDistProgress)) {
+            && x >= (mLeftStartPos + mThumbWidth + mTouchDistProgress)
+            && x <= (mRightStartPos - mProgressBarWidth + mTouchDistProgress)) {
             mProgressLeft = x - mTouchDistProgress;
             mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, height);
             invalidate();
@@ -428,39 +420,27 @@ class VideoTrimmerController extends View implements Progressive {
         return x > rect.left && x < rect.right;
     }
 
-    public void setMediaPlayer(MediaPlayer player) {
-        if (mHandler != null) {
-            mHandler.stop();
-        }
 
-        if (player != null) {
-            mHandler = new ProgressHandler(this);
-            mHandler.start();
-            showProgress = true;
-        }
-        mPlayer = player;
-    }
-
-    @Override
-    public int updateProgress() {
-        int timeOffset;
-        try {
-            timeOffset = mPlayer.getCurrentPosition();
-        } catch (IllegalStateException e) {
-            Log.e("test", "", e);
-            return 0;
-        }
-        setProgress(timeOffset + mStart);
-        return 0;
-    }
-
-    @Override
-    public boolean isInProgress() {
-        try {
-            return !isDraggingThumb && !isDraggingProgressBar && mPlayer != null && mPlayer.isPlaying();
-        } catch (Exception e) {
-            Log.e("test", "", e);
-            return false;
-        }
-    }
+//    @Override
+//    public int updateProgress() {
+//        int timeOffset;
+//        try {
+//            timeOffset = mPlayer.getCurrentPosition();
+//        } catch (IllegalStateException e) {
+//            Log.e("test", "", e);
+//            return 0;
+//        }
+//        setProgress(timeOffset + mStart);
+//        return 0;
+//    }
+//
+//    @Override
+//    public boolean isInProgress() {
+//        try {
+//            return !isDraggingThumb && !isDraggingProgressBar && mPlayer != null && mPlayer.isPlaying();
+//        } catch (Exception e) {
+//            Log.e("test", "", e);
+//            return false;
+//        }
+//    }
 }

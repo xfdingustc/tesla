@@ -29,7 +29,7 @@ import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.clips.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
-import com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar;
+import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
