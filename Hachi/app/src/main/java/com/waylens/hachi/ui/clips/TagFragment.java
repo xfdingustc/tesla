@@ -54,7 +54,8 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -89,23 +90,23 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     private EventBus mEventBus = EventBus.getDefault();
 
 
-    @Bind(R.id.clipGroupList)
+    @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
 
-    @Bind(R.id.refreshLayout)
+    @BindView(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
 
-    @Bind(R.id.llNoBookmark)
+    @BindView(R.id.llNoBookmark)
     LinearLayout mLlNoBookmark;
 
-    @Bind(R.id.bottomLayout)
+    @BindView(R.id.bottomLayout)
     LinearLayout mBottomLayout;
 
-    @Bind(R.id.svBuffer)
+    @BindView(R.id.svBuffer)
     StackView mSvBufferClips;
 
-    @Bind(R.id.tvBufferTime)
+    @BindView(R.id.tvBufferTime)
     TextView mTvBufferTime;
 
     @OnClick(R.id.bottomLayout)

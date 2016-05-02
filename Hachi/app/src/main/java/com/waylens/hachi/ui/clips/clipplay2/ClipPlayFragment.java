@@ -45,7 +45,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -95,34 +96,34 @@ public class ClipPlayFragment extends BaseFragment {
     private int mCurrentState = STATE_IDLE;
     private EventBus mEventBus = EventBus.getDefault();
 
-    @Bind(R.id.textureView)
+    @BindView(R.id.textureView)
     TextureView mTextureView;
 
-    @Bind(R.id.vsCover)
+    @BindView(R.id.vsCover)
     ViewSwitcher mVsCover;
 
-    @Bind(R.id.clipCover)
+    @BindView(R.id.clipCover)
     ImageView mClipCover;
 
-    @Bind(R.id.coverBanner)
+    @BindView(R.id.coverBanner)
     ViewPager mCoverBanner;
 
-    @Bind(R.id.progressLoading)
+    @BindView(R.id.progressLoading)
     ProgressBar mProgressLoading;
 
-    @Bind(R.id.btnPlayPause)
+    @BindView(R.id.btnPlayPause)
     ImageButton mBtnPlayPause;
 
-    @Bind(R.id.playProgress)
+    @BindView(R.id.playProgress)
     TextView mTvProgress;
 
-    @Bind(R.id.multiSegIndicator)
+    @BindView(R.id.multiSegIndicator)
     MultiSegSeekbar mMultiSegSeekbar;
 
-    @Bind(R.id.gaugeView)
+    @BindView(R.id.gaugeView)
     GaugeView mWvGauge;
 
-    @Bind(R.id.btnFullscreen)
+    @BindView(R.id.btnFullscreen)
     ImageButton mBtnFullscreen;
 
     @OnClick(R.id.btnShowOverlay)

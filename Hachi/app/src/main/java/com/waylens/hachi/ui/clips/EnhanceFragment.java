@@ -43,7 +43,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -78,47 +79,47 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    @Bind(R.id.gauge_list_view)
+    @BindView(R.id.gauge_list_view)
     RecyclerView mGaugeListView;
 
-    @Bind(R.id.clips_edit_view)
+    @BindView(R.id.clips_edit_view)
     ClipsEditView mClipsEditView;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.enhance_action_bar)
+    @BindView(R.id.enhance_action_bar)
     View mEnhanceActionBar;
 
-    @Bind(R.id.btn_gauge)
+    @BindView(R.id.btn_gauge)
     View btnGauge;
 
-    @Bind(R.id.btn_music)
+    @BindView(R.id.btn_music)
     View btnMusic;
 
 
-    @Bind(R.id.volume_value_view)
+    @BindView(R.id.volume_value_view)
     TextView mVolumeView;
 
-    @Bind(R.id.volume_seek_bar)
+    @BindView(R.id.volume_seek_bar)
     SeekBar mVolumeSeekBar;
 
-    @Bind(R.id.btn_add_music)
+    @BindView(R.id.btn_add_music)
     Button btnAddMusic;
 
-    @Bind(R.id.btn_remove)
+    @BindView(R.id.btn_remove)
     View btnRemove;
 
-    @Bind(R.id.spinner_theme)
+    @BindView(R.id.spinner_theme)
     Spinner mThemeSpinner;
 
-    @Bind(R.id.spinner_length)
+    @BindView(R.id.spinner_length)
     Spinner mLengthSpinner;
 
-    @Bind(R.id.spinner_clip_src)
+    @BindView(R.id.spinner_clip_src)
     Spinner mClipSrcSpinner;
 
-    @Bind(R.id.style_radio_group)
+    @BindView(R.id.style_radio_group)
     RadioGroup mStyleRadioGroup;
 
     @OnClick(R.id.btn_music)

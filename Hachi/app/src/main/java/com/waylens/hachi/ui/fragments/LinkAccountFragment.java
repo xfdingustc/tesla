@@ -29,7 +29,8 @@ import com.waylens.hachi.utils.VolleyUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -40,16 +41,16 @@ public class LinkAccountFragment extends BaseFragment {
 
     public static final String ARG_SUGGESTED_USER_NAME = "arg.suggested.user.name";
 
-    @Bind(R.id.user_avatar)
+    @BindView(R.id.user_avatar)
     ImageView mAvatar;
 
-    @Bind(R.id.sign_in_username)
+    @BindView(R.id.sign_in_username)
     TextView mUserName;
 
-    @Bind(R.id.sign_in_password)
+    @BindView(R.id.sign_in_password)
     TextView mPassword;
 
-    @Bind(R.id.control_container)
+    @BindView(R.id.control_container)
     ViewAnimator mViewAnimator;
 
     private RequestQueue mRequestQueue;

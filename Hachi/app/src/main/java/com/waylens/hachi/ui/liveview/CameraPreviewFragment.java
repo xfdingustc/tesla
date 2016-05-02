@@ -55,7 +55,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -81,91 +82,91 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    @Bind(R.id.cameraPreview)
+    @BindView(R.id.cameraPreview)
     CameraLiveView mLiveView;
 
     @Nullable
-    @Bind(R.id.spinner)
+    @BindView(R.id.spinner)
     Spinner mCameraSpinner;
 
-    @Bind(R.id.tvCameraStatus)
+    @BindView(R.id.tvCameraStatus)
     TextView mTvCameraRecStatus;
 
-    @Bind(R.id.tv_status_additional)
+    @BindView(R.id.tv_status_additional)
     TextView mTvStatusAdditional;
 
-    @Bind(R.id.btnMicControl)
+    @BindView(R.id.btnMicControl)
     ImageView mBtnMicControl;
 
-    @Bind(R.id.fabBookmark)
+    @BindView(R.id.fabBookmark)
     ImageButton mFabBookmark;
 
-    @Bind(R.id.gaugeView)
+    @BindView(R.id.gaugeView)
     GaugeView mGaugeView;
 
-    @Bind(R.id.liveViewLayout)
+    @BindView(R.id.liveViewLayout)
     FrameLayout mLiveViewLayout;
 
-    @Bind(R.id.btnShowOverlay)
+    @BindView(R.id.btnShowOverlay)
     ImageButton mBtnShowOverlay;
 
 
-    @Bind(R.id.bookmark_message_view)
+    @BindView(R.id.bookmark_message_view)
     View mBookmarkMsgView;
 
 
     @Nullable
-    @Bind(R.id.infoPanel)
+    @BindView(R.id.infoPanel)
     LinearLayout mInfoView;
 
     @Nullable
-    @Bind(R.id.storageView)
+    @BindView(R.id.storageView)
     ProgressBar mStorageView;
 
-    @Bind(R.id.recordDot)
+    @BindView(R.id.recordDot)
     View mRecordDot;
 
     @Nullable
-    @Bind(R.id.wifiMode)
+    @BindView(R.id.wifiMode)
     ImageView mWifiMode;
 
     @Nullable
-    @Bind(R.id.ivBatterStatus)
+    @BindView(R.id.ivBatterStatus)
     ImageView mIvBatterStatus;
 
     @Nullable
-    @Bind(R.id.ivIsChanging)
+    @BindView(R.id.ivIsChanging)
     ImageView mIsCharging;
 
     @Nullable
-    @Bind(R.id.tvBatteryVol)
+    @BindView(R.id.tvBatteryVol)
     TextView mTvBatteryVol;
 
     @Nullable
-    @Bind(R.id.cameraConnecting)
+    @BindView(R.id.cameraConnecting)
     LinearLayout mCameraConnecting;
 
     @Nullable
-    @Bind(R.id.noSignal)
+    @BindView(R.id.noSignal)
     RelativeLayout mCameraNoSignal;
 
     @Nullable
-    @Bind(R.id.connectIndicator)
+    @BindView(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
     @Nullable
-    @Bind(R.id.errorPanel)
+    @BindView(R.id.errorPanel)
     LinearLayout mErrorPanel;
 
     @Nullable
-    @Bind(R.id.tvErrorMessage)
+    @BindView(R.id.tvErrorMessage)
     TextView mTvErrorMessage;
 
     @Nullable
-    @Bind(R.id.tvErrorIndicator)
+    @BindView(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
-    @Bind(R.id.btnStop)
+    @BindView(R.id.btnStop)
     ImageButton mBtnStop;
 
 

@@ -27,7 +27,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 import im.fir.sdk.FIR;
 import im.fir.sdk.VersionCheckCallback;
@@ -41,16 +42,16 @@ public class VersionCheckActivity extends BaseActivity {
     private static final String TAG = "FIR";
     private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0x10;
 
-    @Bind(R.id.current_version_view)
+    @BindView(R.id.current_version_view)
     TextView mCurrentVersionView;
 
-    @Bind(R.id.fir_version_view)
+    @BindView(R.id.fir_version_view)
     TextView mFirVersionView;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.btn_update_now)
+    @BindView(R.id.btn_update_now)
     View mBtnUpdateNow;
 
     private int mVersionCode;

@@ -42,7 +42,8 @@ import com.waylens.hachi.utils.VolleyUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -53,19 +54,19 @@ public class SignInFragment extends BaseFragment {
 
     private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
-    @Bind(R.id.login_button)
+    @BindView(R.id.login_button)
     LoginButton mFBLoginButton;
 
-    @Bind(R.id.button_animator)
+    @BindView(R.id.button_animator)
     ViewAnimator mButtonAnimator;
 
-    @Bind(R.id.sign_in_email)
+    @BindView(R.id.sign_in_email)
     CompoundEditView mTvSignInEmail;
 
-    @Bind(R.id.sign_in_password)
+    @BindView(R.id.sign_in_password)
     CompoundEditView mTvPassword;
 
-    @Bind(R.id.forgot_password_view)
+    @BindView(R.id.forgot_password_view)
     TextView mForgotPasswordView;
 
     CallbackManager mCallbackManager;

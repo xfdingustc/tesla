@@ -26,7 +26,8 @@ import com.waylens.hachi.utils.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -34,7 +35,7 @@ import butterknife.OnClick;
  */
 public class FirstInstallActivity extends BaseActivity {
 
-    @Bind(R.id.viewPager)
+    @BindView(R.id.viewPager)
     ViewPager mViewPager;
 
     private SimpleImageViewPagerAdapter mAdapter;
@@ -103,13 +104,13 @@ public class FirstInstallActivity extends BaseActivity {
 
         boolean hasEnter;
 
-        @Bind(R.id.imageCover)
+        @BindView(R.id.imageCover)
         ImageView imageCover;
 
-        @Bind(R.id.btnEnter)
+        @BindView(R.id.btnEnter)
         Button mBtnEnter;
 
-        @Bind(R.id.withoutCamera)
+        @BindView(R.id.withoutCamera)
         TextView mWithoutCamera;
 
         @OnClick(R.id.btnEnter)

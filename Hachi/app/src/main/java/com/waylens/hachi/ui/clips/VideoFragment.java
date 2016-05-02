@@ -21,7 +21,8 @@ import com.waylens.hachi.vdb.Clip;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2016/2/17.
@@ -31,7 +32,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    @Bind(R.id.spinner)
+    @BindView(R.id.spinner)
     Spinner mVideoSpinner;
 
     @Subscribe

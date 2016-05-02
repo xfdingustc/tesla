@@ -28,13 +28,12 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.views.DragLayout;
 import com.waylens.hachi.ui.views.OnViewDragListener;
-
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -42,8 +41,8 @@ import butterknife.ButterKnife;
  * Created by Richard on 10/26/15.
  */
 public abstract class VideoPlayFragment extends Fragment implements View.OnClickListener,
-        MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
+    MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
+    MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
 
     private static final String TAG = VideoPlayFragment.class.getSimpleName();
 
@@ -77,36 +76,35 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     public static VideoPlayFragment fullScreenPlayer;
 
-    @Bind(R.id.video_root_container)
+    @BindView(R.id.video_root_container)
     FixedAspectRatioFrameLayout mRootContainer;
 
-    @Bind(R.id.waylens_video_container)
+    @BindView(R.id.waylens_video_container)
     DragLayout mVideoContainer;
 
 
-
-    @Bind(R.id.video_controllers)
+    @BindView(R.id.video_controllers)
     FrameLayout mVideoController;
 
-    @Bind(R.id.btn_play)
+    @BindView(R.id.btn_play)
     ImageView mBtnPlay;
 
-    @Bind(R.id.video_surface)
+    @BindView(R.id.video_surface)
     SurfaceView mSurfaceView;
 
-    @Bind(R.id.progress_loading)
+    @BindView(R.id.progress_loading)
     ProgressBar mProgressLoading;
 
-    @Bind(R.id.progress_bar)
+    @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;
 
-    @Bind(R.id.btn_fullscreen)
+    @BindView(R.id.btn_fullscreen)
     ImageView mBtnFullScreen;
 
-    @Bind(R.id.text_video_time)
+    @BindView(R.id.text_video_time)
     TextView mVideoTime;
 
-    @Bind(R.id.infoPanel)
+    @BindView(R.id.infoPanel)
     LinearLayout mInfoPanel;
 
     protected OnViewDragListener mDragListener;
@@ -208,7 +206,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         if (fullScreenPlayer == this) {
             fullScreenPlayer = null;
         }
@@ -235,7 +232,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
 
         if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+            || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //            mPortraitParams = (FrameLayout.LayoutParams) mDashboardLayout.getLayoutParams();
@@ -383,15 +380,15 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     boolean isInPlaybackState() {
         return (mMediaPlayer != null &&
-                mCurrentState != STATE_ERROR &&
-                mCurrentState != STATE_IDLE &&
-                mCurrentState != STATE_PREPARING);
+            mCurrentState != STATE_ERROR &&
+            mCurrentState != STATE_IDLE &&
+            mCurrentState != STATE_PREPARING);
     }
 
     protected void openVideo() {
         if (mVideoSource == null
-                || mSurfaceView == null
-                || mSurfaceHolder == null) {
+            || mSurfaceView == null
+            || mSurfaceHolder == null) {
             return;
         }
 
@@ -549,7 +546,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             return;
         }
         int visibitliy = mVideoController.getVisibility() == View.VISIBLE ? View.INVISIBLE : View
-                .VISIBLE;
+            .VISIBLE;
         mVideoController.setVisibility(visibitliy);
         mInfoPanel.setVisibility(visibitliy);
     }
@@ -572,7 +569,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     private void hideControllers() {
         mVideoController.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                && mCurrentState == STATE_PLAYING) {
+            && mCurrentState == STATE_PLAYING) {
             hideSystemUI();
         }
     }

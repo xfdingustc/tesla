@@ -15,7 +15,8 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
 import com.waylens.hachi.utils.ImageUtils;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -27,13 +28,13 @@ public class AccountActivity extends BaseActivity {
     private ImageLoader mImageLoader = ImageLoader.getInstance();
     private SessionManager mSessionManager = SessionManager.getInstance();
 
-    @Bind(R.id.avatar)
+    @BindView(R.id.avatar)
     CircleImageView mAvatar;
 
-    @Bind(R.id.btnAddPhoto)
+    @BindView(R.id.btnAddPhoto)
     ImageButton mBtnAddPhoto;
 
-    @Bind(R.id.email)
+    @BindView(R.id.email)
     TextView mTvEmail;
 
     @OnClick(R.id.avatar)

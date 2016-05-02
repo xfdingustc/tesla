@@ -28,7 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 
 /**
@@ -50,7 +50,7 @@ public class AvatarActivity extends BaseActivity {
     private String albumName;
     private String mReturnImagePath = null;
 
-    @Bind(R.id.civ_cropper_preview)
+    @BindView(R.id.civ_cropper_preview)
     ClipImageView mCivCropperPreview;
 //
 //    @Bind(R.id.mcpb_upload_progress)

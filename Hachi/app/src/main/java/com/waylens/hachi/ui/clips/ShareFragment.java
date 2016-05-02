@@ -15,9 +15,7 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
-import com.waylens.hachi.ui.clips.EnhanceFragment;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
@@ -25,7 +23,7 @@ import com.waylens.hachi.utils.ViewUtils;
 
 import org.json.JSONObject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -34,13 +32,13 @@ import butterknife.OnClick;
 public class ShareFragment extends BaseFragment implements MomentShareHelper.OnShareMomentListener {
     private static final String TAG = "ShareFragment";
 
-    @Bind(R.id.spinner_social_privacy)
+    @BindView(R.id.spinner_social_privacy)
     Spinner mPrivacySpinner;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.moment_title)
+    @BindView(R.id.moment_title)
     TextView mTitleView;
 
 
@@ -80,10 +78,10 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         }
         typedArray.recycle();
         IconSpinnerAdapter mAdapter = new IconSpinnerAdapter(getActivity(),
-                android.R.layout.simple_spinner_item,
-                strings,
-                drawables,
-                ViewUtils.dp2px(16, getResources()));
+            android.R.layout.simple_spinner_item,
+            strings,
+            drawables,
+            ViewUtils.dp2px(16, getResources()));
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mPrivacySpinner.setAdapter(mAdapter);
 
@@ -112,8 +110,8 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
         JSONObject gaugeSettings = null;
         if (activity instanceof EnhancementActivity) {
-            audioID = ((EnhancementActivity)activity).getAudioID();
-            gaugeSettings = ((EnhancementActivity)activity).getGaugeSettings();
+            audioID = ((EnhancementActivity) activity).getAudioID();
+            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
         }
         mShareHelper.shareMoment(0x100, title, tags, mSocialPrivacy, audioID, gaugeSettings);
     }

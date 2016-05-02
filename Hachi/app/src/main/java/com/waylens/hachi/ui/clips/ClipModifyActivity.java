@@ -32,7 +32,8 @@ import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2016/3/3.
@@ -61,13 +62,13 @@ public class ClipModifyActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
-    @Bind(R.id.clipTrimmer)
+    @BindView(R.id.clipTrimmer)
     VideoTrimmer mClipTrimmer;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.root_view)
+    @BindView(R.id.root_view)
     View mRootView;
 
     @Override

@@ -36,7 +36,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -50,13 +51,13 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
 
     private static final int DEFAULT_COUNT = 10;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.comment_list)
+    @BindView(R.id.comment_list)
     RecyclerView mCommentListView;
 
-    @Bind(R.id.comment_new)
+    @BindView(R.id.comment_new)
     EditText mNewCommentView;
 
     RequestQueue mRequestQueue;

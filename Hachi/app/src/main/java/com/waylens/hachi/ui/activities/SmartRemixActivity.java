@@ -40,7 +40,8 @@ import com.waylens.hachi.vdb.rawdata.RawDataItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -54,30 +55,40 @@ public class SmartRemixActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_STORAGE = 0;
 
-    @Bind(R.id.rawdata)
+    @BindView(R.id.rawdata)
     ProgressBar mLoadingProgressBar;
-    @Bind(R.id.iconSpeed)
+
+    @BindView(R.id.iconSpeed)
     ImageButton mIconSpeed;
-    @Bind(R.id.iconAccel)
+
+    @BindView(R.id.iconAccel)
     ImageButton mIconAccel;
-    @Bind(R.id.iconBrake)
+
+    @BindView(R.id.iconBrake)
     ImageButton mIconBrake;
-    @Bind(R.id.iconTurn)
+
+    @BindView(R.id.iconTurn)
     ImageButton mIconTurn;
-    @Bind(R.id.iconBump)
+
+    @BindView(R.id.iconBump)
     ImageButton mIconBump;
-    @Bind(R.id.rangeBarSpeed)
+
+    @BindView(R.id.rangeBarSpeed)
     RangeBar mRangeBarSpeed;
-    @Bind(R.id.rangeBarAccel)
+
+    @BindView(R.id.rangeBarAccel)
     RangeBar mRangeBarAccel;
-    @Bind(R.id.rangeBarBrake)
+
+    @BindView(R.id.rangeBarBrake)
     RangeBar mRangeBarBrake;
-    @Bind(R.id.rangeBarTurn)
+
+    @BindView(R.id.rangeBarTurn)
     RangeBar mRangeBarTurn;
-    @Bind(R.id.rangeBarBump)
+
+    @BindView(R.id.rangeBarBump)
     RangeBar mRangeBarBump;
 
-    @Bind(R.id.tvClipSelected)
+    @BindView(R.id.tvClipSelected)
     TextView mTvClipSelected;
 
     private ClipSet mAllClipSet;

@@ -6,13 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:elevation="@dimen/default_elevation"
-        app:layout_scrollFlags="scroll"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <include layout="@layout/toolbar_default"/>
+
     <FrameLayout
         android:id="@+id/player_fragment_content"
         android:layout_width="match_parent"

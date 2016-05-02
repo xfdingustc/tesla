@@ -18,7 +18,8 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -60,7 +61,7 @@ public class LiveViewSettingActivity extends BaseActivity {
 //    @Bind(R.id.tvRecordModeInfo)
 //    TextView mTvRecordModeInfo;
 
-    @Bind(R.id.resolution_framerate)
+    @BindView(R.id.resolution_framerate)
     TextView mResolutionFramerate;
 
 

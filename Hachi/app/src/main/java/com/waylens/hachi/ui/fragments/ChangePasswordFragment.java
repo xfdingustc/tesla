@@ -29,7 +29,8 @@ import com.waylens.hachi.utils.VolleyUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -40,19 +41,19 @@ public class ChangePasswordFragment extends BaseFragment {
 
     private static final String TAG_REQUEST_RESET_PASSWORD = "request.reset.password";
 
-    @Bind(R.id.forgot_password_code)
+    @BindView(R.id.forgot_password_code)
     CompoundEditView mEvCode;
 
-    @Bind(R.id.new_password)
+    @BindView(R.id.new_password)
     CompoundEditView mEvPassword;
 
-    @Bind(R.id.button_animator)
+    @BindView(R.id.button_animator)
     ViewAnimator mButtonAnimator;
 
-    @Bind(R.id.tv_resend)
+    @BindView(R.id.tv_resend)
     TextView mTvResend;
 
-    @Bind(R.id.tv_change_password_hint)
+    @BindView(R.id.tv_change_password_hint)
     TextView mTvChangePasswordHint;
 
     private String mPassword;

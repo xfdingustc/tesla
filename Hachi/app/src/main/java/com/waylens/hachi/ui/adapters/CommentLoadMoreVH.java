@@ -8,7 +8,8 @@ import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -17,10 +18,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class CommentLoadMoreVH extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.load_more)
+    @BindView(R.id.load_more)
     View loadMoreView;
 
-    @Bind(R.id.load_more_progressbar)
+    @BindView(R.id.load_more_progressbar)
     ProgressBar loadMoreProgressBar;
 
     public CommentLoadMoreVH(View itemView) {

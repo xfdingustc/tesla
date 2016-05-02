@@ -18,7 +18,8 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -81,22 +82,22 @@ public class NotificationCommentsAdapter extends RecyclerView.Adapter<Notificati
 
     public static class NotificationCommentVH extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.comment_user_avatar)
+        @BindView(R.id.comment_user_avatar)
         CircleImageView commentUserAvatar;
 
-        @Bind(R.id.comment_user_name)
+        @BindView(R.id.comment_user_name)
         TextView commentUserName;
 
-        @Bind(R.id.comment_time)
+        @BindView(R.id.comment_time)
         TextView commentTime;
 
-        @Bind(R.id.comment_content)
+        @BindView(R.id.comment_content)
         TextView commentContent;
 
-        @Bind(R.id.moment_title)
+        @BindView(R.id.moment_title)
         TextView momentTitle;
 
-        @Bind(R.id.moment_thumbnail)
+        @BindView(R.id.moment_thumbnail)
         ImageView momentThumbnail;
 
         public NotificationCommentVH(View itemView) {

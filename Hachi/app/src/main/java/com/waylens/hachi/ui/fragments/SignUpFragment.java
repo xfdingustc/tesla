@@ -38,7 +38,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -53,19 +54,19 @@ public class SignUpFragment extends BaseFragment {
     private static final String TAG_REQUEST_SIGN_UP = "SignInFragment.request.sign.up";
     private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
-    @Bind(R.id.login_button)
+    @BindView(R.id.login_button)
     LoginButton mFBLoginButton;
 
-    @Bind(R.id.button_animator)
+    @BindView(R.id.button_animator)
     ViewAnimator mButtonAnimator;
 
-    @Bind(R.id.input_animator)
+    @BindView(R.id.input_animator)
     ViewAnimator mInputAnimator;
 
-    @Bind(R.id.sign_up_email)
+    @BindView(R.id.sign_up_email)
     CompoundEditView mTvSignUpEmail;
 
-    @Bind(R.id.sign_up_password)
+    @BindView(R.id.sign_up_password)
     CompoundEditView mEvPassword;
 
     CallbackManager mCallbackManager;

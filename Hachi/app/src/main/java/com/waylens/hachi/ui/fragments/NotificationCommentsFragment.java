@@ -31,7 +31,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -42,13 +43,13 @@ public class NotificationCommentsFragment extends BaseFragment implements Recycl
 
     private static final int DEFAULT_COUNT = 10;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.refresh_layout)
+    @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
-    @Bind(R.id.comment_list)
+    @BindView(R.id.comment_list)
     RecyclerViewExt mNotificationListView;
 
     RequestQueue mRequestQueue;

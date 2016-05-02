@@ -14,7 +14,8 @@ import com.waylens.hachi.ui.adapters.FeedPageAdapter;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.utils.VolleyUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2016/1/22.
@@ -23,7 +24,7 @@ public class CommunityFragment extends BaseFragment {
 
     RequestQueue mRequestQueue;
 
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager mViewPager;
     private SimpleFragmentPagerAdapter mFeedPageAdapter;
 

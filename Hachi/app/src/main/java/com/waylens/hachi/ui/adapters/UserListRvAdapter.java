@@ -28,7 +28,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -183,13 +184,13 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public class UserListViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.userAvatar)
+        @BindView(R.id.userAvatar)
         CircleImageView mUserAvater;
 
-        @Bind(R.id.tvUserName)
+        @BindView(R.id.tvUserName)
         TextView mTvUserName;
 
-        @Bind(R.id.btnFollow)
+        @BindView(R.id.btnFollow)
         TextView mTvFollow;
 
         public UserListViewHolder(View itemView) {

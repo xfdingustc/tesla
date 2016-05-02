@@ -35,7 +35,8 @@ import org.florescu.android.rangeseekbar.RangeSeekBar;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -50,19 +51,19 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
 
     public final static int POSITION_UNKNOWN = -1;
 
-    @Bind(R.id.clip_list_view)
+    @BindView(R.id.clip_list_view)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.clips_count_view)
+    @BindView(R.id.clips_count_view)
     TextView mClipsCountView;
 
-    @Bind(R.id.clips_duration_view)
+    @BindView(R.id.clips_duration_view)
     TextView mClipDurationView;
 
-    @Bind(R.id.range_seek_bar)
+    @BindView(R.id.range_seek_bar)
     RangeSeekBar<Long> mRangeSeekBar;
 
-    @Bind(R.id.trimming_bar)
+    @BindView(R.id.trimming_bar)
     View mTrimmingBar;
 
     LinearLayoutManager mLayoutManager;

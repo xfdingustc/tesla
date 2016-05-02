@@ -18,7 +18,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.smartconfig.NetworkUtil;
 import com.waylens.hachi.hardware.smartconfig.SmartConfigConstants;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -43,13 +44,13 @@ public class SmartConfigActivity extends BaseActivity {
     }
 
 
-    @Bind(R.id.smartconfig_network_name_field)
+    @BindView(R.id.smartconfig_network_name_field)
     EditText mEtNetworkName;
 
-    @Bind(R.id.smartconfig_network_pass_field)
+    @BindView(R.id.smartconfig_network_pass_field)
     EditText mEtNetworkPasswd;
 
-    @Bind(R.id.smartconfig_progressbar)
+    @BindView(R.id.smartconfig_progressbar)
     ProgressBar smartconfig_progressbar;
 
     @OnClick(R.id.smartconfig_start)

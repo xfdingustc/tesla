@@ -25,7 +25,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -37,10 +38,10 @@ public class ForgotPasswordFragment extends BaseFragment {
     private static final String TAG_REQUEST_SEND_EMAIL = "ForgotPasswordFragment.request.send.email";
 
 
-    @Bind(R.id.sign_up_email)
+    @BindView(R.id.sign_up_email)
     CompoundEditView mTvSignUpEmail;
 
-    @Bind(R.id.button_animator)
+    @BindView(R.id.button_animator)
     ViewAnimator mButtonAnimator;
 
     private String mEmail;

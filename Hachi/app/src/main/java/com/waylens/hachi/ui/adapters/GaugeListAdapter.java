@@ -18,7 +18,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -147,22 +148,22 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
 
     static class VH extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.title)
+        @BindView(R.id.title)
         TextView titleView;
 
-        @Bind(R.id.btn_small)
+        @BindView(R.id.btn_small)
         View btnSmall;
 
-        @Bind(R.id.btn_medium)
+        @BindView(R.id.btn_medium)
         View btnMedium;
 
-        @Bind(R.id.btn_large)
+        @BindView(R.id.btn_large)
         View btnLarge;
 
-        @Bind(R.id.btn_switch)
+        @BindView(R.id.btn_switch)
         SwitchCompat btnSwitch;
 
-        @Bind(R.id.radio_group)
+        @BindView(R.id.radio_group)
         RadioGroup radioGroup;
 
         public VH(View itemView) {

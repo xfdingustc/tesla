@@ -20,7 +20,8 @@ import com.waylens.hachi.ui.helpers.DownloadHelper;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -185,25 +186,25 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.item_container)
+        @BindView(R.id.item_container)
         LinearLayout itemContainer;
 
-        @Bind(R.id.music_icon)
+        @BindView(R.id.music_icon)
         ImageView musicIcon;
 
-        @Bind(R.id.music_title)
+        @BindView(R.id.music_title)
         TextView musicTitle;
 
-        @Bind(R.id.music_length)
+        @BindView(R.id.music_length)
         TextView musicLength;
 
-        @Bind(R.id.item_view_animator)
+        @BindView(R.id.item_view_animator)
         ViewAnimator viewAnimator;
 
-        @Bind(R.id.music_btn_add)
+        @BindView(R.id.music_btn_add)
         ImageView btnAdd;
 
-        @Bind(R.id.music_btn_play)
+        @BindView(R.id.music_btn_play)
         ImageView btnPlay;
 
         public static final int STATUS_NORMAL = 0;

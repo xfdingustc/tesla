@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.avatar.serializables.Photo;
 import com.waylens.hachi.ui.avatar.serializables.PhotoSerializable;
@@ -22,7 +21,7 @@ import com.waylens.hachi.utils.ThumbnailsUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -42,7 +41,7 @@ public class PhotoPickerFragment extends BaseFragment implements View.OnClickLis
 
     private List<Photo> dataList;
 
-    @Bind(R.id.rvPhotoList)
+    @BindView(R.id.rvPhotoList)
     RecyclerView mRvPhotoList;
 
     @Override
@@ -131,7 +130,7 @@ public class PhotoPickerFragment extends BaseFragment implements View.OnClickLis
 
     class PhotoListViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.image_view)
+        @BindView(R.id.image_view)
         ImageView imageView;
 
         public PhotoListViewHolder(View itemView) {

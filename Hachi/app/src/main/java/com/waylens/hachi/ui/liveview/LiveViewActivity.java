@@ -13,7 +13,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2016/3/22.
@@ -28,7 +29,7 @@ public class LiveViewActivity extends BaseActivity {
     public static final String ACTION_IS_GAUGE_VISIBLE = "broadcast.action.is.gauge.visible";
 
     private int mCurrentOrientation;
-    @Bind(R.id.fragmentContainer)
+    @BindView(R.id.fragmentContainer)
     FrameLayout mFragmentContainer;
 
     public static void launch(Activity startingActivity, VdtCamera camera, boolean isGaugeVisible) {

@@ -39,7 +39,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Richard on 2/1/16.
@@ -47,13 +48,13 @@ import butterknife.Bind;
 public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMusicActionListener {
     private static final String TAG = MusicFragment.class.getSimpleName();
 
-    @Bind(R.id.music_list_view)
+    @BindView(R.id.music_list_view)
     RecyclerViewExt mMusicListView;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.refresh_layout)
+    @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
     MusicListAdapter mMusicListAdapter;

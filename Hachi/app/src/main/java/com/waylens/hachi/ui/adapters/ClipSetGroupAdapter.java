@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -252,7 +253,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public static class ClipGroupHeaderViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.clipSetDate)
+        @BindView(R.id.clipSetDate)
         TextView mClipSetDate;
 
         public ClipGroupHeaderViewHolder(View itemView) {
@@ -263,18 +264,18 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public class ClipGridViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.ivClipCover)
+        @BindView(R.id.ivClipCover)
         ImageView ivClipCover;
 
-        @Bind(R.id.tvDuration)
+        @BindView(R.id.tvDuration)
         TextView tvDuration;
 
         @Nullable
-        @Bind(R.id.btnSelect)
+        @BindView(R.id.btnSelect)
         ImageButton mBtnSelect;
 
         @Nullable
-        @Bind(R.id.selectedMask)
+        @BindView(R.id.selectedMask)
         View mSelectedMask;
 
         public ClipGridViewHolder(View itemView) {

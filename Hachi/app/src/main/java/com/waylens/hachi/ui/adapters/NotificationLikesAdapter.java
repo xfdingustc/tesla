@@ -19,7 +19,8 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -85,19 +86,19 @@ public class NotificationLikesAdapter extends RecyclerView.Adapter<NotificationL
 
     public static class NotificationLikeVH extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.like_user_avatar)
+        @BindView(R.id.like_user_avatar)
         CircleImageView likeUserAvatar;
 
-        @Bind(R.id.like_user_name)
+        @BindView(R.id.like_user_name)
         TextView likeUserName;
 
-        @Bind(R.id.like_time)
+        @BindView(R.id.like_time)
         TextView likeTime;
 
-        @Bind(R.id.moment_title)
+        @BindView(R.id.moment_title)
         TextView momentTitle;
 
-        @Bind(R.id.moment_thumbnail)
+        @BindView(R.id.moment_thumbnail)
         ImageView momentThumbnail;
 
         public NotificationLikeVH(View itemView) {

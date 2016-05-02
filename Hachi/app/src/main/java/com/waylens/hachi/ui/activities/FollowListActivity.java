@@ -28,7 +28,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2015/9/23.
@@ -47,7 +48,7 @@ public class FollowListActivity extends BaseActivity {
     private UserListRvAdapter mUserListAdatper;
 
 
-    @Bind(R.id.rvFollowList)
+    @BindView(R.id.rvFollowList)
     RecyclerView mRvFollowList;
 
     public static void launch(Context context, String userId, boolean isFollowers) {

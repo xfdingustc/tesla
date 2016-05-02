@@ -19,7 +19,8 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2016/3/14.
@@ -31,13 +32,13 @@ public class ScanQrCodeFragment extends BaseFragment {
     private String mWifiPassword;
 
 
-    @Bind(R.id.cropWindow)
+    @BindView(R.id.cropWindow)
     FrameLayout mCropWindow;
 
-    @Bind(R.id.qrDecoderView)
+    @BindView(R.id.qrDecoderView)
     QRCodeReaderView mQrCodeReaderView;
 
-    @Bind(R.id.scanLine)
+    @BindView(R.id.scanLine)
     ImageView mScanLine;
 
 

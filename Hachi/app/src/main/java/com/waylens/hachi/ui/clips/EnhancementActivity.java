@@ -44,7 +44,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Richard on 12/18/15.
@@ -66,10 +67,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     public static final int PLAYLIST_INDEX = 0x100;
 
-    @Bind(R.id.player_fragment_content)
+    @BindView(R.id.player_fragment_content)
     ViewGroup mPlayerContainer;
 
-    @Bind(R.id.clipTrimmer)
+    @BindView(R.id.clipTrimmer)
     VideoTrimmer mClipTrimmer;
 
     private ClipPlayFragment mClipPlayFragment;

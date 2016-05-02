@@ -28,7 +28,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2016/3/21.
@@ -45,16 +46,16 @@ public class ApConnectFragment extends BaseFragment {
     private EventBus mEventBus = EventBus.getDefault();
 
 
-    @Bind(R.id.tvSsid)
+    @BindView(R.id.tvSsid)
     TextView mTvSsid;
 
-    @Bind(R.id.tvPassword)
+    @BindView(R.id.tvPassword)
     TextView mTvPassword;
 
-    @Bind(R.id.vsRootView)
+    @BindView(R.id.vsRootView)
     ViewSwitcher mVsRootView;
 
-    @Bind(R.id.cameraLiveView)
+    @BindView(R.id.cameraLiveView)
     CameraLiveView mCameraLiveView;
 
     public static ApConnectFragment newInstance(String ssid, String password) {

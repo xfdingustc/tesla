@@ -35,7 +35,8 @@ import com.waylens.hachi.utils.PushUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -68,10 +69,10 @@ public class MainActivity extends BaseActivity {
     private BaseFragment mCurrentFragment = null;
     private SessionManager mSessionManager = SessionManager.getInstance();
 
-    @Bind(R.id.drawerLayout)
+    @BindView(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.navView)
+    @BindView(R.id.navView)
     NavigationView mNavView;
 
 

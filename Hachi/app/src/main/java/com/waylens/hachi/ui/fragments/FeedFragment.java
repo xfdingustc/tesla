@@ -42,7 +42,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Xiaofei on 2015/8/4.
@@ -65,13 +66,13 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     public static final int FEED_TAG_STAFF_PICKS = 3;
     public static final int FEED_TAG_ALL = 4;
 
-    @Bind(R.id.view_animator)
+    @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
-    @Bind(R.id.video_list_view)
+    @BindView(R.id.video_list_view)
     RecyclerViewExt mVideoListView;
 
-    @Bind(R.id.refresh_layout)
+    @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
     MomentsRecyclerAdapter mAdapter;

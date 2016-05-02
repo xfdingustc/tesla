@@ -18,7 +18,8 @@ import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONObject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -28,10 +29,10 @@ public class NotificationFragment extends BaseFragment {
 
     public static final String TAG_NOTIFICATIONS = "TAG.notification";
 
-    @Bind(R.id.comments_unread)
+    @BindView(R.id.comments_unread)
     View commentsUnreadView;
 
-    @Bind(R.id.likes_unread)
+    @BindView(R.id.likes_unread)
     View likesUnreadView;
 
     RequestQueue mRequestQueue;

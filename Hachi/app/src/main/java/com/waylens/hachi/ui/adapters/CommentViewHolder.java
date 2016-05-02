@@ -7,7 +7,8 @@ import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -16,19 +17,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class CommentViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.user_avatar)
+    @BindView(R.id.user_avatar)
     CircleImageView avatarView;
 
-    @Bind(R.id.tvUserName)
+    @BindView(R.id.tvUserName)
     TextView tvUserName;
 
-    @Bind(R.id.comment_content)
+    @BindView(R.id.comment_content)
     TextView commentContentViews;
 
-    @Bind(R.id.comment_time)
+    @BindView(R.id.comment_time)
     TextView commentTimeView;
 
-    @Bind(R.id.status_container)
+    @BindView(R.id.status_container)
     ViewAnimator commentViewAnimator;
 
 

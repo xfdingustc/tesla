@@ -44,7 +44,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 
@@ -73,16 +74,16 @@ public class FootageActivity extends BaseActivity {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    @Bind(R.id.vsRoot)
+    @BindView(R.id.vsRoot)
     View mRootView;
 
-    @Bind(R.id.clipSetPrgressBar)
+    @BindView(R.id.clipSetPrgressBar)
     ClipSetProgressBar mClipSetProgressBar;
 
-    @Bind(R.id.btnAddBookmark)
+    @BindView(R.id.btnAddBookmark)
     ImageButton mBtnAddBookmark;
 
-    @Bind(R.id.tvClipPosTime)
+    @BindView(R.id.tvClipPosTime)
     TextView mTvClipPosTime;
 
     @OnClick(R.id.btnAddBookmark)

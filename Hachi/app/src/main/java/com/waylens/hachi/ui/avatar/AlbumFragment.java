@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -20,10 +19,9 @@ import com.waylens.hachi.ui.avatar.serializables.Photo;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.utils.ThumbnailsUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -42,12 +40,12 @@ public class AlbumFragment extends BaseFragment implements View.OnClickListener 
 
     private ImageLoader mImageLoader = ImageLoader.getInstance();
 
-    @Bind(R.id.rvAlbumList)
+    @BindView(R.id.rvAlbumList)
     RecyclerView mRvAlbumList;
 
     @Override
     public void onClick(View v) {
-        AlbumAdapterViewHolder viewHolder = (AlbumAdapterViewHolder)v.getTag();
+        AlbumAdapterViewHolder viewHolder = (AlbumAdapterViewHolder) v.getTag();
         int position = viewHolder.getLayoutPosition();
         AlbumInfo albumInfo = mPhotoAlbumSerializable.getList().get(position);
         onPageLodingClickListener.onAlbumClickedListener(albumInfo.getName_album(), albumInfo.getList());
@@ -99,7 +97,7 @@ public class AlbumFragment extends BaseFragment implements View.OnClickListener 
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            AlbumAdapterViewHolder viewHolder = (AlbumAdapterViewHolder)holder;
+            AlbumAdapterViewHolder viewHolder = (AlbumAdapterViewHolder) holder;
             final AlbumInfo item = mPhotoAlbumSerializable.getList().get(position);
 
             String displayItemUri = ThumbnailsUtil.MapgetHashValue(item.getImage_id(), item.getPath_file());
@@ -117,13 +115,13 @@ public class AlbumFragment extends BaseFragment implements View.OnClickListener 
 
 
     class AlbumAdapterViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.album_item_cover)
+        @BindView(R.id.album_item_cover)
         ImageView ivCover;
 
-        @Bind(R.id.album_item_title)
+        @BindView(R.id.album_item_title)
         TextView tvAlbumTitle;
 
-        @Bind(R.id.album_item_count)
+        @BindView(R.id.album_item_count)
         TextView tvAlbumItemCount;
 
 

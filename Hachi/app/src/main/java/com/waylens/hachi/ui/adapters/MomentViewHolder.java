@@ -8,12 +8,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ViewUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -22,37 +21,37 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MomentViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.user_avatar)
+    @BindView(R.id.user_avatar)
     CircleImageView userAvatar;
 
-    @Bind(R.id.user_name)
+    @BindView(R.id.user_name)
     TextView userName;
 
-    @Bind(R.id.user_car)
+    @BindView(R.id.user_car)
     TextView userCar;
 
-    @Bind(R.id.moment_desc_view)
+    @BindView(R.id.moment_desc_view)
     TextView descView;
 
-    @Bind(R.id.video_time)
+    @BindView(R.id.video_time)
     TextView videoTime;
 
-    @Bind(R.id.video_duration)
+    @BindView(R.id.video_duration)
     TextView videoDuration;
 
-    @Bind(R.id.video_cover)
+    @BindView(R.id.video_cover)
     ImageView videoCover;
 
-    @Bind(R.id.video_control)
+    @BindView(R.id.video_control)
     ImageView videoControl;
 
-    @Bind(R.id.btnLike)
+    @BindView(R.id.btnLike)
     ImageButton btnLike;
 
-    @Bind(R.id.btn_comment)
+    @BindView(R.id.btn_comment)
     LinearLayout btnComment;
 
-    @Bind(R.id.video_fragment_container)
+    @BindView(R.id.video_fragment_container)
     FrameLayout fragmentContainer;
 
     public Fragment videoFragment;

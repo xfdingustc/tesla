@@ -34,7 +34,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,21 +52,22 @@ public class UserProfileActivity extends BaseActivity {
 
     private ArrayList<Moment> mMomentList;
 
-    @Bind(R.id.rvUserMomentList)
+    @BindView(R.id.rvUserMomentList)
     RecyclerView mRvUserMomentList;
 
-    @Bind(R.id.userAvatar)
+
+    @BindView(R.id.userAvatar)
     CircleImageView mCivUserAvatar;
 
 
 
-    @Bind(R.id.btnFollowersCount)
+    @BindView(R.id.btnFollowersCount)
     TextView mTvFollowersCount;
 
-    @Bind(R.id.btnFollowingCount)
+    @BindView(R.id.btnFollowingCount)
     TextView mTvFollowingCount;
 
-    @Bind(R.id.btnFollow)
+    @BindView(R.id.btnFollow)
     TextView mBtnFollow;
     
     @OnClick(R.id.btnFollowersCount)

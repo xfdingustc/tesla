@@ -32,7 +32,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -41,8 +42,9 @@ import butterknife.ButterKnife;
 public class ClientConnectFragment extends BaseFragment {
     private static final String TAG = ClientConnectFragment.class.getSimpleName();
 
-    @Bind(R.id.rvWifiList)
+    @BindView(R.id.rvWifiList)
     RecyclerView mRvWifiList;
+
     private List<NetworkItemBean> mNetworkList;
 
     private NetworkItemAdapter mNetworkItemAdapter;
@@ -230,16 +232,16 @@ public class ClientConnectFragment extends BaseFragment {
 
         public class NetworkItemViewHolder extends RecyclerView.ViewHolder {
 
-            @Bind(R.id.wifiContainer)
+            @BindView(R.id.wifiContainer)
             LinearLayout mContainer;
 
-            @Bind(R.id.tvSsid)
+            @BindView(R.id.tvSsid)
             TextView tvSsid;
 
-            @Bind(R.id.ivWifiCipher)
+            @BindView(R.id.ivWifiCipher)
             ImageView ivWifiCipher;
 
-            @Bind(R.id.ivWifiSignal)
+            @BindView(R.id.ivWifiSignal)
             ImageView ivWifiSignal;
 
             public NetworkItemViewHolder(View itemView) {
