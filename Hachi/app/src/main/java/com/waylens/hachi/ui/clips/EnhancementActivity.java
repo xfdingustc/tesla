@@ -39,6 +39,8 @@ import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -283,7 +285,9 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     void setupToolbarImpl() {
-
+        if (getToolbar() == null) {
+            return;
+        }
         getToolbar().getMenu().clear();
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:
@@ -502,11 +506,11 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }
     }
 
-    public String getGaugeSettings() {
+    public JSONObject getGaugeSettings() {
         if (mEnhanceFragment != null) {
             return mEnhanceFragment.getGaugeSettings();
         } else {
-            return "";
+            return null;
         }
     }
 

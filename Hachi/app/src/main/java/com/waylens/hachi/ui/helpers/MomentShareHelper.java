@@ -10,6 +10,8 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.upload.DataUploader;
 
+import org.json.JSONObject;
+
 
 public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     private static final String TAG = "MomentShareHelper";
@@ -42,8 +44,8 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     LocalMoment mLocalMoment;
 
 
-    public MomentShareHelper(Context context, @NonNull OnShareMomentListener listener) {
-        mVdbRequestQueue = null;//Snipe.newRequestQueue();
+    public MomentShareHelper(Context context, VdbRequestQueue requestQueue, @NonNull OnShareMomentListener listener) {
+        mVdbRequestQueue = requestQueue;
         mShareListener = listener;
         mHandler = new Handler(Looper.getMainLooper());
         mContext = context;
@@ -72,11 +74,9 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
      * @param tags
      * @param accessLevel
      */
-    public void shareMoment(final int playListID, final String title, final String[] tags, final String accessLevel, final int audioID, String gaugeSettings) {
+    public void shareMoment(final int playListID, final String title, final String[] tags, final String accessLevel, final int audioID, JSONObject gaugeSettings) {
         mMomentBuilder = new MomentBuilder(mContext, mVdbRequestQueue);
-        mMomentBuilder.forPlayList(playListID)
-            .asMoment(title, tags, accessLevel, audioID, gaugeSettings)
-            .build(this);
+        mMomentBuilder.forPlayList(playListID).asMoment(title, tags, accessLevel, audioID, gaugeSettings).build(this);
     }
 
     void uploadData() {

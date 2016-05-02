@@ -5,6 +5,8 @@ import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.urls.UploadUrl;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -20,7 +22,7 @@ public class LocalMoment {
 
     public int audioID;
 
-    public String gaugeSettings;
+    public JSONObject gaugeSettings;
 
     public ArrayList<Segment> mSegments;
 
@@ -32,11 +34,7 @@ public class LocalMoment {
 
     private boolean isReadyToUpload;
 
-    public LocalMoment(String title,
-                       String[] tags,
-                       String accessLevel,
-                       int audioID,
-                       String gaugeSettings) {
+    public LocalMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings) {
         this.title = title;
         this.tags = tags;
         this.accessLevel = accessLevel;
@@ -61,7 +59,6 @@ public class LocalMoment {
     public void setPrepared(boolean isPrepared) {
         isReadyToUpload = isPrepared;
     }
-
 
 
     public static class Segment {

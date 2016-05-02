@@ -269,7 +269,7 @@ public class DataUploader {
 
     void uploadClips(LocalMoment localMoment) {
         mMomentID = localMoment.momentID;
-        Logger.t(TAG).e("MomentID: " + mMomentID);
+        Logger.t(TAG).d("MomentID: " + mMomentID);
         try {
             init();
             int ret = login();

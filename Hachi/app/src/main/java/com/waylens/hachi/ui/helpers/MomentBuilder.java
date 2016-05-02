@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.helpers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.android.volley.Request;
@@ -44,13 +43,11 @@ import crs_svr.v2.CrsCommand;
  */
 public class MomentBuilder {
 
-    private static final String TAG = "MomentBuilder";
+    private static final String TAG = MomentBuilder.class.getSimpleName();
 
-    private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1
-        | VdbCommand.Factory.UPLOAD_GET_RAW;
+    private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
 
-    private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW
-        | CrsCommand.VIDIT_RAW_DATA;
+    private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
 
 
     LocalMoment mLocalMoment;
@@ -73,8 +70,7 @@ public class MomentBuilder {
 
     volatile boolean isCancelled;
 
-    public MomentBuilder(Context context,
-                         VdbRequestQueue vdbRequestQueue) {
+    public MomentBuilder(Context context, VdbRequestQueue vdbRequestQueue) {
         mVdbRequestQueue = vdbRequestQueue;
         mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(context);
         cacheDir = context.getExternalCacheDir();
@@ -85,11 +81,7 @@ public class MomentBuilder {
         return this;
     }
 
-    public MomentBuilder asMoment(String title,
-                                  String[] tags,
-                                  String accessLevel,
-                                  int audioID,
-                                  String gaugeSettings) {
+    public MomentBuilder asMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings) {
         mLocalMoment = new LocalMoment(title, tags, accessLevel, audioID, gaugeSettings);
         return this;
     }
@@ -242,11 +234,14 @@ public class MomentBuilder {
             if (mLocalMoment.audioID > 0) {
                 params.put("audioType", 1);
                 params.put("musicSource", "" + mLocalMoment.audioID);
+            } else {
+                params.put("audioType", 0);
             }
+
             params.put("overlay", mLocalMoment.gaugeSettings);
-            Log.e("test", "params: " + params);
+            Logger.t(TAG).d("params: " + params);
         } catch (JSONException e) {
-            Log.e("test", "", e);
+            Logger.t(TAG).e("", e);
         }
 
         mVolleyRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENTS, params,

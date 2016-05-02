@@ -23,6 +23,8 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.ViewUtils;
 
+import org.json.JSONObject;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 
@@ -103,12 +105,12 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     @OnClick(R.id.btn_share)
     void shareVideo() {
         mViewAnimator.setDisplayedChild(1);
-        mShareHelper = new MomentShareHelper(getActivity(), this);
+        mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, this);
         String title = mTitleView.getText().toString();
         String[] tags = new String[]{"Shanghai", "car"};
         Activity activity = getActivity();
         int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
-        String gaugeSettings = "";
+        JSONObject gaugeSettings = null;
         if (activity instanceof EnhancementActivity) {
             audioID = ((EnhancementActivity)activity).getAudioID();
             gaugeSettings = ((EnhancementActivity)activity).getGaugeSettings();

@@ -333,7 +333,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     }
 
 
-    public String getGaugeSettings() {
+    public JSONObject getGaugeSettings() {
         JSONObject jsonObject = mGaugeListAdapter.toJSOptions();
         int checkedId = mStyleRadioGroup.getCheckedRadioButtonId();
         try {
@@ -351,7 +351,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         } catch (JSONException e) {
             Logger.t(TAG).e(e, "");
         }
-        return jsonObject.toString();
+        return jsonObject;
     }
 
     public int getSelectedPosition() {
