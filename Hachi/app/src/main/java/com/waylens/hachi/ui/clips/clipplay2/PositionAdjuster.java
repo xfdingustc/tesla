@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments.clipplay2;
+package com.waylens.hachi.ui.clips.clipplay2;
 
 /**
  * Created by Xiaofei on 2016/3/1.

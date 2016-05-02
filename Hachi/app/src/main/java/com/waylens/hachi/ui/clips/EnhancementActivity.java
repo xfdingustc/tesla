@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,25 +16,22 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.EnhanceFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.fragments.ShareFragment;
 import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
-import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
+import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.clips.clipplay2.ClipUrlProvider;
+import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.clips.clipplay2.PlaylistUrlProvider;
+import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
@@ -106,13 +102,13 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         super.onConfigurationChanged(newConfig);
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mToolbar.setVisibility(View.GONE);
+            getToolbar().setVisibility(View.GONE);
             layoutParams.topMargin = 0;
             layoutParams.width = ViewGroup.MarginLayoutParams.MATCH_PARENT;
             layoutParams.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;
             mPlayerContainer.setLayoutParams(layoutParams);
         } else {
-            mToolbar.setVisibility(View.VISIBLE);
+            getToolbar().setVisibility(View.VISIBLE);
             layoutParams.width = ViewGroup.MarginLayoutParams.MATCH_PARENT;
             layoutParams.height = mOriginalHeight;
             if (mLaunchMode == LAUNCH_MODE_QUICK_VIEW) {
@@ -260,12 +256,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mToolbar == null) {
-            return;
-        }
-        mToolbar.setNavigationIcon(R.drawable.navbar_close);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mLaunchMode == LAUNCH_MODE_ENHANCE) {
@@ -287,31 +279,27 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 }
             }
         });
-        mToolbar.setOnMenuItemClickListener(this);
+        getToolbar().setOnMenuItemClickListener(this);
     }
 
     void setupToolbarImpl() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mToolbar == null) {
-            return;
-        }
 
-        mToolbar.getMenu().clear();
+        getToolbar().getMenu().clear();
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:
-                mToolbar.setTitle("");
-                mToolbar.inflateMenu(R.menu.menu_clip_play_fragment);
+                getToolbar().setTitle("");
+                getToolbar().inflateMenu(R.menu.menu_clip_play_fragment);
                 break;
             case LAUNCH_MODE_ENHANCE:
-                mToolbar.setTitle(R.string.enhance);
-                mToolbar.inflateMenu(R.menu.menu_enhance);
+                getToolbar().setTitle(R.string.enhance);
+                getToolbar().inflateMenu(R.menu.menu_enhance);
                 break;
             case LAUNCH_MODE_SHARE:
-                mToolbar.setTitle(R.string.share);
-                mToolbar.inflateMenu(R.menu.menu_share);
+                getToolbar().setTitle(R.string.share);
+                getToolbar().inflateMenu(R.menu.menu_share);
                 break;
             case LAUNCH_MODE_MODIFY:
-                mToolbar.inflateMenu(R.menu.menu_clip_modify);
+                getToolbar().inflateMenu(R.menu.menu_clip_modify);
                 break;
         }
     }

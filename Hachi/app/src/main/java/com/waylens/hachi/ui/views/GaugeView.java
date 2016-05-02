@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
-import com.waylens.hachi.ui.fragments.clipplay2.GaugeInfoItem;
+import com.waylens.hachi.ui.clips.clipplay2.GaugeInfoItem;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;

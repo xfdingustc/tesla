@@ -1,10 +1,9 @@
-package com.waylens.hachi.ui.fragments.clipplay2;
+package com.waylens.hachi.ui.clips.clipplay2;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.waylens.hachi.snipe.VdbImageLoader;

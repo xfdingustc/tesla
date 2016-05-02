@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments.clipplay2;
+package com.waylens.hachi.ui.clips.clipplay2;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

@@ -89,7 +89,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.FootageActivity"
+            android:name=".ui.clips.FootageActivity"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -129,12 +129,12 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.EnhancementActivity"
+            android:name=".ui.clips.EnhancementActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.ClipChooserActivity"
+            android:name=".ui.clips.ClipChooserActivity"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -142,7 +142,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.ClipModifyActivity"
+            android:name=".ui.clips.ClipModifyActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.MusicDownloadActivity"

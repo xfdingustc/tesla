@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,14 +23,13 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
-import com.waylens.hachi.ui.activities.ClipChooserActivity;
-import com.waylens.hachi.ui.activities.EnhancementActivity;
 import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.GaugeInfoItem;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.clips.clipplay2.GaugeInfoItem;
+import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;

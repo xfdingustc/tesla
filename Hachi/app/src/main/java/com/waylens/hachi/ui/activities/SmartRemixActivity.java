@@ -26,6 +26,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.cache.DiskCache;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipSet;

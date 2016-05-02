@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.res.TypedArray;
@@ -15,9 +15,11 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.EnhancementActivity;
+import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
+import com.waylens.hachi.ui.clips.EnhanceFragment;
 import com.waylens.hachi.ui.entities.LocalMoment;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.ViewUtils;
 

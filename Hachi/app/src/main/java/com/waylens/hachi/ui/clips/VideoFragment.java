@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.clips;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,10 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.ui.activities.SmartRemixActivity;
+import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.vdb.Clip;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,17 +38,17 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     @Subscribe
     public void onEventMultiSelect(MultiSelectEvent event) {
         if (event.getIsMultiSeleted()) {
-            mToolbar.getMenu().clear();
-            mToolbar.inflateMenu(R.menu.menu_clip_list);
-            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            getToolbar().getMenu().clear();
+            getToolbar().inflateMenu(R.menu.menu_clip_list);
+            getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     mEventBus.post(new MenuItemSelectEvent(item.getItemId()));
                     return true;
                 }
             });
-            mToolbar.setNavigationIcon(R.drawable.navbar_close);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            getToolbar().setNavigationIcon(R.drawable.navbar_close);
+            getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     setupToolbar();
@@ -89,19 +90,19 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        mToolbar.getMenu().clear();
-        mToolbar.inflateMenu(R.menu.menu_smart_remix);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.smart_remix:
-                        SmartRemixActivity.launch(getActivity(), mVdtCamera);
-                        break;
-                }
-                return true;
-            }
-        });
+        getToolbar().getMenu().clear();
+//        getToolbar().inflateMenu(R.menu.menu_smart_remix);
+//        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.smart_remix:
+//                        SmartRemixActivity.launch(getActivity(), mVdtCamera);
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
         mVideoSpinner.setVisibility(View.VISIBLE);
     }
 

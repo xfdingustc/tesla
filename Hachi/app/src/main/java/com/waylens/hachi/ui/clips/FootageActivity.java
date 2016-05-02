@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,10 +24,11 @@ import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistEditor;
-import com.waylens.hachi.ui.fragments.clipplay2.PlaylistUrlProvider;
-import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.clips.clipplay2.PlaylistUrlProvider;
+import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
@@ -111,10 +112,10 @@ public class FootageActivity extends BaseActivity {
 
     @Subscribe
     public void onEventClipSelectEvent(final ClipSelectEvent event) {
-        mToolbar.getMenu().clear();
+        getToolbar().getMenu().clear();
         if (event.getClip() != null) {
-            mToolbar.inflateMenu(R.menu.menu_clip_list);
-            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            getToolbar().inflateMenu(R.menu.menu_clip_list);
+            getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
@@ -223,10 +224,9 @@ public class FootageActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.navbar_close);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        if (getToolbar() != null) {
+            getToolbar().setNavigationIcon(R.drawable.navbar_close);
+            getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     finish();

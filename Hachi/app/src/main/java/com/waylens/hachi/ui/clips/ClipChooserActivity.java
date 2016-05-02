@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.clips;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -8,7 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.fragments.TaggedClipFragment;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.clips.TaggedClipFragment;
 import com.waylens.hachi.vdb.Clip;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class ClipChooserActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(getToolbar());
         setTitle(R.string.add_more_clips);
         setHomeAsUpIndicator(R.drawable.navbar_close);
 

@@ -1,8 +1,6 @@
-package com.waylens.hachi.ui.fragments.clipplay2;
+package com.waylens.hachi.ui.clips.clipplay2;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.webkit.WebView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.SnipeError;
@@ -11,20 +9,12 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSegment;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
-import com.waylens.hachi.vdb.rawdata.GpsData;
-import com.waylens.hachi.vdb.rawdata.IioData;
-import com.waylens.hachi.vdb.rawdata.ObdData;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

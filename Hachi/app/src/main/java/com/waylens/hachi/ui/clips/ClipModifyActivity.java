@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,11 +20,11 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.TaggedClipFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay2.ClipUrlProvider;
-import com.waylens.hachi.ui.fragments.clipplay2.UrlProvider;
+import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
+import com.waylens.hachi.ui.clips.clipplay2.ClipUrlProvider;
+import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.views.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
@@ -99,12 +99,12 @@ public class ClipModifyActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.modify);
-        mToolbar.inflateMenu(R.menu.menu_clip_modify);
+        getToolbar().setTitle(R.string.modify);
+        getToolbar().inflateMenu(R.menu.menu_clip_modify);
 
 
-        mToolbar.setNavigationIcon(R.drawable.navbar_close);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (hasUpdated) {
@@ -113,7 +113,7 @@ public class ClipModifyActivity extends BaseActivity {
                 finish();
             }
         });
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
