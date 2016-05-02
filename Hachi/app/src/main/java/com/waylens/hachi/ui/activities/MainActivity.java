@@ -93,12 +93,12 @@ public class MainActivity extends BaseActivity {
         init();
     }
 
-
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         refressNavHeaderView();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -153,13 +153,7 @@ public class MainActivity extends BaseActivity {
             switchFragment(TAB_TAG_LIVE_VIEW);
         }
 
-        // update user profile;
-        if (mSessionManager.isLoggedIn()) {
-            Logger.t(TAG).d("mUserAvatar: " + mUserAvatar + " url: " + mSessionManager.getAvatarUrl());
-            ImageLoader.getInstance().displayImage(mSessionManager.getAvatarUrl(), mUserAvatar);
-            mUsername.setText(mSessionManager.getUserName());
 
-        }
     }
 
     private void hideSystemUI(boolean hide) {
@@ -273,7 +267,7 @@ public class MainActivity extends BaseActivity {
     private void refressNavHeaderView() {
         if (mSessionManager.isLoggedIn()) {
             mUsername.setText(mSessionManager.getUserName());
-
+            ImageLoader.getInstance().displayImage(mSessionManager.getAvatarUrl(), mUserAvatar);
         } else {
             mUsername.setText(getText(R.string.click_2_login));
         }

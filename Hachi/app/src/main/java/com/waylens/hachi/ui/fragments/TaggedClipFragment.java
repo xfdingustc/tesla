@@ -248,9 +248,9 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
 
     private void initViews() {
         if (mVdtCamera != null) {
-            doGetBookmarkClips();
+            doGetClips();
             if (mClipSetType != Clip.TYPE_MARKED) {
-                mBottomLayout.setVisibility(View.VISIBLE);
+                //mBottomLayout.setVisibility(View.VISIBLE);
                 doGetBufferedClips();
             }
         }
@@ -285,7 +285,7 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
                     mDeleteClipCount++;
                     Logger.t(TAG).d("" + mDeleteClipCount + " clips deleted");
                     if (mDeleteClipCount == toDeleteClipCount) {
-                        doGetBookmarkClips();
+                        doGetClips();
                     }
                 }
             }, new VdbResponse.ErrorListener() {
@@ -352,7 +352,7 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
 
 
 
-    private void doGetBookmarkClips() {
+    private void doGetClips() {
         if (mVdbRequestQueue == null) {
             return;
         }
@@ -360,12 +360,12 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
         int flag;
         int attr;
 
-        if (mClipSetType == Clip.TYPE_MARKED) {
+        if (true || mClipSetType == Clip.TYPE_MARKED) {
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA;
             attr = 0;
         } else {
-            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
-            attr = Clip.CLIP_ATTR_MANUALLY;
+//            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
+//            attr = Clip.CLIP_ATTR_MANUALLY;
         }
 
         mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, flag, attr,
@@ -525,7 +525,7 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
     BroadcastReceiver localReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            doGetBookmarkClips();
+            doGetClips();
         }
     };
 

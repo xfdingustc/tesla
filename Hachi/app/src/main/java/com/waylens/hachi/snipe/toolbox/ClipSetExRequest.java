@@ -140,6 +140,8 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
                     clipSet.addClip(clip);
                 }
 
+
+
             } else {
                 clipSet.addClip(clip);
             }
