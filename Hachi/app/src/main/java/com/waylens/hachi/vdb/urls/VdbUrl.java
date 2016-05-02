@@ -1,9 +1,11 @@
 package com.waylens.hachi.vdb.urls;
 
+import java.io.Serializable;
+
 /**
  * Created by Xiaofei on 2016/2/2.
  */
-public class VdbUrl {
+public class VdbUrl implements Serializable{
     public String url;
     public int lengthMs;
     public long realTimeMs;

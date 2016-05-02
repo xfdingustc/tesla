@@ -2,10 +2,12 @@ package com.waylens.hachi.vdb.urls;
 
 import com.waylens.hachi.vdb.Clip;
 
+import java.io.Serializable;
+
 /**
  * Created by Richard on 11/19/15.
  */
-public class UploadUrl extends VdbUrl {
+public class UploadUrl extends VdbUrl implements Serializable{
     public boolean isPlayList;
 
     public Clip.ID cid;

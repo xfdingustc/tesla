@@ -13,19 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
-import com.waylens.hachi.upload.UploadJob;
+import com.waylens.hachi.upload.UploadAvatarJob;
 import com.waylens.hachi.upload.UploadJobManager;
 import com.waylens.hachi.utils.ImageUtils;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -176,9 +172,9 @@ public class AvatarActivity extends BaseActivity {
     }
 
     private void uploadAvatar() {
-        UploadJob uploadJob = new UploadJob(mCroppedImagePath);
+        UploadAvatarJob uploadAvatarJob = new UploadAvatarJob(mCroppedImagePath);
         JobManager jobManager = UploadJobManager.getManager();
-        jobManager.addJobInBackground(uploadJob);
+        jobManager.addJobInBackground(uploadAvatarJob);
         showUploadProgressDialog();
 
     }

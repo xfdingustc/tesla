@@ -17,13 +17,13 @@ import org.json.JSONObject;
 /**
  * Created by Xiaofei on 2016/4/27.
  */
-public class UploadJob extends Job {
-    private static final String TAG = UploadJob.class.getSimpleName();
+public class UploadAvatarJob extends Job {
+    private static final String TAG = UploadAvatarJob.class.getSimpleName();
     private CloudInfo mCloudInfo;
 
     private final String file;
 
-    public UploadJob(String file) {
+    public UploadAvatarJob(String file) {
         super(new Params(0).requireNetwork().persist());
         this.file = file;
     }

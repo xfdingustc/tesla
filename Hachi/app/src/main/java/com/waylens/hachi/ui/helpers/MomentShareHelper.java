@@ -5,10 +5,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.upload.DataUploader;
+import com.waylens.hachi.upload.UploadJobManager;
+import com.waylens.hachi.upload.UploadMomentJob;
 
 import org.json.JSONObject;
 
@@ -80,29 +83,32 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     }
 
     void uploadData() {
-        mUploadThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (isCancelled) {
-                        if (mShareListener != null) {
-                            mShareListener.onCancelShare();
-                        }
-                        return;
-                    }
-                    uploaderV2 = new DataUploader();
-                    uploaderV2.upload(mLocalMoment);
-                } catch (Exception e) {
-                    Logger.t(TAG).e(e, "");
-                    if (mShareListener != null) {
-                        mShareListener.onShareError(ERROR_IO, 0);
-                    }
-                }
-                uploaderV2 = null;
-                mUploadThread = null;
-            }
-        }, "share-moment-thread");
-        mUploadThread.start();
+//        mUploadThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    if (isCancelled) {
+//                        if (mShareListener != null) {
+//                            mShareListener.onCancelShare();
+//                        }
+//                        return;
+//                    }
+//                    uploaderV2 = new DataUploader();
+//                    uploaderV2.upload(mLocalMoment);
+//                } catch (Exception e) {
+//                    Logger.t(TAG).e(e, "");
+//                    if (mShareListener != null) {
+//                        mShareListener.onShareError(ERROR_IO, 0);
+//                    }
+//                }
+//                uploaderV2 = null;
+//                mUploadThread = null;
+//            }
+//        }, "share-moment-thread");
+//        mUploadThread.start();
+        JobManager jobManager = UploadJobManager.getManager();
+        UploadMomentJob job = new UploadMomentJob(mLocalMoment);
+        jobManager.addJobInBackground(job);
     }
 
 //    @Override

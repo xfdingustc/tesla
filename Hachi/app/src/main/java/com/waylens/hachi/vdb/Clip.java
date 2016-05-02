@@ -6,7 +6,9 @@ import android.os.Parcelable;
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.utils.ToStringUtils;
 
-public class Clip implements Parcelable {
+import java.io.Serializable;
+
+public class Clip implements Parcelable, Serializable {
     public static final int TYPE_REAL = -1;
     public static final int TYPE_BUFFERED = 0;
     public static final int TYPE_MARKED = 1;
@@ -32,7 +34,7 @@ public class Clip implements Parcelable {
     // --------------------------------------------------------------
     // clip id
     // --------------------------------------------------------------
-    public static final class ID {
+    public static final class ID implements Serializable{
 
         public final int type; // depends on cat
         public final int subType; // depends on type
@@ -99,7 +101,7 @@ public class Clip implements Parcelable {
     }
 
     // stream info: see StdMedia.java
-    public static final class StreamInfo {
+    public static final class StreamInfo implements Serializable{
 
         public int version; // 0: invalid; current is 2
 
@@ -122,7 +124,7 @@ public class Clip implements Parcelable {
 
     }
 
-    public class EditInfo {
+    public class EditInfo implements Serializable{
         public Clip.ID bufferedCid;
         public Clip.ID realCid;
         public long minExtensibleValue;

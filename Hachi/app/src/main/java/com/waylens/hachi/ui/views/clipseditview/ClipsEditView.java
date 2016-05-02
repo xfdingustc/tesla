@@ -117,7 +117,6 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
 
 
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
-        Logger.t("EnhancementActivity").d("get current camera: " + mVdtCamera);
         if (mVdtCamera != null) {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
             mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);

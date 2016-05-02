@@ -1,11 +1,8 @@
 package com.waylens.hachi.upload;
 
-import android.support.annotation.NonNull;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.upload.event.UploadEvent;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.urls.UploadUrl;
@@ -62,17 +59,16 @@ public class DataUploader {
         mOutputStream = mSocket.getOutputStream();
     }
 
-    private int login() throws IOException {
+    private int login(byte deviceType) throws IOException {
         mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN));
-        CrsUserLogin loginCmd = new CrsUserLogin(mUserId, mMomentID, mCloudInfo.getPrivateKey());
+        CrsUserLogin loginCmd = new CrsUserLogin(mUserId, mMomentID, mCloudInfo.getPrivateKey(), deviceType);
         sendData(loginCmd.getEncodedCommand());
         CrsCommandResponse response = receiveData();
         mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN_SUCCEED));
         return response.responseCode;
     }
 
-    private int createMomentDesc(LocalMoment localMoment)
-        throws IOException {
+    private int createMomentDesc(LocalMoment localMoment) throws IOException {
         CrsMomentDescription momentDescription = new CrsMomentDescription(mUserId, mMomentID, "background music", mCloudInfo.getPrivateKey());
         for (LocalMoment.Segment segment : localMoment.mSegments) {
             momentDescription.addFragment(new CrsFragment(segment.clip.getVdbId(),
@@ -85,9 +81,9 @@ public class DataUploader {
                 segment.dataType
             ));
         }
-        CrsFragment  crsFragment = new CrsFragment(String.valueOf(mMomentID),
-            localMoment.mSegments.get(0).getClipCaptureTime(), 0, 0, 0,
-            (short)0, (short) 0, CrsCommand.VIDIT_THUMBNAIL_JPG);
+        CrsFragment crsFragment = new CrsFragment(String.valueOf(mMomentID),
+            localMoment.mSegments.get(0).getClipCaptureTime(), 0, 0, 0, (short) 0, (short) 0,
+            CrsCommand.VIDIT_THUMBNAIL_JPG);
         momentDescription.addFragment(crsFragment);
         sendData(momentDescription.getEncodedCommand());
         return receiveData().responseCode;
@@ -272,7 +268,7 @@ public class DataUploader {
         Logger.t(TAG).d("MomentID: " + mMomentID);
         try {
             init();
-            int ret = login();
+            int ret = login(CrsCommand.DEVICE_VIDIT);
             if (ret != 0) {
                 Logger.t(TAG).d("Login error");
                 mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_LOGIN));
@@ -326,7 +322,7 @@ public class DataUploader {
         Logger.t(TAG).d("Start upload file: " + file.toString());
         try {
             init();
-            int ret = login();
+            int ret = login(CrsCommand.DEVICE_OTHER);
             if (ret != 0) {
                 Logger.t(TAG).d("Login error");
 //                mUploadListener.onUploadError(MomentShareHelper.ERROR_LOGIN, ret);

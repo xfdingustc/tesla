@@ -7,12 +7,13 @@ import com.waylens.hachi.vdb.urls.UploadUrl;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Richard on 2/19/16.
  */
-public class LocalMoment {
+public class LocalMoment implements Serializable {
 
     public String title;
 
@@ -22,9 +23,10 @@ public class LocalMoment {
 
     public int audioID;
 
-    public JSONObject gaugeSettings;
+    public String gaugeSettings;
 
     public ArrayList<Segment> mSegments;
+
 
     public CloudInfo cloudInfo;
 
@@ -39,7 +41,7 @@ public class LocalMoment {
         this.tags = tags;
         this.accessLevel = accessLevel;
         this.audioID = audioID;
-        this.gaugeSettings = gaugeSettings;
+        this.gaugeSettings = gaugeSettings == null ? null : gaugeSettings.toString();
     }
 
     public void setFragments(ArrayList<Segment> segments, String thumbnailPath) {
@@ -61,7 +63,7 @@ public class LocalMoment {
     }
 
 
-    public static class Segment {
+    public static class Segment implements Serializable {
 
         public Clip clip;
         public UploadUrl uploadURL;
