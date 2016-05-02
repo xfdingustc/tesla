@@ -512,11 +512,9 @@ public class CameraPreviewFragment extends BaseFragment {
             if (serverAddr == null) {
                 mVdtCamera = null;
                 return;
-            } else {
-                mVdtCamera.startPreview();
-                mLiveView.startStream(serverAddr, null, true);
             }
-
+            mVdtCamera.startPreview();
+            mLiveView.startStream(serverAddr, null, true);
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
@@ -526,6 +524,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 @Override
                 public void run() {
                     updateCameraState();
+                    updateCameraInfoPanel();
                 }
             });
 
