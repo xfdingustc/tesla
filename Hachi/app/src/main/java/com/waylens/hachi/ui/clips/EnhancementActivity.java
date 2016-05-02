@@ -352,7 +352,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     private void initClipTrimmer() {
-        int defaultHeight = ViewUtils.dp2px(64, getResources());
+        int defaultHeight = ViewUtils.dp2px(64);
 
         mClipTrimmer.setBackgroundClip(mVdbImageLoader, mSharableClip.clip, defaultHeight);
         mClipTrimmer.setEditing(true);

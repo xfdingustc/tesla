@@ -43,7 +43,7 @@ public class SharpView extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(ViewUtils.dp2px(1, getResources()));
+        mPaint.setStrokeWidth(ViewUtils.dp2px(1));
         mPath = new Path();
     }
 

@@ -74,14 +74,14 @@ public class VideoTrimmer extends FrameLayout {
     void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
         Resources resources = getResources();
         if (attrs == null) {
-            mThumbWidth = ViewUtils.dp2px(DEFAULT_THUMB_WIDTH_DP, resources);
-            mBorderWidth = ViewUtils.dp2px(DEFAULT_BORDER_WIDTH_DP, resources);
-            mProgressBarWidth = ViewUtils.dp2px(DEFAULT_PROGRESS_BAR_WIDTH_DP, resources);
+            mThumbWidth = ViewUtils.dp2px(DEFAULT_THUMB_WIDTH_DP);
+            mBorderWidth = ViewUtils.dp2px(DEFAULT_BORDER_WIDTH_DP);
+            mProgressBarWidth = ViewUtils.dp2px(DEFAULT_PROGRESS_BAR_WIDTH_DP);
         } else {
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoTrimmer, defStyle, 0);
-            mThumbWidth = a.getDimensionPixelSize(R.styleable.VideoTrimmer_thumbWidth, ViewUtils.dp2px(DEFAULT_THUMB_WIDTH_DP, resources));
-            mBorderWidth = a.getDimensionPixelSize(R.styleable.VideoTrimmer_boardWidth, ViewUtils.dp2px(DEFAULT_BORDER_WIDTH_DP, resources));
-            mProgressBarWidth = a.getDimensionPixelSize(R.styleable.VideoTrimmer_progressBarWidth, ViewUtils.dp2px(DEFAULT_PROGRESS_BAR_WIDTH_DP, resources));
+            mThumbWidth = a.getDimensionPixelSize(R.styleable.VideoTrimmer_thumbWidth, ViewUtils.dp2px(DEFAULT_THUMB_WIDTH_DP));
+            mBorderWidth = a.getDimensionPixelSize(R.styleable.VideoTrimmer_boardWidth, ViewUtils.dp2px(DEFAULT_BORDER_WIDTH_DP));
+            mProgressBarWidth = a.getDimensionPixelSize(R.styleable.VideoTrimmer_progressBarWidth, ViewUtils.dp2px(DEFAULT_PROGRESS_BAR_WIDTH_DP));
             a.recycle();
         }
         initChildren();

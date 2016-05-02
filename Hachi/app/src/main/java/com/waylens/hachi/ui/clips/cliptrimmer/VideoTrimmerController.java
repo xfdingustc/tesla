@@ -96,9 +96,9 @@ class VideoTrimmerController extends View {
     private void init() {
         if (mThumbWidth == 0) {
             Resources resources = getResources();
-            mThumbWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_THUMB_WIDTH_DP, resources);
-            mBorderWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_BORDER_WIDTH_DP, resources);
-            mProgressBarWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_PROGRESS_BAR_WIDTH_DP, resources);
+            mThumbWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_THUMB_WIDTH_DP);
+            mBorderWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_BORDER_WIDTH_DP);
+            mProgressBarWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_PROGRESS_BAR_WIDTH_DP);
         }
 
         mColor = Color.rgb(0xff, 0x57, 0x22);

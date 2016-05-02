@@ -105,6 +105,7 @@ public class MomentBuilder {
                     if (clipSet == null || clipSet.getCount() == 0) {
                         mOnBuildListener.onBuildError(MomentShareHelper.ERROR_GET_CLIP_SET, 0);
                     } else {
+
                         mClipSet = clipSet;
                         mSegmentList.clear();
                         requestCounter = 0;

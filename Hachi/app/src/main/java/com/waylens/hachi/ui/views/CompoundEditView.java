@@ -96,7 +96,7 @@ public class CompoundEditView extends FrameLayout implements View.OnClickListene
         mControlsContainer = findViewById(R.id.cev_input_controls);
         mShowPasswordControl = findViewById(R.id.cev_btn_show_password);
         mClearTextControl = findViewById(R.id.cev_btn_clear_text);
-        mControlsBottomMargin = ViewUtils.dp2px(12, getResources());
+        mControlsBottomMargin = ViewUtils.dp2px(12);
         if (mInputHint != null) {
             mTextInputLayout.setHint(mInputHint);
         }

@@ -340,13 +340,13 @@ public class ClipSetProgressBar extends FrameLayout {
 
                 ImageView imageView = new ImageView(parent.getContext());
 
-                mCellWidth = (mRecyclerView.getHeight() - ViewUtils.dp2px(8, getResources())) * 16 / 9;
+                mCellWidth = (mRecyclerView.getHeight() - ViewUtils.dp2px(8)) * 16 / 9;
 
                 int imageViewWidth = getPosOffset(clipSegment.getDurationMs());
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(imageViewWidth, ViewGroup.LayoutParams.MATCH_PARENT);
                 params.gravity = Gravity.CENTER_VERTICAL;
-                params.topMargin = params.bottomMargin = ViewUtils.dp2px(4, getResources());
+                params.topMargin = params.bottomMargin = ViewUtils.dp2px(4);
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setLayoutParams(params);
 

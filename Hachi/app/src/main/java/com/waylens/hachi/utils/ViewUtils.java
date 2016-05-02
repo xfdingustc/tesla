@@ -7,6 +7,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
+import com.waylens.hachi.app.Hachi;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,7 +68,8 @@ public class ViewUtils {
         return getDigits(number, 0);
     }
 
-    public static int dp2px(int dp, Resources resources) {
+    public static int dp2px(int dp) {
+        Resources resources = Hachi.getContext().getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
         return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics) + 0.5f);
     }

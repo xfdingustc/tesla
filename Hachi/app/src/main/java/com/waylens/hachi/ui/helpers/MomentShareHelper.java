@@ -34,9 +34,7 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     VdbRequestQueue mVdbRequestQueue;
     OnShareMomentListener mShareListener;
 
-    volatile Thread mUploadThread;
-    volatile DataUploader uploaderV2;
-    volatile boolean isCancelled;
+
 
     MomentBuilder mMomentBuilder;
 
@@ -55,12 +53,8 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     }
 
     public void cancel(boolean cleanListener) {
-        isCancelled = true;
         if (mMomentBuilder != null) {
             mMomentBuilder.cancel();
-        }
-        if (mUploadThread != null && mUploadThread.isAlive() && uploaderV2 != null) {
-            uploaderV2.cancel();
         }
         if (cleanListener) {
             mShareListener = null;

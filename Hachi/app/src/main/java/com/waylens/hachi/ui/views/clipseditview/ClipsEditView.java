@@ -318,12 +318,12 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
             if (mOriginalSize == 0) {
                 mOriginalSize = holder.cardView.getWidth();
             }
-            int newSize = ViewUtils.dp2px(112, getResources());
+            int newSize = ViewUtils.dp2px(112);
             lp.width = newSize;
             lp.height = newSize;
         } else {
             if (mOriginalSize == 0) {
-                mOriginalSize = ViewUtils.dp2px(80, getResources());
+                mOriginalSize = ViewUtils.dp2px(80);
             }
             lp.width = mOriginalSize;
             lp.height = mOriginalSize;

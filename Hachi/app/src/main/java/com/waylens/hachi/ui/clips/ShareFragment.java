@@ -77,11 +77,8 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
             drawables[i] = typedArray.getDrawable(i);
         }
         typedArray.recycle();
-        IconSpinnerAdapter mAdapter = new IconSpinnerAdapter(getActivity(),
-            android.R.layout.simple_spinner_item,
-            strings,
-            drawables,
-            ViewUtils.dp2px(16, getResources()));
+        IconSpinnerAdapter mAdapter = new IconSpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, strings, drawables,
+            ViewUtils.dp2px(16));
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mPrivacySpinner.setAdapter(mAdapter);
 

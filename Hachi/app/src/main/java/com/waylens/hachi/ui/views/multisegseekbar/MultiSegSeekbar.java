@@ -156,9 +156,9 @@ public class MultiSegSeekbar extends View {
             mActiveColor = a.getColor(R.styleable.MultiSegSeekbar_segActiveColor, Color.WHITE);
             mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color.GRAY);
             mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth,
-                ViewUtils.dp2px(DEFAULT_DIVIDER_WIDTH_DP, resources));
+                ViewUtils.dp2px(DEFAULT_DIVIDER_WIDTH_DP));
             mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barMinHeight,
-                ViewUtils.dp2px(DEFAULT_BAR_HEIGHT, resources));
+                ViewUtils.dp2px(DEFAULT_BAR_HEIGHT));
             mBarPaddingBottom = a.getDimension(R.styleable.MultiSegSeekbar_barPaddingBottom,
                 TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_BAR_PADDING_BOTTOM_DP, getResources().getDisplayMetrics()));
 
