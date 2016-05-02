@@ -4,22 +4,60 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+
+
+
     <ImageView
         android:id="@+id/imageCover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
 
-    <Button
-        android:id="@+id/btnEnter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:text="enter"
-        android:textSize="14sp"
-        android:layout_marginBottom="64dp"
-        android:background="@color/style_color_accent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </Button>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/slogan"
+            android:textSize="20sp"
+            android:textColor="?attr/appTextColorPrimary"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="64dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></FrameLayout>
+
+
+        <Button
+            android:id="@+id/btnEnter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="32dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="Wake Up Camera"
+            android:textSize="14sp"
+            android:background="@color/style_color_accent">
+        </Button>
+
+        <TextView
+            android:id="@+id/withoutCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Withou Camera"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="32dp"
+            android:textColor="?attr/appTextColorPrimary"
+            />
+
+    </LinearLayout>
+
+
+
+
 
 </FrameLayout>

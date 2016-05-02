@@ -10,11 +10,13 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.TextViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
@@ -107,6 +109,9 @@ public class FirstInstallActivity extends BaseActivity {
         @Bind(R.id.btnEnter)
         Button mBtnEnter;
 
+        @Bind(R.id.withoutCamera)
+        TextView mWithoutCamera;
+
         @OnClick(R.id.btnEnter)
         public void onBtnEnterClicked() {
             Intent intent = new Intent();
@@ -127,8 +132,10 @@ public class FirstInstallActivity extends BaseActivity {
             imageCover.setImageResource(imageRes);
             if (hasEnter == true) {
                 mBtnEnter.setVisibility(View.VISIBLE);
+                mWithoutCamera.setVisibility(View.VISIBLE);
             } else {
                 mBtnEnter.setVisibility(View.GONE);
+                mWithoutCamera.setVisibility(View.GONE);
             }
             return view;
         }
