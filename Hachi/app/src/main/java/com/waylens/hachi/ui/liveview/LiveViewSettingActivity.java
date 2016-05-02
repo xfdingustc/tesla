@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.liveview;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import com.bigkoo.pickerview.OptionsPickerView;
 import com.waylens.hachi.R;
 
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.ui.activities.BaseActivity;
 
 import java.util.ArrayList;
 
@@ -23,7 +24,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/1/8.
  */
-public class VdtCameraSettingActivity extends BaseActivity {
+public class LiveViewSettingActivity extends BaseActivity {
 
     private static VdtCamera mSharedCamera;
     private VdtCamera mCamera;
@@ -44,40 +45,40 @@ public class VdtCameraSettingActivity extends BaseActivity {
 
 
     public static void launch(Activity startActivity, VdtCamera camera) {
-        Intent intent = new Intent(startActivity, VdtCameraSettingActivity.class);
+        Intent intent = new Intent(startActivity, LiveViewSettingActivity.class);
         mSharedCamera = camera;
         startActivity.startActivity(intent);
     }
 
 
-    @Bind(R.id.btnContinuous)
-    RadioButton mBtnContinuous;
+//    @Bind(R.id.btnContinuous)
+//    RadioButton mBtnContinuous;
+//
+//    @Bind(R.id.btnManual)
+//    RadioButton mBtnManual;
 
-    @Bind(R.id.btnManual)
-    RadioButton mBtnManual;
-
-    @Bind(R.id.tvRecordModeInfo)
-    TextView mTvRecordModeInfo;
+//    @Bind(R.id.tvRecordModeInfo)
+//    TextView mTvRecordModeInfo;
 
     @Bind(R.id.resolution_framerate)
     TextView mResolutionFramerate;
 
 
-    @OnClick(R.id.btnContinuous)
-    public void onBtnContinuousClicked() {
-        mTvRecordModeInfo.setText(getText(R.string.continuous_info));
-        mChangedRecordMode |= VdtCamera.FLAG_LOOP_RECORD;
-        mChangedRecordMode |= VdtCamera.FLAG_AUTO_RECORD;
-        checkIfChanged();
-    }
-
-    @OnClick(R.id.btnManual)
-    public void onBtnManualClicked() {
-        mTvRecordModeInfo.setText(getText(R.string.manual_info));
-        mChangedRecordMode &= ~VdtCamera.FLAG_LOOP_RECORD;
-        mChangedRecordMode &= ~VdtCamera.FLAG_AUTO_RECORD;
-        checkIfChanged();
-    }
+//    @OnClick(R.id.btnContinuous)
+//    public void onBtnContinuousClicked() {
+//        mTvRecordModeInfo.setText(getText(R.string.continuous_info));
+//        mChangedRecordMode |= VdtCamera.FLAG_LOOP_RECORD;
+//        mChangedRecordMode |= VdtCamera.FLAG_AUTO_RECORD;
+//        checkIfChanged();
+//    }
+//
+//    @OnClick(R.id.btnManual)
+//    public void onBtnManualClicked() {
+//        mTvRecordModeInfo.setText(getText(R.string.manual_info));
+//        mChangedRecordMode &= ~VdtCamera.FLAG_LOOP_RECORD;
+//        mChangedRecordMode &= ~VdtCamera.FLAG_AUTO_RECORD;
+//        checkIfChanged();
+//    }
 
     @OnClick(R.id.resolution_framerate)
     public void onResolutionFramerateClicked() {
@@ -105,7 +106,7 @@ public class VdtCameraSettingActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_live_view_setting);
-        updateRecordMode();
+//        updateRecordMode();
         updateRecordQuality();
         initRecordQualityOptionPickerView();
     }
@@ -115,9 +116,9 @@ public class VdtCameraSettingActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.recording_setting);
-        mToolbar.setNavigationIcon(R.drawable.navbar_close);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        getToolbar().setTitle(R.string.recording_setting);
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -126,16 +127,16 @@ public class VdtCameraSettingActivity extends BaseActivity {
         super.setupToolbar();
     }
 
-    private void updateRecordMode() {
-        int recordMode = mCamera.getRecordMode();
-        if ((recordMode & VdtCamera.FLAG_LOOP_RECORD) > 0) {
-            mBtnContinuous.setChecked(true);
-            mTvRecordModeInfo.setText(getText(R.string.continuous_info));
-        } else {
-            mBtnManual.setChecked(true);
-            mTvRecordModeInfo.setText(getText(R.string.manual_info));
-        }
-    }
+//    private void updateRecordMode() {
+//        int recordMode = mCamera.getRecordMode();
+//        if ((recordMode & VdtCamera.FLAG_LOOP_RECORD) > 0) {
+//            mBtnContinuous.setChecked(true);
+//            mTvRecordModeInfo.setText(getText(R.string.continuous_info));
+//        } else {
+//            mBtnManual.setChecked(true);
+//            mTvRecordModeInfo.setText(getText(R.string.manual_info));
+//        }
+//    }
 
     private void updateRecordQuality() {
         String resolution = null;
@@ -214,10 +215,10 @@ public class VdtCameraSettingActivity extends BaseActivity {
             changed = true;
         }
 
-        mToolbar.getMenu().clear();
+        getToolbar().getMenu().clear();
         if (changed) {
-            mToolbar.inflateMenu(R.menu.recording_setting);
-            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            getToolbar().inflateMenu(R.menu.recording_setting);
+            getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {

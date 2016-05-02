@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments.menualsetup;
+package com.waylens.hachi.ui.fragments.manualsetup;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;

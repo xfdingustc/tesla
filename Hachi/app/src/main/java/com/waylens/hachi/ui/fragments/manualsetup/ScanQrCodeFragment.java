@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments.menualsetup;
+package com.waylens.hachi.ui.fragments.manualsetup;
 
 import android.graphics.PointF;
 import android.os.Bundle;

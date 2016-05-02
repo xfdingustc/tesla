@@ -105,7 +105,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.LiveViewActivity"
+            android:name=".ui.liveview.LiveViewActivity"
             android:screenOrientation="landscape"></activity>
 
         <activity
@@ -121,7 +121,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.VdtCameraSettingActivity"
+            android:name=".ui.liveview.LiveViewSettingActivity"
             android:screenOrientation="portrait"/>
 
         <activity

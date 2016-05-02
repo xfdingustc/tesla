@@ -1,72 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:elevation="@dimen/default_elevation"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    <include layout="@layout/toolbar_default"/>
+
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:text="@string/recording_mode"-->
+        <!--android:textColor="@color/style_color_accent"-->
+        <!--android:textSize="16sp"/>-->
 
 
+    <!--<RadioGroup-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
 
-    </android.support.v7.widget.Toolbar>
+        <!--<RadioButton-->
+            <!--android:id="@+id/btnContinuous"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="16dp"-->
+            <!--android:buttonTint="?attr/appTextColorPrimary"-->
+            <!--android:text="@string/continuous"-->
+            <!--android:textColor="?attr/appTextColorPrimary"-->
+            <!--android:textSize="16sp"-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/recording_mode"
-        android:textColor="@color/style_color_accent"
-        android:textSize="16sp"/>
+            <!--/>-->
 
+        <!--<RadioButton-->
+            <!--android:id="@+id/btnManual"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="16dp"-->
+            <!--android:buttonTint="?attr/appTextColorPrimary"-->
+            <!--android:text="@string/manual"-->
+            <!--android:textColor="?attr/appTextColorPrimary"-->
+            <!--android:textSize="16sp"-->
+            <!--/>-->
+    <!--</RadioGroup>-->
 
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <RadioButton
-            android:id="@+id/btnContinuous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:buttonTint="?attr/appTextColorPrimary"
-            android:text="@string/continuous"
-            android:textColor="?attr/appTextColorPrimary"
-            android:textSize="16sp"
-
-            />
-
-        <RadioButton
-            android:id="@+id/btnManual"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:buttonTint="?attr/appTextColorPrimary"
-            android:text="@string/manual"
-            android:textColor="?attr/appTextColorPrimary"
-            android:textSize="16sp"
-            />
-    </RadioGroup>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/appTextColorDisabled"></View>
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="?attr/appTextColorDisabled"></View>-->
 
 
-    <TextView
-        android:id="@+id/tvRecordModeInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textColor="@color/text_camera_info"
-        android:textSize="14sp"/>
+    <!--<TextView-->
+        <!--android:id="@+id/tvRecordModeInfo"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:textColor="@color/text_camera_info"-->
+        <!--android:textSize="14sp"/>-->
 
 
     <TextView

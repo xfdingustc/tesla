@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments.camerapreview;
+package com.waylens.hachi.ui.liveview;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,17 +37,11 @@ import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
-import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
-import com.waylens.hachi.ui.activities.LiveViewActivity;
-import com.waylens.hachi.ui.activities.VdtCameraSettingActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
-import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
@@ -351,7 +345,7 @@ public class CameraPreviewFragment extends BaseFragment {
                             toggleInfoView();
                             break;
                         case R.id.cameraSetting:
-                            VdtCameraSettingActivity.launch(getActivity(), mVdtCamera);
+                            LiveViewSettingActivity.launch(getActivity(), mVdtCamera);
                             break;
                     }
                     return false;

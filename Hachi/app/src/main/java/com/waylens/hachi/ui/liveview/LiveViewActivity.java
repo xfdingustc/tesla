@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.liveview;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,8 +11,7 @@ import android.widget.FrameLayout;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.ui.fragments.camerapreview.CameraPreviewFragment;
+import com.waylens.hachi.ui.activities.BaseActivity;
 
 import butterknife.Bind;
 

@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments.menualsetup;
+package com.waylens.hachi.ui.fragments.manualsetup;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

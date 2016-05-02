@@ -28,7 +28,7 @@ import com.waylens.hachi.ui.fragments.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.SettingsFragment;
 import com.waylens.hachi.ui.fragments.VideoFragment;
-import com.waylens.hachi.ui.fragments.camerapreview.CameraPreviewFragment;
+import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 

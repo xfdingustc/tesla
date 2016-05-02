@@ -13,7 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.fragments.menualsetup.ScanQrCodeFragment;
+import com.waylens.hachi.ui.fragments.manualsetup.ScanQrCodeFragment;
 
 /**
  * Created by Xiaofei on 2016/3/21.
