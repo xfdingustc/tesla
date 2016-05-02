@@ -27,8 +27,8 @@
 
             <ImageView
                 android:id="@+id/btn_gauge"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="?android:attr/selectableItemBackground"
@@ -37,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/btn_add_video"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="?android:attr/selectableItemBackground"
@@ -47,23 +47,15 @@
 
             <ImageView
                 android:id="@+id/btn_music"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:contentDescription="@null"
                 android:src="@drawable/btn_enhance_music"/>
 
-            <ImageView
-                android:id="@+id/btn_smart_remix"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/btn_enhance_remix"/>
+
         </LinearLayout>
 
         <include layout="@layout/layout_line_break"/>

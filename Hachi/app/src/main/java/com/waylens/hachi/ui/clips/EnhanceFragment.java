@@ -96,8 +96,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @Bind(R.id.btn_music)
     View btnMusic;
 
-    @Bind(R.id.btn_smart_remix)
-    View btnRemix;
 
     @Bind(R.id.volume_value_view)
     TextView mVolumeView;
@@ -126,7 +124,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @OnClick(R.id.btn_music)
     void onClickMusic(View view) {
         btnGauge.setSelected(false);
-        btnRemix.setSelected(false);
+//        btnRemix.setSelected(false);
         view.setSelected(!view.isSelected());
         configureActionUI(ACTION_ADD_MUSIC, view.isSelected());
         updateMusicUI();
@@ -147,7 +145,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @OnClick(R.id.btn_gauge)
     void showGauge(View view) {
         btnMusic.setSelected(false);
-        btnRemix.setSelected(false);
+//        btnRemix.setSelected(false);
         mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_SHOW, true));
         view.setSelected(!view.isSelected());
         configureActionUI(ACTION_OVERLAY, view.isSelected());
@@ -171,7 +169,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @OnClick({R.id.btn_add_video, R.id.btn_add_video_extra})
     void showClipChooser() {
         btnMusic.setSelected(false);
-        btnRemix.setSelected(false);
+//        btnRemix.setSelected(false);
         btnGauge.setSelected(false);
         if (mViewAnimator.getDisplayedChild() != ACTION_ADD_VIDEO) {
             configureActionUI(ACTION_NONE, false);
@@ -180,36 +178,36 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         startActivityForResult(intent, REQUEST_CODE_ENHANCE);
     }
 
-    @OnClick(R.id.btn_smart_remix)
-    void showSmartRemix(View view) {
-        btnMusic.setSelected(false);
-        btnGauge.setSelected(false);
-        view.setSelected(!view.isSelected());
-        configureActionUI(ACTION_SMART_REMIX, view.isSelected());
-        if (mThemeAdapter == null) {
-            mThemeAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.theme_remix,
-                R.layout.layout_remix_spinner);
-            mThemeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mThemeSpinner.setAdapter(mThemeAdapter);
-        }
-
-        if (mLengthAdapter == null) {
-            mLengthAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.theme_length,
-                R.layout.layout_remix_spinner);
-            mLengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mLengthSpinner.setAdapter(mLengthAdapter);
-        }
-
-        if (mClipSrcAdapter == null) {
-            mClipSrcAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.theme_clip_src,
-                R.layout.layout_remix_spinner);
-            mClipSrcAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mClipSrcSpinner.setAdapter(mClipSrcAdapter);
-        }
-    }
+//    @OnClick(R.id.btn_smart_remix)
+//    void showSmartRemix(View view) {
+//        btnMusic.setSelected(false);
+//        btnGauge.setSelected(false);
+//        view.setSelected(!view.isSelected());
+//        configureActionUI(ACTION_SMART_REMIX, view.isSelected());
+//        if (mThemeAdapter == null) {
+//            mThemeAdapter = ArrayAdapter.createFromResource(getActivity(),
+//                R.array.theme_remix,
+//                R.layout.layout_remix_spinner);
+//            mThemeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            mThemeSpinner.setAdapter(mThemeAdapter);
+//        }
+//
+//        if (mLengthAdapter == null) {
+//            mLengthAdapter = ArrayAdapter.createFromResource(getActivity(),
+//                R.array.theme_length,
+//                R.layout.layout_remix_spinner);
+//            mLengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            mLengthSpinner.setAdapter(mLengthAdapter);
+//        }
+//
+//        if (mClipSrcAdapter == null) {
+//            mClipSrcAdapter = ArrayAdapter.createFromResource(getActivity(),
+//                R.array.theme_clip_src,
+//                R.layout.layout_remix_spinner);
+//            mClipSrcAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            mClipSrcSpinner.setAdapter(mClipSrcAdapter);
+//        }
+//    }
 
 
     @Override

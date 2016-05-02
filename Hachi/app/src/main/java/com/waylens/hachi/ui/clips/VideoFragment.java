@@ -14,7 +14,6 @@ import android.widget.Spinner;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
-import com.waylens.hachi.ui.activities.SmartRemixActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.vdb.Clip;
@@ -118,9 +117,9 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
                 //changeCurrentCamera(position);
                 BaseFragment fragment;
                 if (position == 0) {
-                    fragment = TaggedClipFragment.newInstance(Clip.TYPE_MARKED);
+                    fragment = TagFragment.newInstance(Clip.TYPE_MARKED);
                 } else {
-                    fragment = TaggedClipFragment.newInstance(Clip.TYPE_BUFFERED);
+                    fragment = TagFragment.newInstance(Clip.TYPE_BUFFERED);
                 }
 
                 getChildFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();

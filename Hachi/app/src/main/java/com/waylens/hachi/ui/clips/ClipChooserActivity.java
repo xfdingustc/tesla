@@ -9,7 +9,6 @@ import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.clips.TaggedClipFragment;
 import com.waylens.hachi.vdb.Clip;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class ClipChooserActivity extends BaseActivity {
         Intent intent = getIntent();
         //Clip clip = intent.getParcelableExtra("clip");
         ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
-        Fragment fragment = TaggedClipFragment.newInstance(Clip.TYPE_MARKED, true, true);
+        Fragment fragment = TagFragment.newInstance(Clip.TYPE_MARKED, true, true);
 
         getFragmentManager()
                 .beginTransaction()

@@ -122,9 +122,9 @@ public class FootageActivity extends BaseActivity {
                         case R.id.menu_to_enhance:
                             toEnhance(event.getClip());
                             break;
-                        case R.id.menu_to_upload:
+//                        case R.id.menu_to_upload:
                             //toShare();
-                            break;
+//                            break;
                         case R.id.menu_to_delete:
                             MaterialDialog dialog = new MaterialDialog.Builder(FootageActivity.this)
                                 .content(R.string.delete_bookmark_confirm)

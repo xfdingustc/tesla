@@ -60,8 +60,8 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/2/18.
  */
-public class TaggedClipFragment extends BaseFragment implements FragmentNavigator {
-    private static final String TAG = TaggedClipFragment.class.getSimpleName();
+public class TagFragment extends BaseFragment implements FragmentNavigator {
+    private static final String TAG = TagFragment.class.getSimpleName();
     private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
     private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
     private static final String ARG_IS_ADD_MORE = "is.add.more";
@@ -168,12 +168,12 @@ public class TaggedClipFragment extends BaseFragment implements FragmentNavigato
     }
 
 
-    public static TaggedClipFragment newInstance(int clipSetType) {
+    public static TagFragment newInstance(int clipSetType) {
         return newInstance(clipSetType, false, false);
     }
 
-    public static TaggedClipFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
-        TaggedClipFragment fragment = new TaggedClipFragment();
+    public static TagFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
+        TagFragment fragment = new TagFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
         args.putBoolean(ARG_IS_MULTIPLE_MODE, isMultipleSelectionMode);

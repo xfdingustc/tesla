@@ -10,10 +10,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.upload.DataUploader;
 
-/**
- * MomentShareHelper
- * Created by Richard on 1/5/16.
- */
+
 public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     private static final String TAG = "MomentShareHelper";
 
@@ -75,12 +72,7 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
      * @param tags
      * @param accessLevel
      */
-    public void shareMoment(final int playListID,
-                            final String title,
-                            final String[] tags,
-                            final String accessLevel,
-                            final int audioID,
-                            String gaugeSettings) {
+    public void shareMoment(final int playListID, final String title, final String[] tags, final String accessLevel, final int audioID, String gaugeSettings) {
         mMomentBuilder = new MomentBuilder(mContext, mVdbRequestQueue);
         mMomentBuilder.forPlayList(playListID)
             .asMoment(title, tags, accessLevel, audioID, gaugeSettings)
