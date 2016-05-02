@@ -16,21 +16,30 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
+import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-/**
- * Created by Richard on 3/22/16.
- */
+
 public class ShareFragment extends BaseFragment implements MomentShareHelper.OnShareMomentListener {
     private static final String TAG = "ShareFragment";
+    private static final int PLAYLIST_SHARE = 0x100;
+
+    private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_SHARE;
+
 
     @BindView(R.id.spinner_social_privacy)
     Spinner mPrivacySpinner;
@@ -41,12 +50,34 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     @BindView(R.id.moment_title)
     TextView mTitleView;
 
+    @BindArray(R.array.social_privacy_text)
+    CharSequence[] mPrivacyText;
+
+    private ClipSet mClipSet = new ClipSet(Clip.TYPE_TEMP);
 
     String[] mSupportedPrivacy;
 
     String mSocialPrivacy;
 
     private MomentShareHelper mShareHelper;
+
+    public static ShareFragment newInstance(ArrayList<Clip> clipList) {
+        ShareFragment fragment = new ShareFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("cliplist", clipList);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        ArrayList<Clip> clipList = bundle.getParcelableArrayList("cliplist");
+        for (Clip clip : clipList) {
+            mClipSet.addClip(clip);
+        }
+    }
 
     @Nullable
     @Override
@@ -70,14 +101,13 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     }
 
     private void initViews() {
-        CharSequence[] strings = getResources().getTextArray(R.array.social_privacy_text);
         TypedArray typedArray = getResources().obtainTypedArray(R.array.social_privacy_icon);
         Drawable[] drawables = new Drawable[typedArray.length()];
         for (int i = 0; i < drawables.length; i++) {
             drawables[i] = typedArray.getDrawable(i);
         }
         typedArray.recycle();
-        IconSpinnerAdapter mAdapter = new IconSpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, strings, drawables,
+        IconSpinnerAdapter mAdapter = new IconSpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, mPrivacyText, drawables,
             ViewUtils.dp2px(16));
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mPrivacySpinner.setAdapter(mAdapter);
@@ -99,18 +129,28 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
 
     @OnClick(R.id.btn_share)
     void shareVideo() {
-        mViewAnimator.setDisplayedChild(1);
-        mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, this);
-        String title = mTitleView.getText().toString();
-        String[] tags = new String[]{"Shanghai", "car"};
-        Activity activity = getActivity();
-        int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
-        JSONObject gaugeSettings = null;
-        if (activity instanceof EnhancementActivity) {
-            audioID = ((EnhancementActivity) activity).getAudioID();
-            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
-        }
-        mShareHelper.shareMoment(0x100, title, tags, mSocialPrivacy, audioID, gaugeSettings);
+        ClipSetManager manager = ClipSetManager.getManager();
+        manager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_SHARE, mClipSet);
+        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_SHARE);
+        playlistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(ClipSet clipSet) {
+                mClipSet = clipSet;
+                mViewAnimator.setDisplayedChild(1);
+                mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
+                String title = mTitleView.getText().toString();
+                String[] tags = new String[]{"Shanghai", "car"};
+                Activity activity = getActivity();
+                int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
+                JSONObject gaugeSettings = null;
+                if (activity instanceof EnhancementActivity) {
+                    audioID = ((EnhancementActivity) activity).getAudioID();
+                    gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
+                }
+                mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
+            }
+        });
+
     }
 
     @Override

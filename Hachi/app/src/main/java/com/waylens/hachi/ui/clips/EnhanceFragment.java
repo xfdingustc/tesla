@@ -233,7 +233,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
 //            Logger.t(TAG).d("clip play fragment: " + mClipPlayFragment);
         }
         mClipsEditView.setVisibility(View.INVISIBLE);
-        mPlaylistEditor = new PlaylistEditor(getActivity(), mVdtCamera, 0x100);
+        mPlaylistEditor = new PlaylistEditor(mVdbRequestQueue, 0x100);
         mClipsEditView.setVisibility(View.VISIBLE);
 
         configEnhanceView();

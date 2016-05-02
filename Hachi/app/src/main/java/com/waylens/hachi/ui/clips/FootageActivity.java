@@ -252,7 +252,7 @@ public class FootageActivity extends BaseActivity {
     }
 
     private void doMakePlaylist() {
-        mPlaylistEditor = new PlaylistEditor(this, mVdtCamera, 0x101);
+        mPlaylistEditor = new PlaylistEditor(mVdbRequestQueue, 0x101);
         mPlaylistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {

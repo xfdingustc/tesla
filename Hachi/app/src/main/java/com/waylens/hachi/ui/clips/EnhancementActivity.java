@@ -172,7 +172,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     private void doBuildPlaylist() {
-        PlaylistEditor playlistEditor = new PlaylistEditor(this, mVdtCamera, PLAYLIST_INDEX);
+        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_INDEX);
         playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
@@ -230,7 +230,8 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 } else {
                     adjustPlayerPosition(false);
                     if (mShareFragment == null) {
-                        mShareFragment = new ShareFragment();
+                        ArrayList<Clip> clipList = getClipSet().getClipList();
+                        mShareFragment = ShareFragment.newInstance(clipList);
                     }
                     switchFragment(mEnhanceFragment, mShareFragment);
                 }
