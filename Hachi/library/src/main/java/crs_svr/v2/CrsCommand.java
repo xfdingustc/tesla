@@ -2,6 +2,8 @@ package crs_svr.v2;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -273,6 +275,7 @@ public abstract class CrsCommand {
         if (readLength == strLength) {
             byteLength += readLength;
             int zeroCount = (4 - byteLength % 4) % 4;
+
             for (int i = 0; i < zeroCount; i++) {
                 inputStream.read();
             }

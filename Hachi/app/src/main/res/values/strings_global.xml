@@ -1,33 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="password_error">Password may contain 6 to 32 characters, numbers, and the following special characters &#033;&#035;&#036;&#037;&#038;&#042;&#043;&#045;&#064;&#094;&#095;&#046;&#126;</string>
+    <string name="facebook_app_id" translatable="false">400866993445789</string>
+    <string name="verification_code_pattern" translatable="false">[\\d]{6}</string>
     <string name="password_pattern" translatable="false">^[A&#045;Za&#045;z0&#045;9&#033;&#035;&#036;&#037;&#038;&#042;\\&#043;\\&#045;&#064;&#094;&#095;&#046;&#126;]{6,64}</string>
 
-
-    <string name="facebook_app_id">400866993445789</string>
 
     <plurals name="number_of_likes">
         <item quantity="one">%d like</item>
         <item quantity="other">%d likes</item>
     </plurals>
 
-    <string name="reply_to">\@%s</string>
-    <string name="like_your_post">%s like your post</string>
-    <string name="current_version">Current Version: %s</string>
-    <string name="fir_version">The latest version is %s</string>
-    <string name="error_check_fir">Error to check version from FIR.</string>
-    <string name="change_theme_hint">Change app theme need restart the application</string>
     <plurals name="numbers_of_clips">
         <item quantity="one">%d Clip</item>
         <item quantity="other">%d Clips</item>
     </plurals>
 
-    <string name="length_of_remix">Length of Remix</string>
-    <string name="shuffle_remix">Shuffle Remix</string>
-    <string name="verification_code_pattern" translatable="false">[\\d]{6}</string>
 
     <plurals name="number_of_bookmarks">
         <item quantity="one">%d Bookmark</item>
         <item quantity="other">%d Bookmarks</item>
     </plurals>
+
+    <string-array name="resolution" translatable="false">
+        <item>Unknown</item>
+        <item>1080p30</item>
+        <item>1080p60</item>
+        <item>720p30</item>
+        <item>720p60</item>
+        <item>4Kp30</item>
+        <item>4Kp60</item>
+        <item>480p30</item>
+        <item>480p60</item>
+        <item>720p120</item>
+    </string-array>
+
+    <string-array name="videoOptions" translatable="false">
+        <item>Tagged</item>
+        <item>Clip</item>
+        <!--<item>All Footage</item>-->
+    </string-array>
+
+
+    <string-array name="quality" translatable="false">
+        <item>Unknown</item>
+        <item>Super</item>
+        <item>High</item>
+        <item>Normal</item>
+        <item>Low</item>
+    </string-array>
+    <string-array name="colormode" translatable="false">
+        <item>Unknown</item>
+        <item>Normal</item>
+        <item>Sport</item>
+        <item>Car</item>
+        <item>Scenery</item>
+    </string-array>
+
+    <string-array name="rangesRPM" translatable="false">
+        <item>20</item>
+        <item>40</item>
+        <item>60</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="rangeColors" translatable="false">
+        <item>#1BCA21</item>
+        <item>#E8E721</item>
+        <item>#E86F21</item>
+        <item>#E7202B</item>
+    </string-array>
+
+    <string-array name="rangesSpeed" translatable="false">
+        <item>90</item>
+        <item>120</item>
+        <item>150</item>
+        <item>300</item>
+    </string-array>
+
+    <string-array name="rangeColorsTemp" translatable="false">
+        <item>#1BCA21</item>
+        <item>#E7202B</item>
+    </string-array>
+
+    <string-array name="rangesTemp" translatable="false">
+        <item>90</item>
+        <item>170</item>
+    </string-array>
+
+    <string-array name="avatarSource" translatable="false">
+        <item>Take Photo</item>
+        <item>Choose from Gallery</item>
+    </string-array>
+
+    <integer-array name="videoMarkTime" translatable="false">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </integer-array>
+
+    <string-array name="videoMarkTimeDesc" translatable="false">
+        <item>2s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>15s</item>
+        <item>20s</item>
+        <item>30s</item>
+    </string-array>
+
+    <!-- NOTE: Code update might be required after changing this array. -->
+    <string-array name="supported_gauges" translatable="false">
+        <item>SpeedThrottle</item>
+        <item>Rpm</item>
+        <item>Ambient</item>
+        <item>Psi</item>
+        <item>TimeDate</item>
+        <item>Gforce</item>
+        <item>RollPitch</item>
+        <item>Gps</item>
+    </string-array>
+
+    <string-array name="theme_remix" translatable="false">
+        <item>default</item>
+        <item>neo</item>
+        <item>Theme Three</item>
+        <item>Theme Four</item>
+    </string-array>
+
+    <string-array name="theme_length" translatable="false">
+        <item>5 sec</item>
+        <item>10 sec</item>
+        <item>20 sec</item>
+        <item>30 sec</item>
+        <item>45 sec</item>
+        <item>60 sec</item>
+        <item>90 sec</item>
+
+    </string-array>
+
+    <string-array name="theme_clip_src" translatable="false">
+        <item>Timeline Only</item>
+        <item>Last Hour</item>
+        <item>Today</item>
+        <item>Last 3 Days</item>
+    </string-array>
+
+    <string-array name="social_privacy_text" translatable="false">
+        <item>Everyone</item>
+        <item>Followers</item>
+        <item>Only Me</item>
+    </string-array>
+
+    <string-array name="social_privacy_value" translatable="false">
+        <item>PUBLIC</item>
+        <item>FOLLOWERS</item>
+        <item>PRIVATE</item>
+    </string-array>
+
+    <string-array name="setup_items" translatable="false">
+        <item>SmartConfig</item>
+        <item>Menual</item>
+    </string-array>
+
+
+    <integer-array name="social_privacy_icon" translatable="false">
+        <item>@drawable/social_privacy_everyone</item>
+        <item>@drawable/social_privacy_followers</item>
+        <item>@drawable/social_privacy_me</item>
+    </integer-array>
 </resources>
