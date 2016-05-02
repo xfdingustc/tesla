@@ -165,6 +165,9 @@ public class CameraPreviewFragment extends BaseFragment {
     @Bind(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
+    @Bind(R.id.btnStop)
+    ImageButton mBtnStop;
+
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
@@ -183,6 +186,11 @@ public class CameraPreviewFragment extends BaseFragment {
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
         showOverlay(!mIsGaugeVisible);
+    }
+
+    @OnClick(R.id.btnStop)
+    public void onBtnStopClick() {
+        mVdtCamera.stopRecording();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -341,7 +349,6 @@ public class CameraPreviewFragment extends BaseFragment {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.cameraInfo:
-
                             toggleInfoView();
                             break;
                         case R.id.cameraSetting:
@@ -395,8 +402,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-
-
         if (mLiveView != null) {
             mLiveView.stopStream();
         }
@@ -709,6 +714,7 @@ public class CameraPreviewFragment extends BaseFragment {
             case VdtCamera.STATE_RECORD_STOPPED:
                 mFabBookmark.setEnabled(true);
                 mFabBookmark.setImageResource(R.drawable.camera_control_start);
+                mBtnStop.setVisibility(View.GONE);
                 break;
             case VdtCamera.STATE_RECORD_STOPPING:
                 mFabBookmark.setEnabled(false);
@@ -720,12 +726,14 @@ public class CameraPreviewFragment extends BaseFragment {
                 mFabBookmark.setEnabled(true);
                 if (isInCarMode()) {
                     mFabBookmark.setImageResource(R.drawable.camera_control_bookmark);
+                    mBtnStop.setVisibility(View.VISIBLE);
                 } else {
                     mFabBookmark.setImageResource(R.drawable.camera_control_stop);
                 }
                 break;
             case VdtCamera.STATE_RECORD_SWITCHING:
                 mFabBookmark.setEnabled(false);
+                mBtnStop.setVisibility(View.GONE);
                 break;
             default:
                 break;

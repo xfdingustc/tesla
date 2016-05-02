@@ -57,6 +57,7 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
 
     public Fragment videoFragment;
 
+
     public MomentViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);

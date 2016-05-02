@@ -37,32 +37,37 @@ public class GaugeView extends FrameLayout {
     }
 
 
-
     public GaugeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
     private void init(Context context) {
+        if (isInEditMode()) {
+            return;
+        }
         mWebView = new WebView(context);
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addView(mWebView, params);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.loadUrl("file:///android_asset/api.html");
+
+
     }
+
 
     @Subscribe
     public void onGaugeEvent(GaugeEvent event) {
         switch (event.getWhat()) {
             case GaugeEvent.EVENT_WHAT_SHOW:
-                showGauge((Boolean)event.getExtra());
+                showGauge((Boolean) event.getExtra());
                 break;
             case GaugeEvent.EVENT_WHAT_CHANGE_THEME:
-                changeGaugeTheme((String)event.getExtra());
+                changeGaugeTheme((String) event.getExtra());
                 break;
             case GaugeEvent.EVENT_WHAT_UPDATE_SETTING:
-                updateGaugeSetting((GaugeInfoItem)event.getExtra());
+                updateGaugeSetting((GaugeInfoItem) event.getExtra());
                 break;
         }
 

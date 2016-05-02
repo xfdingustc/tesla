@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:background="#222428"
                 android:orientation="vertical">
 
@@ -162,6 +163,20 @@
         android:layout_margin="8dp"
         android:background="@android:color/transparent"
         android:src="@drawable/camera_control_bookmark"/>
+
+    <ImageButton
+        android:id="@+id/btnStop"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:layout_toRightOf="@id/fabBookmark"
+        android:background="@android:color/transparent"
+        android:src="@drawable/camera_control_stop"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
 
 
 </RelativeLayout>
