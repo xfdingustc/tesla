@@ -285,9 +285,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     void setupToolbarImpl() {
-        if (getToolbar() == null) {
-            return;
-        }
         getToolbar().getMenu().clear();
         switch (mLaunchMode) {
             case LAUNCH_MODE_QUICK_VIEW:

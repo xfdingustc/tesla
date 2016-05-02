@@ -3,8 +3,8 @@ package com.waylens.hachi.snipe;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSegment;
 
 /**
  * Created by Xiaofei on 2015/8/19.
@@ -342,11 +342,7 @@ public class VdbCommand {
                 .build();
         }
 
-        public static VdbCommand createCmdGetUploadUrl(Clip.ID cid,
-                                                       boolean isPlayList,
-                                                       long clipTimeMs,
-                                                       int lengthMs,
-                                                       int uploadOpt) {
+        public static VdbCommand createCmdGetUploadUrl(Clip.ID cid, boolean isPlayList, long clipTimeMs, int lengthMs, int uploadOpt) {
             int playListValue = isPlayList ? 1 : 0;
             return new Builder()
                 .writeCmdCode(CMD_GetUploadUrl, 0)

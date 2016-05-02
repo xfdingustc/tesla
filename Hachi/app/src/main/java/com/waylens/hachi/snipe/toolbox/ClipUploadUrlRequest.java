@@ -14,19 +14,17 @@ import com.waylens.hachi.vdb.urls.UploadUrl;
  * Created by Richard on 11/19/15.
  */
 public class ClipUploadUrlRequest extends VdbRequest<UploadUrl> {
-
+    private static final String TAG = ClipUploadUrlRequest.class.getSimpleName();
     public static final java.lang.String PARAM_IS_PLAY_LIST = "is_play_list";
     public static final java.lang.String PARAM_UPLOAD_OPT = "upload.opt";
     public static final java.lang.String PARAM_CLIP_TIME_MS = "clip_time_ms";
     public static final java.lang.String PARAM_CLIP_LENGTH_MS = "clip_length_ms";
 
-    private static final String TAG = "ClipUploadUrlRequest";
 
     private Clip.ID mCid;
     private Bundle mParams;
 
-    public ClipUploadUrlRequest(Clip.ID cid, Bundle params,
-                                VdbResponse.Listener<UploadUrl> listener,
+    public ClipUploadUrlRequest(Clip.ID cid, Bundle params, VdbResponse.Listener<UploadUrl> listener,
                                 VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         mCid = cid;

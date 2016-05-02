@@ -41,7 +41,7 @@ public class DataUploader {
     private OutputStream mOutputStream;
 
     String mUserId;
-    long mMomentID = 888;
+    long mMomentID;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -80,7 +80,9 @@ public class DataUploader {
                 segment.clip.streams[1].video_height,
                 segment.dataType
             ));
+            Logger.t(TAG).d("length: " + segment.uploadURL.lengthMs);
         }
+
         CrsFragment crsFragment = new CrsFragment(String.valueOf(mMomentID),
             localMoment.mSegments.get(0).getClipCaptureTime(), 0, 0, 0, (short) 0, (short) 0,
             CrsCommand.VIDIT_THUMBNAIL_JPG);
@@ -127,10 +129,13 @@ public class DataUploader {
                 URL url = new URL(uploadUrl.url);
                 URLConnection conn = url.openConnection();
                 inputStream = conn.getInputStream();
-                Logger.t(TAG).d("test", String.format("ContentLength[%d]", conn.getContentLength()));
+                Logger.t(TAG).d(String.format("ContentLength[%d]", conn.getContentLength()));
                 int ret = doUpload(guid, conn.getContentLength(), segment.dataType, inputStream, clipIndex++, null);
                 if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
+                    Logger.t(TAG).d("upload input stream error");
                     return ret;
+                } else {
+                    Logger.t(TAG).d("Finish one stream");
                 }
             } finally {
                 if (inputStream != null) {
@@ -175,10 +180,12 @@ public class DataUploader {
             int percentage = clipIndex * 100 / mClipTotalCount + percentageInThisClip;
 
 //            mUploadListener.onUploadProgress(percentage);
-            Logger.t(TAG).d("upload progress: " + percentage);
+            Logger.t(TAG).d("upload progress: " + percentage + " data send: " + dataSend + " totalLength: " + totalLength);
             mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_PROGRESS, percentage));
 
         }
+
+        Logger.t(TAG).d("upload one clip finished");
 
         inputStream.close();
         int serverRet = receiveData().responseCode;

@@ -50,7 +50,7 @@ public class MomentBuilder {
     private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
 
 
-    LocalMoment mLocalMoment;
+    private LocalMoment mLocalMoment;
 
     OnBuildListener mOnBuildListener;
 
