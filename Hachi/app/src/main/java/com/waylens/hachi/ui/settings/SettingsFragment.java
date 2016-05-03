@@ -31,13 +31,23 @@ public class SettingsFragment extends BaseFragment {
         super.setupToolbar();
     }
 
+    @OnClick(R.id.general)
+    public void onGeneralClicked() {
+        GeneralSettingActivity.launch(getActivity());
+    }
+
+    @OnClick(R.id.cameraSetting)
+    public void onCameraSettingClicked() {
+        CameraSettingActivity.launch(getActivity());
+    }
+
     @OnClick(R.id.settings_account)
-    void clickAccount() {
+    public void clickAccount() {
         AccountActivity.launch(getActivity());
     }
 
     @OnClick(R.id.settings_help)
-    void clickHelp() {
+    public void clickHelp() {
         VersionCheckActivity.launch(getActivity());
     }
 

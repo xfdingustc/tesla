@@ -120,6 +120,12 @@
             android:name=".ui.activities.SmartRemixActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.settings.CameraSettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.settings.GeneralSettingActivity"
+                  android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ui.liveview.LiveViewSettingActivity"
             android:screenOrientation="portrait"/>
