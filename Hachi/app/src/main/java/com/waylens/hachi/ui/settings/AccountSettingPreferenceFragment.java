@@ -5,6 +5,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.text.InputType;
+import android.view.View;
 import android.widget.DatePicker;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -64,6 +65,56 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mUserName.setSummary(mSessionManager.getUserName());
         mBirthday.setSummary(mSessionManager.getBirthday());
 
+
+        final int gender = mSessionManager.getGender();
+        switch (gender) {
+            case 0:
+                mGender.setSummary(R.string.male);
+                break;
+            case 1:
+                mGender.setSummary(R.string.female);
+                break;
+            default:
+                mGender.setSummary(R.string.rather_not_to_say);
+                break;
+        }
+
+        mGender.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .title("Please choose your gender")
+                    .items(R.array.gender_list)
+                    .itemsCallbackSingleChoice(gender, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                            return true;
+                        }
+                    })
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            int gender = dialog.getSelectedIndex();
+                            String genderStr = "";
+                            switch (gender) {
+                                case 0:
+                                    genderStr = "MALE";
+                                    break;
+                                case 1:
+                                    genderStr = "FEMALE";
+                                    break;
+
+                            }
+                            updateGender(genderStr);
+                        }
+                    })
+                    .show();
+                return true;
+            }
+        });
+
         mUserName.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -112,6 +163,38 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 return true;
             }
         });
+    }
+
+    private void updateGender(final String gender) {
+        String url = Constants.API_USER_PROFILE;
+        Map<String, String> params = new HashMap<>();
+
+
+        params.put("gender", gender);
+        String postBody = new JSONObject(params).toString();
+        Logger.t(TAG).d("postBody: "  + postBody);
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Logger.t(TAG).json(response.toString());
+                String i18nGender;
+                if (gender.equals("MALE")) {
+                    i18nGender = getString(R.string.male);
+                } else if (gender.equals("FEMALE")) {
+                    i18nGender = getString(R.string.female);
+                } else {
+                    i18nGender = getString(R.string.rather_not_to_say);
+                }
+                mGender.setSummary(i18nGender);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        mRequestQueue.add(request);
     }
 
 

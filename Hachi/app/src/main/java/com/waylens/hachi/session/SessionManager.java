@@ -34,7 +34,7 @@ public class SessionManager {
     private boolean mIsLinked;
     private String mBirthday;
 
-    private String mGender;
+    private int mGender;
 
     private SessionManager() {
         resetSessionInfo();
@@ -44,6 +44,7 @@ public class SessionManager {
         mUserName = newUserName;
         PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
     }
+
 
     private void resetSessionInfo() {
         this.mUserName = null;
@@ -85,7 +86,7 @@ public class SessionManager {
         return mBirthday;
     }
 
-    public String getGender() {
+    public int getGender() {
         return mGender;
     }
 
@@ -176,13 +177,22 @@ public class SessionManager {
             mEmail = response.getString("email");
             mAvatarUrl = response.getString("avatarUrl");
             mBirthday = response.getString("birthday");
-            mGender = response.getString("gender");
+            String gender = response.getString("gender");
+            if (gender.equals("MALE")) {
+                mGender = 0;
+            } else if (gender.equals("FEMALE")) {
+                mGender = 1;
+            } else {
+                mGender = -1;
+            }
+
+
 
             PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
             PreferenceUtils.putString(PreferenceUtils.EMAIL, mEmail);
             PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
             PreferenceUtils.putString(PreferenceUtils.BIRTHDAY, mBirthday);
-            PreferenceUtils.putString(PreferenceUtils.GENDER, mGender);
+            PreferenceUtils.putInt(PreferenceUtils.GENDER, mGender);
         } catch (JSONException e) {
             e.printStackTrace();
         }

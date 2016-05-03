@@ -170,4 +170,10 @@
         <item>@drawable/social_privacy_followers</item>
         <item>@drawable/social_privacy_me</item>
     </integer-array>
+
+    <string-array name="gender_list" translatable="false">
+        <item>@string/male</item>
+        <item>@string/female</item>
+        <item>@string/rather_not_to_say</item>
+    </string-array>
 </resources>

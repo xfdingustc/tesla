@@ -185,4 +185,7 @@
 	<string name="gender">性别</string>
 	<string name="region">区域</string>
 	<string name="change_username">更改用户名</string>
+	<string name="male">男</string>
+	<string name="female">女</string>
+	<string name="rather_not_to_say">我不想说</string>
 </resources>

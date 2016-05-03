@@ -185,4 +185,7 @@
 	<string name="gender">Gender</string>
 	<string name="region">Region</string>
 	<string name="change_username">Change user name</string>
+	<string name="male">Male</string>
+	<string name="female">Female</string>
+	<string name="rather_not_to_say">"I'd rather not to say"</string>
 </resources>
