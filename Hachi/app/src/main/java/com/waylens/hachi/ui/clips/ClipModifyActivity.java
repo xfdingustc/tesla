@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ViewAnimator;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.SnipeError;
@@ -44,10 +45,7 @@ public class ClipModifyActivity extends BaseActivity {
     private static final String TAG_GET_EXTENT = "ClipModifyActivity.get.clip.extent";
     private static final String TAG_SET_EXTENT = "ClipModifyActivity.set.clip.extent";
 
-    private VdtCamera mVdtCamera;
 
-    private VdbRequestQueue mVdbRequestQueue;
-    private VdbImageLoader mVdbImageLoader;
     private ClipPlayFragment mClipPlayFragment;
 
     SharableClip mSharableClip;
@@ -81,7 +79,8 @@ public class ClipModifyActivity extends BaseActivity {
     protected void init() {
         super.init();
 //        mVdbRequestQueue = Snipe.newRequestQueue(this);
-        mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+        initCamera();
+
         Bundle bundle = getIntent().getExtras();
         Clip clip = bundle.getParcelable("clip");
         if (clip != null) {
@@ -169,7 +168,7 @@ public class ClipModifyActivity extends BaseActivity {
     }
 
     void getClipExtent() {
-        if (mSharableClip == null) {
+        if (mSharableClip == null || mVdbRequestQueue == null) {
             return;
         }
         mVdbRequestQueue.add(new ClipExtentGetRequest(mSharableClip.clip, new VdbResponse.Listener<ClipExtent>() {

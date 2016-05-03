@@ -194,13 +194,14 @@ public class FootageActivity extends BaseActivity {
 
             }
         });
-        refreshFootageClipSet();
+
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
+        refreshFootageClipSet();
         mEventBus.register(this);
         mEventBus.register(mClipSetProgressBar);
     }
@@ -351,6 +352,7 @@ public class FootageActivity extends BaseActivity {
     }
 
     private void toModify(Clip clip) {
+        ClipModifyActivity.launch(this, clip);
     }
 
 
