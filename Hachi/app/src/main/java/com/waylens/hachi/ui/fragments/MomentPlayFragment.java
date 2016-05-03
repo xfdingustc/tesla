@@ -1,5 +1,6 @@
-package com.waylens.hachi.ui.fragments.clipplay;
+package com.waylens.hachi.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
@@ -11,41 +12,53 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.DragLayout;
 import com.waylens.hachi.ui.views.OnViewDragListener;
+import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.VolleyUtil;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
- * Video Player
- * Created by Richard on 10/26/15.
+ * Play Moment video
+ * Created by Richard on 11/3/15.
  */
-public abstract class VideoPlayFragment extends Fragment implements View.OnClickListener,
+public class MomentPlayFragment extends Fragment implements View.OnClickListener,
     MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener, ViewTreeObserver.OnGlobalLayoutListener {
-
-    private static final String TAG = VideoPlayFragment.class.getSimpleName();
-
+    MediaPlayer.OnErrorListener {
+    private static final String TAG = MomentPlayFragment.class.getSimpleName();
     protected static final String REQUEST_TAG = "RETRIEVE_RAW_DATA";
 
     private static final int FADE_OUT = 1;
@@ -74,38 +87,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     protected boolean mOverlayShouldDisplay = true;
 
-    public static VideoPlayFragment fullScreenPlayer;
-
-    @BindView(R.id.video_root_container)
-    FixedAspectRatioFrameLayout mRootContainer;
-
-    @BindView(R.id.waylens_video_container)
-    DragLayout mVideoContainer;
-
-
-    @BindView(R.id.video_controllers)
-    FrameLayout mVideoController;
-
-    @BindView(R.id.btn_play)
-    ImageView mBtnPlay;
-
-    @BindView(R.id.video_surface)
-    SurfaceView mSurfaceView;
-
-    @BindView(R.id.progress_loading)
-    ProgressBar mProgressLoading;
-
-    @BindView(R.id.progress_bar)
-    ProgressBar mProgressBar;
-
-    @BindView(R.id.btn_fullscreen)
-    ImageView mBtnFullScreen;
-
-    @BindView(R.id.text_video_time)
-    TextView mVideoTime;
-
-    @BindView(R.id.infoPanel)
-    LinearLayout mInfoPanel;
+    public static MomentPlayFragment fullScreenPlayer;
 
     protected OnViewDragListener mDragListener;
 
@@ -133,15 +115,69 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     OnProgressListener mProgressListener;
 
+    long mMomentID = Moment.INVALID_MOMENT_ID;
+    RequestQueue mRequestQueue;
+    JSONArray mRawDataUrls;
+
+    private FrameLayout.LayoutParams mPortraitInfoPanelParems;
+
+    @BindView(R.id.video_root_container)
+    FixedAspectRatioFrameLayout mRootContainer;
+
+    @BindView(R.id.waylens_video_container)
+    DragLayout mVideoContainer;
+
+    @BindView(R.id.video_controllers)
+    FrameLayout mVideoController;
+
+    @BindView(R.id.btn_play)
+    ImageView mBtnPlay;
+
+    @BindView(R.id.video_surface)
+    SurfaceView mSurfaceView;
+
+    @BindView(R.id.progress_loading)
+    ProgressBar mProgressLoading;
+
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
+
+    @BindView(R.id.btn_fullscreen)
+    ImageView mBtnFullScreen;
+
+    @BindView(R.id.text_video_time)
+    TextView mVideoTime;
+
+    @BindView(R.id.infoPanel)
+    LinearLayout mInfoPanel;
+
+    @OnClick(R.id.btn_play)
+    public void onBtnPlayClicked() {
+        playVideo();
+    }
+
+//    private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
+
+    public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
+        Bundle args = new Bundle();
+        MomentPlayFragment fragment = new MomentPlayFragment();
+        fragment.setArguments(args);
+        fragment.mMomentID = moment.id;
+        fragment.setSource(moment.videoURL);
+
+        fragment.mDragListener = listener;
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        mRequestQueue.start();
         mHandler = new VideoHandler(this);
         mNonUIThread = new HandlerThread("ReleaseMediaPlayer");
         mNonUIThread.start();
         mNonUIHandler = new Handler(mNonUIThread.getLooper());
-
-
     }
 
     @Override
@@ -166,7 +202,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         return view;
     }
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -184,15 +219,16 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-//        mDashboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(this);
-
-
+    public void onStart() {
+        super.onStart();
+        if (mRawDataState != RAW_DATA_STATE_READY) {
+            readRawURL();
+        }
     }
 
     @Override
     public void onStop() {
+
         super.onStop();
         mHandler.removeMessages(FADE_OUT);
         mHandler.removeMessages(SHOW_PROGRESS);
@@ -205,12 +241,20 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     @Override
     public void onDestroyView() {
+        mRequestQueue.cancelAll(REQUEST_TAG);
         super.onDestroyView();
         if (fullScreenPlayer == this) {
             fullScreenPlayer = null;
         }
         mDragListener = null;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRawDataState = RAW_DATA_STATE_UNKNOWN;
+    }
+
 
     protected void setSource(String source) {
         setSource(source, null);
@@ -224,8 +268,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         openVideo();
     }
 
-    private FrameLayout.LayoutParams mPortraitParams;
-    private FrameLayout.LayoutParams mPortraitInfoPanelParems;
 
     public void setFullScreen(boolean fullScreen) {
         int orientation = getActivity().getRequestedOrientation();
@@ -243,9 +285,6 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             mRootView.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
 
-//            mRootContainer.removeView(mDashboardLayout);
-//            mRootView.addView(mDashboardLayout, params);
-            calculateDashboardScaling(mRootView, true);
 
             mRootContainer.removeView(mInfoPanel);
             mRootView.addView(mInfoPanel, mPortraitInfoPanelParems);
@@ -260,61 +299,12 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             fullScreenPlayer = null;
 
 
-//            mRootView.removeView(mDashboardLayout);
-//            mRootContainer.addView(mDashboardLayout, mPortraitParams);
-            calculateDashboardScaling(mRootContainer, false);
-
             mRootView.removeView(mInfoPanel);
             mRootContainer.addView(mInfoPanel, mPortraitInfoPanelParems);
         }
         mIsFullScreen = fullScreen;
     }
 
-    @Override
-    public void onGlobalLayout() {
-        if (mRootContainer != null) {
-            calculateDashboardScaling(mRootContainer, false);
-
-        }
-    }
-
-    private float mWidthScale = 0;
-
-    private void calculateDashboardScaling(View parent, boolean landScape) {
-        float scale = 1.0f;
-        if (!landScape) {
-            int width = parent.getMeasuredWidth();
-
-            if (mWidthScale == 0) {
-//                mWidthScale = (float) width / DashboardLayout.NORMAL_WIDTH;
-
-            }
-
-            scale = mWidthScale;
-        }
-
-//        mDashboardLayout.setScaleX(scale);
-//        mDashboardLayout.setScaleY(scale);
-//        mDashboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-    }
-
-
-    private void hideSystemUI() {
-        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
-        int newUiOptions = uiOptions;
-        if (Build.VERSION.SDK_INT >= 14) {
-            newUiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
-        if (Build.VERSION.SDK_INT >= 16) {
-            newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
-        /*
-        if (Build.VERSION.SDK_INT >= 18) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }*/
-
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-    }
 
     @Override
     public void onClick(View v) {
@@ -331,6 +321,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         }
     }
 
+
     private void playVideo() {
         if (!isInPlaybackState()) {
             mTargetState = STATE_PLAYING;
@@ -343,6 +334,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             resumeVideo();
         }
     }
+
 
     private void resumeVideo() {
         start();
@@ -371,6 +363,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
     }
 
+
     void mute(boolean isMute) {
         int volume = isMute ? 0 : 1;
         if (isInPlaybackState()) {
@@ -386,9 +379,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     }
 
     protected void openVideo() {
-        if (mVideoSource == null
-            || mSurfaceView == null
-            || mSurfaceHolder == null) {
+        if (mVideoSource == null || mSurfaceView == null || mSurfaceHolder == null) {
             return;
         }
 
@@ -432,6 +423,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         }
     }
 
+
     @Override
     public void onPrepared(MediaPlayer mp) {
         mCurrentState = STATE_PREPARED;
@@ -456,6 +448,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
 
     }
 
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.e("test", "surfaceChanged - w:" + width + "; h:" + height);
@@ -476,6 +469,24 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             }
         }
     }
+
+    private void hideSystemUI() {
+        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        if (Build.VERSION.SDK_INT >= 14) {
+            newUiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+        /*
+        if (Build.VERSION.SDK_INT >= 18) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }*/
+
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+    }
+
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -509,6 +520,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         });
     }
 
+
     @Override
     public void onCompletion(MediaPlayer mp) {
         mCurrentState = STATE_PLAYBACK_COMPLETED;
@@ -518,7 +530,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         int duration = mp.getDuration();
         setProgress(duration, duration);
         mHandler.removeMessages(SHOW_PROGRESS);
-        onPlayCompletion();
+//        onPlayCompletion();
         release(true);
     }
 
@@ -530,7 +542,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
                 @Override
                 public void run() {
                     try {
-                        getFragmentManager().beginTransaction().remove(VideoPlayFragment.this).commit();
+                        getFragmentManager().beginTransaction().remove(MomentPlayFragment.this).commit();
                     } catch (Exception e) {
                         Log.e("test", "", e);
                     }
@@ -539,6 +551,21 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
             return true;
         }
         return false;
+    }
+
+    protected void setProgress(int position, int duration) {
+        if (mProgressBar != null) {
+            if (duration > 0) {
+                // use long to avoid overflow
+                long pos = MAX_PROGRESS * position / duration;
+                mProgressBar.setProgress((int) pos);
+            }
+        }
+        updateVideoTime(position, duration);
+//        displayOverlay(position);
+        if (mProgressListener != null) {
+            mProgressListener.onProgress(position, duration);
+        }
     }
 
     void toggleController() {
@@ -566,6 +593,7 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         mHandler.sendEmptyMessageDelayed(FADE_OUT, timeout);
     }
 
+
     private void hideControllers() {
         mVideoController.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -586,21 +614,160 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private void updateVideoTime(int position, int duration) {
+        mVideoTime.setText(DateUtils.formatElapsedTime(position / 1000) + " / " + DateUtils.formatElapsedTime(duration / 1000));
+    }
+
+
+
+    void onLoadRawDataSuccessfully() {
+        mRawDataState = RAW_DATA_STATE_READY;
+        mProgressLoading.setVisibility(View.GONE);
+//        mDashboardLayout.setAdapter(mRawDataAdapter);
+        openVideo();
+    }
+
+
+    void onLoadRawDataError(String msg) {
+        Log.e("test", "msg: " + msg);
+        mRawDataState = RAW_DATA_STATE_ERROR;
+        mProgressLoading.setVisibility(View.GONE);
+        openVideo();
+    }
+
+    void readRawURL() {
+        if (mMomentID == Moment.INVALID_MOMENT_ID) {
+            return;
+        }
+        String url = Constants.API_MOMENT_PLAY + mMomentID;
+        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                mRawDataUrls = response.optJSONArray("rawDataUrl");
+                loadRawData(0);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
+            }
+        }).setTag(REQUEST_TAG));
+        mProgressLoading.setVisibility(View.VISIBLE);
+    }
+
+    void loadRawData(final int index) {
+        if (mRawDataUrls == null || index >= mRawDataUrls.length()) {
+            onLoadRawDataSuccessfully();
+            return;
+        }
+
+        try {
+            JSONObject jsonObject = mRawDataUrls.getJSONObject(index);
+            String url = jsonObject.getString("url");
+            mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (parseRawData(response)) {
+                            int nextIndex = index + 1;
+                            if (nextIndex < mRawDataUrls.length()) {
+                                loadRawData(nextIndex);
+                            } else {
+                                onLoadRawDataSuccessfully();
+                            }
+                        } else {
+                            onLoadRawDataError("Load Raw data error");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                        onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
+                    }
+                }).setTag(REQUEST_TAG));
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+        }
+    }
+
+    boolean parseRawData(JSONObject response) {
+        try {
+            JSONObject obd = response.optJSONObject("obd");
+            if (obd != null) {
+                JSONArray captureTime = obd.getJSONArray("captureTime");
+                JSONArray speed = obd.getJSONArray("speed");
+                JSONArray rpm = obd.getJSONArray("rpm");
+                JSONArray temperature = obd.getJSONArray("temperature");
+                JSONArray tp = obd.getJSONArray("tp");
+                JSONArray imp = obd.getJSONArray("imp");
+                JSONArray bp = obd.getJSONArray("bp");
+                JSONArray bhp = obd.getJSONArray("bhp");
+                for (int i = 0; i < captureTime.length(); i++) {
+//                    mRawDataAdapter.addObdData(
+//                        captureTime.getLong(i),
+//                        speed.getInt(i),
+//                        rpm.getInt(i),
+//                        temperature.getInt(i),
+//                        tp.getInt(i),
+//                        imp.getInt(i),
+//                        bp.getInt(i),
+//                        bhp.getInt(i));
+
+                }
+            }
+            JSONObject acc = response.optJSONObject("acc");
+            if (acc != null) {
+                JSONArray captureTime = acc.getJSONArray("captureTime");
+                JSONArray acceleration = acc.getJSONArray("acceleration");
+                for (int i = 0; i < captureTime.length(); i++) {
+                    JSONObject accObj = acceleration.getJSONObject(i);
+//                    mRawDataAdapter.addAccData(
+//                        captureTime.getLong(i),
+//                        accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
+//                        accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
+//                        accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
+//                        accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
+//                        accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
+//                        accObj.getInt("pressure")
+//                    );
+                }
+            }
+            JSONObject gps = response.optJSONObject("gps");
+            if (gps != null) {
+                JSONArray captureTime = gps.getJSONArray("captureTime");
+                JSONArray coordinates = gps.getJSONObject("coordinate").getJSONArray("coordinates");
+
+                for (int i = 0; i < captureTime.length(); i++) {
+                    JSONArray coordinateObj = coordinates.getJSONArray(i);
+//                    mRawDataAdapter.addGpsData(
+//                        captureTime.getLong(i),
+//                        coordinateObj.getDouble(0),
+//                        coordinateObj.getDouble(1),
+//                        coordinateObj.getDouble(2)
+//                    );
+                }
+            }
+
+            return true;
+        } catch (JSONException e) {
+            Log.e("test", "", e);
+            return false;
+        }
+    }
 
     public void setOnProgressListener(OnProgressListener listener) {
         mProgressListener = listener;
     }
 
-    protected abstract void setProgress(int position, int duration);
-
-    protected abstract void displayOverlay(int position);
-
-    protected abstract void onPlayCompletion();
 
     static class VideoHandler extends Handler {
-        VideoPlayFragment thisFragment;
+        MomentPlayFragment thisFragment;
 
-        VideoHandler(VideoPlayFragment fragment) {
+        VideoHandler(MomentPlayFragment fragment) {
             super();
             thisFragment = fragment;
         }
@@ -621,4 +788,92 @@ public abstract class VideoPlayFragment extends Fragment implements View.OnClick
     public interface OnProgressListener {
         void onProgress(int position, int duration);
     }
+
+//    private static class MomentRawDataAdapter extends RawDataAdapter {
+//        private static final String TAG = MomentRawDataAdapter.class.getSimpleName();
+//        List<RawDataItem> mOBDData = new ArrayList<>();
+//        List<RawDataItem> mAccData = new ArrayList<>();
+//        List<RawDataItem> mGPSData = new ArrayList<>();
+//
+//        private int mObdDataIndex = 0;
+//        private int mAccDataIndex = 0;
+//        private int mGpsDataIndex = 0;
+//
+//        public void reset() {
+//            mObdDataIndex = 0;
+//            mAccDataIndex = 0;
+//            mGpsDataIndex = 0;
+//        }
+//
+//
+//        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
+//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
+//
+//            RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperature, rpm);
+//            item.data = data;
+//            mOBDData.add(item);
+//        }
+//
+//        public void addAccData(long captureTime, int accX, int accY, int accZ,
+//                               int gyroX, int gyroY, int gyroZ,
+//                               int magnX, int magnY, int magnZ,
+//                               int eulerHeading, int eulerRoll, int eulerPitch,
+//                               int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
+//                               int pressure) {
+//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_IIO, captureTime);
+//            RawDataItem.AccData data = new RawDataItem.AccData();
+//
+//            data.accX = accX;
+//            data.accY = accY;
+//            data.accZ = accZ;
+//            data.euler_roll = eulerRoll;
+//            data.euler_pitch = eulerPitch;
+//
+//            item.data = data;
+//            mAccData.add(item);
+//        }
+//
+//        public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
+//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_GPS, captureTime);
+//            RawDataItem.GpsData data = new RawDataItem.GpsData();
+//            data.coord.lat = latitude;
+//            data.coord.lat_orig = latitude;
+//            data.coord.lng = longitude;
+//            data.coord.lng_orig = longitude;
+//            data.altitude = altitude;
+//            item.data = data;
+//
+//            mGPSData.add(item);
+//        }
+//
+//        public void updateCurrentTime(int currentTime) {
+//            if (checkIfUpdated(mAccData, mAccDataIndex, currentTime)) {
+//                mAccDataIndex++;
+//            }
+//            if (checkIfUpdated(mGPSData, mGpsDataIndex, currentTime)) {
+//                mGpsDataIndex++;
+//            }
+//            if (checkIfUpdated(mOBDData, mObdDataIndex, currentTime)) {
+//                mObdDataIndex++;
+//            }
+//        }
+//
+//        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
+//            int index = fromPosition;
+//            if (index >= list.size()) {
+//                return false;
+//            }
+//
+//            RawDataItem item = list.get(index);
+//            if (item.getPtsMs() < currentTime) {
+//                fromPosition++;
+//                notifyDataSetChanged(item);
+//                return true;
+//            }
+//
+//            return false;
+//        }
+//
+//
+//    }
 }

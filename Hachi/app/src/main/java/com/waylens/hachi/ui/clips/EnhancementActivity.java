@@ -26,7 +26,6 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
@@ -319,10 +318,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     @Override
     public boolean onInterceptBackPressed() {
-        if (VideoPlayFragment.fullScreenPlayer != null) {
-            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
-            return true;
-        }
+//        if (VideoPlayFragment.fullScreenPlayer != null) {
+//            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
+//            return true;
+//        }
         return true;
     }
 

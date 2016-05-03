@@ -29,8 +29,6 @@ import com.waylens.hachi.ui.adapters.MomentViewHolder;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.fragments.clipplay.MomentPlayFragment;
-import com.waylens.hachi.ui.fragments.clipplay.VideoPlayFragment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
@@ -388,10 +386,10 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
             return true;
         }
 
-        if (VideoPlayFragment.fullScreenPlayer != null) {
-            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
-            return true;
-        }
+//        if (VideoPlayFragment.fullScreenPlayer != null) {
+//            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
+//            return true;
+//        }
         return false;
     }
 

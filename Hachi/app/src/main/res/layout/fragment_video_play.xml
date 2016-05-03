@@ -57,14 +57,6 @@
             android:visibility="gone"/>
     </com.waylens.hachi.ui.views.DragLayout>
 
-    <com.waylens.hachi.ui.views.dashboard.DashboardLayout
-        android:id="@+id/overlayLayout"
-        android:layout_width="1920px"
-        android:layout_height="1080px"
-        android:layout_gravity="center">
-
-    </com.waylens.hachi.ui.views.dashboard.DashboardLayout>
-
 
     <LinearLayout
         android:id="@+id/infoPanel"
