@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -26,6 +27,8 @@ import com.waylens.hachi.utils.ImageUtils;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +55,9 @@ public class AccountActivity extends BaseActivity {
 
     @BindView(R.id.tvUserName)
     TextView mTvUserName;
+
+    @BindView(R.id.tvBirthday)
+    TextView mBirthday;
 
     @OnClick(R.id.avatar)
     public void onBtnAvatarClicked() {
@@ -89,18 +95,36 @@ public class AccountActivity extends BaseActivity {
 
     @OnClick(R.id.tvBirthday)
     public void onTvBirthdayClicked() {
+//        SublimePickerFragment pickerFrag = new SublimePickerFragment();
+//        pickerFrag.setCallback(new SublimePickerFragment.Callback(){
+//
+//            @Override
+//            public void onCancelled() {
+//
+//            }
+//
+//            @Override
+//            public void onDateTimeRecurrenceSet(SelectedDate selectedDate, int hourOfDay, int minute, SublimeRecurrencePicker.RecurrenceOption recurrenceOption, String recurrenceRule) {
+//
+//            }
+//        });
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-            .title("Change Birthday")
-            .inputType(InputType.TYPE_CLASS_DATETIME)
+            .customView(R.layout.fragment_data_picker, false)
             .positiveText(android.R.string.ok)
             .negativeText(android.R.string.cancel)
             .onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                    dialog.get
+                    DatePicker datePicker = (DatePicker)dialog.getCustomView().findViewById(R.id.dataPicker);
+                    Logger.t(TAG).d("year: " + datePicker.getYear());
+                    Date date = new Date(datePicker.getYear() - 1900, datePicker.getMonth(), datePicker.getDayOfMonth());
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    String birthday = format.format(date);
+                    updateBirthday(birthday);
                 }
             })
             .show();
+
     }
 
 
@@ -159,6 +183,30 @@ public class AccountActivity extends BaseActivity {
                 Logger.t(TAG).json(response.toString());
                 mTvUserName.setText(newUserName);
                 mSessionManager.saveUserName(newUserName);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        mRequestQueue.add(request);
+    }
+
+    private void updateBirthday(final String birthday) {
+        String url = Constants.API_USER_PROFILE;
+        Map<String, String> params = new HashMap<>();
+        params.put("birthday", birthday);
+        String postBody = new JSONObject(params).toString();
+        Logger.t(TAG).d("postBody: "  + postBody);
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Logger.t(TAG).json(response.toString());
+//                mTvUserName.setText(newUserName);
+//                mSessionManager.saveUserName(newUserName);
+                mBirthday.setText(birthday);
             }
         }, new Response.ErrorListener() {
             @Override
