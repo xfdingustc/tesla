@@ -35,9 +35,14 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.DragLayout;
+import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
+import com.waylens.hachi.vdb.rawdata.GpsData;
+import com.waylens.hachi.vdb.rawdata.IioData;
+import com.waylens.hachi.vdb.rawdata.ObdData;
+import com.waylens.hachi.vdb.rawdata.RawDataItem;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 
 import org.json.JSONArray;
@@ -45,7 +50,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -116,6 +123,8 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     private FrameLayout.LayoutParams mPortraitInfoPanelParems;
 
+    private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
+
     @BindView(R.id.video_root_container)
     FixedAspectRatioFrameLayout mRootContainer;
 
@@ -145,6 +154,9 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     @BindView(R.id.infoPanel)
     LinearLayout mInfoPanel;
+
+    @BindView(R.id.gaugeView)
+    GaugeView mGaugeView;
 
     @OnClick(R.id.btn_play)
     public void onBtnPlayClicked() {
@@ -210,7 +222,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -221,7 +232,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onStop() {
-
         super.onStop();
         mHandler.removeMessages(FADE_OUT);
         mHandler.removeMessages(SHOW_PROGRESS);
@@ -269,7 +279,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
             || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//            mPortraitParams = (FrameLayout.LayoutParams) mDashboardLayout.getLayoutParams();
             mPortraitInfoPanelParems = (FrameLayout.LayoutParams) mInfoPanel.getLayoutParams();
 
             mRootContainer.removeView(mVideoContainer);
@@ -301,9 +310,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_play:
-                playVideo();
-                break;
             case R.id.waylens_video_container:
                 toggleController();
                 break;
@@ -332,20 +338,20 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         start();
         mCurrentState = STATE_PLAYING;
         mTargetState = STATE_PLAYING;
-        mBtnPlay.setImageResource(R.drawable.playbar_pause);
+        mBtnPlay.setImageResource(R.drawable.btn_music_pause);
         fadeOutControllers(DEFAULT_TIMEOUT);
     }
 
-    void pauseVideo() {
+    private void pauseVideo() {
         mMediaPlayer.pause();
         mPausePosition = mMediaPlayer.getCurrentPosition();
         mCurrentState = STATE_PAUSED;
         mTargetState = STATE_PAUSED;
-        mBtnPlay.setImageResource(R.drawable.playbar_play);
+        mBtnPlay.setImageResource(R.drawable.music_list_play);
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
-    void start() {
+    private void start() {
         if (isInPlaybackState()) {
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
@@ -356,14 +362,12 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
 
-    boolean isInPlaybackState() {
-        return (mMediaPlayer != null &&
-            mCurrentState != STATE_ERROR &&
-            mCurrentState != STATE_IDLE &&
-            mCurrentState != STATE_PREPARING);
+    private boolean isInPlaybackState() {
+        return (mMediaPlayer != null && mCurrentState != STATE_ERROR &&
+            mCurrentState != STATE_IDLE && mCurrentState != STATE_PREPARING);
     }
 
-    protected void openVideo() {
+    private void openVideo() {
         if (mVideoSource == null || mSurfaceView == null || mSurfaceHolder == null) {
             Logger.t(TAG).d("source: " + mVideoSource + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
             return;
@@ -397,12 +401,11 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                 public void onCompletion(MediaPlayer mp) {
                     mCurrentState = STATE_PLAYBACK_COMPLETED;
                     mTargetState = STATE_PLAYBACK_COMPLETED;
-                    mBtnPlay.setImageResource(R.drawable.playbar_play);
+                    mBtnPlay.setImageResource(R.drawable.music_list_play);
                     showController(0);
                     int duration = mp.getDuration();
                     setProgress(duration, duration);
                     mHandler.removeMessages(SHOW_PROGRESS);
-//        onPlayCompletion();
                     release(true);
                 }
             });
@@ -479,10 +482,10 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
         if (isInPlaybackState() && mSurfaceDestroyed) {
             if (mCurrentState == STATE_PLAYING) {
-                Log.e("test", "surfaceChanged - resume");
+                Logger.t(TAG).d("surfaceChanged - resume");
                 resumeVideo();
             } else {
-                Log.e("test", "surfaceChanged - seek");
+                Logger.t(TAG).d("surfaceChanged - seek");
                 mMediaPlayer.seekTo(mPausePosition);
                 mPausePosition = 0;
             }
@@ -596,6 +599,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         int position = mMediaPlayer.getCurrentPosition();
         int duration = mMediaPlayer.getDuration();
         setProgress(position, duration);
+        mRawDataAdapter.updateCurrentTime(position);
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 20);
         }
@@ -610,13 +614,12 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     void onLoadRawDataSuccessfully() {
         mRawDataState = RAW_DATA_STATE_READY;
         mProgressLoading.setVisibility(View.GONE);
-//        mDashboardLayout.setAdapter(mRawDataAdapter);
         openVideo();
     }
 
 
     void onLoadRawDataError(String msg) {
-        Log.e("test", "msg: " + msg);
+        Logger.t(TAG).d("msg: " + msg);
         mRawDataState = RAW_DATA_STATE_ERROR;
         mProgressLoading.setVisibility(View.GONE);
         openVideo();
@@ -676,7 +679,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                     }
                 }).setTag(REQUEST_TAG));
         } catch (JSONException e) {
-            Log.e("test", "", e);
+            Logger.t(TAG).d("", e);
         }
     }
 
@@ -693,15 +696,15 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                 JSONArray bp = obd.getJSONArray("bp");
                 JSONArray bhp = obd.getJSONArray("bhp");
                 for (int i = 0; i < captureTime.length(); i++) {
-//                    mRawDataAdapter.addObdData(
-//                        captureTime.getLong(i),
-//                        speed.getInt(i),
-//                        rpm.getInt(i),
-//                        temperature.getInt(i),
-//                        tp.getInt(i),
-//                        imp.getInt(i),
-//                        bp.getInt(i),
-//                        bhp.getInt(i));
+                    mRawDataAdapter.addObdData(
+                        captureTime.getLong(i),
+                        speed.getInt(i),
+                        rpm.getInt(i),
+                        temperature.getInt(i),
+                        tp.getInt(i),
+                        imp.getInt(i),
+                        bp.getInt(i),
+                        bhp.getInt(i));
 
                 }
             }
@@ -711,15 +714,15 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                 JSONArray acceleration = acc.getJSONArray("acceleration");
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONObject accObj = acceleration.getJSONObject(i);
-//                    mRawDataAdapter.addAccData(
-//                        captureTime.getLong(i),
-//                        accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
-//                        accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
-//                        accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
-//                        accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
-//                        accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
-//                        accObj.getInt("pressure")
-//                    );
+                    mRawDataAdapter.addAccData(
+                        captureTime.getLong(i),
+                        accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
+                        accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
+                        accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
+                        accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
+                        accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
+                        accObj.getInt("pressure")
+                    );
                 }
             }
             JSONObject gps = response.optJSONObject("gps");
@@ -729,18 +732,18 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONArray coordinateObj = coordinates.getJSONArray(i);
-//                    mRawDataAdapter.addGpsData(
-//                        captureTime.getLong(i),
-//                        coordinateObj.getDouble(0),
-//                        coordinateObj.getDouble(1),
-//                        coordinateObj.getDouble(2)
-//                    );
+                    mRawDataAdapter.addGpsData(
+                        captureTime.getLong(i),
+                        coordinateObj.getDouble(0),
+                        coordinateObj.getDouble(1),
+                        coordinateObj.getDouble(2)
+                    );
                 }
             }
 
             return true;
         } catch (JSONException e) {
-            Log.e("test", "", e);
+            Logger.t(TAG).d("", e);
             return false;
         }
     }
@@ -775,91 +778,91 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         void onProgress(int position, int duration);
     }
 
-//    private static class MomentRawDataAdapter extends RawDataAdapter {
-//        private static final String TAG = MomentRawDataAdapter.class.getSimpleName();
-//        List<RawDataItem> mOBDData = new ArrayList<>();
-//        List<RawDataItem> mAccData = new ArrayList<>();
-//        List<RawDataItem> mGPSData = new ArrayList<>();
-//
-//        private int mObdDataIndex = 0;
-//        private int mAccDataIndex = 0;
-//        private int mGpsDataIndex = 0;
-//
-//        public void reset() {
-//            mObdDataIndex = 0;
-//            mAccDataIndex = 0;
-//            mGpsDataIndex = 0;
-//        }
-//
-//
-//        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
-//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
-//
-//            RawDataItem.OBDData data = new RawDataItem.OBDData(speed, temperature, rpm);
-//            item.data = data;
-//            mOBDData.add(item);
-//        }
-//
-//        public void addAccData(long captureTime, int accX, int accY, int accZ,
-//                               int gyroX, int gyroY, int gyroZ,
-//                               int magnX, int magnY, int magnZ,
-//                               int eulerHeading, int eulerRoll, int eulerPitch,
-//                               int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
-//                               int pressure) {
-//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_IIO, captureTime);
-//            RawDataItem.AccData data = new RawDataItem.AccData();
-//
-//            data.accX = accX;
-//            data.accY = accY;
-//            data.accZ = accZ;
-//            data.euler_roll = eulerRoll;
-//            data.euler_pitch = eulerPitch;
-//
-//            item.data = data;
-//            mAccData.add(item);
-//        }
-//
-//        public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
-//            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_GPS, captureTime);
-//            RawDataItem.GpsData data = new RawDataItem.GpsData();
-//            data.coord.lat = latitude;
-//            data.coord.lat_orig = latitude;
-//            data.coord.lng = longitude;
-//            data.coord.lng_orig = longitude;
-//            data.altitude = altitude;
-//            item.data = data;
-//
-//            mGPSData.add(item);
-//        }
-//
-//        public void updateCurrentTime(int currentTime) {
-//            if (checkIfUpdated(mAccData, mAccDataIndex, currentTime)) {
-//                mAccDataIndex++;
-//            }
-//            if (checkIfUpdated(mGPSData, mGpsDataIndex, currentTime)) {
-//                mGpsDataIndex++;
-//            }
-//            if (checkIfUpdated(mOBDData, mObdDataIndex, currentTime)) {
-//                mObdDataIndex++;
-//            }
-//        }
-//
-//        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
-//            int index = fromPosition;
-//            if (index >= list.size()) {
-//                return false;
-//            }
-//
-//            RawDataItem item = list.get(index);
-//            if (item.getPtsMs() < currentTime) {
-//                fromPosition++;
-//                notifyDataSetChanged(item);
-//                return true;
-//            }
-//
-//            return false;
-//        }
-//
-//
-//    }
+    private class MomentRawDataAdapter {
+        List<RawDataItem> mOBDData = new ArrayList<>();
+        List<RawDataItem> mAccData = new ArrayList<>();
+        List<RawDataItem> mGPSData = new ArrayList<>();
+
+        private int mObdDataIndex = 0;
+        private int mAccDataIndex = 0;
+        private int mGpsDataIndex = 0;
+
+        public void reset() {
+            mObdDataIndex = 0;
+            mAccDataIndex = 0;
+            mGpsDataIndex = 0;
+        }
+
+
+        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
+
+            ObdData data = new ObdData(speed, temperature, rpm);
+            item.data = data;
+            mOBDData.add(item);
+        }
+
+        public void addAccData(long captureTime, int accX, int accY, int accZ,
+                               int gyroX, int gyroY, int gyroZ,
+                               int magnX, int magnY, int magnZ,
+                               int eulerHeading, int eulerRoll, int eulerPitch,
+                               int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
+                               int pressure) {
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_IIO, captureTime);
+            IioData data = new IioData();
+
+            data.accX = accX;
+            data.accY = accY;
+            data.accZ = accZ;
+            data.euler_roll = eulerRoll;
+            data.euler_pitch = eulerPitch;
+
+            item.data = data;
+            mAccData.add(item);
+        }
+
+        public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_GPS, captureTime);
+            GpsData data = new GpsData();
+            data.coord.lat = latitude;
+            data.coord.lat_orig = latitude;
+            data.coord.lng = longitude;
+            data.coord.lng_orig = longitude;
+            data.altitude = altitude;
+            item.data = data;
+
+            mGPSData.add(item);
+        }
+
+        public void updateCurrentTime(int currentTime) {
+            if (checkIfUpdated(mAccData, mAccDataIndex, currentTime)) {
+                mAccDataIndex++;
+            }
+            if (checkIfUpdated(mGPSData, mGpsDataIndex, currentTime)) {
+                mGpsDataIndex++;
+            }
+            if (checkIfUpdated(mOBDData, mObdDataIndex, currentTime)) {
+                mObdDataIndex++;
+            }
+        }
+
+        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
+            int index = fromPosition;
+            if (index >= list.size()) {
+                return false;
+            }
+
+            RawDataItem item = list.get(index);
+            if (item.getPtsMs() < currentTime) {
+                fromPosition++;
+                //notifyDataSetChanged(item);
+                mGaugeView.updateRawDateItem(item);
+                return true;
+            }
+
+            return false;
+        }
+
+
+    }
 }

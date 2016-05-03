@@ -35,8 +35,13 @@
                 android:layout_gravity="center"
                 android:background="?android:attr/selectableItemBackground"
                 android:contentDescription="@null"
-                android:src="@drawable/playbar_pause"/>
+                android:src="@drawable/btn_music_pause"/>
         </FrameLayout>
+
+        <com.waylens.hachi.ui.views.GaugeView
+            android:id="@+id/gaugeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></com.waylens.hachi.ui.views.GaugeView>
 
 
         <ProgressBar
