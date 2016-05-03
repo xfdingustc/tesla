@@ -15,14 +15,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetPos;
 
@@ -94,8 +95,6 @@ public class ClipSetProgressBar extends FrameLayout {
     public void onEventClipSelectEvent(ClipSelectEvent event) {
         if (event.getClipList() == null) {
             mAdapter.mSelectedClip.clear();
-        } else {
-            mAdapter.mSelectedClip.addAll(event.getClipList());
         }
 
         mAdapter.notifyDataSetChanged();
@@ -238,8 +237,6 @@ public class ClipSetProgressBar extends FrameLayout {
     }
 
 
-
-
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private static final int DEFAULT_PERIOD_MS = 1000 * 30;
@@ -362,8 +359,7 @@ public class ClipSetProgressBar extends FrameLayout {
 //                Logger.t(TAG).d("create one Fragment: " + clipFragment.getStartTimeMs() + " ~ " + clipFragment.getEndTimeMs());
 
                 BookmarkView bookmarkView = new BookmarkView(context);
-                //bookmarkView.setBackgroundColor(0xFF7AD502);
-                //bookmarkView.setAlpha(0.3f);
+
                 bookmarkView.setTag("bookmark");
                 bookmarkView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 //                bookmarkView.setVisibility(GONE);
