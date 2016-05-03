@@ -188,10 +188,14 @@ public class DataUploader {
         Logger.t(TAG).d("upload one clip finished");
 
         inputStream.close();
-        int serverRet = receiveData().responseCode;
-        if (serverRet != CrsCommand.RES_FILE_TRANS_COMPLETE) {
-            throw new IOException("In upload content: upload file failed ret = " + serverRet);
-        }
+
+        Logger.t(TAG).d("steam closed");
+//        int serverRet = receiveData().responseCode;
+//        if (serverRet != CrsCommand.RES_FILE_TRANS_COMPLETE) {
+//            throw new IOException("In upload content: upload file failed ret = " + serverRet);
+//        }
+
+        Logger.t(TAG).d("stop up load");
 
 
         return stopUpload(guid);

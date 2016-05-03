@@ -180,4 +180,9 @@
 	<string name="error_check_fir">Error to check version from server.</string>
 	<string name="length_of_remix">Length of Remix</string>
 	<string name="shuffle_remix">Shuffle Remix</string>
+	<string name="profile">Profile</string>
+	<string name="birthday">Birthday</string>
+	<string name="gender">Gender</string>
+	<string name="region">Region</string>
+	<string name="change_username">Change user name</string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -27,12 +28,18 @@ public class SessionManager {
     private boolean mHasLogined;
     private String mToken;
     private String mAvatarUrl;
+    private String mEmail;
 
     private int mLoginType;
     private boolean mIsLinked;
 
     private SessionManager() {
         resetSessionInfo();
+    }
+
+    public void saveUserName(String newUserName) {
+        mUserName = newUserName;
+        PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
     }
 
     private void resetSessionInfo() {
@@ -67,6 +74,10 @@ public class SessionManager {
         mHasLogined = isLoggedIn;
     }
 
+    public String getEmail() {
+        return mEmail;
+    }
+
     public String getToken() {
         return mToken;
     }
@@ -85,6 +96,7 @@ public class SessionManager {
     }
 
     public void saveLoginInfo(JSONObject response, boolean isLoginWithSNS) {
+        Logger.t(TAG).json(response.toString());
         try {
             JSONObject userInfo = response.getJSONObject(JsonKey.USER);
             mUserName = userInfo.optString(JsonKey.USERNAME);
@@ -121,16 +133,14 @@ public class SessionManager {
         this.mUserId = PreferenceUtils.getString(PreferenceUtils.USER_ID, ANONYMOUS);
         this.mToken = PreferenceUtils.getString(PreferenceUtils.TOKEN, null);
         this.mAvatarUrl = PreferenceUtils.getString(PreferenceUtils.AVATAR_URL, null);
+        this.mEmail = PreferenceUtils.getString(PreferenceUtils.EMAIL, null);
         mIsLinked = PreferenceUtils.getBoolean(PreferenceUtils.IS_LINKED, false);
         mLoginType = PreferenceUtils.getInt(PreferenceUtils.LOGIN_TYPE, LOGIN_TYPE_USERNAME_PASSWORD);
-
         setLoginInternal();
     }
 
     private void setLoginInternal() {
-        if (mUserName != null
-                && mUserId != null
-                && mToken != null) {
+        if (mUserName != null && mUserId != null && mToken != null) {
             setIsLoggedIn(true);
         } else {
             setIsLoggedIn(false);
@@ -150,7 +160,17 @@ public class SessionManager {
     }
 
     public void saveUserProfile(JSONObject response) {
+        try {
+            mUserName = response.getString("userName");
+            mEmail = response.getString("email");
+            mAvatarUrl = response.getString("avatarUrl");
 
+            PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
+            PreferenceUtils.putString(PreferenceUtils.EMAIL, mEmail);
+            PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void refreshlogin() {

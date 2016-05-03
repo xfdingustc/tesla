@@ -19,17 +19,9 @@ public class CrsClientTranData extends CrsCommand {
     short length;
     public byte[] buffer;
 
-    public CrsClientTranData(String userID,
-                             String guid,
-                             long momentID,
-                             byte[] fileSha1,
-                             byte[] blockSha1,
-                             int dataType,
-                             int seqNum,
-                             int blockNum,
-                             short length,
-                             byte[] buffer,
-                             String privateKey) {
+    public CrsClientTranData(String userID, String guid, long momentID, byte[] fileSha1,
+                             byte[] blockSha1, int dataType, int seqNum, int blockNum,
+                             short length, byte[] buffer, String privateKey) {
         super(privateKey);
         jidExt = userID + "/" + WAYLENS_RESOURCE_TYPE_ANDROID + "/" + guid;
         this.momentID = momentID;

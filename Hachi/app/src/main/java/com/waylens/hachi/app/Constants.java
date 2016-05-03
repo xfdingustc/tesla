@@ -18,6 +18,10 @@ public class Constants {
 
     public static final String API_SIGN_IN = HOST_URL + "api/users/signin";
 
+    public static final String API_USER_ME = HOST_URL + "api/users/me";
+
+    public static final String API_USER_PROFILE = HOST_URL + "api/users/me/profile";
+
     public static final String API_RESET_PASSWORD_MAIL = HOST_URL + "api/users/send_passwordreset_mail?e=";
 
     public static final String API_RESET_PASSWORD = HOST_URL + "api/users/reset_password";
