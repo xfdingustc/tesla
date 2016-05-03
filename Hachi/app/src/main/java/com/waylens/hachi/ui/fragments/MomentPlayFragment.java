@@ -151,6 +151,11 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         playVideo();
     }
 
+    @OnClick(R.id.btn_fullscreen)
+    public void onBtnFullScreenClicked() {
+        setFullScreen(!mIsFullScreen);
+    }
+
     public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
         Bundle args = new Bundle();
         MomentPlayFragment fragment = new MomentPlayFragment();
