@@ -237,8 +237,8 @@ public class VdtCamera {
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
-
         mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
+        startClient();
     }
 
     public void setCameraName(String name) {
@@ -326,6 +326,7 @@ public class VdtCamera {
     }
 
     public int getWifiMode() {
+        mController.cmd_Network_GetWLanMode();
         return mWifiMode;
     }
 
@@ -639,11 +640,11 @@ public class VdtCamera {
         mController.cmd_Network_ScanHost();
     }
 
-    public void GetSetup() {
+    public void getSetup() {
         mController.userCmd_GetSetup();
     }
 
-    public void startClient() {
+    private void startClient() {
         mController.start();
     }
 

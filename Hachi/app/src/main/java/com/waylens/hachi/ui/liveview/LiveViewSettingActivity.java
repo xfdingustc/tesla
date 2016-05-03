@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.liveview;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.waylens.hachi.R;
 
@@ -224,8 +227,19 @@ public class LiveViewSettingActivity extends BaseActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.apply:
-                            doApplyChanges();
-                            finish();
+                            MaterialDialog dialog = new MaterialDialog.Builder(LiveViewSettingActivity.this)
+                                .title(R.string.change_camera_setting)
+                                .content(R.string.change_camera_setting_hint)
+                                .positiveText(android.R.string.ok)
+                                .negativeText(android.R.string.cancel)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        doApplyChanges();
+                                        finish();
+                                    }
+                                }).show();
+
                             break;
                     }
                     return false;
@@ -252,6 +266,7 @@ public class LiveViewSettingActivity extends BaseActivity {
 
         if (mOriginVideoResolution != mChangedVideoResolution || mOriginVideoFramerate != mChangedVideoFramerate) {
             mCamera.setVideoResolution(mChangedVideoResolution, mChangedVideoFramerate);
+            mCamera.stopRecording();
         }
 
         if (mOriginVideoFramerate != mChangedVideoFramerate) {

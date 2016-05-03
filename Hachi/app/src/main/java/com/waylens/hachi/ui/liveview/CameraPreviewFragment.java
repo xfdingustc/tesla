@@ -520,7 +520,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
             mVdtCamera.getRecordResolutionList();
-            mVdtCamera.GetSetup();
+            mVdtCamera.getSetup();
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

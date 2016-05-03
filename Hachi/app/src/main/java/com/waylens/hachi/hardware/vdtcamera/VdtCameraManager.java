@@ -90,7 +90,7 @@ public class VdtCameraManager {
 
 
         mConnectingVdtCameras.add(vdtCamera);
-        vdtCamera.startClient();
+//        vdtCamera.startClient();
 
 
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_CONNECTING, vdtCamera));

@@ -193,4 +193,6 @@
 	<string name="old_password">Old Password</string>
 	<string name="change_password_successfully">Change Password successfully</string>
 	<string name="change_password_failed">Failed to change password</string>
+	<string name="change_camera_setting">Change camera setting</string>
+	<string name="change_camera_setting_hint">This action will stop camera if it is recording. Do you want to continue?</string>
 </resources>

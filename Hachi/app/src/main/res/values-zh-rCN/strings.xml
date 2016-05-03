@@ -193,4 +193,6 @@
 	<string name="old_password">老密码</string>
 	<string name="change_password_successfully">更改密码成功</string>
 	<string name="change_password_failed">更改密码失败</string>
+	<string name="change_camera_setting">更改相机设置</string>
+	<string name="change_camera_setting_hint">这个动作会停止相机当前的录制，确定继续？</string>
 </resources>
