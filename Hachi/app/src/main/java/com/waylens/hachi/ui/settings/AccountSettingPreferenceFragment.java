@@ -46,6 +46,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private Preference mBirthday;
     private Preference mGender;
     private Preference mRegion;
+    private Preference mLogout;
 
     private View positiveAction;
     private EditText oldPasswordInput;
@@ -71,6 +72,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mBirthday = findPreference("birthday");
         mGender = findPreference("gender");
         mRegion = findPreference("region");
+        mLogout = findPreference("logout");
 
         mEmail.setSummary(mSessionManager.getEmail());
         mUserName.setSummary(mSessionManager.getUserName());
@@ -217,6 +219,24 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             String birthday = format.format(date);
                             updateBirthday(birthday);
+                        }
+                    })
+                    .show();
+                return true;
+            }
+        });
+
+        mLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.logout)
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mSessionManager.logout();
                         }
                     })
                     .show();
