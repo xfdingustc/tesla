@@ -168,6 +168,12 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         setFullScreen(!mIsFullScreen);
     }
 
+    @OnClick(R.id.btnShowOverlay)
+    public void onBtnShowOverlayClicked() {
+        int visibility = mGaugeView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE;
+        mGaugeView.setVisibility(visibility);
+    }
+
     public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
         Bundle args = new Bundle();
         MomentPlayFragment fragment = new MomentPlayFragment();
