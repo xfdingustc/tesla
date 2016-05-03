@@ -43,6 +43,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 
 import butterknife.BindView;
@@ -114,18 +115,24 @@ public class FootageActivity extends BaseActivity {
     @Subscribe
     public void onEventClipSelectEvent(final ClipSelectEvent event) {
         getToolbar().getMenu().clear();
-        if (event.getClip() != null) {
-            getToolbar().inflateMenu(R.menu.menu_clip_list);
+        if (event.getClipList() != null) {
+            getToolbar().inflateMenu(R.menu.menu_clip_footage);
+            if (event.getClipList().size() > 1) {
+                getToolbar().getMenu().removeItem(R.id.menu_to_modify);
+            }
             getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.menu_to_enhance:
-                            toEnhance(event.getClip());
+                            toEnhance(event.getClipList());
                             break;
 //                        case R.id.menu_to_upload:
                             //toShare();
 //                            break;
+                        case R.id.menu_to_modify:
+                            toModify(event.getClipList().get(0));
+                            break;
                         case R.id.menu_to_delete:
                             MaterialDialog dialog = new MaterialDialog.Builder(FootageActivity.this)
                                 .content(R.string.delete_bookmark_confirm)
@@ -134,7 +141,7 @@ public class FootageActivity extends BaseActivity {
                                 .callback(new MaterialDialog.ButtonCallback() {
                                     @Override
                                     public void onPositive(MaterialDialog dialog) {
-                                        doDeleteSelectedClips(event.getClip());
+                                        doDeleteSelectedClips(event.getClipList().get(0));
                                     }
                                 })
                                 .build();
@@ -150,6 +157,7 @@ public class FootageActivity extends BaseActivity {
         }
 
     }
+
 
 
     public static void launch(Activity activity, int clipSetIndex) {
@@ -338,11 +346,13 @@ public class FootageActivity extends BaseActivity {
         return mClipSetManager.getClipSet(mClipSetIndex);
     }
 
-    private void toEnhance(Clip clip) {
-        ArrayList<Clip> selectedList = new ArrayList<>();
-        selectedList.add(clip);
-        EnhancementActivity.launch(this, selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+    private void toEnhance(List<Clip> clipList) {
+        EnhancementActivity.launch(this, (ArrayList<Clip>)clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
     }
+
+    private void toModify(Clip clip) {
+    }
+
 
     private void doDeleteSelectedClips(Clip clip) {
         ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, new VdbResponse.Listener<Integer>() {

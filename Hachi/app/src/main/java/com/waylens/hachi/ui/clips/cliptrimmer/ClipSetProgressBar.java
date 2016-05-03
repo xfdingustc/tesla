@@ -92,7 +92,12 @@ public class ClipSetProgressBar extends FrameLayout {
 
     @Subscribe
     public void onEventClipSelectEvent(ClipSelectEvent event) {
-        mAdapter.mSelectedClip = event.getClip();
+        if (event.getClipList() == null) {
+            mAdapter.mSelectedClip.clear();
+        } else {
+            mAdapter.mSelectedClip.addAll(event.getClipList());
+        }
+
         mAdapter.notifyDataSetChanged();
     }
 
@@ -254,7 +259,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
         private int mCellWidth;
 
-        private Clip mSelectedClip = null;
+        private List<Clip> mSelectedClip = new ArrayList<>();
 
 
         private void generateClipPosList() {
@@ -402,11 +407,25 @@ public class ClipSetProgressBar extends FrameLayout {
             @Override
             public void onClick(View v) {
                 Clip clip = (Clip) v.getTag();
-                mSelectedClip = clip;
-                mEventBus.post(new ClipSelectEvent(clip));
+                if (!ifBookmarkSelected(clip)) {
+                    mSelectedClip.add(clip);
+                }
+                mEventBus.post(new ClipSelectEvent(mSelectedClip));
                 notifyDataSetChanged();
             }
         };
+
+        private boolean ifBookmarkSelected(Clip clip) {
+            boolean isSelected = false;
+            for (Clip selected : mSelectedClip) {
+                if (selected.cid.equals(clip.cid)) {
+                    isSelected = true;
+                    break;
+                }
+            }
+
+            return isSelected;
+        }
 
         private void setupBookmarkView(ClipSegment clipSegment, BookmarkView bookmarkView) {
             List<Clip> bookmarkList = mBookmarkClipSet.getClipList();
@@ -418,7 +437,7 @@ public class ClipSetProgressBar extends FrameLayout {
                 if (clip.realCid.equals(clipSegment.getClip().realCid)) {
                     bookmarkView.setVisibility(VISIBLE);
 //                    Logger.t(TAG).d("bookmark " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs() + " clipFragment: " + clipFragment.getStartTimeMs() + " ~" + clipFragment.getEndTimeMs());
-                    boolean isSelected = mSelectedClip == null ? false : mSelectedClip.cid.equals(clip.cid);
+                    boolean isSelected = ifBookmarkSelected(clip);
 
 
                     if (clipSegment.getStartTimeMs() <= clip.getStartTimeMs() && clip.getStartTimeMs() <= clipSegment.getEndTimeMs()) {
