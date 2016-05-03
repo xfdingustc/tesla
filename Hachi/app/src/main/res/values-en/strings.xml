@@ -196,4 +196,7 @@
 	<string name="change_camera_setting">Change camera setting</string>
 	<string name="change_camera_setting_hint">This action will stop camera if it is recording. Do you want to continue?</string>
 	<string name="camera_name">Camera Name</string>
+	<string name="bookmark">Bookmark</string>
+	<string name="before">Before</string>
+	<string name="after">After</string>
 </resources>

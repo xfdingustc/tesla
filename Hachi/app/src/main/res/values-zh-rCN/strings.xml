@@ -196,4 +196,7 @@
 	<string name="change_camera_setting">更改相机设置</string>
 	<string name="change_camera_setting_hint">这个动作会停止相机当前的录制，确定继续？</string>
 	<string name="camera_name">相机名称</string>
+	<string name="bookmark">标签</string>
+	<string name="before">向前</string>
+	<string name="after">向后</string>
 </resources>

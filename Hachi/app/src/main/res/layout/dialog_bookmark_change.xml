@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:text="@string/before"
+            android:textColor="?attr/appTextColorPrimary"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="32dp"/>
+
+        <NumberPicker
+            android:id="@+id/npBefore"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            ></NumberPicker>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:text="@string/after"
+            android:textColor="?attr/appTextColorPrimary"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="32dp"/>
+
+        <NumberPicker
+            android:id="@+id/npAfter"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"></NumberPicker>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

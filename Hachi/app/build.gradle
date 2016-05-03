@@ -112,9 +112,7 @@ dependencies {
     compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
         transitive = true
     }
-//    compile('com.github.afollestad.material-dialogs:commons:0.8.5.8@aar') {
-//        transitive = true
-//    }
+
     compile 'com.facebook.android:facebook-android-sdk:4.5.0'
     compile 'com.xfdingustc.fixaspectratiolayout:layout:0.2@aar'
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'

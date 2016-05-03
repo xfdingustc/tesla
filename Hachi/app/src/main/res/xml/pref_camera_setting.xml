@@ -14,4 +14,22 @@
 
     </PreferenceCategory>
 
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category_widget">
+
+
+        <Preference
+            android:key="bookmark"
+            android:layout="@layout/preference_item"
+            android:title="@string/bookmark"/>
+
+        <EditTextPreference
+            android:key="bookmark1"
+            android:layout="@layout/preference_item"
+            android:title="@string/bookmark"/>
+
+    </PreferenceCategory>
+
+
 </PreferenceScreen>
