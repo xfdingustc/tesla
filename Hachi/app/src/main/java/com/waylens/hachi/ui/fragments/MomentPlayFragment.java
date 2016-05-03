@@ -51,15 +51,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Play Moment video
- * Created by Richard on 11/3/15.
- */
-public class MomentPlayFragment extends Fragment implements View.OnClickListener,
-    MediaPlayer.OnPreparedListener, SurfaceHolder.Callback, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener {
+
+public class MomentPlayFragment extends Fragment implements View.OnClickListener, SurfaceHolder.Callback {
     private static final String TAG = MomentPlayFragment.class.getSimpleName();
-    protected static final String REQUEST_TAG = "RETRIEVE_RAW_DATA";
+    private static final String REQUEST_TAG = "RETRIEVE_RAW_DATA";
 
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
@@ -74,7 +69,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     private static final int STATE_PLAYBACK_COMPLETED = 5;
 
     private static final int DEFAULT_TIMEOUT = 3000;
-    static final long MAX_PROGRESS = 1000L;
+    private static final long MAX_PROGRESS = 1000L;
 
     protected static final int RAW_DATA_STATE_UNKNOWN = -1;
     protected static final int RAW_DATA_STATE_READY = 0;
@@ -156,8 +151,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         playVideo();
     }
 
-//    private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
-
     public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
         Bundle args = new Bundle();
         MomentPlayFragment fragment = new MomentPlayFragment();
@@ -205,10 +198,10 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mVideoContainer.setOnClickListener(this);
-        mBtnPlay.setOnClickListener(this);
+//        mVideoContainer.setOnClickListener(this);
+
         mSurfaceView.getHolder().addCallback(this);
-        mBtnFullScreen.setOnClickListener(this);
+//        mBtnFullScreen.setOnClickListener(this);
         mProgressBar.setMax((int) MAX_PROGRESS);
         mVideoController.setVisibility(View.INVISIBLE);
         if (mDragListener != null) {
@@ -271,7 +264,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     public void setFullScreen(boolean fullScreen) {
         int orientation = getActivity().getRequestedOrientation();
-
 
         if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
@@ -364,13 +356,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
 
-    void mute(boolean isMute) {
-        int volume = isMute ? 0 : 1;
-        if (isInPlaybackState()) {
-            mMediaPlayer.setVolume(volume, volume);
-        }
-    }
-
     boolean isInPlaybackState() {
         return (mMediaPlayer != null &&
             mCurrentState != STATE_ERROR &&
@@ -390,9 +375,55 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         mProgressLoading.setVisibility(View.VISIBLE);
         try {
             mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setOnErrorListener(this);
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mCurrentState = STATE_PREPARED;
+                    mVideoWidth = mp.getVideoWidth();
+                    mVideoHeight = mp.getVideoHeight();
+                    if (mSurfaceHolder != null && mVideoWidth != 0 && mVideoHeight != 0) {
+                        mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
+                    }
+                    showController(DEFAULT_TIMEOUT);
+                    if (mTargetState == STATE_PLAYING) {
+                        start();
+                    }
+                }
+            });
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mCurrentState = STATE_PLAYBACK_COMPLETED;
+                    mTargetState = STATE_PLAYBACK_COMPLETED;
+                    mBtnPlay.setImageResource(R.drawable.playbar_play);
+                    showController(0);
+                    int duration = mp.getDuration();
+                    setProgress(duration, duration);
+                    mHandler.removeMessages(SHOW_PROGRESS);
+//        onPlayCompletion();
+                    release(true);
+                }
+            });
+            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN && extra == MediaPlayer.MEDIA_ERROR_IO) {
+                        Snackbar.make(getView(), "Cannot load video.", Snackbar.LENGTH_SHORT).show();
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    getFragmentManager().beginTransaction().remove(MomentPlayFragment.this).commit();
+                                } catch (Exception e) {
+                                    Logger.t(TAG).d("", e);
+                                }
+                            }
+                        }, 1000);
+                        return true;
+                    }
+                    return false;
+                }
+            });
 
             if (mHeaders != null) {
                 mMediaPlayer.setDataSource(getActivity(), Uri.parse(mVideoSource), mHeaders);
@@ -423,20 +454,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         }
     }
 
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        mCurrentState = STATE_PREPARED;
-        mVideoWidth = mp.getVideoWidth();
-        mVideoHeight = mp.getVideoHeight();
-        if (mSurfaceHolder != null && mVideoWidth != 0 && mVideoHeight != 0) {
-            mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
-        }
-        showController(DEFAULT_TIMEOUT);
-        if (mTargetState == STATE_PLAYING) {
-            start();
-        }
-    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -521,38 +538,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
 
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        mCurrentState = STATE_PLAYBACK_COMPLETED;
-        mTargetState = STATE_PLAYBACK_COMPLETED;
-        mBtnPlay.setImageResource(R.drawable.playbar_play);
-        showController(0);
-        int duration = mp.getDuration();
-        setProgress(duration, duration);
-        mHandler.removeMessages(SHOW_PROGRESS);
-//        onPlayCompletion();
-        release(true);
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN && extra == MediaPlayer.MEDIA_ERROR_IO) {
-            Snackbar.make(getView(), "Cannot load video.", Snackbar.LENGTH_SHORT).show();
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        getFragmentManager().beginTransaction().remove(MomentPlayFragment.this).commit();
-                    } catch (Exception e) {
-                        Log.e("test", "", e);
-                    }
-                }
-            }, 1000);
-            return true;
-        }
-        return false;
-    }
-
     protected void setProgress(int position, int duration) {
         if (mProgressBar != null) {
             if (duration > 0) {
@@ -618,7 +603,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     private void updateVideoTime(int position, int duration) {
         mVideoTime.setText(DateUtils.formatElapsedTime(position / 1000) + " / " + DateUtils.formatElapsedTime(duration / 1000));
     }
-
 
 
     void onLoadRawDataSuccessfully() {
