@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -44,5 +45,11 @@ public class CameraSettingActivity extends BaseActivity {
     public void setupToolbar() {
         super.setupToolbar();
         getToolbar().setTitle(R.string.camera);
+        getToolbar().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }

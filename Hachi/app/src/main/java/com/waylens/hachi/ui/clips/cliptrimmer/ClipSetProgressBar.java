@@ -415,7 +415,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
             for (int i = 0; i < bookmarkList.size(); i++) {
                 Clip clip = bookmarkList.get(i);
-                if (clip.realCid.equals(clipSegment.getClip().cid)) {
+                if (clip.realCid.equals(clipSegment.getClip().realCid)) {
                     bookmarkView.setVisibility(VISIBLE);
 //                    Logger.t(TAG).d("bookmark " + clip.getStartTimeMs() + " ~ " + clip.getEndTimeMs() + " clipFragment: " + clipFragment.getStartTimeMs() + " ~" + clipFragment.getEndTimeMs());
                     boolean isSelected = mSelectedClip == null ? false : mSelectedClip.cid.equals(clip.cid);

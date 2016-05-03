@@ -24,10 +24,7 @@
             android:layout="@layout/preference_item"
             android:title="@string/bookmark"/>
 
-        <EditTextPreference
-            android:key="bookmark1"
-            android:layout="@layout/preference_item"
-            android:title="@string/bookmark"/>
+
 
     </PreferenceCategory>
 
