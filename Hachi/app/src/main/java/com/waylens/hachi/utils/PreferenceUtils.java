@@ -13,6 +13,8 @@ public class PreferenceUtils {
     public static final String USER_ID = "user_id";
     public static final String EMAIL = "email";
     public static final String TOKEN = "token";
+    public static final String BIRTHDAY = "birthday";
+    public static final String GENDER = "gender";
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String IS_FIRST_INSTALL = "is_first_install";
     public static final String VERSION_NAME = "version_name";

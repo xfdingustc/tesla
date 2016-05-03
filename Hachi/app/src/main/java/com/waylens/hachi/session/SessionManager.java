@@ -32,6 +32,9 @@ public class SessionManager {
 
     private int mLoginType;
     private boolean mIsLinked;
+    private String mBirthday;
+
+    private String mGender;
 
     private SessionManager() {
         resetSessionInfo();
@@ -76,6 +79,14 @@ public class SessionManager {
 
     public String getEmail() {
         return mEmail;
+    }
+
+    public String getBirthday() {
+        return mBirthday;
+    }
+
+    public String getGender() {
+        return mGender;
     }
 
     public String getToken() {
@@ -164,39 +175,20 @@ public class SessionManager {
             mUserName = response.getString("userName");
             mEmail = response.getString("email");
             mAvatarUrl = response.getString("avatarUrl");
+            mBirthday = response.getString("birthday");
+            mGender = response.getString("gender");
 
             PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
             PreferenceUtils.putString(PreferenceUtils.EMAIL, mEmail);
             PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
+            PreferenceUtils.putString(PreferenceUtils.BIRTHDAY, mBirthday);
+            PreferenceUtils.putString(PreferenceUtils.GENDER, mGender);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void refreshlogin() {
-        // TODO: uncomment this code block after refresh token is added back
-    /*
-    String url = Constant.HOST_URL + Constant.REFRESH_TOKEN_URL + mRefreshToken + "&id=" + mUserId;
 
-    RequestQueue requestQueue =
-    TutuJsonObjectRequest refreshRequest = new TutuJsonObjectRequest(url, new Response.Listener<JSONObject>() {
-      @Override
-      public void onResponse(JSONObject response) {
-        saveLoginInfo(response.toString());
-        Toast.makeText(mSharedAppContext, mSharedAppContext.getString(R.string
-            .login_successfully), Toast.LENGTH_SHORT).show();
-      }
-    }, new Response.ErrorListener() {
-      @Override
-      public void onErrorResponse(VolleyError error) {
-
-      }
-    });
-
-    requestQueue.add(refreshRequest);
-    requestQueue.start();
-    */
-    }
 
     public void refreshUserProfile() {
         /*

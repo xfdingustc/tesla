@@ -51,14 +51,6 @@ public class AccountActivity extends BaseActivity {
     @BindView(R.id.btnAddPhoto)
     ImageButton mBtnAddPhoto;
 
-    @BindView(R.id.email)
-    TextView mTvEmail;
-
-    @BindView(R.id.tvUserName)
-    TextView mTvUserName;
-
-    @BindView(R.id.tvBirthday)
-    TextView mBirthday;
 
     @OnClick(R.id.avatar)
     public void onBtnAvatarClicked() {
@@ -70,50 +62,8 @@ public class AccountActivity extends BaseActivity {
         AvatarActivity.start(this, true);
     }
 
-    @OnClick(R.id.tvUserName)
-    public void onTvUserNameClick() {
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-            .title(R.string.change_username)
-            .inputType(InputType.TYPE_CLASS_TEXT)
-            .input(getString(R.string.username), mSessionManager.getUserName(), new MaterialDialog.InputCallback() {
-                @Override
-                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
 
-                }
-            })
-            .positiveText(android.R.string.ok)
-            .negativeText(android.R.string.cancel)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    String newUserName = dialog.getInputEditText().getText().toString();
-                    updateNewUserName(newUserName);
-                }
-            })
-            .show();
 
-    }
-
-    @OnClick(R.id.tvBirthday)
-    public void onTvBirthdayClicked() {
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-            .customView(R.layout.fragment_data_picker, false)
-            .positiveText(android.R.string.ok)
-            .negativeText(android.R.string.cancel)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    DatePicker datePicker = (DatePicker)dialog.getCustomView().findViewById(R.id.dataPicker);
-                    Logger.t(TAG).d("year: " + datePicker.getYear());
-                    Date date = new Date(datePicker.getYear() - 1900, datePicker.getMonth(), datePicker.getDayOfMonth());
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                    String birthday = format.format(date);
-                    updateBirthday(birthday);
-                }
-            })
-            .show();
-
-    }
 
 
 
@@ -142,7 +92,8 @@ public class AccountActivity extends BaseActivity {
                 Logger.t(TAG).json(response.toString());
                 mSessionManager.saveUserProfile(response);
                 showUserProfile(response);
-
+                AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
+                getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commit();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -154,57 +105,13 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void showUserProfile(JSONObject response) {
-        mTvUserName.setText(mSessionManager.getUserName());
-        mTvEmail.setText(mSessionManager.getEmail());
+
         mImageLoader.displayImage(mSessionManager.getAvatarUrl(), mAvatar);
     }
 
-    private void updateNewUserName(final String newUserName) {
-        String url = Constants.API_USER_PROFILE;
-        Map<String, String> params = new HashMap<>();
-        params.put("userName", newUserName);
-        String postBody = new JSONObject(params).toString();
-        Logger.t(TAG).d("postBody: "  + postBody);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                mTvUserName.setText(newUserName);
-                mSessionManager.saveUserName(newUserName);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
 
-        mRequestQueue.add(request);
-    }
 
-    private void updateBirthday(final String birthday) {
-        String url = Constants.API_USER_PROFILE;
-        Map<String, String> params = new HashMap<>();
-        params.put("birthday", birthday);
-        String postBody = new JSONObject(params).toString();
-        Logger.t(TAG).d("postBody: "  + postBody);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-//                mTvUserName.setText(newUserName);
-//                mSessionManager.saveUserName(newUserName);
-                mBirthday.setText(birthday);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        mRequestQueue.add(request);
-    }
 
 
     @Override
@@ -217,8 +124,7 @@ public class AccountActivity extends BaseActivity {
         setContentView(R.layout.activity_account);
         setupToolbar();
         mImageLoader.displayImage(mSessionManager.getAvatarUrl(), mAvatar, ImageUtils.getAvatarOptions());
-        mTvEmail.setText(mSessionManager.getEmail());
-        mTvUserName.setText(mSessionManager.getUserName());
+
     }
 
 

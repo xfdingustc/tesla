@@ -35,86 +35,13 @@
 
     </FrameLayout>
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/account"
-        android:textColor="@color/style_color_accent"
-        android:textSize="18sp"
-        tools:text="Account"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/email"
-        android:textColor="?attr/appTextColorPrimary"
-        android:textSize="18sp"
-        tools:text="Email"/>
-
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:textColor="?attr/appTextColorSecondary"
-        tools:text="xfding@cam2cloud.com"/>
-
-    <View
+    <FrameLayout
+        android:id="@+id/accountPref"
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@color/settings_line_separator"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/change_password"
-        android:textColor="?attr/appTextColorSecondary"
-        android:textSize="18sp"
-        tools:text="Change password"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/profile"
-        android:textColor="@color/style_color_accent"
-        android:textSize="18sp"
-        tools:text="Profile"/>
-
-    <TextView
-        android:id="@+id/tvUserName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textColor="?attr/appTextColorPrimary"
-        android:textSize="18sp"
-        tools:text="UserName"/>
+        android:layout_height="match_parent"></FrameLayout>
 
 
-    <TextView
-        android:id="@+id/tvBirthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/birthday"
-        android:textColor="?attr/appTextColorPrimary"
-        android:textSize="18sp"/>
 
-    <TextView
-        android:id="@+id/tvGender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/gender"
-        android:textColor="?attr/appTextColorPrimary"
-        android:textSize="18sp"/>
 
 
 

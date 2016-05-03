@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category_widget"
+        android:title="@string/account">
+
+
+
+        <Preference
+            android:key="email"
+            android:layout="@layout/preference_item"
+            android:title="@string/email"/>
+
+        <Preference
+            android:key="change_password"
+            android:layout="@layout/preference_item"
+            android:title="@string/change_password"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category_widget"
+        android:title="@string/profile">
+
+        <Preference
+            android:key="user_name"
+            android:layout="@layout/preference_item"
+            android:title="@string/username"/>
+
+        <Preference
+            android:key="birthday"
+            android:layout="@layout/preference_item"
+            android:title="@string/birthday"/>
+
+        <Preference
+            android:key="gender"
+            android:layout="@layout/preference_item"
+            android:title="@string/gender"/>
+
+        <Preference
+            android:key="region"
+            android:layout="@layout/preference_item"
+            android:title="@string/region"/>
+
+    </PreferenceCategory>
+
+
+    <Preference
+        android:key="@string/logout"
+        android:layout="@layout/preference_item"
+        android:title="@string/logout"/>
+
+</PreferenceScreen>
