@@ -52,7 +52,7 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     LinearLayout btnComment;
 
     @BindView(R.id.video_fragment_container)
-    FrameLayout fragmentContainer;
+    public FrameLayout fragmentContainer;
 
     public Fragment videoFragment;
 

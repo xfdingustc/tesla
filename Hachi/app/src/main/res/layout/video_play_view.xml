@@ -26,10 +26,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="invisible"/>
-    <com.waylens.hachi.ui.views.dashboard.DashboardLayout
-        android:id="@+id/overlayLayout"
-        android:layout_width="1920px"
-        android:layout_height="1080px"
-        android:layout_gravity="center"
-        android:visibility="visible"/>
+
 </merge>

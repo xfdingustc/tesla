@@ -86,7 +86,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     protected OnViewDragListener mDragListener;
 
-    SurfaceHolder mSurfaceHolder;
+    private SurfaceHolder mSurfaceHolder;
 
     private MediaPlayer mMediaPlayer;
 
@@ -192,14 +192,8 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video_play, container, false);
         ButterKnife.bind(this, view);
-        return view;
-    }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-//        mVideoContainer.setOnClickListener(this);
-
+        mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
 //        mBtnFullScreen.setOnClickListener(this);
         mProgressBar.setMax((int) MAX_PROGRESS);
@@ -207,9 +201,10 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         if (mDragListener != null) {
             mVideoContainer.setOnViewDragListener(mDragListener);
         }
-
-
+        return view;
     }
+
+
 
     @Override
     public void onStart() {
@@ -365,10 +360,12 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     protected void openVideo() {
         if (mVideoSource == null || mSurfaceView == null || mSurfaceHolder == null) {
+            Logger.t(TAG).d("source: " + mVideoSource + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
             return;
         }
 
         if (mOverlayShouldDisplay && mRawDataState == RAW_DATA_STATE_UNKNOWN) {
+            Logger.t(TAG).d("overlay show display: " + mOverlayShouldDisplay + " rawdata state: " + mRawDataState);
             return;
         }
 
@@ -507,7 +504,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.e("test", "surfaceDestroyed");
+        Logger.t(TAG).d("surfaceDestroyed");
         mSurfaceHolder = null;
         mSurfaceDestroyed = true;
         if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
