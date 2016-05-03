@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.ManualSetupActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -38,7 +39,9 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.cameraSetting)
     public void onCameraSettingClicked() {
-        CameraSettingActivity.launch(getActivity());
+        if (VdtCameraManager.getManager().isConnected()) {
+            CameraSettingActivity.launch(getActivity());
+        }
     }
 
     @OnClick(R.id.settings_account)

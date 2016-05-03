@@ -35,7 +35,9 @@ public class CameraSettingActivity extends BaseActivity {
         setupToolbar();
         CameraSettingFragment fragment = new CameraSettingFragment();
         getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
+
     }
+
 
 
     @Override

@@ -6,8 +6,8 @@
         android:layout="@layout/preference_category_widget">
 
 
-        <com.afollestad.materialdialogs.prefs.MaterialEditTextPreference
-            android:key="name"
+        <Preference
+            android:key="cameraName"
             android:layout="@layout/preference_item"
             android:title="@string/camera_name"/>
 
