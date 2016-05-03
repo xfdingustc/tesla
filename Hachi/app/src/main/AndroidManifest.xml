@@ -81,7 +81,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.AccountActivity"
+            android:name=".ui.settings.AccountActivity"
             android:screenOrientation="portrait"/>
 
         <activity

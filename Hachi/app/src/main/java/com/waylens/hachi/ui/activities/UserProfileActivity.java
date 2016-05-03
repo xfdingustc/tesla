@@ -26,6 +26,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.utils.ImageUtils;
 
 import org.json.JSONArray;
@@ -55,11 +56,8 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.rvUserMomentList)
     RecyclerView mRvUserMomentList;
 
-
     @BindView(R.id.userAvatar)
     CircleImageView mCivUserAvatar;
-
-
 
     @BindView(R.id.btnFollowersCount)
     TextView mTvFollowersCount;

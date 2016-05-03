@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,6 +22,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
 import com.waylens.hachi.utils.ImageUtils;
 
@@ -95,19 +96,6 @@ public class AccountActivity extends BaseActivity {
 
     @OnClick(R.id.tvBirthday)
     public void onTvBirthdayClicked() {
-//        SublimePickerFragment pickerFrag = new SublimePickerFragment();
-//        pickerFrag.setCallback(new SublimePickerFragment.Callback(){
-//
-//            @Override
-//            public void onCancelled() {
-//
-//            }
-//
-//            @Override
-//            public void onDateTimeRecurrenceSet(SelectedDate selectedDate, int hourOfDay, int minute, SublimeRecurrencePicker.RecurrenceOption recurrenceOption, String recurrenceRule) {
-//
-//            }
-//        });
         MaterialDialog dialog = new MaterialDialog.Builder(this)
             .customView(R.layout.fragment_data_picker, false)
             .positiveText(android.R.string.ok)
@@ -238,13 +226,13 @@ public class AccountActivity extends BaseActivity {
     public void setupToolbar() {
         super.setupToolbar();
 
-        mToolbar.setNavigationIcon(R.drawable.navbar_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        getToolbar().setNavigationIcon(R.drawable.navbar_back);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        mToolbar.setTitle(R.string.account);
+        getToolbar().setTitle(R.string.account);
     }
 }

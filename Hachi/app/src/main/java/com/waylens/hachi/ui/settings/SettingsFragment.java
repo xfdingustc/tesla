@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.AccountActivity;
 import com.waylens.hachi.ui.activities.ManualSetupActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 
 import butterknife.OnClick;
 
@@ -27,7 +27,7 @@ public class SettingsFragment extends BaseFragment {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.settings);
+        getToolbar().setTitle(R.string.settings);
         super.setupToolbar();
     }
 
