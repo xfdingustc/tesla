@@ -26,6 +26,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.ui.settings.SettingPrefFragment;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.ui.clips.VideoFragment;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
@@ -59,14 +60,14 @@ public class MainActivity extends BaseActivity {
     private Map<Integer, Integer> mMenuId2Tab = new HashMap<>();
     private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
-    private BaseFragment[] mFragmentList = new BaseFragment[]{
+    private Fragment[] mFragmentList = new Fragment[]{
         new VideoFragment(),
         new CameraPreviewFragment(),
         new CommunityFragment(),
         new SettingsFragment()
     };
 
-    private BaseFragment mCurrentFragment = null;
+    private Fragment mCurrentFragment = null;
     private SessionManager mSessionManager = SessionManager.getInstance();
 
     @BindView(R.id.drawerLayout)
@@ -184,7 +185,7 @@ public class MainActivity extends BaseActivity {
         mCurrentNavMenuId = menuId;
         mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
 
-        BaseFragment fragment = mFragmentList[tag];
+        Fragment fragment = mFragmentList[tag];
 
 
         /*

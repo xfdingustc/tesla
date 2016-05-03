@@ -8,7 +8,12 @@
     android:minHeight="?android:listPreferredItemHeight"
     android:orientation="horizontal">
 
-
+    <ImageButton
+        android:id="@android:id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"/>
 
     <RelativeLayout
         android:layout_weight="1"
