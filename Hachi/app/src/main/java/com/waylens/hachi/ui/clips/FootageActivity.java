@@ -67,6 +67,8 @@ public class FootageActivity extends BaseActivity {
 
     private int mClipSetIndex;
 
+    private int mDeleteClipCount = 0;
+
 
     private ClipSet mFootageClipSet;
     private ClipSet mBookmarkClipSet;
@@ -141,7 +143,7 @@ public class FootageActivity extends BaseActivity {
                                 .callback(new MaterialDialog.ButtonCallback() {
                                     @Override
                                     public void onPositive(MaterialDialog dialog) {
-                                        doDeleteSelectedClips(event.getClipList().get(0));
+                                        doDeleteSelectedClips(event.getClipList());
                                     }
                                 })
                                 .build();
@@ -356,21 +358,31 @@ public class FootageActivity extends BaseActivity {
     }
 
 
-    private void doDeleteSelectedClips(Clip clip) {
-        ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, new VdbResponse.Listener<Integer>() {
-            @Override
-            public void onResponse(Integer response) {
-                Logger.t(TAG).d("clips deleted");
-                refreshBookmarkClipSet();
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
+    private void doDeleteSelectedClips(List<Clip> clipList) {
 
-            }
-        });
+        final int toDeleteClipCount = clipList.size();
+        mDeleteClipCount = 0;
 
-        mVdbRequestQueue.add(request);
+        for (Clip clip : clipList) {
+            ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, new VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+                    mDeleteClipCount++;
+                    Logger.t(TAG).d("" + mDeleteClipCount + " clips deleted");
+                    if (mDeleteClipCount == toDeleteClipCount) {
+                        refreshBookmarkClipSet();
+                    }
+                }
+            }, new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+
+                }
+            });
+
+            mVdbRequestQueue.add(request);
+        }
+        
     }
 
 }

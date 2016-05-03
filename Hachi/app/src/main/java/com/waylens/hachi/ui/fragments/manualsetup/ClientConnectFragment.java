@@ -145,7 +145,7 @@ public class ClientConnectFragment extends BaseFragment {
         final NetworkItemBean itemBean = mNetworkList.get(position);
         mPasswordDialog = new MaterialDialog.Builder(getActivity())
             .title(itemBean.ssid)
-            .customView(R.layout.dialog_network_password, false)
+            .customView(R.layout.dialog_network_password, true)
             .positiveText(R.string.join)
             .callback(new MaterialDialog.ButtonCallback() {
                 @Override

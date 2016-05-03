@@ -461,60 +461,9 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     }
 
-    ActionMode.Callback mCABCallback = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_clip_list, menu);
-            return true;
-        }
 
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            if (mIsAddMore) {
-                MenuItem menuItem = menu.findItem(R.id.menu_to_upload);
-                if (menuItem != null) {
-                    menuItem.setVisible(false);
-                }
-                menuItem = menu.findItem(R.id.menu_to_delete);
-                if (menuItem != null) {
-                    menuItem.setVisible(false);
-                }
-            }
-            return true;
-        }
 
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.menu_to_enhance:
-                    toEnhance();
-                    return true;
-                case R.id.menu_to_upload:
-                    toShare();
-                    return false;
-                case R.id.menu_to_delete:
-                    doDeleteSelectedClips();
-                    return false;
-                default:
-                    return false;
-            }
-
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
-            if (mIsAddMore) {
-                getActivity().finish();
-            } else if (mIsMultipleMode) {
-                mIsMultipleMode = false;
-                mAdapter.setMultiSelectedMode(false);
-            }
-        }
-    };
-
-    void toShare() {
+    private void toShare() {
         if (SessionManager.getInstance().isLoggedIn()) {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
             EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
