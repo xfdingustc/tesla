@@ -188,4 +188,9 @@
 	<string name="male">男</string>
 	<string name="female">女</string>
 	<string name="rather_not_to_say">我不想说</string>
+	<string name="show_password">显示密码</string>
+	<string name="new_password">新密码</string>
+	<string name="old_password">老密码</string>
+	<string name="change_password_successfully">更改密码成功</string>
+	<string name="change_password_failed">更改密码失败</string>
 </resources>

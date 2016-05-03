@@ -22,6 +22,8 @@ public class Constants {
 
     public static final String API_USER_PROFILE = HOST_URL + "api/users/me/profile";
 
+    public static final String API_USER_CHANGE_PASSWORD = HOST_URL + "api/users/change_password";
+
     public static final String API_RESET_PASSWORD_MAIL = HOST_URL + "api/users/send_passwordreset_mail?e=";
 
     public static final String API_RESET_PASSWORD = HOST_URL + "api/users/reset_password";

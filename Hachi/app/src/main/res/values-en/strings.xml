@@ -188,4 +188,9 @@
 	<string name="male">Male</string>
 	<string name="female">Female</string>
 	<string name="rather_not_to_say">"I'd rather not to say"</string>
+	<string name="show_password">Show Password</string>
+	<string name="new_password">New Password</string>
+	<string name="old_password">Old Password</string>
+	<string name="change_password_successfully">Change Password successfully</string>
+	<string name="change_password_failed">Failed to change password</string>
 </resources>

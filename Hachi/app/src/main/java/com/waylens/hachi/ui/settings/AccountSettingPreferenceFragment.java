@@ -4,9 +4,16 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -39,6 +46,10 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private Preference mBirthday;
     private Preference mGender;
     private Preference mRegion;
+
+    private View positiveAction;
+    private EditText oldPasswordInput;
+    private EditText newPasswordInput;
 
     private SessionManager mSessionManager = SessionManager.getInstance();
     private RequestQueue mRequestQueue;
@@ -78,6 +89,55 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 mGender.setSummary(R.string.rather_not_to_say);
                 break;
         }
+
+        mChangePassword.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.change_password)
+                    .customView(R.layout.dialog_change_password, true)
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            uploadPassword(oldPasswordInput.getText().toString(), newPasswordInput.getText().toString());
+                        }
+                    })
+                    .show();
+
+                positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+                //noinspection ConstantConditions
+                newPasswordInput = (EditText) dialog.getCustomView().findViewById(R.id.newPassword);
+                oldPasswordInput = (EditText) dialog.getCustomView().findViewById(R.id.oldPassword);
+                oldPasswordInput.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        positiveAction.setEnabled(s.toString().trim().length() > 0);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                });
+
+                CheckBox checkbox = (CheckBox) dialog.getCustomView().findViewById(R.id.showPassword);
+                checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        oldPasswordInput.setInputType(!isChecked ? InputType.TYPE_TEXT_VARIATION_PASSWORD : InputType.TYPE_CLASS_TEXT);
+                        oldPasswordInput.setTransformationMethod(!isChecked ? PasswordTransformationMethod.getInstance() : null);
+                        newPasswordInput.setInputType(!isChecked ? InputType.TYPE_TEXT_VARIATION_PASSWORD : InputType.TYPE_CLASS_TEXT);
+                        newPasswordInput.setTransformationMethod(!isChecked ? PasswordTransformationMethod.getInstance() : null);
+                    }
+                });
+                return true;
+            }
+        });
 
         mGender.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -163,6 +223,31 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 return true;
             }
         });
+    }
+
+    private void uploadPassword(String oldPwd, String newPwd) {
+        String url = Constants.API_USER_CHANGE_PASSWORD;
+        Map<String, String> params = new HashMap<>();
+        params.put("curPassword", oldPwd);
+        params.put("newPassword", newPwd);
+        String postBody = new JSONObject(params).toString();
+        Logger.t(TAG).d("postBody: "  + postBody);
+
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Logger.t(TAG).json(response.toString());
+                mSessionManager.saveLoginInfo(response);
+                Snackbar.make(getView(), R.string.change_password_successfully, Snackbar.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar.make(getView(), R.string.change_password_failed, Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+        mRequestQueue.add(request);
     }
 
     private void updateGender(final String gender) {
