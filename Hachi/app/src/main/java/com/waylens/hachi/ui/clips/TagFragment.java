@@ -69,19 +69,13 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
-
-
     private ClipSetGroupAdapter mAdapter;
-
-    private Handler mUiThreadHandler;
 
     private int mClipSetType;
 
     private boolean mIsMultipleMode;
 
     boolean mIsAddMore;
-
-    ActionMode mActionMode;
 
     private int mDeleteClipCount = 0;
 
@@ -203,7 +197,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_tagged_clip,
             savedInstanceState);
-        mUiThreadHandler = new Handler();
         //setupClipSetGroup();
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

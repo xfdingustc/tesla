@@ -25,10 +25,10 @@ import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
-import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.clipplay2.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
+import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
@@ -42,7 +42,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -98,11 +97,11 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     View btnMusic;
 
 
-    @BindView(R.id.volume_value_view)
-    TextView mVolumeView;
-
-    @BindView(R.id.volume_seek_bar)
-    SeekBar mVolumeSeekBar;
+//    @BindView(R.id.volume_value_view)
+//    TextView mVolumeView;
+//
+//    @BindView(R.id.volume_seek_bar)
+//    SeekBar mVolumeSeekBar;
 
     @BindView(R.id.btn_add_music)
     Button btnAddMusic;
@@ -127,24 +126,28 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         btnGauge.setSelected(false);
 //        btnRemix.setSelected(false);
         view.setSelected(!view.isSelected());
-        configureActionUI(ACTION_ADD_MUSIC, view.isSelected());
+        if (mMusicItem == null) {
+            MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
+        } else {
+            configureActionUI(ACTION_ADD_MUSIC, view.isSelected());
+        }
         updateMusicUI();
     }
 
     @OnClick(R.id.btn_add_music)
-    void addMusic() {
+    public void addMusic() {
         MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
     }
 
     @OnClick(R.id.btn_remove)
-    void removeMusic() {
+    public void removeMusic() {
         mMusicItem = null;
         getClipPlayFragment().setAudioUrl(null);
         updateMusicUI();
     }
 
     @OnClick(R.id.btn_gauge)
-    void showGauge(View view) {
+    public void showGauge(View view) {
         btnMusic.setSelected(false);
 //        btnRemix.setSelected(false);
         mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_SHOW, true));
@@ -168,7 +171,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     }
 
     @OnClick({R.id.btn_add_video, R.id.btn_add_video_extra})
-    void showClipChooser() {
+    public void showClipChooser() {
         btnMusic.setSelected(false);
 //        btnRemix.setSelected(false);
         btnGauge.setSelected(false);
@@ -299,26 +302,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         mClipsEditView.setClipIndex(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
         mClipsEditView.setOnClipEditListener(this);
 
-        mVolumeView.setText("100");
-        mVolumeSeekBar.setMax(100);
-        mVolumeSeekBar.setProgress(100);
 
-        mVolumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mVolumeView.setText(String.valueOf(progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                //
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //
-            }
-        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
