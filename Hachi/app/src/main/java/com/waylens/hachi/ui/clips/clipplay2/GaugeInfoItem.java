@@ -18,6 +18,8 @@ public class GaugeInfoItem {
             GaugeInfoItem.Option.large,
     };
 
+
+
     //NOTE: Keep the same order as R.array.supported_gauges
     public static final String[] OPTION_JS_PARAMS = new String[]{
             "showSpeedThrottle",
@@ -34,11 +36,11 @@ public class GaugeInfoItem {
 
     public final String title;
 
-    public Option option;
+    public String option;
 
     public boolean isEnabled;
 
-    public GaugeInfoItem(int id, String title, Option option) {
+    public GaugeInfoItem(int id, String title, String option) {
         this.id = id;
         this.title = title;
         this.option = option;
@@ -54,10 +56,11 @@ public class GaugeInfoItem {
     }
 
     public String getOption() {
-        if (isEnabled) {
-            return option.name();
-        } else {
-            return Option.NA.name();
-        }
+//        if (isEnabled) {
+//            return option.name();
+//        } else {
+//            return Option.NA.name();
+//        }
+        return option;
     }
 }

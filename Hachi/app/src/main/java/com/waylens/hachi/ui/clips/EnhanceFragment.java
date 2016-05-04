@@ -20,6 +20,7 @@ import android.widget.ViewAnimator;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
@@ -311,6 +312,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
             @Override
             public void onGaugeItemChanged(GaugeInfoItem item) {
                 mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_UPDATE_SETTING, item));
+                GaugeSettingManager.getManager().saveSetting(item);
             }
         });
         mGaugeListView.setAdapter(mGaugeListAdapter);

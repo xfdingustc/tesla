@@ -7,9 +7,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.clips.clipplay2.GaugeInfoItem;
 import com.waylens.hachi.vdb.rawdata.GpsData;
@@ -22,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/4/6.
@@ -52,9 +55,18 @@ public class GaugeView extends FrameLayout {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.loadUrl("file:///android_asset/api.html");
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                initGaugeView();
+                super.onPageFinished(view, url);
+            }
+        });
 
+//        mWebView.l
 
     }
+
 
 
     @Subscribe
@@ -73,12 +85,28 @@ public class GaugeView extends FrameLayout {
 
     }
 
-    public void showGauge(Boolean show) {
+
+    public void initGaugeView() {
+        List<GaugeInfoItem> itemList = GaugeSettingManager.getManager().getSetting();
+        Logger.t(TAG).d("itemListsize: " + itemList.size());
+        for (GaugeInfoItem item : itemList) {
+            updateGaugeSetting(item);
+        }
+    }
+
+
+    public void showGauge(boolean show) {
         if (show) {
             mWebView.setVisibility(View.VISIBLE);
+
         } else {
-            mWebView.setVisibility(View.GONE);
+            mWebView.setVisibility(View.INVISIBLE);
         }
+
+    }
+
+    public boolean isGaugeShown() {
+        return mWebView.getVisibility() == View.VISIBLE ? true : false;
     }
 
 

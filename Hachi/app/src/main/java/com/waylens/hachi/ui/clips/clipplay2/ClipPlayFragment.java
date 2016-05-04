@@ -23,6 +23,7 @@ import android.widget.ViewSwitcher;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
+import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -44,7 +45,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -128,8 +128,8 @@ public class ClipPlayFragment extends BaseFragment {
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
-        int visibility = mWvGauge.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-        mWvGauge.setVisibility(visibility);
+        boolean isGaugeShown = !mWvGauge.isGaugeShown();
+        mWvGauge.showGauge(isGaugeShown);
     }
 
 
@@ -169,11 +169,22 @@ public class ClipPlayFragment extends BaseFragment {
 
     }
 
+    @Subscribe
+    public void onGaugeEvent(GaugeEvent event) {
+        switch (event.getWhat()) {
+            case GaugeEvent.EVENT_WHAT_SHOW:
+                Boolean shouldShow = (Boolean) event.getExtra();
+                mWvGauge.showGauge(shouldShow);
+                break;
+
+        }
+
+    }
+
 
     private void start() {
         startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
     }
-
 
 
     public enum ClipMode {
@@ -188,7 +199,6 @@ public class ClipPlayFragment extends BaseFragment {
 
     public ClipMode mClipMode = ClipMode.SINGLE;
     public CoverMode mCoverMode = CoverMode.NORMAL;
-
 
 
     public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex, UrlProvider urlProvider) {
@@ -301,6 +311,8 @@ public class ClipPlayFragment extends BaseFragment {
         if (getClipSet() == null) {
             return;
         }
+
+        mWvGauge.showGauge(false);
 
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
 

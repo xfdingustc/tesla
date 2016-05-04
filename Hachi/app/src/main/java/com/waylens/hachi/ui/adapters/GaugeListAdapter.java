@@ -11,12 +11,14 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.ui.clips.clipplay2.GaugeInfoItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 import butterknife.BindView;
@@ -28,7 +30,7 @@ import butterknife.ButterKnife;
 public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> {
 
     private final OnGaugeItemChangedListener mListener;
-    ArrayList<GaugeInfoItem> mGaugeItems;
+    List<GaugeInfoItem> mGaugeItems;
 
     public interface OnGaugeItemChangedListener {
         void onGaugeItemChanged(GaugeInfoItem item);
@@ -36,12 +38,8 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
 
     public GaugeListAdapter(String[] supportedGauges, OnGaugeItemChangedListener listener) {
         if (supportedGauges != null) {
-            mGaugeItems = new ArrayList<>();
-            int i = 0;
-            for (String title : supportedGauges) {
-                mGaugeItems.add(new GaugeInfoItem(i, title, GaugeInfoItem.DEFAULT_OPTIONS[i]));
-                i++;
-            }
+            mGaugeItems = GaugeSettingManager.getManager().getSetting();
+
         }
 
         this.mListener = listener;
@@ -90,13 +88,13 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
         GaugeInfoItem gaugeItem = mGaugeItems.get(holder.getAdapterPosition());
         switch (checkedId) {
             case R.id.btn_small:
-                gaugeItem.option = GaugeInfoItem.Option.small;
+                gaugeItem.option = "small";
                 break;
             case R.id.btn_medium:
-                gaugeItem.option = GaugeInfoItem.Option.middle;
+                gaugeItem.option = "middle";
                 break;
             case R.id.btn_large:
-                gaugeItem.option = GaugeInfoItem.Option.large;
+                gaugeItem.option = "large";
                 break;
         }
     }
@@ -112,17 +110,17 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
         }
     }
 
-    int getRadioButtonID(GaugeInfoItem.Option option) {
-        switch (option) {
-            case small:
-                return R.id.btn_small;
-            case middle:
-                return R.id.btn_medium;
-            case large:
-                return R.id.btn_large;
-            default:
-                return -1;
+    int getRadioButtonID(String option) {
+        if (option.equals("small")) {
+            return R.id.btn_small;
+        } else if (option.equals("middle")) {
+            return R.id.btn_medium;
+        } else if (option.equals("large")) {
+            return R.id.btn_large;
+        } else {
+            return -1;
         }
+
     }
 
     @Override
