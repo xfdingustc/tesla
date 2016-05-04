@@ -204,4 +204,6 @@
 	<string name="yesterday">Yesterday</string>
 	<string name="mic">Mic</string>
 	<string name="speaker">Speaker</string>
+	<string name="sd">SD</string>
+	<string name="fullhd">Full HD</string>
 </resources>

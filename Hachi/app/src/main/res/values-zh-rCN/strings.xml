@@ -204,4 +204,6 @@
 	<string name="yesterday">昨天</string>
 	<string name="mic">麦克风</string>
 	<string name="speaker">扬声器</string>
+	<string name="sd">标清</string>
+	<string name="fullhd">超高清</string>
 </resources>

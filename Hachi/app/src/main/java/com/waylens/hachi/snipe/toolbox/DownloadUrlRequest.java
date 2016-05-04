@@ -14,7 +14,12 @@ import com.waylens.hachi.vdb.ClipSegment;
  */
 public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
     private static final String TAG = DownloadUrlRequest.class.getSimpleName();
-    private final ClipSegment mClipSegment;
+    private ClipSegment mClipSegment;
+    private int mStreamIndex;
+    private Clip.ID cid;
+
+    private long mStartTime;
+    private int mLength;
 
     public static final int DOWNLOAD_OPT_MAIN_STREAM = (1 << 0);
     public static final int DOWNLOAD_OPT_SUB_STREAM_1 = (1 << 1);
@@ -22,21 +27,34 @@ public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
     public static final int DOWNLOAD_OPT_PLAYLIST = (1 << 3);
     public static final int DOWNLOAD_OPT_MUTE_AUDIO = (1 << 4);
 
+
+
     public DownloadUrlRequest(ClipSegment clipSegment, VdbResponse.Listener<ClipDownloadInfo> listener,
                               VdbResponse.ErrorListener errorListener) {
-        this(0, clipSegment, listener, errorListener);
+        this(clipSegment, DOWNLOAD_OPT_SUB_STREAM_1, listener, errorListener);
     }
 
-    public DownloadUrlRequest(int method, ClipSegment clipSegment, VdbResponse.Listener<ClipDownloadInfo>
-        listener, VdbResponse.ErrorListener errorListener) {
+    public DownloadUrlRequest(ClipSegment clipSegment, int streamIndex, VdbResponse.Listener<ClipDownloadInfo> listener,
+                              VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         this.mClipSegment = clipSegment;
+        this.mStreamIndex = streamIndex;
     }
+
+    public DownloadUrlRequest(Clip.ID cid, long start, int length, VdbResponse.Listener<ClipDownloadInfo> listener,
+                              VdbResponse.ErrorListener errorListener) {
+        super(0, listener, errorListener);
+        this.cid = cid;
+        this.mStartTime = start;
+        this.mLength = length;
+//        this.mStreamIndex = streamIndex;
+    }
+
 
     @Override
     protected VdbCommand createVdbCommand() {
-        int downloadOption = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_INDEX_PICT;
-        mVdbCommand = VdbCommand.Factory.createCmdGetClipDownloadUrl(mClipSegment, downloadOption, true);
+        int downloadOption = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_SUB_STREAM_1 | DOWNLOAD_OPT_INDEX_PICT | DOWNLOAD_OPT_PLAYLIST;
+        mVdbCommand = VdbCommand.Factory.createCmdGetClipDownloadUrl(cid, mStartTime, mLength, downloadOption, true);
         return mVdbCommand;
     }
 

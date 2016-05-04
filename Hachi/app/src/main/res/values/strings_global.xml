@@ -176,4 +176,9 @@
         <item>@string/female</item>
         <item>@string/rather_not_to_say</item>
     </string-array>
+
+    <string-array name="download_resolution" translatable="false">
+        <item>@string/sd</item>
+        <item>@string/fullhd</item>
+    </string-array>
 </resources>

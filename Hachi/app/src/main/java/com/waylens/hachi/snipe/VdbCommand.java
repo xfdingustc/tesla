@@ -289,7 +289,7 @@ public class VdbCommand {
 
         }
 
-        public static VdbCommand createCmdGetClipDownloadUrl(ClipSegment clipSegment, int downloadOption, boolean bFirstLoop) {
+        public static VdbCommand createCmdGetClipDownloadUrl(Clip.ID cid, long startTime, int length, int downloadOption, boolean bFirstLoop) {
             int cmdTag = DOWNLOAD_FOR_FILE;
             if (bFirstLoop) {
                 cmdTag |= DOWNLOAD_FIRST_LOOP;
@@ -297,9 +297,9 @@ public class VdbCommand {
             //int duration = (int) (endMs - startMs);
             return new Builder()
                 .writeCmdCode(CMD_GetDownloadUrlEx, cmdTag, 0, 0)
-                .writeClipId(clipSegment.getClip().cid)
-                .writeInt64(clipSegment.getStartTimeMs())
-                .writeInt32(clipSegment.getDurationMs())
+                .writeClipId(cid)
+                .writeInt64(startTime)
+                .writeInt32(length)
                 .writeInt32(downloadOption)
                 .build();
         }

@@ -67,6 +67,11 @@ public class UploadProgressDialogFragment extends BlurDialogFragment {
 
     private EventBus mEventBus = EventBus.getDefault();
 
+
+    public static UploadProgressDialogFragment newInstance() {
+        return newInstance(9, 2.4f, false, false, false, true);
+    }
+
     /**
      * Retrieve a new instance of the sample fragment.
      *

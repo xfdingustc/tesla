@@ -88,7 +88,6 @@ public class GaugeView extends FrameLayout {
 
     public void initGaugeView() {
         List<GaugeInfoItem> itemList = GaugeSettingManager.getManager().getSetting();
-        Logger.t(TAG).d("itemListsize: " + itemList.size());
         for (GaugeInfoItem item : itemList) {
             updateGaugeSetting(item);
         }

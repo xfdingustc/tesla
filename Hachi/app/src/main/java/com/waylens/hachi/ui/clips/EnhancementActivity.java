@@ -7,12 +7,14 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -22,19 +24,22 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
+import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.LoginActivity;
-import com.waylens.hachi.ui.entities.SharableClip;
-import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.clips.clipplay2.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.clipplay2.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.clips.clipplay2.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
+import com.waylens.hachi.ui.entities.SharableClip;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipExtent;
+import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
@@ -343,6 +348,27 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 break;
             case R.id.menu_to_download:
                 //TODO
+                new MaterialDialog.Builder(this)
+                    .title(R.string.download)
+                    .items(R.array.download_resolution)
+                    .itemsCallbackSingleChoice(2, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+//                            showToast(which + ": " + text);
+                            return true; // allow selection
+                        }
+                    })
+                    .positiveText(R.string.download)
+                    .negativeText(android.R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                            doDownloadClips(dialog.getSelectedIndex());
+                        }
+                    })
+                    .show();
+
                 break;
             case R.id.save:
                 doSaveClipTrimInfo();
@@ -350,6 +376,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }
         return true;
     }
+
 
     private void initClipTrimmer() {
         int defaultHeight = ViewUtils.dp2px(64);
@@ -418,6 +445,31 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 }
             }
         ));
+    }
+
+
+    private void doDownloadClips(int selectIndex) {
+//        DownloadUrlRequest request =
+//        ClipSegment clipSegment = new ClipSegment(getClipSet().getClip(0));
+        Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
+        DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
+            .Listener<ClipDownloadInfo>() {
+            @Override
+            public void onResponse(ClipDownloadInfo response) {
+                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
+                Logger.t(TAG).d("on response: " + response.sub.url);
+                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
+
+                //startDownload(response, 0, clipSegment.getClip().streams[0]);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
+
     }
 
     private void doGetClipExtension() {
