@@ -83,7 +83,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
+                            mVdtCamera.setMarkTime(mBeforeNumber.getValue(), mAfterNumber.getValue());
                         }
                     }).show();
 
@@ -93,6 +93,9 @@ public class CameraSettingFragment extends PreferenceFragment {
                 mAfterNumber.setMaxValue(MAX_BOOKMARK_LENGHT);
                 mBeforeNumber.setMinValue(0);
                 mAfterNumber.setMinValue(0);
+                mBeforeNumber.setValue(mVdtCamera.getMarkBeforeTime());
+                mAfterNumber.setValue(mVdtCamera.getMarkAfterTime());
+
 
                 mBeforeNumber.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                     @Override

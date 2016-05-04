@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -671,6 +670,18 @@ public class VdtCamera {
 
     public void markLiveVideo() {
         mController.cmd_Rec_MarkLiveVideo();
+    }
+
+    public int getMarkBeforeTime() {
+        return mMarkBeforeTime;
+    }
+
+    public int getMarkAfterTime() {
+        return mMarkAfterTime;
+    }
+
+    public void setMarkTime(int before, int after) {
+        mController.cmd_Rec_SetMarkTime(before, after);
     }
 
     public void stopRecording() {
@@ -1350,8 +1361,7 @@ public class VdtCamera {
             if (before < 0 || after < 0) {
                 return;
             }
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_MARK_TIME,
-                String.valueOf(before), String.valueOf(after));
+            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_MARK_TIME, String.valueOf(before), String.valueOf(after));
         }
 
         private void ack_Rec_SetMarkTime(String p1, String p2) {

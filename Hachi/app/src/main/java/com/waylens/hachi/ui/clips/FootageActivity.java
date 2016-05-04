@@ -129,9 +129,6 @@ public class FootageActivity extends BaseActivity {
                         case R.id.menu_to_enhance:
                             toEnhance(event.getClipList());
                             break;
-//                        case R.id.menu_to_upload:
-                            //toShare();
-//                            break;
                         case R.id.menu_to_modify:
                             toModify(event.getClipList().get(0));
                             break;
@@ -382,7 +379,7 @@ public class FootageActivity extends BaseActivity {
 
             mVdbRequestQueue.add(request);
         }
-        
+
     }
 
 }
