@@ -320,8 +320,15 @@ public class VdtCamera {
         return mServiceInfo.serverName;
     }
 
-    public int getMicState() {
-        return mMicState;
+
+
+    public boolean isMicOn() {
+        return mMicState == STATE_MIC_ON;
+    }
+
+    public void setMicOn(boolean on) {
+        int micState = on ? STATE_MIC_ON : STATE_MIC_OFF;
+        mController.cmd_audio_setMic(micState, 0);
     }
 
     public int getWifiMode() {
@@ -622,7 +629,8 @@ public class VdtCamera {
         mController.cmd_Rec_get_RecMode();
     }
 
-    public void setAudioMic(int state, int vol) {
+    public void setAudioMic(boolean isOn, int vol) {
+        int state = isOn ? STATE_MIC_ON : STATE_MIC_OFF;
         mController.cmd_audio_setMic(state, vol);
     }
 
@@ -711,8 +719,7 @@ public class VdtCamera {
     }
 
     public boolean isMicEnabled() {
-        int micState = getMicState();
-        return micState == STATE_MIC_ON;
+        return mMicState == STATE_MIC_ON;
     }
 
     public static class StorageInfo {
@@ -1048,8 +1055,9 @@ public class VdtCamera {
         }
 
         public void cmd_audio_setMic(int state, int gain) {
-            if (state == STATE_MIC_ON && gain == 0)
+            if (state == STATE_MIC_ON && gain == 0) {
                 gain = 5;
+            }
             String p1 = Integer.toString(state);
             String p2 = Integer.toString(gain);
             postRequest(CMD_DOMAIN_CAM, CMD_AUDIO_SET_MIC, p1, p2);

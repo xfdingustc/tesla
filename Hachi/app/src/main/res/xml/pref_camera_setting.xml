@@ -11,6 +11,15 @@
             android:layout="@layout/preference_item"
             android:title="@string/camera_name"/>
 
+        <Preference
+            android:key="video"
+            android:layout="@layout/preference_item"
+            android:title="@string/video"/>
+
+        <Preference
+            android:key="audio"
+            android:layout="@layout/preference_item"
+            android:title="@string/audio"/>
 
     </PreferenceCategory>
 
