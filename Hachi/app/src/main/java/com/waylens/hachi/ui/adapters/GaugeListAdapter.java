@@ -17,9 +17,7 @@ import com.waylens.hachi.ui.clips.clipplay2.GaugeInfoItem;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,11 +34,8 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
         void onGaugeItemChanged(GaugeInfoItem item);
     }
 
-    public GaugeListAdapter(String[] supportedGauges, OnGaugeItemChangedListener listener) {
-        if (supportedGauges != null) {
-            mGaugeItems = GaugeSettingManager.getManager().getSetting();
-
-        }
+    public GaugeListAdapter(OnGaugeItemChangedListener listener) {
+        mGaugeItems = GaugeSettingManager.getManager().getSetting();
 
         this.mListener = listener;
     }

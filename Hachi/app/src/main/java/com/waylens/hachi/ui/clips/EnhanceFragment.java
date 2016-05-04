@@ -51,7 +51,7 @@ import butterknife.OnClick;
  * Created by Richard on 3/22/16.
  */
 public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnClipEditListener {
-    private static final String TAG = "EnhanceFragment";
+    private static final String TAG = EnhanceFragment.class.getSimpleName();
 
     private static final int REQUEST_CODE_ENHANCE = 1000;
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
@@ -64,7 +64,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     private static final int ACTION_ADD_MUSIC = 2;
     private static final int ACTION_SMART_REMIX = 3;
 
-    String[] supportedGauges;
+
     GaugeListAdapter mGaugeListAdapter;
 
     MusicItem mMusicItem;
@@ -220,7 +220,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        supportedGauges = getResources().getStringArray(R.array.supported_gauges);
     }
 
 
@@ -310,7 +309,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mGaugeListView.setLayoutManager(layoutManager);
-        mGaugeListAdapter = new GaugeListAdapter(supportedGauges, new GaugeListAdapter.OnGaugeItemChangedListener() {
+        mGaugeListAdapter = new GaugeListAdapter(new GaugeListAdapter.OnGaugeItemChangedListener() {
             @Override
             public void onGaugeItemChanged(GaugeInfoItem item) {
                 mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_UPDATE_SETTING, item));
