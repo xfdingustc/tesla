@@ -5,21 +5,6 @@ package com.waylens.hachi.ui.clips.clipplay2;
  */
 public class GaugeInfoItem {
 
-    public enum Option {NA, large, middle, small}
-
-    public static final GaugeInfoItem.Option[] DEFAULT_OPTIONS = new GaugeInfoItem.Option[]{
-            GaugeInfoItem.Option.large,
-            GaugeInfoItem.Option.middle,
-            GaugeInfoItem.Option.small,
-            GaugeInfoItem.Option.small,
-            GaugeInfoItem.Option.small,
-            GaugeInfoItem.Option.large,
-            GaugeInfoItem.Option.middle,
-            GaugeInfoItem.Option.large,
-    };
-
-
-
     //NOTE: Keep the same order as R.array.supported_gauges
     public static final String[] OPTION_JS_PARAMS = new String[]{
             "showSpeedThrottle",

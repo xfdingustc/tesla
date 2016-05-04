@@ -92,6 +92,8 @@ public class GaugeView extends FrameLayout {
         for (GaugeInfoItem item : itemList) {
             updateGaugeSetting(item);
         }
+
+        changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
     }
 
 

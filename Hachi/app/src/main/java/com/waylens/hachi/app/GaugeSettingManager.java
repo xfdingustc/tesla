@@ -33,6 +33,10 @@ public class GaugeSettingManager  {
         PreferenceUtils.putString(item.title, item.getOption());
     }
 
+    public void saveTheme(String theme) {
+        PreferenceUtils.putString("theme", theme);
+    }
+
     public List<GaugeInfoItem> getSetting() {
         List<GaugeInfoItem> itemList = new ArrayList<>();
         String[] supportedGauges = Hachi.getContext().getResources().getStringArray(R.array.supported_gauges);
@@ -47,5 +51,9 @@ public class GaugeSettingManager  {
 
 
         return itemList;
+    }
+
+    public String getTheme() {
+        return PreferenceUtils.getString("theme", "default");
     }
 }

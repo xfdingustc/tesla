@@ -164,11 +164,13 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     @OnClick(R.id.btnThemeDefault)
     public void onBtnThemeDefaultClicked() {
         mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "default"));
+        GaugeSettingManager.getManager().saveTheme("default");
     }
 
     @OnClick(R.id.btnThemeNeo)
     public void onBtnThemeNeoClicked() {
         mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "neo"));
+        GaugeSettingManager.getManager().saveTheme("neo");
     }
 
     @OnClick({R.id.btn_add_video, R.id.btn_add_video_extra})
