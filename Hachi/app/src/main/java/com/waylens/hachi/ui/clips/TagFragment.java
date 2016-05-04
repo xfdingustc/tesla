@@ -6,13 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,7 +51,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -209,7 +206,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -249,7 +245,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             }
         }
     }
-
 
 
     /**
@@ -306,9 +301,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
-
-
-
     private void setupClipSetGroup() {
         int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
         int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
@@ -317,6 +309,10 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
+                if (mIsMultipleMode && clip == null) {
+                    mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
+                    return;
+                }
                 if (mClipSetType == Clip.TYPE_MARKED) {
                     popClipPreviewFragment(clip);
                 } else {
@@ -334,7 +330,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //                    mActionMode = getActivity().startActionMode(mCABCallback);
 //                }
 
-                mEventBus.post(new MultiSelectEvent(true));
+                mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
             }
         });
 
@@ -343,7 +339,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         mRvClipGroupList.setAdapter(mAdapter);
 
     }
-
 
 
     private void doGetClips() {
@@ -403,7 +398,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
                 if (response.getCount() > 0) {
                     Clip clip = response.getClip(0);
-                    Date date = new Date((long)clip.getDate() * 1000);
+                    Date date = new Date((long) clip.getDate() * 1000);
                     PrettyTime t = new PrettyTime(new Date());
 
                     mTvBufferTime.setText(t.format(date));
@@ -421,8 +416,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
-
-
     private void popClipPreviewFragment(Clip clip) {
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
@@ -435,7 +428,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_MENUAL, clipSet);
         FootageActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_MENUAL);
     }
-
 
 
     @Override
@@ -453,7 +445,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         mAdapter.setMultiSelectedMode(mIsMultipleMode);
 
     }
-
 
 
     private void toShare() {
@@ -500,7 +491,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         public View getView(int position, View convertView, ViewGroup parent) {
             Clip clip = mClipSet.getClip(position);
             ImageView iv = new ImageView(getContext());
-            int imageSize = (int)Utils.dp2px(64);
+            int imageSize = (int) Utils.dp2px(64);
             iv.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 

@@ -177,10 +177,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (mMultiSelectedMode == false) {
             for (ClipGridItem item : mClipGridItemList) {
                 item.isItemSelected = false;
-
             }
-
-
         }
         notifyDataSetChanged();
     }
@@ -298,6 +295,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     } else {
                         clipGridItem.isItemSelected = !clipGridItem.isItemSelected;
                         toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem.isItemSelected);
+                        mClipClickListener.onClipClicked(null);
                     }
 
                 }
