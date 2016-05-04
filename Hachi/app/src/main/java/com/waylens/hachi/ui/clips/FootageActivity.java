@@ -319,8 +319,8 @@ public class FootageActivity extends BaseActivity {
         ClipSetPos clipSetPos = mClipSetProgressBar.getCurrentClipSetPos();
         Clip clip = getClipSet().getClip(clipSetPos.getClipIndex());
 
-        long startTimeMs = clipPos.getClipTimeMs() - DEFAULT_BOOKMARK_LENGTH / 2;
-        long endTimeMs = clipPos.getClipTimeMs() + DEFAULT_BOOKMARK_LENGTH / 2;
+        long startTimeMs = clipPos.getClipTimeMs() - mVdtCamera.getMarkBeforeTime() * 1000;
+        long endTimeMs = clipPos.getClipTimeMs() + mVdtCamera.getMarkAfterTime() * 1000;
 
 
         startTimeMs = Math.max(startTimeMs, clip.getStartTimeMs());
