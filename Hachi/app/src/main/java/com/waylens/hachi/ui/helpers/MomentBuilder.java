@@ -81,8 +81,8 @@ public class MomentBuilder {
         return this;
     }
 
-    public MomentBuilder asMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings) {
-        mLocalMoment = new LocalMoment(title, tags, accessLevel, audioID, gaugeSettings);
+    public MomentBuilder asMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
+        mLocalMoment = new LocalMoment(title, tags, accessLevel, audioID, gaugeSettings, isFbShare);
         return this;
     }
 
@@ -240,6 +240,15 @@ public class MomentBuilder {
             }
 
             params.put("overlay", mLocalMoment.gaugeSettings);
+            JSONArray array = new JSONArray();
+            if (mLocalMoment.isFbShare) {
+                array.put("facebook");
+            }
+
+            if (array.length() > 0) {
+                params.put("shareProviders", array);
+            }
+
             Logger.t(TAG).d("params: " + params);
         } catch (JSONException e) {
             Logger.t(TAG).e("", e);

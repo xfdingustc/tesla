@@ -159,6 +159,11 @@ public class SessionManager {
         }
     }
 
+    public boolean isLinked() {
+        mIsLinked = PreferenceUtils.getBoolean(PreferenceUtils.IS_LINKED, false);
+        return mIsLinked;
+    }
+
     public boolean needLinkAccount() {
         return (mLoginType == LOGIN_TYPE_SNS) && !mIsLinked;
     }

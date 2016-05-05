@@ -37,12 +37,15 @@ public class LocalMoment implements Serializable {
 
     private boolean isReadyToUpload;
 
-    public LocalMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings) {
+    public boolean isFbShare;
+
+    public LocalMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
         this.title = title;
         this.tags = tags;
         this.accessLevel = accessLevel;
         this.audioID = audioID;
         this.gaugeSettings = gaugeSettings;
+        this.isFbShare = isFbShare;
     }
 
     public void setFragments(ArrayList<Segment> segments, String thumbnailPath) {

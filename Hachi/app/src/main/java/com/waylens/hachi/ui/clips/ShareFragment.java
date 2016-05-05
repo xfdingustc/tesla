@@ -30,6 +30,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -60,6 +61,8 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
 
     private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_SHARE;
 
+    private boolean mIsFacebookShareChecked = false;
+
 
     @BindView(R.id.spinner_social_privacy)
     Spinner mPrivacySpinner;
@@ -78,7 +81,12 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
 
     @OnClick(R.id.btn_facebook)
     public void onBtnFackBookChecked() {
-
+        mIsFacebookShareChecked = !mIsFacebookShareChecked;
+        if (mIsFacebookShareChecked) {
+            mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_s);
+        } else {
+            mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_n);
+        }
     }
 
 
@@ -167,6 +175,13 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
                 mSocialPrivacy = mSupportedPrivacy[0];
             }
         });
+
+        SessionManager sessionManager = SessionManager.getInstance();
+        if (sessionManager.isLinked()) {
+            mBtnFaceBook.setVisibility(View.VISIBLE);
+        } else {
+            mBtnFaceBook.setVisibility(View.GONE);
+        }
     }
 
     @OnClick(R.id.btn_share)
@@ -175,30 +190,6 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         manager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_SHARE, mClipSet);
 
         checkPermission();
-//        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_SHARE);
-//        playlistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
-//            @Override
-//            public void onBuildComplete(ClipSet clipSet) {
-//                mClipSet = clipSet;
-//                mViewAnimator.setDisplayedChild(1);
-//                mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
-//                String title = mTitleView.getText().toString();
-//                String[] tags = new String[]{"Shanghai", "car"};
-//                Activity activity = getActivity();
-//                int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
-//                JSONObject gaugeSettings = null;
-//                if (activity instanceof EnhancementActivity) {
-//                    audioID = ((EnhancementActivity) activity).getAudioID();
-//                    gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
-//                }
-//                mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
-//            }
-//        });
-
-//        requestPublishPermission();
-
-
-//
 
     }
 
@@ -253,7 +244,9 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
             audioID = ((EnhancementActivity) activity).getAudioID();
             gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
         }
-        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
+
+
+        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings, mIsFacebookShareChecked);
     }
 
     @Override

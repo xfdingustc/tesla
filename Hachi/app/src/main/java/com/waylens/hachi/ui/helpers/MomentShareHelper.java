@@ -64,9 +64,11 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
      * @param tags
      * @param accessLevel
      */
-    public void shareMoment(final int playListID, final String title, final String[] tags, final String accessLevel, final int audioID, JSONObject gaugeSettings) {
+    public void shareMoment(final int playListID, final String title, final String[] tags,
+                            final String accessLevel, final int audioID, JSONObject gaugeSettings,
+                            boolean isFbShare) {
         mMomentBuilder = new MomentBuilder(mContext, mVdbRequestQueue);
-        mMomentBuilder.forPlayList(playListID).asMoment(title, tags, accessLevel, audioID, gaugeSettings).build(this);
+        mMomentBuilder.forPlayList(playListID).asMoment(title, tags, accessLevel, audioID, gaugeSettings, isFbShare).build(this);
     }
 
     private void uploadData() {
