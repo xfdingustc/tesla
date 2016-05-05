@@ -170,7 +170,7 @@
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider400866993445789"
+            android:authorities="com.facebook.app.FacebookContentProvider771534372933789"
             android:exported="true"/>
 
         <!-- [START gcm_receiver] -->

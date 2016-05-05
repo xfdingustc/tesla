@@ -46,11 +46,9 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-/**
- * Created by Richard on 8/17/15.
- */
+
 public class SignInFragment extends BaseFragment {
-    private static final String TAG = "SignInFragment";
+    private static final String TAG = SignInFragment.class.getSimpleName();
 
     private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
@@ -208,7 +206,7 @@ public class SignInFragment extends BaseFragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("test", "Response: " + response);
+                        Logger.t(TAG).d("Response: " + response);
                         SessionManager.getInstance().saveLoginInfo(response, true);
                         hideDialog();
                         getActivity().setResult(Activity.RESULT_OK);
@@ -246,7 +244,7 @@ public class SignInFragment extends BaseFragment {
 
         @Override
         public void onError(FacebookException e) {
-            Log.e("test", "facebook login", e);
+            Logger.t(TAG).d("facebook login", e);
             showMessage(R.string.login_error_facebook);
         }
     }

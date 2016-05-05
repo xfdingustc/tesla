@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="facebook_app_id" translatable="false">400866993445789</string>
+    <string name="facebook_app_id" translatable="false">771534372933789</string>
     <string name="verification_code_pattern" translatable="false">[\\d]{6}</string>
     <string name="password_pattern" translatable="false">^[A&#045;Za&#045;z0&#045;9&#033;&#035;&#036;&#037;&#038;&#042;\\&#043;\\&#045;&#064;&#094;&#095;&#046;&#126;]{6,64}</string>
 

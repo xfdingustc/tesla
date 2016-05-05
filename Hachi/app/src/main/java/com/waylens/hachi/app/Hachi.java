@@ -2,6 +2,7 @@ package com.waylens.hachi.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.VpnService;
 import android.net.nsd.NsdServiceInfo;
 
 //import com.bugtags.library.Bugtags;
@@ -150,6 +151,8 @@ public class Hachi extends Application {
             .setMethodCount(1)
             .hideThreadInfo();
     }
+
+
 
 
 

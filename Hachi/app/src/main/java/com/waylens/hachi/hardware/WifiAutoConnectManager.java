@@ -146,6 +146,7 @@ public class WifiAutoConnectManager {
 //            wifiManager.getConfiguredNetworks()
 
             boolean enabled = wifiManager.enableNetwork(netID, true);
+
             Log.d(TAG, "enableNetwork status enable=" + enabled);
             boolean connected = wifiManager.reconnect();
             Log.d(TAG, "enableNetwork connected=" + connected);

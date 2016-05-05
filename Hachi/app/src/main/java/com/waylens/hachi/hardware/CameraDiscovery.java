@@ -72,17 +72,18 @@ public class CameraDiscovery {
             @Override
             public void onServiceFound(NsdServiceInfo serviceInfo) {
                 mIsStarted.set(true);
-                Log.e(TAG, "onServiceFound");
+                Logger.t(TAG).d("onServiceFound");
                 mNsdManager.resolveService(serviceInfo, createResolveListener(callback));
             }
 
             @Override
             public void onServiceLost(NsdServiceInfo serviceInfo) {
                 mIsStarted.set(false);
-                Log.e(TAG, "onServiceLost");
+                Logger.t(TAG).d("onServiceLost");
             }
         };
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+
     }
 
     private NsdManager.ResolveListener createResolveListener(final Callback callback) {
