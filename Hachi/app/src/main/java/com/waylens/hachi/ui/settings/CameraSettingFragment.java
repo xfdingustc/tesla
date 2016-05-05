@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.settings;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -16,11 +17,26 @@ import android.widget.Switch;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigkoo.pickerview.OptionsPickerView;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.vdb.SpaceInfo;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/5/3.
@@ -32,6 +48,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mVideo;
     private Preference mAudio;
     private Preference mBookmark;
+    private Preference mStorage;
 
 
     private NumberPicker mBeforeNumber;
@@ -40,6 +57,8 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Switch mMicSwitch;
     private Switch mSpeakerSwitch;
     private SeekBar mAudioSeekbar;
+
+    private PieChart mStorageChart;
 
     private static final int MAX_BOOKMARK_LENGHT = 30;
 
@@ -63,7 +82,77 @@ public class CameraSettingFragment extends PreferenceFragment {
         initBookmarkPreference();
         initVideoPreference();
         initAudioPreference();
+        initStoragePreference();
+    }
 
+    private void initStoragePreference() {
+        mStorage = findPreference("storage");
+        mStorage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                showStorageInfo();
+
+
+                return true;
+            }
+        });
+    }
+
+    private void showStorageInfo() {
+        GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
+            @Override
+            public void onResponse(SpaceInfo response) {
+                showStorageChart(response);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+
+        mVdtCamera.getRequestQueue().add(request);
+    }
+
+    private void showStorageChart(SpaceInfo response) {
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+            .customView(R.layout.dialog_storage_info, true)
+            .show();
+
+        mStorageChart = (PieChart)dialog.getCustomView().findViewById(R.id.pieChart);
+
+
+        List<String> storageName = Arrays.asList("Marked", "Used", "Free");
+        List<Entry> spaces = new ArrayList<Entry>();
+        spaces.add(new Entry(response.marked / (1024 * 1024), 1));
+        spaces.add(new Entry((response.used - response.marked) / (1024 * 1024), 2));
+        spaces.add(new Entry((response.total - response.used) / (1024 * 1024), 3));
+
+        ArrayList<Integer> colors = new ArrayList<Integer>();
+        colors.add(getResources().getColor(R.color.style_color_accent));
+        colors.add(getResources().getColor(R.color.material_deep_orange_300));
+        colors.add(Color.BLACK);
+
+        PieDataSet dataSet = new PieDataSet(spaces, "Storage Info");
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(5f);
+        dataSet.setColors(colors);
+
+        PieData data = new PieData(storageName, dataSet);
+        data.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return String.valueOf(value) + " M";
+            }
+        });
+        data.setValueTextSize(11f);
+        data.setValueTextColor(Color.WHITE);
+
+        mStorageChart.setData(data);
+        mStorageChart.setCenterText("Storage Info");
+        mStorageChart.highlightValue(null);
+        mStorageChart.invalidate();
     }
 
     private void initAudioPreference() {

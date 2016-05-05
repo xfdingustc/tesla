@@ -33,10 +33,10 @@ public class SettingsFragment extends BaseFragment {
         super.setupToolbar();
     }
 
-    @OnClick(R.id.general)
-    public void onGeneralClicked() {
-        GeneralSettingActivity.launch(getActivity());
-    }
+//    @OnClick(R.id.general)
+//    public void onGeneralClicked() {
+//        GeneralSettingActivity.launch(getActivity());
+//    }
 
     @OnClick(R.id.cameraSetting)
     public void onCameraSettingClicked() {

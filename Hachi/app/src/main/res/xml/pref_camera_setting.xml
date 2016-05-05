@@ -38,4 +38,18 @@
     </PreferenceCategory>
 
 
+    <PreferenceCategory
+        android:layout="@layout/preference_category_widget">
+
+
+        <Preference
+            android:key="storage"
+            android:layout="@layout/preference_item"
+            android:title="@string/storage"/>
+
+
+
+    </PreferenceCategory>
+
+
 </PreferenceScreen>

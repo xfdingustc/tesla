@@ -138,4 +138,5 @@ dependencies {
 //    compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.5'
     compile 'com.jakewharton:butterknife:8.0.1'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }
