@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.clips;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -9,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
@@ -36,6 +39,8 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -68,18 +73,27 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     @BindArray(R.array.social_privacy_text)
     CharSequence[] mPrivacyText;
 
+    @BindView(R.id.btn_facebook)
+    ImageView mBtnFaceBook;
+
+    @OnClick(R.id.btn_facebook)
+    public void onBtnFackBookChecked() {
+
+    }
+
+
     private ClipSet mClipSet = new ClipSet(Clip.TYPE_TEMP);
 
-    String[] mSupportedPrivacy;
+    private String[] mSupportedPrivacy;
 
-    String mSocialPrivacy;
+    private String mSocialPrivacy;
 
     private MomentShareHelper mShareHelper;
 
     private RequestQueue mRequestQueue;
 
 
-    CallbackManager callbackManager = CallbackManager.Factory.create();
+    private CallbackManager callbackManager = CallbackManager.Factory.create();
 
     public static ShareFragment newInstance(ArrayList<Clip> clipList) {
         ShareFragment fragment = new ShareFragment();
@@ -159,6 +173,8 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     void shareVideo() {
         ClipSetManager manager = ClipSetManager.getManager();
         manager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_SHARE, mClipSet);
+
+        checkPermission();
 //        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_SHARE);
 //        playlistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
 //            @Override
@@ -179,22 +195,65 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
 //            }
 //        });
 
-        requestPublishPermission();
+//        requestPublishPermission();
 
 
-//        mViewAnimator.setDisplayedChild(1);
-//        mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
-//        String title = mTitleView.getText().toString();
-//        String[] tags = new String[]{"Shanghai", "car"};
-//        Activity activity = getActivity();
-//        int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
-//        JSONObject gaugeSettings = null;
-//        if (activity instanceof EnhancementActivity) {
-//            audioID = ((EnhancementActivity) activity).getAudioID();
-//            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
-//        }
-//        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
+//
 
+    }
+
+    private void checkPermission() {
+        Logger.t(TAG).d("send check permission");
+        String url = Constants.API_SHARE_ACCOUNTS;
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest(url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Logger.t(TAG).json(response.toString());
+                boolean hasFacebookPermission = hasFacebookPermission(response);
+                if (hasFacebookPermission) {
+                    doShare();
+                } else {
+                    requestPublishPermission();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Logger.t(TAG).d("error");
+            }
+        });
+        mRequestQueue.add(request);
+    }
+
+    private boolean hasFacebookPermission(JSONObject response) {
+        try {
+            JSONArray array = response.getJSONArray("linkedAccounts");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String provider = object.getString("provider");
+                if (provider.equals("facebook")) {
+                    return true;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void doShare() {
+        mViewAnimator.setDisplayedChild(1);
+        mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
+        String title = mTitleView.getText().toString();
+        String[] tags = new String[]{"Shanghai", "car"};
+        Activity activity = getActivity();
+        int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
+        JSONObject gaugeSettings = null;
+        if (activity instanceof EnhancementActivity) {
+            audioID = ((EnhancementActivity) activity).getAudioID();
+            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
+        }
+        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
     }
 
     @Override

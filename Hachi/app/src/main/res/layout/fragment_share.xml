@@ -85,17 +85,17 @@
             android:src="@drawable/btn_platform_facebook"
             android:background="?attr/selectableItemBackground"
             android:contentDescription="@null"/>
-        <ImageView
-            android:id="@+id/btn_youtube"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/btn_platform_youtube"
-            android:layout_toEndOf="@id/btn_facebook"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@null"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/btn_youtube"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginStart="16dp"-->
+            <!--android:layout_marginEnd="16dp"-->
+            <!--android:src="@drawable/btn_platform_youtube"-->
+            <!--android:layout_toEndOf="@id/btn_facebook"-->
+            <!--android:background="?attr/selectableItemBackground"-->
+            <!--android:contentDescription="@null"/>-->
         <ViewAnimator
             android:id="@+id/view_animator"
             android:layout_width="wrap_content"
@@ -111,8 +111,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/share"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"/>
+                android:textColor="?attr/appTextColorPrimary"
+                android:background="@color/style_color_accent"
+                android:textSize="18sp"/>
 
             <ProgressBar
                 android:layout_width="wrap_content"

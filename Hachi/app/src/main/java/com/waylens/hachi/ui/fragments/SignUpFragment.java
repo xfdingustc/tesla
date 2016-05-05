@@ -280,7 +280,7 @@ public class SignUpFragment extends BaseFragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                Logger.t(TAG).d("");
+                Logger.t(TAG).d("error: " + error.toString());
 
                 showMessage(errorInfo.msgResID);
                 hideDialog();
