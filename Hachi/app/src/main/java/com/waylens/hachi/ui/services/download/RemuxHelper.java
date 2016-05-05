@@ -5,7 +5,7 @@ import android.os.StatFs;
 
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.DownloadManager;
+import com.waylens.hachi.bgjob.download.DownloadHelper;
 
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class RemuxHelper {
 	// API
 	public static String genDownloadFileName(int clipDate, long clipTimeMs) {
 		try {
-			String dir = DownloadManager.getManager().getVideoDownloadPath();
+			String dir = DownloadHelper.getVideoDownloadPath();
 			if (dir == null) {
 				return null;
 			}

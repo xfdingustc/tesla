@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -15,11 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadJob;
+import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -45,6 +48,9 @@ import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -92,6 +98,38 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private SharableClip mSharableClip;
 
+    private MaterialDialog mDownloadDialog;
+
+    private EventBus mEventBus = EventBus.getDefault();
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventDownload(DownloadEvent event) {
+        switch (event.getWhat()) {
+            case DownloadEvent.DOWNLOAD_WHAT_START:
+                mDownloadDialog = new MaterialDialog.Builder(this)
+                    .title(R.string.downloading)
+                    .contentGravity(GravityEnum.CENTER)
+                    .progress(false, 100, true)
+                    .show();
+                mDownloadDialog.setCanceledOnTouchOutside(false);
+                break;
+            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
+                if (mDownloadDialog != null) {
+                    int progress = (Integer)event.getExtra();
+                    mDownloadDialog.getProgressBar().setProgress(progress);
+                }
+                break;
+            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
+                if (mDownloadDialog != null) {
+                    mDownloadDialog.dismiss();
+                }
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Stream has been download into " + (String)event.getExtra())
+                    .show();
+                break;
+        }
+    }
+
 
     public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
         Intent intent = new Intent(activity, EnhancementActivity.class);
@@ -104,6 +142,18 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mEventBus.register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
     }
 
     @Override

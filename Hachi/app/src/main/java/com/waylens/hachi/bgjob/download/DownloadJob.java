@@ -5,10 +5,13 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
+import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Xiaofei on 2016/5/4.
@@ -17,6 +20,9 @@ public class DownloadJob extends Job {
     private static final String TAG = DownloadJob.class.getSimpleName();
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
     private Clip.StreamInfo mStreamInfo;
+
+    private EventBus mEventBus = EventBus.getDefault();
+    private String mDownloadFilePath;
 
 
     public DownloadJob(Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
@@ -120,8 +126,10 @@ public class DownloadJob extends Job {
             Logger.t(TAG).e("Output File is null");
         } else {
             //item.outputFile = outputFile;
+            mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
             remuxer.run(params, outputFile);
-            //mDownloadFilePath = outputFile;
+            mDownloadFilePath = outputFile;
+
             Logger.t(TAG).d("remux is running output file is: " + outputFile);
         }
     }
@@ -132,12 +140,14 @@ public class DownloadJob extends Job {
 
     private void handleRemuxerProgress(int progress) {
 //        broadcastDownloadProgress(progress);
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, progress));
         Logger.t(TAG).d("download progress: " + progress);
     }
 
 
     private void handleRemuxerFinished() {
 //        broadcastDownloadFinished();
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, mDownloadFilePath));
         Logger.t(TAG).d("download started: ");
 
     }
