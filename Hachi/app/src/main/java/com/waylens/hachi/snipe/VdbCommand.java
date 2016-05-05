@@ -175,6 +175,8 @@ public class VdbCommand {
 
         protected static final int CMD_SetOptions = 20;
 
+        protected static final int CMD_GetSpaceInfo = 21;
+
         //-----------------------
         // since version 1.2
         //-----------------------
@@ -287,6 +289,12 @@ public class VdbCommand {
             }
             return builder.build();
 
+        }
+
+        public static VdbCommand createCmdGetSpaceInfo() {
+            return new Builder()
+                .writeCmdCode(CMD_GetSpaceInfo, 0)
+                .build();
         }
 
         public static VdbCommand createCmdGetClipDownloadUrl(Clip.ID cid, long startTime, int length, int downloadOption, boolean bFirstLoop) {

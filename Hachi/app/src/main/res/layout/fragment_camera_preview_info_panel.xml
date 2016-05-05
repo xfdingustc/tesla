@@ -114,18 +114,30 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:text="Used Space"
-            android:textColor="@color/text_camera_info"
-            android:textSize="14sp"/>
+        <View
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/style_color_primary"></View>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Free Spaces"
+            android:layout_marginRight="20dp"
+            android:text="Mark Space"
+            android:textColor="@color/text_camera_info"
+            android:textSize="14sp"/>
+
+        <View
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/material_orange_300"></View>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Used Space"
             android:textColor="@color/text_camera_info"
             android:textSize="14sp"/>
     </LinearLayout>

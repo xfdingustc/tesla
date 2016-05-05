@@ -8,6 +8,18 @@
     </item>
 
 
+
+
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <corners android:radius="2dp" />
+                <solid android:color="@color/material_orange_300"></solid>
+            </shape>
+        </clip>
+
+    </item>
+
     <item android:id="@android:id/progress">
         <clip>
             <shape>

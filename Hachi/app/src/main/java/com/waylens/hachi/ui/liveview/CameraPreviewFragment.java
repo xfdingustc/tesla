@@ -38,10 +38,12 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
+import com.waylens.hachi.vdb.SpaceInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
@@ -504,6 +506,8 @@ public class CameraPreviewFragment extends BaseFragment {
         animationDrawable.start();
         handleOnCameraConnected();
 
+        updateSpaceInfo();
+
     }
 
     private void initCameraPreview() {
@@ -540,9 +544,32 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void updateCameraState() {
+
         updateCameraStatusInfo();
         updateFloatActionButton();
         toggleRecordDot();
+    }
+
+    private void updateSpaceInfo() {
+        if (mInfoView != null && mInfoView.getVisibility() == View.VISIBLE) {
+            GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
+                @Override
+                public void onResponse(SpaceInfo response) {
+                    Logger.t(TAG).d("response: " + response.toString());
+
+                    mStorageView.setMax((int)(response.total / (1024 * 1024)));
+                    mStorageView.setProgress((int)(response.marked / (1024 * 1024)));
+                    mStorageView.setSecondaryProgress((int)(response.used / (1024 * 1024)));
+                }
+            }, new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+
+                }
+            });
+
+            mVdbRequestQueue.add(request);
+        }
     }
 
 
@@ -802,8 +829,8 @@ public class CameraPreviewFragment extends BaseFragment {
 
 //        Logger.t(TAG).d("totalSpace: " + storageInfo.totalSpace + " freeSpace: " + storageInfo.freeSpace);
 
-        mStorageView.setMax(storageInfo.totalSpace);
-        mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
+//        mStorageView.setMax(storageInfo.totalSpace);
+//        mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
     }
 
     /**
