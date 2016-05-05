@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:text="@string/skip"
+        android:textColor="@color/text_camera_info"/>
+
+
+    <LinearLayout
+        android:id="@+id/centerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></LinearLayout>
+
+        <com.xfdingustc.far.FixedAspectRatioFrameLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            app:farfl_xratio="1dp"
+            app:farfl_yratio="1dp"
+            tools:background="@android:color/holo_blue_bright">
+
+            <com.waylens.hachi.ui.views.camerapreview.CameraLiveView
+                android:id="@+id/cameraLiveView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></LinearLayout>
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/centerLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="32dp"
+        android:text="@string/connect_successfully"
+        android:textColor="?attr/appTextColorPrimary"
+        tools:text="Camera connected successfully"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/icon_recalibrate_ok"/>
+
+
+    <Button
+        android:id="@+id/connectHomeWifi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="64dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/style_color_accent"
+        android:text="@string/connect_your_home_wifi"
+        android:visibility="gone"
+        />
+
+
+</RelativeLayout>

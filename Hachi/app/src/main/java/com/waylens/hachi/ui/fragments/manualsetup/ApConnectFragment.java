@@ -4,14 +4,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.Outline;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -21,6 +26,7 @@ import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
 
@@ -28,7 +34,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.net.InetSocketAddress;
+
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -56,7 +65,23 @@ public class ApConnectFragment extends BaseFragment {
     ViewSwitcher mVsRootView;
 
     @BindView(R.id.cameraLiveView)
-    CameraLiveView mCameraLiveView;
+    CameraLiveView mLiveView;
+
+    @BindView(R.id.skip)
+    TextView mSkip;
+
+    @BindView(R.id.connectHomeWifi)
+    Button mConnectHomeWifi;
+
+    @OnClick(R.id.skip)
+    public void onSkipClicked() {
+        MainActivity.launch(getActivity());
+    }
+
+    @OnClick(R.id.connectHomeWifi)
+    public void onConnectHomeWifiClick() {
+        launchCltConnectFragment();
+    }
 
     public static ApConnectFragment newInstance(String ssid, String password) {
         ApConnectFragment fragment = new ApConnectFragment();
@@ -115,6 +140,7 @@ public class ApConnectFragment extends BaseFragment {
         Logger.t(TAG).d("on stop");
         mEventBus.unregister(this);
         getActivity().unregisterReceiver(mWifiStateReceiver);
+        mLiveView.stopStream();
     }
 
 
@@ -150,6 +176,15 @@ public class ApConnectFragment extends BaseFragment {
     private void initViews() {
         mTvSsid.setText("SSID:" + mSSID);
         mTvPassword.setText("PASSWORD:" + mPassword);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mLiveView.setClipToOutline(true);
+            mLiveView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                }
+            });
+        }
 
 
     }
@@ -160,12 +195,35 @@ public class ApConnectFragment extends BaseFragment {
         }
         if (mVdtCameraManager.isConnected()) {
             mVsRootView.showNext();
-            mUiHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    launchCltConnectFragment();
-                }
-            }, 1000);
+            initCamera();
+            mConnectHomeWifi.setVisibility(View.VISIBLE);
+//            mUiHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    launchCltConnectFragment();
+//                }
+//            }, 1000);
+
+            startCameraPreview();
+
+        }
+    }
+
+    private void startCameraPreview() {
+        mLiveView.setBackgroundColor(Color.BLACK);
+        if (mVdtCamera != null) {
+            InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
+            if (serverAddr == null) {
+                mVdtCamera = null;
+                return;
+            }
+            mVdtCamera.startPreview();
+            mLiveView.startStream(serverAddr, null, true);
+//            mVdtCamera.getRecordRecMode();
+//            mVdtCamera.getRecordTime();
+//            mVdtCamera.getAudioMicState();
+//            mVdtCamera.getRecordResolutionList();
+//            mVdtCamera.getSetup();
 
         }
     }

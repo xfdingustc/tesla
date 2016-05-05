@@ -4,9 +4,11 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,7 +147,14 @@ public class ClientConnectFragment extends BaseFragment {
         final NetworkItemBean itemBean = mNetworkList.get(position);
         mPasswordDialog = new MaterialDialog.Builder(getActivity())
             .title(itemBean.ssid)
-            .customView(R.layout.dialog_network_password, true)
+//            .customView(R.layout.dialog_network_password, true)
+            .inputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD)
+            .input(getString(R.string.password), null, new MaterialDialog.InputCallback() {
+                @Override
+                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+
+                }
+            })
             .positiveText(R.string.join)
             .callback(new MaterialDialog.ButtonCallback() {
                 @Override
@@ -156,7 +165,7 @@ public class ClientConnectFragment extends BaseFragment {
             })
             .build();
         mPasswordDialog.show();
-        mEtPassword = (EditText) mPasswordDialog.getCustomView().findViewById(R.id.password);
+        mEtPassword = mPasswordDialog.getInputEditText();
     }
 
     private void setNetwork2Camera(final String ssid, final String password) {

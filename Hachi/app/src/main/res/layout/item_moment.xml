@@ -159,25 +159,25 @@
                 android:textSize="16sp"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/btn_share"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:id="@+id/btn_share"-->
+            <!--style="?android:attr/buttonBarButtonStyle"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:clickable="true"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:orientation="vertical">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/social_share"
-                android:drawablePadding="8dp"
-                android:text="@string/share"
-                android:textColor="#76787A"
-                android:textSize="16sp"/>
-        </LinearLayout>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:drawableLeft="@drawable/social_share"-->
+                <!--android:drawablePadding="8dp"-->
+                <!--android:text="@string/share"-->
+                <!--android:textColor="#76787A"-->
+                <!--android:textSize="16sp"/>-->
+        <!--</LinearLayout>-->
 
     </LinearLayout>
 
