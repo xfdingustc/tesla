@@ -108,6 +108,21 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+
+//        mCurrentCursor = 0;
+//        loadFeed(mCurrentCursor, true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mRequestQueue.cancelAll(getRequestTag());
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -135,7 +150,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRequestQueue.cancelAll(getRequestTag());
+
     }
 
 

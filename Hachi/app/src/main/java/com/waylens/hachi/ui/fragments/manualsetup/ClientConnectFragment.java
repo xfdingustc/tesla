@@ -1,21 +1,22 @@
 package com.waylens.hachi.ui.fragments.manualsetup;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.waylens.hachi.R;
@@ -23,7 +24,6 @@ import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.activities.WelcomeActivity;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 
@@ -34,7 +34,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +46,15 @@ public class ClientConnectFragment extends BaseFragment {
 
     @BindView(R.id.rvWifiList)
     RecyclerView mRvWifiList;
+
+    @BindView(R.id.loadingProgress)
+    ProgressBar mLoadingProgress;
+
+    @BindView(R.id.vsConnect)
+    ViewSwitcher mVsConnect;
+
+    @BindView(R.id.connectIndicator)
+    ImageView mIvConnectIdicator;
 
     private List<NetworkItemBean> mNetworkList;
 
@@ -107,6 +115,13 @@ public class ClientConnectFragment extends BaseFragment {
             @Override
             public void OnScanHostResult(List<NetworkItemBean> networkList) {
 //                Logger.t(TAG).d("get network list: " + networkList.size());
+                mLoadingProgress.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoadingProgress.setVisibility(View.GONE);
+                    }
+                });
+
                 mNetworkList = networkList;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -141,6 +156,13 @@ public class ClientConnectFragment extends BaseFragment {
 
     private void refreshWifiList() {
 //        Logger.t(TAG).d("start scan host: ");
+        mLoadingProgress.post(new Runnable() {
+            @Override
+            public void run() {
+                mLoadingProgress.setVisibility(View.VISIBLE);
+            }
+        });
+
         mVdtCamera.scanHost(mOnScanHostListener);
     }
 
@@ -148,14 +170,7 @@ public class ClientConnectFragment extends BaseFragment {
         final NetworkItemBean itemBean = mNetworkList.get(position);
         mPasswordDialog = new MaterialDialog.Builder(getActivity())
             .title(itemBean.ssid)
-//            .customView(R.layout.dialog_network_password, true)
-            .inputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD)
-            .input(getString(R.string.password), null, new MaterialDialog.InputCallback() {
-                @Override
-                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-
-                }
-            })
+            .customView(R.layout.dialog_network_password, true)
             .positiveText(R.string.join)
             .callback(new MaterialDialog.ButtonCallback() {
                 @Override
@@ -166,7 +181,7 @@ public class ClientConnectFragment extends BaseFragment {
             })
             .build();
         mPasswordDialog.show();
-        mEtPassword = mPasswordDialog.getInputEditText();
+        mEtPassword = (EditText)mPasswordDialog.getCustomView().findViewById(R.id.password);
     }
 
     private void setNetwork2Camera(final String ssid, final String password) {
@@ -178,6 +193,18 @@ public class ClientConnectFragment extends BaseFragment {
 
             @Override
             public void onNetworkConnected() {
+
+                mVsConnect.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mVsConnect.showNext();
+                        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+                        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+                        animationDrawable.start();
+                    }
+                });
+
+
                 WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
                     (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
                         @Override

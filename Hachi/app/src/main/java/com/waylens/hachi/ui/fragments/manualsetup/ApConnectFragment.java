@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -73,6 +75,9 @@ public class ApConnectFragment extends BaseFragment {
     @BindView(R.id.connectHomeWifi)
     Button mConnectHomeWifi;
 
+    @BindView(R.id.connectIndicator)
+    ImageView mIvConnectIdicator;
+
     @OnClick(R.id.skip)
     public void onSkipClicked() {
         MainActivity.launch(getActivity());
@@ -119,6 +124,10 @@ public class ApConnectFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         mEventBus.register(this);
+
+        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+        animationDrawable.start();
         WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
         if (wifiInfo.getSSID() == mSSID) {
             toggleCameraConnectView(mVdtCamera);

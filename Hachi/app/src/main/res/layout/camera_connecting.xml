@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/cameraConnecting"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/defaultBgColor"
+    android:orientation="vertical"
+    android:paddingBottom="?attr/actionBarSize"
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <RelativeLayout
+        android:id="@+id/connectingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/connectIndicator"
+                android:layout_width="44dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+
+            <ImageView
+                android:id="@+id/ivConnectStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/connectIndicator"
+                android:background="@android:color/transparent"
+                android:src="@drawable/camera_connecting_phone"/>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/connectIndicator"
+                android:background="@android:color/transparent"
+                android:src="@drawable/camera_connecting_camera"/>
+
+            <Button
+                android:id="@+id/btnEnterPreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/connectIndicator"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="56dp"
+                android:text="Preview"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</LinearLayout>

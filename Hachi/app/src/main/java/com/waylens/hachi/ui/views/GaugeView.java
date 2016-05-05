@@ -99,7 +99,7 @@ public class GaugeView extends FrameLayout {
     public void showGauge(boolean show) {
         if (show) {
             mWebView.setVisibility(View.VISIBLE);
-
+            initGaugeView();
         } else {
             mWebView.setVisibility(View.INVISIBLE);
         }

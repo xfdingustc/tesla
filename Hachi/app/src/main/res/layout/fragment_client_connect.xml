@@ -23,14 +23,61 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="32dp"
         android:layout_marginBottom="32dp"
+        android:layout_marginTop="32dp"
         android:text="@string/connected_before"
         android:textColor="@color/text_color_title"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvWifiList"
+
+
+
+    <ViewSwitcher
+        android:id="@+id/vsConnect"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="Scanning"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="18sp"/>
+
+                <ProgressBar
+                    android:id="@+id/loadingProgress"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:indeterminate="true"/>
+
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvWifiList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+
+
+        </LinearLayout>
+
+
+
+        <include layout="@layout/camera_connecting" />
+
+    </ViewSwitcher>
+
+
 
 </LinearLayout>

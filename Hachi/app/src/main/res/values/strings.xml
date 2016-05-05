@@ -206,4 +206,6 @@
 	<string name="speaker">Speaker</string>
 	<string name="sd">SD</string>
 	<string name="fullhd">Full HD</string>
+	<string name="connect_your_home_wifi">Connect Your Home Wi-Fi</string>
+	<string name="storage">Storage</string>
 </resources>
