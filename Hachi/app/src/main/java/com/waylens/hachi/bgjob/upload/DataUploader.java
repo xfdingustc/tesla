@@ -180,7 +180,7 @@ public class DataUploader {
             int percentage = clipIndex * 100 / mClipTotalCount + percentageInThisClip;
 
 //            mUploadListener.onUploadProgress(percentage);
-            Logger.t(TAG).d("upload progress: " + percentage + " data send: " + dataSend + " totalLength: " + totalLength);
+//            Logger.t(TAG).d("upload progress: " + percentage + " data send: " + dataSend + " totalLength: " + totalLength);
             mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_PROGRESS, percentage));
 
         }

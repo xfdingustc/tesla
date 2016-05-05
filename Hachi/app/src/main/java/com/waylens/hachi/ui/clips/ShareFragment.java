@@ -16,7 +16,6 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
-import com.waylens.hachi.ui.clips.clipplay2.PlaylistEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
@@ -131,25 +130,39 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     void shareVideo() {
         ClipSetManager manager = ClipSetManager.getManager();
         manager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_SHARE, mClipSet);
-        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_SHARE);
-        playlistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                mClipSet = clipSet;
-                mViewAnimator.setDisplayedChild(1);
-                mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
-                String title = mTitleView.getText().toString();
-                String[] tags = new String[]{"Shanghai", "car"};
-                Activity activity = getActivity();
-                int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
-                JSONObject gaugeSettings = null;
-                if (activity instanceof EnhancementActivity) {
-                    audioID = ((EnhancementActivity) activity).getAudioID();
-                    gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
-                }
-                mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
-            }
-        });
+//        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_SHARE);
+//        playlistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
+//            @Override
+//            public void onBuildComplete(ClipSet clipSet) {
+//                mClipSet = clipSet;
+//                mViewAnimator.setDisplayedChild(1);
+//                mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
+//                String title = mTitleView.getText().toString();
+//                String[] tags = new String[]{"Shanghai", "car"};
+//                Activity activity = getActivity();
+//                int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
+//                JSONObject gaugeSettings = null;
+//                if (activity instanceof EnhancementActivity) {
+//                    audioID = ((EnhancementActivity) activity).getAudioID();
+//                    gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
+//                }
+//                mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
+//            }
+//        });
+
+
+        mViewAnimator.setDisplayedChild(1);
+        mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
+        String title = mTitleView.getText().toString();
+        String[] tags = new String[]{"Shanghai", "car"};
+        Activity activity = getActivity();
+        int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
+        JSONObject gaugeSettings = null;
+        if (activity instanceof EnhancementActivity) {
+            audioID = ((EnhancementActivity) activity).getAudioID();
+            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
+        }
+        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
 
     }
 

@@ -23,6 +23,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
+import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -99,6 +100,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     private SharableClip mSharableClip;
 
     private MaterialDialog mDownloadDialog;
+    private MaterialDialog mUploadDialog;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -129,6 +131,35 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 break;
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventUpload(UploadEvent event) {
+        switch (event.getWhat()) {
+            case UploadEvent.UPLOAD_WHAT_START:
+                mUploadDialog = new MaterialDialog.Builder(this)
+                    .title(R.string.upload)
+                    .contentGravity(GravityEnum.CENTER)
+                    .progress(false, 100, true)
+                    .show();
+                mUploadDialog.setCanceledOnTouchOutside(false);
+                break;
+            case UploadEvent.UPLOAD_WHAT_PROGRESS:
+                if (mUploadDialog != null) {
+                    int progress = event.getExtra();
+                    mUploadDialog.getProgressBar().setProgress(progress);
+                }
+                break;
+            case UploadEvent.UPLOAD_WHAT_FINISHED:
+                if (mUploadDialog != null) {
+                    mUploadDialog.dismiss();
+                }
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Uploading finished")
+                    .show();
+                break;
+        }
+    }
+
 
 
     public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {

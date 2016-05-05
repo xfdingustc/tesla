@@ -24,7 +24,7 @@ public class LocalMoment implements Serializable {
 
     public int audioID;
 
-    public String gaugeSettings;
+    public JSONObject gaugeSettings;
 
     public ArrayList<Segment> mSegments;
 
@@ -42,7 +42,7 @@ public class LocalMoment implements Serializable {
         this.tags = tags;
         this.accessLevel = accessLevel;
         this.audioID = audioID;
-        this.gaugeSettings = gaugeSettings == null ? null : gaugeSettings.toString();
+        this.gaugeSettings = gaugeSettings;
     }
 
     public void setFragments(ArrayList<Segment> segments, String thumbnailPath) {

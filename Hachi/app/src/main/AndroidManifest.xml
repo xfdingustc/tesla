@@ -205,7 +205,7 @@
         </service>
 
         <service
-            android:name=".bgjob.upload.UploadJobService"
+            android:name=".bgjob.BgJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
 

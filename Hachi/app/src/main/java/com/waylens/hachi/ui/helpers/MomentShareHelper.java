@@ -32,11 +32,7 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     VdbRequestQueue mVdbRequestQueue;
     OnShareMomentListener mShareListener;
 
-
-
     MomentBuilder mMomentBuilder;
-
-    Handler mHandler;
 
     Context mContext;
 
@@ -46,7 +42,6 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     public MomentShareHelper(Context context, VdbRequestQueue requestQueue, @NonNull OnShareMomentListener listener) {
         mVdbRequestQueue = requestQueue;
         mShareListener = listener;
-        mHandler = new Handler(Looper.getMainLooper());
         mContext = context;
     }
 
@@ -74,82 +69,14 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
         mMomentBuilder.forPlayList(playListID).asMoment(title, tags, accessLevel, audioID, gaugeSettings).build(this);
     }
 
-    void uploadData() {
-//        mUploadThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    if (isCancelled) {
-//                        if (mShareListener != null) {
-//                            mShareListener.onCancelShare();
-//                        }
-//                        return;
-//                    }
-//                    uploaderV2 = new DataUploader();
-//                    uploaderV2.upload(mLocalMoment);
-//                } catch (Exception e) {
-//                    Logger.t(TAG).e(e, "");
-//                    if (mShareListener != null) {
-//                        mShareListener.onShareError(ERROR_IO, 0);
-//                    }
-//                }
-//                uploaderV2 = null;
-//                mUploadThread = null;
-//            }
-//        }, "share-moment-thread");
-//        mUploadThread.start();
+    private void uploadData() {
+
         JobManager jobManager = BgJobManager.getManager();
         UploadMomentJob job = new UploadMomentJob(mLocalMoment);
         jobManager.addJobInBackground(job);
     }
 
-//    @Override
-//    public void onUploadSuccessful() {
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mShareListener != null) {
-//                    mShareListener.onShareSuccessful(mLocalMoment);
-//                }
-//            }
-//        });
-//    }
 
-//    @Override
-//    public void onUploadProgress(final int percentage) {
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mShareListener != null) {
-//                    mShareListener.onUploadProgress(percentage);
-//                }
-//            }
-//        });
-//    }
-
-//    @Override
-//    public void onUploadError(final int errorCode, final int extraCode) {
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mShareListener != null) {
-//                    mShareListener.onShareError(errorCode, 0);
-//                }
-//            }
-//        });
-//    }
-
-//    @Override
-//    public void onCancelUpload() {
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mShareListener != null) {
-//                    mShareListener.onCancelShare();
-//                }
-//            }
-//        });
-//    }
 
     @Override
     public void onBuildSuccessful(LocalMoment localMoment) {

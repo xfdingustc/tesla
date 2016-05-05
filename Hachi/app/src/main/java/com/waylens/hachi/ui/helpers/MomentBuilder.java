@@ -97,7 +97,7 @@ public class MomentBuilder {
             return;
         }
 
-        Logger.t(TAG).d("retrievePlayListInfo");
+        Logger.t(TAG).d("retrievePlayListInfo: " + mPlayListID);
         mVdbRequestQueue.add(new ClipSetExRequest(mPlayListID, ClipSetExRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override

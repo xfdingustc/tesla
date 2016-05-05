@@ -14,7 +14,7 @@ public class UploadMomentJob extends Job {
     private final LocalMoment mLocalMoment;
 
     public UploadMomentJob(LocalMoment moment) {
-        super(new Params(0).requireNetwork().persist());
+        super(new Params(0).requireNetwork().setPersistent(false));
         this.mLocalMoment = moment;
     }
 
@@ -38,6 +38,6 @@ public class UploadMomentJob extends Job {
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(Throwable throwable, int runCount, int maxRunCount) {
-        return null;
+        return new RetryConstraint(false);
     }
 }
