@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 
 import com.android.volley.RequestQueue;
-import com.bugtags.library.Bugtags;
+//import com.bugtags.library.Bugtags;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
@@ -43,21 +43,21 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * Bugtags call
      */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Bugtags.onResume(this);
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Bugtags.onPause(this);
-    }
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        Bugtags.onDispatchTouchEvent(this, event);
-        return super.dispatchTouchEvent(event);
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Bugtags.onResume(this);
+//    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        Bugtags.onPause(this);
+//    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent event) {
+//        Bugtags.onDispatchTouchEvent(this, event);
+//        return super.dispatchTouchEvent(event);
+//    }
 
     /**
      * end Bugtags

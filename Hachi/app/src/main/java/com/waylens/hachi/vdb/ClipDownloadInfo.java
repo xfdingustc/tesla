@@ -1,11 +1,13 @@
 package com.waylens.hachi.vdb;
 
+import java.io.Serializable;
+
 /**
  * Created by Xiaofei on 2015/8/28.
  */
 public class ClipDownloadInfo {
 
-    public static class StreamDownloadInfo {
+    public static class StreamDownloadInfo implements Serializable {
         public int clipDate;
         public long clipTimeMs;
         public int lengthMs;

@@ -164,25 +164,25 @@ public class DownloadIntentService extends IntentService {
         Logger.t(TAG).d("start download item " + params.getInputFile());
 
 
-        HttpRemuxer remuxer = new HttpRemuxer(0);
-        remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
-            @Override
-            public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
-                switch (event) {
-                    case HttpRemuxer.EVENT_ERROR:
-                        handleRemuxerError(arg1, arg2);
-                        break;
-                    case HttpRemuxer.EVENT_PROGRESS:
-                        handleRemuxerProgress(arg1);
-                        break;
-                    case HttpRemuxer.EVENT_FINISHED:
-                        Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
-                        handleRemuxerFinished();
-                        break;
-
-                }
-            }
-        });
+//        HttpRemuxer remuxer = new HttpRemuxer(0);
+//        remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
+//            @Override
+//            public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
+//                switch (event) {
+//                    case HttpRemuxer.EVENT_ERROR:
+//                        handleRemuxerError(arg1, arg2);
+//                        break;
+//                    case HttpRemuxer.EVENT_PROGRESS:
+//                        handleRemuxerProgress(arg1);
+//                        break;
+//                    case HttpRemuxer.EVENT_FINISHED:
+//                        Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
+//                        handleRemuxerFinished();
+//                        break;
+//
+//                }
+//            }
+//        });
 
         // TODO:
         //broadcastInfo(REASON_DOWNLOAD_STARTED, DOWNLOAD_STATE_RUNNING, item, 0, remain);
@@ -194,7 +194,7 @@ public class DownloadIntentService extends IntentService {
             Logger.t(TAG).e("Output File is null");
         } else {
             //item.outputFile = outputFile;
-            remuxer.run(params, outputFile);
+//            remuxer.run(params, outputFile);
             mDownloadFilePath = outputFile;
             Logger.t(TAG).d("remux is running output file is: " + outputFile);
         }

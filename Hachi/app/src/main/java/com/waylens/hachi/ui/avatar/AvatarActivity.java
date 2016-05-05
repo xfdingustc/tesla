@@ -182,8 +182,8 @@ public class AvatarActivity extends BaseActivity {
 
 
     private void showUploadProgressDialog() {
-        UploadProgressDialogFragment fragment = UploadProgressDialogFragment.newInstance();
-        fragment.show(getFragmentManager(), "upload");
+//        UploadProgressDialogFragment fragment = UploadProgressDialogFragment.newInstance();
+//        fragment.show(getFragmentManager(), "upload");
 
     }
 

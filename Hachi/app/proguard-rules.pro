@@ -23,4 +23,3 @@
 -dontwarn com.bugtags.library.vender.**
 -dontwarn com.bugtags.library.**
 
--keep public class com.tencent.bugly.**{*;}

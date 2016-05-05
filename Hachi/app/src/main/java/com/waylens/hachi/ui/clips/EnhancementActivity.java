@@ -16,8 +16,10 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.download.DownloadJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -35,11 +37,11 @@ import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.upload.UploadJobManager;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipExtent;
-import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
@@ -448,7 +450,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
 
-    private void doDownloadClips(int selectIndex) {
+    private void doDownloadClips(final int selectIndex) {
 //        DownloadUrlRequest request =
 //        ClipSegment clipSegment = new ClipSegment(getClipSet().getClip(0));
         Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
@@ -459,6 +461,20 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 Logger.t(TAG).d("on response:!!!!: " + response.main.url);
                 Logger.t(TAG).d("on response: " + response.sub.url);
                 Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
+
+
+
+
+                ClipDownloadInfo.StreamDownloadInfo downloadInfo;
+                if (selectIndex == 0) {
+                    downloadInfo = response.sub;
+                } else {
+                    downloadInfo = response.main;
+                }
+
+                JobManager jobManager = UploadJobManager.getManager();
+                DownloadJob job = new DownloadJob(getClipSet().getClip(0).streams[0], downloadInfo);
+                jobManager.addJobInBackground(job);
 
                 //startDownload(response, 0, clipSegment.getClip().streams[0]);
             }

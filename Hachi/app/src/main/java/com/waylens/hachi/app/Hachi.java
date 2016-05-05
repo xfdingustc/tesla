@@ -4,13 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 
-import com.birbit.android.jobqueue.JobManager;
-import com.bugtags.library.Bugtags;
-import com.bugtags.library.BugtagsOptions;
+//import com.bugtags.library.Bugtags;
+//import com.bugtags.library.BugtagsOptions;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.squareup.leakcanary.LeakCanary;
-import com.tencent.bugly.crashreport.CrashReport;
+//import com.tencent.bugly.crashreport.CrashReport;
+import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.dao.RawDataItemDao;
 import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
@@ -43,20 +43,20 @@ public class Hachi extends Application {
         /**
          * inti Bugtags
          */
-        BugtagsOptions options = new BugtagsOptions.Builder().
-            trackingLocation(true).
-            trackingCrashLog(true).
-            trackingConsoleLog(true).
-            trackingUserSteps(true).
-            versionName("0.38").
-            versionCode(1).
-            build();
-        Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
-
-        /**
-         * inti Burly
-         */
-        CrashReport.initCrashReport(getApplicationContext(), "900022478", false);
+//        BugtagsOptions options = new BugtagsOptions.Builder().
+//            trackingLocation(true).
+//            trackingCrashLog(true).
+//            trackingConsoleLog(true).
+//            trackingUserSteps(true).
+//            versionName("0.38").
+//            versionCode(1).
+//            build();
+//        Bugtags.start("a088e06d7c05be80a41cf34e7de0f9b0", this, Bugtags.BTGInvocationEventNone, options);
+//
+//        /**
+//         * inti Burly
+//         */
+//        CrashReport.initCrashReport(getApplicationContext(), "900022478", false);
 
         init();
     }
@@ -121,6 +121,8 @@ public class Hachi extends Application {
 
     private void configureJobManager() {
         UploadJobManager.init(this);
+
+
     }
 
     public void startDeviceScanner() {
