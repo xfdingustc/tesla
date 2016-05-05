@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.settings.SettingsFragment;
 
 import butterknife.OnClick;
 
@@ -56,6 +58,11 @@ public class StartupActivity extends BaseActivity {
             .build();
         dialog.show();
 
+    }
+
+    public static void launch(Activity activity) {
+        Intent intent = new Intent(activity, StartupActivity.class);
+        activity.startActivity(intent);
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.ManualSetupActivity;
+import com.waylens.hachi.ui.activities.StartupActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 
@@ -73,6 +74,7 @@ public class SettingsFragment extends BaseFragment {
 //                    return true;
 //                }
 //            }).show();
-        ManualSetupActivity.launch(getActivity());
+        //ManualSetupActivity.launch(getActivity());
+        StartupActivity.launch(getActivity());
     }
 }

@@ -283,7 +283,7 @@ public class SignUpFragment extends BaseFragment {
                 hideDialog();
             }
         }));
-        mVolleyRequestQueue.start();
+
 
         showDialog();
     }
