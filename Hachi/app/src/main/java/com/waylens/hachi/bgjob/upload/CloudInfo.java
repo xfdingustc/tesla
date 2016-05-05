@@ -1,4 +1,4 @@
-package com.waylens.hachi.upload;
+package com.waylens.hachi.bgjob.upload;
 
 import com.waylens.hachi.utils.ToStringUtils;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Created by Xiaofei on 2016/4/27.
  */
-public class CloudInfo implements Serializable{
+public class CloudInfo implements Serializable {
     private String mAddress;
     private int mPort;
     private String mPrivateKey;

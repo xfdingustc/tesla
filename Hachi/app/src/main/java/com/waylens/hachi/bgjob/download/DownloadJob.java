@@ -1,4 +1,4 @@
-package com.waylens.hachi.download;
+package com.waylens.hachi.bgjob.download;
 
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;

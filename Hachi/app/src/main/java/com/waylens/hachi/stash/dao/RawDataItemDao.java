@@ -1,4 +1,4 @@
-package com.waylens.hachi.dao;
+package com.waylens.hachi.stash.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

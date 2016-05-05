@@ -1,9 +1,9 @@
-package com.waylens.hachi.upload;
+package com.waylens.hachi.bgjob.upload;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.upload.event.UploadEvent;
+import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.urls.UploadUrl;
 

@@ -1,4 +1,4 @@
-package com.waylens.hachi.upload.event;
+package com.waylens.hachi.bgjob.upload.event;
 
 /**
  * Created by Xiaofei on 2016/4/28.

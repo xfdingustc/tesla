@@ -1,4 +1,4 @@
-package com.waylens.hachi.upload;
+package com.waylens.hachi.bgjob;
 
 import android.content.Context;
 import android.os.Build;
@@ -11,7 +11,7 @@ import com.birbit.android.jobqueue.scheduling.FrameworkJobSchedulerService;
 /**
  * Created by Xiaofei on 2016/4/28.
  */
-public class UploadJobManager {
+public class BgJobManager {
 
     private static JobManager mJobManager;
 
@@ -49,7 +49,7 @@ public class UploadJobManager {
             .consumerKeepAlive(120);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.scheduler(FrameworkJobSchedulerService.createSchedulerFor(context, UploadJobService.class), false);
+            builder.scheduler(FrameworkJobSchedulerService.createSchedulerFor(context, BgJobService.class), false);
         } else {
 //            int enableGcm =
 

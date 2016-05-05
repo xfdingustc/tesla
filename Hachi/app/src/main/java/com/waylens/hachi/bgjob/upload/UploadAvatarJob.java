@@ -1,4 +1,4 @@
-package com.waylens.hachi.upload;
+package com.waylens.hachi.bgjob.upload;
 
 import android.content.Context;
 
