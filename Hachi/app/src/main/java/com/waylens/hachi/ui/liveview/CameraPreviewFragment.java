@@ -822,7 +822,13 @@ public class CameraPreviewFragment extends BaseFragment {
         public void run() {
             if (mVdtCamera != null) {
                 mVdtCamera.getRecordTime();
-//                updateCameraState();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateCameraState();
+                    }
+                });
+
             }
         }
     }

@@ -22,6 +22,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.activities.WelcomeActivity;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -71,7 +72,7 @@ public class ClientConnectFragment extends BaseFragment {
     public void onEventCameraConnection(CameraConnectionEvent event) {
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
-                WelcomeActivity.launch(getActivity());
+                MainActivity.launch(getActivity());
                 break;
         }
     }
