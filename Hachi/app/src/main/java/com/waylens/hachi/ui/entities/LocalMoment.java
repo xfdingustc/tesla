@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.entities;
 
-import com.waylens.hachi.upload.CloudInfo;
+
+import com.waylens.hachi.bgjob.upload.CloudInfo;
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.urls.UploadUrl;

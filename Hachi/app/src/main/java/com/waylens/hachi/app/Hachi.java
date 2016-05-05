@@ -10,15 +10,14 @@ import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.squareup.leakcanary.LeakCanary;
 //import com.tencent.bugly.crashreport.CrashReport;
-import com.transee.vdb.HttpRemuxer;
-import com.waylens.hachi.dao.RawDataItemDao;
+
 import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.upload.UploadJobManager;
+import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -87,7 +86,7 @@ public class Hachi extends Application {
         SessionManager.initialize(this);
         SessionManager.getInstance().reloadLoginInfo();
 
-        RawDataItemDao.initialize(this);
+
 
         initCameraManager();
 
@@ -120,9 +119,7 @@ public class Hachi extends Application {
     }
 
     private void configureJobManager() {
-        UploadJobManager.init(this);
-
-
+        BgJobManager.init(this);
     }
 
     public void startDeviceScanner() {

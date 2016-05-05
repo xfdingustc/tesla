@@ -19,8 +19,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
-import com.waylens.hachi.upload.UploadAvatarJob;
-import com.waylens.hachi.upload.UploadJobManager;
+import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
+import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.utils.ImageUtils;
 
 import java.io.File;
@@ -173,7 +173,7 @@ public class AvatarActivity extends BaseActivity {
 
     private void uploadAvatar() {
         UploadAvatarJob uploadAvatarJob = new UploadAvatarJob(mCroppedImagePath);
-        JobManager jobManager = UploadJobManager.getManager();
+        JobManager jobManager = BgJobManager.getManager();
         jobManager.addJobInBackground(uploadAvatarJob);
         showUploadProgressDialog();
 

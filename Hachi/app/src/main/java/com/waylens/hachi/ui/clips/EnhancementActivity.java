@@ -19,7 +19,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.download.DownloadJob;
+import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -37,7 +37,7 @@ import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.upload.UploadJobManager;
+import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
@@ -472,7 +472,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                     downloadInfo = response.main;
                 }
 
-                JobManager jobManager = UploadJobManager.getManager();
+                JobManager jobManager = BgJobManager.getManager();
                 DownloadJob job = new DownloadJob(getClipSet().getClip(0).streams[0], downloadInfo);
                 jobManager.addJobInBackground(job);
 

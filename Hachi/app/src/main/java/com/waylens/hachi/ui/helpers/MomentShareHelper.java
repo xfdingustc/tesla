@@ -6,12 +6,10 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import com.birbit.android.jobqueue.JobManager;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.upload.DataUploader;
-import com.waylens.hachi.upload.UploadJobManager;
-import com.waylens.hachi.upload.UploadMomentJob;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 
 import org.json.JSONObject;
 
@@ -100,7 +98,7 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
 //            }
 //        }, "share-moment-thread");
 //        mUploadThread.start();
-        JobManager jobManager = UploadJobManager.getManager();
+        JobManager jobManager = BgJobManager.getManager();
         UploadMomentJob job = new UploadMomentJob(mLocalMoment);
         jobManager.addJobInBackground(job);
     }

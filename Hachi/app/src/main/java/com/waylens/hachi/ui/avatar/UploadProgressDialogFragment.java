@@ -1,23 +1,5 @@
 package com.waylens.hachi.ui.avatar;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.View;
-
-import com.waylens.hachi.R;
-import com.waylens.hachi.ui.views.CircularProgressView;
-import com.waylens.hachi.upload.event.UploadEvent;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 //import fr.tvbarthel.lib.blurdialogfragment.BlurDialogFragment;
 
 /**
