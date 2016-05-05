@@ -30,6 +30,7 @@ import com.waylens.hachi.ui.settings.SettingPrefFragment;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.ui.clips.VideoFragment;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
+import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -269,9 +270,11 @@ public class MainActivity extends BaseActivity {
     private void refressNavHeaderView() {
         if (mSessionManager.isLoggedIn()) {
             mUsername.setText(mSessionManager.getUserName());
-            ImageLoader.getInstance().displayImage(mSessionManager.getAvatarUrl(), mUserAvatar);
+            ImageLoader.getInstance().displayImage(mSessionManager.getAvatarUrl(), mUserAvatar, ImageUtils.getAvatarOptions());
         } else {
             mUsername.setText(getText(R.string.click_2_login));
+
+            mUserAvatar.setImageResource(R.drawable.waylens_logo_76x86);
         }
     }
 

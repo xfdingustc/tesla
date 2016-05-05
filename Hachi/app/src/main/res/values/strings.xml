@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="audio">Audio</string>
+	<string name="audio_setting">Audio Setting</string>
 	<string name="accel">Accel</string>
 	<string name="account">Account</string>
 	<string name="add_clip_hint2">to add a bookmark or footage</string>
@@ -195,9 +196,14 @@
 	<string name="verification_code_error">Valid verification code contains 6 numbers</string>
 	<string name="version_up_to_date">Waylens app is up to date</string>
 	<string name="video">Video </string>
+	<string name="video_setting">Video Setting</string>
 	<string name="volume">Volume</string>
 	<string name="waylens_cloud">Waylens Cloud</string>
 	<string name="welcome_back">Welcome Back</string>
 	<string name="what_to_do_next">What to do next</string>
 	<string name="yesterday">Yesterday</string>
+	<string name="mic">Mic</string>
+	<string name="speaker">Speaker</string>
+	<string name="sd">SD</string>
+	<string name="fullhd">Full HD</string>
 </resources>

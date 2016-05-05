@@ -185,7 +185,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
                 url = Constants.API_MOMENTS_ME;
                 break;
             case FEED_TAG_LIKES:
-                url = null;
+                url = Constants.API_MOMENTS_MY_LIKE;
                 break;
             case FEED_TAG_STAFF_PICKS:
                 url = Constants.API_MOMENTS_FEATURED;

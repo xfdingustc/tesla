@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -54,12 +55,12 @@ public class AccountActivity extends BaseActivity {
 
     @OnClick(R.id.avatar)
     public void onBtnAvatarClicked() {
-        AvatarActivity.start(this, false);
+        AvatarActivity.launch(this, false);
     }
 
     @OnClick(R.id.btnAddPhoto)
     public void onBtnAddPhotoClick() {
-        AvatarActivity.start(this, true);
+        AvatarActivity.launch(this, true);
     }
 
 
@@ -106,7 +107,9 @@ public class AccountActivity extends BaseActivity {
 
     private void showUserProfile(JSONObject response) {
 
-        mImageLoader.displayImage(mSessionManager.getAvatarUrl(), mAvatar);
+        Logger.t(TAG).d("avatart: " + mSessionManager.getAvatarUrl());
+
+        mImageLoader.displayImage(mSessionManager.getAvatarUrl(), mAvatar, ImageUtils.getAvatarOptions());
     }
 
 

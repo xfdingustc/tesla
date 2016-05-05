@@ -17,6 +17,7 @@ import com.waylens.hachi.ui.avatar.serializables.AlbumInfo;
 import com.waylens.hachi.ui.avatar.serializables.AlbumSerializable;
 import com.waylens.hachi.ui.avatar.serializables.Photo;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ThumbnailsUtil;
 
 import java.util.List;
@@ -101,7 +102,7 @@ public class AlbumFragment extends BaseFragment implements View.OnClickListener 
             final AlbumInfo item = mPhotoAlbumSerializable.getList().get(position);
 
             String displayItemUri = ThumbnailsUtil.MapgetHashValue(item.getImage_id(), item.getPath_file());
-            mImageLoader.displayImage(displayItemUri, viewHolder.ivCover);
+            mImageLoader.displayImage(displayItemUri, viewHolder.ivCover, ImageUtils.getVideoOptions());
 
             viewHolder.tvAlbumTitle.setText(item.getName_album());
             viewHolder.tvAlbumItemCount.setText("" + item.getList().size());

@@ -237,6 +237,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             mSessionManager.logout();
+                            getActivity().finish();
                         }
                     })
                     .show();

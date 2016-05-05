@@ -51,6 +51,8 @@ public class Constants {
 
     public static final String API_MOMENTS_ME = HOST_URL + "api/users/me/moments";
 
+    public static final String API_MOMENTS_MY_LIKE = HOST_URL + "api/moments/mylike";
+
     public static final String API_MOMENTS_PARAM_ORDER = "order";
     public static final String API_MOMENTS_PARAM_CURSOR = "cursor";
     public static final String API_MOMENTS_PARAM_COUNT = "count";

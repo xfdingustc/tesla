@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.avatar;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,15 +14,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
+import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
-import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
-import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.utils.ImageUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,7 +64,48 @@ public class AvatarActivity extends BaseActivity {
 //    @Bind(R.id.mcpb_upload_progress)
 //    MaterialCircularProgressBar mUploadProgressBar;
 
-    public static void start(Activity startActivity, boolean fromCamera) {
+
+    private MaterialDialog mUploadDialog;
+
+    private EventBus mEventBus = EventBus.getDefault();
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventUpload(UploadEvent event) {
+        switch (event.getWhat()) {
+            case UploadEvent.UPLOAD_WHAT_START:
+                mUploadDialog = new MaterialDialog.Builder(this)
+                    .title(R.string.upload)
+                    .contentGravity(GravityEnum.CENTER)
+                    .progress(false, 100, true)
+                    .show();
+                mUploadDialog.setCanceledOnTouchOutside(false);
+                break;
+            case UploadEvent.UPLOAD_WHAT_PROGRESS:
+                if (mUploadDialog != null) {
+                    int progress = event.getExtra();
+                    mUploadDialog.getProgressBar().setProgress(progress);
+                }
+                break;
+            case UploadEvent.UPLOAD_WHAT_FINISHED:
+                if (mUploadDialog != null) {
+                    mUploadDialog.dismiss();
+                }
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Uploading finished")
+                    .show();
+
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        finish();
+                    }
+                });
+                break;
+        }
+    }
+
+    public static void launch(Activity startActivity, boolean fromCamera) {
         Intent intent = new Intent(startActivity, AvatarActivity.class);
         intent.putExtra(PICK_FROM_CAMERA, fromCamera);
         startActivity.startActivity(intent);
@@ -78,6 +127,7 @@ public class AvatarActivity extends BaseActivity {
 
     }
 
+
     private void jump2TakePhoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         ContentValues values = new ContentValues(1);
@@ -87,6 +137,18 @@ public class AvatarActivity extends BaseActivity {
         startActivityForResult(intent, TAKE_PHOTO);
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mEventBus.register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
+    }
 
     @Override
     protected void init() {
@@ -175,19 +237,9 @@ public class AvatarActivity extends BaseActivity {
         UploadAvatarJob uploadAvatarJob = new UploadAvatarJob(mCroppedImagePath);
         JobManager jobManager = BgJobManager.getManager();
         jobManager.addJobInBackground(uploadAvatarJob);
-        showUploadProgressDialog();
+
 
     }
-
-
-
-    private void showUploadProgressDialog() {
-//        UploadProgressDialogFragment fragment = UploadProgressDialogFragment.newInstance();
-//        fragment.show(getFragmentManager(), "upload");
-
-    }
-
-
 
     public class ExtractThumbTask extends AsyncTask<Object, Void, String> {
         String srcImgPath = null, dstImgPath = null;

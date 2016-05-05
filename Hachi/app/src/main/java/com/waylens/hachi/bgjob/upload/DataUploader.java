@@ -1,9 +1,9 @@
 package com.waylens.hachi.bgjob.upload;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.urls.UploadUrl;
 
@@ -130,7 +130,7 @@ public class DataUploader {
                 URLConnection conn = url.openConnection();
                 inputStream = conn.getInputStream();
                 Logger.t(TAG).d(String.format("ContentLength[%d]", conn.getContentLength()));
-                int ret = doUpload(guid, conn.getContentLength(), segment.dataType, inputStream, clipIndex++, null);
+                int ret = doUpload(guid, conn.getContentLength(), segment.dataType, inputStream, clipIndex++, null, false);
                 if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                     Logger.t(TAG).d("upload input stream error");
                     return ret;
@@ -151,7 +151,7 @@ public class DataUploader {
     }
 
     private int doUpload(String guid, int totalLength, int dataType, InputStream inputStream,
-                         int clipIndex, byte[] fileSha1) throws IOException {
+                         int clipIndex, byte[] fileSha1, boolean checkRet) throws IOException {
         byte[] data = new byte[1024 * 4];
         int length;
         int seqNum = 0;
@@ -166,7 +166,7 @@ public class DataUploader {
 
             byte[] blockSha1 = HashUtils.SHA1(data, length);
 
-//            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
+            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
 
             CrsClientTranData tranData = new CrsClientTranData(mUserId, guid, mMomentID, fileSha1,
                 blockSha1, dataType, seqNum, 0, (short) length, data, mCloudInfo.getPrivateKey());
@@ -190,10 +190,12 @@ public class DataUploader {
         inputStream.close();
 
         Logger.t(TAG).d("steam closed");
-//        int serverRet = receiveData().responseCode;
-//        if (serverRet != CrsCommand.RES_FILE_TRANS_COMPLETE) {
-//            throw new IOException("In upload content: upload file failed ret = " + serverRet);
-//        }
+        if (checkRet) {
+            int serverRet = receiveData().responseCode;
+            if (serverRet != CrsCommand.RES_FILE_TRANS_COMPLETE) {
+                throw new IOException("In upload content: upload file failed ret = " + serverRet);
+            }
+        }
 
         Logger.t(TAG).d("stop up load");
 
@@ -247,7 +249,7 @@ public class DataUploader {
 
         FileInputStream fis = new FileInputStream(thumbnailPath);
         return doUpload(String.valueOf(mMomentID), fis.available(), CrsCommand.VIDIT_THUMBNAIL_JPG,
-            fis, mClipTotalCount - 1, null);
+            fis, mClipTotalCount - 1, null, false);
 
     }
 
@@ -269,7 +271,7 @@ public class DataUploader {
             fis.skip(response.offset);
         }
         return doUpload(String.valueOf(mMomentID), fileSize, CrsCommand.JPEG_AVATAR,
-            fis, mClipTotalCount - 1, fileSha1);
+            fis, mClipTotalCount - 1, fileSha1, true);
 
     }
 

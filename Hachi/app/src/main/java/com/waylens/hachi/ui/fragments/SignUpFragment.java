@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +15,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
@@ -31,15 +30,12 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -82,7 +78,8 @@ public class SignUpFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCallbackManager = CallbackManager.Factory.create();
-        mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        mVolleyRequestQueue = Volley.newRequestQueue(getActivity());
+        mVolleyRequestQueue.start();
     }
 
     @Nullable
@@ -108,11 +105,11 @@ public class SignUpFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (mVolleyRequestQueue != null) {
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_VERIFY_EMAIL);
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_UP);
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_IN);
-        }
+//        if (mVolleyRequestQueue != null) {
+//            mVolleyRequestQueue.cancelAll(TAG_REQUEST_VERIFY_EMAIL);
+//            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_UP);
+//            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_IN);
+//        }
     }
 
     @Override
@@ -263,7 +260,7 @@ public class SignUpFragment extends BaseFragment {
         getActivity().finish();
     }
 
-    void signUpWithFacebook(final AccessToken accessToken) {
+    private void signUpWithFacebook(final AccessToken accessToken) {
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
             new Response.Listener<JSONObject>() {
                 @Override
@@ -292,12 +289,14 @@ public class SignUpFragment extends BaseFragment {
     }
 
 
-
     class FBCallback implements FacebookCallback<LoginResult> {
         @Override
-        public void onSuccess(LoginResult loginResult) {
+        public void onSuccess(final LoginResult loginResult) {
             Logger.t(TAG).d("signup with facebooke");
+
             signUpWithFacebook(loginResult.getAccessToken());
+
+
         }
 
         @Override

@@ -24,7 +24,7 @@ public class UploadAvatarJob extends Job {
     private final String file;
 
     public UploadAvatarJob(String file) {
-        super(new Params(0).requireNetwork().persist());
+        super(new Params(0).requireNetwork().setPersistent(false));
         this.file = file;
     }
 
@@ -62,7 +62,7 @@ public class UploadAvatarJob extends Job {
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(Throwable throwable, int runCount, int maxRunCount) {
-        return null;
+        return new RetryConstraint(false);
     }
 
 
