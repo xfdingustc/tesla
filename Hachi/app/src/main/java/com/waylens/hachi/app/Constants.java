@@ -30,6 +30,8 @@ public class Constants {
 
     public static final String API_AUTH_FACEBOOK = HOST_URL + "api/authenticate/facebook?accessToken=";
 
+    public static final String API_SHARE_ACCOUNTS = HOST_URL + "api/share/accounts";
+
     /**
      * Link Social account with Waylens account
      */

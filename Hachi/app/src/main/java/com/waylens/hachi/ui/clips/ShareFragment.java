@@ -1,6 +1,6 @@
 package com.waylens.hachi.ui.clips;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,8 +13,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -27,6 +39,10 @@ import com.waylens.hachi.vdb.ClipSetManager;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -34,7 +50,7 @@ import butterknife.OnClick;
 
 
 public class ShareFragment extends BaseFragment implements MomentShareHelper.OnShareMomentListener {
-    private static final String TAG = "ShareFragment";
+    private static final String TAG = ShareFragment.class.getSimpleName();
     private static final int PLAYLIST_SHARE = 0x100;
 
     private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_SHARE;
@@ -60,6 +76,11 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
 
     private MomentShareHelper mShareHelper;
 
+    private RequestQueue mRequestQueue;
+
+
+    CallbackManager callbackManager = CallbackManager.Factory.create();
+
     public static ShareFragment newInstance(ArrayList<Clip> clipList) {
         ShareFragment fragment = new ShareFragment();
         Bundle bundle = new Bundle();
@@ -76,6 +97,8 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         for (Clip clip : clipList) {
             mClipSet.addClip(clip);
         }
+        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue.start();
     }
 
     @Nullable
@@ -97,6 +120,12 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         if (mShareHelper != null) {
             mShareHelper.cancel(true);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void initViews() {
@@ -150,19 +179,21 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
 //            }
 //        });
 
+        requestPublishPermission();
 
-        mViewAnimator.setDisplayedChild(1);
-        mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
-        String title = mTitleView.getText().toString();
-        String[] tags = new String[]{"Shanghai", "car"};
-        Activity activity = getActivity();
-        int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
-        JSONObject gaugeSettings = null;
-        if (activity instanceof EnhancementActivity) {
-            audioID = ((EnhancementActivity) activity).getAudioID();
-            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
-        }
-        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
+
+//        mViewAnimator.setDisplayedChild(1);
+//        mShareHelper = new MomentShareHelper(getActivity(), mVdbRequestQueue, ShareFragment.this);
+//        String title = mTitleView.getText().toString();
+//        String[] tags = new String[]{"Shanghai", "car"};
+//        Activity activity = getActivity();
+//        int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
+//        JSONObject gaugeSettings = null;
+//        if (activity instanceof EnhancementActivity) {
+//            audioID = ((EnhancementActivity) activity).getAudioID();
+//            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
+//        }
+//        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings);
 
     }
 
@@ -189,4 +220,57 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         //Logger.t(TAG).e("onUploadProgress: "+ uploadPercentage);
     }
 
+
+    private void requestPublishPermission() {
+        Logger.t(TAG).d("request publish permission");
+        LoginManager loginManager = LoginManager.getInstance();
+
+
+        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Logger.t(TAG).d("on sucess!!!");
+                sendShareTokenToServer(loginResult.getAccessToken().getToken());
+
+            }
+
+            @Override
+            public void onCancel() {
+                Logger.t(TAG).d("on cancel");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Logger.t(TAG).d("on error");
+            }
+        });
+        loginManager.logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+
+
+
+    }
+
+    private void sendShareTokenToServer(String token) {
+        String url = Constants.API_SHARE_ACCOUNTS;
+        Map<String, String> param = new HashMap<>();
+        param.put("provider", "facebook");
+        param.put("accessToken", token);
+
+        final JSONObject requestBody = new JSONObject(param);
+
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Logger.t(TAG).json(response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        mRequestQueue.add(request);
+    }
 }

@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,6 @@ import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -98,12 +96,12 @@ public class SignInFragment extends BaseFragment {
         SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forget_password_hint1));
         int start = ssb.length();
         ssb.append(getString(R.string.forgot_password_hint2))
-                .setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        onForgotPassword();
-                    }
-                }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            .setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    onForgotPassword();
+                }
+            }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         mForgotPasswordView.setText(ssb);
         mForgotPasswordView.setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -125,8 +123,8 @@ public class SignInFragment extends BaseFragment {
         super.onStart();
 
         if (TextUtils.isEmpty(SessionManager.getInstance().getToken())
-                && AccessToken.getCurrentAccessToken() != null
-                && !AccessToken.getCurrentAccessToken().isExpired()) {
+            && AccessToken.getCurrentAccessToken() != null
+            && !AccessToken.getCurrentAccessToken().isExpired()) {
             signUpWithFacebook(AccessToken.getCurrentAccessToken());
         }
     }
@@ -176,18 +174,18 @@ public class SignInFragment extends BaseFragment {
         }
         Logger.t(TAG).d("signin : " + params.toString());
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_IN, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onSignInSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onSignInFailed(error);
-                    }
-                }).setTag(TAG_REQUEST_SIGN_IN));
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    onSignInSuccessful(response);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onSignInFailed(error);
+                }
+            }).setTag(TAG_REQUEST_SIGN_IN));
     }
 
     void onSignInFailed(VolleyError error) {
@@ -201,22 +199,21 @@ public class SignInFragment extends BaseFragment {
         getActivity().finish();
     }
 
-    void signUpWithFacebook(final AccessToken accessToken) {
+    private void signUpWithFacebook(final AccessToken accessToken) {
+        Logger.t(TAG).d("get accesstoken: " + accessToken.getToken());
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Logger.t(TAG).d("Response: " + response);
-                        SessionManager.getInstance().saveLoginInfo(response, true);
-                        hideDialog();
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
-                    }
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).d("Response: " + response);
+                    SessionManager.getInstance().saveLoginInfo(response, true);
+                    hideDialog();
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
                 }
+            }
 
-                , new Response.ErrorListener()
-
-        {
+            , new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);

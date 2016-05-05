@@ -86,7 +86,7 @@ public class ServerMessage {
         if (error.networkResponse != null && error.networkResponse.data != null) {
             String errorMessageJson = new String(error.networkResponse.data);
             try {
-                Log.e("test", "Server msg: " + errorMessageJson);
+                Logger.t(TAG).d("Server msg: " + errorMessageJson);
                 JSONObject errorJson = new JSONObject(errorMessageJson);
                 Logger.t(TAG).json(errorJson.toString());
                 int errorCode = errorJson.getInt("code");

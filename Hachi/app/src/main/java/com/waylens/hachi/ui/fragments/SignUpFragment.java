@@ -20,6 +20,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
@@ -37,7 +38,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -47,7 +49,7 @@ import butterknife.OnClick;
  */
 public class SignUpFragment extends BaseFragment {
 
-    private static final String TAG = "SignUpFragment";
+    private static final String TAG = SignUpFragment.class.getSimpleName();
 
     private static final String TAG_REQUEST_VERIFY_EMAIL = "SignInFragment.request.verify.email";
 
@@ -96,8 +98,9 @@ public class SignUpFragment extends BaseFragment {
         super.onStart();
 
         if (TextUtils.isEmpty(SessionManager.getInstance().getToken())
-                && AccessToken.getCurrentAccessToken() != null
-                && !AccessToken.getCurrentAccessToken().isExpired()) {
+            && AccessToken.getCurrentAccessToken() != null
+            && !AccessToken.getCurrentAccessToken().isExpired()) {
+            Logger.t(TAG).d("refresh facebook token");
             signUpWithFacebook(AccessToken.getCurrentAccessToken());
         }
     }
@@ -121,7 +124,8 @@ public class SignUpFragment extends BaseFragment {
     void initViews() {
         mRootView.requestFocus();
         mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends", "user_location",
-                "user_birthday");
+            "user_birthday");
+
         mFBLoginButton.registerCallback(mCallbackManager, new FBCallback());
         String email = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, null);
         if (email != null) {
@@ -166,18 +170,18 @@ public class SignUpFragment extends BaseFragment {
             Logger.t(TAG).e(e, "");
         }
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_UP, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onSignUpSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onSignUpFailed(error);
-                    }
-                }).setTag(TAG_REQUEST_SIGN_UP));
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    onSignUpSuccessful(response);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onSignUpFailed(error);
+                }
+            }).setTag(TAG_REQUEST_SIGN_UP));
     }
 
     void onSignUpFailed(VolleyError error) {
@@ -235,18 +239,18 @@ public class SignUpFragment extends BaseFragment {
             Logger.t(TAG).e(e, "");
         }
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_IN, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onSignInSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onSignInFailed(error);
-                    }
-                }).setTag(TAG_REQUEST_SIGN_IN));
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    onSignInSuccessful(response);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onSignInFailed(error);
+                }
+            }).setTag(TAG_REQUEST_SIGN_IN));
     }
 
     void onSignInFailed(VolleyError error) {
@@ -261,19 +265,23 @@ public class SignUpFragment extends BaseFragment {
 
     void signUpWithFacebook(final AccessToken accessToken) {
         mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("test", "Response: " + response);
-                        SessionManager.getInstance().saveLoginInfo(response, true);
-                        hideDialog();
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
-                    }
-                }, new Response.ErrorListener() {
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).d("Response: " + response);
+                    SessionManager.getInstance().saveLoginInfo(response, true);
+                    hideDialog();
+
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
+
+                }
+            }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                Logger.t(TAG).d("");
+
                 showMessage(errorInfo.msgResID);
                 hideDialog();
             }
@@ -283,9 +291,12 @@ public class SignUpFragment extends BaseFragment {
         showDialog();
     }
 
+
+
     class FBCallback implements FacebookCallback<LoginResult> {
         @Override
         public void onSuccess(LoginResult loginResult) {
+            Logger.t(TAG).d("signup with facebooke");
             signUpWithFacebook(loginResult.getAccessToken());
         }
 
@@ -296,7 +307,7 @@ public class SignUpFragment extends BaseFragment {
 
         @Override
         public void onError(FacebookException e) {
-            Log.e("test", "facebook login", e);
+            Logger.t(TAG).d("facebook login", e);
             showMessage(R.string.login_error_facebook);
         }
     }
