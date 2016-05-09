@@ -120,6 +120,10 @@ public class BaseFragment extends Fragment  {
         return mToolbar;
     }
 
+    public TabLayout getTablayout() {
+        return mTabLayout;
+    }
+
 
 
     public void showDialog() {

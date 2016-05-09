@@ -22,11 +22,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.fragments.CommunityFragment;
+import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.settings.SettingPrefFragment;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.ui.clips.VideoFragment;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
@@ -150,11 +149,12 @@ public class MainActivity extends BaseActivity {
 
         setupNavigationView();
 
-        if (mSessionManager.isLoggedIn()) {
-            switchFragment(TAB_TAG_MOMENTS);
-        } else {
+        if (VdtCameraManager.getManager().isConnected()) {
             switchFragment(TAB_TAG_LIVE_VIEW);
+        } else {
+            switchFragment(TAB_TAG_MOMENTS);
         }
+
 
 
     }
