@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.fragments.manualsetup;
 
 import android.graphics.PointF;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -36,7 +37,7 @@ public class ScanQrCodeFragment extends BaseFragment {
     FrameLayout mCropWindow;
 
     @BindView(R.id.qrDecoderView)
-    QRCodeReaderView mQrCodeReaderView;
+    UltraQrCodeReaderView mQrCodeReaderView;
 
     @BindView(R.id.scanLine)
     ImageView mScanLine;
@@ -61,6 +62,7 @@ public class ScanQrCodeFragment extends BaseFragment {
         super.onStart();
 
 
+
     }
 
     @Override
@@ -76,6 +78,8 @@ public class ScanQrCodeFragment extends BaseFragment {
 
     private void initViews() {
         mQrCodeReaderView.getCameraManager().startPreview();
+
+
 
 
         mQrCodeReaderView.setOnQRCodeReadListener(new QRCodeReaderView.OnQRCodeReadListener() {
@@ -98,8 +102,7 @@ public class ScanQrCodeFragment extends BaseFragment {
             }
         });
 
-
-        mCropWindow.post(new Runnable() {
+            mCropWindow.post(new Runnable() {
             @Override
             public void run() {
                 TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mCropWindow.getMeasuredHeight());
