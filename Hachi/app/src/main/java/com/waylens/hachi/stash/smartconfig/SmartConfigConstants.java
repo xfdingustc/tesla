@@ -2,7 +2,7 @@
 //  Copyright (c) 2014 Texas Instruments. All rights reserved.
 //
 
-package com.waylens.hachi.hardware.smartconfig;
+package com.waylens.hachi.stash.smartconfig;
 
 public interface SmartConfigConstants {
 	

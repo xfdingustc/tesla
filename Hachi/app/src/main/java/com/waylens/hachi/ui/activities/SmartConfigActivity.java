@@ -15,8 +15,8 @@ import com.integrity_project.smartconfiglib.SmartConfig;
 import com.integrity_project.smartconfiglib.SmartConfigListener;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.smartconfig.NetworkUtil;
-import com.waylens.hachi.hardware.smartconfig.SmartConfigConstants;
+import com.waylens.hachi.stash.smartconfig.NetworkUtil;
+import com.waylens.hachi.stash.smartconfig.SmartConfigConstants;
 
 
 import butterknife.BindView;

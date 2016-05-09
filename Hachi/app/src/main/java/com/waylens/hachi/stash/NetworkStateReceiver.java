@@ -1,11 +1,11 @@
-package com.waylens.hachi.hardware;
+package com.waylens.hachi.stash;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.hardware.smartconfig.NetworkUtil;
+import com.waylens.hachi.stash.smartconfig.NetworkUtil;
 
 /**
  * Created by Richard on 3/17/16.

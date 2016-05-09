@@ -216,6 +216,10 @@ public class ClientConnectFragment extends BaseFragment {
             }
         });
 
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+
         //registerReceiver();
     }
 

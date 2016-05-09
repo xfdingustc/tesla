@@ -1,13 +1,10 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.PackageManager;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
-import com.waylens.hachi.hardware.NetworkStateReceiver;
-import com.waylens.hachi.hardware.smartconfig.NetworkUtil;
+import com.waylens.hachi.stash.smartconfig.NetworkUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
