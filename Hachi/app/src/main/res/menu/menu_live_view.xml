@@ -9,6 +9,7 @@
 
     <item
         android:id="@+id/cameraSetting"
+        android:icon="@drawable/navbar_change_rec_mode"
         android:title="@string/settings"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 </menu>
