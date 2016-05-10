@@ -5,7 +5,7 @@
              android:layout_height="match_parent"
              android:background="?attr/defaultBgColor">
 
-    <com.waylens.hachi.ui.fragments.manualsetup.UltraQrCodeReaderView
+    <com.waylens.hachi.ui.manualsetup.UltraQrCodeReaderView
         android:id="@+id/qrDecoderView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

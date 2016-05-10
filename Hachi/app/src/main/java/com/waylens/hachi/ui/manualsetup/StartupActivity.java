@@ -1,23 +1,22 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.manualsetup;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.fragments.manualsetup.ScanQrCodeFragment;
-import com.waylens.hachi.ui.settings.SettingsFragment;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
+
 
 import butterknife.OnClick;
 

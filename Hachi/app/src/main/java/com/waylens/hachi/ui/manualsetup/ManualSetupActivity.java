@@ -1,22 +1,21 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.manualsetup;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.fragments.manualsetup.ScanQrCodeFragment;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
+
 
 /**
  * Created by Xiaofei on 2016/3/21.
@@ -80,9 +79,9 @@ public class ManualSetupActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        mToolbar.setTitle(R.string.initial_setup);
-        mToolbar.setNavigationIcon(R.drawable.navbar_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        getToolbar().setTitle(R.string.initial_setup);
+        getToolbar().setNavigationIcon(R.drawable.navbar_back);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity.launch(ManualSetupActivity.this);

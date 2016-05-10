@@ -24,6 +24,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.authorization.LoginActivity;
 import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.settings.SettingsFragment;

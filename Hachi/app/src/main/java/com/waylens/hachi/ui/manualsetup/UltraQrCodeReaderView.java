@@ -1,15 +1,11 @@
-package com.waylens.hachi.ui.fragments.manualsetup;
+package com.waylens.hachi.ui.manualsetup;
 
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
-import com.google.zxing.qrcode.QRCodeReader;
-
-import java.io.IOException;
 
 /**
  * Created by Xiaofei on 2016/5/9.

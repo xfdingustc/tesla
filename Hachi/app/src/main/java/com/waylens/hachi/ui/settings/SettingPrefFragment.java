@@ -7,8 +7,8 @@ import android.preference.PreferenceScreen;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.ManualSetupActivity;
 import com.waylens.hachi.ui.activities.VersionCheckActivity;
+import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
 
 /**
  * Created by Xiaofei on 2016/5/3.
@@ -82,7 +82,6 @@ public class SettingPrefFragment extends PreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        Logger.t(TAG).d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 }

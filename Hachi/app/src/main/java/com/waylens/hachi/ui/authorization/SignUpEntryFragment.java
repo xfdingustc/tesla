@@ -1,6 +1,5 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.authorization;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.LoginActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 
 import butterknife.OnClick;
 

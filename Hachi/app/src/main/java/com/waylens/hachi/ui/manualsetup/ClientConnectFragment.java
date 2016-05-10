@@ -1,10 +1,9 @@
-package com.waylens.hachi.ui.fragments.manualsetup;
+package com.waylens.hachi.ui.manualsetup;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

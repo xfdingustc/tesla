@@ -23,7 +23,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.activities.LoginActivity;
+import com.waylens.hachi.ui.authorization.LoginActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.adapters.MomentViewHolder;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;

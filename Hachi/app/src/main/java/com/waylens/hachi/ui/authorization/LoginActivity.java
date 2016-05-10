@@ -1,18 +1,14 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.authorization;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.fragments.LinkAccountFragment;
-import com.waylens.hachi.ui.fragments.SignInFragment;
-import com.waylens.hachi.ui.fragments.SignUpFragment;
+import com.waylens.hachi.ui.activities.BaseActivity;
 
 /**
  * Created by Xiaofei on 2015/8/5.
@@ -50,13 +46,9 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        if (mToolbar == null) {
-            return;
-        }
         setTitle(R.string.sign_up);
-        setSupportActionBar(mToolbar);
-        mToolbar.setNavigationIcon(R.drawable.navbar_close);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

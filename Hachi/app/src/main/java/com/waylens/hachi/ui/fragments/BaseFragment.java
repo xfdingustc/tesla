@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,13 @@ import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.MainActivity;
 
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class BaseFragment extends Fragment  {
+public class BaseFragment extends Fragment {
     protected View mRootView;
     protected MaterialDialog mProgressDialog;
 
@@ -70,7 +68,6 @@ public class BaseFragment extends Fragment  {
     }
 
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -86,14 +83,13 @@ public class BaseFragment extends Fragment  {
     }
 
 
-    protected  void onCameraConnecting(VdtCamera vdtCamera) {
+    protected void onCameraConnecting(VdtCamera vdtCamera) {
 
     }
 
     protected void onCameraDisconnected(VdtCamera vdtCamera) {
         //
     }
-
 
 
     public void onCameraVdbConnected(VdtCamera camera) {
@@ -109,7 +105,7 @@ public class BaseFragment extends Fragment  {
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).showDrawer();
+                    ((MainActivity) getActivity()).showDrawer();
                 }
             });
             mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
@@ -125,16 +121,15 @@ public class BaseFragment extends Fragment  {
     }
 
 
-
     public void showDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             return;
         }
         mProgressDialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.loading)
-                .progress(true, 0)
-                .progressIndeterminateStyle(false)
-                .build();
+            .title(R.string.loading)
+            .progress(true, 0)
+            .progressIndeterminateStyle(false)
+            .build();
 
         mProgressDialog.show();
     }
@@ -145,13 +140,8 @@ public class BaseFragment extends Fragment  {
         }
     }
 
-    void showMessage(int resId) {
-        //Should not call this method if UI has been already destroyed.
-        try {
-            Snackbar.make(mRootView, resId, Snackbar.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Log.e("test", "", e);
-        }
+    protected void showMessage(int resId) {
+        Snackbar.make(mRootView, resId, Snackbar.LENGTH_SHORT).show();
     }
 
     void showMessage(String message) {
@@ -179,7 +169,6 @@ public class BaseFragment extends Fragment  {
         }
         return camera;
     }
-
 
 
 }

@@ -62,7 +62,7 @@
         </activity>
 
         <activity
-            android:name=".ui.activities.LoginActivity"
+            android:name=".ui.authorization.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
 
@@ -99,7 +99,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.StartupActivity"
+            android:name=".ui.manualsetup.StartupActivity"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -133,7 +133,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.ManualSetupActivity"
+            android:name=".ui.manualsetup.ManualSetupActivity"
             android:screenOrientation="portrait"/>
 
         <activity

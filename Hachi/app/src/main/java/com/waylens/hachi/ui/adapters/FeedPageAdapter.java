@@ -5,7 +5,7 @@ import android.app.FragmentManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FeedFragment;
-import com.waylens.hachi.ui.fragments.SignUpEntryFragment;
+import com.waylens.hachi.ui.authorization.SignUpEntryFragment;
 
 /**
  * Created by Richard on 3/14/16.

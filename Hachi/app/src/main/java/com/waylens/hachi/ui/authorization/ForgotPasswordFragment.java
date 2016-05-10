@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.authorization;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +15,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.authorization.ChangePasswordFragment;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerMessage;
