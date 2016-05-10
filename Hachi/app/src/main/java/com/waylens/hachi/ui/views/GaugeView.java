@@ -161,21 +161,19 @@ public class GaugeView extends FrameLayout {
                     state.put("mph", obdData.speed);
                     break;
             }
-//            state.put("rpm", 5000);
-//            state.put("roll", -2000);
-//            state.put("pitch", -50);
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
-            String date = format.format(item.getPtsMs());
+            long pts = item.getPtsMs() == 0 ? System.currentTimeMillis() : item.getPtsMs();
+            String date = format.format(pts);
             data = "numericMonthDate('" + date + "')";
-            //Log.e("test", "date: " + data);
+//            Logger.t(TAG).d("pts: " + item.getPtsMs() + " date: " + data);
             //state.put("time", data);
         } catch (JSONException e) {
-            Log.e("test", "", e);
+            Logger.t(TAG).e("", e);
         }
 
         String callJS1 = "javascript:setState(" + state.toString() + ")";
         String callJS2 = "javascript:setState(" + "{time:" + data + "})";
-//        Logger.t(TAG).d("callJS: " + callJS1);
+//        Logger.t(TAG).d("callJS: " + callJS2);
         mWebView.loadUrl(callJS1);
         mWebView.loadUrl(callJS2);
         mWebView.loadUrl("javascript:update()");
