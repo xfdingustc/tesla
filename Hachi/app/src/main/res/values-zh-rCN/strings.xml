@@ -188,7 +188,7 @@
 	<string name="trim">裁剪</string>
 	<string name="try_again">再试一次</string>
 	<string name="turn">转弯</string>
-	<string name="understand">我以明白</string>
+	<string name="understand">我已明白</string>
 	<string name="update_now">立刻更新</string>
 	<string name="upload">上传</string>
 	<string name="username">用户名</string>
@@ -208,4 +208,5 @@
 	<string name="fullhd">超高清</string>
 	<string name="connect_your_home_wifi">连接家庭Wifi</string>
 	<string name="storage">存储</string>
+	<string name="manually_select_wifi_network"><u>手动选择网络</u></string>
 </resources>

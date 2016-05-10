@@ -1,7 +1,7 @@
 package com.waylens.hachi.ui.fragments.manualsetup;
 
+import android.content.Intent;
 import android.graphics.PointF;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,8 +12,10 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 
@@ -21,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -28,6 +31,8 @@ import butterknife.BindView;
  */
 public class ScanQrCodeFragment extends BaseFragment {
     private static final String TAG = ScanQrCodeFragment.class.getSimpleName();
+
+    private static final int WIFI_SETTING = 0;
 
     private String mWifiName;
     private String mWifiPassword;
@@ -41,6 +46,14 @@ public class ScanQrCodeFragment extends BaseFragment {
 
     @BindView(R.id.scanLine)
     ImageView mScanLine;
+
+    @BindView(R.id.manualSelectWifi)
+    TextView mManualSelectWifi;
+
+    @OnClick(R.id.manualSelectWifi)
+    public void onManualSelectWifiClick() {
+        startActivityForResult(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS), WIFI_SETTING);
+    }
 
 
     @Override
@@ -63,6 +76,15 @@ public class ScanQrCodeFragment extends BaseFragment {
         mQrCodeReaderView.getCameraManager().stopPreview();
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == WIFI_SETTING) {
+            launchApConnectFragment();
+        }
+        Logger.t(TAG).d("requestCode: " + requestCode + " resultCode: " + resultCode + " data: " + data);
+    }
 
     private void init() {
 
@@ -91,7 +113,7 @@ public class ScanQrCodeFragment extends BaseFragment {
             }
         });
 
-            mCropWindow.post(new Runnable() {
+        mCropWindow.post(new Runnable() {
             @Override
             public void run() {
                 TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mCropWindow.getMeasuredHeight());
@@ -102,6 +124,8 @@ public class ScanQrCodeFragment extends BaseFragment {
                 mScanLine.startAnimation(animation);
             }
         });
+
+
 
     }
 

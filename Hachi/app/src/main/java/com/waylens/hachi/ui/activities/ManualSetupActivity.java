@@ -41,8 +41,15 @@ public class ManualSetupActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void init() {
+        super.init();
+
+        initViews();
+    }
+
+    private void initViews() {
+        setContentView(R.layout.activity_manual_setup);
+//        checkIfCameraIsGranted();
 
         PackageManager pm = getPackageManager();
         boolean permission = pm.checkPermission("android.permission.CAMERA", "com.waylens.hachi") == PackageManager.PERMISSION_GRANTED;
@@ -55,26 +62,6 @@ public class ManualSetupActivity extends BaseActivity {
         } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
         }
-
-
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-//            mScanQrCodeFragment = new ScanQrCodeFragment();
-//            getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, mScanQrCodeFragment).commit();
-//        } else {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
-//        }
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-
-        initViews();
-    }
-
-    private void initViews() {
-        setContentView(R.layout.activity_manual_setup);
-//        checkIfCameraIsGranted();
     }
 
 
