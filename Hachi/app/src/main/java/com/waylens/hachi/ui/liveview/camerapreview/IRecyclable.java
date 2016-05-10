@@ -8,5 +8,5 @@ package com.waylens.hachi.ui.liveview.camerapreview;
 //	ByteArrayBuffer
 
 public interface IRecyclable {
-	public void recycle();
+	void recycle();
 }

@@ -26,9 +26,9 @@ public class CameraLiveView extends View {
 	private MjpegStream mMjpegStream;
 	private Bitmap mMaskedBitmap;
 	private BitmapCanvas mBitmapCanvas;
-	private GestureDetector mGesture;
+
 	private Drawable[] mStates = new Drawable[MAX_STATES];
-	private int[] mResId = new int[MAX_STATES];
+
 
 	private final Runnable mDrawBitmapAction = new Runnable() {
 		@Override
@@ -54,7 +54,6 @@ public class CameraLiveView extends View {
 	}
 
 	private void initView() {
-		setVisibility(View.INVISIBLE);
 		mHandler = new Handler();
 
 		mMjpegStream = new MyMjpegStream();
@@ -71,11 +70,6 @@ public class CameraLiveView extends View {
 			}
 		};
 
-		mGesture = new GestureDetector(getContext(), new MyGestureListener());
-
-		for (int i = 0; i < mResId.length; i++) {
-			mResId[i] = -1;
-		}
 	}
 
 	@Override
@@ -84,29 +78,7 @@ public class CameraLiveView extends View {
 	}
 
 	// API
-	public final void setAnchorRect(int leftMargin, int topMargin, int rightMargin, int bottomMargin, float bestZoom) {
-		mBitmapCanvas.setAnchorRect(leftMargin, topMargin, rightMargin, bottomMargin, bestZoom);
-	}
 
-	public void setAnchorTopThumbnail(int anchorTopThumbnail) {
-		mBitmapCanvas.setAnchorTopThumbnail(anchorTopThumbnail);
-	}
-
-	// API
-	public int getStateResId(int index) {
-		return mResId[index];
-	}
-
-	// API
-	public void setState(int index, int resId, Drawable drawable) {
-		mStates[index] = drawable;
-		mResId[index] = resId;
-	}
-
-	// API
-	public final void setThumbnailScale(int thumbnailScale) {
-		mBitmapCanvas.setThumbnailScale(thumbnailScale);
-	}
 
 	// API
 	public final void startStream(InetSocketAddress serverAddr, Callback callback, boolean bLoop) {
@@ -149,47 +121,6 @@ public class CameraLiveView extends View {
 		mBitmapCanvas.drawBitmap(canvas, bitmap, bMasked, mStates);
 	}
 
-	public void startMask(int frames) {
-		if (mMaskCounter != frames) {
-			mMaskCounter = frames;
-			if (frames > 0) {
-				mMaskedBitmap = getCurrentBitmap();
-				invalidate();
-			}
-		}
-	}
-
-	@Override
-	public boolean dispatchTouchEvent(MotionEvent ev) {
-		// Log.d(TAG, "dispatchTouchEvent");
-		boolean handled = super.dispatchTouchEvent(ev);
-		handled |= mBitmapCanvas.dispatchTouchEvent(ev, handled, mGesture);
-		return handled;
-	}
-
-	private void onDown(MotionEvent e) {
-		mBitmapCanvas.onDown(e);
-		if (mCallback != null) {
-		}
-	}
-
-	private void onSingleTapUp(MotionEvent e) {
-		if (mBitmapCanvas.isDoubleClick(e)) {
-			mBitmapCanvas.scale(e, false);
-		} else {
-			if (mCallback != null) {
-				mCallback.onSingleTapUp();
-			}
-		}
-	}
-
-	private void onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-		mBitmapCanvas.scroll(e1, e2, distanceX, distanceY);
-	}
-
-	private void onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-		mBitmapCanvas.fling(e1, e2, velocityX, velocityY);
-	}
 
 	class MyMjpegStream extends MjpegStream {
 
@@ -214,40 +145,6 @@ public class CameraLiveView extends View {
 
 	}
 
-	private class MyGestureListener implements GestureDetector.OnGestureListener {
-
-		@Override
-		public boolean onDown(MotionEvent e) {
-			CameraLiveView.this.onDown(e);
-			return true;
-		}
-
-		@Override
-		public void onShowPress(MotionEvent e) {
-		}
-
-		@Override
-		public boolean onSingleTapUp(MotionEvent e) {
-			CameraLiveView.this.onSingleTapUp(e);
-			return true;
-		}
-
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-			CameraLiveView.this.onScroll(e1, e2, distanceX, distanceY);
-			return true;
-		}
-
-		@Override
-		public void onLongPress(MotionEvent e) {
-		}
-
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			CameraLiveView.this.onFling(e1, e2, velocityX, velocityY);
-			return true;
-		}
-
-	}
+//
 
 }
