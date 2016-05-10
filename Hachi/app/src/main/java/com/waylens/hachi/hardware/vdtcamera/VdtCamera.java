@@ -6,6 +6,7 @@ import android.util.Xml;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
+import com.waylens.hachi.hardware.vdtcamera.events.NetworkEvent;
 import com.waylens.hachi.snipe.BasicVdbSocket;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -132,7 +133,6 @@ public class VdtCamera {
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
-    private EventBus mEventBus = EventBus.getDefault();
 
     private String mCameraName = new String();
     private String mFirmwareVersion = new String();
@@ -185,9 +185,10 @@ public class VdtCamera {
 
     private OnScanHostListener mOnScanHostListener;
 
-    private OnNetworkListener mOnNetworkListener;
 
     private VdbRequestQueue mVdbRequestQueue;
+
+    private EventBus mEventBus = EventBus.getDefault();
 
 
     public static class ServiceInfo {
@@ -709,10 +710,11 @@ public class VdtCamera {
         mController.cmd_Network_RmvHost(ssid);
     }
 
-    public void addNetworkHost(String ssid, String password, OnNetworkListener listener) {
+    public void addNetworkHost(String ssid, String password) {
         mController.cmd_Network_AddHost(ssid, password);
-        mOnNetworkListener = listener;
     }
+
+
 
     public void connectNetworkHost(String ssid) {
         mController.cmd_Network_ConnectHost(ssid);
@@ -736,13 +738,7 @@ public class VdtCamera {
 
 
     public interface OnScanHostListener {
-        void OnScanHostResult(List<NetworkItemBean> networkList);
-    }
-
-    public interface OnNetworkListener {
-        void onNetworkAdded();
-
-        void onNetworkConnected();
+        void OnScanHostResult(List<NetworkItemBean> addedNetworkList, List<NetworkItemBean> networkList);
     }
 
 
@@ -1791,16 +1787,14 @@ public class VdtCamera {
 
         private void handleNetworkConnectHost(String p1, String p2) {
             Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
-            if (mOnNetworkListener != null) {
-                mOnNetworkListener.onNetworkConnected();
-            }
+
+            mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED));
         }
 
         private void handleOnNetworkAddHost(String p1, String p2) {
             Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
-            if (mOnNetworkListener != null) {
-                mOnNetworkListener.onNetworkAdded();
-            }
+
+            mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_ADDED));
         }
 
         private void handleNetWorkScanHostResult(String p1, String p2) {
@@ -1809,6 +1803,7 @@ public class VdtCamera {
             }
             Logger.t(TAG).json(p1);
             List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
+            List<NetworkItemBean> addedNetworkItemBeanList = new ArrayList<>();
             try {
                 JSONObject object = new JSONObject(p1);
                 JSONArray networks = object.getJSONArray("networks");
@@ -1820,14 +1815,19 @@ public class VdtCamera {
                     networkItem.flags = networkObject.optString("flags");
                     networkItem.frequency = networkObject.optInt("frequency");
                     networkItem.singalLevel = networkObject.optInt("signal_level");
-                    networkItemBeanList.add(networkItem);
+                    networkItem.added = networkObject.optBoolean("added");
+                    if (networkItem.added) {
+                        addedNetworkItemBeanList.add(networkItem);
+                    } else {
+                        networkItemBeanList.add(networkItem);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             if (mOnScanHostListener != null) {
-                mOnScanHostListener.OnScanHostResult(networkItemBeanList);
+                mOnScanHostListener.OnScanHostResult(addedNetworkItemBeanList, networkItemBeanList);
             }
 
         }

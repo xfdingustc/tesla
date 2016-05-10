@@ -11,6 +11,7 @@ public class NetworkItemBean {
     public String flags;
     public int frequency;
     public int singalLevel;
+    public boolean added;
 
     @Override
     public String toString() {

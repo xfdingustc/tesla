@@ -17,7 +17,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
         android:text="@string/choose_your_home_wifi"
-        android:textColor="@color/text_color_title"/>
+        android:textColor="?attr/appTextColorPrimary"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
         android:layout_marginBottom="32dp"
         android:layout_marginTop="32dp"
         android:text="@string/connected_before"
-        android:textColor="@color/text_color_title"/>
+        android:textColor="?attr/appTextColorSecondary"/>
 
 
 
@@ -40,6 +40,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvAddedWifiList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,7 +74,9 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvWifiList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
 
 
 
