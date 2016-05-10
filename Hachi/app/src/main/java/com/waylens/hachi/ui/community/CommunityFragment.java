@@ -51,11 +51,6 @@ public class CommunityFragment extends BaseFragment {
         super.setupToolbar();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        //mViewPager.setAdapter(null);
-    }
 
     private void setupViewPager() {
         mFeedPageAdapter = new FeedPageAdapter(getChildFragmentManager());

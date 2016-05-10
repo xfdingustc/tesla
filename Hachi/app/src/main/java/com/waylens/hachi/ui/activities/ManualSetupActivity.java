@@ -5,13 +5,16 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.fragments.manualsetup.ScanQrCodeFragment;
 
@@ -40,24 +43,26 @@ public class ManualSetupActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+
+        PackageManager pm = getPackageManager();
+        boolean permission = pm.checkPermission("android.permission.CAMERA", "com.waylens.hachi") == PackageManager.PERMISSION_GRANTED;
+
+        Logger.t(TAG).d("Permission: " + permission);
+
+        if (permission) {
             mScanQrCodeFragment = new ScanQrCodeFragment();
             getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, mScanQrCodeFragment).commit();
         } else {
-//            MaterialDialog dialog = new MaterialDialog.Builder(this)
-//                    .title(R.string.grant_camera_permission)
-//                    .positiveText(R.string.grant)
-//                    .negativeText(R.string.skip)
-//                    .callback(new MaterialDialog.ButtonCallback() {
-//                        @Override
-//                        public void onPositive(MaterialDialog dialog) {
-//                            super.onPositive(dialog);
-//                        }
-//                    })
-//                    .build();
-//            dialog.show();
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
         }
+
+
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+//            mScanQrCodeFragment = new ScanQrCodeFragment();
+//            getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, mScanQrCodeFragment).commit();
+//        } else {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+//        }
     }
 
     @Override
@@ -69,7 +74,10 @@ public class ManualSetupActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_manual_setup);
+//        checkIfCameraIsGranted();
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

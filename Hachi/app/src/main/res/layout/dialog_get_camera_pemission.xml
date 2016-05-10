@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="24dp"
+        android:textColor="?attr/appTextColorPrimary"
         android:text="@string/providing_access"/>
 
 </LinearLayout>
