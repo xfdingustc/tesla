@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.stash;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -17,6 +17,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.stash.smartconfig.NetworkUtil;
 import com.waylens.hachi.stash.smartconfig.SmartConfigConstants;
+import com.waylens.hachi.ui.activities.BaseActivity;
 
 
 import butterknife.BindView;
@@ -98,8 +99,8 @@ public class SmartConfigActivity extends BaseActivity {
     @Override
     public void setupToolbar() {
 //        mToolbar.setTitle(R.string.title_smartconfig);
-        mToolbar.setNavigationIcon(R.drawable.navbar_close);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

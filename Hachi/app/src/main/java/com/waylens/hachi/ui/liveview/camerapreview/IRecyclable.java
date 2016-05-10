@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.camerapreview;
+package com.waylens.hachi.ui.liveview.camerapreview;
 
 // objects that can be recycled for reuse (avoid GC)
 // TODO - use ref counter

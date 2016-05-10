@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.camerapreview;
+package com.waylens.hachi.ui.liveview.camerapreview;
 
 public class ByteArrayBuffer implements IRecyclable {
 

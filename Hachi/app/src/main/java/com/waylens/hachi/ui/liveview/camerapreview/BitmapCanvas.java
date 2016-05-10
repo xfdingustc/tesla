@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.camerapreview;
+package com.waylens.hachi.ui.liveview.camerapreview;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

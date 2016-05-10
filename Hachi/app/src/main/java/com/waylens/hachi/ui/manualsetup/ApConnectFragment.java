@@ -30,7 +30,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.views.camerapreview.CameraLiveView;
+import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
