@@ -132,6 +132,13 @@ public class VdtCamera {
     public static final int WIFI_MODE_CLIENT = 1;
     public static final int WIFI_MODE_OFF = 2; //
 
+
+    public static final int BTDEV_STATE_UNKNOWN = -1;
+    public static final int BTDEV_STATE_OFF = 0;
+    public static final int BTDEV_STATE_ON = 1;
+    public static final int BTDEV_STATE_BUSY = 2;
+    public static final int BTDEV_STATE_WAIT = 3;
+
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
@@ -176,13 +183,20 @@ public class VdtCamera {
     public int mNumWifiAP = 0;
 
 
+
+
+    private BtState mBtState = new BtState();
+    private BtDevState mObdState = new BtDevState(BtDevState.BT_DEVICE_TYPE_OBD, "OBD");
+    private BtDevState mRemoteCtrlState = new BtDevState(BtDevState.BT_DEVICE_TYPE_REMOTE_CTR, "HID");
+
+
     private final ServiceInfo mServiceInfo;
     private final VdtCameraController mController;
 
     private InetSocketAddress mPreviewAddress;
 
 
-    private BtState mBtStates = new BtState();
+
     private GpsState mGpsStates = new GpsState();
 
     private OnScanHostListener mOnScanHostListener;
@@ -294,11 +308,6 @@ public class VdtCamera {
     }
 
 
-    public boolean isConnected() {
-        return mIsConnected && mIsVdbConnected;
-    }
-
-
     public int getBatteryState() {
         return mBatteryState;
     }
@@ -321,6 +330,16 @@ public class VdtCamera {
 
     public String getServerName() {
         return mServiceInfo.serverName;
+    }
+
+    public BtDevState getObdState() {
+        mController.cmd_CAM_BT_isEnabled();
+        return mObdState;
+    }
+
+    public BtDevState getRemoteCtrlState() {
+        mController.cmd_CAM_BT_isEnabled();
+        return mRemoteCtrlState;
     }
 
 
@@ -373,11 +392,6 @@ public class VdtCamera {
     public int getRecordState() {
         return mRecordState;
     }
-
-    public BtState getBtStates() {
-        return mBtStates;
-    }
-
 
     public int getVideoResolution() {
         mController.cmd_Rec_get_Resolution();
@@ -537,6 +551,9 @@ public class VdtCamera {
         int timeZone = TimeZone.getDefault().getRawOffset();
 
         mController.cmd_Network_Synctime(timeMillis / 1000, timeZone / (3600 * 1000));
+
+        mController.cmd_CAM_BT_isEnabled();
+//        mController.cmd_CAM_BT_getDEVStatus();
 
     }
 
@@ -745,7 +762,7 @@ public class VdtCamera {
 
     class VdtCameraController implements VdtCameraCmdConsts {
 
-        private final BtState mBtStates = new BtState();
+
         private final GpsState mGpsStates = new GpsState();
 
         private final TcpConnection mConnection;
@@ -761,9 +778,7 @@ public class VdtCamera {
         }
 
 
-        public boolean syncBtState(BtState user) {
-            return mBtStates.syncStates(user);
-        }
+
 
         public boolean syncGpsState(GpsState user) {
             return mGpsStates.syncStates(user);
@@ -1072,15 +1087,15 @@ public class VdtCamera {
             setFirmwareVersion(p2);
         }
 
-        public void cmd_CAM_BT_isSupported() {
-            if (version12() && mBtStates.mBtSupport == BtState.BT_SUPPORT_UNKNOWN) {
-                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_SUPPORTED);
-            }
-        }
-
-        private void ack_CAM_BT_isSupported(String p1) {
-            mBtStates.setIsBTSupported(Integer.parseInt(p1));
-        }
+//        public void cmd_CAM_BT_isSupported() {
+//            if (version12() && mBtStates.mBtSupport == BtState.BT_SUPPORT_UNKNOWN) {
+//                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_SUPPORTED);
+//            }
+//        }
+//
+//        private void ack_CAM_BT_isSupported(String p1) {
+//            mBtStates.setIsBTSupported(Integer.parseInt(p1));
+//        }
 
         public void cmd_CAM_BT_isEnabled() {
             if (version12()) {
@@ -1090,10 +1105,11 @@ public class VdtCamera {
 
         private void ack_CAM_BT_isEnabled(String p1) {
             int enabled = Integer.parseInt(p1);
-            mBtStates.setIsBTEnabled(enabled);
+            Logger.t(TAG).d("bt is enabled " + p1);
+            mBtState.setIsBTEnabled(enabled);
             if (enabled == BtState.BT_STATE_ENABLED) {
-                cmd_CAM_BT_getDEVStatus(BtState.BT_TYPE_HID);
-                cmd_CAM_BT_getDEVStatus(BtState.BT_TYPE_OBD);
+                cmd_CAM_BT_getDEVStatus(BtDevState.BT_DEVICE_TYPE_REMOTE_CTR);
+                cmd_CAM_BT_getDEVStatus(BtDevState.BT_DEVICE_TYPE_OBD);
             }
         }
 
@@ -1111,8 +1127,8 @@ public class VdtCamera {
 
         private void ack_CAM_BT_getDEVStatus(String p1, String p2) {
             int i_p1 = Integer.parseInt(p1);
-            int dev_type = (i_p1 >> 8) & 0xff;
-            int dev_state = i_p1 & 0xff;
+            int devType = (i_p1 >> 8) & 0xff;
+            int devState = i_p1 & 0xff;
             String mac = "";
             String name = "";
             int index = p2.indexOf('#');
@@ -1123,11 +1139,18 @@ public class VdtCamera {
             if (mac.equals("NA")) {
                 //cmd_CAM_BT_getDEVStatus(dev_type);
                 //return;
-                dev_state = BtState.BTDEV_STATE_OFF;
+                devState = BtDevState.BT_DEVICE_STATE_OFF;
                 mac = "";
                 name = "";
             }
-            mBtStates.setDevState(dev_type, dev_state, mac, name);
+
+            Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
+            if (BtDevState.BT_DEVICE_TYPE_OBD == devType) {
+                mObdState.setDevState(devState, mac, name);
+            } else if (BtDevState.BT_DEVICE_TYPE_REMOTE_CTR == devType) {
+                mRemoteCtrlState.setDevState(devState, mac, name);
+            }
+
         }
 
         public void cmd_CAM_BT_getHostNum() {
@@ -1139,7 +1162,7 @@ public class VdtCamera {
             if (numDevs < 0) {
                 numDevs = 0;
             }
-            mBtStates.setNumDevs(numDevs);
+//            mBtStates.setNumDevs(numDevs);
             //onBtDevInfo(BtState.BT_TYPE_HID, "11:D6:00:BB:71:58", "Smart Shutter");
             //onBtDevInfo(BtState.BT_TYPE_OBD, "11:D6:00:BB:71:59", "OBD device");
             //onBtDevInfo(-1, "11:D6:00:BB:71:60", "Smart Shutter 3");
@@ -1154,7 +1177,7 @@ public class VdtCamera {
 
         // p1: name; p2: mac
         private void ack_CAM_BT_getHostInfor(String p1, String p2) {
-            int type = p1.indexOf("OBD") >= 0 ? BtState.BT_TYPE_OBD : BtState.BT_TYPE_HID;
+//            int type = p1.indexOf("OBD") >= 0 ? BtState.BT_TYPE_OBD : BtState.BT_TYPE_HID;
 //            if (mListener != null) {
 //                mListener.onBtDevInfo(type, p2, p1);
 //            }
@@ -1169,7 +1192,7 @@ public class VdtCamera {
         }
 
         private void ack_CAM_BT_doScan() {
-            mBtStates.scanBtDone();
+//            mBtStates.scanBtDone();
 //            if (mListener != null) {
 //                mListener.onScanBtDone();
 //            }
@@ -1184,7 +1207,7 @@ public class VdtCamera {
             int type = Integer.parseInt(p1);
             int result = Integer.parseInt(p2);
             if (result == 0) {
-                if (type == BtState.BT_TYPE_HID || type == BtState.BT_TYPE_OBD) {
+                if (type == BtDevState.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevState.BT_DEVICE_TYPE_OBD) {
                     postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
                 }
             }
@@ -1197,7 +1220,7 @@ public class VdtCamera {
 
         private void ack_CAM_BT_doUnBind(String p1, String p2) {
             int type = Integer.parseInt(p1);
-            if (type == BtState.BT_TYPE_HID || type == BtState.BT_TYPE_OBD) {
+            if (type == BtDevState.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevState.BT_DEVICE_TYPE_OBD) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
             }
         }
@@ -1419,7 +1442,7 @@ public class VdtCamera {
                     this.cmd_Rec_getOverlayState();
 
                     this.cmd_Network_GetWLanMode();
-                    this.cmd_CAM_BT_isSupported();
+//                    this.cmd_CAM_BT_isSupported();
                     this.cmd_CAM_BT_isEnabled();
                     this.cmd_Rec_GetMarkTime();
                     break;
@@ -1552,7 +1575,7 @@ public class VdtCamera {
 
                     mGpsStates.mbSchedule = false;
 
-                    mBtStates.mbSchedule = false;
+
 
                     sis.clear();
 
@@ -1590,10 +1613,7 @@ public class VdtCamera {
 //                    mQueue.scheduleUpdate(Queue.SCHEDULE_GPS_UPDATE);
                     }
 
-                    if (mBtStates.mbSchedule) {
-                        mBtStates.mbSchedule = false;
-//                    mQueue.scheduleUpdate(Queue.SCHEDULE_BT_UPDATE);
-                    }
+
                 }
 
             } catch (XmlPullParserException e) {
@@ -1745,7 +1765,8 @@ public class VdtCamera {
                     ackNotHandled("CMD_FW_DO_UPGRADE", p1, p2);
                     break;
                 case CMD_CAM_BT_IS_SUPPORTED:
-                    ack_CAM_BT_isSupported(p1);
+//                    ack_CAM_BT_isSupported(p1);
+                    ackNotHandled("CMD_CAM_BT_IS_SUPPORTED", p1, p2);
                     break;
                 case CMD_CAM_BT_IS_ENABLED:
                     ack_CAM_BT_isEnabled(p1);

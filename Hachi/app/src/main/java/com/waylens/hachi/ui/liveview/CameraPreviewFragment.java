@@ -34,6 +34,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
+import com.waylens.hachi.hardware.vdtcamera.BtDevState;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
@@ -120,6 +121,14 @@ public class CameraPreviewFragment extends BaseFragment {
     @Nullable
     @BindView(R.id.infoPanel)
     LinearLayout mInfoView;
+
+    @Nullable
+    @BindView(R.id.remote_ctrl)
+    ImageView mRemoteCtrl;
+
+    @Nullable
+    @BindView(R.id.obd)
+    ImageView mObd;
 
     @Nullable
     @BindView(R.id.storageView)
@@ -824,13 +833,23 @@ public class CameraPreviewFragment extends BaseFragment {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_client);
         }
 
-        // update storage info;
-        VdtCamera.StorageInfo storageInfo = mVdtCamera.getStorageInfo();
 
-//        Logger.t(TAG).d("totalSpace: " + storageInfo.totalSpace + " freeSpace: " + storageInfo.freeSpace);
+        BtDevState obdState = mVdtCamera.getObdState();
+        BtDevState remoteCtrState = mVdtCamera.getRemoteCtrlState();
 
-//        mStorageView.setMax(storageInfo.totalSpace);
-//        mStorageView.setProgress(storageInfo.totalSpace - storageInfo.freeSpace);
+        if (obdState.getState() != BtDevState.BT_DEVICE_STATE_ON) {
+            mObd.setAlpha(0.2f);
+        } else {
+            mObd.setAlpha(1.0f);
+        }
+
+        if (remoteCtrState.getState() != BtDevState.BT_DEVICE_STATE_ON) {
+            mRemoteCtrl.setAlpha(0.2f);
+        } else {
+            mRemoteCtrl.setAlpha(1.0f);
+        }
+
+
     }
 
     /**
