@@ -18,6 +18,7 @@ import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
+import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
@@ -35,6 +36,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
@@ -503,11 +505,6 @@ public class VdtCamera {
     }
 
     private void onCameraDisconnected() {
-//        try {
-//            mVdbConnection.disconnect();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
 //        mVdbRequestQueue.stop();
         if (mVdbRequestQueue != null) {
@@ -536,6 +533,10 @@ public class VdtCamera {
         mController.cmd_Network_GetWLanMode();
         mController.cmd_Network_GetHostNum();
         mController.cmd_Rec_GetMarkTime();
+        long timeMillis = System.currentTimeMillis();
+        int timeZone = TimeZone.getDefault().getRawOffset();
+
+        mController.cmd_Network_Synctime(timeMillis / 1000, timeZone / (3600 * 1000));
 
     }
 
