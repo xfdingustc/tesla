@@ -1,33 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/llNoBookmark"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:visibility="gone">
+<ViewSwitcher android:id="@+id/llNoBookmark"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="32dp"
-        android:src="@drawable/bookmark_no_bookmarks"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/no_bookmark"
-        android:textColor="@android:color/white"
-        android:textSize="24sp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/no_footage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="32dp"
+            android:text="@string/no_footage"
+            android:textColor="?attr/appTextColorPrimary"
+            android:textSize="16sp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/no_bookmark_help"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"/>
+        <TextView
+            android:id="@+id/no_footage_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/no_footage"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:text="@string/no_footage_help"
+            android:textColor="?attr/appTextColorSecondary"
+            android:textAlignment="viewStart"
+            android:textSize="16sp"/>
 
-</LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/no_footage"
+            android:layout_margin="16dp"
+            android:src="@drawable/bookmark_no_footages"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/no_bookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="32dp"
+            android:text="@string/no_bookmark"
+            android:textColor="?attr/appTextColorPrimary"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/no_bookmark_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/no_bookmark"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:text="@string/no_bookmark_help"
+            android:textColor="?attr/appTextColorSecondary"
+            android:textAlignment="viewStart"
+            android:textSize="16sp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/no_bookmark"
+            android:layout_margin="16dp"
+            android:src="@drawable/bookmark_no_bookmarks"/>
+
+    </RelativeLayout>
+
+
+
+</ViewSwitcher>
 

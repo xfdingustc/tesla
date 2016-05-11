@@ -30,9 +30,7 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_content, new SignUpFragment())
-                .commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
     }
 
     @Override
@@ -46,7 +44,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        setTitle(R.string.sign_up);
+        setTitle(R.string.login);
         getToolbar().setNavigationIcon(R.drawable.navbar_close);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override

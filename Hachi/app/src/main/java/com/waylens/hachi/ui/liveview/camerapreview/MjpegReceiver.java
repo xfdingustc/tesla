@@ -2,6 +2,8 @@ package com.waylens.hachi.ui.liveview.camerapreview;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
@@ -9,168 +11,155 @@ import java.net.Socket;
 import java.net.SocketException;
 
 abstract public class MjpegReceiver extends Thread {
+    private static final String TAG = MjpegReceiver.class.getSimpleName();
+    public static final int ERROR_CANNOT_CONNECT = 1;
+    public static final int ERROR_CONNECTION = 2;
 
-	public static final int ERROR_CANNOT_CONNECT = 1;
-	public static final int ERROR_CONNECTION = 2;
+    abstract public void onIOError(int error);
 
-	abstract public void onIOError(int error);
+    private boolean mbRunning;
+    private final InetSocketAddress mServerAddress;
+    private final ByteArrayBuffer.Manager mBufferManager;
+    private final SimpleQueue<ByteArrayBuffer> mOutputQ;
+    private Socket mSocket;
+    private MjpegBuffer mBuffer;
 
-	private static final boolean DEBUG = false;
-	private static final String TAG = "MjpegReceiver";
+    public MjpegReceiver(InetSocketAddress serverAddress, SimpleQueue<ByteArrayBuffer> outputQ) {
+        super("MjpegReceiver");
+        mServerAddress = serverAddress;
+        // 3 buffers: receiving; in queue; decoding
+        mBufferManager = new ByteArrayBuffer.Manager(3);
+        mOutputQ = outputQ;
+    }
 
-	protected final boolean mbLoop;
-	private boolean mbRunning;
-	private final InetSocketAddress mServerAddress;
-	private final ByteArrayBuffer.Manager mBufferManager;
-	private final SimpleQueue<ByteArrayBuffer> mOutputQ;
-	private Socket mSocket;
-	private MjpegBuffer mBuffer;
+    // API
+    public void shutdown() {
+        mbRunning = false;
+        interrupt();
+        closeSocket();
 
-	public MjpegReceiver(InetSocketAddress serverAddress, SimpleQueue<ByteArrayBuffer> outputQ, boolean bLoop) {
-		super("MjpegReceiver");
-		mbLoop = bLoop;
-		mServerAddress = serverAddress;
-		// 3 buffers: receiving; in queue; decoding
-		mBufferManager = new ByteArrayBuffer.Manager(3);
-		mOutputQ = outputQ;
-	}
+        Logger.t(TAG).d("shutdown");
+        try {
+            join();
+        } catch (Exception e) {
 
-	// API
-	public void shutdown() {
-		mbRunning = false;
-		interrupt();
-		closeSocket();
+        }
+        Logger.t(TAG).d("join");
+    }
 
-		Log.d(TAG, "shutdown");
-		try {
-			join();
-		} catch (Exception e) {
+    synchronized private void openSocket() throws SocketException {
+        mSocket = new Socket();
+        mSocket.setReceiveBufferSize(64 * 1024);
+    }
 
-		}
-		Log.d(TAG, "join");
-	}
+    synchronized private void closeSocket() {
+        if (mSocket != null) {
+            try {
+                mSocket.close();
+            } catch (Exception ex) {
 
-	synchronized private void openSocket() throws SocketException {
-		mSocket = new Socket();
-		mSocket.setReceiveBufferSize(64 * 1024);
-	}
+            }
+            mSocket = null;
+        }
+    }
 
-	synchronized private void closeSocket() {
-		if (mSocket != null) {
-			try {
-				mSocket.close();
-			} catch (Exception ex) {
+    private void runOnce() {
+        int error = ERROR_CANNOT_CONNECT;
+        try {
+            connect();
+            error = ERROR_CONNECTION;
+            while (checkRunning()) {
+                readOneFrame();
+            }
+        } catch (IOException e) {
+            Logger.t(TAG).d("IOException: " + e.getMessage());
+            onIOError(error);
+        }
+    }
 
-			}
-			mSocket = null;
-		}
-	}
+    @Override
+    public void start() {
+        mbRunning = true;
+        super.start();
+    }
 
-	private void runOnce() {
-		int error = ERROR_CANNOT_CONNECT;
-		try {
-			connect();
-			error = ERROR_CONNECTION;
-			while (checkRunning()) {
-				readOneFrame();
-			}
-		} catch (IOException e) {
-			if (DEBUG) {
-				Log.d(TAG, "IOException: " + e.getMessage());
-			}
-			onIOError(error);
-		}
-	}
+    @Override
+    public void run() {
+        runOnce();
+        closeSocket();
+        checkRunning();
+    }
 
-	@Override
-	public void start() {
-		mbRunning = true;
-		super.start();
-	}
+    private boolean checkRunning() {
+        if (mbRunning && !isInterrupted()) {
+            return true;
+        }
 
-	@Override
-	public void run() {
-		runOnce();
-		closeSocket();
-		checkRunning();
-	}
+        Logger.t(TAG).d("mbRunning: " + mbRunning + ", isInterrupted: " + isInterrupted());
+        return false;
+    }
 
-	private boolean checkRunning() {
-		if (mbRunning && !isInterrupted())
-			return true;
-		if (DEBUG) {
-			Log.d(TAG, "mbRunning: " + mbRunning + ", isInterrupted: " + isInterrupted());
-		}
-		return false;
-	}
+    private void connect() throws IOException {
+        Logger.t(TAG).d("connecting to " + mServerAddress);
 
-	private void connect() throws IOException {
-		if (DEBUG) {
-			Log.i(TAG, "connecting to " + mServerAddress);
-		}
+        while (true) {
+            openSocket();
+            try {
+                mSocket.connect(mServerAddress);
+                break;
+            } catch (IOException e) {
+                Log.d(TAG, "IOException: " + e.getMessage());
 
-		while (true) {
-			openSocket();
-			try {
-				mSocket.connect(mServerAddress);
-				break;
-			} catch (IOException e) {
-				Log.d(TAG, "IOException: " + e.getMessage());
-				if (!mbLoop) {
-					throw e;
-				}
-			}
-			if (!checkRunning()) {
-				return;
-			}
-			closeSocket();
-			if (DEBUG) {
-				Log.d(TAG, "sleep 500");
-			}
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				Log.d(TAG, "sleep interrupted");
-			}
-			if (!checkRunning()) {
-				return;
-			}
-		}
+            }
+            if (!checkRunning()) {
+                return;
+            }
+            closeSocket();
 
-		if (DEBUG) {
-			Log.i(TAG, "connected to " + mServerAddress);
-		}
+            Logger.t(TAG).d(TAG, "sleep 500");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Logger.t(TAG).d("sleep interrupted");
+            }
+            if (!checkRunning()) {
+                return;
+            }
+        }
 
-		PrintWriter out = new PrintWriter(mSocket.getOutputStream());
-		String request = "GET / HTTP/1.1\r\n" + "Host: " + mServerAddress + "\r\n" + "Connection: keep-alive\r\n"
-				+ "Cache-Control: no-cache\r\n" + "\r\n";
-		out.print(request);
-		out.flush();
 
-		mBuffer = new MjpegBuffer(mSocket.getInputStream());
-		mBuffer.refill();
-		mBuffer.skipHttpEnd();
-	}
+        Logger.t(TAG).d("connected to " + mServerAddress);
 
-	private void readOneFrame() throws IOException {
-		// find Content-Length
-		mBuffer.refill();
-		mBuffer.skipContentLength();
+        PrintWriter out = new PrintWriter(mSocket.getOutputStream());
+        String request = "GET / HTTP/1.1\r\n" + "Host: " + mServerAddress + "\r\n" + "Connection: keep-alive\r\n"
+            + "Cache-Control: no-cache\r\n" + "\r\n";
+        out.print(request);
+        out.flush();
 
-		// read frame length
-		int frameLen = mBuffer.scanInteger();
-		if (frameLen <= 0) {
-			throw new IOException("cannot get Content-Length");
-		}
+        mBuffer = new MjpegBuffer(mSocket.getInputStream());
+        mBuffer.refill();
+        mBuffer.skipHttpEnd();
+    }
 
-		// skip http header
-		mBuffer.skipHttpEnd();
+    private void readOneFrame() throws IOException {
+        // find Content-Length
+        mBuffer.refill();
+        mBuffer.skipContentLength();
 
-		// read frame
-		ByteArrayBuffer buffer = mBufferManager.allocateBuffer(frameLen);
-		mBuffer.read(buffer.getBuffer(), 0, frameLen);
+        // read frame length
+        int frameLen = mBuffer.scanInteger();
+        if (frameLen <= 0) {
+            throw new IOException("cannot get Content-Length");
+        }
 
-		// send to decoder
-		mOutputQ.putObject(buffer);
-	}
+        // skip http header
+        mBuffer.skipHttpEnd();
+
+        // read frame
+        ByteArrayBuffer buffer = mBufferManager.allocateBuffer(frameLen);
+        mBuffer.read(buffer.getBuffer(), 0, frameLen);
+
+        // send to decoder
+        mOutputQ.putObject(buffer);
+    }
 }

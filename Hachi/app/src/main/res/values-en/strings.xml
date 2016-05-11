@@ -115,6 +115,8 @@
 	<string name="next">Next</string>
 	<string name="no_bookmark">"You don't have any bookmarks"</string>
 	<string name="no_bookmark_help">"Bookmarks won't be erased automatically on your SD card, you can add bookmarks by :\n\n1.Click on remote control button when continuous recording is on.\n2.Choose one footage to add bookmarks"</string>
+	<string name="no_footage">"You don't have any footages"</string>
+	<string name="no_footage_help">"Footage are automatically erasable videos, the oldest will be replaced by latest content. You can easily make footages by using Waylens camera to record!"</string>
 	<string name="no_signal">NO SIGNAL</string>
 	<string name="no_title">No Title</string>
 	<string name="old_password">Old Password</string>

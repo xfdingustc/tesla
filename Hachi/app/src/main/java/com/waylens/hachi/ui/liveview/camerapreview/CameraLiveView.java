@@ -13,16 +13,11 @@ import android.view.View;
 import java.net.InetSocketAddress;
 
 public class CameraLiveView extends View {
-	public interface Callback {
-		void onSingleTapUp();
-		void onIoErrorAsync(int error);
-	}
-
 	private final int MAX_STATES = 4;
 	private int mMaskCounter;
 
 	private Handler mHandler;
-	private Callback mCallback;
+
 	private MjpegStream mMjpegStream;
 	private Bitmap mMaskedBitmap;
 	private BitmapCanvas mBitmapCanvas;
@@ -33,7 +28,7 @@ public class CameraLiveView extends View {
 	private final Runnable mDrawBitmapAction = new Runnable() {
 		@Override
 		public void run() {
-			// TODO - optimize
+
 			invalidate();
 		}
 	};
@@ -77,24 +72,16 @@ public class CameraLiveView extends View {
 		mBitmapCanvas.setBackgroundColor(color);
 	}
 
-	// API
-
-
-	// API
-	public final void startStream(InetSocketAddress serverAddr, Callback callback, boolean bLoop) {
-		mCallback = callback;
-		setVisibility(View.VISIBLE);
-		mMjpegStream.start(serverAddr, bLoop);
+	public final void startStream(InetSocketAddress serverAddr) {
+		mMjpegStream.start(serverAddr);
 	}
 
-	// API
 	public final void stopStream() {
 		mMjpegStream.stop();
 		if (mMaskedBitmap != null) {
 			mMaskedBitmap.recycle();
 			mMaskedBitmap = null;
 		}
-		setVisibility(View.INVISIBLE);
 	}
 
 	private Bitmap getCurrentBitmap() {
@@ -138,9 +125,7 @@ public class CameraLiveView extends View {
 
 		@Override
 		protected void onIoErrorAsync(MjpegStream stream, final int error) {
-			if (mCallback != null) {
-				mCallback.onIoErrorAsync(error);
-			}
+
 		}
 
 	}

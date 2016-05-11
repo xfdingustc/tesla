@@ -115,6 +115,8 @@
 	<string name="next">下一步</string>
 	<string name="no_bookmark">没有发现标签</string>
 	<string name="no_bookmark_help">SD卡上的标签不会自动被擦除，你可以通过下列方式添加标签：\n１.在连续录制时点击遥控器按钮。\n2.选择一个足迹并手动增加标签</string>
+	<string name="no_footage">没有发现足迹</string>
+	<string name="no_footage_help">足迹是可自动擦除的视频。老的视频会被最新的内容代替。你可以使用Waylens相机轻松录制视频。</string>
 	<string name="no_signal">没有信号</string>
 	<string name="no_title">没有标题</string>
 	<string name="old_password">老密码</string>

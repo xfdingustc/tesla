@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.StackView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -34,8 +35,8 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.ui.authorization.LoginActivity;
 import com.waylens.hachi.ui.adapters.ClipSetGroupAdapter;
+import com.waylens.hachi.ui.authorization.LoginActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -72,7 +73,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     private boolean mIsMultipleMode;
 
-    boolean mIsAddMore;
+    private boolean mIsAddMore;
 
     private int mDeleteClipCount = 0;
 
@@ -89,7 +90,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     SwipeRefreshLayout mRefreshLayout;
 
     @BindView(R.id.llNoBookmark)
-    LinearLayout mLlNoBookmark;
+    ViewSwitcher mLlNoBookmark;
 
     @BindView(R.id.bottomLayout)
     LinearLayout mBottomLayout;
@@ -192,8 +193,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_tagged_clip,
-            savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_tagged_clip, savedInstanceState);
         //setupClipSetGroup();
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -230,13 +230,11 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         mEventBus.unregister(this);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_add_clip, menu);
-    }
-
 
     private void initViews() {
+        if (mClipSetType == Clip.TYPE_MARKED) {
+            mLlNoBookmark.showNext();
+        }
         if (mVdtCamera != null) {
             doGetClips();
             if (mClipSetType != Clip.TYPE_MARKED) {
@@ -247,19 +245,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
-    /**
-     * Don't remove
-     * This callback is used by "Enhance -> Add more clips"
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_to_enhance:
-                toEnhance();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
 
     private void doDeleteSelectedClips() {

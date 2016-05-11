@@ -519,7 +519,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 return;
             }
             mVdtCamera.startPreview();
-            mLiveView.startStream(serverAddr, null, true);
+            mLiveView.startStream(serverAddr);
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
