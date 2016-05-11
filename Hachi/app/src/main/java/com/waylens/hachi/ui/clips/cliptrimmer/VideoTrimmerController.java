@@ -101,7 +101,8 @@ class VideoTrimmerController extends View {
             mProgressBarWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_PROGRESS_BAR_WIDTH_DP);
         }
 
-        mColor = Color.rgb(0xff, 0x57, 0x22);
+        mColor = Color.rgb(0x7a, 0xd5, 0x02);
+//        mColor = Color.rgb(0xff, 0x57, 0x22);
         mPaint = new Paint();
         mPaint.setColor(mColor);
         mRectLeft = new Rect();
@@ -148,15 +149,16 @@ class VideoTrimmerController extends View {
     void drawThumb(Canvas canvas) {
         int height = getHeight();
         canvas.drawRect(mRectLeftEx, mPaintEx);
-        canvas.drawRect(mRectLeft, mPaint);
-        canvas.drawBitmap(mBitmapLeftArrow, null, mRectLeft, mPaint);
 
-        canvas.drawRect(mRectRight, mPaint);
-        canvas.drawBitmap(mBitmapRightArrow, null, mRectRight, mPaint);
+        canvas.drawBitmap(mBitmapLeftArrow, null, mRectLeft, null);
+
+        canvas.drawBitmap(mBitmapRightArrow, null, mRectRight, null);
         canvas.drawRect(mRectRightEx, mPaintEx);
 
         mRectBorder.set(mRectLeft.right, 0, mRectRight.left, mBorderWidth);
+
         canvas.drawRect(mRectBorder, mPaint);
+
         mRectBorder.set(mRectLeft.right, height - mBorderWidth, mRectRight.left, height);
         canvas.drawRect(mRectBorder, mPaint);
 

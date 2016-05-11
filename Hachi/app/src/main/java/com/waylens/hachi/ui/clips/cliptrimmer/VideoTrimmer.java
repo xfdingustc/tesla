@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Point;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -21,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.ViewUtils;
@@ -30,10 +29,9 @@ import com.waylens.hachi.vdb.ClipPos;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Richard on 9/28/15.
- */
+
 public class VideoTrimmer extends FrameLayout {
+    private static final String TAG = VideoTrimmer.class.getSimpleName();
 
     public enum DraggingFlag {UNKNOWN, PROGRESS, LEFT, RIGHT}
 
@@ -117,14 +115,12 @@ public class VideoTrimmer extends FrameLayout {
     }
 
     public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, int defaultHeight) {
-        setBackgroundClip(imageLoader,
-                clip,
-                clip.getStartTimeMs(),
-                clip.getStartTimeMs() + clip.getDurationMs(),
-                defaultHeight);
+        setBackgroundClip(imageLoader, clip, clip.getStartTimeMs(),
+            clip.getStartTimeMs() + clip.getDurationMs(), defaultHeight);
     }
 
-    public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, long startMs, long endMs, int defaultHeight) {
+    public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, long startMs, long endMs,
+                                  int defaultHeight) {
         if (clip == null) {
             return;
         }
@@ -153,7 +149,7 @@ public class VideoTrimmer extends FrameLayout {
             itemCount++;
         }
         if (itemCount < 2) {
-            Log.e("test", "itemCount is less than 2.");
+            Logger.t(TAG).d("itemCount is less than 2.");
             return;
         }
         long period = (endMs - startMs) / itemCount;
@@ -215,7 +211,6 @@ public class VideoTrimmer extends FrameLayout {
     }
 
 
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return !mIsEditing || super.onInterceptTouchEvent(ev);
@@ -226,7 +221,7 @@ public class VideoTrimmer extends FrameLayout {
         if (!mIsEditing) {
             final int action = MotionEventCompat.getActionMasked(e);
             if (action == MotionEvent.ACTION_UP) {
-                Log.e("test", "Click VideoTrimmer");
+                Logger.t(TAG).d("Click VideoTrimmer");
                 performClick();
                 return true;
             }

@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
@@ -40,7 +41,6 @@ import com.waylens.hachi.ui.clips.clipplay2.UrlProvider;
 import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
@@ -116,7 +116,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 break;
             case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
                 if (mDownloadDialog != null) {
-                    int progress = (Integer)event.getExtra();
+                    int progress = (Integer) event.getExtra();
                     mDownloadDialog.getProgressBar().setProgress(progress);
                 }
                 break;
@@ -125,7 +125,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                     mDownloadDialog.dismiss();
                 }
                 MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content("Stream has been download into " + (String)event.getExtra())
+                    .content("Stream has been download into " + (String) event.getExtra())
                     .show();
                 break;
         }
@@ -158,7 +158,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 break;
         }
     }
-
 
 
     public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
@@ -543,8 +542,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
 
 
-
-
                 ClipDownloadInfo.StreamDownloadInfo downloadInfo;
                 if (selectIndex == 0) {
                     downloadInfo = response.sub;
@@ -590,7 +587,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-                Log.e("test", "", error);
+                Logger.t(TAG).d(error.toString());
             }
         }));
     }
