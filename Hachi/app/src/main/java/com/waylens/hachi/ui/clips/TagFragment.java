@@ -12,9 +12,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -90,7 +87,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     SwipeRefreshLayout mRefreshLayout;
 
     @BindView(R.id.llNoBookmark)
-    ViewSwitcher mLlNoBookmark;
+    ViewSwitcher mVsNoBookmark;
 
     @BindView(R.id.bottomLayout)
     LinearLayout mBottomLayout;
@@ -233,7 +230,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     private void initViews() {
         if (mClipSetType == Clip.TYPE_MARKED) {
-            mLlNoBookmark.showNext();
+            mVsNoBookmark.showNext();
         }
         if (mVdtCamera != null) {
             doGetClips();
@@ -348,10 +345,11 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 public void onResponse(ClipSet clipSet) {
                     mRefreshLayout.setRefreshing(false);
                     if (clipSet.getCount() == 0) {
-                        mLlNoBookmark.setVisibility(View.VISIBLE);
+                        mVsNoBookmark.setVisibility(View.VISIBLE);
                         mRvClipGroupList.setVisibility(View.GONE);
+                        mEventBus.post(new MultiSelectEvent(false, null));
                     } else {
-                        mLlNoBookmark.setVisibility(View.GONE);
+                        mVsNoBookmark.setVisibility(View.GONE);
                         mRvClipGroupList.setVisibility(View.VISIBLE);
                         setupClipSetGroup();
                         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);

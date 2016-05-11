@@ -61,11 +61,11 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
 
             mVideoSpinner.setVisibility(View.GONE);
         } else {
+            getToolbar().getMenu().clear();
+            setupToolbar();
 
         }
     }
-
-
 
 
     @Nullable
@@ -136,8 +136,6 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
             }
         });
     }
-
-
 
 
     @Override
