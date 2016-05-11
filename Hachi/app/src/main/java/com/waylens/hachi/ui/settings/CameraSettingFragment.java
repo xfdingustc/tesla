@@ -49,6 +49,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mAudio;
     private Preference mBookmark;
     private Preference mStorage;
+    private Preference mConnectivity;
 
 
     private NumberPicker mBeforeNumber;
@@ -83,6 +84,18 @@ public class CameraSettingFragment extends PreferenceFragment {
         initVideoPreference();
         initAudioPreference();
         initStoragePreference();
+        initConnectivityPreference();
+    }
+
+    private void initConnectivityPreference() {
+        mConnectivity = findPreference("connectivity");
+        mConnectivity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                ConnectivitySettingActivity.launch(getActivity());
+                return true;
+            }
+        });
     }
 
     private void initStoragePreference() {

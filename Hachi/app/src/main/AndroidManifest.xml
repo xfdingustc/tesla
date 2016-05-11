@@ -152,6 +152,13 @@
         <activity
             android:name=".ui.clips.ClipModifyActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.settings.ConnectivitySettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.settings.BluetoothSettingActivity"
+                  android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ui.activities.MusicDownloadActivity"
             android:screenOrientation="portrait"/>

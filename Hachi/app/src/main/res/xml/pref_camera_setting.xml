@@ -47,9 +47,32 @@
             android:layout="@layout/preference_item"
             android:title="@string/storage"/>
 
+        <Preference
+            android:key="connectivity"
+            android:layout="@layout/preference_item"
+            android:title="@string/connectivity"/>
 
+
+        <Preference
+            android:key="power"
+            android:layout="@layout/preference_item"
+            android:title="@string/power"/>
 
     </PreferenceCategory>
 
+
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category_widget">
+
+
+        <Preference
+            android:key="firmware"
+            android:layout="@layout/preference_item"
+            android:title="@string/firmware"/>
+
+
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
