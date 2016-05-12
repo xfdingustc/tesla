@@ -1196,7 +1196,7 @@ public class VdtCamera {
 
             mScannedBtDeviceList.add(device);
             if (mScannedBtDeviceList.size() == mScannedBtDeviceNumber) {
-                mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_SCAN_BIND_FINISHED, mScannedBtDeviceList));
+                mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_SCAN_COMPLETE, mScannedBtDeviceList));
             }
 
         }
@@ -1229,7 +1229,7 @@ public class VdtCamera {
                     postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
                 }
             }
-            mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_SCAN_BIND_FINISHED));
+            mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_BIND_FINISHED));
         }
 
         public void cmd_CAM_BT_doUnBind(int type, String mac) {
@@ -1242,6 +1242,8 @@ public class VdtCamera {
             if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
                 postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
             }
+
+            mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_UNBIND_FINISHED));
         }
 
 

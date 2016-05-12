@@ -5,8 +5,8 @@ package com.waylens.hachi.hardware.vdtcamera.events;
  */
 public class BluetoothEvent {
     public static final int BT_SCAN_COMPLETE = 0;
-    public static final int BT_SCAN_BIND_FINISHED = 1;
-    public static final int BT_SCAN_UNBIND_FINISHED = 2;
+    public static final int BT_DEVICE_BIND_FINISHED = 1;
+    public static final int BT_DEVICE_UNBIND_FINISHED = 2;
 
     private final Object mExtra;
     private final int mWhat;

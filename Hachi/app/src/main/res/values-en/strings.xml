@@ -220,4 +220,5 @@
 	<string name="obd">OBD</string>
 	<string name="remote_ctrl">Remote Control</string>
 	<string name="scan_bluetooth_devices">Scan Bluetooth Devices</string>
+	<string name="unbind_bt_device">Unbind bluetooth device</string>
 </resources>

@@ -220,4 +220,5 @@
 	<string name="obd">OBD</string>
 	<string name="remote_ctrl">遥控器</string>
 	<string name="scan_bluetooth_devices">扫描蓝牙设备</string>
+	<string name="unbind_bt_device">解除蓝牙设备绑定</string>
 </resources>
