@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.BtDevice;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.events.BluetoothScanEvent;
+import com.waylens.hachi.hardware.vdtcamera.events.BluetoothEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,6 +37,12 @@ public class BluetoothSettingActivity extends BaseActivity {
     private static final String TAG = BluetoothSettingActivity.class.getSimpleName();
     private EventBus mEventBus = EventBus.getDefault();
 
+
+    @BindView(R.id.obd_name)
+    TextView mObdName;
+
+    @BindView(R.id.remote_ctrl_name)
+    TextView mRemoteCtrlName;
 
     @BindView(R.id.scan_mask)
     FrameLayout mScanMask;
@@ -74,22 +79,30 @@ public class BluetoothSettingActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onBluetoothEvent(BluetoothScanEvent event) {
-        List<BtDevice> devices = event.getDevices();
+    public void onBluetoothEvent(BluetoothEvent event) {
+        switch (event.getWhat()) {
+            case BluetoothEvent.BT_SCAN_COMPLETE:
+                List<BtDevice> devices = (List<BtDevice>) event.getExtra();
 
-        mObdDeviceList.clear();
-        mRemoteCtrlDeviceList.clear();
-        for (BtDevice device : devices) {
-            Logger.t(TAG).d("Devices: " + device.toString());
-            if (device.getType() == BtDevice.BtDeviceType.BT_DEVICE_TYPE_OBD) {
-                mObdDeviceList.add(device);
-            } else if (device.getType() == BtDevice.BtDeviceType.BT_DEVICE_TYPE_REMOTE_CTR) {
-                mRemoteCtrlDeviceList.add(device);
-            }
+                mObdDeviceList.clear();
+                mRemoteCtrlDeviceList.clear();
+                for (BtDevice device : devices) {
+                    Logger.t(TAG).d("Devices: " + device.toString());
+                    if (device.getType() == BtDevice.BT_DEVICE_TYPE_OBD) {
+                        mObdDeviceList.add(device);
+                    } else if (device.getType() == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR) {
+                        mRemoteCtrlDeviceList.add(device);
+                    }
+                }
+
+                mRemoteCtrlDeviceListAdapter.setDeviceList(mRemoteCtrlDeviceList);
+                mObdDeviceListAdapter.setDeviceList(mObdDeviceList);
+                break;
+            case BluetoothEvent.BT_SCAN_BIND_FINISHED:
+                refreshBtDevices();
+                break;
         }
 
-        mRemoteCtrlDeviceListAdapter.setDeviceList(mRemoteCtrlDeviceList);
-        mObdDeviceListAdapter.setDeviceList(mObdDeviceList);
 
         mScanMask.setVisibility(View.GONE);
     }
@@ -125,7 +138,10 @@ public class BluetoothSettingActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_bt_setting);
+        setupToolbar();
         mBtSwitch.setChecked(mVdtCamera.getBtState() == VdtCamera.BT_STATE_ENABLED ? true : false);
+
+        refreshBtDevices();
 
         mRvObdDeviceList.setLayoutManager(new LinearLayoutManager(this));
         mRvRemoteCtrlList.setLayoutManager(new LinearLayoutManager(this));
@@ -136,6 +152,36 @@ public class BluetoothSettingActivity extends BaseActivity {
         mRvObdDeviceList.setAdapter(mObdDeviceListAdapter);
         mRvRemoteCtrlList.setAdapter(mRemoteCtrlDeviceListAdapter);
 
+    }
+
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        getToolbar().setTitle(R.string.bt);
+    }
+
+    private void refreshBtDevices() {
+        BtDevice obdDevice = mVdtCamera.getObdDevice();
+        Logger.t(TAG).d("obd state: " + obdDevice.getState());
+        if (obdDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
+            Logger.t(TAG).d("obd state: " + obdDevice.getName());
+            mObdName.setText(obdDevice.getName());
+        } else {
+            mObdName.setText(getString(R.string.na));
+        }
+
+        BtDevice remoteCtrlDevice = mVdtCamera.getRemoteCtrlDevice();
+        if (remoteCtrlDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
+            mRemoteCtrlName.setText(remoteCtrlDevice.getName());
+        } else {
+            mRemoteCtrlName.setText(getString(R.string.na));
+        }
     }
 
 
@@ -160,23 +206,38 @@ public class BluetoothSettingActivity extends BaseActivity {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
             BtDevice btDevice = mDeviceList.get(position);
-            BtDeviceListViewHolder viewHolder = (BtDeviceListViewHolder)holder;
+            BtDeviceListViewHolder viewHolder = (BtDeviceListViewHolder) holder;
             viewHolder.deviceMac.setText(btDevice.getMac());
             viewHolder.deviceName.setText(btDevice.getName());
+            viewHolder.rootView.setTag(holder);
+            viewHolder.rootView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BtDevice device = mDeviceList.get(position);
+                    doBindBtDevice(device);
+                    mScanMask.setVisibility(View.VISIBLE);
+                }
+            });
         }
 
         @Override
         public int getItemCount() {
-            int ret =  mDeviceList == null ? 0 : mDeviceList.size();
-            Logger.t(TAG).d("item count: " + ret);
-            return ret;
+            return mDeviceList == null ? 0 : mDeviceList.size();
+
         }
+    }
+
+    private void doBindBtDevice(BtDevice device) {
+        mVdtCamera.doBind(device.getType(), device.getMac());
     }
 
 
     public static class BtDeviceListViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.root_view)
+        View rootView;
 
         @BindView(R.id.device_name)
         TextView deviceName;
@@ -187,6 +248,7 @@ public class BluetoothSettingActivity extends BaseActivity {
         public BtDeviceListViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
         }
     }
 }

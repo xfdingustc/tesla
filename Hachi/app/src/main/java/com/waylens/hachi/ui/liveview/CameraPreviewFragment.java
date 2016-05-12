@@ -834,8 +834,8 @@ public class CameraPreviewFragment extends BaseFragment {
         }
 
 
-        BtDevice obdState = mVdtCamera.getObdState();
-        BtDevice remoteCtrState = mVdtCamera.getRemoteCtrlState();
+        BtDevice obdState = mVdtCamera.getObdDevice();
+        BtDevice remoteCtrState = mVdtCamera.getRemoteCtrlDevice();
 
         if (obdState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mObd.setAlpha(0.2f);

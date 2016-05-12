@@ -16,25 +16,23 @@ public class BtDevice {
 
     public static final int BT_DEVICE_TYPE_OBD = 0;
     public static final int BT_DEVICE_TYPE_REMOTE_CTR = 1;
+    public static final int BT_DEVICE_TYPE_OTHER = -1;
 
-    public enum BtDeviceType {
-        BT_DEVICE_TYPE_OBD,
-        BT_DEVICE_TYPE_REMOTE_CTR
-    }
+
 
     private int mState = BT_DEVICE_STATE_UNKNOWN;
     private String mMac = "";
     private String mName = "";
 
-    private final BtDeviceType mType;
+    private final int mType;
     private final String mTypeName;
 
-    public BtDevice(BtDeviceType type) {
+    public BtDevice(int type) {
         this.mType = type;
         this.mTypeName = "";
     }
 
-    public BtDevice(BtDeviceType type, String typeName) {
+    public BtDevice(int type, String typeName) {
         this.mType = type;
         this.mTypeName = typeName;
     }
@@ -49,7 +47,7 @@ public class BtDevice {
         }
     }
 
-    public BtDeviceType getType() {
+    public int getType() {
         return mType;
     }
 

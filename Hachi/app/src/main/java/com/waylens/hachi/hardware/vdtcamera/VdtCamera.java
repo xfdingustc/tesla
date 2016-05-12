@@ -6,7 +6,7 @@ import android.util.Xml;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
-import com.waylens.hachi.hardware.vdtcamera.events.BluetoothScanEvent;
+import com.waylens.hachi.hardware.vdtcamera.events.BluetoothEvent;
 import com.waylens.hachi.hardware.vdtcamera.events.NetworkEvent;
 import com.waylens.hachi.snipe.BasicVdbSocket;
 import com.waylens.hachi.snipe.SnipeError;
@@ -186,8 +186,8 @@ public class VdtCamera {
 
 
     private int mBtState = BT_STATE_UNKNOWN;
-    private BtDevice mObdDevice = new BtDevice(BtDevice.BtDeviceType.BT_DEVICE_TYPE_OBD);
-    private BtDevice mRemoteCtrlDevice = new BtDevice(BtDevice.BtDeviceType.BT_DEVICE_TYPE_REMOTE_CTR);
+    private BtDevice mObdDevice = new BtDevice(BtDevice.BT_DEVICE_TYPE_OBD);
+    private BtDevice mRemoteCtrlDevice = new BtDevice(BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
 
 
     private final ServiceInfo mServiceInfo;
@@ -338,12 +338,12 @@ public class VdtCamera {
         return mBtState;
     }
 
-    public BtDevice getObdState() {
+    public BtDevice getObdDevice() {
         mController.cmd_CAM_BT_isEnabled();
         return mObdDevice;
     }
 
-    public BtDevice getRemoteCtrlState() {
+    public BtDevice getRemoteCtrlDevice() {
         mController.cmd_CAM_BT_isEnabled();
         return mRemoteCtrlDevice;
     }
@@ -1111,7 +1111,6 @@ public class VdtCamera {
 
         private void ack_CAM_BT_isEnabled(String p1) {
             int enabled = Integer.parseInt(p1);
-            Logger.t(TAG).d("bt is enabled " + p1);
             mBtState = enabled;
             if (enabled == BT_STATE_ENABLED) {
                 cmd_CAM_BT_getDEVStatus(BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
@@ -1182,7 +1181,14 @@ public class VdtCamera {
 
 
         private void ack_CAM_BT_getHostInfor(String name, String mac) {
-            BtDevice.BtDeviceType type = name.indexOf("OBD") >= 0 ? BtDevice.BtDeviceType.BT_DEVICE_TYPE_OBD : BtDevice.BtDeviceType.BT_DEVICE_TYPE_REMOTE_CTR;
+            int type;
+            if (name.indexOf("OBD") >= 0) {
+                type = BtDevice.BT_DEVICE_TYPE_OBD;
+            } else if (name.indexOf("RC") >= 0) {
+                type = BtDevice.BT_DEVICE_TYPE_REMOTE_CTR;
+            } else {
+                type = BtDevice.BT_DEVICE_TYPE_OTHER;
+            }
 
             Logger.t(TAG).d("type: " + type + " mac: " + mac + " name: " + name);
             BtDevice device = new BtDevice(type);
@@ -1190,7 +1196,7 @@ public class VdtCamera {
 
             mScannedBtDeviceList.add(device);
             if (mScannedBtDeviceList.size() == mScannedBtDeviceNumber) {
-                mEventBus.post(new BluetoothScanEvent(mScannedBtDeviceList));
+                mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_SCAN_BIND_FINISHED, mScannedBtDeviceList));
             }
 
         }
@@ -1223,6 +1229,7 @@ public class VdtCamera {
                     postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
                 }
             }
+            mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_SCAN_BIND_FINISHED));
         }
 
         public void cmd_CAM_BT_doUnBind(int type, String mac) {
