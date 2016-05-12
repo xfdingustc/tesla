@@ -216,4 +216,8 @@
 	<string name="firmware">固件</string>
 	<string name="wifi">无线网络</string>
 	<string name="bt">蓝牙</string>
+	<string name="na">未连接</string>
+	<string name="obd">OBD</string>
+	<string name="remote_ctrl">遥控器</string>
+	<string name="scan_bluetooth_devices">扫描蓝牙设备</string>
 </resources>

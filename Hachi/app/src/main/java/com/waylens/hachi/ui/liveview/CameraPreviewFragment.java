@@ -34,7 +34,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
-import com.waylens.hachi.hardware.vdtcamera.BtDevState;
+import com.waylens.hachi.hardware.vdtcamera.BtDevice;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
@@ -834,16 +834,16 @@ public class CameraPreviewFragment extends BaseFragment {
         }
 
 
-        BtDevState obdState = mVdtCamera.getObdState();
-        BtDevState remoteCtrState = mVdtCamera.getRemoteCtrlState();
+        BtDevice obdState = mVdtCamera.getObdState();
+        BtDevice remoteCtrState = mVdtCamera.getRemoteCtrlState();
 
-        if (obdState.getState() != BtDevState.BT_DEVICE_STATE_ON) {
+        if (obdState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mObd.setAlpha(0.2f);
         } else {
             mObd.setAlpha(1.0f);
         }
 
-        if (remoteCtrState.getState() != BtDevState.BT_DEVICE_STATE_ON) {
+        if (remoteCtrState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mRemoteCtrl.setAlpha(0.2f);
         } else {
             mRemoteCtrl.setAlpha(1.0f);

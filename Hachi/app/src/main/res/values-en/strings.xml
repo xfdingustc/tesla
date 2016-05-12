@@ -216,4 +216,8 @@
 	<string name="firmware">Firmware</string>
 	<string name="wifi">WiFi</string>
 	<string name="bt">Bluetooth</string>
+	<string name="na">Not Availabe</string>
+	<string name="obd">OBD</string>
+	<string name="remote_ctrl">Remote Control</string>
+	<string name="scan_bluetooth_devices">Scan Bluetooth Devices</string>
 </resources>

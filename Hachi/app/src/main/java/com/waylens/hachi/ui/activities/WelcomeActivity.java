@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.BtState;
 
 import butterknife.OnClick;
 
