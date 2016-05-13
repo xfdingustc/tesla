@@ -221,4 +221,7 @@
 	<string name="remote_ctrl">遥控器</string>
 	<string name="scan_bluetooth_devices">扫描蓝牙设备</string>
 	<string name="unbind_bt_device">解除蓝牙设备绑定</string>
+	<string name="found_new_firmware">发现新固件</string>
+	<string name="upgrade">升级</string>
+	<string name="download_complete">下载完成</string>
 </resources>

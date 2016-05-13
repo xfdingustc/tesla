@@ -146,6 +146,7 @@ public class VdtCamera {
     private String mCameraName = new String();
     private String mFirmwareVersion = new String();
     private String mBspVersion = new String();
+    private String mHardwareName;
     private int mApiVersion = 0;
     private String mApiVersionStr = new String();
     private String mBuild = new String();
@@ -277,7 +278,8 @@ public class VdtCamera {
         return String.format(Locale.US, "%d.%d.%s", main, sub, mBuild);
     }
 
-    public void setFirmwareVersion(String bspVersion) {
+    public void setFirmwareVersion(String hardwareName, String bspVersion) {
+        mHardwareName = hardwareName.substring(hardwareName.indexOf("@") + 1);
         if (!mBspVersion.equals(bspVersion)) {
 //            Logger.t(TAG).d("setFirmwareVersion: " + version);
             mBspVersion = bspVersion;
@@ -286,6 +288,12 @@ public class VdtCamera {
 
     public String getApiVersion() {
         return mApiVersionStr;
+    }
+
+    // TODO:  For testing
+    public String getHardwareName() {
+//        return mHardwareName;
+        return "HACHI_V0C";
     }
 
 
@@ -779,7 +787,7 @@ public class VdtCamera {
     class VdtCameraController implements VdtCameraCmdConsts {
 
 
-        private final GpsState mGpsStates = new GpsState();
+
 
         private final TcpConnection mConnection;
 
@@ -796,9 +804,6 @@ public class VdtCamera {
 
 
 
-        public boolean syncGpsState(GpsState user) {
-            return mGpsStates.syncStates(user);
-        }
 
 
         public InetSocketAddress getInetSocketAddress() {
@@ -994,7 +999,7 @@ public class VdtCamera {
 
         private void ack_Cam_msg_GPS_infor(String p1, String p2) {
             int state = Integer.parseInt(p1);
-            mGpsStates.setGpsState(state);
+
         }
 
         private void ack_Cam_msg_Mic_infor(String p1, String p2) {
@@ -1102,7 +1107,7 @@ public class VdtCamera {
 
         private void ack_fw_getVersion(String p1, String p2) {
             Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
-            setFirmwareVersion(p2);
+            setFirmwareVersion(p1, p2);
         }
 
 //        public void cmd_CAM_BT_isSupported() {
@@ -1606,10 +1611,6 @@ public class VdtCamera {
 
                 while (!thread.isInterrupted()) {
 
-                    mGpsStates.mbSchedule = false;
-
-
-
                     sis.clear();
 
                     mConnection.readFully(sis.getBuffer(), 0, HEAD_SIZE);
@@ -1640,13 +1641,6 @@ public class VdtCamera {
                         }
                         eventType = xpp.next();
                     }
-
-                    if (mGpsStates.mbSchedule) {
-                        mGpsStates.mbSchedule = false;
-//                    mQueue.scheduleUpdate(Queue.SCHEDULE_GPS_UPDATE);
-                    }
-
-
                 }
 
             } catch (XmlPullParserException e) {
@@ -1825,15 +1819,7 @@ public class VdtCamera {
                 case CMD_CAM_BT_DO_UNBIND:
                     ack_CAM_BT_doUnBind(p1, p2);
                     break;
-                case CMD_CAM_BT_SET_OBD_TYPES:
-                    ackNotHandled("CMD_CAM_BT_SET_OBD_TYPES", p1, p2);
-                    break;
-                case CMD_CAM_WANT_IDLE:
-                    // not used
-                    break;
-                case CMD_CAM_WANT_PREVIEW:
-                    // not used
-                    break;
+
                 default:
                     Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                     break;

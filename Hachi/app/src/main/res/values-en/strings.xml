@@ -221,4 +221,7 @@
 	<string name="remote_ctrl">Remote Control</string>
 	<string name="scan_bluetooth_devices">Scan Bluetooth Devices</string>
 	<string name="unbind_bt_device">Unbind bluetooth device</string>
+	<string name="found_new_firmware">Found new firmware</string>
+	<string name="upgrade">Upgrade</string>
+	<string name="download_complete">Download Complete</string>
 </resources>
