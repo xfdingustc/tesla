@@ -26,7 +26,6 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
-import com.waylens.hachi.ui.community.ReportDialog;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
@@ -37,7 +36,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -74,7 +72,7 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     @BindView(R.id.comment_new)
     EditText mNewCommentView;
 
-    private String mReportReason = getResources().getStringArray(R.array.report_reason)[0];
+    private String mReportReason;
 
 
     @OnClick(R.id.btn_send)
@@ -151,6 +149,7 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     protected void init() {
         super.init();
         Intent intent = getIntent();
+        mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         mMomentID = intent.getLongExtra(ARG_MOMENT_ID, Moment.INVALID_MOMENT_ID);
         mPosition = intent.getIntExtra(ARG_MOMENT_POSITION, 0);
         initViews();
@@ -278,7 +277,7 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     @Override
     public void onCommentLongClicked(final Comment comment) {
         BottomSheet builder = new BottomSheet.Builder(this)
-            .sheet(R.menu.menu_post_comment)
+            .sheet(R.menu.menu_report_comment)
             .darkTheme()
             .listener(new MenuItem.OnMenuItemClickListener() {
                 @Override

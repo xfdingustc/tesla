@@ -3,7 +3,9 @@ package com.waylens.hachi.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -49,6 +53,8 @@ public class UserProfileActivity extends BaseActivity {
     private String mUserID;
     private MomentsRecyclerAdapter mMomentRvAdapter;
     private User mUser;
+
+    private String mReportReason;
 
 
     private ArrayList<Moment> mMomentList;
@@ -106,14 +112,107 @@ public class UserProfileActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-
+        mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
+
         setupUserProfile();
         doGetUserList();
+    }
+
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
+        getToolbar().getMenu().clear();
+        getToolbar().inflateMenu(R.menu.menu_user_profile);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.report:
+                        MaterialDialog dialog = new MaterialDialog.Builder(UserProfileActivity.this)
+                            .title(R.string.report)
+                            .items(R.array.report_reason)
+                            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                                @Override
+                                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                    mReportReason = getResources().getStringArray(R.array.report_reason)[which];
+                                    return true;
+                                }
+                            })
+                            .positiveText(R.string.report)
+                            .negativeText(android.R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    doReportComment();
+                                }
+                            })
+                            .show();
+
+                        break;
+                    case R.id.block:
+                        doBlockUser();
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
+    private void doBlockUser() {
+        String url = Constants.API_BLOCK;
+        JSONObject requestBody = new JSONObject();
+
+        try {
+            requestBody.put("userID", mUserID);
+            Logger.t(TAG).json(requestBody.toString());
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    Snackbar.make(mRvUserMomentList, "Block user", Snackbar.LENGTH_LONG).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+            mRequestQueue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void doReportComment() {
+        String url = Constants.API_REPORT;
+        final JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("userId", mUserID);
+            requestBody.put("reason", mReportReason);
+
+            Logger.t(TAG).json(requestBody.toString());
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    Snackbar.make(mRvUserMomentList, "Report comment successfully", Snackbar.LENGTH_LONG).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+
+            mRequestQueue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void doGetUserList() {
@@ -179,6 +278,7 @@ public class UserProfileActivity extends BaseActivity {
 
         if (isCurrentUser(userInfo)) {
             mBtnFollow.setVisibility(View.GONE);
+            mToolbar.getMenu().clear();
             mToolbar.inflateMenu(R.menu.menu_profile_edit);
             mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -193,6 +293,7 @@ public class UserProfileActivity extends BaseActivity {
             });
         } else {
             mBtnFollow.setVisibility(View.VISIBLE);
+            setupToolbar();
         }
 
 //        mTvFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());

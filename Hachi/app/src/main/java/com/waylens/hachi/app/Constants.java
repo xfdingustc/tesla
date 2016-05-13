@@ -36,6 +36,8 @@ public class Constants {
 
     public static final String API_REPORT = HOST_URL + "api/reports";
 
+    public static final String API_BLOCK = HOST_URL + "api/friends/block";
+
     /**
      * Link Social account with Waylens account
      */
