@@ -118,6 +118,15 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     }
                 }
             });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mOnCommentClickListener != null) {
+                        mOnCommentClickListener.onCommentLongClicked(comment);
+                    }
+                    return true;
+                }
+            });
         } else {
             final CommentLoadMoreVH vh = (CommentLoadMoreVH) holder;
             updateLoadMoreStatus(vh);
@@ -176,6 +185,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     public interface OnCommentClickListener {
         void onCommentClicked(Comment comment);
+        void onCommentLongClicked(Comment comment);
     }
 
     public interface OnLoadMoreListener {

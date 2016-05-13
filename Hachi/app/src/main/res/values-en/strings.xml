@@ -224,4 +224,5 @@
 	<string name="found_new_firmware">Found new firmware</string>
 	<string name="upgrade">Upgrade</string>
 	<string name="download_complete">Download Complete</string>
+	<string name="report">Report</string>
 </resources>

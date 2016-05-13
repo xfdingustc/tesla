@@ -34,6 +34,8 @@ public class Constants {
 
     public static final String API_CAMEAR_FIRMWARE = HOST_URL + "api/camera/firmware";
 
+    public static final String API_REPORT = HOST_URL + "api/reports";
+
     /**
      * Link Social account with Waylens account
      */

@@ -4,6 +4,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+
     <include layout="@layout/toolbar_default"/>
 
     <ViewAnimator
@@ -37,7 +38,6 @@
         android:paddingTop="8dp">
 
 
-
         <EditText
             android:id="@+id/comment_new"
             style="@style/TextAppearance.AppCompat.Body1"
@@ -46,20 +46,21 @@
             android:layout_gravity="center_vertical"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
+            android:background="@color/app_text_color_disabled"
             android:hint="@string/add_one_comment"
             android:inputType="text"
-            android:textCursorDrawable="@drawable/color_cursor"
             android:minHeight="36dp"
-            android:background="@color/app_text_color_disabled"
+            android:textCursorDrawable="@drawable/color_cursor"
             />
 
         <Button
             android:id="@+id/btn_send"
             android:layout_width="wrap_content"
+            style="@style/ActionButton"
             android:layout_height="wrap_content"
             android:text="@string/send"
-            android:textColor="@color/background_color_dark"
             />
     </LinearLayout>
+
 
 </LinearLayout>

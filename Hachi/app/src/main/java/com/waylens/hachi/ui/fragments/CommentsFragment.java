@@ -235,6 +235,11 @@ public class CommentsFragment extends BaseFragment implements CommentsRecyclerAd
     }
 
     @Override
+    public void onCommentLongClicked(Comment comment) {
+
+    }
+
+    @Override
     public void loadMore() {
         loadComments(mCurrentCursor, false);
     }

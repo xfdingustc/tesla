@@ -3,24 +3,30 @@ package com.waylens.hachi.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ViewAnimator;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.CommentsRecyclerAdapter;
+import com.waylens.hachi.ui.community.ReportDialog;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
@@ -31,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -66,6 +73,8 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
 
     @BindView(R.id.comment_new)
     EditText mNewCommentView;
+
+    private String mReportReason = getResources().getStringArray(R.array.report_reason)[0];
 
 
     @OnClick(R.id.btn_send)
@@ -264,6 +273,81 @@ public class CommentsActivity extends BaseActivity implements CommentsRecyclerAd
     public void onCommentClicked(Comment comment) {
         mReplyTo = comment.author;
         mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+    }
+
+    @Override
+    public void onCommentLongClicked(final Comment comment) {
+        BottomSheet builder = new BottomSheet.Builder(this)
+            .sheet(R.menu.menu_post_comment)
+            .darkTheme()
+            .listener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.report:
+
+                            MaterialDialog dialog = new MaterialDialog.Builder(CommentsActivity.this)
+                                .title(R.string.report)
+                                .items(R.array.report_reason)
+                                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                        mReportReason = getResources().getStringArray(R.array.report_reason)[which];
+                                        return true;
+                                    }
+                                })
+                                .positiveText(R.string.report)
+                                .negativeText(android.R.string.cancel)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        doReportComment(comment);
+                                    }
+                                })
+                                .show();
+
+
+                            break;
+                    }
+                    return true;
+                }
+            })
+            .build();
+
+        builder.show();
+
+
+
+
+
+    }
+
+    private void doReportComment(Comment comment) {
+        String url = Constants.API_REPORT;
+        final JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("commentID", comment.commentID);
+            requestBody.put("reason", mReportReason);
+
+            Logger.t(TAG).json(requestBody.toString());
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    Snackbar.make(mCommentListView, "Report comment successfully", Snackbar.LENGTH_LONG).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+
+            mRequestQueue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

@@ -41,7 +41,7 @@
         <item name="android:button">@null</item>
     </style>
 
-    <style name="ActionButton" parent="Base.Widget.AppCompat.Button">
+    <style name="ActionButton" parent="Base.TextAppearance.AppCompat.Button">
         <item name="android:background">@color/style_color_accent</item>
         <item name="android:textColor">?attr/appTextColorPrimary</item>
         <item name="android:textSize">14sp</item>

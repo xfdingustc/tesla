@@ -177,6 +177,14 @@
         <item>@string/rather_not_to_say</item>
     </string-array>
 
+    <string-array name="report_reason" ranslatable="false">
+        <item>Porn</item>
+        <item>Scam</item>
+        <item>Spam</item>
+        <item>Infringement</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="download_resolution" translatable="false">
         <item>@string/sd</item>
         <item>@string/fullhd</item>
