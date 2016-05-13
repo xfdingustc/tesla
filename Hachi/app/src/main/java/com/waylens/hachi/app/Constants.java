@@ -45,6 +45,8 @@ public class Constants {
 
     public static final String API_START_UPLOAD_AVATAR = HOST_URL + "api/users/start_upload_avatar";
 
+    public static final String API_MOMENTS_SUMMARY = HOST_URL + "api/moments/summary";
+
     public static final String API_MOMENTS = HOST_URL + "api/moments";
 
     public static final String API_MOMENTS_MY_FEED = API_MOMENTS + "/myfeed";

@@ -159,6 +159,9 @@
         <activity android:name=".ui.settings.BluetoothSettingActivity"
                   android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.settings.WaylensCloudActivity"
+                  android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ui.activities.MusicDownloadActivity"
             android:screenOrientation="portrait"/>

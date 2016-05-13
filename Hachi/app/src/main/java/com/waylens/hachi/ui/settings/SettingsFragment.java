@@ -44,6 +44,11 @@ public class SettingsFragment extends BaseFragment {
         }
     }
 
+    @OnClick(R.id.waylens_cloud)
+    public void onWaylensCloudClick() {
+        WaylensCloudActivity.launch(getActivity());
+    }
+
     @OnClick(R.id.settings_account)
     public void clickAccount() {
         AccountActivity.launch(getActivity());

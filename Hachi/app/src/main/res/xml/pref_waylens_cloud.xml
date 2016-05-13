@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="storage"
+        android:layout="@layout/preference_category_widget">
+
+
+        <Preference
+            android:key="totalStorage"
+            android:layout="@layout/preference_item"
+            android:title="@string/camera_name"/>
+
+        <Preference
+            android:key="video"
+            android:layout="@layout/preference_item"
+            android:title="@string/video"/>
+
+        <Preference
+            android:key="audio"
+            android:layout="@layout/preference_item"
+            android:title="@string/audio"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>
