@@ -145,7 +145,9 @@ public class VdtCamera {
 
     private String mCameraName = new String();
     private String mFirmwareVersion = new String();
+    private String mBspVersion = new String();
     private int mApiVersion = 0;
+    private String mApiVersionStr = new String();
     private String mBuild = new String();
 
     private int mMicState = STATE_MIC_UNKNOWN;
@@ -195,9 +197,6 @@ public class VdtCamera {
 
     private InetSocketAddress mPreviewAddress;
 
-
-
-    private GpsState mGpsStates = new GpsState();
 
     private OnScanHostListener mOnScanHostListener;
 
@@ -278,13 +277,18 @@ public class VdtCamera {
         return String.format(Locale.US, "%d.%d.%s", main, sub, mBuild);
     }
 
-    public void setFirmwareVersion(String version) {
-        if (!mFirmwareVersion.equals(version)) {
+    public void setFirmwareVersion(String bspVersion) {
+        if (!mBspVersion.equals(bspVersion)) {
 //            Logger.t(TAG).d("setFirmwareVersion: " + version);
-            mFirmwareVersion = version;
-
+            mBspVersion = bspVersion;
         }
     }
+
+    public String getApiVersion() {
+        return mApiVersionStr;
+    }
+
+
 
     public boolean version12() {
         return mApiVersion >= makeVersion(1, 2);
@@ -362,6 +366,11 @@ public class VdtCamera {
     public int getWifiMode() {
         mController.cmd_Network_GetWLanMode();
         return mWifiMode;
+    }
+
+    public String getBspFirmware() {
+        mController.cmd_fw_getVersion();
+        return mBspVersion;
     }
 
     public VdbRequestQueue getRequestQueue() {
@@ -559,7 +568,8 @@ public class VdtCamera {
         mController.cmd_Network_Synctime(timeMillis / 1000, timeZone / (3600 * 1000));
 
         mController.cmd_CAM_BT_isEnabled();
-//        mController.cmd_CAM_BT_getDEVStatus();
+        mController.cmd_CAM_BT_getDEVStatus(BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
+        mController.cmd_CAM_BT_getDEVStatus(BtDevice.BT_DEVICE_TYPE_OBD);
 
     }
 
@@ -858,6 +868,7 @@ public class VdtCamera {
         }
 
         private void ack_Cam_getApiVersion(String p1) {
+            mApiVersionStr = p1;
             int main = 0, sub = 0;
             String build = "";
             int i_main = p1.indexOf('.', 0);
@@ -1090,6 +1101,7 @@ public class VdtCamera {
         }
 
         private void ack_fw_getVersion(String p1, String p2) {
+            Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
             setFirmwareVersion(p2);
         }
 
@@ -1149,7 +1161,7 @@ public class VdtCamera {
                 name = "";
             }
 
-            Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
+//            Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
             if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
                 mObdDevice.setDevState(devState, mac, name);
             } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {

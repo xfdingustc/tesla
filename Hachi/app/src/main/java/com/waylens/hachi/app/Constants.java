@@ -32,6 +32,8 @@ public class Constants {
 
     public static final String API_SHARE_ACCOUNTS = HOST_URL + "api/share/accounts";
 
+    public static final String API_CAMEAR_FIRMWARE = HOST_URL + "api/camera/firmware";
+
     /**
      * Link Social account with Waylens account
      */

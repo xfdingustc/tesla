@@ -1,31 +1,34 @@
 package com.waylens.hachi.ui.settings;
 
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.formatter.LargeValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
@@ -33,7 +36,9 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.vdb.SpaceInfo;
 
-import java.lang.reflect.Array;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +47,7 @@ import java.util.List;
  * Created by Xiaofei on 2016/5/3.
  */
 public class CameraSettingFragment extends PreferenceFragment {
+    private static final String TAG = CameraSettingFragment.class.getSimpleName();
     private VdtCamera mVdtCamera;
 
     private Preference mCameraName;
@@ -50,6 +56,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mBookmark;
     private Preference mStorage;
     private Preference mConnectivity;
+    private Preference mFirmware;
 
 
     private NumberPicker mBeforeNumber;
@@ -70,11 +77,15 @@ public class CameraSettingFragment extends PreferenceFragment {
     private int mChangedVideoResolution;
     private int mChangedVideoFramerate;
 
+    private RequestQueue mRequestQueue;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_camera_setting);
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
+        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue.start();
         initPreference();
     }
 
@@ -85,6 +96,28 @@ public class CameraSettingFragment extends PreferenceFragment {
         initAudioPreference();
         initStoragePreference();
         initConnectivityPreference();
+        initFirmwarePreference();
+    }
+
+    private void initFirmwarePreference() {
+        mFirmware = findPreference("firmware");
+        mFirmware.setSummary(mVdtCamera.getApiVersion());
+
+        String url = Constants.API_CAMEAR_FIRMWARE;
+
+        Request<JSONArray> request = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Logger.t(TAG).json(response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Logger.t(TAG).e(error.toString());
+            }
+        });
+        mRequestQueue.add(request);
+
     }
 
     private void initConnectivityPreference() {
@@ -103,10 +136,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         mStorage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-
                 showStorageInfo();
-
-
                 return true;
             }
         });
@@ -133,7 +163,7 @@ public class CameraSettingFragment extends PreferenceFragment {
             .customView(R.layout.dialog_storage_info, true)
             .show();
 
-        mStorageChart = (PieChart)dialog.getCustomView().findViewById(R.id.pieChart);
+        mStorageChart = (PieChart) dialog.getCustomView().findViewById(R.id.pieChart);
 
 
         List<String> storageName = Arrays.asList("Marked", "Used", "Free");
@@ -187,9 +217,9 @@ public class CameraSettingFragment extends PreferenceFragment {
                     })
                     .show();
 
-                mMicSwitch = (Switch)dialog.getCustomView().findViewById(R.id.swMic);
+                mMicSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swMic);
                 mAudioSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbMicVolume);
-                mSpeakerSwitch = (Switch)dialog.getCustomView().findViewById(R.id.swSpeaker);
+                mSpeakerSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swSpeaker);
 
                 boolean isMicOn = mVdtCamera.isMicOn();
                 mMicSwitch.setChecked(isMicOn);
@@ -273,8 +303,8 @@ public class CameraSettingFragment extends PreferenceFragment {
                         }
                     }).show();
 
-                mBeforeNumber = (NumberPicker)dialog.getCustomView().findViewById(R.id.npBefore);
-                mAfterNumber = (NumberPicker)dialog.getCustomView().findViewById(R.id.npAfter);
+                mBeforeNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npBefore);
+                mAfterNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAfter);
                 mBeforeNumber.setMaxValue(MAX_BOOKMARK_LENGHT);
                 mAfterNumber.setMaxValue(MAX_BOOKMARK_LENGHT);
                 mBeforeNumber.setMinValue(0);
