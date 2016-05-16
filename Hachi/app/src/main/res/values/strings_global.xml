@@ -177,7 +177,7 @@
         <item>@string/rather_not_to_say</item>
     </string-array>
 
-    <string-array name="report_reason" ranslatable="false">
+    <string-array name="report_reason" translatable="false">
         <item>Porn</item>
         <item>Scam</item>
         <item>Spam</item>

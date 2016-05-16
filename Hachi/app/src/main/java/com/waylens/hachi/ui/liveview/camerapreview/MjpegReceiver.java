@@ -116,7 +116,6 @@ abstract public class MjpegReceiver extends Thread {
             }
             closeSocket();
 
-            Logger.t(TAG).d(TAG, "sleep 500");
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {

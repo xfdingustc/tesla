@@ -8,10 +8,10 @@ import com.waylens.hachi.utils.ToStringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/**
- * Created by Richard on 8/21/15.
- */
-public class Moment {
+import java.io.Serializable;
+
+
+public class Moment implements Serializable {
 
     public static final long INVALID_MOMENT_ID = -1;
 

@@ -115,6 +115,8 @@
 	<string name="next">Next</string>
 	<string name="no_bookmark">"You don't have any bookmarks"</string>
 	<string name="no_bookmark_help">"Bookmarks won't be erased automatically on your SD card, you can add bookmarks by :\n\n1.Click on remote control button when continuous recording is on.\n2.Choose one footage to add bookmarks"</string>
+	<string name="no_footage">"You don't have any footages"</string>
+	<string name="no_footage_help">"Footage are automatically erasable videos, the oldest will be replaced by latest content. You can easily make footages by using Waylens camera to record!"</string>
 	<string name="no_signal">NO SIGNAL</string>
 	<string name="no_title">No Title</string>
 	<string name="old_password">Old Password</string>
@@ -208,4 +210,20 @@
 	<string name="fullhd">Full HD</string>
 	<string name="connect_your_home_wifi">Connect Your Home Wi-Fi</string>
 	<string name="storage">Storage</string>
+	<string name="manually_select_wifi_network"><u>Manually Select WiFi Network</u></string>
+	<string name="connectivity">Connectivity</string>
+	<string name="power">Power</string>
+	<string name="firmware">Firmware</string>
+	<string name="wifi">WiFi</string>
+	<string name="bt">Bluetooth</string>
+	<string name="na">Not Availabe</string>
+	<string name="obd">OBD</string>
+	<string name="remote_ctrl">Remote Control</string>
+	<string name="scan_bluetooth_devices">Scan Bluetooth Devices</string>
+	<string name="unbind_bt_device">Unbind bluetooth device</string>
+	<string name="found_new_firmware">Found new firmware</string>
+	<string name="upgrade">Upgrade</string>
+	<string name="download_complete">Download Complete</string>
+	<string name="report">Report</string>
+	<string name="block">Block</string>
 </resources>

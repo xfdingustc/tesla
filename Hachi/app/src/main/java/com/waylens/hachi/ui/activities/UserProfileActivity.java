@@ -27,7 +27,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
+import com.waylens.hachi.ui.community.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.settings.AccountActivity;
@@ -51,7 +51,7 @@ public class UserProfileActivity extends BaseActivity {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private static final String USER_ID = "user_id";
     private String mUserID;
-    private MomentsRecyclerAdapter mMomentRvAdapter;
+    private MomentsListAdapter mMomentRvAdapter;
     private User mUser;
 
     private String mReportReason;
@@ -328,7 +328,7 @@ public class UserProfileActivity extends BaseActivity {
 //                    Logger.t(TAG).json(response.toString());
                     mMomentList = parseMomentArray(response);
 //                    mMomentRvAdapter.setMomentList(mMomentList);
-                    mMomentRvAdapter = new MomentsRecyclerAdapter(UserProfileActivity.this, mMomentList, getFragmentManager(), mRequestQueue, getResources());
+                    mMomentRvAdapter = new MomentsListAdapter(UserProfileActivity.this, mMomentList, getFragmentManager(), mRequestQueue, getResources());
                     mMomentRvAdapter.setUserInfo(mUser);
                     mRvUserMomentList.setAdapter(mMomentRvAdapter);
                 }

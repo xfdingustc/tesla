@@ -18,8 +18,7 @@ public class BgJobManager {
     public static JobManager getManager() {
         return mJobManager;
     }
-
-    public static void init(Context context) {
+     public static void init(Context context) {
         Configuration.Builder builder = new Configuration.Builder(context)
             .customLogger(new CustomLogger() {
 

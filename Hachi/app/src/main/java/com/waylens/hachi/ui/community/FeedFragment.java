@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +21,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.authorization.LoginActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
-import com.waylens.hachi.ui.adapters.MomentViewHolder;
-import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -40,7 +35,6 @@ import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -51,8 +45,8 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter.OnMomentActionListener,
-        SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener {
+public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnMomentActionListener,
+    SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener {
     private static final String TAG = FeedFragment.class.getSimpleName();
     static final int DEFAULT_COUNT = 10;
 
@@ -78,7 +72,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
-    MomentsRecyclerAdapter mAdapter;
+    MomentsListAdapter mAdapter;
 
     RequestQueue mRequestQueue;
 
@@ -108,7 +102,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
             mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_MY_FEED);
         }
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
-        mAdapter = new MomentsRecyclerAdapter(getActivity(), null, getFragmentManager(), mRequestQueue, getResources());
+        mAdapter = new MomentsListAdapter(getActivity(), null, getFragmentManager(), mRequestQueue, getResources());
         mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
     }
@@ -166,18 +160,18 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         }
         Logger.t(TAG).d("Load url: " + url);
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onLoadFeedSuccessful(response, isRefresh);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onLoadFeedFailed(error);
-                    }
-                }).setTag(getRequestTag()));
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    onLoadFeedSuccessful(response, isRefresh);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onLoadFeedFailed(error);
+                }
+            }).setTag(getRequestTag()));
     }
 
     String getRequestTag() {
@@ -195,7 +189,7 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         }
     }
 
-    String getFeedURL(int cursor) {
+    private String getFeedURL(int cursor) {
         String url = null;
         switch (mFeedTag) {
             case FEED_TAG_MY_FEED:
@@ -216,17 +210,17 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         }
         if (url != null) {
             Uri uri = Uri.parse(url).buildUpon()
-                    .appendQueryParameter(Constants.API_MOMENTS_PARAM_CURSOR, String.valueOf(cursor))
-                    .appendQueryParameter(Constants.API_MOMENTS_PARAM_COUNT, String.valueOf(DEFAULT_COUNT))
-                    .appendQueryParameter(Constants.API_MOMENTS_PARAM_ORDER, Constants.PARAM_SORT_UPLOAD_TIME)
-                    .build();
+                .appendQueryParameter(Constants.API_MOMENTS_PARAM_CURSOR, String.valueOf(cursor))
+                .appendQueryParameter(Constants.API_MOMENTS_PARAM_COUNT, String.valueOf(DEFAULT_COUNT))
+                .appendQueryParameter(Constants.API_MOMENTS_PARAM_ORDER, Constants.PARAM_SORT_UPLOAD_TIME)
+                .build();
             return uri.toString();
         } else {
             return null;
         }
     }
 
-    void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
+    private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
         JSONArray jsonMoments = response.optJSONArray("moments");
         if (jsonMoments == null) {
@@ -302,59 +296,6 @@ public class FeedFragment extends BaseFragment implements MomentsRecyclerAdapter
         mAdapter.updateMoment(ssb, position);
     }
 
-    @Override
-    public void onCommentMoment(Moment moment, int position) {
-        if (!SessionManager.getInstance().isLoggedIn()) {
-            LoginActivity.launch(getActivity());
-            return;
-        }
-        //CommentsActivity.launch(getActivity(), moment.id, position);
-//        CommentsFragment fragment = new CommentsFragment();
-//        Bundle args = new Bundle();
-//        args.putLong(CommentsFragment.ARG_MOMENT_ID, moment.id);
-//        args.putInt(CommentsFragment.ARG_MOMENT_POSITION, position);
-//        fragment.setArguments(args);
-//
-//
-//        getFragmentManager().beginTransaction().add(R.id.view_animator, fragment).commit();
-    }
-
-    @Override
-    public void onLikeMoment(Moment moment, boolean isCancel) {
-        if (!SessionManager.getInstance().isLoggedIn()) {
-            LoginActivity.launch(getActivity());
-            return;
-        }
-        likeVideo(moment, isCancel);
-    }
-
-    void likeVideo(final Moment moment, final boolean isCancel) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put("momentID", moment.id);
-            params.put("cancel", isCancel);
-        } catch (JSONException e) {
-            Log.e("test", "", e);
-        }
-
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENT_LIKE,
-                params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        moment.isLiked = !isCancel;
-                        moment.likesCount = response.optInt("count");
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                        showMessage(errorInfo.msgResID);
-                        Log.e("test", "Error: " + error);
-                    }
-                }));
-    }
 
     @Override
     public void onRefresh() {

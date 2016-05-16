@@ -10,10 +10,8 @@ import android.view.ViewGroup;
 import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.adapters.FeedPageAdapter;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.fragments.FeedFragment;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.BindView;
