@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.community;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -22,11 +22,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.birbit.android.jobqueue.JobManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.ui.activities.CommentsActivity;
+import com.waylens.hachi.ui.adapters.MomentViewHolder;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
@@ -261,38 +265,15 @@ public class MomentsRecyclerAdapter extends RecyclerView.Adapter<MomentViewHolde
     }
 
     private void doAddLike(final MomentViewHolder vh, final Moment moment) {
-        String url = Constants.API_LIKES;
-        JSONObject requestBody = new JSONObject();
-        try {
-            boolean isCancel = moment.isLiked;
-            requestBody.put("momentID", moment.id);
-            requestBody.put("cancel", isCancel);
-
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url,
-                requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    moment.isLiked = !moment.isLiked;
-                    doUpdateLikeStateAnimator(vh, moment);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            });
-            mRequestQueue.add(request);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
+        boolean isCancel = moment.isLiked;
+        JobManager jobManager = BgJobManager.getManager();
+        LikeJob job = new LikeJob(moment, isCancel);
+        jobManager.addJobInBackground(job);
+        moment.isLiked = !moment.isLiked;
+        doUpdateLikeStateAnimator(vh, moment);
     }
 
     public interface OnMomentActionListener {
-        void onLikeMoment(Moment moment, boolean isCancel);
-
-        void onCommentMoment(Moment moment, int position);
 
         void onUserAvatarClicked(Moment moment, int position);
 

@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.community;
 
 import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -16,9 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Created by Richard on 8/21/15.
- */
+
 public class MomentViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.user_avatar)

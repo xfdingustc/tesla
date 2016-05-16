@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.community;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -29,6 +29,11 @@ import com.waylens.hachi.ui.adapters.MomentViewHolder;
 import com.waylens.hachi.ui.adapters.MomentsRecyclerAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.ui.fragments.MomentPlayFragment;
+import com.waylens.hachi.ui.fragments.Refreshable;
+import com.waylens.hachi.ui.fragments.YouTubeFragment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
