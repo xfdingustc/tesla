@@ -75,6 +75,10 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         notifyDataSetChanged();
     }
 
+    public Moment getMomemnt(int position) {
+        return mMoments.get(position);
+    }
+
     public void addMoments(ArrayList<Moment> moments) {
         if (mMoments == null) {
             mMoments = new ArrayList<>();

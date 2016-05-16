@@ -7,20 +7,20 @@
         android:text="REPORT"
         android:textColor="@color/style_color_accent" />
 
-    <Button
-        android:id="@+id/btnSharePhoto"
-        style="@style/ContextMenuButton"
-        android:text="SHARE PHOTO" />
+    <!--<Button-->
+        <!--android:id="@+id/btnSharePhoto"-->
+        <!--style="@style/ContextMenuButton"-->
+        <!--android:text="SHARE PHOTO" />-->
 
-    <Button
-        android:id="@+id/btnCopyShareUrl"
-        style="@style/ContextMenuButton"
-        android:text="COPY SHARE URL" />
+    <!--<Button-->
+        <!--android:id="@+id/btnCopyShareUrl"-->
+        <!--style="@style/ContextMenuButton"-->
+        <!--android:text="COPY SHARE URL" />-->
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#eeeeee" />
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="#eeeeee" />-->
 
     <Button
         android:id="@+id/btnCancel"

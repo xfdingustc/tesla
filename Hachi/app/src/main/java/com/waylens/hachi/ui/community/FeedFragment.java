@@ -4,7 +4,9 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -35,6 +39,7 @@ import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -84,6 +89,8 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     private int mFeedTag;
 
+    private String mReportReason;
+
     public static FeedFragment newInstance(int tag) {
 
         Bundle args = new Bundle();
@@ -105,6 +112,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
         mAdapter = new MomentsListAdapter(getActivity(), null, getFragmentManager(), mRequestQueue, getResources());
         mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mReportReason = getResources().getStringArray(R.array.report_reason)[0];
     }
 
     @Override
@@ -159,24 +167,61 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     }
 
     @Override
-    public void onReportClick(int feedItem) {
-
-
+    public void onReportClick(final int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+            .title(R.string.report)
+            .items(R.array.report_reason)
+            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                @Override
+                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                    mReportReason = getResources().getStringArray(R.array.report_reason)[which];
+                    return true;
+                }
+            })
+            .positiveText(R.string.report)
+            .negativeText(android.R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    Moment moment = mAdapter.getMomemnt(feedItem);
+                    doReportMoment(moment);
+                }
+            })
+            .show();
     }
 
-    @Override
-    public void onSharePhotoClick(int feedItem) {
+    private void doReportMoment(Moment moment) {
+        String url = Constants.API_REPORT;
+        final JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("momentID", moment.id);
+            requestBody.put("reason", mReportReason);
 
+            Logger.t(TAG).json(requestBody.toString());
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    Snackbar.make(mRvVideoList, "Report moment successfully", Snackbar.LENGTH_LONG).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+
+            mRequestQueue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void onCopyShareUrlClick(int feedItem) {
-
-    }
 
     @Override
     public void onCancelClick(int feedItem) {
-
+        FeedContextMenuManager.getInstance().hideContextMenu();
     }
 
 

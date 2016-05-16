@@ -15,7 +15,7 @@ import butterknife.OnClick;
  * Created by Xiaofei on 2016/5/16.
  */
 public class FeedContextMenu extends LinearLayout {
-    private static final int CONTEXT_MENU_WIDTH = (int)Utils.dp2Px(240);
+    private static final int CONTEXT_MENU_WIDTH = (int) Utils.dp2Px(240);
 
     private int feedItem = -1;
 
@@ -54,19 +54,19 @@ public class FeedContextMenu extends LinearLayout {
         }
     }
 
-    @OnClick(R.id.btnSharePhoto)
-    public void onSharePhotoClick() {
-        if (onItemClickListener != null) {
-            onItemClickListener.onSharePhotoClick(feedItem);
-        }
-    }
-
-    @OnClick(R.id.btnCopyShareUrl)
-    public void onCopyShareUrlClick() {
-        if (onItemClickListener != null) {
-            onItemClickListener.onCopyShareUrlClick(feedItem);
-        }
-    }
+//    @OnClick(R.id.btnSharePhoto)
+//    public void onSharePhotoClick() {
+//        if (onItemClickListener != null) {
+//            onItemClickListener.onSharePhotoClick(feedItem);
+//        }
+//    }
+//
+//    @OnClick(R.id.btnCopyShareUrl)
+//    public void onCopyShareUrlClick() {
+//        if (onItemClickListener != null) {
+//            onItemClickListener.onCopyShareUrlClick(feedItem);
+//        }
+//    }
 
     @OnClick(R.id.btnCancel)
     public void onCancelClick() {
@@ -80,12 +80,8 @@ public class FeedContextMenu extends LinearLayout {
     }
 
     public interface OnFeedContextMenuItemClickListener {
-        public void onReportClick(int feedItem);
+        void onReportClick(int feedItem);
 
-        public void onSharePhotoClick(int feedItem);
-
-        public void onCopyShareUrlClick(int feedItem);
-
-        public void onCancelClick(int feedItem);
+        void onCancelClick(int feedItem);
     }
 }
