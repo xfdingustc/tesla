@@ -12,7 +12,8 @@
 
 
     <color name="background_color_dark">#2F2F2F</color>
-
+    <color name="btn_context_menu_normal">#ffffff</color>
+    <color name="btn_context_menu_pressed">#40000000</color>
 
     <color name="btn_send_normal">#02c754</color>
     <color name="btn_send_pressed">#006633</color>

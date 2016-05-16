@@ -31,12 +31,12 @@ public final class Utils {
 		return context.getResources().getDisplayMetrics().density;
 	}
 
-	public static float dp2px(int dp) {
+	public static float dp2Px(int dp) {
 		float scale = Hachi.getContext().getResources().getDisplayMetrics().density;
 		return scale * dp;
 	}
 
-	public static final int dp2px(float density, int dp) {
+	public static final int dp2Px(float density, int dp) {
 		return (int)(density * dp + 0.5f);
 	}
 

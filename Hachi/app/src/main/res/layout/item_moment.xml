@@ -68,15 +68,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/moment_desc_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:textColor="#A4A6A6"
-            android:textSize="14sp"
-            tools:text="Like the weather! Hope you were here too!"/>
 
         <com.xfdingustc.far.FixedAspectRatioFrameLayout
             android:id="@+id/video_fragment_container"
@@ -112,87 +103,47 @@
                 tools:text="01:08"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
+        <TextView
+            android:id="@+id/moment_desc_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textColor="#A4A6A6"
+            android:textSize="14sp"
+            tools:text="Like the weather! Hope you were here too!"/>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:baselineAligned="false"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <LinearLayout
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/btnLike"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/social_like"/>
+            <ImageButton
+                android:id="@+id/btnLike"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/btn_default_bg"
+                android:src="@drawable/social_like"/>
 
-                <TextView
-                    android:id="@+id/btn_like_tv"
-                    style="@style/HachiTextViewBody"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
-                    android:text="@string/like"
-                    android:textSize="16sp"/>
-            </LinearLayout>
 
-            <LinearLayout
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btn_comment"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/btn_default_bg"
+                android:src="@drawable/social_comment"/>
 
-                <ImageButton
-                    android:id="@+id/btn_comment"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/social_comment"/>
 
-                <TextView
-                    style="@style/HachiTextViewBody"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:drawablePadding="4dp"
-                    android:text="@string/comment"
-                    android:textSize="16sp"/>
-            </LinearLayout>
+            <ImageButton
+                android:id="@+id/btn_more"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/btn_default_bg"
+                android:src="@drawable/ic_more_grey"/>
 
-            <!--<LinearLayout-->
-            <!--android:id="@+id/btn_share"-->
-            <!--style="?android:attr/buttonBarButtonStyle"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:clickable="true"-->
-            <!--android:gravity="center_horizontal"-->
-            <!--android:orientation="vertical">-->
-
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:drawableLeft="@drawable/social_share"-->
-            <!--android:drawablePadding="8dp"-->
-            <!--android:text="@string/share"-->
-            <!--android:textColor="#76787A"-->
-            <!--android:textSize="16sp"/>-->
-            <!--</LinearLayout>-->
 
         </LinearLayout>
 

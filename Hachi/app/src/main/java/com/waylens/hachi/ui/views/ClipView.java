@@ -2,14 +2,11 @@ package com.waylens.hachi.ui.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.utils.Utils;
 
 /**
@@ -17,7 +14,7 @@ import com.waylens.hachi.utils.Utils;
  */
 public class ClipView extends View {
 
-    public static final int BORDERDISTANCE = (int)Utils.dp2px(16);
+    public static final int BORDERDISTANCE = (int)Utils.dp2Px(16);
 
 
 

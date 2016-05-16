@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -46,7 +46,7 @@ import butterknife.BindView;
  * Created by Xiaofei on 2015/8/4.
  */
 public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnMomentActionListener,
-    SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener {
+    SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener, FeedContextMenu.OnFeedContextMenuItemClickListener {
     private static final String TAG = FeedFragment.class.getSimpleName();
     static final int DEFAULT_COUNT = 10;
 
@@ -67,7 +67,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     ViewAnimator mViewAnimator;
 
     @BindView(R.id.video_list_view)
-    RecyclerViewExt mVideoListView;
+    RecyclerViewExt mRvVideoList;
 
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
@@ -126,13 +126,19 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_feed, savedInstanceState);
-        mVideoListView.setAdapter(mAdapter);
-        mVideoListView.setLayoutManager(mLinearLayoutManager);
+        mRvVideoList.setAdapter(mAdapter);
+        mRvVideoList.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);
-        mVideoListView.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+        mRvVideoList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
             @Override
             public void loadMore() {
                 loadFeed(mCurrentCursor, false);
+            }
+        });
+        mRvVideoList.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
             }
         });
         return view;
@@ -149,6 +155,27 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+    }
+
+    @Override
+    public void onReportClick(int feedItem) {
+
+
+    }
+
+    @Override
+    public void onSharePhotoClick(int feedItem) {
+
+    }
+
+    @Override
+    public void onCopyShareUrlClick(int feedItem) {
+
+    }
+
+    @Override
+    public void onCancelClick(int feedItem) {
 
     }
 
@@ -236,10 +263,10 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             mAdapter.addMoments(momentList);
         }
 
-        mVideoListView.setIsLoadingMore(false);
+        mRvVideoList.setIsLoadingMore(false);
         mCurrentCursor += momentList.size();
         if (!response.optBoolean("hasMore")) {
-            mVideoListView.setEnableLoadMore(false);
+            mRvVideoList.setEnableLoadMore(false);
         }
 
         if (mViewAnimator.getDisplayedChild() == 0) {
@@ -254,7 +281,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     void onLoadFeedFailed(VolleyError error) {
         mRefreshLayout.setRefreshing(false);
-        mVideoListView.setIsLoadingMore(false);
+        mRvVideoList.setIsLoadingMore(false);
         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
         showMessage(errorInfo.msgResID);
     }
@@ -300,7 +327,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     @Override
     public void onRefresh() {
         mCurrentCursor = 0;
-        mVideoListView.setEnableLoadMore(true);
+        mRvVideoList.setEnableLoadMore(true);
         loadFeed(mCurrentCursor, true);
     }
 
@@ -335,6 +362,11 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     }
 
     @Override
+    public void onMoreClick(View v, int position) {
+        FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this);
+    }
+
+    @Override
     public boolean onInterceptBackPressed() {
         if (YouTubeFragment.fullScreenFragment != null) {
             YouTubeFragment.fullScreenFragment.setFullScreen(false);
@@ -350,13 +382,13 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     @Override
     public void onStartDragging() {
-        mVideoListView.setLayoutFrozen(true);
+        mRvVideoList.setLayoutFrozen(true);
         mRefreshLayout.setEnabled(false);
     }
 
     @Override
     public void onStopDragging() {
-        mVideoListView.setLayoutFrozen(false);
+        mRvVideoList.setLayoutFrozen(false);
         mRefreshLayout.setEnabled(true);
     }
 

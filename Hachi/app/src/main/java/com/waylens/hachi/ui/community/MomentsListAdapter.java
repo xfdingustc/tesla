@@ -107,7 +107,12 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         }
 
         holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
-        holder.descView.setText(moment.description);
+        if (moment.description != null && !moment.description.isEmpty()) {
+            holder.descView.setVisibility(View.VISIBLE);
+            holder.descView.setText(moment.description);
+        } else {
+            holder.descView.setVisibility(View.GONE);
+        }
         ImageLoader.getInstance().displayImage(moment.thumbnail, holder.videoCover, ImageUtils.getVideoOptions());
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +146,15 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
             public void onClick(View v) {
                 if (mOnMomentActionListener != null) {
                     mOnMomentActionListener.onRequestVideoPlay(holder, moment, position);
+                }
+            }
+        });
+
+        holder.btnMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnMomentActionListener != null) {
+                    mOnMomentActionListener.onMoreClick(v, position);
                 }
             }
         });
@@ -236,5 +250,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
 
     public interface OnMomentActionListener {
         void onRequestVideoPlay(MomentViewHolder vh, Moment moment, int position);
+
+        void onMoreClick(View v, int position);
     }
 }
