@@ -27,6 +27,7 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.ui.activities.CommentsActivity;
+import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
@@ -112,9 +113,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnMomentActionListener != null) {
-                    mOnMomentActionListener.onUserAvatarClicked(moment, position);
-                }
+                String userId = moment.owner.userID;
+                UserProfileActivity.launch(mContext, userId);
             }
         });
 
@@ -235,9 +235,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     }
 
     public interface OnMomentActionListener {
-
-        void onUserAvatarClicked(Moment moment, int position);
-
         void onRequestVideoPlay(MomentViewHolder vh, Moment moment, int position);
     }
 }

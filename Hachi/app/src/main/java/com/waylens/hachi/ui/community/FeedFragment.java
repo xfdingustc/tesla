@@ -312,12 +312,6 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     }
 
     @Override
-    public void onUserAvatarClicked(Moment moment, int position) {
-        String userId = moment.owner.userID;
-        UserProfileActivity.launch(getActivity(), userId);
-    }
-
-    @Override
     public void onRequestVideoPlay(MomentViewHolder vh, Moment moment, int position) {
         FragmentManager mFragmentManager = getFragmentManager();
         if (mVideoFragment != null) {
