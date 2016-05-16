@@ -47,7 +47,7 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     ImageButton btnLike;
 
     @BindView(R.id.btn_comment)
-    LinearLayout btnComment;
+    ImageButton btnComment;
 
     @BindView(R.id.video_fragment_container)
     public FrameLayout fragmentContainer;
