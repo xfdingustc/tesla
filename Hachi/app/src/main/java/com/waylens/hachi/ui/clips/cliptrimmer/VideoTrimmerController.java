@@ -15,12 +15,13 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.ViewUtils;
 
 
 class VideoTrimmerController extends View {
-
+    private static final String TAG = VideoTrimmerController.class.getSimpleName();
     private static final float MAX_VALUE = 1000.0f;
 
     int mThumbWidth;
@@ -95,7 +96,6 @@ class VideoTrimmerController extends View {
 
     private void init() {
         if (mThumbWidth == 0) {
-            Resources resources = getResources();
             mThumbWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_THUMB_WIDTH_DP);
             mBorderWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_BORDER_WIDTH_DP);
             mProgressBarWidth = ViewUtils.dp2px(VideoTrimmer.DEFAULT_PROGRESS_BAR_WIDTH_DP);
@@ -257,12 +257,15 @@ class VideoTrimmerController extends View {
     private void positionProgress() {
         double normalizedValue = mProgress - mRangeValueLeft;
         mProgressLeft = (int) (normalizedValue / getRange() * mTotalViewLength) + mThumbWidth;
-        if (mProgressLeft < mRectLeft.right) {
-            mProgressLeft = mRectLeft.right;
-        }
+
         if (mProgressLeft > (mRectRight.left - mProgressBarWidth)) {
             mProgressLeft = mRectRight.left - mProgressBarWidth;
         }
+
+        if (mProgressLeft < mRectLeft.right) {
+            mProgressLeft = mRectLeft.right;
+        }
+
         mRectProgress.set(mProgressLeft, 0, mProgressLeft + mProgressBarWidth, getHeight());
     }
 
