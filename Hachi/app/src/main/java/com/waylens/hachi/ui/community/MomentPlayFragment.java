@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.community;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
@@ -105,7 +105,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     boolean mIsFullScreen;
 
-    ViewGroup mRootView;
+    private ViewGroup mActivityRootView;
 
     int mPausePosition;
     int mVideoWidth;
@@ -199,7 +199,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mRootView = (ViewGroup) getActivity().findViewById(android.R.id.content);
+        mActivityRootView = (ViewGroup) getActivity().findViewById(android.R.id.content);
         getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override
             public void onSystemUiVisibilityChange(int visibility) {
@@ -213,7 +213,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_video_play, container, false);
+        View view = inflater.inflate(R.layout.fragment_moment_play, container, false);
         ButterKnife.bind(this, view);
 
         mSurfaceHolder = mSurfaceView.getHolder();
@@ -289,25 +289,19 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
             mRootContainer.removeView(mVideoContainer);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            mRootView.addView(mVideoContainer, params);
+            mActivityRootView.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
 
-
-            mRootContainer.removeView(mInfoPanel);
-            mRootView.addView(mInfoPanel, mPortraitInfoPanelParems);
 
             fullScreenPlayer = this;
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mRootView.removeView(mVideoContainer);
+            mActivityRootView.removeView(mVideoContainer);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mRootContainer.addView(mVideoContainer, params);
             mBtnFullScreen.setImageResource(R.drawable.screen_full);
             fullScreenPlayer = null;
 
-
-            mRootView.removeView(mInfoPanel);
-            mRootContainer.addView(mInfoPanel, mPortraitInfoPanelParems);
         }
         mIsFullScreen = fullScreen;
     }

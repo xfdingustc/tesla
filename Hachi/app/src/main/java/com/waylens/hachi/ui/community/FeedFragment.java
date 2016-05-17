@@ -30,7 +30,6 @@ import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.fragments.MomentPlayFragment;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.fragments.YouTubeFragment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
@@ -246,7 +245,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             }).setTag(getRequestTag()));
     }
 
-    String getRequestTag() {
+    private String getRequestTag() {
         switch (mFeedTag) {
             case FEED_TAG_MY_FEED:
                 return TAG_REQUEST_MY_FEED;
@@ -418,10 +417,10 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             return true;
         }
 
-//        if (VideoPlayFragment.fullScreenPlayer != null) {
-//            VideoPlayFragment.fullScreenPlayer.setFullScreen(false);
-//            return true;
-//        }
+        if (MomentPlayFragment.fullScreenPlayer != null) {
+            MomentPlayFragment.fullScreenPlayer.setFullScreen(false);
+            return true;
+        }
         return false;
     }
 
