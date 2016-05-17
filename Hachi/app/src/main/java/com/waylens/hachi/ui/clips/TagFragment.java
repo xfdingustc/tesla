@@ -473,7 +473,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Clip clip = mClipSet.getClip(position);
-            ImageView iv = new ImageView(getContext());
+            ImageView iv = new ImageView(getActivity());
             int imageSize = (int) Utils.dp2Px(64);
             iv.setLayoutParams(new LinearLayout.LayoutParams(imageSize, imageSize));
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
