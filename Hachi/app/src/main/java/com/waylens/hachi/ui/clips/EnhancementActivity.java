@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,9 +58,6 @@ import java.util.List;
 import butterknife.BindView;
 
 
-/**
- * Created by Richard on 12/18/15.
- */
 public class EnhancementActivity extends BaseActivity implements FragmentNavigator,
     android.support.v7.widget.Toolbar.OnMenuItemClickListener,
     ClipPlayFragment.ClipPlayFragmentContainer {
@@ -257,6 +253,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     private void doBuildPlaylist() {
+        Logger.t(TAG).d("do build play list");
         PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_INDEX);
         playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
             @Override
@@ -293,6 +290,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     private void switchToMode(int launchMode) {
+        Logger.t(TAG).d("switch to mode: " + launchMode);
         if (mLaunchMode == launchMode) {
             return;
         }

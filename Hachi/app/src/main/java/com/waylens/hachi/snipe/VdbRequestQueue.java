@@ -125,6 +125,12 @@ public class VdbRequestQueue {
         }
     }
 
+    public void cancelAll() {
+        for (VdbRequest<?> request : mCurrentVdbRequests.values()) {
+            request.cancel();
+        }
+    }
+
     public void cancelAll(final Object tag) {
         if (tag == null) {
             throw new IllegalArgumentException("Cannot cancelAll with a null tag");

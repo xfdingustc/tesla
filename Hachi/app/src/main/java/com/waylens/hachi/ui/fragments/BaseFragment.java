@@ -71,12 +71,9 @@ public class BaseFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mVdbRequestQueue.cancelAll(new VdbRequestQueue.RequestFilter() {
-            @Override
-            public boolean apply(VdbRequest<?> request) {
-                return true;
-            }
-        });
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.cancelAll();
+        }
     }
 
     @Override
