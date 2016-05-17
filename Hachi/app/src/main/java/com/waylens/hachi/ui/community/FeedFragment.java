@@ -412,6 +412,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     @Override
     public boolean onInterceptBackPressed() {
+        Logger.t(TAG).d("back pressed");
         if (YouTubeFragment.fullScreenFragment != null) {
             YouTubeFragment.fullScreenFragment.setFullScreen(false);
             return true;

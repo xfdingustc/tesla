@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.community;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -12,6 +13,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.BindView;
@@ -20,7 +22,7 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2016/1/22.
  */
-public class CommunityFragment extends BaseFragment {
+public class CommunityFragment extends BaseFragment implements FragmentNavigator{
 
     RequestQueue mRequestQueue;
 
@@ -47,6 +49,12 @@ public class CommunityFragment extends BaseFragment {
     public void setupToolbar() {
         getToolbar().setTitle(R.string.moments);
         super.setupToolbar();
+    }
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        Fragment fragment = mFeedPageAdapter.getItem(mViewPager.getCurrentItem());
+        return ((FragmentNavigator)fragment).onInterceptBackPressed();
     }
 
 

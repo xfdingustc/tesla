@@ -455,7 +455,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         } catch (IOException e) {
             mCurrentState = STATE_ERROR;
             mTargetState = STATE_ERROR;
-            Log.e(TAG, "", e);
+            Logger.t(TAG).e(e.toString());
         }
     }
 
@@ -473,7 +473,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.e("test", "surfaceChanged - w:" + width + "; h:" + height);
+        Logger.t(TAG).d("surfaceChanged - w:" + width + "; h:" + height);
         if (mMediaPlayer == null) {
             return;
         }
@@ -493,6 +493,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
     private void hideSystemUI() {
+        /*
         int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
         int newUiOptions = uiOptions;
         if (Build.VERSION.SDK_INT >= 14) {
@@ -504,7 +505,12 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         /*
         if (Build.VERSION.SDK_INT >= 18) {
             newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }*/
+        }
+
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions); */
+
+        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
         getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
     }
@@ -743,7 +749,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
             return true;
         } catch (JSONException e) {
-            Logger.t(TAG).d("", e);
+            Logger.t(TAG).d(e.toString());
             return false;
         }
     }

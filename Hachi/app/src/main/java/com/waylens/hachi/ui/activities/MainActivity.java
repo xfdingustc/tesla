@@ -351,6 +351,7 @@ public class MainActivity extends BaseActivity {
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
             && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+
             return;
         }
 
