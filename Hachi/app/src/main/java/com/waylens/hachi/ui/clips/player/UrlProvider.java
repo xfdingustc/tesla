@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.clips.clipplay2;
+package com.waylens.hachi.ui.clips.player;
 
 import com.waylens.hachi.vdb.urls.VdbUrl;
 

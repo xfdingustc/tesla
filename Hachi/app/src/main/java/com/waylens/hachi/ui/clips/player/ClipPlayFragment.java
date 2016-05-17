@@ -1,5 +1,7 @@
-package com.waylens.hachi.ui.clips.clipplay2;
+package com.waylens.hachi.ui.clips.player;
 
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -9,13 +11,18 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -53,7 +60,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/2/22.
  */
-public class ClipPlayFragment extends BaseFragment {
+public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Callback {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
 
     private int mClipSetIndex;
@@ -66,13 +73,9 @@ public class ClipPlayFragment extends BaseFragment {
     private String mAudioUrl;
     private VdbUrl mVdbUrl;
 
-    private float mAudioPlayerVolume = 1.0f;
-
-    private Handler mUiHandler;
-
-
     private RawDataLoader mRawDataLoader;
 
+    private boolean mIsFullScreen = false;
 
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
@@ -85,6 +88,12 @@ public class ClipPlayFragment extends BaseFragment {
 
     private BannerAdapter mBannerAdapter;
 
+    private ViewGroup mActivityRootView;
+
+    private FrameLayout mFullscreenFrameLayout;
+
+    private LinearLayout.LayoutParams mControlLayoutParams;
+
 
     private final int STATE_IDLE = 0;
     private final int STATE_PREPAREING = 1;
@@ -96,8 +105,10 @@ public class ClipPlayFragment extends BaseFragment {
     private int mCurrentState = STATE_IDLE;
     private EventBus mEventBus = EventBus.getDefault();
 
-    @BindView(R.id.textureView)
-    TextureView mTextureView;
+    private SurfaceHolder mSurfaceHolder;
+
+    @BindView(R.id.surface_view)
+    SurfaceView mSurfaceView;
 
     @BindView(R.id.vsCover)
     ViewSwitcher mVsCover;
@@ -125,6 +136,19 @@ public class ClipPlayFragment extends BaseFragment {
 
     @BindView(R.id.btnFullscreen)
     ImageButton mBtnFullscreen;
+
+    @BindView(R.id.root_container)
+    FrameLayout mRootContainer;
+
+    @BindView(R.id.fragment_view)
+    LinearLayout mFragmentView;
+
+    @BindView(R.id.control_panel)
+    LinearLayout mControlPanel;
+
+    @BindView(R.id.media_window)
+    FrameLayout mMediaWindow;
+
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
@@ -154,7 +178,28 @@ public class ClipPlayFragment extends BaseFragment {
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullscreenClicked() {
+        mIsFullScreen = !mIsFullScreen;
+        if (mIsFullScreen) {
+            hideSystemUI();
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+            mBtnFullscreen.setImageResource(R.drawable.screen_narrow);
+
+            mFragmentView.removeView(mControlPanel);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.BOTTOM;
+            mMediaWindow.addView(mControlPanel, params);
+
+
+
+        } else {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+            mMediaWindow.removeView(mControlPanel);
+            mFragmentView.addView(mControlPanel);
+
+            mBtnFullscreen.setImageResource(R.drawable.screen_full);
+        }
     }
 
 
@@ -181,6 +226,29 @@ public class ClipPlayFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivityRootView = (ViewGroup)activity.findViewById(android.R.id.content);
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mSurfaceHolder = holder;
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        if (mMediaPlayer == null) {
+            return;
+        }
+        mMediaPlayer.setDisplay(holder);
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        mSurfaceHolder = null;
+    }
 
     private void start() {
         startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
@@ -239,29 +307,7 @@ public class ClipPlayFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //mSurfaceView.getHolder().addCallback(this);
-        mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
 
-                mBtnPlayPause.setEnabled(true);
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                return false;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
-            }
-        });
     }
 
     @Override
@@ -285,6 +331,7 @@ public class ClipPlayFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         stopPlayer();
+        Logger.t(TAG).d("on Stop");
         mTimer.cancel();
         mEventBus.unregister(this);
         mEventBus.unregister(mMultiSegSeekbar);
@@ -298,15 +345,11 @@ public class ClipPlayFragment extends BaseFragment {
     }
 
     private void init() {
-        mUiHandler = new Handler();
-        mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
-        mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
-
-
+        initCamera();
+        setRetainInstance(true);
     }
 
     private void initViews() {
-        mBtnPlayPause.setEnabled(false);
         setupToolbar();
         if (getClipSet() == null) {
             return;
@@ -326,6 +369,9 @@ public class ClipPlayFragment extends BaseFragment {
 
 
         setupMultiSegSeekBar();
+
+        mSurfaceHolder = mSurfaceView.getHolder();
+        mSurfaceView.getHolder().addCallback(this);
 
     }
 
@@ -357,48 +403,14 @@ public class ClipPlayFragment extends BaseFragment {
         });
     }
 
+    private void hideSystemUI() {
+        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-//    private void setupToolbar() {
-//        mToolbar.setNavigationIcon(R.drawable.navbar_close);
-//        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dismiss();
-//            }
-//        });
-//        mToolbar.inflateMenu(R.menu.menu_clip_play_fragment);
-//        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.menu_to_share:
-////                        dismiss();
-//                        //ShareActivity.launch(getActivity(), mClipSetIndex);
-//                        return true;
-//                    case R.id.menu_to_enhance:
-////                        dismiss();
-//                        ClipSet clipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
-//                        ArrayList<Clip> clipList = new ArrayList<>();
-//                        for (Clip clip : clipSet.getClipList()) {
-//                            clipList.add(clip);
-//                        }
-//                        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
-//                        return true;
-//                    case R.id.menu_to_modify:
-////                        dismiss();
-//                        ClipModifyActivity.launch(getActivity(), getClipSet().getClip(0));
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
-//
-//        if (getShowsDialog()) {
-//            mToolbar.setVisibility(View.VISIBLE);
-//        } else {
-//            mToolbar.setVisibility(View.GONE);
-//        }
-//    }
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+    }
+
+
 
     private ClipSet getClipSet() {
         return ClipSetManager.getManager().getClipSet(mClipSetIndex);
@@ -472,9 +484,7 @@ public class ClipPlayFragment extends BaseFragment {
 
 
     protected void openVideo() {
-        if (mTextureView == null) {
-            return;
-        }
+
 
         try {
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -521,7 +531,8 @@ public class ClipPlayFragment extends BaseFragment {
 
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(mVdbUrl.url);
-            mMediaPlayer.setSurface(new Surface(mTextureView.getSurfaceTexture()));
+//            mMediaPlayer.setSurface(new Surface(mTextureView.getSurfaceTexture()));
+            mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
 
         } catch (IOException e) {
@@ -546,7 +557,7 @@ public class ClipPlayFragment extends BaseFragment {
             });
             mAudioPlayer.prepareAsync();
         } catch (IOException e) {
-            Log.e("test", "", e);
+            Logger.e("", e);
         }
 
     }
@@ -659,12 +670,6 @@ public class ClipPlayFragment extends BaseFragment {
         }
     }
 
-
-    public void setAudioPlayerVolume(float volume) {
-        if (mAudioPlayer != null) {
-            mAudioPlayer.setVolume(volume, volume);
-        }
-    }
 
 
     public void setUrlProvider(UrlProvider urlProvider) {

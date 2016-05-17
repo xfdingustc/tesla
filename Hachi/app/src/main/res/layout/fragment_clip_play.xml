@@ -1,114 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?attr/defaultBgColor"
-              android:orientation="vertical">
+<FrameLayout android:id="@+id/root_container"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="?attr/defaultBgColor">
 
-
-
-
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+    <LinearLayout
+        android:id="@+id/fragment_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
 
-        <TextureView
-            android:id="@+id/textureView"
+        <com.xfdingustc.far.FixedAspectRatioFrameLayout
+            android:id="@+id/media_window"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0dp"
+            app:farfl_xratio="16dp"
+            app:farfl_yratio="9dp">
 
-        <ViewSwitcher
-            android:id="@+id/vsCover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/clipCover"
+
+            <SurfaceView
+                android:id="@+id/surface_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/coverBanner"
+            <ViewSwitcher
+                android:id="@+id/vsCover"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></android.support.v4.view.ViewPager>
-        </ViewSwitcher>
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/clipCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/coverBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+            </ViewSwitcher>
 
 
-
-
-        <ProgressBar
-            android:id="@+id/progressLoading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
-
-        <com.waylens.hachi.ui.views.GaugeView
-            android:id="@+id/gaugeView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"/>
-
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
-
-    <com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar
-        android:id="@+id/multiSegIndicator"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:barHeight="8dp"
-        app:circleColor="?attr/appTextColorPrimary"/>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btnPlayPause"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:enabled="false"
-            android:src="@drawable/playbar_play"/>
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/playProgress"
+            <ProgressBar
+                android:id="@+id/progressLoading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="0:00/0:00"
-                android:textColor="?attr/appTextColorPrimary"/>
+                android:visibility="gone"/>
 
-        </FrameLayout>
-
-        <ImageButton
-            android:id="@+id/btnShowOverlay"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/btn_gauge_overlay"/>
+            <com.waylens.hachi.ui.views.GaugeView
+                android:id="@+id/gaugeView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"/>
 
 
-        <ImageButton
-            android:id="@+id/btnFullscreen"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/screen_full"/>
+
+
+        </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+        <LinearLayout
+            android:id="@+id/control_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar
+                android:id="@+id/multiSegIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:barHeight="8dp"
+                app:circleColor="?attr/appTextColorPrimary"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnPlayPause"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_default_bg"
+                    android:src="@drawable/playbar_play"/>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/playProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="0:00/0:00"
+                        android:textColor="?attr/appTextColorPrimary"/>
+
+                </FrameLayout>
+
+                <ImageButton
+                    android:id="@+id/btnShowOverlay"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_default_bg"
+                    android:src="@drawable/btn_gauge_overlay"/>
+
+
+                <ImageButton
+                    android:id="@+id/btnFullscreen"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_default_bg"
+                    android:src="@drawable/screen_full"/>
+
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
-
-</LinearLayout>
+</FrameLayout>

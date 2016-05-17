@@ -149,6 +149,9 @@ public class MultiSegSeekbar extends View {
     }
 
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
+        if (isInEditMode()) {
+            return;
+        }
         Resources resources = getResources();
         if (attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MultiSegSeekbar, defStyle, 0);

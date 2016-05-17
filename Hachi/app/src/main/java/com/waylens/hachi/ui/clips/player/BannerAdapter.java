@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.clips.clipplay2;
+package com.waylens.hachi.ui.clips.player;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
