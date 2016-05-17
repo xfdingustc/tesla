@@ -109,7 +109,7 @@ public class FootageActivity extends BaseActivity {
     public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
         ClipSetPos clipSetPos = event.getClipSetPos();
         Clip clip = getClipSet().getClip(clipSetPos.getClipIndex());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss, a");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy, MMM dd, hh:mm:ss, a");
 
         mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getDate(), clipSetPos.getClipTimeMs())));
     }
