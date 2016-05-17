@@ -401,8 +401,10 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             vh.videoFragment = videoPlayFragment;
             mVideoFragment = videoPlayFragment;
             mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
+            videoPlayFragment.
         }
         //vh.videoControl.setVisibility(View.GONE);
+
     }
 
     @Override

@@ -121,7 +121,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     RequestQueue mRequestQueue;
     JSONArray mRawDataUrls;
 
-    private FrameLayout.LayoutParams mPortraitInfoPanelParems;
 
     private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
 
@@ -285,7 +284,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
             || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            mPortraitInfoPanelParems = (FrameLayout.LayoutParams) mInfoPanel.getLayoutParams();
+
 
             mRootContainer.removeView(mVideoContainer);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -338,7 +337,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         start();
         mCurrentState = STATE_PLAYING;
         mTargetState = STATE_PLAYING;
-        mBtnPlay.setImageResource(R.drawable.btn_music_pause);
+        mBtnPlay.setImageResource(R.drawable.btn_film_pause);
         fadeOutControllers(DEFAULT_TIMEOUT);
     }
 
@@ -347,7 +346,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         mPausePosition = mMediaPlayer.getCurrentPosition();
         mCurrentState = STATE_PAUSED;
         mTargetState = STATE_PAUSED;
-        mBtnPlay.setImageResource(R.drawable.music_list_play);
+        mBtnPlay.setImageResource(R.drawable.btn_film_play);
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
@@ -401,7 +400,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                 public void onCompletion(MediaPlayer mp) {
                     mCurrentState = STATE_PLAYBACK_COMPLETED;
                     mTargetState = STATE_PLAYBACK_COMPLETED;
-                    mBtnPlay.setImageResource(R.drawable.music_list_play);
+                    mBtnPlay.setImageResource(R.drawable.btn_film_pause);
                     showController(0);
                     int duration = mp.getDuration();
                     setProgress(duration, duration);
