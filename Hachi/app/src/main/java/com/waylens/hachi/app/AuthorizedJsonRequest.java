@@ -5,9 +5,12 @@ import android.text.TextUtils;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.cocosw.bottomsheet.BottomSheet;
 import com.waylens.hachi.session.SessionManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -75,6 +78,79 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
             mHashMap.put("X-Auth-Token", mToken);
         }
         return mHashMap;
+    }
+
+    public static class Builder {
+        private int mMethod;
+        private String mUrl;
+        private Response.Listener<JSONObject> mListener;
+        private Response.ErrorListener mErrorListener;
+        private JSONObject mPostBody;
+
+        public Builder() {
+            mMethod = Method.GET;
+            mListener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            };
+            mErrorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            };
+            mPostBody = new JSONObject();
+        }
+
+        public Builder method(int method) {
+            mMethod = method;
+            return this;
+        }
+
+        public Builder url(String url) {
+            mUrl = url;
+            return this;
+        }
+
+        public Builder postBody(String key, String value) {
+            mMethod = Method.POST;
+            try {
+                mPostBody.put(key, value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return this;
+        }
+
+        public Builder postBody(String key, long value) {
+            mMethod = Method.POST;
+            try {
+                mPostBody.put(key, value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return this;
+        }
+
+        public Builder listner(Response.Listener<JSONObject> listener) {
+            mListener = listener;
+            return this;
+        }
+
+        public Builder errorListener(Response.ErrorListener errorListener) {
+            mErrorListener = errorListener;
+            return this;
+        }
+
+        public AuthorizedJsonRequest build() {
+            if (mMethod == Method.GET) {
+                return new AuthorizedJsonRequest(mMethod, mUrl, mListener, mErrorListener);
+            } else {
+                return new AuthorizedJsonRequest(mMethod, mUrl, mPostBody, mListener, mErrorListener);
+            }
+        }
     }
 
 

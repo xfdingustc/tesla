@@ -226,4 +226,6 @@
 	<string name="download_complete">Download Complete</string>
 	<string name="report">Report</string>
 	<string name="block">Block</string>
+	<string name="country">Country</string>
+	<string name="city">City</string>
 </resources>

@@ -27,7 +27,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/DarkTheme">
-        
+
         <!--<uses-library android:name="com.transee.vdb" android:required="true"/>-->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -122,11 +122,13 @@
             android:name=".ui.activities.SmartRemixActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.CameraSettingActivity"
+        <activity
+            android:name=".ui.settings.CameraSettingActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.GeneralSettingActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.settings.GeneralSettingActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.liveview.LiveViewSettingActivity"
@@ -153,14 +155,24 @@
             android:name=".ui.clips.ClipModifyActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.ConnectivitySettingActivity"
+        <activity
+            android:name=".ui.settings.CountryActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.BluetoothSettingActivity"
+        <activity android:name=".ui.settings.CityActivity"
                   android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.WaylensCloudActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.settings.ConnectivitySettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.settings.BluetoothSettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.settings.WaylensCloudActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.activities.MusicDownloadActivity"

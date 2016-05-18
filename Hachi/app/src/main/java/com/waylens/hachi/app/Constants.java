@@ -38,6 +38,10 @@ public class Constants {
 
     public static final String API_BLOCK = HOST_URL + "api/friends/block";
 
+    public static final String API_COUNTRY = HOST_URL + "api/region/countries";
+
+    public static final String API_CITY = HOST_URL + "api/region/cities";
+
     /**
      * Link Social account with Waylens account
      */

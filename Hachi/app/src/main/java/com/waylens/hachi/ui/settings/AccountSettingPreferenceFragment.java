@@ -226,6 +226,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             }
         });
 
+        mRegion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                CountryActivity.launch(getActivity());
+                return true;
+            }
+        });
+
         mLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
