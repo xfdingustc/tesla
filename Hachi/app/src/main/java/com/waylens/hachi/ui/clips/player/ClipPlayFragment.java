@@ -88,12 +88,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private BannerAdapter mBannerAdapter;
 
-    private ViewGroup mActivityRootView;
-
-    private FrameLayout mFullscreenFrameLayout;
-
-    private LinearLayout.LayoutParams mControlLayoutParams;
-
 
     private final int STATE_IDLE = 0;
     private final int STATE_PREPAREING = 1;
@@ -229,7 +223,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivityRootView = (ViewGroup)activity.findViewById(android.R.id.content);
     }
 
     @Override

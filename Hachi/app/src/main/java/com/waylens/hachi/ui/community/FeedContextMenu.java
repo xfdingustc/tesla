@@ -30,12 +30,13 @@ public class FeedContextMenu extends LinearLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.view_context_menu, this, true);
         setBackgroundResource(R.drawable.bg_container_shadow);
         setOrientation(VERTICAL);
-        setLayoutParams(new LayoutParams(CONTEXT_MENU_WIDTH, ViewGroup.LayoutParams.WRAP_CONTENT));
+        setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     public void bindToItem(int feedItem) {
         this.feedItem = feedItem;
     }
+
 
     @Override
     protected void onAttachedToWindow() {

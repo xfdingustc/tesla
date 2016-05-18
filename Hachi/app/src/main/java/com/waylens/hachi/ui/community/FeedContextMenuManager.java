@@ -11,9 +11,7 @@ import android.view.animation.OvershootInterpolator;
 
 import com.waylens.hachi.utils.Utils;
 
-/**
- * Created by Xiaofei on 2016/5/16.
- */
+
 public class FeedContextMenuManager extends RecyclerView.OnScrollListener implements View.OnAttachStateChangeListener {
 
     private static FeedContextMenuManager instance;
@@ -67,13 +65,18 @@ public class FeedContextMenuManager extends RecyclerView.OnScrollListener implem
     private void setupContextMenuInitialPosition(View openingView) {
         final int[] openingViewLocation = new int[2];
         openingView.getLocationOnScreen(openingViewLocation);
-        int additionalBottomMargin = (int)Utils.dp2Px(16);
-        contextMenuView.setTranslationX(openingViewLocation[0] - contextMenuView.getWidth() / 3);
-        contextMenuView.setTranslationY(openingViewLocation[1] - contextMenuView.getHeight() - additionalBottomMargin);
+        int additionalBottomMargin = (int) Utils.dp2Px(16);
+        int menuLeft = openingViewLocation[0] - contextMenuView.getWidth();
+        int menuTop = openingViewLocation[1] - contextMenuView.getHeight();
+        if (menuTop < (int)Utils.dp2Px(16)) {
+            menuTop  = openingViewLocation[1] + openingView.getHeight();
+        }
+        contextMenuView.setTranslationX(menuLeft);
+        contextMenuView.setTranslationY(menuTop);
     }
 
     private void performShowAnimation() {
-        contextMenuView.setPivotX(contextMenuView.getWidth() / 2);
+        contextMenuView.setPivotX(contextMenuView.getWidth());
         contextMenuView.setPivotY(contextMenuView.getHeight());
         contextMenuView.setScaleX(0.1f);
         contextMenuView.setScaleY(0.1f);
@@ -97,7 +100,7 @@ public class FeedContextMenuManager extends RecyclerView.OnScrollListener implem
     }
 
     private void performDismissAnimation() {
-        contextMenuView.setPivotX(contextMenuView.getWidth() / 2);
+        contextMenuView.setPivotX(contextMenuView.getWidth());
         contextMenuView.setPivotY(contextMenuView.getHeight());
         contextMenuView.animate()
             .scaleX(0.1f).scaleY(0.1f)

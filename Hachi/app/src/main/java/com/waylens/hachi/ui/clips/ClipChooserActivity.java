@@ -35,9 +35,7 @@ public class ClipChooserActivity extends BaseActivity {
         ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
         Fragment fragment = TagFragment.newInstance(Clip.TYPE_MARKED, true, true);
 
-        getFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_content, fragment).commit();
+        getFragmentManager().beginTransaction().add(R.id.fragment_content, fragment).commit();
     }
 
     @Override
