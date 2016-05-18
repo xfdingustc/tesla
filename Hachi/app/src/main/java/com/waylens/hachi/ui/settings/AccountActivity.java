@@ -86,22 +86,20 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void fetchUserProfile() {
-        String url = Constants.API_USER_ME;
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                mSessionManager.saveUserProfile(response);
-                showUserProfile(response);
-                AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
-                getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commit();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_USER_ME)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    mSessionManager.saveUserProfile(response);
+                    showUserProfile(response);
+                    AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
+                    getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commit();
+                }
+            })
+            .build();
 
-            }
-        });
         mRequestQueue.add(request);
     }
 

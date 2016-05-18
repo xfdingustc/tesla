@@ -1,6 +1,7 @@
 package com.waylens.hachi.session;
 
 import android.content.Context;
+import android.preference.PreferenceFragment;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
@@ -35,6 +36,7 @@ public class SessionManager {
     private String mBirthday;
 
     private int mGender;
+    private String mRegion;
 
     private SessionManager() {
         resetSessionInfo();
@@ -84,6 +86,10 @@ public class SessionManager {
 
     public String getBirthday() {
         return mBirthday;
+    }
+
+    public String getRegion() {
+        return PreferenceUtils.getString(PreferenceUtils.REGION, null);
     }
 
     public int getGender() {
@@ -182,6 +188,7 @@ public class SessionManager {
             mEmail = response.getString("email");
             mAvatarUrl = response.getString("avatarUrl");
             mBirthday = response.getString("birthday");
+            mRegion = response.getString("region");
             String gender = response.getString("gender");
             if (gender.equals("MALE")) {
                 mGender = 0;
@@ -198,6 +205,7 @@ public class SessionManager {
             PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
             PreferenceUtils.putString(PreferenceUtils.BIRTHDAY, mBirthday);
             PreferenceUtils.putInt(PreferenceUtils.GENDER, mGender);
+            PreferenceUtils.putString(PreferenceUtils.REGION, mRegion);
         } catch (JSONException e) {
             e.printStackTrace();
         }

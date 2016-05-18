@@ -104,11 +104,6 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
             mPostBody = new JSONObject();
         }
 
-        public Builder method(int method) {
-            mMethod = method;
-            return this;
-        }
-
         public Builder url(String url) {
             mUrl = url;
             return this;

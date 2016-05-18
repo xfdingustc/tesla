@@ -77,6 +77,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mEmail.setSummary(mSessionManager.getEmail());
         mUserName.setSummary(mSessionManager.getUserName());
         mBirthday.setSummary(mSessionManager.getBirthday());
+        mRegion.setSummary(mSessionManager.getRegion());
 
 
         final int gender = mSessionManager.getGender();
@@ -255,104 +256,78 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void uploadPassword(String oldPwd, String newPwd) {
-        String url = Constants.API_USER_CHANGE_PASSWORD;
-        Map<String, String> params = new HashMap<>();
-        params.put("curPassword", oldPwd);
-        params.put("newPassword", newPwd);
-        String postBody = new JSONObject(params).toString();
-        Logger.t(TAG).d("postBody: "  + postBody);
-
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                mSessionManager.saveLoginInfo(response);
-                Snackbar.make(getView(), R.string.change_password_successfully, Snackbar.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar.make(getView(), R.string.change_password_failed, Snackbar.LENGTH_LONG).show();
-            }
-        });
-
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_USER_CHANGE_PASSWORD)
+            .postBody("curPassword", oldPwd)
+            .postBody("newPassword", newPwd)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    mSessionManager.saveLoginInfo(response);
+                    Snackbar.make(getView(), R.string.change_password_successfully, Snackbar.LENGTH_LONG).show();
+                }
+            })
+            .errorListener(new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Snackbar.make(getView(), R.string.change_password_failed, Snackbar.LENGTH_LONG).show();
+                }
+            })
+            .build();
         mRequestQueue.add(request);
     }
 
     private void updateGender(final String gender) {
-        String url = Constants.API_USER_PROFILE;
-        Map<String, String> params = new HashMap<>();
-
-
-        params.put("gender", gender);
-        String postBody = new JSONObject(params).toString();
-        Logger.t(TAG).d("postBody: "  + postBody);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                String i18nGender;
-                if (gender.equals("MALE")) {
-                    i18nGender = getString(R.string.male);
-                } else if (gender.equals("FEMALE")) {
-                    i18nGender = getString(R.string.female);
-                } else {
-                    i18nGender = getString(R.string.rather_not_to_say);
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_USER_PROFILE)
+            .postBody("gender", gender)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    String i18nGender;
+                    if (gender.equals("MALE")) {
+                        i18nGender = getString(R.string.male);
+                    } else if (gender.equals("FEMALE")) {
+                        i18nGender = getString(R.string.female);
+                    } else {
+                        i18nGender = getString(R.string.rather_not_to_say);
+                    }
+                    mGender.setSummary(i18nGender);
                 }
-                mGender.setSummary(i18nGender);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
+            })
+            .build();
         mRequestQueue.add(request);
     }
 
 
     private void updateNewUserName(final String newUserName) {
-        String url = Constants.API_USER_PROFILE;
-        Map<String, String> params = new HashMap<>();
-        params.put("userName", newUserName);
-        String postBody = new JSONObject(params).toString();
-        Logger.t(TAG).d("postBody: "  + postBody);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                mUserName.setSummary(newUserName);
-                mSessionManager.saveUserName(newUserName);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_USER_PROFILE)
+            .postBody("userName", newUserName)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    mUserName.setSummary(newUserName);
+                    mSessionManager.saveUserName(newUserName);
+                }
+            })
+            .build();
         mRequestQueue.add(request);
     }
 
     private void updateBirthday(final String birthday) {
-        String url = Constants.API_USER_PROFILE;
-        Map<String, String> params = new HashMap<>();
-        params.put("birthday", birthday);
-        String postBody = new JSONObject(params).toString();
-        Logger.t(TAG).d("postBody: "  + postBody);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, postBody, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                mBirthday.setSummary(birthday);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_USER_PROFILE)
+            .postBody("birthday", birthday)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    mBirthday.setSummary(birthday);
+                }
+            })
+            .build();
 
-            }
-        });
 
         mRequestQueue.add(request);
     }
