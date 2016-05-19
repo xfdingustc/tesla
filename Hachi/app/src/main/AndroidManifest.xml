@@ -159,8 +159,9 @@
             android:name=".ui.settings.CountryActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.CityActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.settings.CityActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.settings.ConnectivitySettingActivity"
@@ -176,6 +177,10 @@
 
         <activity
             android:name=".ui.activities.MusicDownloadActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.community.MomentActivity"
             android:screenOrientation="portrait"/>
 
         <activity

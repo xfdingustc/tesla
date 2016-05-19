@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/wifiContainer"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/wifiContainer"
+              android:background="@drawable/default_bg"
               android:orientation="vertical">
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
@@ -28,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textColor="@color/text_color_title"
+            style="@style/HachiTextViewTitle"
             tools:text="wifi"/>
 
         <LinearLayout
@@ -40,20 +42,19 @@
             android:id="@+id/ivWifiCipher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/rec_info_obd_on"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="16dp"
+            android:src="@drawable/rec_info_obd_on"/>
 
         <ImageView
             android:id="@+id/ivWifiSignal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/settings_signal_1"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="16dp"
+            android:src="@drawable/settings_signal_1"/>
 
     </LinearLayout>
-
 
 
 </LinearLayout>

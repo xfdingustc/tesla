@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.community;
+package com.waylens.hachi.ui.community.feed;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -26,6 +26,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.community.MomentPlayFragment;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -145,7 +146,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
         mRvVideoList.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
+                FeedContextMenu.FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
             }
         });
         return view;
@@ -167,7 +168,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     @Override
     public void onReportClick(final int feedItem) {
-        FeedContextMenuManager.getInstance().hideContextMenu();
+        FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
             .title(R.string.report)
             .items(R.array.report_reason)
@@ -220,7 +221,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     @Override
     public void onCancelClick(int feedItem) {
-        FeedContextMenuManager.getInstance().hideContextMenu();
+        FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
     }
 
 
@@ -393,12 +394,12 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
         if (moment.type == Moment.TYPE_YOUTUBE) {
             YouTubeFragment youTubeFragment = YouTubeFragment.newInstance();
             youTubeFragment.setVideoId(moment.videoID);
-            vh.videoFragment = youTubeFragment;
+//            vh.videoFragment = youTubeFragment;
             mVideoFragment = youTubeFragment;
 //            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
         } else {
             MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment, this);
-            vh.videoFragment = videoPlayFragment;
+//            vh.videoFragment = videoPlayFragment;
             mVideoFragment = videoPlayFragment;
             mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
 
@@ -409,7 +410,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     @Override
     public void onMoreClick(View v, int position) {
-        FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this);
+        FeedContextMenu.FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this);
     }
 
     @Override

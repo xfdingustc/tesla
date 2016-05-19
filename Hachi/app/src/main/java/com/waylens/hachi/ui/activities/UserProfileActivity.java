@@ -27,7 +27,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.community.MomentsListAdapter;
+import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.settings.AccountActivity;

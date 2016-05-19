@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.community;
+package com.waylens.hachi.ui.community.feed;
 
 import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -40,23 +40,12 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.video_cover)
     ImageView videoCover;
 
-    @BindView(R.id.video_control)
-    ImageView videoControl;
-
-    @BindView(R.id.btnLike)
-    ImageButton btnLike;
-
-    @BindView(R.id.btn_comment)
-    ImageButton btnComment;
 
     @BindView(R.id.btn_more)
     ImageButton btnMore;
 
     @BindView(R.id.video_fragment_container)
     public FrameLayout fragmentContainer;
-
-    public Fragment videoFragment;
-
 
     public MomentViewHolder(View itemView) {
         super(itemView);

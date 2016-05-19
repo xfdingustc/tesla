@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Spannable;
 
 import com.google.gson.annotations.Expose;
@@ -60,9 +62,9 @@ public class Moment implements Serializable {
     @Expose
     public String videoURL;
 
-    public Spannable comments;
+    public transient Spannable comments;
 
-    public User owner;
+    public transient User owner;
 
     public int type;
 
@@ -161,4 +163,6 @@ public class Moment implements Serializable {
     public String toString() {
         return ToStringUtils.getString(this);
     }
+
+
 }

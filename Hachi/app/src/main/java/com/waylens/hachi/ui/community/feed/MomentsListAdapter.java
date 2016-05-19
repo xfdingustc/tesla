@@ -1,10 +1,5 @@
-package com.waylens.hachi.ui.community;
+package com.waylens.hachi.ui.community.feed;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Resources;
@@ -26,8 +21,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.LikeJob;
-import com.waylens.hachi.ui.activities.CommentsActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
+import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
@@ -127,32 +122,39 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
             }
         });
 
-        updateLikeState(holder, moment);
-
-
-        holder.btnLike.setOnClickListener(new View.OnClickListener() {
+        holder.videoCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAddLike(holder, moment);
+                MomentActivity.launch(mContext, moment);
             }
         });
 
-        holder.btnComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CommentsActivity.launch((Activity) mContext, moment.id, 0);
-            }
-        });
+//        updateLikeState(holder, moment);
 
 
-        holder.videoControl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnMomentActionListener != null) {
-                    mOnMomentActionListener.onRequestVideoPlay(holder, moment, position);
-                }
-            }
-        });
+//        holder.btnLike.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                doAddLike(holder, moment);
+//            }
+//        });
+//
+//        holder.btnComment.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                CommentsActivity.launch((Activity) mContext, moment.id, 0);
+//            }
+//        });
+//
+//
+//        holder.videoControl.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mOnMomentActionListener != null) {
+//                    mOnMomentActionListener.onRequestVideoPlay(holder, moment, position);
+//                }
+//            }
+//        });
 
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,57 +167,57 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     }
 
 
-    private void doUpdateLikeStateAnimator(final MomentViewHolder holder, final Moment moment) {
+//    private void doUpdateLikeStateAnimator(final MomentViewHolder holder, final Moment moment) {
+//
+//        AnimatorSet animatorSet = new AnimatorSet();
+//
+//        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.btnLike, "rotation", 0f, 360f);
+//        rotationAnim.setDuration(300);
+//        rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+//
+//        ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.btnLike, "scaleX", 0.2f, 1f);
+//        bounceAnimX.setDuration(300);
+//        bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
+//
+//        ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.btnLike, "scaleY", 0.2f, 1f);
+//        bounceAnimY.setDuration(300);
+//        bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+//        bounceAnimY.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationStart(Animator animation) {
+//                updateLikeState(holder, moment);
+//            }
+//        });
+//
+//        animatorSet.play(rotationAnim);
+//        animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
+//
+//
+//        animatorSet.start();
+//
+//    }
 
-        AnimatorSet animatorSet = new AnimatorSet();
+//    private void updateLikeState(MomentViewHolder holder, final Moment moment) {
+//        if (moment.isLiked) {
+//            //vh.btnLike.setImageResource(R.drawable.social_like_click);
+//            holder.btnLike.setImageResource(R.drawable.social_like_click);
+//        } else {
+//            holder.btnLike.setImageResource(R.drawable.social_like);
+//        }
+//    }
 
-        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.btnLike, "rotation", 0f, 360f);
-        rotationAnim.setDuration(300);
-        rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
-
-        ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.btnLike, "scaleX", 0.2f, 1f);
-        bounceAnimX.setDuration(300);
-        bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
-
-        ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.btnLike, "scaleY", 0.2f, 1f);
-        bounceAnimY.setDuration(300);
-        bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
-        bounceAnimY.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                updateLikeState(holder, moment);
-            }
-        });
-
-        animatorSet.play(rotationAnim);
-        animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
-
-
-        animatorSet.start();
-
-    }
-
-    private void updateLikeState(MomentViewHolder holder, final Moment moment) {
-        if (moment.isLiked) {
-            //vh.btnLike.setImageResource(R.drawable.social_like_click);
-            holder.btnLike.setImageResource(R.drawable.social_like_click);
-        } else {
-            holder.btnLike.setImageResource(R.drawable.social_like);
-        }
-    }
-
-    @Override
-    public void onViewAttachedToWindow(MomentViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        holder.videoControl.setVisibility(View.VISIBLE);
-    }
+//    @Override
+//    public void onViewAttachedToWindow(MomentViewHolder holder) {
+//        super.onViewAttachedToWindow(holder);
+//        holder.videoControl.setVisibility(View.VISIBLE);
+//    }
 
     @Override
     public void onViewDetachedFromWindow(MomentViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        if (holder.videoFragment != null) {
-            mFragmentManager.beginTransaction().remove(holder.videoFragment).commit();
-        }
+//        if (holder.videoFragment != null) {
+//            mFragmentManager.beginTransaction().remove(holder.videoFragment).commit();
+//        }
 
         mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
             @Override
@@ -249,7 +251,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         LikeJob job = new LikeJob(moment, isCancel);
         jobManager.addJobInBackground(job);
         moment.isLiked = !moment.isLiked;
-        doUpdateLikeStateAnimator(vh, moment);
+//        doUpdateLikeStateAnimator(vh, moment);
     }
 
     public interface OnMomentActionListener {
