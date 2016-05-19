@@ -1,11 +1,8 @@
 package com.waylens.hachi.ui.community;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -13,7 +10,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -29,16 +25,17 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.DragLayout;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;
@@ -51,7 +48,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,9 +55,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MomentPlayFragment extends Fragment implements View.OnClickListener, SurfaceHolder.Callback {
+public class MomentPlayFragment extends BaseFragment implements View.OnClickListener, SurfaceHolder.Callback {
     private static final String TAG = MomentPlayFragment.class.getSimpleName();
-    private static final String REQUEST_TAG = "RETRIEVE_RAW_DATA";
+
 
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
@@ -89,8 +85,6 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     protected boolean mOverlayShouldDisplay = true;
 
-    public static MomentPlayFragment fullScreenPlayer;
-
     protected OnViewDragListener mDragListener;
 
     private SurfaceHolder mSurfaceHolder;
@@ -99,13 +93,11 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     VideoHandler mHandler;
 
-    String mVideoSource;
+    private Moment mMoment;
 
-    HashMap<String, String> mHeaders;
 
     boolean mIsFullScreen;
 
-    private ViewGroup mActivityRootView;
 
     int mPausePosition;
     int mVideoWidth;
@@ -117,8 +109,8 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
     OnProgressListener mProgressListener;
 
-    long mMomentID = Moment.INVALID_MOMENT_ID;
-    RequestQueue mRequestQueue;
+
+    private RequestQueue mRequestQueue;
     JSONArray mRawDataUrls;
 
 
@@ -174,11 +166,10 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
     public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
-        Bundle args = new Bundle();
         MomentPlayFragment fragment = new MomentPlayFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("moment", moment);
         fragment.setArguments(args);
-        fragment.mMomentID = moment.id;
-        fragment.setSource(moment.videoURL);
 
         fragment.mDragListener = listener;
         return fragment;
@@ -187,8 +178,12 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+        Bundle args = getArguments();
+        mMoment = (Moment) args.getSerializable("moment");
+
+        mRequestQueue = Volley.newRequestQueue(getActivity());
         mRequestQueue.start();
+
         mHandler = new VideoHandler(this);
         mNonUIThread = new HandlerThread("ReleaseMediaPlayer");
         mNonUIThread.start();
@@ -198,7 +193,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivityRootView = (ViewGroup) getActivity().findViewById(android.R.id.content);
+
         getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override
             public void onSystemUiVisibilityChange(int visibility) {
@@ -243,17 +238,14 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         if (mMediaPlayer != null) {
             release(true);
         }
-        mVideoSource = null;
+//        mVideoSource = null;
         mNonUIThread.quitSafely();
     }
 
     @Override
     public void onDestroyView() {
-        mRequestQueue.cancelAll(REQUEST_TAG);
         super.onDestroyView();
-        if (fullScreenPlayer == this) {
-            fullScreenPlayer = null;
-        }
+
         mDragListener = null;
     }
 
@@ -265,12 +257,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
 
 
     protected void setSource(String source) {
-        setSource(source, null);
-    }
-
-    protected void setSource(String source, HashMap<String, String> headers) {
-        mVideoSource = source;
-        mHeaders = headers;
+//        mVideoSource = source;
         mTargetState = STATE_PLAYING;
         mPausePosition = 0;
         openVideo();
@@ -284,23 +271,8 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
             || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-
-            mRootContainer.removeView(mVideoContainer);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            mActivityRootView.addView(mVideoContainer, params);
-            mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
-
-
-            fullScreenPlayer = this;
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mActivityRootView.removeView(mVideoContainer);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            mRootContainer.addView(mVideoContainer, params);
-            mBtnFullScreen.setImageResource(R.drawable.screen_full);
-            fullScreenPlayer = null;
-
         }
         mIsFullScreen = fullScreen;
     }
@@ -312,9 +284,7 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
             case R.id.waylens_video_container:
                 toggleController();
                 break;
-            case R.id.btn_fullscreen:
-                setFullScreen(!mIsFullScreen);
-                break;
+
         }
     }
 
@@ -367,8 +337,8 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
     private void openVideo() {
-        if (mVideoSource == null || mSurfaceView == null || mSurfaceHolder == null) {
-            Logger.t(TAG).d("source: " + mVideoSource + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
+        if (mMoment.videoURL == null || mSurfaceView == null || mSurfaceHolder == null) {
+            Logger.t(TAG).d("source: " + mMoment.videoURL + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
             return;
         }
 
@@ -429,11 +399,8 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                 }
             });
 
-            if (mHeaders != null) {
-                mMediaPlayer.setDataSource(getActivity(), Uri.parse(mVideoSource), mHeaders);
-            } else {
-                mMediaPlayer.setDataSource(mVideoSource);
-            }
+
+            mMediaPlayer.setDataSource(mMoment.videoURL);
             mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
@@ -631,10 +598,10 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
     }
 
     void readRawURL() {
-        if (mMomentID == Moment.INVALID_MOMENT_ID) {
+        if (mMoment.id == Moment.INVALID_MOMENT_ID) {
             return;
         }
-        String url = Constants.API_MOMENT_PLAY + mMomentID;
+        String url = Constants.API_MOMENT_PLAY + mMoment.id;
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -647,11 +614,11 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                 onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
             }
-        }).setTag(REQUEST_TAG));
+        }).setTag(TAG));
         mProgressLoading.setVisibility(View.VISIBLE);
     }
 
-    void loadRawData(final int index) {
+    private void loadRawData(final int index) {
         if (mRawDataUrls == null || index >= mRawDataUrls.length()) {
             onLoadRawDataSuccessfully();
             return;
@@ -660,8 +627,9 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
         try {
             JSONObject jsonObject = mRawDataUrls.getJSONObject(index);
             String url = jsonObject.getString("url");
-            mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+                .url(jsonObject.getString("url"))
+                .listner(new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (parseRawData(response)) {
@@ -675,16 +643,20 @@ public class MomentPlayFragment extends Fragment implements View.OnClickListener
                             onLoadRawDataError("Load Raw data error");
                         }
                     }
-                },
-                new Response.ErrorListener() {
+                })
+                .errorListener(new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
                         onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
                     }
-                }).setTag(REQUEST_TAG));
+                })
+                .build();
+            request.setTag(TAG);
+            mRequestQueue.add(request);
+
         } catch (JSONException e) {
-            Logger.t(TAG).d("", e);
+            Logger.t(TAG).d(e.toString());
         }
     }
 
