@@ -290,10 +290,8 @@ public class VdtCamera {
         return mApiVersionStr;
     }
 
-    // TODO:  For testing
     public String getHardwareName() {
-//        return mHardwareName;
-        return "HACHI_V0C";
+        return mHardwareName;
     }
 
 
