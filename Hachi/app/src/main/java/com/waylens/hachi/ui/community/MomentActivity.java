@@ -12,11 +12,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.LikeJob;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
@@ -69,6 +72,8 @@ public class MomentActivity extends BaseActivity {
 
     private String mReportReason;
 
+    private boolean hasUpdates;
+
     private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
@@ -94,7 +99,7 @@ public class MomentActivity extends BaseActivity {
 
     @BindView(R.id.user_avatar)
     CircleImageView mUserAvatar;
-    
+
     @BindView(R.id.comment_list)
     RecyclerView mCommentList;
 
@@ -117,6 +122,34 @@ public class MomentActivity extends BaseActivity {
     @OnClick(R.id.user_avatar)
     public void onUserAvatarClick() {
         UserProfileActivity.launch(this, mMoment.owner.userID);
+    }
+
+    @BindView(R.id.comment_new)
+    EditText mNewCommentView;
+
+
+    @OnClick(R.id.btn_send)
+    public void sendComment() {
+        if (TextUtils.isEmpty(mNewCommentView.getText())) {
+            return;
+        }
+        Comment comment = new Comment();
+        comment.content = mNewCommentView.getText().toString();
+        comment.createTime = System.currentTimeMillis();
+        User basicUserInfo = new User();
+        basicUserInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();
+        basicUserInfo.userName = SessionManager.getInstance().getUserName();
+        basicUserInfo.userID = SessionManager.getInstance().getUserId();
+        comment.author = basicUserInfo;
+        if (mReplyTo != null) {
+            comment.replyTo = mReplyTo;
+            mReplyTo = null;
+            mNewCommentView.setHint(R.string.add_one_comment);
+        }
+        int position = mAdapter.addComment(comment);
+        mCommentList.scrollToPosition(position);
+        mNewCommentView.setText("");
+        publishComment(comment, position);
     }
 
 
@@ -173,7 +206,6 @@ public class MomentActivity extends BaseActivity {
 
         setupCommentList();
     }
-
 
 
     private void doUpdateLikeStateAnimator() {
@@ -237,7 +269,7 @@ public class MomentActivity extends BaseActivity {
             @Override
             public void onCommentClicked(Comment comment) {
                 mReplyTo = comment.author;
-//                mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+                mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
             }
 
             @Override
@@ -324,7 +356,6 @@ public class MomentActivity extends BaseActivity {
         mRequestQueue.add(request);
 
 
-
     }
 
     private void doReportComment(Comment comment) {
@@ -335,7 +366,7 @@ public class MomentActivity extends BaseActivity {
             requestBody.put("reason", mReportReason);
 
             Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.t(TAG).json(response.toString());
@@ -355,7 +386,7 @@ public class MomentActivity extends BaseActivity {
 
     }
 
-        void showMessage(int resId) {
+    void showMessage(int resId) {
         //Should not call this method if UI has been already destroyed.
         try {
             Snackbar.make(mCommentList, resId, Snackbar.LENGTH_SHORT).show();
@@ -397,4 +428,48 @@ public class MomentActivity extends BaseActivity {
 //        }
     }
 
+
+    private void publishComment(final Comment comment, final int position) {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("momentID", mMoment.id);
+            params.put("content", comment.content);
+
+        } catch (JSONException e) {
+            Logger.t(TAG).e(e.toString());
+        }
+
+        AuthorizedJsonRequest.Builder requestBuilder = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_COMMENTS)
+            .postBody("momentID", mMoment.id)
+            .postBody("content", comment.content)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    long commentID = response.optLong("commentID");
+                    mAdapter.updateCommentID(position, commentID);
+                    if (!hasUpdates) {
+                        hasUpdates = true;
+                    }
+                }
+            })
+            .errorListener(new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                    showMessage(errorInfo.msgResID);
+                }
+            });
+
+        if (comment.replyTo != null) {
+            requestBuilder.postBody("replyTo", comment.replyTo.userID);
+        }
+
+        mRequestQueue.add(requestBuilder.build());
+
+
+
+
+
+    }
 }

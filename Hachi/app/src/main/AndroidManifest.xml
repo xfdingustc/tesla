@@ -75,10 +75,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.community.comment.CommentsActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity
             android:name=".ui.activities.VersionCheckActivity"
             android:screenOrientation="portrait"/>
 
