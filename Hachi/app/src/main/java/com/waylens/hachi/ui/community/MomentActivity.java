@@ -190,17 +190,7 @@ public class MomentActivity extends BaseActivity {
         mImageLoader.displayImage(mMoment.owner.avatarUrl, mUserAvatar, ImageUtils.getAvatarOptions());
 
 
-        MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMoment, new OnViewDragListener() {
-            @Override
-            public void onStartDragging() {
-
-            }
-
-            @Override
-            public void onStopDragging() {
-
-            }
-        });
+        MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMoment);
 
         getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
 

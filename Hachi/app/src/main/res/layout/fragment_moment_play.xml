@@ -6,112 +6,112 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    android:clipChildren="false"
     app:farfl_xratio="16dp"
     app:farfl_yratio="9dp">
 
-    <com.waylens.hachi.ui.views.DragLayout
-        android:id="@+id/waylens_video_container"
+
+    <SurfaceView
+        android:id="@+id/video_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/video_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/video_controllers"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <SurfaceView
-            android:id="@+id/video_surface"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:visibility="gone"/>
 
-        <FrameLayout
-            android:id="@+id/video_controllers"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <!--<ImageView-->
+        <!--android:id="@+id/btn_play"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:background="?android:attr/selectableItemBackground"-->
+        <!--android:contentDescription="@null"-->
+        <!--android:src="@drawable/btn_music_pause"/>-->
 
+        <com.xfdingustc.mdplaypausebutton.PlayPauseButton
+            android:id="@+id/btn_play_pause"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center">
 
-            <!--<ImageView-->
-                <!--android:id="@+id/btn_play"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:background="?android:attr/selectableItemBackground"-->
-                <!--android:contentDescription="@null"-->
-                <!--android:src="@drawable/btn_music_pause"/>-->
+        </com.xfdingustc.mdplaypausebutton.PlayPauseButton>
+    </FrameLayout>
 
-            <com.xfdingustc.mdplaypausebutton.PlayPauseButton
-                android:id="@+id/btn_play_pause"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_gravity="center">
-
-            </com.xfdingustc.mdplaypausebutton.PlayPauseButton>
-        </FrameLayout>
-
-        <com.waylens.hachi.ui.views.GaugeView
-            android:id="@+id/gaugeView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible"></com.waylens.hachi.ui.views.GaugeView>
+    <com.waylens.hachi.ui.views.GaugeView
+        android:id="@+id/gaugeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"></com.waylens.hachi.ui.views.GaugeView>
 
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="16dp"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="-6dp"
-            android:layout_marginTop="-6dp"
-            android:minHeight="16dp"/>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-6dp"
+        android:layout_marginTop="-6dp"
+        android:minHeight="16dp"/>
 
-        <ProgressBar
-            android:id="@+id/progress_loading"
+    <ProgressBar
+        android:id="@+id/progress_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+
+    <LinearLayout
+        android:id="@+id/infoPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="4dp"
+        android:background="#CC000000"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_video_time"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:layout_marginLeft="8dp"
+            android:gravity="start"
+            tools:text="00:15 / 00:42"/>
 
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/infoPanel"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/btnShowOverlay"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="4dp"
-            android:background="#CC000000"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_gauge_overlay"/>
 
-            <TextView
-                android:id="@+id/text_video_time"
-                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:gravity="start"
-                tools:text="00:15 / 00:42"/>
+        <ImageView
+            android:id="@+id/btn_fullscreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@null"
+            android:src="@drawable/screen_full"
+            tools:ignore="RtlHardcoded"/>
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"></FrameLayout>
-
-            <ImageButton
-                android:id="@+id/btnShowOverlay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@drawable/btn_gauge_overlay"/>
-
-            <ImageView
-                android:id="@+id/btn_fullscreen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/screen_full"
-                tools:ignore="RtlHardcoded"/>
-
-        </LinearLayout>
-    </com.waylens.hachi.ui.views.DragLayout>
+    </LinearLayout>
 
 </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 

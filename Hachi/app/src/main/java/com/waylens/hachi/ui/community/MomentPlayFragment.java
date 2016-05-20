@@ -35,6 +35,7 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.DragLayout;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.ui.views.OnViewDragListener;
+import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
@@ -86,7 +87,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     protected boolean mOverlayShouldDisplay = true;
 
-    protected OnViewDragListener mDragListener;
+
 
     private SurfaceHolder mSurfaceHolder;
 
@@ -117,11 +118,12 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
 
+    @BindView(R.id.video_thumbnail)
+    ImageView mVideoThumbnail;
+
     @BindView(R.id.video_root_container)
     FixedAspectRatioFrameLayout mRootContainer;
 
-    @BindView(R.id.waylens_video_container)
-    DragLayout mVideoContainer;
 
     @BindView(R.id.video_controllers)
     FrameLayout mVideoController;
@@ -166,13 +168,11 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mGaugeView.setVisibility(visibility);
     }
 
-    public static MomentPlayFragment newInstance(Moment moment, OnViewDragListener listener) {
+    public static MomentPlayFragment newInstance(Moment moment) {
         MomentPlayFragment fragment = new MomentPlayFragment();
         Bundle args = new Bundle();
         args.putSerializable("moment", moment);
         fragment.setArguments(args);
-
-        fragment.mDragListener = listener;
         return fragment;
     }
 
@@ -211,14 +211,14 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         View view = inflater.inflate(R.layout.fragment_moment_play, container, false);
         ButterKnife.bind(this, view);
 
+        mImageLoader.displayImage(mMoment.thumbnail, mVideoThumbnail, ImageUtils.getVideoOptions());
+
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
-//        mBtnFullScreen.setOnClickListener(this);
+
         mProgressBar.setMax((int) MAX_PROGRESS);
         mVideoController.setVisibility(View.INVISIBLE);
-        if (mDragListener != null) {
-            mVideoContainer.setOnViewDragListener(mDragListener);
-        }
+
         return view;
     }
 
@@ -239,16 +239,9 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         if (mMediaPlayer != null) {
             release(true);
         }
-//        mVideoSource = null;
         mNonUIThread.quitSafely();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        mDragListener = null;
-    }
 
     @Override
     public void onDestroy() {
@@ -282,9 +275,9 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.waylens_video_container:
-                toggleController();
-                break;
+//            case R.id.waylens_video_container:
+//                toggleController();
+//                break;
 
         }
     }
@@ -322,7 +315,9 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     }
 
     private void start() {
+        Logger.t(TAG).d("start");
         if (isInPlaybackState()) {
+            Logger.t(TAG).d("start media player");
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
             mProgressLoading.setVisibility(View.GONE);
@@ -354,6 +349,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
+                    Logger.t(TAG).d("prepared finished");
                     mCurrentState = STATE_PREPARED;
                     mVideoWidth = mp.getVideoWidth();
                     mVideoHeight = mp.getVideoHeight();
@@ -364,6 +360,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                     if (mTargetState == STATE_PLAYING) {
                         start();
                     }
+                    mVideoThumbnail.setVisibility(View.GONE);
                 }
             });
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -429,7 +426,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Logger.t(TAG).d("surfaceCreated");
+//        Logger.t(TAG).d("surfaceCreated");
         mSurfaceHolder = holder;
         if (!isInPlaybackState()) {
             openVideo();
@@ -440,7 +437,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Logger.t(TAG).d("surfaceChanged - w:" + width + "; h:" + height);
+//        Logger.t(TAG).d("surfaceChanged - w:" + width + "; h:" + height);
         if (mMediaPlayer == null) {
             return;
         }
@@ -449,11 +446,11 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
         if (isInPlaybackState() && mSurfaceDestroyed) {
             if (mCurrentState == STATE_PLAYING) {
-                Logger.t(TAG).d("surfaceChanged - resume");
+//                Logger.t(TAG).d("surfaceChanged - resume");
                 resumeVideo();
             } else {
                 Logger.t(TAG).d("surfaceChanged - seek");
-                mMediaPlayer.seekTo(mPausePosition);
+//                mMediaPlayer.seekTo(mPausePosition);
                 mPausePosition = 0;
             }
         }
@@ -598,7 +595,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         openVideo();
     }
 
-    void readRawURL() {
+    private void readRawURL() {
         if (mMoment.id == Moment.INVALID_MOMENT_ID) {
             return;
         }
