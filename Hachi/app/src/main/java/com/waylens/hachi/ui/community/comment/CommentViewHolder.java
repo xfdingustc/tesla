@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.community.comment;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

@@ -1,9 +1,10 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.community.comment;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
@@ -15,10 +16,11 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by Richard on 8/26/15.
- */
-public class CommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+
+public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     ArrayList<Comment> mComments;
 
@@ -30,7 +32,7 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     boolean mIsLoadingMore;
 
-    public CommentsRecyclerAdapter(ArrayList<Comment> comments) {
+    public CommentsAdapter(ArrayList<Comment> comments) {
         mComments = comments;
         mPrettyTime = new PrettyTime();
     }
@@ -191,4 +193,19 @@ public class CommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     public interface OnLoadMoreListener {
         void loadMore();
     }
+
+    public static class CommentLoadMoreVH extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.load_more)
+        View loadMoreView;
+
+        @BindView(R.id.load_more_progressbar)
+        ProgressBar loadMoreProgressBar;
+
+        public CommentLoadMoreVH(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
 }

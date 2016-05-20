@@ -45,15 +45,15 @@
 
 
             <TextView
+                style="@style/HachiTextViewBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="123"
-                style="@style/HachiTextViewBody"/>
+                tools:text="123"/>
 
             <TextView
+                style="@style/HachiTextViewBody"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/HachiTextViewBody"/>
+                android:layout_height="wrap_content"/>
 
 
         </TextSwitcher>
@@ -115,5 +115,11 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@color/settings_line_separator"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comment_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

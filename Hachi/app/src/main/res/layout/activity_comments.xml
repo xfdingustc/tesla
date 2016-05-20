@@ -7,24 +7,7 @@
 
     <include layout="@layout/toolbar_default"/>
 
-    <ViewAnimator
-        android:id="@+id/view_animator"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
 
-        <ProgressBar
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/comment_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </ViewAnimator>
 
     <include layout="@layout/row_divider"/>
 
