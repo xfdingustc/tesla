@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -48,6 +49,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -97,7 +100,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     int mPausePosition;
 
-
+    private Timer mTimer;
+    private UpdatePlayTimeTask mUpdatePlayTimeTask;
 
 
     OnProgressListener mProgressListener;
@@ -128,14 +132,17 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     @BindView(R.id.progress_loading)
     ProgressBar mProgressLoading;
 
-    @BindView(R.id.progress_bar)
-    ProgressBar mProgressBar;
+    @BindView(R.id.video_seek_bar)
+    SeekBar mVideoSeekBar;
 
     @BindView(R.id.btn_fullscreen)
     ImageView mBtnFullScreen;
 
     @BindView(R.id.text_video_time)
     TextView mVideoTime;
+
+    @BindView(R.id.text_video_duration)
+    TextView mVideoDuration;
 
     @BindView(R.id.infoPanel)
     LinearLayout mInfoPanel;
@@ -227,12 +234,22 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mSurfaceView.getHolder().addCallback(this);
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mTimer = new Timer();
+        mUpdatePlayTimeTask = new UpdatePlayTimeTask();
+        mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
+    }
+
     @Override
     public void onStop() {
         super.onStop();
         if (mMediaPlayer != null) {
             release(true);
         }
+        mTimer.cancel();
     }
 
 
@@ -435,11 +452,11 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
 
     protected void setProgress(int position, int duration) {
-        if (mProgressBar != null) {
+        if (mVideoSeekBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
-                long pos = MAX_PROGRESS * position / duration;
-                mProgressBar.setProgress((int) pos);
+                mVideoSeekBar.setMax(duration);
+                mVideoSeekBar.setProgress(position);
             }
         }
         updateVideoTime(position, duration);
@@ -491,7 +508,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     @SuppressLint("SetTextI18n")
     private void updateVideoTime(int position, int duration) {
-        mVideoTime.setText(DateUtils.formatElapsedTime(position / 1000) + " / " + DateUtils.formatElapsedTime(duration / 1000));
+        mVideoTime.setText(DateUtils.formatElapsedTime(position / 1000));
+        mVideoDuration.setText(DateUtils.formatElapsedTime(duration / 1000));
     }
 
 
@@ -800,5 +818,32 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             mMediaPlayer.stop();
         }
 
+    }
+
+    public class UpdatePlayTimeTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                refreshProgressBar();
+
+            }
+        }
+
+        private void refreshProgressBar() {
+            if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+                return;
+            }
+            final int currentPos = mMediaPlayer.getCurrentPosition();
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setProgress(currentPos, mMediaPlayer.getDuration());
+                }
+            });
+
+
+        }
     }
 }

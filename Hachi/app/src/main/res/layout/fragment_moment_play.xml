@@ -53,16 +53,6 @@
 
 
     <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="-6dp"
-        android:layout_marginTop="-6dp"
-        android:minHeight="16dp"/>
-
-    <ProgressBar
         android:id="@+id/progress_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,12 +63,12 @@
     <LinearLayout
         android:id="@+id/infoPanel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="4dp"
-        android:background="#CC000000"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:background="#CC000000">
 
         <TextView
             android:id="@+id/text_video_time"
@@ -86,27 +76,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:gravity="start"
-            tools:text="00:15 / 00:42"/>
+            android:text="00:00"/>
 
-        <FrameLayout
+
+        <SeekBar
+            android:id="@+id/video_seek_bar"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-        </FrameLayout>
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="-6dp"
+            android:layout_marginTop="-6dp"
+            android:minHeight="16dp"/>
+
+        <TextView
+            android:id="@+id/text_video_duration"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="00:00"/>
 
         <ImageButton
             android:id="@+id/btnShowOverlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/btn_default_bg"
             android:src="@drawable/btn_gauge_overlay"/>
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_fullscreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/btn_default_bg"
             android:contentDescription="@null"
             android:src="@drawable/screen_full"
             tools:ignore="RtlHardcoded"/>
