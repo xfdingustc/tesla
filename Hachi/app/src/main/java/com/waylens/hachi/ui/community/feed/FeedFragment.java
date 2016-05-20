@@ -421,10 +421,6 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             return true;
         }
 
-        if (MomentPlayFragment.fullScreenPlayer != null) {
-            MomentPlayFragment.fullScreenPlayer.setFullScreen(false);
-            return true;
-        }
         return false;
     }
 

@@ -41,6 +41,7 @@ import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 import com.xfdingustc.far.FixedAspectRatioFrameLayout;
+import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -125,8 +126,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     @BindView(R.id.video_controllers)
     FrameLayout mVideoController;
 
-    @BindView(R.id.btn_play)
-    ImageView mBtnPlay;
+    @BindView(R.id.btn_play_pause)
+    PlayPauseButton mBtnPlayPause;
 
     @BindView(R.id.video_surface)
     SurfaceView mSurfaceView;
@@ -149,7 +150,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     @BindView(R.id.gaugeView)
     GaugeView mGaugeView;
 
-    @OnClick(R.id.btn_play)
+    @OnClick(R.id.btn_play_pause)
     public void onBtnPlayClicked() {
         playVideo();
     }
@@ -307,7 +308,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         start();
         mCurrentState = STATE_PLAYING;
         mTargetState = STATE_PLAYING;
-        mBtnPlay.setImageResource(R.drawable.btn_film_pause);
+        mBtnPlayPause.toggle();
         fadeOutControllers(DEFAULT_TIMEOUT);
     }
 
@@ -316,7 +317,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mPausePosition = mMediaPlayer.getCurrentPosition();
         mCurrentState = STATE_PAUSED;
         mTargetState = STATE_PAUSED;
-        mBtnPlay.setImageResource(R.drawable.btn_film_play);
+        mBtnPlayPause.toggle();
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
@@ -370,7 +371,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                 public void onCompletion(MediaPlayer mp) {
                     mCurrentState = STATE_PLAYBACK_COMPLETED;
                     mTargetState = STATE_PLAYBACK_COMPLETED;
-                    mBtnPlay.setImageResource(R.drawable.btn_film_pause);
+                    mBtnPlayPause.toggle();
                     showController(0);
                     int duration = mp.getDuration();
                     setProgress(duration, duration);

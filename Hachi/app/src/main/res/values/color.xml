@@ -10,6 +10,8 @@
     <color name="text_like_counter">#2b5a83</color>
     <color name="none_color">#00000000</color>
 
+    <color name="purple">#6A1B9A</color>
+    <color name="blue">#1565C0</color>
 
     <color name="background_color_dark">#2F2F2F</color>
     <color name="btn_context_menu_normal">#ffffff</color>
