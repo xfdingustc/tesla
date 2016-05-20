@@ -36,7 +36,7 @@
 
     <string-array name="videoOptions" translatable="false">
         <item>Tag</item>
-        <item>Clip</item>
+        <item>Buffer</item>
         <!--<item>All Footage</item>-->
     </string-array>
 

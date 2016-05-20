@@ -47,9 +47,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
 
     private User mUser;
 
-    private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
-    private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
-    private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
+
 
 
     public MomentsListAdapter(Context context, ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
@@ -167,44 +165,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     }
 
 
-//    private void doUpdateLikeStateAnimator(final MomentViewHolder holder, final Moment moment) {
-//
-//        AnimatorSet animatorSet = new AnimatorSet();
-//
-//        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.btnLike, "rotation", 0f, 360f);
-//        rotationAnim.setDuration(300);
-//        rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
-//
-//        ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.btnLike, "scaleX", 0.2f, 1f);
-//        bounceAnimX.setDuration(300);
-//        bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
-//
-//        ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.btnLike, "scaleY", 0.2f, 1f);
-//        bounceAnimY.setDuration(300);
-//        bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
-//        bounceAnimY.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationStart(Animator animation) {
-//                updateLikeState(holder, moment);
-//            }
-//        });
-//
-//        animatorSet.play(rotationAnim);
-//        animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
-//
-//
-//        animatorSet.start();
-//
-//    }
 
-//    private void updateLikeState(MomentViewHolder holder, final Moment moment) {
-//        if (moment.isLiked) {
-//            //vh.btnLike.setImageResource(R.drawable.social_like_click);
-//            holder.btnLike.setImageResource(R.drawable.social_like_click);
-//        } else {
-//            holder.btnLike.setImageResource(R.drawable.social_like);
-//        }
-//    }
+
+
 
 //    @Override
 //    public void onViewAttachedToWindow(MomentViewHolder holder) {

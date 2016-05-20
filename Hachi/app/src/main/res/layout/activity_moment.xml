@@ -8,7 +8,8 @@
     <FrameLayout
         android:id="@+id/moment_play_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:layout_height="202dp">
 
     </FrameLayout>
 
@@ -19,6 +20,50 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         tools:text="Momemnt Title"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_like"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/btn_default_bg"
+            android:src="@drawable/social_like"/>
+
+        <TextSwitcher
+            android:id="@+id/like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:inAnimation="@anim/slide_in_likes_counter"
+            android:outAnimation="@anim/slide_out_likes_counter">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="123"
+                style="@style/HachiTextViewBody"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HachiTextViewBody"/>
+
+
+        </TextSwitcher>
+
+
+        <TextSwitcher
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></TextSwitcher>
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -41,15 +86,28 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical">
 
-        <Button
+            <TextView
+                android:id="@+id/user_name"
+                style="@style/HachiTextViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                tools:text="User Name"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/add_follow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
             android:text="@string/add_follow"
-            android:background="@drawable/default_bg"/>
+            android:textColor="@color/style_color_accent"
+            android:textSize="18sp"
+            />
 
     </LinearLayout>
 

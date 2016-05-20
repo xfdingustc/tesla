@@ -64,7 +64,7 @@ public class Moment implements Serializable {
 
     public transient Spannable comments;
 
-    public transient User owner;
+    public User owner;
 
     public int type;
 

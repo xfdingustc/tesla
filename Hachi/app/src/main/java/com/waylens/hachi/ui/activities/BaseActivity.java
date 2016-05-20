@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 
 import com.android.volley.RequestQueue;
 //import com.bugtags.library.Bugtags;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
@@ -40,6 +41,8 @@ public class BaseActivity extends AppCompatActivity {
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
     protected VdbImageLoader mVdbImageLoader;
+
+    protected ImageLoader mImageLoader = ImageLoader.getInstance();
     /**
      * Bugtags call
      */
