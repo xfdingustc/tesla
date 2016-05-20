@@ -21,6 +21,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ImageUtils;
@@ -54,6 +55,9 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.btn_like)
     ImageButton mBtnLike;
 
+    @BindView(R.id.user_name)
+    TextView mUserName;
+
     @BindView(R.id.like_count)
     TextSwitcher mTsLikeCount;
 
@@ -76,6 +80,11 @@ public class MomentActivity extends BaseActivity {
         updateLikeCount();
     }
 
+    @OnClick(R.id.user_avatar)
+    public void onUserAvatarClick() {
+        UserProfileActivity.launch(this, mMoment.owner.userID);
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,7 +103,12 @@ public class MomentActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_moment);
-        mMomentTitle.setText(mMoment.title);
+        if (mMoment.title == null && mMoment.title.isEmpty()) {
+            mMomentTitle.setText("No Title");
+        } else {
+            mMomentTitle.setText(mMoment.title);
+        }
+        mUserName.setText(mMoment.owner.userName);
         updateLikeState();
 
         mTsLikeCount.setCurrentText(String.valueOf(mMoment.likesCount));
