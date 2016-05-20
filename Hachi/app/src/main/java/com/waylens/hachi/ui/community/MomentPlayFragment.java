@@ -97,7 +97,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     int mPausePosition;
 
-    boolean mSurfaceDestroyed;
+
 
 
     OnProgressListener mProgressListener;
@@ -198,6 +198,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        setRetainInstance(true);
 
         getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override
@@ -422,11 +424,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     public void surfaceDestroyed(SurfaceHolder holder) {
         Logger.t(TAG).d("surfaceDestroyed");
         mSurfaceHolder = null;
-        mSurfaceDestroyed = true;
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
-            mPausePosition = mMediaPlayer.getCurrentPosition();
-        }
+
     }
 
     void release(final boolean clearTargetState) {
