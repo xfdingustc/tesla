@@ -66,7 +66,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     private final int STATE_PREPARED = 2;
     private final int STATE_PLAYING = 3;
     private final int STATE_PAUSE = 4;
-    private final int STATE_FAST_PREVIEW = 5;
+
 
     private static final int DEFAULT_TIMEOUT = 3000;
     private static final long MAX_PROGRESS = 1000L;
@@ -148,7 +148,6 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         switch (mCurrentState) {
             case STATE_IDLE:
             case STATE_PREPARED:
-            case STATE_FAST_PREVIEW:
                 start();
                 break;
             case STATE_PAUSE:
@@ -221,24 +220,17 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     private void initViews() {
         mImageLoader.displayImage(mMoment.thumbnail, mVsCover, ImageUtils.getVideoOptions());
-
+        mBtnPlayPause.toggle(true);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
-
-//        mProgressBar.setMax((int) MAX_PROGRESS);
-//        mVideoController.setVisibility(View.INVISIBLE);
     }
-
 
     @Override
     public void onStop() {
         super.onStop();
-//        mHandler.removeMessages(FADE_OUT);
-//        mHandler.removeMessages(SHOW_PROGRESS);
         if (mMediaPlayer != null) {
             release(true);
         }
-//        mNonUIThread.quitSafely();
     }
 
 
@@ -293,8 +285,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     private void resumeVideo() {
         start();
-
-        mBtnPlayPause.toggle();
+        mBtnPlayPause.toggle(false);
 
     }
 
@@ -302,7 +293,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mMediaPlayer.pause();
         mPausePosition = mMediaPlayer.getCurrentPosition();
 
-        mBtnPlayPause.toggle();
+        mBtnPlayPause.toggle(true);
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
@@ -325,7 +316,6 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
         mProgressLoading.setVisibility(View.VISIBLE);
         try {
-            mMediaPlayer = new MediaPlayer();
             mMediaPlayer.reset();
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -443,16 +433,6 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         final MediaPlayer mediaPlayer = mMediaPlayer;
         mMediaPlayer = null;
 
-
-//        mNonUIHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mediaPlayer != null) {
-//                    mediaPlayer.reset();
-//                    mediaPlayer.release();
-//                }
-//            }
-//        });
     }
 
 
@@ -794,19 +774,15 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                 break;
             case STATE_PLAYING:
                 mVsCover.setVisibility(View.INVISIBLE);
-                mBtnPlayPause.toggle();
+                mBtnPlayPause.toggle(false);
                 startPlayer();
                 mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PAUSE:
-                mBtnPlayPause.toggle();
+                mBtnPlayPause.toggle(true);
                 pausePlayer();
                 break;
-            case STATE_FAST_PREVIEW:
-                mVsCover.setVisibility(View.VISIBLE);
-                mBtnPlayPause.toggle();
-                stopPlayer();
-                break;
+
         }
         mCurrentState = targetState;
     }
