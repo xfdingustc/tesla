@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -32,9 +31,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.views.DragLayout;
 import com.waylens.hachi.ui.views.GaugeView;
-import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.vdb.rawdata.GpsData;
@@ -64,14 +61,12 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
 
-    // all possible internal states
-    private static final int STATE_ERROR = -1;
-    private static final int STATE_IDLE = 0;
-    private static final int STATE_PREPARING = 1;
-    private static final int STATE_PREPARED = 2;
-    private static final int STATE_PLAYING = 3;
-    private static final int STATE_PAUSED = 4;
-    private static final int STATE_PLAYBACK_COMPLETED = 5;
+    private final int STATE_IDLE = 0;
+    private final int STATE_PREPAREING = 1;
+    private final int STATE_PREPARED = 2;
+    private final int STATE_PLAYING = 3;
+    private final int STATE_PAUSE = 4;
+    private final int STATE_FAST_PREVIEW = 5;
 
     private static final int DEFAULT_TIMEOUT = 3000;
     private static final long MAX_PROGRESS = 1000L;
@@ -80,18 +75,17 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     protected static final int RAW_DATA_STATE_READY = 0;
     protected static final int RAW_DATA_STATE_ERROR = 1;
 
-    private int mCurrentState = STATE_IDLE;
-    private int mTargetState = STATE_IDLE;
 
     protected int mRawDataState = RAW_DATA_STATE_UNKNOWN;
 
     protected boolean mOverlayShouldDisplay = true;
 
-
+    private MediaPlayer mMediaPlayer = new MediaPlayer();
 
     private SurfaceHolder mSurfaceHolder;
 
-    private MediaPlayer mMediaPlayer;
+    private int mCurrentState = STATE_IDLE;
+
 
     VideoHandler mHandler;
 
@@ -102,12 +96,9 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
 
     int mPausePosition;
-    int mVideoWidth;
-    int mVideoHeight;
+
     boolean mSurfaceDestroyed;
 
-    HandlerThread mNonUIThread;
-    Handler mNonUIHandler;
 
     OnProgressListener mProgressListener;
 
@@ -119,7 +110,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
 
     @BindView(R.id.video_thumbnail)
-    ImageView mVideoThumbnail;
+    ImageView mVsCover;
 
     @BindView(R.id.video_root_container)
     FixedAspectRatioFrameLayout mRootContainer;
@@ -154,7 +145,21 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     @OnClick(R.id.btn_play_pause)
     public void onBtnPlayClicked() {
-        playVideo();
+        switch (mCurrentState) {
+            case STATE_IDLE:
+            case STATE_PREPARED:
+            case STATE_FAST_PREVIEW:
+                start();
+                break;
+            case STATE_PAUSE:
+                changeState(STATE_PLAYING);
+                break;
+            case STATE_PLAYING:
+                changeState(STATE_PAUSE);
+                break;
+            case STATE_PREPAREING:
+                break;
+        }
     }
 
     @OnClick(R.id.btn_fullscreen)
@@ -185,10 +190,10 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mRequestQueue.start();
 
-        mHandler = new VideoHandler(this);
-        mNonUIThread = new HandlerThread("ReleaseMediaPlayer");
-        mNonUIThread.start();
-        mNonUIHandler = new Handler(mNonUIThread.getLooper());
+//        mHandler = new VideoHandler(this);
+//        mNonUIThread = new HandlerThread("ReleaseMediaPlayer");
+//        mNonUIThread.start();
+//        mNonUIHandler = new Handler(mNonUIThread.getLooper());
     }
 
     @Override
@@ -210,36 +215,30 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moment_play, container, false);
         ButterKnife.bind(this, view);
+        initViews();
+        return view;
+    }
 
-        mImageLoader.displayImage(mMoment.thumbnail, mVideoThumbnail, ImageUtils.getVideoOptions());
+    private void initViews() {
+        mImageLoader.displayImage(mMoment.thumbnail, mVsCover, ImageUtils.getVideoOptions());
 
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
 
-        mProgressBar.setMax((int) MAX_PROGRESS);
-        mVideoController.setVisibility(View.INVISIBLE);
-
-        return view;
+//        mProgressBar.setMax((int) MAX_PROGRESS);
+//        mVideoController.setVisibility(View.INVISIBLE);
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (mRawDataState != RAW_DATA_STATE_READY) {
-            readRawURL();
-        }
-    }
 
     @Override
     public void onStop() {
         super.onStop();
-        mHandler.removeMessages(FADE_OUT);
-        mHandler.removeMessages(SHOW_PROGRESS);
+//        mHandler.removeMessages(FADE_OUT);
+//        mHandler.removeMessages(SHOW_PROGRESS);
         if (mMediaPlayer != null) {
             release(true);
         }
-        mNonUIThread.quitSafely();
+//        mNonUIThread.quitSafely();
     }
 
 
@@ -251,8 +250,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
 
     protected void setSource(String source) {
-//        mVideoSource = source;
-        mTargetState = STATE_PLAYING;
+
         mPausePosition = 0;
         openVideo();
     }
@@ -284,11 +282,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
 
     private void playVideo() {
-        if (!isInPlaybackState()) {
-            mTargetState = STATE_PLAYING;
-            openVideo();
-            return;
-        }
+        openVideo();
         if (mMediaPlayer.isPlaying()) {
             pauseVideo();
         } else {
@@ -299,38 +293,24 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     private void resumeVideo() {
         start();
-        mCurrentState = STATE_PLAYING;
-        mTargetState = STATE_PLAYING;
+
         mBtnPlayPause.toggle();
-        fadeOutControllers(DEFAULT_TIMEOUT);
+
     }
 
     private void pauseVideo() {
         mMediaPlayer.pause();
         mPausePosition = mMediaPlayer.getCurrentPosition();
-        mCurrentState = STATE_PAUSED;
-        mTargetState = STATE_PAUSED;
+
         mBtnPlayPause.toggle();
         mHandler.removeMessages(SHOW_PROGRESS);
     }
 
     private void start() {
-        Logger.t(TAG).d("start");
-        if (isInPlaybackState()) {
-            Logger.t(TAG).d("start media player");
-            mMediaPlayer.start();
-            mCurrentState = STATE_PLAYING;
-            mProgressLoading.setVisibility(View.GONE);
-        }
-        mTargetState = STATE_PLAYING;
-        mHandler.sendEmptyMessage(SHOW_PROGRESS);
+        openVideo();
+        changeState(STATE_PREPAREING);
     }
 
-
-    private boolean isInPlaybackState() {
-        return (mMediaPlayer != null && mCurrentState != STATE_ERROR &&
-            mCurrentState != STATE_IDLE && mCurrentState != STATE_PREPARING);
-    }
 
     private void openVideo() {
         if (mMoment.videoURL == null || mSurfaceView == null || mSurfaceHolder == null) {
@@ -338,42 +318,28 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             return;
         }
 
-        if (mOverlayShouldDisplay && mRawDataState == RAW_DATA_STATE_UNKNOWN) {
-            Logger.t(TAG).d("overlay show display: " + mOverlayShouldDisplay + " rawdata state: " + mRawDataState);
-            return;
-        }
+//        if (mOverlayShouldDisplay && mRawDataState == RAW_DATA_STATE_UNKNOWN) {
+//            Logger.t(TAG).d("overlay show display: " + mOverlayShouldDisplay + " rawdata state: " + mRawDataState);
+//            return;
+//        }
 
         mProgressLoading.setVisibility(View.VISIBLE);
         try {
             mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.reset();
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     Logger.t(TAG).d("prepared finished");
-                    mCurrentState = STATE_PREPARED;
-                    mVideoWidth = mp.getVideoWidth();
-                    mVideoHeight = mp.getVideoHeight();
-                    if (mSurfaceHolder != null && mVideoWidth != 0 && mVideoHeight != 0) {
-                        mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
-                    }
-                    showController(DEFAULT_TIMEOUT);
-                    if (mTargetState == STATE_PLAYING) {
-                        start();
-                    }
-                    mVideoThumbnail.setVisibility(View.GONE);
+                    changeState(STATE_PREPARED);
+                    changeState(STATE_PLAYING);
                 }
             });
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    mCurrentState = STATE_PLAYBACK_COMPLETED;
-                    mTargetState = STATE_PLAYBACK_COMPLETED;
-                    mBtnPlayPause.toggle();
-                    showController(0);
-                    int duration = mp.getDuration();
-                    setProgress(duration, duration);
-                    mHandler.removeMessages(SHOW_PROGRESS);
-                    release(true);
+
+                    changeState(STATE_IDLE);
                 }
             });
             mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -415,10 +381,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                     return false;
                 }
             });
-            mCurrentState = STATE_PREPARING;
+
         } catch (IOException e) {
-            mCurrentState = STATE_ERROR;
-            mTargetState = STATE_ERROR;
             Logger.t(TAG).e(e.toString());
         }
     }
@@ -426,34 +390,18 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-//        Logger.t(TAG).d("surfaceCreated");
         mSurfaceHolder = holder;
-        if (!isInPlaybackState()) {
-            openVideo();
-        }
-
     }
 
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-//        Logger.t(TAG).d("surfaceChanged - w:" + width + "; h:" + height);
         if (mMediaPlayer == null) {
             return;
         }
 
         mMediaPlayer.setDisplay(holder);
 
-        if (isInPlaybackState() && mSurfaceDestroyed) {
-            if (mCurrentState == STATE_PLAYING) {
-//                Logger.t(TAG).d("surfaceChanged - resume");
-                resumeVideo();
-            } else {
-                Logger.t(TAG).d("surfaceChanged - seek");
-//                mMediaPlayer.seekTo(mPausePosition);
-                mPausePosition = 0;
-            }
-        }
     }
 
     private void hideSystemUI() {
@@ -485,7 +433,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         Logger.t(TAG).d("surfaceDestroyed");
         mSurfaceHolder = null;
         mSurfaceDestroyed = true;
-        if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
+        if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             mPausePosition = mMediaPlayer.getCurrentPosition();
         }
@@ -494,22 +442,17 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     void release(final boolean clearTargetState) {
         final MediaPlayer mediaPlayer = mMediaPlayer;
         mMediaPlayer = null;
-        mCurrentState = STATE_IDLE;
-        if (clearTargetState) {
-            mTargetState = STATE_IDLE;
-        }
-        mVideoWidth = 0;
-        mVideoHeight = 0;
 
-        mNonUIHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mediaPlayer != null) {
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
-                }
-            }
-        });
+
+//        mNonUIHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mediaPlayer != null) {
+//                    mediaPlayer.reset();
+//                    mediaPlayer.release();
+//                }
+//            }
+//        });
     }
 
 
@@ -543,21 +486,14 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             return;
         }
         mVideoController.setVisibility(View.VISIBLE);
-        if (timeout > 0) {
-            fadeOutControllers(timeout);
-        }
-    }
 
-    private void fadeOutControllers(int timeout) {
-        mHandler.removeMessages(FADE_OUT);
-        mHandler.sendEmptyMessageDelayed(FADE_OUT, timeout);
     }
 
 
     private void hideControllers() {
         mVideoController.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            && mCurrentState == STATE_PLAYING) {
+            ) {
             hideSystemUI();
         }
     }
@@ -838,6 +774,57 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             return false;
         }
 
+
+    }
+
+    private void changeState(int targetState) {
+        Logger.t(TAG).d("target state: " + targetState);
+        switch (targetState) {
+            case STATE_IDLE:
+                mVsCover.setVisibility(View.VISIBLE);
+                mProgressLoading.setVisibility(View.INVISIBLE);
+//                mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+                break;
+            case STATE_PREPAREING:
+                mVsCover.setVisibility(View.VISIBLE);
+                mProgressLoading.setVisibility(View.VISIBLE);
+                break;
+            case STATE_PREPARED:
+                mProgressLoading.setVisibility(View.GONE);
+                break;
+            case STATE_PLAYING:
+                mVsCover.setVisibility(View.INVISIBLE);
+                mBtnPlayPause.toggle();
+                startPlayer();
+                mProgressLoading.setVisibility(View.GONE);
+                break;
+            case STATE_PAUSE:
+                mBtnPlayPause.toggle();
+                pausePlayer();
+                break;
+            case STATE_FAST_PREVIEW:
+                mVsCover.setVisibility(View.VISIBLE);
+                mBtnPlayPause.toggle();
+                stopPlayer();
+                break;
+        }
+        mCurrentState = targetState;
+    }
+
+    private void startPlayer() {
+        mMediaPlayer.start();
+
+    }
+
+    private void pausePlayer() {
+        mMediaPlayer.pause();
+
+    }
+
+    private void stopPlayer() {
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.stop();
+        }
 
     }
 }

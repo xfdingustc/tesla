@@ -30,6 +30,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
@@ -196,8 +197,26 @@ public class SignInFragment extends BaseFragment {
 
     void onSignInSuccessful(JSONObject response) {
         SessionManager.getInstance().saveLoginInfo(response);
-        getActivity().setResult(Activity.RESULT_OK);
-        getActivity().finish();
+        doDeviceLogin();
+
+    }
+
+    private void doDeviceLogin() {
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_DEVICE_LOGIN)
+            .postBody("deviceType", "ANDROID")
+            .postBody("deviceID", "xfding")
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    SessionManager.getInstance().saveLoginInfo(response);
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
+                }
+            })
+            .build();
+
+        mVolleyRequestQueue.add(request);
     }
 
     private void signUpWithFacebook(final AccessToken accessToken) {
@@ -207,10 +226,8 @@ public class SignInFragment extends BaseFragment {
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.t(TAG).d("Response: " + response);
-                    SessionManager.getInstance().saveLoginInfo(response, true);
                     hideDialog();
-                    getActivity().setResult(Activity.RESULT_OK);
-                    getActivity().finish();
+                    onSignInSuccessful(response);
                 }
             }
 

@@ -20,6 +20,8 @@ public class Constants {
 
     public static final String API_USER_ME = HOST_URL + "api/users/me";
 
+    public static final String API_DEVICE_LOGIN = HOST_URL + "api/devices/login";
+
     public static final String API_USER_PROFILE = HOST_URL + "api/users/me/profile";
 
     public static final String API_USER_CHANGE_PASSWORD = HOST_URL + "api/users/change_password";

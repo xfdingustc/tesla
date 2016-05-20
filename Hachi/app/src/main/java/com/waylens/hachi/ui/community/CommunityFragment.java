@@ -64,6 +64,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_ME), getString(R
             .string.me));
+        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LATEST), "Latest");
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LIKES), getString(R.string
             .like));
         mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string

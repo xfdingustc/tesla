@@ -65,8 +65,9 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     public static final int FEED_TAG_MY_FEED = 0;
     public static final int FEED_TAG_ME = 1;
     public static final int FEED_TAG_LIKES = 2;
-    public static final int FEED_TAG_STAFF_PICKS = 3;
-    public static final int FEED_TAG_ALL = 4;
+    public static final int FEED_TAG_LATEST = 3;
+    public static final int FEED_TAG_STAFF_PICKS = 4;
+    public static final int FEED_TAG_ALL = 5;
 
     @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -269,6 +270,9 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
                 break;
             case FEED_TAG_ME:
                 url = Constants.API_MOMENTS_ME;
+                break;
+            case FEED_TAG_LATEST:
+                url = Constants.API_MOMENTS;
                 break;
             case FEED_TAG_LIKES:
                 url = Constants.API_MOMENTS_MY_LIKE;

@@ -220,10 +220,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -243,7 +239,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mSurfaceHolder = null;
     }
 
-    private void start() {
+    private void  start() {
         startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
     }
 
