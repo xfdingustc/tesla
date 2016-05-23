@@ -415,6 +415,7 @@ public class CameraPreviewFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         if (mLiveView != null) {
+            Logger.t(TAG).d("Stop camera preview");
             mLiveView.stopStream();
         }
 

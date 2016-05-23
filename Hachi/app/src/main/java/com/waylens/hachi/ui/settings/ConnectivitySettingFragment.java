@@ -14,6 +14,8 @@ public class ConnectivitySettingFragment extends PreferenceFragment {
 
     private Preference mBt;
 
+    private Preference mWifi;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +28,16 @@ public class ConnectivitySettingFragment extends PreferenceFragment {
     }
 
     private void initBtPreference() {
+        mWifi = findPreference("wifi");
+        mWifi.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                WifiSettingActivity.launch(getActivity());
+                return true;
+            }
+        });
+
+
         mBt = findPreference("bluetooth");
         mBt.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

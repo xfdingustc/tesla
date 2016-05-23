@@ -369,6 +369,10 @@ public class VdtCamera {
         mController.cmd_audio_setMic(micState, 0);
     }
 
+    public void setWifiMode(int wifiMode) {
+        mController.cmd_NetWork_SetWLandMode(wifiMode);
+    }
+
     public int getWifiMode() {
         mController.cmd_Network_GetWLanMode();
         return mWifiMode;
@@ -806,6 +810,10 @@ public class VdtCamera {
 
         public InetSocketAddress getInetSocketAddress() {
             return getConnection().getInetSocketAddress();
+        }
+
+        public void cmd_NetWork_SetWLandMode(int wifiMode) {
+            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECT_HOST, wifiMode);
         }
 
 
@@ -1756,8 +1764,7 @@ public class VdtCamera {
                     ackNotHandled("CMD_NETWORK_RMV_HOST", p1, p2);
                     break;
                 case CMD_NETWORK_CONNECT_HOST:
-                    ackNotHandled("CMD_NETWORK_CONNECT_HOST", p1, p2);
-                    //
+                    handleOnNetworkConnectHost(p1, p2);
                     break;
                 case CMD_NETWORK_SCANHOST:
                     handleNetWorkScanHostResult(p1, p2);
@@ -1822,6 +1829,10 @@ public class VdtCamera {
                     Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                     break;
             }
+        }
+
+        private void handleOnNetworkConnectHost(String p1, String p2) {
+            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
         }
 
         private void handleNetworkConnectHost(String p1, String p2) {

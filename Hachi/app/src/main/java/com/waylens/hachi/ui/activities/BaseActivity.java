@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
+import android.view.View;
 
 import com.android.volley.RequestQueue;
 //import com.bugtags.library.Bugtags;
@@ -112,6 +113,12 @@ public class BaseActivity extends AppCompatActivity {
 //        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         if (mToolbar != null) {
             mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }
     }
 

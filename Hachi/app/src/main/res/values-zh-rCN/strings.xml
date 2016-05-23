@@ -228,4 +228,11 @@
 	<string name="block">屏蔽</string>
 	<string name="country">国家</string>
 	<string name="city">城市</string>
+	<string name="wifi_mode">无线模式</string>
+	<string name="choose_wifi">选择无线网络</string>
+	<string name="access_point">无线热点</string>
+	<string name="client">客户端</string>
+	<string name="off">关闭</string>
+	<string name="change_wifi_mode">更改无线模式</string>
+	<string name="change_wifi_mode_alert">改变Wifi模式将断开相机，你确定要这样做吗？</string>
 </resources>
