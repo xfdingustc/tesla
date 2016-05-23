@@ -6,7 +6,6 @@ import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.Playlist;
 
 /**
  * Created by Xiaofei on 2016/1/27.
@@ -21,23 +20,14 @@ public class PlaylistEditRequest extends VdbRequest<Integer> {
     private final long mEndTimeMs;
     private final int mIndex;
 
-    public PlaylistEditRequest(Clip clip,
-                               long startTimeMs,
-                               long endTimeMs,
-                               int playListID,
-                               VdbResponse.Listener<Integer> listener,
-                               VdbResponse.ErrorListener errorListener) {
+    public PlaylistEditRequest(Clip clip, long startTimeMs, long endTimeMs, int playListID,
+                               VdbResponse.Listener<Integer> listener, VdbResponse.ErrorListener errorListener) {
         this(METHOD_INSERT_CLIP, clip, startTimeMs, endTimeMs, -1, playListID, listener, errorListener);
 
     }
 
-    public PlaylistEditRequest(int method,
-                               Clip clip,
-                               long startTimeMs,
-                               long endTimeMs,
-                               int index,
-                               int playListID,
-                               VdbResponse.Listener<Integer> listener,
+    public PlaylistEditRequest(int method, Clip clip, long startTimeMs, long endTimeMs, int index,
+                               int playListID, VdbResponse.Listener<Integer> listener,
                                VdbResponse.ErrorListener errorListener) {
         super(method, listener, errorListener);
         this.mClip = clip;
@@ -58,7 +48,7 @@ public class PlaylistEditRequest extends VdbRequest<Integer> {
         switch (mMethod) {
             case METHOD_INSERT_CLIP:
                 mVdbCommand = VdbCommand.Factory.createCmdInsertClip(mClip.cid, mStartTimeMs,
-                        mEndTimeMs, mPlayListID, mIndex);
+                    mEndTimeMs, mPlayListID, mIndex);
                 break;
             case METHOD_CLEAR_PLAYLIST:
                 mVdbCommand = VdbCommand.Factory.createCmdClearPlayList(mPlayListID);

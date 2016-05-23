@@ -72,11 +72,17 @@ public class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.cancelAll();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
     }
 
     @Override

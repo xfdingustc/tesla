@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.clips.player;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -83,7 +84,8 @@ public class PlaylistEditor {
         doTrimClip(position, clip);
     }
 
-    void doGetPlaylistInfo(final int action) {
+    private void doGetPlaylistInfo(final int action) {
+        Logger.t(TAG).d("do get play list info");
         mVdbRequestQueue.add(new ClipSetExRequest(mPlayListID, ClipSetExRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
@@ -124,6 +126,7 @@ public class PlaylistEditor {
     }
 
     void doClearPlayList(final ArrayList<Clip> clipList) {
+        Logger.t(TAG).d("doClearPlaylist");
         PlaylistEditRequest request = PlaylistEditRequest.getClearPlayListRequest(mPlayListID,
             new VdbResponse.Listener<Integer>() {
                 @Override
@@ -135,35 +138,32 @@ public class PlaylistEditor {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-
+                    Logger.t(TAG).d("clear play list error");
                 }
             });
         mVdbRequestQueue.add(request);
     }
 
     private void doBuildPlaylist(final List<Clip> clips) {
+        Logger.t(TAG).d("do Build play list");
         mClipAdded = 0;
         for (Clip clip : clips) {
-            PlaylistEditRequest playRequest = new PlaylistEditRequest(
-                clip,
-                clip.getStartTimeMs(),
-                clip.getEndTimeMs(),
-                mPlayListID,
-                new VdbResponse.Listener<Integer>() {
-                    @Override
-                    public void onResponse(Integer response) {
-//                            Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + " " + "realId: ");
-                        mClipAdded++;
-                        if (mClipAdded == clips.size() && mOnBuildCompleteListener != null) {
-                            doGetPlaylistInfo(ACTION_ADD);
-                        }
+            PlaylistEditRequest playRequest = new PlaylistEditRequest(clip, clip.getStartTimeMs(),
+                clip.getEndTimeMs(), mPlayListID, new VdbResponse.Listener<Integer>() {
+                @Override
+                public void onResponse(Integer response) {
+                    Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + " " + "realId: ");
+                    mClipAdded++;
+                    if (mClipAdded == clips.size() && mOnBuildCompleteListener != null) {
+                        doGetPlaylistInfo(ACTION_ADD);
                     }
-                },
+                }
+            },
                 new VdbResponse.ErrorListener() {
                     @Override
                     public void onErrorResponse(SnipeError error) {
                         mClipAdded++;
-                        Log.e("test", "ClipDeleteRequest", error);
+                        Logger.t(TAG).d("ClipDeleteRequest", error);
                     }
                 });
 
