@@ -32,6 +32,7 @@
         <attr name="barPaddingBottom" format="dimension"/>
         <attr name="circleSize" format="dimension"/>
         <attr name="circleColor" format="color"/>
+        <attr name="barHeight" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="CompoundEditView">

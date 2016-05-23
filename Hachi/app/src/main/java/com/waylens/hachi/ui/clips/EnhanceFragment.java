@@ -29,7 +29,7 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.player.PlaylistEditor;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.views.clipseditview.ClipsEditView;
+import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
@@ -340,9 +340,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         return jsonObject;
     }
 
-    public int getSelectedPosition() {
-        return mClipsEditView.getSelectedPosition();
-    }
 
     public int getAudioID() {
         if (mMusicItem != null) {
@@ -434,7 +431,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     }
 
     @Override
-    public void onTrimming(Clip clip, int flag, long value) {
+    public void onTrimming(Clip clip) {
         mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
     }
 

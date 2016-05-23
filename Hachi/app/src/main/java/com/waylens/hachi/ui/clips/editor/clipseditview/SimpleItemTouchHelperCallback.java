@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.waylens.hachi.ui.views.clipseditview;
+package com.waylens.hachi.ui.clips.editor.clipseditview;
 
 import android.graphics.Canvas;
 import android.support.v7.widget.LinearLayoutManager;

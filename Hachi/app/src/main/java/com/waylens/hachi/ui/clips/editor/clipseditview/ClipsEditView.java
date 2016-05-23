@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.clipseditview;
+package com.waylens.hachi.ui.clips.editor.clipseditview;
 
 import android.content.Context;
 import android.os.Build;
@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.appyvet.rangebar.RangeBar;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -30,21 +31,16 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
-import org.florescu.android.rangeseekbar.RangeSeekBar;
+
 
 import java.util.Collections;
 import java.util.List;
 
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * //
- * Created by Richard on 2/23/16.
- */
-public class ClipsEditView extends LinearLayout implements View.OnClickListener,
-        RecyclerView.OnItemTouchListener, RangeSeekBar.OnRangeSeekBarChangeListener<Long> {
+
+public class ClipsEditView extends LinearLayout {
     private static final String TAG = ClipsEditView.class.getSimpleName();
     final static float HALF_ALPHA = 0.5f;
     final static float FULL_ALPHA = 1.0f;
@@ -61,7 +57,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
     TextView mClipDurationView;
 
     @BindView(R.id.range_seek_bar)
-    RangeSeekBar<Long> mRangeSeekBar;
+    RangeBar mRangeSeekBar;
 
     @BindView(R.id.trimming_bar)
     View mTrimmingBar;
@@ -96,7 +92,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
     void init(Context context) {
         setOrientation(VERTICAL);
         View.inflate(context, R.layout.layout_clips_edit_view, this);
-        ButterKnife.bind(this, this);
+        ButterKnife.bind(this);
 
         mTrimmingBar.setVisibility(INVISIBLE);
         mClipsCountView.setVisibility(VISIBLE);
@@ -111,10 +107,43 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         setClickable(true);
-        setOnClickListener(this);
-        mRecyclerView.addOnItemTouchListener(this);
-        mRangeSeekBar.setNotifyWhileDragging(true);
-        mRangeSeekBar.setOnRangeSeekBarChangeListener(this);
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+                final int action = MotionEventCompat.getActionMasked(e);
+                if (action == MotionEvent.ACTION_UP) {
+                    exitClipEditing();
+                }
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
+
+
+        mRangeSeekBar.setThumbMoveListener(new RangeBar.OnThumbMoveListener() {
+            @Override
+            public void onThumbMovingStart(RangeBar rangeBar, boolean b) {
+
+            }
+
+            @Override
+            public void onThumbMovingStop(RangeBar rangeBar, boolean b) {
+                if (mOnClipEditListener != null) {
+                    Clip clip = getClipSet().getClip(mSelectedPosition);
+                    mOnClipEditListener.onStopTrimming(clip);
+                }
+            }
+        });
+        mRangeSeekBar.setOnRangeBarChangeListener(mRangeBarchangeListener);
 
 
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
@@ -124,69 +153,27 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        //TODO
-        //exitClipEditing();
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-        //TODO
-        //return null == recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-        return false;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        final int action = MotionEventCompat.getActionMasked(e);
-        if (action == MotionEvent.ACTION_UP) {
-            exitClipEditing();
+    private RangeBar.OnRangeBarChangeListener mRangeBarchangeListener = new RangeBar.OnRangeBarChangeListener() {
+        @Override
+        public void onRangeChangeListener(RangeBar rangeBar, int i, int i1, String s, String s1) {
+            if (mSelectedPosition == -1) {
+                return;
+            }
+            Clip clip = getClipSet().getClip(mSelectedPosition);
+            clip.editInfo.selectedStartValue = rangeBar.getLeftIndex();
+            clip.editInfo.selectedEndValue = rangeBar.getRightIndex();
+            updateClipDuration(clip);
+            if (mOnClipEditListener != null) {
+                mOnClipEditListener.onTrimming(clip);
+            }
         }
-    }
+    };
 
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        //
-    }
-
-    @Override
-    public void onStartTrackingTouch(RangeSeekBar<Long> rangeSeekBar) {
-        if (mOnClipEditListener != null) {
-            mOnClipEditListener.onStartTrimming();
-        }
-    }
 
     private ClipSet getClipSet() {
         return ClipSetManager.getManager().getClipSet(mClipSetIndex);
     }
 
-    @Override
-    public void onRangeSeekBarValuesChanged(RangeSeekBar<Long> rangeSeekBar,
-                                            RangeSeekBar.Thumb pressedThumb,
-                                            Long value) {
-        if (mSelectedPosition == -1) {
-            return;
-        }
-        Clip clip = getClipSet().getClip(mSelectedPosition);
-        if (pressedThumb == RangeSeekBar.Thumb.MIN) {
-            clip.editInfo.selectedStartValue = value;
-        } else {
-            clip.editInfo.selectedEndValue = value;
-        }
-        updateClipDuration(clip);
-        if (mOnClipEditListener != null) {
-            mOnClipEditListener.onTrimming(clip, pressedThumb.ordinal(), value);
-        }
-    }
-
-    @Override
-    public void onStopTrackingTouch(RangeSeekBar<Long> rangeSeekBar) {
-        if (mOnClipEditListener != null) {
-            Clip clip = getClipSet().getClip(mSelectedPosition);
-            mOnClipEditListener.onStopTrimming(clip);
-        }
-    }
 
     public void setClipIndex(int clipSetIndex) {
         if (mAdapter != null) {
@@ -262,18 +249,23 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
     void internalOnSelectClip(int selectedPosition, Clip clip) {
         mTrimmingBar.setVisibility(VISIBLE);
         mClipsCountView.setVisibility(INVISIBLE);
-        mRangeSeekBar.setRangeValues(clip.editInfo.minExtensibleValue, clip.editInfo.maxExtensibleValue);
-        mRangeSeekBar.setSelectedMinValue(clip.editInfo.selectedStartValue);
-        mRangeSeekBar.setSelectedMaxValue(clip.editInfo.selectedEndValue);
+
+
+        mRangeSeekBar.setOnRangeBarChangeListener(null);
+        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue);
+        mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue);
+        mRangeSeekBar.setRangePinsByIndices((int)clip.editInfo.selectedStartValue, (int)clip.editInfo.selectedEndValue);
+
         updateClipDuration(clip);
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onClipSelected(selectedPosition, clip);
         }
+        mRangeSeekBar.setOnRangeBarChangeListener(mRangeBarchangeListener);
     }
 
     private void updateClipDuration(Clip clip) {
         mClipDurationView.setText(DateUtils.formatElapsedTime(clip.editInfo.getSelectedLength() /
-                1000));
+            1000));
     }
 
     void internalOnClipMoved(int fromPosition, int toPosition) {
@@ -306,7 +298,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
 
     void updateClipCount(int clipCount) {
         mClipsCountView.setText(getResources().getQuantityString(
-                R.plurals.numbers_of_clips, clipCount, clipCount));
+            R.plurals.numbers_of_clips, clipCount, clipCount));
     }
 
     void layoutTransition(VH holder, boolean isSelected) {
@@ -471,7 +463,7 @@ public class ClipsEditView extends LinearLayout implements View.OnClickListener,
 
         void onStartTrimming();
 
-        void onTrimming(Clip clip, int flag, long value);
+        void onTrimming(Clip clip);
 
         void onStopTrimming(Clip clip);
     }

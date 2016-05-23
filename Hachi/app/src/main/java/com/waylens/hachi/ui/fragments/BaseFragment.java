@@ -82,7 +82,6 @@ public class BaseFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-
     }
 
     @Override
@@ -94,7 +93,7 @@ public class BaseFragment extends Fragment {
     protected void initCamera() {
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
         if (mVdtCamera != null) {
-            mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
+            mVdbRequestQueue = mVdtCamera.getRequestQueue();
             mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         }
     }
