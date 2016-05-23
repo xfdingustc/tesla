@@ -235,4 +235,5 @@
 	<string name="off">关闭</string>
 	<string name="change_wifi_mode">更改无线模式</string>
 	<string name="change_wifi_mode_alert">改变Wifi模式将断开相机，你确定要这样做吗？</string>
+	<string name="wifi_added">下列Wifi已成功加入相机</string>
 </resources>

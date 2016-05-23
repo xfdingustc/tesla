@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <include layout="@layout/toolbar_default"/>
+
+    <TextView
+        style="@style/HachiTextViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/wifi_added"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/added_wifi_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        style="@style/HachiTextViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/choose_wifi"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/wifi_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

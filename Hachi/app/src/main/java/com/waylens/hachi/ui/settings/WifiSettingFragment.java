@@ -12,6 +12,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.ui.activities.MainActivity;
 
 /**
  * Created by Xiaofei on 2016/5/23.
@@ -35,6 +36,15 @@ public class WifiSettingFragment extends PreferenceFragment {
             return;
         }
 
+        initWifiModePreference();
+        initChangeWifiPreference();
+
+
+    }
+
+
+
+    private void initWifiModePreference() {
         mWifiMode = findPreference("mode");
         int wifiMode = 0;
         switch (mVdtCamera.getWifiMode()) {
@@ -89,6 +99,17 @@ public class WifiSettingFragment extends PreferenceFragment {
         });
     }
 
+    private void initChangeWifiPreference() {
+        mChooseWifi = findPreference("wifi_list");
+        mChooseWifi.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                ChooseWifiActivity.launch(getActivity());
+                return true;
+            }
+        });
+    }
+
 
     private void showChangeWifiModeAlertDialog(final int selectIndex) {
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
@@ -108,6 +129,7 @@ public class WifiSettingFragment extends PreferenceFragment {
     private void doChangeWifiMode(int selectIndex) {
         Logger.t(TAG).d("change wifi mode to " + selectIndex);
         mVdtCamera.setWifiMode(selectIndex);
+        MainActivity.launch(getActivity());
     }
 
 
