@@ -1,11 +1,10 @@
-package com.waylens.hachi.ui.views.multisegseekbar;
+package com.waylens.hachi.ui.clips.player.multisegseekbar;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSetPos;
 
 import java.util.ArrayList;

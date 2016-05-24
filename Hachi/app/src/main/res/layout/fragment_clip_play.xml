@@ -68,7 +68,7 @@
             android:orientation="vertical">
 
 
-            <com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar
+            <com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar
                 android:id="@+id/multiSegIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

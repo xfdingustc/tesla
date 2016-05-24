@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.multisegseekbar;
+package com.waylens.hachi.ui.clips.player.multisegseekbar;
 
 import android.content.Context;
 import android.content.res.Resources;

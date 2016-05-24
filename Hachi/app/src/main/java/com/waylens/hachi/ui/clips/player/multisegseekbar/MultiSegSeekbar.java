@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.multisegseekbar;
+package com.waylens.hachi.ui.clips.player.multisegseekbar;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -17,7 +17,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.utils.ViewUtils;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
@@ -53,6 +52,7 @@ public class MultiSegSeekbar extends View {
     private int mDefaultWidth = 500;
     private int mDefaultHeight = 150;
     private boolean mIsMulti = true;
+    private int mCurrentClipIndex = 0;
 
     private static final int DEFAULT_BAR_COLOR = Color.LTGRAY;
     private static final float DEFAULT_BAR_WEIGHT_PX = 2;
@@ -135,6 +135,7 @@ public class MultiSegSeekbar extends View {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
         ClipSetPos clipSetPos = event.getClipSetPos();
+        mCurrentClipIndex = clipSetPos.getClipIndex();
         float newX = mBar.setClipSetPos(clipSetPos);
         mThumb.setX(newX);
         invalidate();
@@ -144,6 +145,9 @@ public class MultiSegSeekbar extends View {
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         if (mClipListIndex == event.getIndex()) {
+            ClipSetPos clipSetPos = new ClipSetPos(mCurrentClipIndex, getClipSet().getClip(mCurrentClipIndex).editInfo.selectedStartValue);
+            float newX = mBar.setClipSetPos(clipSetPos);
+            mThumb.setX(newX);
             invalidate();
         }
     }
@@ -176,13 +180,6 @@ public class MultiSegSeekbar extends View {
         this.mListener = listener;
     }
 
-
-
-
-    public void notifyDateSetChanged() {
-        // recalcuate current progress;
-        invalidate();
-    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -277,21 +274,6 @@ public class MultiSegSeekbar extends View {
 
     private ClipSet getClipSet() {
         return ClipSetManager.getManager().getClipSet(mClipListIndex);
-    }
-
-    public void setProgress(int progress) {
-        mProgress = progress;
-        float thumbX = mProgress * mBar.getWidth() / mMax;
-        mThumb.setX(thumbX + mBar.getLeftX());
-        invalidate();
-    }
-
-    public int getMax() {
-        return mMax;
-    }
-
-    public int getProgress() {
-        return mProgress;
     }
 
     public interface OnMultiSegSeekBarChangeListener {

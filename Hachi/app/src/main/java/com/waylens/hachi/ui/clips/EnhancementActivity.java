@@ -212,7 +212,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             clipSet.addClip(clip);
         }
 
-        Logger.t(TAG).d("clip set size: " + clipSet.getCount() + " clip: " + clipSet.getClip(0).toString());
+//        Logger.t(TAG).d("clip set size: " + clipSet.getCount() + " clip: " + clipSet.getClip(0).toString());
 
         if (!checkIfResolutionUnity(clipList)) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)

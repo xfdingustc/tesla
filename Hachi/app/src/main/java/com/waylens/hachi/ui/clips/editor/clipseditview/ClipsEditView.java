@@ -252,9 +252,11 @@ public class ClipsEditView extends LinearLayout {
 
 
         mRangeSeekBar.setOnRangeBarChangeListener(null);
-        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue);
+        Logger.t(TAG).d("tickStart: " + clip.editInfo.minExtensibleValue + " tickEnd: " + clip.editInfo.maxExtensibleValue);
         mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue);
-        mRangeSeekBar.setRangePinsByIndices((int)clip.editInfo.selectedStartValue, (int)clip.editInfo.selectedEndValue);
+        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue);
+
+        mRangeSeekBar.setRangePinsByValue((int)clip.editInfo.selectedStartValue, (int)clip.editInfo.selectedEndValue);
 
         updateClipDuration(clip);
         if (mOnClipEditListener != null) {

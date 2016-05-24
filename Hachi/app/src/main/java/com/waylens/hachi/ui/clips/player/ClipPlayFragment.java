@@ -1,22 +1,16 @@
 package com.waylens.hachi.ui.clips.player;
 
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -32,10 +26,9 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
-import com.waylens.hachi.ui.views.multisegseekbar.MultiSegSeekbar;
+import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
@@ -463,12 +456,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mPreviousShownClipPos = clipPos;
             mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
         }
-    }
-
-    public void notifyClipSetChanged() {
-        //mMultiSegSeekbar.setClipList(mClipSetIndex);
-        mMultiSegSeekbar.notifyDateSetChanged();
-        //refreshProgressBar();
     }
 
 

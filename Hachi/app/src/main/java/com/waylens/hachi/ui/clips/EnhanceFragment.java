@@ -357,7 +357,7 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     public void onClipSelected(int position, Clip clip) {
         getActivity().setTitle(R.string.trim);
         mEnhanceActionBar.setVisibility(View.INVISIBLE);
-        ClipSetPos clipSetPos = new ClipSetPos(position, clip.getStartTimeMs());
+        ClipSetPos clipSetPos = new ClipSetPos(position, clip.editInfo.selectedStartValue);
 
 //        mClipPlayFragment.setClipSetPos(clipSetPos, true);
         mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
