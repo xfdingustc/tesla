@@ -26,9 +26,9 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
-import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
@@ -178,7 +178,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mMediaWindow.addView(mControlPanel, params);
 
 
-
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -232,7 +231,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mSurfaceHolder = null;
     }
 
-    private void  start() {
+    private void start() {
         startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
     }
 
@@ -393,7 +392,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-
     private ClipSet getClipSet() {
         return ClipSetManager.getManager().getClipSet(mClipSetIndex);
     }
@@ -475,7 +473,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
+                    ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
                     mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
                     changeState(STATE_IDLE);
                 }
@@ -559,6 +557,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private void startLoadPlaybackUrl(ClipSetPos clipSetPos) {
         long startTimeMs = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
+        Logger.t(TAG).d("startTimeMs: " + startTimeMs);
         mUrlProvider.getUri(startTimeMs, new UrlProvider.OnUrlLoadedListener() {
 
             @Override
@@ -645,7 +644,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mAudioPlayer.stop();
         }
     }
-
 
 
     public void setUrlProvider(UrlProvider urlProvider) {

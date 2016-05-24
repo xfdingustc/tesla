@@ -147,6 +147,7 @@ public class MultiSegSeekbar extends View {
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         if (mClipListIndex == event.getIndex()) {
             ClipSetPos clipSetPos = new ClipSetPos(mCurrentClipIndex, getClipSet().getClip(mCurrentClipIndex).editInfo.selectedStartValue);
+            mBar.setClipSetList(getClipSet().getClipList());
             float newX = mBar.setClipSetPos(clipSetPos);
             mThumb.setX(newX);
             invalidate();
@@ -203,7 +204,6 @@ public class MultiSegSeekbar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         if (getClipSet() == null) {
             return;
         }

@@ -66,9 +66,10 @@ class Bar {
             return;
         }
 
+        mClipList = clipList;
         generateLineList();
 
-        mClipList = clipList;
+
 
         for (Line line : mLineList) {
             canvas.drawLine(line.startX, mY, line.endX, mY, mInactivePaint);
@@ -81,6 +82,11 @@ class Bar {
         long timeOffset = clipSetPos.getClipTimeMs() - activeClip.editInfo.selectedStartValue;
         float lineOffset = timeOffset * (activeLine.endX - activeLine.startX) / activeClip.editInfo.getSelectedLength();
         return activeLine.startX + lineOffset;
+    }
+
+    public void setClipSetList(ArrayList<Clip> clipList) {
+        mClipList = clipList;
+        generateLineList();
     }
 
     private void generateLineList() {
@@ -131,7 +137,7 @@ class Bar {
                 Clip clip = mClipList.get(i);
                 float offset = x - line.startX;
                 long timeOffset = (long)(offset * clip.editInfo.getSelectedLength() / (line.endX - line.startX));
-                return new ClipSetPos(i, clip.getStartTimeMs() + timeOffset);
+                return new ClipSetPos(i, clip.editInfo.selectedStartValue + timeOffset);
             }
         }
         return null;
