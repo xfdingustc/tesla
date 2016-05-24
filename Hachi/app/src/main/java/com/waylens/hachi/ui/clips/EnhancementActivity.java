@@ -254,20 +254,17 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private void doBuildPlaylist() {
         Logger.t(TAG).d("do build play list");
-        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_INDEX);
-        playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-                PlaylistUrlProvider urlProvider = new PlaylistUrlProvider(mVdbRequestQueue, PLAYLIST_INDEX);
-                mClipPlayFragment.setUrlProvider(urlProvider);
-                Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
-                if (mEnhanceFragment == null) {
-                    mEnhanceFragment = new EnhanceFragment();
-                }
-                switchFragment(mShareFragment, mEnhanceFragment);
-            }
-        });
+//        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_INDEX);
+//        playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
+//            @Override
+//            public void onBuildComplete(ClipSet clipSet) {
+////                ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+//                PlaylistUrlProvider urlProvider = new PlaylistUrlProvider(mVdbRequestQueue, PLAYLIST_INDEX);
+//                mClipPlayFragment.setUrlProvider(urlProvider);
+//                Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
+//
+//            }
+//        });
 
     }
 
@@ -290,7 +287,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     private void switchToMode(int launchMode) {
-        Logger.t(TAG).d("switch to mode: " + launchMode);
+//        Logger.t(TAG).d("switch to mode: " + launchMode);
         if (mLaunchMode == launchMode) {
             return;
         }
@@ -303,7 +300,10 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             case LAUNCH_MODE_ENHANCE:
                 mClipTrimmer.setVisibility(View.GONE);
                 adjustPlayerPosition(false);
-                doBuildPlaylist();
+                if (mEnhanceFragment == null) {
+                    mEnhanceFragment = new EnhanceFragment();
+                }
+                switchFragment(mShareFragment, mEnhanceFragment);
                 break;
             case LAUNCH_MODE_SHARE:
                 mClipTrimmer.setVisibility(View.GONE);

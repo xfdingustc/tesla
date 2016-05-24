@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.clips.player;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.SnipeError;
@@ -31,41 +30,54 @@ public class PlaylistEditor {
 
     private final VdbRequestQueue mVdbRequestQueue;
     private int mClipSetIndex;
+    private final int mEditSetIndex = ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING;
 
     private OnBuildCompleteListener mOnBuildCompleteListener;
     private OnDeleteCompleteListener mOnDeleteCompleteListener;
-    OnMoveCompletedListener mOnMoveCompletedListener;
-    OnTrimCompletedListener mOnTrimCompletedListener;
+    private OnMoveCompletedListener mOnMoveCompletedListener;
+    private OnTrimCompletedListener mOnTrimCompletedListener;
 
     private int mClipAdded;
 
-    final int mPlayListID;
-    //ClipSet mPlayListClipSet;
+    private final int mPlayListID;
+
     private ClipSetManager mClipSetManager = ClipSetManager.getManager();
 
     public PlaylistEditor(@NonNull VdbRequestQueue requestQueue, int playListID) {
-        this.mVdbRequestQueue = requestQueue;//Snipe.newRequestQueue(context, vdtCamera);
-        //this class should not modify the original clip list
-        mPlayListID = playListID;
+        this.mVdbRequestQueue = requestQueue;
+        this.mPlayListID = playListID;
     }
 
     public ClipSet getClipSet() {
         return mClipSetManager.getClipSet(mClipSetIndex);
     }
 
-    public int getPlayListID() {
+    public ClipSet getEditClipSet() {
+        return mClipSetManager.getClipSet(mEditSetIndex);
+    }
+
+    public int getPlaylistId() {
         return mPlayListID;
     }
+
 
     public void build(int clipSetIndex, @NonNull OnBuildCompleteListener listener) {
         mOnBuildCompleteListener = listener;
         mClipSetIndex = clipSetIndex;
 
-        doClearPlayList(mClipSetManager.getClipSet(clipSetIndex).getClipList());
+        doRebuildPlaylist(ACTION_ADD);
+    }
+
+    private void doRebuildPlaylist(int actionAdd) {
+        doClearPlayList(actionAdd);
     }
 
     public void appendClips(List<Clip> clips, OnBuildCompleteListener listener) {
-        doBuildPlaylist(clips);
+        ClipSet clipSet = getClipSet();
+        clipSet.getClipList().addAll(clips);
+        ClipSetManager.getManager().updateClipSet(mClipSetIndex, clipSet);
+        doRebuildPlaylist(ACTION_ADD);
+
         mOnBuildCompleteListener = listener;
     }
 
@@ -81,7 +93,8 @@ public class PlaylistEditor {
 
     public void trimClip(int position, Clip clip, OnTrimCompletedListener listener) {
         mOnTrimCompletedListener = listener;
-        doTrimClip(position, clip);
+//        doTrimClip(position, clip);
+        doRebuildPlaylist(ACTION_TRIM);
     }
 
     private void doGetPlaylistInfo(final int action) {
@@ -90,7 +103,8 @@ public class PlaylistEditor {
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
-                    mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
+//                    mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
+                    adjustClipSet(clipSet);
                     switch (action) {
                         case ACTION_ADD:
                             if (mOnBuildCompleteListener != null) {
@@ -119,19 +133,34 @@ public class PlaylistEditor {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "", error);
+                    Logger.t(TAG).e("" + error);
 
                 }
             }));
     }
 
-    void doClearPlayList(final ArrayList<Clip> clipList) {
+    private void adjustClipSet(ClipSet clipSet) {
+        ClipSet originClipSet = getClipSet();
+
+
+        for (Clip origClip : originClipSet.getClipList()) {
+            for (Clip newClip : clipSet.getClipList()) {
+                if (origClip.realCid.equals(newClip.realCid)) {
+                    origClip.editInfo.selectedStartValue = newClip.getStartTimeMs();
+                    origClip.editInfo.selectedEndValue = newClip.getEndTimeMs();
+                    break;
+                }
+            }
+        }
+    }
+
+    private void doClearPlayList(final int action) {
         Logger.t(TAG).d("doClearPlaylist");
         PlaylistEditRequest request = PlaylistEditRequest.getClearPlayListRequest(mPlayListID,
             new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    doBuildPlaylist(clipList);
+                    doBuildPlaylist(action);
                 }
 
             },
@@ -144,18 +173,17 @@ public class PlaylistEditor {
         mVdbRequestQueue.add(request);
     }
 
-    private void doBuildPlaylist(final List<Clip> clips) {
-        Logger.t(TAG).d("do Build play list");
+    private void doBuildPlaylist(final int action) {
         mClipAdded = 0;
-        for (Clip clip : clips) {
-            PlaylistEditRequest playRequest = new PlaylistEditRequest(clip, clip.getStartTimeMs(),
-                clip.getEndTimeMs(), mPlayListID, new VdbResponse.Listener<Integer>() {
+        for (final Clip clip : getClipSet().getClipList()) {
+            PlaylistEditRequest playRequest = new PlaylistEditRequest(clip, clip.editInfo.selectedStartValue,
+                clip.editInfo.selectedEndValue, mPlayListID, new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    Logger.t(TAG).d("Add one clip to playlist!!!!!! cid: " + " " + "realId: ");
+                    Logger.t(TAG).d("Add one clip to playlist: " + clip.toString() );
                     mClipAdded++;
-                    if (mClipAdded == clips.size() && mOnBuildCompleteListener != null) {
-                        doGetPlaylistInfo(ACTION_ADD);
+                    if (mClipAdded == getClipSet().getClipList().size() && mOnBuildCompleteListener != null) {
+                        doGetPlaylistInfo(action);
                     }
                 }
             },
@@ -172,6 +200,7 @@ public class PlaylistEditor {
     }
 
     private void doDeleteClip(int position) {
+        Logger.t(TAG).d("do delete clip");
         if (getClipSet() == null) {
             return;
         }
@@ -189,13 +218,14 @@ public class PlaylistEditor {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "ClipDeleteRequest", error);
+                    Logger.t(TAG).e("ClipDeleteRequest: " + error);
                 }
             }));
 
     }
 
-    void doMoveClip(int fromPosition, int toPosition) {
+    private void doMoveClip(int fromPosition, int toPosition) {
+        Logger.t(TAG).d("do move clip");
         if (getClipSet() == null) {
             return;
         }
@@ -213,18 +243,21 @@ public class PlaylistEditor {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "ClipMoveRequest", error);
+                    Logger.t(TAG).e("ClipMoveRequest" + error);
                 }
             }));
     }
 
-    void doTrimClip(final int position, final Clip clip) {
+    private void doTrimClip(final int position, final Clip clip) {
+        Logger.t(TAG).d("do trim clip");
         ClipSet clipSet = getClipSet();
         if (clipSet == null) {
+            Logger.t(TAG).d("clip set is null clipSetIndex: " + mClipSetIndex);
             return;
         }
         Clip oldClip = clipSet.getClip(position);
         if (oldClip == null) {
+            Logger.t(TAG).d("old clip is null");
             return;
         }
         mVdbRequestQueue.add(new ClipDeleteRequest(oldClip.cid,
@@ -237,13 +270,14 @@ public class PlaylistEditor {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "ClipDeleteRequest", error);
+                    Logger.t(TAG).e("ClipDeleteRequest" + error);
                 }
             }));
 
     }
 
-    void insertClip(Clip clip, final int index) {
+    private void insertClip(Clip clip, final int index) {
+        Logger.t(TAG).d("do insert clip");
         long startValue = clip.editInfo.selectedStartValue;
         long endValue = clip.editInfo.selectedEndValue;
 
@@ -256,7 +290,7 @@ public class PlaylistEditor {
         }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-                Log.e("test", "ClipDeleteRequest", error);
+                Logger.t(TAG).e("ClipDeleteRequest" + error);
             }
         }));
     }
@@ -265,7 +299,7 @@ public class PlaylistEditor {
      * To work around a playlist insertion bug: when inserting a clip to a "position",
      * it's actually inserted at "position + 1"
      */
-    void tmpMove(Clip clip, int toPosition) {
+    private void tmpMove(Clip clip, int toPosition) {
         mVdbRequestQueue.add(new ClipMoveRequest(clip.cid, toPosition,
             new VdbResponse.Listener<Integer>() {
                 @Override
@@ -276,12 +310,12 @@ public class PlaylistEditor {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "ClipMoveRequest", error);
+                    Logger.t(TAG).e("ClipMoveRequest" + error);
                 }
             }));
     }
 
-    void tmpDoGetPlaylistInfo(final int position) {
+    private void tmpDoGetPlaylistInfo(final int position) {
         mVdbRequestQueue.add(new ClipSetExRequest(0x100, ClipSetExRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
@@ -297,7 +331,7 @@ public class PlaylistEditor {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e("test", "", error);
+                    Logger.t(TAG).e("" + error);
 
                 }
             }));

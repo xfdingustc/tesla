@@ -263,7 +263,8 @@ public class Clip implements Parcelable, Serializable {
     }
 
     public String toString() {
-        return "Clip id: " + cid.toString() + " start time: " + mStartTimeMs + " end time: " + getEndTimeMs();
+        return "Clip id: " + cid.toString() + " start time: " + mStartTimeMs + " end time: " + getEndTimeMs()
+         + "real Clip id: " + realCid.toString();
     }
 
     public long getStandardClipDate() {

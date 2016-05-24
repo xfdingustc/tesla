@@ -252,7 +252,7 @@ public class ClipsEditView extends LinearLayout {
 
 
         mRangeSeekBar.setOnRangeBarChangeListener(null);
-        Logger.t(TAG).d("tickStart: " + clip.editInfo.minExtensibleValue + " tickEnd: " + clip.editInfo.maxExtensibleValue);
+//        Logger.t(TAG).d("tickStart: " + clip.editInfo.minExtensibleValue + " tickEnd: " + clip.editInfo.maxExtensibleValue);
         mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue);
         mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue);
 
@@ -341,6 +341,7 @@ public class ClipsEditView extends LinearLayout {
         @Override
         public void onBindViewHolder(final VH holder, final int position) {
             final Clip clip = getClipSet().getClip(position);
+
             ClipPos clipPos = new ClipPos(clip);
             mVdbImageLoader.displayVdbImage(clipPos, holder.clipThumbnail);
             holder.itemView.setTag(holder);
@@ -364,7 +365,7 @@ public class ClipsEditView extends LinearLayout {
                         }
 
                     }
-
+                    Logger.t(TAG).d(getClipSet().toString());
                     holder.itemView.setAlpha(FULL_ALPHA);
                     layoutTransition(holder, true);
                     mSelectedPosition = holder.getAdapterPosition();

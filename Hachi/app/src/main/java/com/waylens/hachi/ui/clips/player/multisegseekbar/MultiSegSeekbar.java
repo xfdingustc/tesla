@@ -119,8 +119,6 @@ public class MultiSegSeekbar extends View {
 
     public void setMultiStyle(boolean isMulti) {
         mIsMulti = isMulti;
-
-        //mBar.setMultiStyle(isMulti);
         invalidate();
     }
 
@@ -135,6 +133,9 @@ public class MultiSegSeekbar extends View {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
         ClipSetPos clipSetPos = event.getClipSetPos();
+        if (clipSetPos == null) {
+            return;
+        }
         mCurrentClipIndex = clipSetPos.getClipIndex();
         float newX = mBar.setClipSetPos(clipSetPos);
         mThumb.setX(newX);

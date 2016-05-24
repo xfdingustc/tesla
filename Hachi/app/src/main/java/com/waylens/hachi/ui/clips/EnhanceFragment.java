@@ -24,12 +24,13 @@ import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
+import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.player.PlaylistEditor;
+import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
@@ -48,7 +49,7 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 3/22/16.
  */
-public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnClipEditListener {
+public class EnhanceFragment extends BaseFragment {
     private static final String TAG = EnhanceFragment.class.getSimpleName();
 
     private static final int REQUEST_CODE_ENHANCE = 1000;
@@ -71,9 +72,11 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
     ArrayAdapter<CharSequence> mLengthAdapter;
     ArrayAdapter<CharSequence> mClipSrcAdapter;
 
-//    ClipPlayFragment mClipPlayFragment;
+    private ClipPlayFragment mClipPlayFragment;
 
     private PlaylistEditor mPlaylistEditor;
+
+    public static final int PLAYLIST_INDEX = 0x100;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -232,11 +235,21 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
         super.onViewCreated(view, savedInstanceState);
         Activity activity = getActivity();
         if (activity instanceof ClipPlayFragment.ClipPlayFragmentContainer) {
-//            mClipPlayFragment = ((ClipPlayFragment.ClipPlayFragmentContainer) activity).getClipPlayFragment();
+            mClipPlayFragment = ((ClipPlayFragment.ClipPlayFragmentContainer) activity).getClipPlayFragment();
 //            Logger.t(TAG).d("clip play fragment: " + mClipPlayFragment);
         }
         mClipsEditView.setVisibility(View.INVISIBLE);
-        mPlaylistEditor = new PlaylistEditor(mVdbRequestQueue, 0x100);
+        mPlaylistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_INDEX);
+        mPlaylistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(ClipSet clipSet) {
+//                ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
+                PlaylistUrlProvider urlProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlaylistId());
+                mClipPlayFragment.setUrlProvider(urlProvider);
+                Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
+
+            }
+        });
         mClipsEditView.setVisibility(View.VISIBLE);
 
         configEnhanceView();
@@ -300,8 +313,100 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
 
     void configEnhanceView() {
         mClipsEditView.setClipIndex(ClipSetManager.CLIP_SET_TYPE_ENHANCE);
-        mClipsEditView.setOnClipEditListener(this);
+        mClipsEditView.setOnClipEditListener(new ClipsEditView.OnClipEditListener() {
+            @Override
+            public void onClipSelected(int position, Clip clip) {
+                getActivity().setTitle(R.string.trim);
+                mEnhanceActionBar.setVisibility(View.INVISIBLE);
+                ClipSetPos clipSetPos = new ClipSetPos(position, clip.editInfo.selectedStartValue);
+                mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
+            }
 
+            @Override
+            public void onClipMoved(int fromPosition, final int toPosition, final Clip clip) {
+                mPlaylistEditor.move(fromPosition, toPosition, new PlaylistEditor.OnMoveCompletedListener() {
+                    @Override
+                    public void onMoveCompleted(ClipSet clipSet) {
+                        int selectedPosition = mClipsEditView.getSelectedPosition();
+                        ClipSetPos clipSetPos = getClipPlayFragment().getClipSetPos();
+                        if (selectedPosition != clipSetPos.getClipIndex()) {
+                            ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.getStartTimeMs());
+                            getClipPlayFragment().setClipSetPos(newClipSetPos, false);
+                        }
+                        if (selectedPosition == -1 && toPosition == 0) {
+                            getClipPlayFragment().showClipPosThumbnail(clip, clip.getStartTimeMs());
+                        }
+                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+                    }
+                });
+            }
+
+            @Override
+            public void onClipsAppended(List<Clip> clips, int clipCount) {
+                if (clips == null) {
+                    return;
+                }
+                mPlaylistEditor.appendClips(clips, new PlaylistEditor.OnBuildCompleteListener() {
+                    @Override
+                    public void onBuildComplete(ClipSet clipSet) {
+                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+                    }
+                });
+                if (clipCount > 0
+                    && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
+                    btnGauge.setEnabled(true);
+                    btnMusic.setEnabled(true);
+                    configureActionUI(ACTION_NONE, false);
+                }
+            }
+
+            @Override
+            public void onClipRemoved(Clip clip, int position, int clipCount) {
+                mPlaylistEditor.delete(position, new PlaylistEditor.OnDeleteCompleteListener() {
+                    @Override
+                    public void onDeleteComplete() {
+                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+                    }
+                });
+                if (clipCount == 0) {
+                    btnGauge.setEnabled(false);
+                    btnMusic.setEnabled(false);
+                    configureActionUI(ACTION_ADD_VIDEO, true);
+                }
+            }
+
+            @Override
+            public void onExitEditing() {
+                getActivity().setTitle(R.string.enhance);
+                mEnhanceActionBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onStartTrimming() {
+
+            }
+
+            @Override
+            public void onTrimming(Clip clip) {
+                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+            }
+
+            @Override
+            public void onStopTrimming(Clip clip) {
+                int selectedPosition = mClipsEditView.getSelectedPosition();
+                if (selectedPosition == ClipsEditView.POSITION_UNKNOWN) {
+                    return;
+                }
+                mPlaylistEditor.trimClip(selectedPosition, clip,
+                    new PlaylistEditor.OnTrimCompletedListener() {
+                        @Override
+                        public void onTrimCompleted(ClipSet clipSet) {
+                            Logger.t(TAG).d("on trip complete");
+                            mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+                        }
+                    });
+            }
+        });
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -351,104 +456,6 @@ public class EnhanceFragment extends BaseFragment implements ClipsEditView.OnCli
 
     public ClipPlayFragment getClipPlayFragment() {
         return ((ClipPlayFragment.ClipPlayFragmentContainer) getActivity()).getClipPlayFragment();
-    }
-
-    @Override
-    public void onClipSelected(int position, Clip clip) {
-        getActivity().setTitle(R.string.trim);
-        mEnhanceActionBar.setVisibility(View.INVISIBLE);
-        ClipSetPos clipSetPos = new ClipSetPos(position, clip.editInfo.selectedStartValue);
-
-//        mClipPlayFragment.setClipSetPos(clipSetPos, true);
-        mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
-    }
-
-
-    @Override
-    public void onClipMoved(int fromPosition, final int toPosition, final Clip clip) {
-
-        mPlaylistEditor.move(fromPosition, toPosition, new PlaylistEditor.OnMoveCompletedListener() {
-            @Override
-            public void onMoveCompleted(ClipSet clipSet) {
-                int selectedPosition = mClipsEditView.getSelectedPosition();
-                ClipSetPos clipSetPos = getClipPlayFragment().getClipSetPos();
-                if (selectedPosition != clipSetPos.getClipIndex()) {
-                    ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.getStartTimeMs());
-                    getClipPlayFragment().setClipSetPos(newClipSetPos, false);
-                }
-                if (selectedPosition == -1 && toPosition == 0) {
-                    getClipPlayFragment().showClipPosThumbnail(clip, clip.getStartTimeMs());
-                }
-                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-            }
-        });
-
-    }
-
-    @Override
-    public void onClipsAppended(List<Clip> clips, int clipCount) {
-        if (clips == null) {
-            return;
-        }
-        mPlaylistEditor.appendClips(clips, new PlaylistEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-            }
-        });
-        if (clipCount > 0
-            && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
-            btnGauge.setEnabled(true);
-            btnMusic.setEnabled(true);
-            configureActionUI(ACTION_NONE, false);
-        }
-    }
-
-    @Override
-    public void onClipRemoved(Clip clip, int position, int clipCount) {
-        mPlaylistEditor.delete(position, new PlaylistEditor.OnDeleteCompleteListener() {
-            @Override
-            public void onDeleteComplete() {
-                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-            }
-        });
-        if (clipCount == 0) {
-            btnGauge.setEnabled(false);
-            btnMusic.setEnabled(false);
-            configureActionUI(ACTION_ADD_VIDEO, true);
-        }
-    }
-
-    @Override
-    public void onExitEditing() {
-        getActivity().setTitle(R.string.enhance);
-        mEnhanceActionBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onStartTrimming() {
-        //TODO
-    }
-
-    @Override
-    public void onTrimming(Clip clip) {
-        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-    }
-
-    @Override
-    public void onStopTrimming(Clip clip) {
-        int selectedPosition = mClipsEditView.getSelectedPosition();
-        if (selectedPosition == ClipsEditView.POSITION_UNKNOWN) {
-            return;
-        }
-        mPlaylistEditor.trimClip(selectedPosition, clip,
-            new PlaylistEditor.OnTrimCompletedListener() {
-                @Override
-                public void onTrimCompleted(ClipSet clipSet) {
-                    mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-                }
-            });
-
     }
 
 

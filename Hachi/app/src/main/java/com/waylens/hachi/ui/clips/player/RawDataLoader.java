@@ -64,7 +64,7 @@ public class RawDataLoader {
         }
 
 
-        Logger.t(TAG).d("clipset count: " + getClipSet().getCount() + " loading index: " + mCurrentLoadingIndex);
+//        Logger.t(TAG).d("clipset count: " + getClipSet().getCount() + " loading index: " + mCurrentLoadingIndex);
         Clip clip = getClipSet().getClip(mCurrentLoadingIndex);
 
         ClipSegment clipSegment = new ClipSegment(clip);
@@ -92,7 +92,7 @@ public class RawDataLoader {
     private void onLoadRawDataFinished(int dataType, RawDataBlock block) {
         RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(mCurrentLoadingIndex);
 
-        Logger.t(TAG).d("Load finished type: " + dataType + " index: " + mCurrentLoadingIndex);
+//        Logger.t(TAG).d("Load finished type: " + dataType + " index: " + mCurrentLoadingIndex);
 
         switch (dataType) {
             case RawDataItem.DATA_TYPE_OBD:
