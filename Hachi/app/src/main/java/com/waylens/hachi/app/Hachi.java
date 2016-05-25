@@ -92,7 +92,7 @@ public class Hachi extends Application {
         initCameraManager();
 
         initFacebookSDK();
-        ImageUtils.initImageLoader(this);
+
         VdbImageLoader.init(this, 1024 * 64);
 //        FIR.init(this);
 

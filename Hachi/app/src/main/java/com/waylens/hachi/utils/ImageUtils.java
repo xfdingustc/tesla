@@ -2,70 +2,14 @@ package com.waylens.hachi.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Environment;
-
-
-import com.waylens.hachi.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
-/**
- * Created by Richard on 8/18/15.
- */
+
 public class ImageUtils {
-
-    public static void initImageLoader(Context context) {
-//        ImageLoaderConfiguration config = new ImageLoaderConfiguration
-//            .Builder(context)
-//            .threadPoolSize(3)
-//            .threadPriority(Thread.NORM_PRIORITY - 2)
-//            .denyCacheImageMultipleSizesInMemory()
-//            .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024))
-//            .memoryCacheSize(2 * 1024 * 1024)
-//            .discCacheSize(50 * 1024 * 1024)
-//            .discCacheFileNameGenerator(new Md5FileNameGenerator())
-//            .tasksProcessingOrder(QueueProcessingType.LIFO)
-//            .discCacheFileCount(300)
-//            .discCache(new UnlimitedDiskCache(getStorageDir(context, "cache-img")))
-//            .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
-//            .imageDownloader(new BaseImageDownloader(context, 5 * 1000, 30 * 1000))
-//            .build();
-//        ImageLoader.getInstance().init(config);
-//        L.writeLogs(false);
-    }
-
-    private static BitmapFactory.Options getDefaultOptions() {
-        BitmapFactory.Options option = new BitmapFactory.Options();
-        option.inPreferredConfig = Bitmap.Config.RGB_565;
-        return option;
-    }
-
-//    public static DisplayImageOptions getAvatarOptions() {
-//        return new DisplayImageOptions.Builder()
-//            .showImageOnLoading(R.drawable.waylens_logo_76x86)
-//            .showImageForEmptyUri(R.drawable.waylens_logo_76x86)
-//            .showImageOnFail(R.drawable.waylens_logo_76x86)
-//            .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-//            .decodingOptions(getDefaultOptions())
-//            .cacheInMemory(true)
-//            .cacheOnDisc(true)
-//            .build();
-//    }
-//
-//    public static DisplayImageOptions getVideoOptions() {
-//        return new DisplayImageOptions.Builder()
-//            .showImageOnLoading(R.drawable.defaultpic)
-//            .showImageForEmptyUri(R.drawable.defaultpic)
-//            .showImageOnFail(R.drawable.defaultpic)
-//            .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-//            .decodingOptions(getDefaultOptions())
-//            .cacheInMemory(true)
-//            .cacheOnDisc(true)
-//            .build();
-//    }
 
     public static String getStoragePath(Context context, String type) {
         return getStorageDir(context, type).getPath();
