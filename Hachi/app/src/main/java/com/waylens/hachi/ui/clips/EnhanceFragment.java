@@ -46,9 +46,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-/**
- * Created by Richard on 3/22/16.
- */
+
 public class EnhanceFragment extends BaseFragment {
     private static final String TAG = EnhanceFragment.class.getSimpleName();
 
@@ -329,14 +327,14 @@ public class EnhanceFragment extends BaseFragment {
                     public void onMoveCompleted(ClipSet clipSet) {
                         int selectedPosition = mClipsEditView.getSelectedPosition();
                         ClipSetPos clipSetPos = getClipPlayFragment().getClipSetPos();
-                        if (selectedPosition != clipSetPos.getClipIndex()) {
-                            ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.getStartTimeMs());
+                        if (selectedPosition == -1) {
+                            getClipPlayFragment().showClipPosThumbnail(clip, clip.editInfo.selectedStartValue);
+                        } else if (selectedPosition != clipSetPos.getClipIndex()) {
+                            ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.editInfo.selectedStartValue);
                             getClipPlayFragment().setClipSetPos(newClipSetPos, false);
                         }
-                        if (selectedPosition == -1 && toPosition == 0) {
-                            getClipPlayFragment().showClipPosThumbnail(clip, clip.getStartTimeMs());
-                        }
-                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+
+
                     }
                 });
             }
@@ -346,14 +344,8 @@ public class EnhanceFragment extends BaseFragment {
                 if (clips == null) {
                     return;
                 }
-                mPlaylistEditor.appendClips(clips, new PlaylistEditor.OnBuildCompleteListener() {
-                    @Override
-                    public void onBuildComplete(ClipSet clipSet) {
-                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-                    }
-                });
-                if (clipCount > 0
-                    && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
+                mPlaylistEditor.appendClips(clips, null);
+                if (clipCount > 0 && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
                     btnGauge.setEnabled(true);
                     btnMusic.setEnabled(true);
                     configureActionUI(ACTION_NONE, false);
@@ -362,12 +354,7 @@ public class EnhanceFragment extends BaseFragment {
 
             @Override
             public void onClipRemoved(Clip clip, int position, int clipCount) {
-                mPlaylistEditor.delete(position, new PlaylistEditor.OnDeleteCompleteListener() {
-                    @Override
-                    public void onDeleteComplete() {
-                        mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
-                    }
-                });
+                mPlaylistEditor.delete(position, null);
                 if (clipCount == 0) {
                     btnGauge.setEnabled(false);
                     btnMusic.setEnabled(false);

@@ -31,8 +31,6 @@ import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
-
-
 import java.util.Collections;
 import java.util.List;
 
@@ -237,7 +235,8 @@ public class ClipsEditView extends LinearLayout {
     }
 
 
-    void internalOnExitEditing() {
+    private void internalOnExitEditing() {
+        Logger.t(TAG).d("internalOnExitEditing");
         mSelectedPosition = -1;
         mTrimmingBar.setVisibility(INVISIBLE);
         mClipsCountView.setVisibility(VISIBLE);
@@ -256,7 +255,7 @@ public class ClipsEditView extends LinearLayout {
         mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue);
         mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue);
 
-        mRangeSeekBar.setRangePinsByValue((int)clip.editInfo.selectedStartValue, (int)clip.editInfo.selectedEndValue);
+        mRangeSeekBar.setRangePinsByValue((int) clip.editInfo.selectedStartValue, (int) clip.editInfo.selectedEndValue);
 
         updateClipDuration(clip);
         if (mOnClipEditListener != null) {
@@ -407,7 +406,7 @@ public class ClipsEditView extends LinearLayout {
             return true;
         }
 
-        void updateSelectedPosition(int from, int to) {
+        private void updateSelectedPosition(int from, int to) {
             if (from == mSelectedPosition) {
                 mSelectedPosition = to;
             } else if (to == mSelectedPosition) {
