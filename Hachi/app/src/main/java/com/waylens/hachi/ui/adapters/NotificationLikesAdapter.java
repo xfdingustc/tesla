@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.adapters;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -9,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.LikeEvent;
 import com.waylens.hachi.utils.ImageUtils;
@@ -74,14 +75,17 @@ public class NotificationLikesAdapter extends RecyclerView.Adapter<NotificationL
     @Override
     public void onBindViewHolder(NotificationLikeVH holder, int position) {
         LikeEvent likeEvent = mLikeEvents.get(position);
-        ImageLoader.getInstance().displayImage(likeEvent.liker.avatarUrl, holder.likeUserAvatar, ImageUtils.getAvatarOptions());
+        Context context = holder.likeUserAvatar.getContext();
+        Glide.with(context).load(likeEvent.liker.avatarUrl).crossFade().into(holder.likeUserAvatar);
+
 
         holder.likeUserName.setText(mResources.getString(R.string.like_your_post, likeEvent.liker.userName));
         holder.likeTime.setText(mPrettyTime.formatUnrounded(new Date(likeEvent.createTime)));
         if (!TextUtils.isEmpty(likeEvent.title)) {
             holder.momentTitle.setText(likeEvent.title);
         }
-        ImageLoader.getInstance().displayImage(likeEvent.thumbnail, holder.momentThumbnail, ImageUtils.getVideoOptions());
+
+        Glide.with(context).load(likeEvent.thumbnail).crossFade().into(holder.momentThumbnail);
     }
 
     public static class NotificationLikeVH extends RecyclerView.ViewHolder {

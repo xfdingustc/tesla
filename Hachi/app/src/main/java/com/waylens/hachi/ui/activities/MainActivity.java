@@ -18,7 +18,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -271,7 +271,8 @@ public class MainActivity extends BaseActivity {
     private void refressNavHeaderView() {
         if (mSessionManager.isLoggedIn()) {
             mUsername.setText(mSessionManager.getUserName());
-            ImageLoader.getInstance().displayImage(mSessionManager.getAvatarUrl(), mUserAvatar, ImageUtils.getAvatarOptions());
+
+            Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(mUserAvatar);
         } else {
             mUsername.setText(getText(R.string.click_2_login));
 

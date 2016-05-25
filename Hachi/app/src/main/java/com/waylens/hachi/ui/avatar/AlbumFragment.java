@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.avatar.serializables.AlbumInfo;
 import com.waylens.hachi.ui.avatar.serializables.AlbumSerializable;
@@ -39,7 +39,6 @@ public class AlbumFragment extends BaseFragment implements View.OnClickListener 
 
     private AlbumSerializable mPhotoAlbumSerializable;
 
-    private ImageLoader mImageLoader = ImageLoader.getInstance();
 
     @BindView(R.id.rvAlbumList)
     RecyclerView mRvAlbumList;
@@ -102,7 +101,8 @@ public class AlbumFragment extends BaseFragment implements View.OnClickListener 
             final AlbumInfo item = mPhotoAlbumSerializable.getList().get(position);
 
             String displayItemUri = ThumbnailsUtil.MapgetHashValue(item.getImage_id(), item.getPath_file());
-            mImageLoader.displayImage(displayItemUri, viewHolder.ivCover, ImageUtils.getVideoOptions());
+
+            Glide.with(AlbumFragment.this).load(displayItemUri).crossFade().into(viewHolder.ivCover);
 
             viewHolder.tvAlbumTitle.setText(item.getName_album());
             viewHolder.tvAlbumItemCount.setText("" + item.getList().size());

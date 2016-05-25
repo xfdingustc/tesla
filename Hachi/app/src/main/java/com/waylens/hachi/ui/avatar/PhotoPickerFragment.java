@@ -10,7 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+
+import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.avatar.serializables.Photo;
 import com.waylens.hachi.ui.avatar.serializables.PhotoSerializable;
@@ -32,12 +33,12 @@ public class PhotoPickerFragment extends BaseFragment implements View.OnClickLis
 
 
     public interface OnPhotoSelectClickListener {
-        public void onOKClickListener(Photo selectedPhoto);
+        void onOKClickListener(Photo selectedPhoto);
     }
 
     private OnPhotoSelectClickListener onPhotoSelectClickListener;
 
-    protected ImageLoader imageLoader = ImageLoader.getInstance();
+
 
     private List<Photo> dataList;
 
@@ -118,7 +119,8 @@ public class PhotoPickerFragment extends BaseFragment implements View.OnClickLis
             PhotoListViewHolder viewHolder = (PhotoListViewHolder) holder;
             Photo photo = dataList.get(position);
             String displayItemUri = ThumbnailsUtil.MapgetHashValue(photo.getImageId(), photo.getUrl());
-            imageLoader.displayImage(displayItemUri, viewHolder.imageView, ImageUtils.getVideoOptions());
+
+            Glide.with(PhotoPickerFragment.this).load(displayItemUri).crossFade().into(viewHolder.imageView);
 
         }
 

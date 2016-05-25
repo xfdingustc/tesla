@@ -312,7 +312,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onStop() {
         super.onStop();
         stopPlayer();
-        Logger.t(TAG).d("on Stop");
         mTimer.cancel();
         mEventBus.unregister(this);
         mEventBus.unregister(mMultiSegSeekbar);

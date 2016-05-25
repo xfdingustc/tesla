@@ -6,16 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Environment;
 
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
-import com.nostra13.universalimageloader.utils.L;
+
 import com.waylens.hachi.R;
 
 import java.io.File;
@@ -27,23 +18,23 @@ import java.io.FileOutputStream;
 public class ImageUtils {
 
     public static void initImageLoader(Context context) {
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration
-            .Builder(context)
-            .threadPoolSize(3)
-            .threadPriority(Thread.NORM_PRIORITY - 2)
-            .denyCacheImageMultipleSizesInMemory()
-            .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024))
-            .memoryCacheSize(2 * 1024 * 1024)
-            .discCacheSize(50 * 1024 * 1024)
-            .discCacheFileNameGenerator(new Md5FileNameGenerator())
-            .tasksProcessingOrder(QueueProcessingType.LIFO)
-            .discCacheFileCount(300)
-            .discCache(new UnlimitedDiskCache(getStorageDir(context, "cache-img")))
-            .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
-            .imageDownloader(new BaseImageDownloader(context, 5 * 1000, 30 * 1000))
-            .build();
-        ImageLoader.getInstance().init(config);
-        L.writeLogs(false);
+//        ImageLoaderConfiguration config = new ImageLoaderConfiguration
+//            .Builder(context)
+//            .threadPoolSize(3)
+//            .threadPriority(Thread.NORM_PRIORITY - 2)
+//            .denyCacheImageMultipleSizesInMemory()
+//            .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024))
+//            .memoryCacheSize(2 * 1024 * 1024)
+//            .discCacheSize(50 * 1024 * 1024)
+//            .discCacheFileNameGenerator(new Md5FileNameGenerator())
+//            .tasksProcessingOrder(QueueProcessingType.LIFO)
+//            .discCacheFileCount(300)
+//            .discCache(new UnlimitedDiskCache(getStorageDir(context, "cache-img")))
+//            .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
+//            .imageDownloader(new BaseImageDownloader(context, 5 * 1000, 30 * 1000))
+//            .build();
+//        ImageLoader.getInstance().init(config);
+//        L.writeLogs(false);
     }
 
     private static BitmapFactory.Options getDefaultOptions() {
@@ -52,29 +43,29 @@ public class ImageUtils {
         return option;
     }
 
-    public static DisplayImageOptions getAvatarOptions() {
-        return new DisplayImageOptions.Builder()
-            .showImageOnLoading(R.drawable.waylens_logo_76x86)
-            .showImageForEmptyUri(R.drawable.waylens_logo_76x86)
-            .showImageOnFail(R.drawable.waylens_logo_76x86)
-            .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-            .decodingOptions(getDefaultOptions())
-            .cacheInMemory(true)
-            .cacheOnDisc(true)
-            .build();
-    }
-
-    public static DisplayImageOptions getVideoOptions() {
-        return new DisplayImageOptions.Builder()
-            .showImageOnLoading(R.drawable.defaultpic)
-            .showImageForEmptyUri(R.drawable.defaultpic)
-            .showImageOnFail(R.drawable.defaultpic)
-            .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-            .decodingOptions(getDefaultOptions())
-            .cacheInMemory(true)
-            .cacheOnDisc(true)
-            .build();
-    }
+//    public static DisplayImageOptions getAvatarOptions() {
+//        return new DisplayImageOptions.Builder()
+//            .showImageOnLoading(R.drawable.waylens_logo_76x86)
+//            .showImageForEmptyUri(R.drawable.waylens_logo_76x86)
+//            .showImageOnFail(R.drawable.waylens_logo_76x86)
+//            .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+//            .decodingOptions(getDefaultOptions())
+//            .cacheInMemory(true)
+//            .cacheOnDisc(true)
+//            .build();
+//    }
+//
+//    public static DisplayImageOptions getVideoOptions() {
+//        return new DisplayImageOptions.Builder()
+//            .showImageOnLoading(R.drawable.defaultpic)
+//            .showImageForEmptyUri(R.drawable.defaultpic)
+//            .showImageOnFail(R.drawable.defaultpic)
+//            .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+//            .decodingOptions(getDefaultOptions())
+//            .cacheInMemory(true)
+//            .cacheOnDisc(true)
+//            .build();
+//    }
 
     public static String getStoragePath(Context context, String type) {
         return getStorageDir(context, type).getPath();

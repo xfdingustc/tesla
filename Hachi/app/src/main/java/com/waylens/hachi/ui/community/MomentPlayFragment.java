@@ -26,6 +26,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -228,7 +229,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     }
 
     private void initViews() {
-        mImageLoader.displayImage(mMoment.thumbnail, mVsCover, ImageUtils.getVideoOptions());
+        Glide.with(this).load(mMoment.thumbnail).crossFade().into(mVsCover);
         mBtnPlayPause.toggle(true);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);

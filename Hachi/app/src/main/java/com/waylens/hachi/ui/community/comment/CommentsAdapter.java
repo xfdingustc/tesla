@@ -1,12 +1,14 @@
 package com.waylens.hachi.ui.community.comment;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+
+import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.utils.ImageUtils;
@@ -101,7 +103,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (getItemViewType(position) == Comment.TYPE_NORMAL) {
             CommentViewHolder vh = (CommentViewHolder) holder;
             final Comment comment = mComments.get(position);
-            ImageLoader.getInstance().displayImage(comment.author.avatarUrl, vh.avatarView, ImageUtils.getAvatarOptions());
+
+            Context context = vh.avatarView.getContext();
+            Glide.with(context).load(comment.author.avatarUrl).crossFade().into(vh.avatarView);
             vh.tvUserName.setText(comment.author.userName);
             vh.commentContentViews.setText(comment.toSpannable());
             vh.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));

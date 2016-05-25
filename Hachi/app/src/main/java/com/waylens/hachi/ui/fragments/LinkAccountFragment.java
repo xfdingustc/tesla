@@ -14,21 +14,18 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -42,7 +39,7 @@ public class LinkAccountFragment extends BaseFragment {
     public static final String ARG_SUGGESTED_USER_NAME = "arg.suggested.user.name";
 
     @BindView(R.id.user_avatar)
-    ImageView mAvatar;
+    ImageView ivAvatar;
 
     @BindView(R.id.sign_in_username)
     TextView mUserName;
@@ -68,7 +65,7 @@ public class LinkAccountFragment extends BaseFragment {
         return view;
     }
 
-    void initViews() {
+    private void initViews() {
 //        showToolbar();
 //        setTitle("LinkAccount");
         Bundle args = getArguments();
@@ -78,8 +75,8 @@ public class LinkAccountFragment extends BaseFragment {
                 mUserName.setText(suggestedName);
             }
         }
-        ImageLoader.getInstance().displayImage(SessionManager.getInstance().getAvatarUrl(),
-                mAvatar, ImageUtils.getAvatarOptions());
+
+        Glide.with(this).load(SessionManager.getInstance().getAvatarUrl()).crossFade().into(ivAvatar);
     }
 
     @OnClick(R.id.btn_next)
@@ -94,29 +91,29 @@ public class LinkAccountFragment extends BaseFragment {
         }
 
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_LINK_ACCOUNT, body,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Log.e("test", "Response: " + response);
-                                boolean result = response.optBoolean("result");
-                                if (result) {
-                                    SessionManager.getInstance().updateLinkStatus(userName, true);
-                                    getActivity().finish();
-                                } else {
-                                    mViewAnimator.setDisplayedChild(0);
-                                }
-                            }
-                        }, new Response.ErrorListener() {
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                        showMessage(errorInfo.msgResID);
-                        if (errorInfo.errorCode == ServerMessage.USER_NAME_HAS_BEEN_USED) {
-                            mUserName.requestFocus();
+                    public void onResponse(JSONObject response) {
+                        Log.e("test", "Response: " + response);
+                        boolean result = response.optBoolean("result");
+                        if (result) {
+                            SessionManager.getInstance().updateLinkStatus(userName, true);
+                            getActivity().finish();
+                        } else {
+                            mViewAnimator.setDisplayedChild(0);
                         }
-                        mViewAnimator.setDisplayedChild(0);
                     }
-                })
+                }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                    showMessage(errorInfo.msgResID);
+                    if (errorInfo.errorCode == ServerMessage.USER_NAME_HAS_BEEN_USED) {
+                        mUserName.requestFocus();
+                    }
+                    mViewAnimator.setDisplayedChild(0);
+                }
+            })
         );
         mRequestQueue.start();
         mViewAnimator.setDisplayedChild(1);

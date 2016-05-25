@@ -2,22 +2,13 @@ package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.InputType;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -29,11 +20,6 @@ import com.waylens.hachi.utils.ImageUtils;
 
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -43,7 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class AccountActivity extends BaseActivity {
     private static final String TAG = AccountActivity.class.getSimpleName();
-    private ImageLoader mImageLoader = ImageLoader.getInstance();
+
     private SessionManager mSessionManager = SessionManager.getInstance();
 
     @BindView(R.id.avatar)
@@ -62,10 +48,6 @@ public class AccountActivity extends BaseActivity {
     public void onBtnAddPhotoClick() {
         AvatarActivity.launch(this, true);
     }
-
-
-
-
 
 
     public static void launch(Activity activity) {
@@ -107,12 +89,9 @@ public class AccountActivity extends BaseActivity {
 
         Logger.t(TAG).d("avatart: " + mSessionManager.getAvatarUrl());
 
-        mImageLoader.displayImage(mSessionManager.getAvatarUrl(), mAvatar, ImageUtils.getAvatarOptions());
+
+        Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(mAvatar);
     }
-
-
-
-
 
 
     @Override
@@ -124,8 +103,8 @@ public class AccountActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_account);
         setupToolbar();
-        mImageLoader.displayImage(mSessionManager.getAvatarUrl(), mAvatar, ImageUtils.getAvatarOptions());
 
+        Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(mAvatar);
     }
 
 

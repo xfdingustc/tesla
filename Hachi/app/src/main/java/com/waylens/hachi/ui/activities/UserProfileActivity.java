@@ -18,9 +18,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -28,17 +28,15 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
-import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.settings.AccountActivity;
-import com.waylens.hachi.utils.ImageUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -63,7 +61,7 @@ public class UserProfileActivity extends BaseActivity {
     RecyclerView mRvUserMomentList;
 
     @BindView(R.id.userAvatar)
-    CircleImageView mCivUserAvatar;
+    CircleImageView civUserAvatar;
 
     @BindView(R.id.btnFollowersCount)
     TextView mTvFollowersCount;
@@ -73,7 +71,7 @@ public class UserProfileActivity extends BaseActivity {
 
     @BindView(R.id.btnFollow)
     TextView mBtnFollow;
-    
+
     @OnClick(R.id.btnFollowersCount)
     public void onBtnFollowerCountClicked() {
         FollowListActivity.launch(this, mUserID, true);
@@ -170,7 +168,7 @@ public class UserProfileActivity extends BaseActivity {
         try {
             requestBody.put("userID", mUserID);
             Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.t(TAG).json(response.toString());
@@ -196,7 +194,7 @@ public class UserProfileActivity extends BaseActivity {
             requestBody.put("reason", mReportReason);
 
             Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.t(TAG).json(response.toString());
@@ -262,9 +260,8 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void showUserInfo(User userInfo) {
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage(userInfo.avatarUrl, mCivUserAvatar, ImageUtils.getAvatarOptions());
 
+        Glide.with(this).load(userInfo.avatarUrl).crossFade().into(civUserAvatar);
 
         mToolbar.setTitle(userInfo.userName);
         mToolbar.setNavigationIcon(R.drawable.navbar_back);
@@ -316,7 +313,6 @@ public class UserProfileActivity extends BaseActivity {
     private void setupUserMomentsFeed() {
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
         //mMomentRvAdapter = new UserProfileFeedAdapter(this);
-
 
 
         String requestUrl = Constants.API_USERS + "/" + mUserID + "/moments";
@@ -398,7 +394,7 @@ public class UserProfileActivity extends BaseActivity {
                 }
             });
             mRequestQueue.add(request);
-           mBtnFollow.setEnabled(false);
+            mBtnFollow.setEnabled(false);
         } catch (JSONException e) {
             e.printStackTrace();
         }

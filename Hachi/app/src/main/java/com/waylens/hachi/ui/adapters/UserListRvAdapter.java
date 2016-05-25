@@ -5,15 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -27,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,8 +66,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         viewHolder.mTvUserName.setText(userInfo.userName);
 
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage(userInfo.avatarUrl, viewHolder.mUserAvater, ImageUtils.getAvatarOptions());
+        Glide.with(mContext).load(userInfo.avatarUrl).crossFade().into(viewHolder.mUserAvater);
 
         if (userInfo.getIsFollowing()) {
             setFollowButton(viewHolder, true);

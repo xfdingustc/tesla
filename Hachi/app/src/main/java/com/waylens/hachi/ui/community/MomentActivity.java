@@ -30,6 +30,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
+import com.bumptech.glide.Glide;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -194,7 +195,8 @@ public class MomentActivity extends BaseActivity {
 
         mTsLikeCount.setCurrentText(String.valueOf(mMoment.likesCount));
 
-        mImageLoader.displayImage(mMoment.owner.avatarUrl, mUserAvatar, ImageUtils.getAvatarOptions());
+
+        Glide.with(this).load(mMoment.owner.avatarUrl).crossFade().into(mUserAvatar);
 
 
         MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMoment);

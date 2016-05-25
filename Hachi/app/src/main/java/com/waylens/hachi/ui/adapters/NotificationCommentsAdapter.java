@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -8,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.utils.ImageUtils;
@@ -17,7 +18,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,14 +70,16 @@ public class NotificationCommentsAdapter extends RecyclerView.Adapter<Notificati
     @Override
     public void onBindViewHolder(NotificationCommentVH holder, int position) {
         CommentEvent commentEvent = mCommentEvents.get(position);
-        ImageLoader.getInstance().displayImage(commentEvent.author.avatarUrl, holder.commentUserAvatar, ImageUtils.getAvatarOptions());
+        Context context = holder.commentUserAvatar.getContext();
+        Glide.with(context).load(commentEvent.author.avatarUrl).crossFade().into(holder.commentUserAvatar);
         holder.commentUserName.setText(commentEvent.author.userName);
         holder.commentTime.setText(mPrettyTime.formatUnrounded(new Date(commentEvent.createTime)));
         holder.commentContent.setText(commentEvent.commentToSpannable());
         if (!TextUtils.isEmpty(commentEvent.title)) {
             holder.momentTitle.setText(commentEvent.title);
         }
-        ImageLoader.getInstance().displayImage(commentEvent.thumbnail, holder.momentThumbnail, ImageUtils.getVideoOptions());
+
+        Glide.with(context).load(commentEvent.thumbnail).crossFade().into(holder.momentThumbnail);
     }
 
     public static class NotificationCommentVH extends RecyclerView.ViewHolder {

@@ -13,12 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.MainActivity;
 
@@ -36,7 +34,6 @@ public class BaseFragment extends Fragment {
     protected VdbRequestQueue mVdbRequestQueue;
     protected VdbImageLoader mVdbImageLoader;
 
-    protected ImageLoader mImageLoader = ImageLoader.getInstance();
 
     @Nullable
     @BindView(R.id.toolbar)

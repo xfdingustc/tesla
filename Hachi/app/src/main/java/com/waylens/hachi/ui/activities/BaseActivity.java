@@ -6,13 +6,9 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.volley.RequestQueue;
-//import com.bugtags.library.Bugtags;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -22,9 +18,10 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+//import com.bugtags.library.Bugtags;
 
 /**
  * Created by Xiaofei on 2015/7/29.
@@ -43,7 +40,7 @@ public class BaseActivity extends AppCompatActivity {
     protected VdbRequestQueue mVdbRequestQueue;
     protected VdbImageLoader mVdbImageLoader;
 
-    protected ImageLoader mImageLoader = ImageLoader.getInstance();
+//    protected ImageLoader mImageLoader = ImageLoader.getInstance();
     /**
      * Bugtags call
      */
@@ -75,7 +72,6 @@ public class BaseActivity extends AppCompatActivity {
     @Nullable
     @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
-
 
 
     protected void init() {

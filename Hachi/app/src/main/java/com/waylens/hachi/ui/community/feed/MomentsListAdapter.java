@@ -9,14 +9,11 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.birbit.android.jobqueue.JobManager;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
@@ -33,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+
+
 public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
 
     public ArrayList<Moment> mMoments;
@@ -46,8 +45,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     OnMomentActionListener mOnMomentActionListener;
 
     private User mUser;
-
-
 
 
     public MomentsListAdapter(Context context, ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
@@ -96,10 +93,10 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     public void onBindViewHolder(final MomentViewHolder holder, final int position) {
         final Moment moment = mMoments.get(position);
         if (moment.owner != null && moment.owner.avatarUrl != null) {
-            ImageLoader.getInstance().displayImage(moment.owner.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
+            Glide.with(mContext).load(moment.owner.avatarUrl).crossFade().into(holder.userAvatar);
             holder.userName.setText(moment.owner.userName);
         } else if (mUser != null) {
-            ImageLoader.getInstance().displayImage(mUser.avatarUrl, holder.userAvatar, ImageUtils.getAvatarOptions());
+            Glide.with(mContext).load(mUser.avatarUrl).crossFade().into(holder.userAvatar);
             holder.userName.setText(mUser.userName);
         }
 
@@ -110,7 +107,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         } else {
             holder.descView.setVisibility(View.GONE);
         }
-        ImageLoader.getInstance().displayImage(moment.thumbnail, holder.videoCover, ImageUtils.getVideoOptions());
+        Glide.with(mContext).load(moment.thumbnail).crossFade().into(holder.videoCover);
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,10 +160,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
             }
         });
     }
-
-
-
-
 
 
 //    @Override
