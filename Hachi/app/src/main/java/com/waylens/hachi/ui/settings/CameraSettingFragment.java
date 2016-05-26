@@ -42,12 +42,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import cn.aigestudio.downloader.bizs.DLManager;
 import cn.aigestudio.downloader.interfaces.IDListener;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class CameraSettingFragment extends PreferenceFragment {
@@ -228,7 +239,11 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
 
-
+        // TODO: only for debug since DownloadManager does not send already exist notification
+        File file = new File("/data/user/0/com.waylens.hachi/cache/HACHI_V0C_1.4.10_1.4.5.10.44.tsf");
+        Logger.t(TAG).d("File size: " + file.length());
+        String downloadFileMd5 = HashUtils.MD5String(file);
+        doSendFirmware2Camera(file, downloadFileMd5);
 
     }
 
@@ -243,30 +258,42 @@ public class CameraSettingFragment extends PreferenceFragment {
                         public void run() {
                             mUploadProgressDialog = new MaterialDialog.Builder(getActivity())
                                 .title(R.string.upload)
-                                .progress(false, (int)file.length(), false)
+                                .progress(false, (int) file.length(), false)
                                 .contentGravity(GravityEnum.CENTER)
                                 .cancelable(false)
                                 .show();
                         }
                     });
 
-                    FirmwareWriter writer = new FirmwareWriter(file, mVdtCamera);
-                    writer.start(new FirmwareWriter.WriteListener() {
+                    Observable.create(new Observable.OnSubscribe<Integer>() {
                         @Override
-                        public void onWriteProgress(final int progress) {
-                            Logger.t(TAG).d("write progress: " + progress);
-                            if (progress == file.length()) {
-                                //doUpgradeFirmware();
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mUploadProgressDialog.setProgress(progress);
-                                    }
-                                });
+                        public void call(Subscriber<? super Integer> subscriber) {
+                            FirmwareWriter writer = new FirmwareWriter(file, mVdtCamera, subscriber);
+                            writer.start();
+
+                        }
+                    })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Integer>() {
+
+                            @Override
+                            public void onCompleted() {
 
                             }
-                        }
-                    });
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(Integer integer) {
+                                mUploadProgressDialog.setProgress(integer);
+                            }
+                        });
+
+
                 } else if (response == 0) {
                     doUpgradeFirmware();
                 }
