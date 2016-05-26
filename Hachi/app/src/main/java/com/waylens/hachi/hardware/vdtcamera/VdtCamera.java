@@ -19,6 +19,7 @@ import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
+import com.waylens.hachi.utils.ToStringUtils;
 import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
@@ -226,6 +227,11 @@ public class VdtCamera {
             this.serviceName = serviceName;
             this.bPcServer = bPcServer;
         }
+
+        @Override
+        public String toString() {
+            return ToStringUtils.getString(this);
+        }
     }
 
 
@@ -237,8 +243,14 @@ public class VdtCamera {
         void onDisconnected(VdtCamera vdtCamera);
     }
 
+    public interface OnNewFwVersionListern {
+        void onNewVersion(int response);
+    }
+
 
     private OnConnectionChangeListener mOnConnectionChangeListener = null;
+
+    private OnNewFwVersionListern mOnNewFwVersionListerner = null;
 
 
     public void setOnConnectionChangeListener(OnConnectionChangeListener listener) {
@@ -344,6 +356,10 @@ public class VdtCamera {
         return mServiceInfo.serverName;
     }
 
+    public ServiceInfo getServerInfo() {
+        return mServiceInfo;
+    }
+
     public int getBtState() {
         return mBtState;
     }
@@ -381,6 +397,15 @@ public class VdtCamera {
     public String getBspFirmware() {
         mController.cmd_fw_getVersion();
         return mBspVersion;
+    }
+
+    public void sendNewFirmware(String md5, OnNewFwVersionListern listener) {
+        mOnNewFwVersionListerner = listener;
+        mController.sendCmdFwNewVersion(md5);
+    }
+
+    public void upgradeFirmware() {
+        mController.sendUpgradeFirmware();
     }
 
     public VdbRequestQueue getRequestQueue() {
@@ -850,6 +875,9 @@ public class VdtCamera {
             postRequest(domain, cmd, Integer.toString(p1), "");
         }
 
+        private void postRequest(int domain, int cmd, String p1) {
+            postRequest(domain, cmd, p1, "");
+        }
 
         private void postRequest(int domain, int cmd, String p1, String p2) {
             Request request = new Request(domain, cmd, p1, p2);
@@ -1114,6 +1142,14 @@ public class VdtCamera {
         private void ack_fw_getVersion(String p1, String p2) {
             Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
             setFirmwareVersion(p1, p2);
+        }
+
+        public void sendCmdFwNewVersion(String md5) {
+            postRequest(CMD_DOMAIN_CAM, CMD_FW_NEW_VERSION, md5);
+        }
+
+        public void sendUpgradeFirmware() {
+            postRequest(CMD_DOMAIN_CAM, CMD_FW_DO_UPGRADE);
         }
 
 //        public void cmd_CAM_BT_isSupported() {
@@ -1791,7 +1827,7 @@ public class VdtCamera {
                     ack_fw_getVersion(p1, p2);
                     break;
                 case CMD_FW_NEW_VERSION:
-                    ackNotHandled("CMD_FW_NEW_VERSION", p1, p2);
+                    handleNewFwVersion(p1, p2);
                     break;
                 case CMD_FW_DO_UPGRADE:
                     ackNotHandled("CMD_FW_DO_UPGRADE", p1, p2);
@@ -1828,6 +1864,13 @@ public class VdtCamera {
                 default:
                     Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                     break;
+            }
+        }
+
+        private void handleNewFwVersion(String p1, String p2) {
+            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
+            if (mOnNewFwVersionListerner != null) {
+                mOnNewFwVersionListerner.onNewVersion(Integer.valueOf(p1));
             }
         }
 

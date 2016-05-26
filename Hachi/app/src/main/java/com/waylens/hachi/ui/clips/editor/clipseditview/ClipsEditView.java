@@ -364,7 +364,6 @@ public class ClipsEditView extends LinearLayout {
                         }
 
                     }
-                    Logger.t(TAG).d(getClipSet().toString());
                     holder.itemView.setAlpha(FULL_ALPHA);
                     layoutTransition(holder, true);
                     mSelectedPosition = holder.getAdapterPosition();

@@ -38,8 +38,33 @@ public class HashUtils {
         }
     }
 
+    public final static byte[] MD5(File file) {
+        try {
+            FileInputStream in = new FileInputStream(file);
+            MessageDigest sha1Inst = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[1024 * 4];
+            int len = 0;
+
+
+            while ((len = in.read(buffer)) > 0) {
+                sha1Inst.update(buffer, 0, len);
+                //sha1Inst.update(buffer);
+//                Log.i(TAG, "time = " + cnt++ + " len = " + len);
+            }
+            byte[] ret = sha1Inst.digest();
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public final static String MD5String(String s) {
         return getStringFromDigest(MD5(s));
+    }
+
+    public final static String MD5String(File file) {
+        return getStringFromDigest(MD5(file));
     }
 
     private final static String getStringFromDigest(byte[] digest) {

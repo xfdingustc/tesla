@@ -1,23 +1,11 @@
 package com.waylens.hachi.ui.settings;
 
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.ContentObserver;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.text.InputType;
-import android.util.Log;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -47,7 +35,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
-import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.SpaceInfo;
 
 import org.json.JSONArray;
@@ -58,9 +46,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Xiaofei on 2016/5/3.
- */
+import cn.aigestudio.downloader.bizs.DLManager;
+import cn.aigestudio.downloader.interfaces.IDListener;
+
+
 public class CameraSettingFragment extends PreferenceFragment {
     private static final String TAG = CameraSettingFragment.class.getSimpleName();
     private static final String DOWNLOAD_FOLDER_NAME = "Waylens";
@@ -95,41 +84,12 @@ public class CameraSettingFragment extends PreferenceFragment {
     private int mChangedVideoFramerate;
 
     private RequestQueue mRequestQueue;
-    private DownloadManager mDownloadManager;
-    private long mDownloadId;
+
 
     private MaterialDialog mDownloadProgressDialog;
-//    private ContentObserver mDownloadObserver;
-    private DownloadChangeObserver mDownloadObserver;
-    private String mDownloadedFile;
 
+    private MaterialDialog mUploadProgressDialog;
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 0:
-                    if (mDownloadProgressDialog == null) {
-                        return;
-                    }
-
-                    int arg1 = msg.arg1 / 1024;
-                    int arg2 = msg.arg2 / 1024;
-
-                    mDownloadProgressDialog.setMaxProgress(arg2);
-
-                    mDownloadProgressDialog.setProgress(arg1);
-
-                    if (arg1 >= arg2) {
-                        mDownloadProgressDialog.setContent(R.string.download_complete);
-                    }
-
-                    break;
-
-            }
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,25 +100,6 @@ public class CameraSettingFragment extends PreferenceFragment {
         mRequestQueue.start();
         initPreference();
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mDownloadObserver = new DownloadChangeObserver(mHandler);
-        getActivity().getContentResolver().registerContentObserver(Uri.parse("content://downloads/my_downloads"),
-            true, mDownloadObserver);
-    }
-
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().getContentResolver().unregisterContentObserver(mDownloadObserver);
-    }
-
-
-
 
     private void initPreference() {
         initCameraNamePreference();
@@ -214,38 +155,136 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
         request.setRetryPolicy(new DefaultRetryPolicy(1000 * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Logger.t(TAG).d("fetch latest firmware");
         mRequestQueue.add(request);
 
     }
 
-    private void doDownloadFirmware(FirmwareInfo firmwareInfo) {
-        File folder = Environment.getExternalStoragePublicDirectory(DOWNLOAD_FOLDER_NAME);
-        if (!folder.exists() || !folder.isDirectory()) {
-            folder.mkdirs();
-        }
-        mDownloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(firmwareInfo.getUrl());
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setDestinationInExternalPublicDir(DOWNLOAD_FOLDER_NAME, DOWNLOAD_FILE_NAME);
-        mDownloadId = mDownloadManager.enqueue(request);
-//        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-//        request.setAllowedOverRoaming(true);
-//        request.setMimeType("application/vnd.android.package-archive");
-//        request.setVisibleInDownloadsUi(true);
-//        String url = firmwareInfo.getUrl();
-//
-//        String firmwareFile = url.substring(url.lastIndexOf("/") + 1);
-//        request.setDestinationInExternalPublicDir("/download/", firmwareFile);
-//        request.setTitle(getString(R.string.app_name) + firmwareFile);
-//        mDownloadId = mDownloadManager.enqueue(request);
-        showDownloadProgressDialog();
+
+    private void doDownloadFirmware(final FirmwareInfo firmwareInfo) {
+
+        DLManager.getInstance(getActivity()).dlStart(firmwareInfo.getUrl(), new IDListener() {
+
+            @Override
+            public void onPrepare() {
+
+            }
+
+            @Override
+            public void onStart(String fileName, String realUrl, final int fileLength) {
+                Logger.t(TAG).d("fileName: " + fileName + " realUrl: " + realUrl + " fileLength: " + fileLength);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showDownloadProgressDialog(fileLength);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onProgress(int progress) {
+                mDownloadProgressDialog.setProgress(progress);
+            }
+
+            @Override
+            public void onStop(int progress) {
+                Logger.t(TAG).d("progress: " + progress);
+            }
+
+            @Override
+            public void onFinish(final File file) {
+                Logger.t(TAG).d("File: " + file);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDownloadProgressDialog.setContent(R.string.download_complete);
+                    }
+                });
+
+                final String downloadFileMd5 = HashUtils.MD5String(file);
+                if (downloadFileMd5.equals(firmwareInfo.getMd5())) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDownloadProgressDialog.setContent("MD5 is ok");
+                            doSendFirmware2Camera(file, downloadFileMd5);
+                        }
+                    });
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDownloadProgressDialog.setContent("MD5 is failed");
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onError(int status, String error) {
+                Logger.t(TAG).d("status: " + status + " error: " + error);
+            }
+        });
+
+
+
+    }
+
+    private void doSendFirmware2Camera(final File file, final String md5) {
+        mVdtCamera.sendNewFirmware(md5, new VdtCamera.OnNewFwVersionListern() {
+            @Override
+            public void onNewVersion(int response) {
+                Logger.t(TAG).d("response: " + response);
+                if (response == 1) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mUploadProgressDialog = new MaterialDialog.Builder(getActivity())
+                                .title(R.string.upload)
+                                .progress(false, (int)file.length(), false)
+                                .contentGravity(GravityEnum.CENTER)
+                                .cancelable(false)
+                                .show();
+                        }
+                    });
+
+                    FirmwareWriter writer = new FirmwareWriter(file, mVdtCamera);
+                    writer.start(new FirmwareWriter.WriteListener() {
+                        @Override
+                        public void onWriteProgress(final int progress) {
+                            Logger.t(TAG).d("write progress: " + progress);
+                            if (progress == file.length()) {
+                                //doUpgradeFirmware();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mUploadProgressDialog.setProgress(progress);
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+                } else if (response == 0) {
+                    doUpgradeFirmware();
+                }
+            }
+        });
+
+    }
+
+    private void doUpgradeFirmware() {
+
+        mVdtCamera.upgradeFirmware();
     }
 
 
-    private void showDownloadProgressDialog() {
+    private void showDownloadProgressDialog(int fileLength) {
         mDownloadProgressDialog = new MaterialDialog.Builder(getActivity())
             .title(R.string.downloading)
-            .progress(false, 100, false)
+            .progress(false, fileLength, false)
             .contentGravity(GravityEnum.CENTER)
             .cancelable(false)
             .show();
@@ -298,12 +337,12 @@ public class CameraSettingFragment extends PreferenceFragment {
 
 
         List<String> storageName = Arrays.asList("Marked", "Used", "Free");
-        List<Entry> spaces = new ArrayList<Entry>();
+        List<Entry> spaces = new ArrayList<>();
         spaces.add(new Entry(response.marked / (1024 * 1024), 1));
         spaces.add(new Entry((response.used - response.marked) / (1024 * 1024), 2));
         spaces.add(new Entry((response.total - response.used) / (1024 * 1024), 3));
 
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        ArrayList<Integer> colors = new ArrayList<>();
         colors.add(getResources().getColor(R.color.style_color_accent));
         colors.add(getResources().getColor(R.color.material_deep_orange_300));
         colors.add(Color.BLACK);
@@ -570,52 +609,9 @@ public class CameraSettingFragment extends PreferenceFragment {
                 return true;
             }
 
-            return false;
+            return true;
         }
     }
-
-
-    private class DownloadChangeObserver extends ContentObserver {
-
-        public DownloadChangeObserver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            super.onChange(selfChange);
-            updateProgressView();
-        }
-    }
-
-    private void updateProgressView() {
-        int[] bytesAndStatus = getBytesAndStatus(mDownloadId);
-
-        mHandler.sendMessage(mHandler.obtainMessage(0, bytesAndStatus[0], bytesAndStatus[1],
-            bytesAndStatus[2]));
-    }
-
-    public int[] getBytesAndStatus(long downloadId) {
-        int[] bytesAndStatus = new int[]{-1, -1, 0};
-        DownloadManager.Query query = new DownloadManager.Query().setFilterById(downloadId);
-        Cursor c = null;
-        try {
-            c = mDownloadManager.query(query);
-            if (c != null && c.moveToFirst()) {
-                bytesAndStatus[0] = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                bytesAndStatus[1] = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-                bytesAndStatus[2] = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
-            }
-        } finally {
-            if (c != null) {
-                c.close();
-            }
-        }
-        return bytesAndStatus;
-    }
-
-
-
 
 
 }

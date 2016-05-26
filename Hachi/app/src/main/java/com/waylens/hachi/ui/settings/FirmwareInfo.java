@@ -40,4 +40,8 @@ public class FirmwareInfo {
     public String getUrl() {
         return mUrl;
     }
+
+    public String getMd5() {
+        return mMd5;
+    }
 }
