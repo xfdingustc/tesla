@@ -228,4 +228,14 @@
 	<string name="block">Block</string>
 	<string name="country">Country</string>
 	<string name="city">City</string>
+	<string name="wifi_mode">Wifi Mode</string>
+	<string name="choose_wifi">Choose wifi</string>
+	<string name="access_point">Access Point</string>
+	<string name="client">Client</string>
+	<string name="off">Off</string>
+	<string name="change_wifi_mode">Change Wifi Mode</string>
+	<string name="change_wifi_mode_alert">Change wifi mode will lose connection with current camera, are you sure you are going to do this?</string>
+	<string name="wifi_added">These wifi are already added into camera</string>
+	<string name="resolution">Resolution</string>
+	<string name="framerate">Framerate</string>
 </resources>
