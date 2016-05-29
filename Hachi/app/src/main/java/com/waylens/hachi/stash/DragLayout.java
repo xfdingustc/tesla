@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.stash;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.waylens.hachi.ui.views.OnViewDragListener;
 
 
 /**

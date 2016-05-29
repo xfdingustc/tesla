@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.stash;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
