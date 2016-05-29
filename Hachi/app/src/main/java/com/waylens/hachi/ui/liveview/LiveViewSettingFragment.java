@@ -36,12 +36,12 @@ public class LiveViewSettingFragment extends PreferenceFragment {
 
         final int resolutionIndex = mVdtCamera.getVideoResolution();
         tmpResIndex = resolutionIndex;
-        mResolution.setSummary(getResources().getStringArray(R.array.resolution)[resolutionIndex]);
+        mResolution.setSummary(getResources().getStringArray(R.array.resolution_list)[resolutionIndex]);
         mResolution.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .items(R.array.resolution)
+                    .items(R.array.resolution_list)
                     .itemsCallbackSingleChoice(resolutionIndex, new MaterialDialog.ListCallbackSingleChoice() {
 
                         @Override
@@ -51,7 +51,7 @@ public class LiveViewSettingFragment extends PreferenceFragment {
                             mEventBus.post(new VideoSettingChangEvent(VideoSettingChangEvent.WHAT_RESOLUTION, which));
                             if (which == VdtCamera.VIDEO_RESOLUTION_1080P) {
                                 if (mVdtCamera.getVideoFramerate() == VdtCamera.VIDEO_FRAMERATE_120FPS) {
-                                    mFramerate.setSummary(getResources().getStringArray(R.array.framerate)[1]);
+                                    mFramerate.setSummary(getResources().getStringArray(R.array.framerate_list)[1]);
                                     mEventBus.post(new VideoSettingChangEvent(VideoSettingChangEvent.WHAT_FRAMERATE, 1));
 
                                 }
@@ -68,12 +68,12 @@ public class LiveViewSettingFragment extends PreferenceFragment {
 
         mFramerate = findPreference("framerate");
         int framerateIndex = mVdtCamera.getVideoFramerate();
-        mFramerate.setSummary(getResources().getStringArray(R.array.framerate)[framerateIndex]);
+        mFramerate.setSummary(getResources().getStringArray(R.array.framerate_list)[framerateIndex]);
         mFramerate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .items(tmpResIndex == VdtCamera.VIDEO_RESOLUTION_720P ? R.array.framerate : R.array.framerate_1080)
+                    .items(tmpResIndex == VdtCamera.VIDEO_RESOLUTION_720P ? R.array.framerate_list : R.array.framerate_1080_list)
                     .itemsCallbackSingleChoice(resolutionIndex, new MaterialDialog.ListCallbackSingleChoice() {
 
                         @Override

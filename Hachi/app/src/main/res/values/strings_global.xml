@@ -21,17 +21,17 @@
         <item quantity="other">%d Bookmarks</item>
     </plurals>
 
-    <string-array name="resolution" translatable="false">
+    <string-array name="resolution_list" translatable="false">
         <item>720P</item>
         <item>1080P</item>
     </string-array>
 
-    <string-array name="framerate_1080" translatable="false">
+    <string-array name="framerate_1080_list" translatable="false">
         <item>30fps</item>
         <item>60fps</item>
     </string-array>
 
-    <string-array name="framerate" translatable="false">
+    <string-array name="framerate_list" translatable="false">
         <item>30fps</item>
         <item>60fps</item>
         <item>120fps</item>

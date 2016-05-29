@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="wifi_mode" translatable="false">
+    <string-array name="wifi_mode_list" translatable="false">
         <item>@string/access_point</item>
         <item>@string/client</item>
         <item>@string/off</item>

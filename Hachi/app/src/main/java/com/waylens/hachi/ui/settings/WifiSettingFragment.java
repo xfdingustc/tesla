@@ -69,7 +69,7 @@ public class WifiSettingFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.change_wifi_mode)
-                    .items(R.array.wifi_mode)
+                    .items(R.array.wifi_mode_list)
                     .itemsCallbackSingleChoice(wifiModeIndex, new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
