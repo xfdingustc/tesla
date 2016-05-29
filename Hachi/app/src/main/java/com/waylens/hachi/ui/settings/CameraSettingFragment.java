@@ -6,6 +6,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -13,6 +14,7 @@ import android.widget.Switch;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,9 +30,11 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
@@ -44,7 +48,9 @@ import org.json.JSONException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.aigestudio.downloader.bizs.DLManager;
 import cn.aigestudio.downloader.interfaces.IDListener;
@@ -81,12 +87,6 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private static final int MAX_BOOKMARK_LENGHT = 30;
 
-//    private OptionsPickerView mQualityPickerView;
-    private ArrayList<String> mResolutionList = new ArrayList<>();
-    private ArrayList<ArrayList<String>> mFrameRateList = new ArrayList<>();
-
-    private int mChangedVideoResolution;
-    private int mChangedVideoFramerate;
 
     private RequestQueue mRequestQueue;
 
@@ -126,43 +126,59 @@ public class CameraSettingFragment extends PreferenceFragment {
             @Override
             public void onResponse(JSONArray response) {
                 Logger.t(TAG).json(response.toString());
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        final FirmwareInfo firmwareInfo = FirmwareInfo.fromJson(response.getJSONObject(i));
-                        if (firmwareInfo.getName().equals(mVdtCamera.getHardwareName())) {
-                            Logger.t(TAG).d("Found our hardware");
-                            FirmwareVersion versionFromServer = new FirmwareVersion(firmwareInfo.getVersion());
-                            FirmwareVersion versionInCamera = new FirmwareVersion(mVdtCamera.getApiVersion());
-                            if (versionFromServer.isGreaterThan(versionInCamera)) {
-                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                                    .title(R.string.found_new_firmware)
-                                    .positiveText(R.string.upgrade)
-                                    .negativeText(android.R.string.cancel)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            doDownloadFirmware(firmwareInfo);
-                                        }
-                                    })
-                                    .show();
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                showFirmwareUpgradDialog(response);
 
-                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Logger.t(TAG).e(error.toString());
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> mHashMap = new HashMap<>();
+                String token = SessionManager.getInstance().getToken();
+                if (token != null && !token.isEmpty()) {
+                    mHashMap.put("X-Auth-Token", token);
+                }
+                return mHashMap;
+            }
+        };
         request.setRetryPolicy(new DefaultRetryPolicy(1000 * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Logger.t(TAG).d("fetch latest firmware");
         mRequestQueue.add(request);
 
+    }
+
+    private void showFirmwareUpgradDialog(JSONArray response) {
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                final FirmwareInfo firmwareInfo = FirmwareInfo.fromJson(response.getJSONObject(i));
+                if (firmwareInfo.getName().equals(mVdtCamera.getHardwareName())) {
+                    Logger.t(TAG).d("Found our hardware");
+                    FirmwareVersion versionFromServer = new FirmwareVersion(firmwareInfo.getVersion());
+                    FirmwareVersion versionInCamera = new FirmwareVersion(mVdtCamera.getApiVersion());
+                    if (versionFromServer.isGreaterThan(versionInCamera)) {
+                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                            .title(R.string.found_new_firmware)
+                            .content(firmwareInfo.getDescription())
+                            .positiveText(R.string.upgrade)
+                            .negativeText(android.R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    doDownloadFirmware(firmwareInfo);
+                                }
+                            })
+                            .show();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 
@@ -421,7 +437,15 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initVideoPreference() {
-        LiveViewSettingActivity.launch(getActivity());
+        mVideo = findPreference("video");
+        mVideo.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                LiveViewSettingActivity.launch(getActivity());
+                return true;
+            }
+        });
+
     }
 
 
@@ -549,7 +573,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                 return true;
             }
 
-            return false;
+            return true;
         }
     }
 

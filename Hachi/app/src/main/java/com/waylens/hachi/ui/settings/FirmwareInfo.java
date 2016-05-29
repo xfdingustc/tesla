@@ -13,6 +13,7 @@ public class FirmwareInfo {
     private String mVersion;
     private int mSize;
     private String mMd5;
+    private String mDescription;
 
     public static FirmwareInfo fromJson(JSONObject object) {
         FirmwareInfo firmwareInfo = new FirmwareInfo();
@@ -22,6 +23,8 @@ public class FirmwareInfo {
             firmwareInfo.mUrl = object.getString("url");
             firmwareInfo.mSize = object.getInt("size");
             firmwareInfo.mMd5 = object.getString("md5");
+            JSONObject description = object.getJSONObject("description");
+            firmwareInfo.mDescription = description.getString("en");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -43,5 +46,9 @@ public class FirmwareInfo {
 
     public String getMd5() {
         return mMd5;
+    }
+
+    public String getDescription() {
+        return mDescription;
     }
 }
