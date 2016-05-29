@@ -1,12 +1,15 @@
 package com.waylens.hachi.ui.settings;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -30,7 +33,6 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
@@ -38,7 +40,9 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
+import com.waylens.hachi.ui.services.download.InetDownloadService;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.SpaceInfo;
 
@@ -52,8 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.aigestudio.downloader.bizs.DLManager;
-import cn.aigestudio.downloader.interfaces.IDListener;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -75,6 +77,8 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mConnectivity;
     private Preference mFirmware;
 
+    private FirmwareInfo mFirmwareInfo;
+
 
     private NumberPicker mBeforeNumber;
     private NumberPicker mAfterNumber;
@@ -84,6 +88,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private SeekBar mAudioSeekbar;
 
     private PieChart mStorageChart;
+
 
     private static final int MAX_BOOKMARK_LENGHT = 30;
 
@@ -95,6 +100,30 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private MaterialDialog mUploadProgressDialog;
 
+    private BroadcastReceiver mDownloadProgressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mDownloadProgressDialog != null && mDownloadProgressDialog.isShowing()) {
+                int what = intent.getIntExtra(InetDownloadService.EVENT_EXTRA_WHAT, -1);
+                switch (what) {
+                    case InetDownloadService.EVENT_WHAT_DOWNLOAD_PROGRESS:
+                        int progress = intent.getIntExtra(InetDownloadService.EVENT_EXTRA_DOWNLOAD_PROGRESS, 0);
+                        mDownloadProgressDialog.setProgress(progress);
+                        break;
+                    case InetDownloadService.EVENT_WHAT_DOWNLOAD_FINSHED:
+
+                        mDownloadProgressDialog.setContent(R.string.download_complete);
+
+                        final String file = intent.getStringExtra(InetDownloadService.EVENT_EXTRA_DOWNLOAD_FILE_PATH);
+                        startFirmwareMd5Check(new File(file));
+
+                }
+
+
+            }
+        }
+    };
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,6 +133,21 @@ public class CameraSettingFragment extends PreferenceFragment {
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mRequestQueue.start();
         initPreference();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter(InetDownloadService.INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
+        getActivity().registerReceiver(mDownloadProgressReceiver, intentFilter);
+
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unregisterReceiver(mDownloadProgressReceiver);
     }
 
     private void initPreference() {
@@ -184,81 +228,69 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private void doDownloadFirmware(final FirmwareInfo firmwareInfo) {
 
-        DLManager.getInstance(getActivity()).dlStart(firmwareInfo.getUrl(), new IDListener() {
+        InetDownloadService.start(getActivity(), firmwareInfo.getUrl());
 
-            @Override
-            public void onPrepare() {
+        mFirmwareInfo = firmwareInfo;
 
-            }
+        showDownloadProgressDialog();
 
-            @Override
-            public void onStart(String fileName, String realUrl, final int fileLength) {
-                Logger.t(TAG).d("fileName: " + fileName + " realUrl: " + realUrl + " fileLength: " + fileLength);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showDownloadProgressDialog(fileLength);
-                    }
-                });
 
-            }
-
-            @Override
-            public void onProgress(int progress) {
-                mDownloadProgressDialog.setProgress(progress);
-            }
-
-            @Override
-            public void onStop(int progress) {
-                Logger.t(TAG).d("progress: " + progress);
-            }
-
-            @Override
-            public void onFinish(final File file) {
-                Logger.t(TAG).d("File: " + file);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDownloadProgressDialog.setContent(R.string.download_complete);
-                    }
-                });
-
-                final String downloadFileMd5 = HashUtils.MD5String(file);
-                if (downloadFileMd5.equals(firmwareInfo.getMd5())) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDownloadProgressDialog.setContent("MD5 is ok");
-                            doSendFirmware2Camera(file, downloadFileMd5);
-                        }
-                    });
-                } else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDownloadProgressDialog.setContent("MD5 is failed");
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onError(int status, String error) {
-                Logger.t(TAG).d("status: " + status + " error: " + error);
-            }
-        });
-
-//        // TODO: only for debug since DownloadManager does not send already exist notification
-//        File file = new File("/data/user/0/com.waylens.hachi/cache/HACHI_V0C_1.4.10_1.4.5.10.44.tsf");
-//        Logger.t(TAG).d("File size: " + file.length());
-//        String downloadFileMd5 = HashUtils.MD5String(file);
-//        doSendFirmware2Camera(file, downloadFileMd5);
 
     }
 
-    private void doSendFirmware2Camera(final File file, final String md5) {
-        mVdtCamera.sendNewFirmware(md5, new VdtCamera.OnNewFwVersionListern() {
+    private void startFirmwareMd5Check(final File file) {
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                subscriber.onNext(0);
+                final String downloadFileMd5 = HashUtils.MD5String(file);
+                if (downloadFileMd5.equals(mFirmwareInfo.getMd5())) {
+                    subscriber.onNext(1);
+                } else {
+                    subscriber.onNext(-1);
+                }
+            }
+
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<Integer>() {
+
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Integer integer) {
+                    switch (integer) {
+                        case 0:
+                            mDownloadProgressDialog.setContent("Checking firmware file");
+                            break;
+                        case 1:
+                            mDownloadProgressDialog.setContent("MD5 is ok");
+                            mDownloadProgressDialog.dismiss();
+                            doSendFirmware2Camera(file);
+                            break;
+                        case -1:
+                            mDownloadProgressDialog.setContent("MD5 is failed");
+                            break;
+                    }
+
+                }
+            });
+
+
+
+    }
+
+    private void doSendFirmware2Camera(final File file) {
+        mVdtCamera.sendNewFirmware(mFirmwareInfo.getMd5(), new VdtCamera.OnNewFwVersionListern() {
             @Override
             public void onNewVersion(int response) {
                 Logger.t(TAG).d("response: " + response);
@@ -280,6 +312,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                         public void call(Subscriber<? super Integer> subscriber) {
                             FirmwareWriter writer = new FirmwareWriter(file, mVdtCamera, subscriber);
                             writer.start();
+                            subscriber.onCompleted();
 
                         }
                     })
@@ -289,7 +322,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
                             @Override
                             public void onCompleted() {
-
+                                MainActivity.launch(getActivity());
                             }
 
                             @Override
@@ -318,10 +351,10 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
 
-    private void showDownloadProgressDialog(int fileLength) {
+    private void showDownloadProgressDialog() {
         mDownloadProgressDialog = new MaterialDialog.Builder(getActivity())
             .title(R.string.downloading)
-            .progress(false, fileLength, false)
+            .progress(false, 100, false)
             .contentGravity(GravityEnum.CENTER)
             .cancelable(false)
             .show();
@@ -532,8 +565,6 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
 
-
-
     private static class FirmwareVersion {
         private int mMain;
         private int mSub;
@@ -573,7 +604,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                 return true;
             }
 
-            return true;
+            return false;
         }
     }
 

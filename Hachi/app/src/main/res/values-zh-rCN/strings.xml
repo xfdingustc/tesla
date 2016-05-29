@@ -238,4 +238,5 @@
 	<string name="wifi_added">下列Wifi已成功加入相机</string>
 	<string name="resolution">分辨率</string>
 	<string name="framerate">帧率</string>
+	<string name="download_progress">下载进度</string>
 </resources>
