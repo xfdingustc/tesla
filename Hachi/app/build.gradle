@@ -21,7 +21,7 @@ android {
         versionName "0.61"
 //        renderscriptTargetApi 22
 //        renderscriptSupportModeEnabled true
-        //multiDexEnabled true
+//        multiDexEnabled true
 
 //        ndk {
 //            moduleName "HttpRemuxer"
@@ -117,13 +117,13 @@ dependencies {
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'com.google.android.gms:play-services-gcm:7.8.0'
-    //    compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'im.fir:fir-sdk:latest.integration@aar'
     compile 'javax.jmdns:jmdns:3.4.1'
-    compile 'com.bigkoo:pickerview:2.0.8'
+//    compile 'com.bigkoo:pickerview:2.0.8'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'info.hoang8f:android-segmented:1.0.6'
+//    compile 'info.hoang8f:android-segmented:1.0.6'
     compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+
     //    compile 'com.bugtags.library:bugtags-lib:latest.integration'
 
     //    compile 'com.tencent.bugly:crashreport:latest.release'

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
-import com.waylens.hachi.stash.smartconfig.NetworkUtil;
+
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -152,16 +152,10 @@ public class VdtCameraManager {
 
         Logger.t(TAG).d("camera connected, but was not connecting, stop it");
         vdtCamera.stopClient();
-        enableNetworkStateReceiver(false);
+
     }
 
-    private void enableNetworkStateReceiver(boolean isEnabled) {
-//        int newState = isEnabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-//        ComponentName receiver = new ComponentName(mContext, NetworkStateReceiver.class);
-//        PackageManager pm = mContext.getPackageManager();
-//        pm.setComponentEnabledSetting(receiver, newState, PackageManager.DONT_KILL_APP);
-//        Logger.t(TAG).d("NetworkStateReceiver status: " + newState);
-    }
+
 
 
     private void onCameraDisconnected(VdtCamera vdtCamera) {
@@ -195,9 +189,7 @@ public class VdtCameraManager {
         }
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_DISCONNECTED, vdtCamera));
 
-        if (!NetworkUtil.isWifiConnected(mContext)) {
-            enableNetworkStateReceiver(true);
-        }
+
     }
 
 

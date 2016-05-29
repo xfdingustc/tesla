@@ -11,7 +11,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/style_color_primary</item>
         <item name="colorPrimaryDark">@color/style_color_primary_dark</item>
         <item name="colorAccent">@color/style_color_primary</item>

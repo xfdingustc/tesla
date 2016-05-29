@@ -20,7 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.bigkoo.pickerview.OptionsPickerView;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -35,6 +34,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.SpaceInfo;
 
@@ -42,12 +42,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +81,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private static final int MAX_BOOKMARK_LENGHT = 30;
 
-    private OptionsPickerView mQualityPickerView;
+//    private OptionsPickerView mQualityPickerView;
     private ArrayList<String> mResolutionList = new ArrayList<>();
     private ArrayList<ArrayList<String>> mFrameRateList = new ArrayList<>();
 
@@ -239,11 +233,11 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
 
-        // TODO: only for debug since DownloadManager does not send already exist notification
-        File file = new File("/data/user/0/com.waylens.hachi/cache/HACHI_V0C_1.4.10_1.4.5.10.44.tsf");
-        Logger.t(TAG).d("File size: " + file.length());
-        String downloadFileMd5 = HashUtils.MD5String(file);
-        doSendFirmware2Camera(file, downloadFileMd5);
+//        // TODO: only for debug since DownloadManager does not send already exist notification
+//        File file = new File("/data/user/0/com.waylens.hachi/cache/HACHI_V0C_1.4.10_1.4.5.10.44.tsf");
+//        Logger.t(TAG).d("File size: " + file.length());
+//        String downloadFileMd5 = HashUtils.MD5String(file);
+//        doSendFirmware2Camera(file, downloadFileMd5);
 
     }
 
@@ -427,28 +421,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initVideoPreference() {
-        mVideo = findPreference("video");
-        mVideo.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                    .title(R.string.video_setting)
-//                    .customView(R.layout.dialog_video_setting, true)
-//                    .positiveText(android.R.string.ok)
-//                    .negativeText(android.R.string.cancel)
-//                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//
-//                        }
-//                    })
-//                    .show();
-
-                mQualityPickerView.show();
-                return true;
-            }
-        });
-        initRecordQualityOptionPickerView();
+        LiveViewSettingActivity.launch(getActivity());
     }
 
 
@@ -535,67 +508,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
 
-    private void initRecordQualityOptionPickerView() {
-        mQualityPickerView = new OptionsPickerView(getActivity());
 
-        mResolutionList.add("1080P");
-        mResolutionList.add("720P");
-
-        ArrayList<String> framerateItem_01 = new ArrayList<>();
-        framerateItem_01.add("30fps");
-        framerateItem_01.add("60fps");
-        framerateItem_01.add("120fps");
-
-        ArrayList<String> framerateItem_02 = new ArrayList<>();
-        framerateItem_02.add("30fps");
-        framerateItem_02.add("60fps");
-        framerateItem_02.add("120fps");
-
-        mFrameRateList.add(framerateItem_01);
-        mFrameRateList.add(framerateItem_02);
-
-        mQualityPickerView.setPicker(mResolutionList, mFrameRateList, true);
-        mQualityPickerView.setCyclic(false, false, false);
-
-        mQualityPickerView.setOnoptionsSelectListener(new OptionsPickerView.OnOptionsSelectListener() {
-            @Override
-            public void onOptionsSelect(int options1, int option2, int options3) {
-                if (options1 == 0) {
-                    mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_1080P;
-                } else {
-                    mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_720P;
-                }
-
-                if (option2 == 0) {
-                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_30FPS;
-                } else if (option2 == 1) {
-                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_60FPS;
-                } else {
-                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_120FPS;
-                }
-
-                showConfirmDialog();
-            }
-
-
-        });
-    }
-
-    private void showConfirmDialog() {
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-            .title(R.string.change_camera_setting)
-            .content(R.string.change_camera_setting_hint)
-            .positiveText(android.R.string.ok)
-            .negativeText(android.R.string.cancel)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    mVdtCamera.setVideoResolution(mChangedVideoResolution, mChangedVideoFramerate);
-                    mVdtCamera.stopRecording();
-
-                }
-            }).show();
-    }
 
     private static class FirmwareVersion {
         private int mMain;

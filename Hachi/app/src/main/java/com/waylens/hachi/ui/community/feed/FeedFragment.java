@@ -32,7 +32,6 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
-import com.waylens.hachi.ui.fragments.YouTubeFragment;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
@@ -396,10 +395,10 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
         }
 
         if (moment.type == Moment.TYPE_YOUTUBE) {
-            YouTubeFragment youTubeFragment = YouTubeFragment.newInstance();
-            youTubeFragment.setVideoId(moment.videoID);
-//            vh.videoFragment = youTubeFragment;
-            mVideoFragment = youTubeFragment;
+//            YouTubeFragment youTubeFragment = YouTubeFragment.newInstance();
+//            youTubeFragment.setVideoId(moment.videoID);
+////            vh.videoFragment = youTubeFragment;
+//            mVideoFragment = youTubeFragment;
 //            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
         } else {
             MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment);

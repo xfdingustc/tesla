@@ -40,15 +40,8 @@
             android:textColor="?attr/appTextColorSecondary"
             android:textSize="14sp"/>
 
+
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@android:id/widget_frame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
-        android:orientation="vertical">
-
-    </LinearLayout>
 
 </LinearLayout>

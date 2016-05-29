@@ -13,7 +13,7 @@
         android:textColor="@color/style_color_accent"
         android:textSize="18sp"
         android:text="indroduce"/>
-    
+
 
 
 </LinearLayout>

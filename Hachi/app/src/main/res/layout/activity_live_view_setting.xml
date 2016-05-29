@@ -1,85 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="?attr/defaultBgColor"
-              android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:background="?attr/defaultBgColor"
+                                              android:orientation="vertical">
 
     <include layout="@layout/toolbar_default"/>
 
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
+
     <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="16dp"-->
-        <!--android:text="@string/recording_mode"-->
-        <!--android:textColor="@color/style_color_accent"-->
-        <!--android:textSize="16sp"/>-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:text="@string/recording_mode"-->
+    <!--android:textColor="@color/style_color_accent"-->
+    <!--android:textSize="16sp"/>-->
 
 
     <!--<RadioGroup-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content">-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content">-->
 
-        <!--<RadioButton-->
-            <!--android:id="@+id/btnContinuous"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="16dp"-->
-            <!--android:buttonTint="?attr/appTextColorPrimary"-->
-            <!--android:text="@string/continuous"-->
-            <!--android:textColor="?attr/appTextColorPrimary"-->
-            <!--android:textSize="16sp"-->
+    <!--<RadioButton-->
+    <!--android:id="@+id/btnContinuous"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:buttonTint="?attr/appTextColorPrimary"-->
+    <!--android:text="@string/continuous"-->
+    <!--android:textColor="?attr/appTextColorPrimary"-->
+    <!--android:textSize="16sp"-->
 
-            <!--/>-->
+    <!--/>-->
 
-        <!--<RadioButton-->
-            <!--android:id="@+id/btnManual"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="16dp"-->
-            <!--android:buttonTint="?attr/appTextColorPrimary"-->
-            <!--android:text="@string/manual"-->
-            <!--android:textColor="?attr/appTextColorPrimary"-->
-            <!--android:textSize="16sp"-->
-            <!--/>-->
+    <!--<RadioButton-->
+    <!--android:id="@+id/btnManual"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:buttonTint="?attr/appTextColorPrimary"-->
+    <!--android:text="@string/manual"-->
+    <!--android:textColor="?attr/appTextColorPrimary"-->
+    <!--android:textSize="16sp"-->
+    <!--/>-->
     <!--</RadioGroup>-->
 
     <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:background="?attr/appTextColorDisabled"></View>-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:background="?attr/appTextColorDisabled"></View>-->
 
 
     <!--<TextView-->
-        <!--android:id="@+id/tvRecordModeInfo"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="16dp"-->
-        <!--android:textColor="@color/text_camera_info"-->
-        <!--android:textSize="14sp"/>-->
+    <!--android:id="@+id/tvRecordModeInfo"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:textColor="@color/text_camera_info"-->
+    <!--android:textSize="14sp"/>-->
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/recording_quality"
-        android:textColor="@color/style_color_accent"
-        android:textSize="16sp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/resolution_framerate"
-        android:textColor="?attr/appTextColorPrimary"/>
-
-    <TextView
-        android:id="@+id/resolution_framerate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:textColor="?attr/appTextColorPrimary"/>
 
 
 </LinearLayout>

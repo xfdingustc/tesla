@@ -364,7 +364,7 @@ public class CameraPreviewFragment extends BaseFragment {
                             toggleInfoView();
                             break;
                         case R.id.cameraSetting:
-                            LiveViewSettingActivity.launch(getActivity(), mVdtCamera);
+                            LiveViewSettingActivity.launch(getActivity());
                             break;
                     }
                     return false;

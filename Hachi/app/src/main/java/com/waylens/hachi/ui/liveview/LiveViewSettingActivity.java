@@ -8,21 +8,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.bigkoo.pickerview.OptionsPickerView;
 import com.waylens.hachi.R;
-
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
-
-import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -30,7 +28,7 @@ import butterknife.OnClick;
  */
 public class LiveViewSettingActivity extends BaseActivity {
 
-    private static VdtCamera mSharedCamera;
+
     private VdtCamera mCamera;
 
     private int mOriginRecordMode;
@@ -41,16 +39,14 @@ public class LiveViewSettingActivity extends BaseActivity {
     private int mChangedVideoResolution;
     private int mChangedVideoFramerate;
 
-    private OptionsPickerView mQualityPickerView;
+//    private OptionsPickerView mQualityPickerView;
 
     private ArrayList<String> mResolutionList = new ArrayList<>();
     private ArrayList<ArrayList<String>> mFrameRateList = new ArrayList<>();
 
 
-
-    public static void launch(Activity startActivity, VdtCamera camera) {
+    public static void launch(Activity startActivity) {
         Intent intent = new Intent(startActivity, LiveViewSettingActivity.class);
-        mSharedCamera = camera;
         startActivity.startActivity(intent);
     }
 
@@ -64,8 +60,8 @@ public class LiveViewSettingActivity extends BaseActivity {
 //    @Bind(R.id.tvRecordModeInfo)
 //    TextView mTvRecordModeInfo;
 
-    @BindView(R.id.resolution_framerate)
-    TextView mResolutionFramerate;
+//    @BindView(R.id.resolution_framerate)
+//    TextView mResolutionFramerate;
 
 
 //    @OnClick(R.id.btnContinuous)
@@ -84,10 +80,20 @@ public class LiveViewSettingActivity extends BaseActivity {
 //        checkIfChanged();
 //    }
 
-    @OnClick(R.id.resolution_framerate)
-    public void onResolutionFramerateClicked() {
-        mQualityPickerView.show();
+    @Subscribe
+    public void onEventVideoSettingChange(VideoSettingChangEvent event) {
+        switch (event.getWhat()) {
+            case VideoSettingChangEvent.WHAT_FRAMERATE:
+                mChangedVideoFramerate = event.getValue();
+                break;
+            case VideoSettingChangEvent.WHAT_RESOLUTION:
+                mChangedVideoResolution = event.getValue();
+                break;
+        }
+        checkIfChanged();
     }
+
+
 
 
 
@@ -98,9 +104,21 @@ public class LiveViewSettingActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected void init() {
         super.init();
-        mCamera = mSharedCamera;
+        mCamera = VdtCameraManager.getManager().getCurrentCamera();
         mOriginRecordMode = mCamera.getRecordMode();
         mOriginVideoResolution = mChangedVideoResolution = mCamera.getVideoResolution();
         mOriginVideoFramerate = mChangedVideoFramerate = mCamera.getVideoFramerate();
@@ -110,12 +128,9 @@ public class LiveViewSettingActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_live_view_setting);
-//        updateRecordMode();
-        updateRecordQuality();
-        initRecordQualityOptionPickerView();
+        LiveViewSettingFragment fragment = new LiveViewSettingFragment();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
-
-
 
 
     @Override
@@ -131,85 +146,6 @@ public class LiveViewSettingActivity extends BaseActivity {
         super.setupToolbar();
     }
 
-//    private void updateRecordMode() {
-//        int recordMode = mCamera.getRecordMode();
-//        if ((recordMode & VdtCamera.FLAG_LOOP_RECORD) > 0) {
-//            mBtnContinuous.setChecked(true);
-//            mTvRecordModeInfo.setText(getText(R.string.continuous_info));
-//        } else {
-//            mBtnManual.setChecked(true);
-//            mTvRecordModeInfo.setText(getText(R.string.manual_info));
-//        }
-//    }
-
-    private void updateRecordQuality() {
-        String resolution = null;
-        String frameRate;
-
-        if (mChangedVideoResolution == VdtCamera.VIDEO_RESOLUTION_1080P) {
-            resolution = "1080P";
-        } else if (mChangedVideoResolution == VdtCamera.VIDEO_RESOLUTION_720P) {
-            resolution = "720P";
-        }
-
-
-        if (mChangedVideoFramerate == VdtCamera.VIDEO_FRAMERATE_30FPS) {
-            frameRate = "30fps";
-        } else if (mChangedVideoFramerate == VdtCamera.VIDEO_FRAMERATE_60FPS) {
-            frameRate = "60fps";
-        } else {
-            frameRate = "120fps";
-        }
-
-
-        mResolutionFramerate.setText(resolution + "/" + frameRate);
-
-    }
-
-    private void initRecordQualityOptionPickerView() {
-        mQualityPickerView = new OptionsPickerView(this);
-
-        mResolutionList.add("1080P");
-        mResolutionList.add("720P");
-
-        ArrayList<String> framerateItem_01 = new ArrayList<>();
-        framerateItem_01.add("30fps");
-        framerateItem_01.add("60fps");
-        framerateItem_01.add("120fps");
-
-        ArrayList<String> framerateItem_02 = new ArrayList<>();
-        framerateItem_02.add("30fps");
-        framerateItem_02.add("60fps");
-        framerateItem_02.add("120fps");
-
-        mFrameRateList.add(framerateItem_01);
-        mFrameRateList.add(framerateItem_02);
-
-        mQualityPickerView.setPicker(mResolutionList, mFrameRateList, true);
-        mQualityPickerView.setCyclic(false, false, false);
-
-        mQualityPickerView.setOnoptionsSelectListener(new OptionsPickerView.OnOptionsSelectListener() {
-            @Override
-            public void onOptionsSelect(int options1, int option2, int options3) {
-                if (options1 == 0) {
-                    mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_1080P;
-                } else {
-                    mChangedVideoResolution = VdtCamera.VIDEO_RESOLUTION_720P;
-                }
-
-                if (option2 == 0) {
-                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_30FPS;
-                } else if (option2 == 1) {
-                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_60FPS;
-                } else {
-                    mChangedVideoFramerate = VdtCamera.VIDEO_FRAMERATE_120FPS;
-                }
-
-                updateRecordQuality();
-                checkIfChanged();
-            }
-        });
-    }
 
     private void checkIfChanged() {
         boolean changed = false;

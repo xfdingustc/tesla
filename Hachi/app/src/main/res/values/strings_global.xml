@@ -22,16 +22,19 @@
     </plurals>
 
     <string-array name="resolution" translatable="false">
-        <item>Unknown</item>
-        <item>1080p30</item>
-        <item>1080p60</item>
-        <item>720p30</item>
-        <item>720p60</item>
-        <item>4Kp30</item>
-        <item>4Kp60</item>
-        <item>480p30</item>
-        <item>480p60</item>
-        <item>720p120</item>
+        <item>720P</item>
+        <item>1080P</item>
+    </string-array>
+
+    <string-array name="framerate_1080" translatable="false">
+        <item>30fps</item>
+        <item>60fps</item>
+    </string-array>
+
+    <string-array name="framerate" translatable="false">
+        <item>30fps</item>
+        <item>60fps</item>
+        <item>120fps</item>
     </string-array>
 
     <string-array name="videoOptions" translatable="false">
