@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
@@ -24,9 +25,7 @@ import org.greenrobot.eventbus.Subscribe;
 import butterknife.BindView;
 
 
-/**
- * Created by Xiaofei on 2016/2/17.
- */
+
 public class VideoFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = VideoFragment.class.getSimpleName();
 

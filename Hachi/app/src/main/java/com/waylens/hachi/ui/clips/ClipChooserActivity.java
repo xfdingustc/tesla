@@ -1,50 +1,78 @@
 package com.waylens.hachi.ui.clips;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.vdb.Clip;
 
-import java.util.ArrayList;
+import org.greenrobot.eventbus.EventBus;
 
-/**
- * Created by Richard on 3/2/16.
- */
+
 public class ClipChooserActivity extends BaseActivity {
+    private EventBus mEventBus = EventBus.getDefault();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
+
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        initViews();
+    }
+
+    private void initViews() {
         setContentView(R.layout.activity_single_fragment);
-        setSupportActionBar(getToolbar());
-        setTitle(R.string.add_more_clips);
-        setHomeAsUpIndicator(R.drawable.navbar_close);
-
-        View view = findViewById(R.id.tabs);
-        if (view != null) {
-            view.setVisibility(View.GONE);
-        }
-
-        Intent intent = getIntent();
-        //Clip clip = intent.getParcelableExtra("clip");
-        ArrayList<Clip> clips = intent.getParcelableArrayListExtra("clips");
+        setupToolbar();
         Fragment fragment = TagFragment.newInstance(Clip.TYPE_MARKED, true, true);
 
         getFragmentManager().beginTransaction().add(R.id.fragment_content, fragment).commit();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
+    public void setupToolbar() {
+        super.setupToolbar();
+        getToolbar().setTitle(R.string.add_more_clips);
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().getMenu().clear();
+        getToolbar().inflateMenu(R.menu.menu_add_clip);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_to_enhance:
+                        mEventBus.post(new MenuItemSelectEvent(item.getItemId()));
+                        break;
+                }
+
                 return true;
-        }
-        return super.onOptionsItemSelected(item);
+            }
+        });
+
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        mEventBus.register(this);
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        mEventBus.unregister(this);
+    }
+
+
 }

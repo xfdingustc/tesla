@@ -208,10 +208,10 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         super.onViewCreated(view, savedInstanceState);
         mRefreshLayout.setRefreshing(true);
 
-        mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        if (mBroadcastManager != null) {
-            mBroadcastManager.registerReceiver(localReceiver, new IntentFilter(ACTION_RETRIEVE_CLIPS));
-        }
+//        mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+//        if (mBroadcastManager != null) {
+//            mBroadcastManager.registerReceiver(localReceiver, new IntentFilter(ACTION_RETRIEVE_CLIPS));
+//        }
     }
 
 
@@ -274,6 +274,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         if (mIsAddMore) {
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
+            Logger.t(TAG).d("add clip size: " + mAdapter.getSelectedClipList().size());
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         } else {
@@ -439,12 +440,12 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         }
     }
 
-    BroadcastReceiver localReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            doGetClips();
-        }
-    };
+//    BroadcastReceiver localReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            doGetClips();
+//        }
+//    };
 
 
     private class BufferClipAdapter extends BaseAdapter {

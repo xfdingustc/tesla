@@ -72,7 +72,7 @@ public class PlaylistEditor {
 
     public void appendClips(List<Clip> clips, OnBuildCompleteListener listener) {
         ClipSet clipSet = getClipSet();
-        clipSet.getClipList().addAll(clips);
+        
         ClipSetManager.getManager().updateClipSet(mClipSetIndex, clipSet);
         doRebuildPlaylist(ACTION_ADD);
 

@@ -260,6 +260,7 @@ public class EnhanceFragment extends BaseFragment {
             case REQUEST_CODE_ENHANCE:
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND);
+                    Logger.t(TAG).d("append clips: " + clips.size());
                     if (!mClipsEditView.appendSharableClips(clips)) {
                         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                             .content(R.string.resolution_not_correct)

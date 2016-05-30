@@ -250,21 +250,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         switchToMode(launchMode);
     }
 
-    private void doBuildPlaylist() {
-        Logger.t(TAG).d("do build play list");
-//        PlaylistEditor playlistEditor = new PlaylistEditor(mVdbRequestQueue, PLAYLIST_INDEX);
-//        playlistEditor.build(ClipSetManager.CLIP_SET_TYPE_ENHANCE, new PlaylistEditor.OnBuildCompleteListener() {
-//            @Override
-//            public void onBuildComplete(ClipSet clipSet) {
-////                ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_ENHANCE, clipSet);
-//                PlaylistUrlProvider urlProvider = new PlaylistUrlProvider(mVdbRequestQueue, PLAYLIST_INDEX);
-//                mClipPlayFragment.setUrlProvider(urlProvider);
-//                Logger.t(TAG).d("enhance clipset: \n" + clipSet.toString());
-//
-//            }
-//        });
 
-    }
 
     private boolean checkIfResolutionUnity(List<Clip> clipList) {
         if (clipList.size() <= 1) {
