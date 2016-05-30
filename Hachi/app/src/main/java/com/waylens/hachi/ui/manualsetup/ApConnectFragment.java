@@ -53,7 +53,6 @@ public class ApConnectFragment extends BaseFragment {
     private String mPassword;
     private WifiManager mWifiManager;
     private BroadcastReceiver mWifiStateReceiver;
-    private Handler mUiHandler;
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -179,7 +178,7 @@ public class ApConnectFragment extends BaseFragment {
         mSSID = bundle.getString("ssid");
         mPassword = bundle.getString("password");
         mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-        mUiHandler = new Handler();
+
 
     }
 

@@ -50,7 +50,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class VdtCamera implements VdtCameraCmdConsts{
+public class VdtCamera implements VdtCameraCmdConsts {
     private static final String TAG = VdtCamera.class.getSimpleName();
 
     public static final int STATE_MIC_UNKNOWN = -1;
@@ -587,7 +587,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
     }
 
 
-
     private void initCameraState() {
         mController.sendCommand(CMD_CAM_GET_API_VERSION);
         mController.sendCommand(CMD_FW_GET_VERSION);
@@ -605,8 +604,8 @@ public class VdtCamera implements VdtCameraCmdConsts{
         int timeZone = TimeZone.getDefault().getRawOffset();
 
 
-        mController.sendCommand(CMD_NETWORK_SYNCTIME, ((Long)(timeMillis / 1000)).toString(),
-            ((Integer)(timeZone / (3600 * 1000))).toString());
+        mController.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
+            ((Integer) (timeZone / (3600 * 1000))).toString());
 
         mController.sendCommand(CMD_CAM_BT_IS_ENABLED);
         mController.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
@@ -637,7 +636,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
         Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
         mController.sendCommand(CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
     }
-
 
 
     public void setName(String name) {
@@ -715,7 +713,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
     }
 
 
-
     public void scanHost(OnScanHostListener listener) {
         mOnScanHostListener = listener;
         mController.sendCommand(CMD_NETWORK_SCANHOST);
@@ -732,7 +729,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
     public void stopClient() {
         mController.stop();
     }
-
 
 
     public void startPreview() {
@@ -795,7 +791,7 @@ public class VdtCamera implements VdtCameraCmdConsts{
         if (ssid == null) {
             ssid = "";
         }
-        mController.sendCommand(CMD_NETWORK_CONNECTHOTSPOT,ssid);
+        mController.sendCommand(CMD_NETWORK_CONNECTHOTSPOT, ssid);
 
     }
 
@@ -871,6 +867,8 @@ public class VdtCamera implements VdtCameraCmdConsts{
                         e.printStackTrace();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    } finally {
+                        onCameraDisconnected();
                     }
                 }
             })
@@ -949,7 +947,8 @@ public class VdtCamera implements VdtCameraCmdConsts{
                     } catch (XmlPullParserException e) {
                         Logger.t(TAG).d("XmlPullParserException: length=");
                         e.printStackTrace();
-
+                    } finally {
+                        onCameraDisconnected();
                     }
 
                 }
@@ -1002,7 +1001,7 @@ public class VdtCamera implements VdtCameraCmdConsts{
         private void sendCommand(int cmd, String p1, String p2) {
             VdtCameraCommand command;
             if (cmd >= CMD_DOMAIN_REC_START) {
-                 command = new VdtCameraCommand(CMD_DOMAIN_REC, cmd - CMD_DOMAIN_REC_START, p1, p2);
+                command = new VdtCameraCommand(CMD_DOMAIN_REC, cmd - CMD_DOMAIN_REC_START, p1, p2);
             } else {
                 command = new VdtCameraCommand(CMD_DOMAIN_CAM, cmd - CMD_DOMAIN_CAM_START, p1, p2);
             }
@@ -1014,10 +1013,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
             mCameraCommandQueue.offer(request);
 
         }
-
-
-
-
 
 
         private void ack_Cam_getApiVersion(String p1) {
@@ -1041,16 +1036,9 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
-
         private void ack_Cam_get_Name_result(String p1, String p2) {
             setCameraName(p1);
         }
-
-
-
-
 
 
         private void ack_Cam_get_State_result(String p1, String p2) {
@@ -1065,11 +1053,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
-
-
-
         private void ack_Cam_get_time_result(String p1, String p2) {
             int duration = Integer.parseInt(p1);
 
@@ -1080,8 +1063,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
 
 
         }
-
-
 
 
         private void ack_Cam_msg_Storage_infor(String p1, String p2) {
@@ -1138,16 +1119,10 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
-
-
         private void ack_Network_GetWLanMode(String p1, String p2) {
             int mode = Integer.parseInt(p1);
             mWifiMode = mode;
         }
-
-
 
 
         private void ack_Network_GetHostNum(String p1, String p2) {
@@ -1157,8 +1132,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, i);
             }
         }
-
-
 
 
         private void ack_Network_GetHostInfor(String p1, String p2) {
@@ -1174,18 +1147,10 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
-
-
-
         private void ack_fw_getVersion(String p1, String p2) {
             Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
             setFirmwareVersion(p1, p2);
         }
-
-
-
 
 
         private static final String XML_CCEV = "ccev";
@@ -1196,7 +1161,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
         private static final int HEAD_SIZE = 128;
 
 
-
         private void ack_CAM_BT_isEnabled(String p1) {
             int enabled = Integer.parseInt(p1);
             mBtState = enabled;
@@ -1205,9 +1169,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
             }
         }
-
-
-
 
 
         private void ack_CAM_BT_getDEVStatus(String p1, String p2) {
@@ -1253,7 +1214,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
         private void ack_CAM_BT_getHostInfor(String name, String mac) {
             int type;
             if (name.indexOf("OBD") >= 0) {
@@ -1276,8 +1236,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
         private void ack_CAM_BT_doScan(String p1) {
             int ret = Integer.parseInt(p1);
             Logger.t(TAG).d("ret: " + ret);
@@ -1285,7 +1243,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 sendCommand(CMD_CAM_BT_GET_HOST_NUM);
             }
         }
-
 
 
         private void ack_CAM_BT_doBind(String p1, String p2) {
@@ -1300,7 +1257,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
         private void ack_CAM_BT_doUnBind(String p1, String p2) {
             int type = Integer.parseInt(p1);
             if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
@@ -1311,15 +1267,10 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
         private void ack_Rec_List_Resolutions(String p1, String p2) {
             int list = Integer.parseInt(p1);
             mVideoResolutionList = list;
         }
-
-
-
 
 
         private void ack_Rec_get_Resolution(String p1, String p2) {
@@ -1329,13 +1280,10 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
         private void ack_Rec_List_Qualities(String p1, String p2) {
             int list = Integer.parseInt(p1);
             mVideoQualityList = list;
         }
-
 
 
         private void ack_Rec_get_Quality(String p1, String p2) {
@@ -1345,16 +1293,10 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
         private void ack_Rec_List_RecModes(String p1, String p2) {
             int list = Integer.parseInt(p1);
             mRecordModeList = list;
         }
-
-
-
-
 
 
         private void ack_Rec_get_RecMode(String p1, String p2) {
@@ -1366,14 +1308,10 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
         private void ack_Rec_List_ColorModes(String p1, String p2) {
             int list = Integer.parseInt(p1);
             mColorModeList = list;
         }
-
-
-
 
 
         private void ack_Rec_get_ColorMode(String p1, String p2) {
@@ -1382,16 +1320,10 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
         private void ack_Rec_getOverlayState(String p1, String p2) {
             int flags = Integer.parseInt(p1);
             mOverlayFlags = flags;
         }
-
-
-
-
 
 
         private void ack_Rec_GetMarkTime(String p1, String p2) {
@@ -1403,7 +1335,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2), e);
             }
         }
-
 
 
         private void ack_Rec_SetMarkTime(String p1, String p2) {
@@ -1469,8 +1400,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-
-
         private final Pattern mPattern = Pattern.compile("ECMD(\\d+).(\\d+)", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
@@ -1518,61 +1447,19 @@ public class VdtCamera implements VdtCameraCmdConsts{
         }
 
 
-        private void ackNotHandled(String name, String p1, String p2) {
-
-            //Logger.t(TAG).d("not handled: " + name + ", p1=" + p1 + ",p2=" + p2);
-
-        }
-
         private void camDomainMsg(int cmd, String p1, String p2) {
             switch (cmd) {
-                case CMD_CAM_GET_MODE:
-                    ackNotHandled("CMD_CAM_GET_MODE", p1, p2);
-                    break;
-                case CMD_CAM_GET_MODE_RESULT:
-                    ackNotHandled("CMD_CAM_GET_MODE_RESULT", p1, p2);
-                    break;
                 case CMD_CAM_GET_API_VERSION:
                     ack_Cam_getApiVersion(p1);
-                    break;
-                case CMD_CAM_IS_API_SUPPORTED:
-                    ackNotHandled("CMD_CAM_IS_API_SUPPORTED", p1, p2);
-                    break;
-                case CMD_CAM_GET_NAME:
-                    ackNotHandled("CMD_CAM_GET_NAME", p1, p2);
                     break;
                 case CMD_CAM_GET_NAME_RESULT:
                     ack_Cam_get_Name_result(p1, p2);
                     break;
-                case CMD_CAM_SET_NAME:
-                    ackNotHandled("CMD_CAM_SET_NAME", p1, p2);
-                    break;
-                case CMD_CAM_SET_NAME_RESULT:
-                    ackNotHandled("CMD_CAM_SET_NAME_RESULT", p1, p2);
-                    break;
-                case CMD_CAM_GET_STATE:
-                    ackNotHandled("CMD_CAM_GET_STATE", p1, p2);
-                    break;
                 case CMD_CAM_GET_STATE_RESULT:
                     ack_Cam_get_State_result(p1, p2);
                     break;
-                case CMD_CAM_START_REC:
-                    ackNotHandled("CMD_CAM_START_REC", p1, p2);
-                    break;
-                case CMD_CAM_STOP_REC:
-                    ackNotHandled("CMD_CAM_STOP_REC", p1, p2);
-                    break;
-                case CMD_CAM_GET_TIME:
-                    ackNotHandled("CMD_CAM_GET_TIME", p1, p2);
-                    break;
                 case CMD_CAM_GET_TIME_RESULT:
                     ack_Cam_get_time_result(p1, p2);
-                    break;
-                case CMD_CAM_GET_GET_ALL_INFOR:
-                    ackNotHandled("CMD_CAM_GET_GET_ALL_INFOR", p1, p2);
-                    break;
-                case CMD_CAM_GET_GET_STORAGE_INFOR:
-                    ackNotHandled("CMD_CAM_GET_GET_STORAGE_INFOR", p1, p2);
                     break;
                 case CMD_CAM_MSG_STORAGE_INFOR:
                     ack_Cam_msg_Storage_infor(p1, p2);
@@ -1586,26 +1473,11 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 case CMD_CAM_MSG_POWER_INFOR:
                     ack_Cam_msg_power_infor(p1, p2);
                     break;
-                case CMD_CAM_MSG_BT_INFOR:
-                    ackNotHandled("CMD_CAM_MSG_BT_INFOR", p1, p2);
-                    break;
                 case CMD_CAM_MSG_GPS_INFOR:
                     ack_Cam_msg_GPS_infor(p1, p2);
                     break;
-                case CMD_CAM_MSG_INTERNET_INFOR:
-                    ackNotHandled("CMD_CAM_MSG_INTERNET_INFOR", p1, p2);
-                    break;
                 case CMD_CAM_MSG_MIC_INFOR:
                     ack_Cam_msg_Mic_infor(p1, p2);
-                    break;
-                case CMD_CAM_SET_STREAM_SIZE:
-                    ackNotHandled("CMD_CAM_SET_STREAM_SIZE", p1, p2);
-                    break;
-                case CMD_CAM_POWER_OFF:
-                    ackNotHandled("CMD_CAM_POWER_OFF", p1, p2);
-                    break;
-                case CMD_CAM_REBOOT:
-                    ackNotHandled("CMD_CAM_REBOOT", p1, p2);
                     break;
                 case CMD_NETWORK_GET_WLAN_MODE:
                     ack_Network_GetWLanMode(p1, p2);
@@ -1620,9 +1492,7 @@ public class VdtCamera implements VdtCameraCmdConsts{
 //                    ackNotHandled("CMD_NETWORK_ADD_HOST", p1, p2);
                     handleOnNetworkAddHost(p1, p2);
                     break;
-                case CMD_NETWORK_RMV_HOST:
-                    ackNotHandled("CMD_NETWORK_RMV_HOST", p1, p2);
-                    break;
+
                 case CMD_NETWORK_CONNECT_HOST:
                     handleOnNetworkConnectHost(p1, p2);
                     break;
@@ -1632,20 +1502,9 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 case CMD_NETWORK_CONNECTHOTSPOT:
                     handleNetworkConnectHost(p1, p2);
                     break;
-                case CMD_NETWORK_SYNCTIME:
-                    ackNotHandled("CMD_NETWORK_SYNCTIME", p1, p2);
-                    break;
-                case CMD_NETWORK_GET_DEVICETIME:
-                    ackNotHandled("CMD_NETWORK_GET_DEVICETIME", p1, p2);
-                    break;
+
                 case CMD_REC_ERROR:
                     ack_Rec_error(p1, p2);
-                    break;
-                case CMD_AUDIO_SET_MIC:
-                    ackNotHandled("CMD_AUDIO_SET_MIC", p1, p2);
-                    break;
-                case CMD_AUDIO_GET_MIC_STATE:
-                    ackNotHandled("CMD_AUDIO_GET_MIC_STATE", p1, p2);
                     break;
                 case CMD_FW_GET_VERSION:
                     ack_fw_getVersion(p1, p2);
@@ -1653,18 +1512,8 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 case CMD_FW_NEW_VERSION:
                     handleNewFwVersion(p1, p2);
                     break;
-                case CMD_FW_DO_UPGRADE:
-                    ackNotHandled("CMD_FW_DO_UPGRADE", p1, p2);
-                    break;
-                case CMD_CAM_BT_IS_SUPPORTED:
-//                    ack_CAM_BT_isSupported(p1);
-                    ackNotHandled("CMD_CAM_BT_IS_SUPPORTED", p1, p2);
-                    break;
                 case CMD_CAM_BT_IS_ENABLED:
                     ack_CAM_BT_isEnabled(p1);
-                    break;
-                case CMD_CAM_BT_ENABLE:
-                    ackNotHandled("CMD_CAM_BT_ENABLE", p1, p2);
                     break;
                 case CMD_CAM_BT_GET_DEV_STATUS:
                     ack_CAM_BT_getDEVStatus(p1, p2);
@@ -1684,7 +1533,6 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 case CMD_CAM_BT_DO_UNBIND:
                     ack_CAM_BT_doUnBind(p1, p2);
                     break;
-
                 default:
                     Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                     break;
@@ -1751,26 +1599,15 @@ public class VdtCamera implements VdtCameraCmdConsts{
 
         private void recDomainMsg(int cmd, String p1, String p2) {
             switch (cmd) {
-                case CMD_REC_START:
-                    ackNotHandled("CMD_REC_START", p1, p2);
-                    break;
-                case CMD_REC_STOP:
-                    ackNotHandled("CMD_REC_STOP", p1, p2);
-                    break;
                 case CMD_REC_LIST_RESOLUTIONS:
                     ack_Rec_List_Resolutions(p1, p2);
                     break;
-                case CMD_REC_SET_RESOLUTION:
-                    ackNotHandled("CMD_REC_SET_RESOLUTION", p1, p2);
-                    break;
+
                 case CMD_REC_GET_RESOLUTION:
                     ack_Rec_get_Resolution(p1, p2);
                     break;
                 case CMD_REC_LIST_QUALITIES:
                     ack_Rec_List_Qualities(p1, p2);
-                    break;
-                case CMD_REC_SET_QUALITY:
-                    ackNotHandled("CMD_REC_SET_QUALITY", p1, p2);
                     break;
                 case CMD_REC_GET_QUALITY:
                     ack_Rec_get_Quality(p1, p2);
@@ -1778,68 +1615,24 @@ public class VdtCamera implements VdtCameraCmdConsts{
                 case CMD_REC_LIST_REC_MODES:
                     ack_Rec_List_RecModes(p1, p2);
                     break;
-                case CMD_REC_SET_REC_MODE:
-                    ackNotHandled("CMD_REC_SET_REC_MODE", p1, p2);
-                    break;
                 case CMD_REC_GET_REC_MODE:
                     ack_Rec_get_RecMode(p1, p2);
                     break;
                 case CMD_REC_LIST_COLOR_MODES:
                     ack_Rec_List_ColorModes(p1, p2);
                     break;
-                case CMD_REC_SET_COLOR_MODE:
-                    ackNotHandled("CMD_REC_SET_COLOR_MODE", p1, p2);
-                    break;
                 case CMD_REC_GET_COLOR_MODE:
                     ack_Rec_get_ColorMode(p1, p2);
-                    break;
-                case CMD_REC_LIST_SEG_LENS:
-                    ackNotHandled("CMD_REC_LIST_SEG_LENS", p1, p2);
-                    break;
-                case CMD_REC_SET_SEG_LEN:
-                    ackNotHandled("CMD_REC_SET_SEG_LEN", p1, p2);
-                    break;
-                case CMD_REC_GET_SEG_LEN:
-                    ackNotHandled("CMD_REC_GET_SEG_LEN", p1, p2);
-                    break;
-                case CMD_REC_GET_STATE:
-                    ackNotHandled("CMD_REC_GET_STATE", p1, p2);
-                    break;
-                case EVT_REC_STATE_CHANGE:
-                    ackNotHandled("EVT_REC_STATE_CHANGE", p1, p2);
-                    break;
-                case CMD_REC_GET_TIME:
-                    ackNotHandled("CMD_REC_GET_TIME", p1, p2);
-                    break;
-                case CMD_REC_GET_TIME_RESULT:
-                    ackNotHandled("CMD_REC_GET_TIME_RESULT", p1, p2);
-                    break;
-                case CMD_REC_SET_DUAL_STREAM:
-                    ackNotHandled("CMD_REC_SET_DUAL_STREAM", p1, p2);
-                    break;
-                case CMD_REC_GET_DUAL_STREAM_STATE:
-                    ackNotHandled("CMD_REC_GET_DUAL_STREAM_STATE", p1, p2);
-                    break;
-                case CMD_REC_SET_OVERLAY:
-                    ackNotHandled("CMD_REC_SET_OVERLAY", p1, p2);
                     break;
                 case CMD_REC_GET_OVERLAY_STATE:
                     ack_Rec_getOverlayState(p1, p2);
                     break;
-                case CMD_REC_SET_STILL_MODE:
-                    ackNotHandled("CMD_REC_SET_STILL_MODE", p1, p2);
-                    break;
-                case CMD_REC_STOP_STILL_CAPTURE:
-                    ackNotHandled("CMD_REC_STOP_STILL_CAPTURE", p1, p2);
-                    break;
-
                 case CMD_REC_GET_MARK_TIME:
                     ack_Rec_GetMarkTime(p1, p2);
                     break;
                 case CMD_REC_SET_MARK_TIME:
                     ack_Rec_SetMarkTime(p1, p2);
                     break;
-
                 default:
                     Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                     break;
