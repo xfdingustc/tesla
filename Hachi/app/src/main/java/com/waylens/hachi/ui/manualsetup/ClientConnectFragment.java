@@ -203,6 +203,9 @@ public class ClientConnectFragment extends BaseFragment {
 
         if (itemBean.added) {
             connect2AddedWifi(itemBean.ssid);
+            if (mTimer != null) {
+                mTimer.cancel();
+            }
         } else {
 
             mPasswordDialog = new MaterialDialog.Builder(getActivity())
@@ -220,6 +223,9 @@ public class ClientConnectFragment extends BaseFragment {
                 .build();
             mPasswordDialog.show();
             mEtPassword = (EditText) mPasswordDialog.getCustomView().findViewById(R.id.password);
+            if (mTimer != null) {
+                mTimer.cancel();
+            }
         }
     }
 
@@ -231,9 +237,7 @@ public class ClientConnectFragment extends BaseFragment {
     private void setNetwork2Camera(final String ssid, final String password) {
         mVdtCamera.addNetworkHost(ssid, password);
         mSavedPassword = password;
-        if (mTimer != null) {
-            mTimer.cancel();
-        }
+
 
         //registerReceiver();
     }

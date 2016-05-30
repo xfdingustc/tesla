@@ -868,6 +868,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } finally {
+                        mRunCmdAndMsgLoop = false;
                         onCameraDisconnected();
                     }
                 }
@@ -948,6 +949,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                         Logger.t(TAG).d("XmlPullParserException: length=");
                         e.printStackTrace();
                     } finally {
+                        mRunCmdAndMsgLoop = false;
                         onCameraDisconnected();
                     }
 
@@ -1006,13 +1008,11 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 command = new VdtCameraCommand(CMD_DOMAIN_CAM, cmd - CMD_DOMAIN_CAM_START, p1, p2);
             }
 
-            sendCommand(command);
-        }
-
-        private void sendCommand(VdtCameraCommand request) {
-            mCameraCommandQueue.offer(request);
+            mCameraCommandQueue.offer(command);
 
         }
+
+
 
 
         private void ack_Cam_getApiVersion(String p1) {
