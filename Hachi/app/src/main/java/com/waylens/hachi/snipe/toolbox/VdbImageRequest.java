@@ -6,14 +6,12 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView.ScaleType;
 
-
-import com.orhanobut.logger.Logger;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipPos;
 
 /**
  * Created by Xiaofei on 2015/8/25.
@@ -27,15 +25,9 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     private final ScaleType mScaleType;
     private final ClipPos mClipPos;
     String mCacheKey; //
-    public VdbImageRequest(ClipPos clipPos,
-                           VdbResponse.Listener<Bitmap> listener,
-                           VdbResponse.ErrorListener errorListener,
-                           int maxWidth,
-                           int maxHeight,
-                           ScaleType scaleType,
-                           Config decodeConfig,
-                           String cacheKey
-                           ) {
+
+    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, VdbResponse.ErrorListener errorListener,
+                           int maxWidth, int maxHeight, ScaleType scaleType, Config decodeConfig, String cacheKey) {
         super(0, listener, errorListener);
         this.mClipPos = clipPos;
         this.mDecoderConfig = decodeConfig;
@@ -103,7 +95,7 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     }
 
     public int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -112,7 +104,7 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
             final int halfWidth = width / 2;
 
             while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
+                && (halfWidth / inSampleSize) > reqWidth) {
                 inSampleSize *= 2;
             }
         }

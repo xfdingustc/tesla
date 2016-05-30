@@ -579,7 +579,9 @@ public class CameraPreviewFragment extends BaseFragment {
                 }
             });
 
-            mVdbRequestQueue.add(request);
+            if (mVdbRequestQueue != null) {
+                mVdbRequestQueue.add(request);
+            }
         }
     }
 

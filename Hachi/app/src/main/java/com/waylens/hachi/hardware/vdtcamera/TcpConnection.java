@@ -86,14 +86,35 @@ abstract public class TcpConnection {
         }
     }
 
+    public static void readFully(Socket socket, byte[] buffer, int pos, int size) throws IOException {
+        InputStream input = socket.getInputStream();
+        while (size > 0) {
+            int ret = input.read(buffer, pos, size);
+            if (ret < 0) {
+                throw new IOException();
+            }
+            pos += ret;
+            size -= ret;
+        }
+    }
+
     // API
     public void sendByteArray(byte[] data) throws IOException {
         mSocket.getOutputStream().write(data);
     }
 
+    public static void sendByteArray(Socket socket, byte[] data) throws IOException {
+        socket.getOutputStream().write(data);
+    }
+
+
     // API
     public void sendByteArray(byte[] data, int offset, int count) throws IOException {
         mSocket.getOutputStream().write(data, offset, count);
+    }
+
+    public static void sendByteArray(Socket socket, byte[] data, int offset, int count) throws IOException {
+        socket.getOutputStream().write(data, offset, count);
     }
 
     synchronized private void connectError() {

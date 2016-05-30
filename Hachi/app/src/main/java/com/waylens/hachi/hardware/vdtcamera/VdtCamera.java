@@ -34,6 +34,7 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +43,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class VdtCamera {
@@ -139,7 +146,6 @@ public class VdtCamera {
     public static final int BT_STATE_ENABLED = 1;
 
 
-
     private boolean mIsConnected = false;
     private boolean mIsVdbConnected = false;
 
@@ -185,8 +191,6 @@ public class VdtCamera {
 
     private int mWifiMode = WIFI_MODE_UNKNOWN;
     public int mNumWifiAP = 0;
-
-
 
 
     private int mBtState = BT_STATE_UNKNOWN;
@@ -307,7 +311,6 @@ public class VdtCamera {
     }
 
 
-
     public boolean version12() {
         return mApiVersion >= makeVersion(1, 2);
     }
@@ -373,7 +376,6 @@ public class VdtCamera {
         mController.cmd_CAM_BT_isEnabled();
         return mRemoteCtrlDevice;
     }
-
 
 
     public boolean isMicOn() {
@@ -784,7 +786,6 @@ public class VdtCamera {
     }
 
 
-
     public void connectNetworkHost(String ssid) {
         mController.cmd_Network_ConnectHost(ssid);
     }
@@ -813,28 +814,160 @@ public class VdtCamera {
 
     class VdtCameraController implements VdtCameraCmdConsts {
 
-
-
-
-        private final TcpConnection mConnection;
-
+        private InetSocketAddress mAddress;
         private final BlockingQueue<Request> mCameraRequestQueue;
 
-        public VdtCameraController(InetAddress host, int port) {
-            InetSocketAddress address = new InetSocketAddress(host, port);
+        private Socket mSocket;
 
-            mConnection = new MyTcpConnection("ccam", address);
+        private boolean mRunCmdAndMsgLoop = true;
+
+        public VdtCameraController(InetAddress host, int port) {
+            mAddress = new InetSocketAddress(host, port);
 
             mCameraRequestQueue = new LinkedBlockingQueue<>();
+            createCmdObserver(mAddress);
+
+
+        }
+
+        private void createCmdObserver(final InetSocketAddress address) {
+            Logger.t(TAG).d("create cmd observer");
+            Observable.create(new Observable.OnSubscribe<Integer>() {
+                @Override
+                public void call(Subscriber<? super Integer> subscriber) {
+                    mSocket = new Socket();
+                    try {
+                        mSocket.setReceiveBufferSize(8192);
+                        mSocket.connect(address);
+
+                        subscriber.onNext(0);
+
+
+                        while (mRunCmdAndMsgLoop) {
+                            Request request = mCameraRequestQueue.take();
+
+
+                            if (request.mDomain == CMD_DOMAIN_USER) {
+                                if (!createUserCmd(request)) {
+                                    break;
+                                }
+                                continue;
+                            }
+
+                            writeRequest(request);
+                        }
+
+                        subscriber.onCompleted();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            })
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        initCameraState();
+                        onCameraConnected();
+                        createMsgObserver();
+                    }
+                });
+        }
+
+        private void createMsgObserver() {
+            Logger.t(TAG).d("create msg observer");
+            Observable.create(new Observable.OnSubscribe<Integer>() {
+                @Override
+                public void call(Subscriber<? super Integer> subscriber) {
+                    try {
+                        while (mRunCmdAndMsgLoop) {
+                            SimpleInputStream sis = new SimpleInputStream(8192);
+                            XmlPullParser xpp = Xml.newPullParser();
+                            int length = 0;
+                            int appended = 0;
+
+
+                            sis.clear();
+
+                            TcpConnection.readFully(mSocket, sis.getBuffer(), 0, HEAD_SIZE);
+                            length = sis.readi32(0);
+                            appended = sis.readi32(4);
+                            if (appended > 0) {
+                                sis.expand(HEAD_SIZE + appended);
+                                TcpConnection.readFully(mSocket, sis.getBuffer(), HEAD_SIZE, appended);
+                            }
+                            sis.setRange(8, length);
+
+                            xpp.setInput(sis, "UTF-8");
+
+
+                            int eventType = xpp.getEventType();
+
+
+                            while (true) {
+                                switch (eventType) {
+                                    case XmlPullParser.START_TAG:
+                                        if (xpp.getName().equals(XML_CMD)) {
+                                            parseCmdTag(xpp);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (eventType == XmlPullParser.END_DOCUMENT) {
+                                    break;
+                                }
+                                eventType = xpp.next();
+                            }
+
+
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (XmlPullParserException e) {
+                        Logger.t(TAG).d("XmlPullParserException: length=");
+                        e.printStackTrace();
+
+                    }
+
+                }
+            })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+
+                    }
+                });
         }
 
 
-
-
-
-
         public InetSocketAddress getInetSocketAddress() {
-            return getConnection().getInetSocketAddress();
+            return mAddress;
         }
 
         public void cmd_NetWork_SetWLandMode(int wifiMode) {
@@ -885,7 +1018,7 @@ public class VdtCamera {
         }
 
         private void postRequest(Request request) {
-            boolean ret = mCameraRequestQueue.offer(request);
+            mCameraRequestQueue.offer(request);
 //            Logger.t(TAG).d("add request: cmd: " + request.mCmd + " ret = " + ret + " vdtcamera:   " + VdtCamera.this);
         }
 
@@ -1350,16 +1483,11 @@ public class VdtCamera {
             mVideoQualityList = list;
         }
 
-        // ========================================================
-        // CMD_REC_SET_QUALITY
-        // ========================================================
         public void cmd_Rec_Set_Quality(int index) {
             postRequest(CMD_DOMAIN_REC, CMD_REC_SET_QUALITY, index);
         }
 
-        // ========================================================
-        // CMD_REC_GET_QUALITY
-        // ========================================================
+
         public void cmd_Rec_get_Quality() {
             postRequest(CMD_DOMAIN_REC, CMD_REC_GET_QUALITY);
         }
@@ -1370,9 +1498,7 @@ public class VdtCamera {
             mVideoQualityIndex = index;
         }
 
-        // ========================================================
-        // CMD_REC_LIST_REC_MODES
-        // ========================================================
+
         public void cmd_Rec_List_RecModes() {
             postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_REC_MODES);
         }
@@ -1414,9 +1540,7 @@ public class VdtCamera {
             postRequest(CMD_DOMAIN_REC, CMD_REC_SET_COLOR_MODE, index);
         }
 
-        // ========================================================
-        // CMD_REC_GET_COLOR_MODE
-        // ========================================================
+
         public void cmd_Rec_get_ColorMode() {
             postRequest(CMD_DOMAIN_REC, CMD_REC_GET_COLOR_MODE);
         }
@@ -1431,9 +1555,6 @@ public class VdtCamera {
             postRequest(CMD_DOMAIN_REC, CMD_REC_SET_OVERLAY, flags);
         }
 
-        // ========================================================
-        // CMD_REC_GET_OVERLAY_STATE
-        // ========================================================
         public void cmd_Rec_getOverlayState() {
             postRequest(CMD_DOMAIN_REC, CMD_REC_GET_OVERLAY_STATE);
         }
@@ -1487,18 +1608,14 @@ public class VdtCamera {
 
 
         public void start() {
-            mConnection.start(null);
+//            mConnection.start(null);
         }
 
         // API
         public void stop() {
-            mConnection.stop();
+            mRunCmdAndMsgLoop = false;
         }
 
-        // API
-        public TcpConnection getConnection() {
-            return mConnection;
-        }
 
         private boolean createUserCmd(Request request) {
             switch (request.mCmd) {
@@ -1573,26 +1690,9 @@ public class VdtCamera {
                 size = HEAD_SIZE;
             }
 
-            mConnection.sendByteArray(sos.getBuffer(), 0, size);
+            TcpConnection.sendByteArray(mSocket, sos.getBuffer(), 0, size);
         }
 
-        private void cmdLoop(Thread thread) throws IOException, InterruptedException {
-            while (!thread.isInterrupted()) {
-
-                Request request = mCameraRequestQueue.take();
-
-                if (request.mDomain == CMD_DOMAIN_USER) {
-                    if (!createUserCmd(request)) {
-                        break;
-                    }
-                    continue;
-                }
-
-
-                writeRequest(request);
-
-            }
-        }
 
         private final Pattern mPattern = Pattern.compile("ECMD(\\d+).(\\d+)", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
@@ -1626,13 +1726,11 @@ public class VdtCamera {
 
                     switch (domain) {
                         case CMD_DOMAIN_CAM:
-//                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
-//                            + " cmd = " + CMD_CAM_TO_STRING.get(cmd));
+//                            Logger.t(TAG).d("Domain = " + domain + " cmd = " + cmd);
                             camDomainMsg(cmd, p1, p2);
                             break;
                         case CMD_DOMAIN_REC:
-//                        Logger.t(TAG).d("Domain = " + DOMAIN_TO_STRING.get(domain)
-//                            + " cmd =" + CMD_REC_TO_STRING.get(cmd));
+//                            Logger.t(TAG).d("Domain = " + domain + " cmd =" + cmd);
                             recDomainMsg(cmd, p1, p2);
                             break;
                         default:
@@ -1655,12 +1753,12 @@ public class VdtCamera {
 
                     sis.clear();
 
-                    mConnection.readFully(sis.getBuffer(), 0, HEAD_SIZE);
+//                    mConnection.readFully(sis.getBuffer(), 0, HEAD_SIZE);
                     length = sis.readi32(0);
                     appended = sis.readi32(4);
                     if (appended > 0) {
                         sis.expand(HEAD_SIZE + appended);
-                        mConnection.readFully(sis.getBuffer(), HEAD_SIZE, appended);
+//                        mConnection.readFully(sis.getBuffer(), HEAD_SIZE, appended);
                     }
                     sis.setRange(8, length);
 
@@ -2019,34 +2117,6 @@ public class VdtCamera {
                 default:
                     Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                     break;
-            }
-        }
-
-        class MyTcpConnection extends TcpConnection {
-
-            public MyTcpConnection(String name, InetSocketAddress address) {
-                super(name, address);
-            }
-
-            @Override
-            public void onConnectedAsync() {
-                initCameraState();
-                onCameraConnected();
-            }
-
-            @Override
-            public void onConnectErrorAsync() {
-                onCameraDisconnected();
-            }
-
-            @Override
-            public void cmdLoop(Thread thread) throws IOException, InterruptedException {
-                VdtCameraController.this.cmdLoop(thread);
-            }
-
-            @Override
-            public void msgLoop(Thread thread) throws IOException, InterruptedException {
-                VdtCameraController.this.msgLoop(thread);
             }
         }
 
