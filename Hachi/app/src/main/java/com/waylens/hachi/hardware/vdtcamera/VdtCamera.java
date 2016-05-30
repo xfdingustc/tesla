@@ -902,12 +902,12 @@ public class VdtCamera {
 
                             sis.clear();
 
-                            TcpConnection.readFully(mSocket, sis.getBuffer(), 0, HEAD_SIZE);
+                            SocketUtils.readFully(mSocket, sis.getBuffer(), 0, HEAD_SIZE);
                             length = sis.readi32(0);
                             appended = sis.readi32(4);
                             if (appended > 0) {
                                 sis.expand(HEAD_SIZE + appended);
-                                TcpConnection.readFully(mSocket, sis.getBuffer(), HEAD_SIZE, appended);
+                                SocketUtils.readFully(mSocket, sis.getBuffer(), HEAD_SIZE, appended);
                             }
                             sis.setRange(8, length);
 
@@ -1690,7 +1690,7 @@ public class VdtCamera {
                 size = HEAD_SIZE;
             }
 
-            TcpConnection.sendByteArray(mSocket, sos.getBuffer(), 0, size);
+            SocketUtils.sendByteArray(mSocket, sos.getBuffer(), 0, size);
         }
 
 
@@ -1740,57 +1740,7 @@ public class VdtCamera {
             }
         }
 
-        private final void msgLoop(Thread thread) throws IOException, InterruptedException {
 
-            SimpleInputStream sis = new SimpleInputStream(8192);
-            XmlPullParser xpp = Xml.newPullParser();
-            int length = 0;
-            int appended = 0;
-
-            try {
-
-                while (!thread.isInterrupted()) {
-
-                    sis.clear();
-
-//                    mConnection.readFully(sis.getBuffer(), 0, HEAD_SIZE);
-                    length = sis.readi32(0);
-                    appended = sis.readi32(4);
-                    if (appended > 0) {
-                        sis.expand(HEAD_SIZE + appended);
-//                        mConnection.readFully(sis.getBuffer(), HEAD_SIZE, appended);
-                    }
-                    sis.setRange(8, length);
-
-                    xpp.setInput(sis, "UTF-8");
-
-
-                    int eventType = xpp.getEventType();
-                    while (!thread.isInterrupted()) {
-                        switch (eventType) {
-                            case XmlPullParser.START_TAG:
-                                if (xpp.getName().equals(XML_CMD)) {
-                                    parseCmdTag(xpp);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                        if (eventType == XmlPullParser.END_DOCUMENT) {
-                            break;
-                        }
-                        eventType = xpp.next();
-                    }
-                }
-
-            } catch (XmlPullParserException e) {
-
-                Logger.t(TAG).d("XmlPullParserException: length=" + length + ", appended=" +
-                    appended);
-                e.printStackTrace();
-                throw new IOException("XmlPullParserException");
-            }
-        }
 
         private void ackNotHandled(String name, String p1, String p2) {
 
