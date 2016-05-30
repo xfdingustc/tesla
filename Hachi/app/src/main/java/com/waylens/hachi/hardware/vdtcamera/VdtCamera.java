@@ -29,7 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -310,10 +309,6 @@ public class VdtCamera {
         return mHardwareName;
     }
 
-
-    public boolean version12() {
-        return mApiVersion >= makeVersion(1, 2);
-    }
 
     private int makeVersion(int main, int sub) {
         return (main << 16) | sub;
@@ -815,7 +810,7 @@ public class VdtCamera {
     class VdtCameraController implements VdtCameraCmdConsts {
 
         private InetSocketAddress mAddress;
-        private final BlockingQueue<Request> mCameraRequestQueue;
+        private final BlockingQueue<VdtCameraCommand> mCameraRequestQueue;
 
         private Socket mSocket;
 
@@ -844,17 +839,17 @@ public class VdtCamera {
 
 
                         while (mRunCmdAndMsgLoop) {
-                            Request request = mCameraRequestQueue.take();
+                            VdtCameraCommand command = mCameraRequestQueue.take();
 
 
-                            if (request.mDomain == CMD_DOMAIN_USER) {
-                                if (!createUserCmd(request)) {
+                            if (command.mDomain == CMD_DOMAIN_USER) {
+                                if (!createUserCmd(command)) {
                                     break;
                                 }
                                 continue;
                             }
 
-                            writeRequest(request);
+                            SocketUtils.writeCommand(mSocket, command);
                         }
 
                         subscriber.onCompleted();
@@ -975,29 +970,11 @@ public class VdtCamera {
         }
 
 
-        private class Request {
-            final int mDomain;
-            final int mCmd;
-            final String mP1;
-            final String mP2;
-
-            Request(int domain, int cmd, String p1, String p2) {
-                mDomain = domain;
-                mCmd = cmd;
-                mP1 = p1;
-                mP2 = p2;
-            }
 
 
-        }
 
-        static final int HEAD_SIZE = 128;
 
-        static final String XML_CCEV = "ccev";
-        static final String XML_CMD = "cmd";
-        static final String XML_ACT = "act";
-        static final String XML_P1 = "p1";
-        static final String XML_P2 = "p2";
+
 
 
         private void postRequest(int domain, int cmd) {
@@ -1013,13 +990,13 @@ public class VdtCamera {
         }
 
         private void postRequest(int domain, int cmd, String p1, String p2) {
-            Request request = new Request(domain, cmd, p1, p2);
+            VdtCameraCommand request = new VdtCameraCommand(domain, cmd, p1, p2);
             postRequest(request);
         }
 
-        private void postRequest(Request request) {
+        private void postRequest(VdtCameraCommand request) {
             mCameraRequestQueue.offer(request);
-//            Logger.t(TAG).d("add request: cmd: " + request.mCmd + " ret = " + ret + " vdtcamera:   " + VdtCamera.this);
+
         }
 
         // all info for setup
@@ -1285,20 +1262,17 @@ public class VdtCamera {
             postRequest(CMD_DOMAIN_CAM, CMD_FW_DO_UPGRADE);
         }
 
-//        public void cmd_CAM_BT_isSupported() {
-//            if (version12() && mBtStates.mBtSupport == BtState.BT_SUPPORT_UNKNOWN) {
-//                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_SUPPORTED);
-//            }
-//        }
-//
-//        private void ack_CAM_BT_isSupported(String p1) {
-//            mBtStates.setIsBTSupported(Integer.parseInt(p1));
-//        }
+        private static final String XML_CCEV = "ccev";
+        private static final String XML_CMD = "cmd";
+        private static final String XML_ACT = "act";
+        private static final String XML_P1 = "p1";
+        private static final String XML_P2 = "p2";
+        private static final int HEAD_SIZE = 128;
 
         public void cmd_CAM_BT_isEnabled() {
-            if (version12()) {
-                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
-            }
+
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
+
         }
 
         private void ack_CAM_BT_isEnabled(String p1) {
@@ -1311,15 +1285,15 @@ public class VdtCamera {
         }
 
         public void cmd_CAM_BT_Enable(boolean bEnable) {
-            if (version12()) {
-                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_ENABLE, bEnable ? 1 : 0);
-            }
+
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_ENABLE, bEnable ? 1 : 0);
+
         }
 
         public void cmd_CAM_BT_getDEVStatus(int type) {
-            if (version12()) {
-                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
-            }
+
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
+
         }
 
         private void ack_CAM_BT_getDEVStatus(String p1, String p2) {
@@ -1395,9 +1369,8 @@ public class VdtCamera {
 
 
         public void cmd_CAM_BT_doScan() {
-            if (version12()) {
-                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_SCAN);
-            }
+            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_SCAN);
+
         }
 
         private void ack_CAM_BT_doScan(String p1) {
@@ -1617,8 +1590,8 @@ public class VdtCamera {
         }
 
 
-        private boolean createUserCmd(Request request) {
-            switch (request.mCmd) {
+        private boolean createUserCmd(VdtCameraCommand command) {
+            switch (command.mCmd) {
                 case USER_CMD_GET_SETUP:
 
                     this.cmd_Cam_get_getAllInfor();
@@ -1648,7 +1621,7 @@ public class VdtCamera {
                     return false;
 
                 default:
-                    Logger.t(TAG).d("unknown user cmd " + request.mCmd);
+                    Logger.t(TAG).d("unknown user cmd " + command.mCmd);
                     break;
             }
 
@@ -1656,42 +1629,6 @@ public class VdtCamera {
         }
 
 
-        private void writeRequest(Request request) throws IOException, InterruptedException {
-            SimpleOutputStream sos = new SimpleOutputStream(1024);
-            XmlSerializer xml = Xml.newSerializer();
-
-            sos.reset();
-            sos.writeZero(8);
-
-            xml.setOutput(sos, "UTF-8");
-            xml.startDocument("UTF-8", true);
-            xml.startTag(null, XML_CCEV);
-
-            xml.startTag(null, XML_CMD);
-            String act = String.format(Locale.US, "ECMD%1$d.%2$d", request.mDomain, request.mCmd); // TODO : why US
-
-            xml.attribute(null, XML_ACT, act);
-            xml.attribute(null, XML_P1, request.mP1);
-            xml.attribute(null, XML_P2, request.mP2);
-            xml.endTag(null, XML_CMD);
-
-            xml.endTag(null, XML_CCEV);
-            xml.endDocument();
-
-
-            int size = sos.getSize();
-            if (size >= HEAD_SIZE) {
-                sos.writei32(0, size);
-                sos.writei32(4, size - HEAD_SIZE);
-            } else {
-                sos.writei32(0, HEAD_SIZE);
-                // append is 0
-                sos.clear(size, HEAD_SIZE - size);
-                size = HEAD_SIZE;
-            }
-
-            SocketUtils.sendByteArray(mSocket, sos.getBuffer(), 0, size);
-        }
 
 
         private final Pattern mPattern = Pattern.compile("ECMD(\\d+).(\\d+)", Pattern.CASE_INSENSITIVE
@@ -1739,7 +1676,6 @@ public class VdtCamera {
                 }
             }
         }
-
 
 
         private void ackNotHandled(String name, String p1, String p2) {
