@@ -50,7 +50,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class VdtCamera {
+public class VdtCamera implements VdtCameraCmdConsts{
     private static final String TAG = VdtCamera.class.getSimpleName();
 
     public static final int STATE_MIC_UNKNOWN = -1;
@@ -363,12 +363,12 @@ public class VdtCamera {
     }
 
     public BtDevice getObdDevice() {
-        mController.cmd_CAM_BT_isEnabled();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
         return mObdDevice;
     }
 
     public BtDevice getRemoteCtrlDevice() {
-        mController.cmd_CAM_BT_isEnabled();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
         return mRemoteCtrlDevice;
     }
 
@@ -387,22 +387,22 @@ public class VdtCamera {
     }
 
     public int getWifiMode() {
-        mController.cmd_Network_GetWLanMode();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_WLAN_MODE);
         return mWifiMode;
     }
 
     public String getBspFirmware() {
-        mController.cmd_fw_getVersion();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_FW_GET_VERSION);
         return mBspVersion;
     }
 
     public void sendNewFirmware(String md5, OnNewFwVersionListern listener) {
         mOnNewFwVersionListerner = listener;
-        mController.sendCmdFwNewVersion(md5);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_FW_NEW_VERSION, md5);
     }
 
     public void upgradeFirmware() {
-        mController.sendUpgradeFirmware();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_FW_DO_UPGRADE);
     }
 
     public VdbRequestQueue getRequestQueue() {
@@ -441,7 +441,7 @@ public class VdtCamera {
     }
 
     public int getVideoResolution() {
-        mController.cmd_Rec_get_Resolution();
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_RESOLUTION);
         Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
@@ -453,7 +453,7 @@ public class VdtCamera {
     }
 
     public int getVideoFramerate() {
-        mController.cmd_Rec_get_Resolution();
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_RESOLUTION);
         Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
@@ -581,32 +581,34 @@ public class VdtCamera {
     }
 
 
-    // called on camera thread
+
     private void initCameraState() {
-        mController.cmd_Cam_getApiVersion();
-        mController.cmd_fw_getVersion();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_API_VERSION);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_FW_GET_VERSION);
+
 //        mController.getName();
-        mController.getNameAsync();
-        mController.cmd_Rec_get_RecMode();
-        mController.cmd_Rec_List_Resolutions(); // see if still capture is supported
-        mController.cmd_Cam_get_getAllInfor();
-        mController.cmd_Cam_get_State();
-        mController.cmd_Network_GetWLanMode();
-        mController.cmd_Network_GetHostNum();
-        mController.cmd_Rec_GetMarkTime();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME);
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_REC_MODE);
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_LIST_RESOLUTIONS);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_GET_ALL_INFOR);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_STATE);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_WLAN_MODE);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_NUM);
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_MARK_TIME);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
-        mController.cmd_Network_Synctime(timeMillis / 1000, timeZone / (3600 * 1000));
 
-        mController.cmd_CAM_BT_isEnabled();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_SYNCTIME, ((Long)(timeMillis / 1000)).toString(),
+            ((Integer)(timeZone / (3600 * 1000))).toString());
+
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
         mController.cmd_CAM_BT_getDEVStatus(BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
         mController.cmd_CAM_BT_getDEVStatus(BtDevice.BT_DEVICE_TYPE_OBD);
 
     }
 
 
-    // Control APIs
     public void setBtEnable(boolean enable) {
         mController.cmd_CAM_BT_Enable(enable);
     }
@@ -624,20 +626,18 @@ public class VdtCamera {
     }
 
     public void doBind(int type, String mac) {
-        mController.cmd_CAM_BT_doBind(type, mac);
+        Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
     }
 
 
-    public void setRecordMarkTime(int markBeforeTime, int newMarkTime) {
-        mController.cmd_Rec_SetMarkTime(markBeforeTime, newMarkTime);
-    }
 
     public void setName(String name) {
-        mController.cmd_Cam_set_Name(name);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_SET_NAME, name);
     }
 
     public String getName() {
-        mController.getNameAsync();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME);
         return mCameraName;
     }
 
@@ -668,16 +668,17 @@ public class VdtCamera {
     }
 
     public void setVideoResolution(int resolutionIndex) {
-        mController.cmd_Rec_Set_Resolution(resolutionIndex);
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_SET_RESOLUTION, resolutionIndex);
     }
 
 
     public void setVideoQuality(int qualityIndex) {
-        mController.cmd_Rec_Set_Quality(qualityIndex);
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_SET_QUALITY, qualityIndex);
     }
 
     public void getRecordQuality() {
-        mController.cmd_Rec_get_Quality();
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_QUALITY);
+
     }
 
     public void setRecordColorMode(int index) {
@@ -685,7 +686,7 @@ public class VdtCamera {
     }
 
     public void getRecordColorMode() {
-        mController.cmd_Rec_get_ColorMode();
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_COLOR_MODE);
     }
 
     public void setRecordRecMode(int flags) {
@@ -693,7 +694,7 @@ public class VdtCamera {
     }
 
     public void getRecordRecMode() {
-        mController.cmd_Rec_get_RecMode();
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_REC_MODE);
     }
 
     public void setAudioMic(boolean isOn, int vol) {
@@ -702,16 +703,14 @@ public class VdtCamera {
     }
 
     public void getAudioMicState() {
-        mController.cmd_audio_getMicState();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_AUDIO_GET_MIC_STATE);
     }
 
-    public void setNetworkSynctime(long time, int timezone) {
-        mController.cmd_Network_Synctime(time, timezone);
-    }
+
 
     public void scanHost(OnScanHostListener listener) {
         mOnScanHostListener = listener;
-        mController.cmd_Network_ScanHost();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_SCANHOST);
     }
 
     public void getSetup() {
@@ -726,25 +725,23 @@ public class VdtCamera {
         mController.stop();
     }
 
-    public void setCameraWantIdle() {
-        mController.cmd_CAM_WantIdle();
-    }
+
 
     public void startPreview() {
-        mController.cmd_CAM_WantPreview();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_WANT_PREVIEW);
     }
 
     public int getRecordTime() {
-        mController.ack_Cam_get_time();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_TIME);
         return mRecordTime;
     }
 
     public void getRecordResolutionList() {
-        mController.cmd_Rec_List_Resolutions();
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_LIST_RESOLUTIONS);
     }
 
     public void markLiveVideo() {
-        mController.cmd_Rec_MarkLiveVideo();
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_MARK_LIVE_VIDEO);
     }
 
     public int getMarkBeforeTime() {
@@ -756,7 +753,10 @@ public class VdtCamera {
     }
 
     public void setMarkTime(int before, int after) {
-        mController.cmd_Rec_SetMarkTime(before, after);
+        if (before < 0 || after < 0) {
+            return;
+        }
+        mController.sendCommand(CMD_DOMAIN_REC, CMD_REC_SET_MARK_TIME, before, before);
     }
 
     public void stopRecording() {
@@ -769,20 +769,26 @@ public class VdtCamera {
 
 
     public void getNetworkHostHum() {
-        mController.cmd_Network_GetHostNum();
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_NUM);
     }
 
     public void setNetworkRmvHost(String ssid) {
-        mController.cmd_Network_RmvHost(ssid);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_RMV_HOST, ssid, "");
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_NUM);
     }
 
     public void addNetworkHost(String ssid, String password) {
-        mController.cmd_Network_AddHost(ssid, password);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_ADD_HOST, ssid, password);
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_NUM);
     }
 
 
     public void connectNetworkHost(String ssid) {
-        mController.cmd_Network_ConnectHost(ssid);
+        if (ssid == null) {
+            ssid = "";
+        }
+        mController.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECTHOTSPOT, /*Integer.toString(mode),*/ ssid);
+
     }
 
     public boolean isMicEnabled() {
@@ -810,7 +816,7 @@ public class VdtCamera {
     class VdtCameraController implements VdtCameraCmdConsts {
 
         private InetSocketAddress mAddress;
-        private final BlockingQueue<VdtCameraCommand> mCameraRequestQueue;
+        private final BlockingQueue<VdtCameraCommand> mCameraCommandQueue;
 
         private Socket mSocket;
 
@@ -819,7 +825,7 @@ public class VdtCamera {
         public VdtCameraController(InetAddress host, int port) {
             mAddress = new InetSocketAddress(host, port);
 
-            mCameraRequestQueue = new LinkedBlockingQueue<>();
+            mCameraCommandQueue = new LinkedBlockingQueue<>();
             createCmdObserver(mAddress);
 
 
@@ -839,7 +845,7 @@ public class VdtCamera {
 
 
                         while (mRunCmdAndMsgLoop) {
-                            VdtCameraCommand command = mCameraRequestQueue.take();
+                            VdtCameraCommand command = mCameraCommandQueue.take();
 
 
                             if (command.mDomain == CMD_DOMAIN_USER) {
@@ -966,55 +972,49 @@ public class VdtCamera {
         }
 
         public void cmd_NetWork_SetWLandMode(int wifiMode) {
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECT_HOST, wifiMode);
+            sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECT_HOST, wifiMode);
         }
 
-
-
-
-
-
-
-
-
-        private void postRequest(int domain, int cmd) {
-            postRequest(domain, cmd, "", "");
+        private void sendCommand(int domain, int cmd) {
+            sendCommand(domain, cmd, "", "");
         }
 
-        private void postRequest(int domain, int cmd, int p1) {
-            postRequest(domain, cmd, Integer.toString(p1), "");
+        private void sendCommand(int domain, int cmd, int p1) {
+            sendCommand(domain, cmd, Integer.toString(p1), "");
         }
 
-        private void postRequest(int domain, int cmd, String p1) {
-            postRequest(domain, cmd, p1, "");
+        private void sendCommand(int domain, int cmd, int p1, int p2) {
+            sendCommand(domain, cmd, Integer.toString(p1), Integer.toString(p2));
         }
 
-        private void postRequest(int domain, int cmd, String p1, String p2) {
-            VdtCameraCommand request = new VdtCameraCommand(domain, cmd, p1, p2);
-            postRequest(request);
+        private void sendCommand(int domain, int cmd, String p1) {
+            sendCommand(domain, cmd, p1, "");
         }
 
-        private void postRequest(VdtCameraCommand request) {
-            mCameraRequestQueue.offer(request);
+        private void sendCommand(int domain, int cmd, String p1, String p2) {
+            VdtCameraCommand command = new VdtCameraCommand(domain, cmd, p1, p2);
+            sendCommand(command);
+        }
+
+        private void sendCommand(VdtCameraCommand request) {
+            mCameraCommandQueue.offer(request);
 
         }
 
         // all info for setup
         public void userCmd_GetSetup() {
-            postRequest(CMD_DOMAIN_USER, USER_CMD_GET_SETUP);
+            sendCommand(CMD_DOMAIN_USER, USER_CMD_GET_SETUP);
         }
 
         public void userCmd_ExitThread() {
-            postRequest(CMD_DOMAIN_USER, USER_CMD_EXIT_THREAD);
+            sendCommand(CMD_DOMAIN_USER, USER_CMD_EXIT_THREAD);
         }
 
         public void cmd_Cam_getMode() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_MODE);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_MODE);
         }
 
-        public void cmd_Cam_getApiVersion() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_API_VERSION);
-        }
+
 
         private void ack_Cam_getApiVersion(String p1) {
             mApiVersionStr = p1;
@@ -1037,23 +1037,16 @@ public class VdtCamera {
         }
 
 
-        public void getNameAsync() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME);
-        }
+
 
 
         private void ack_Cam_get_Name_result(String p1, String p2) {
             setCameraName(p1);
         }
 
-        public void cmd_Cam_set_Name(String name) {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_SET_NAME, name, "");
-        }
 
 
-        public void cmd_Cam_get_State() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_STATE);
-        }
+
 
 
         private void ack_Cam_get_State_result(String p1, String p2) {
@@ -1069,16 +1062,13 @@ public class VdtCamera {
 
 
         public void cmd_Cam_start_rec() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_START_REC);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_START_REC);
         }
 
         public void ack_Cam_stop_rec() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_STOP_REC);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_STOP_REC);
         }
 
-        public void ack_Cam_get_time() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_TIME);
-        }
 
 
         private void ack_Cam_get_time_result(String p1, String p2) {
@@ -1092,12 +1082,8 @@ public class VdtCamera {
 
         }
 
-        public void cmd_Cam_get_getAllInfor() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_GET_ALL_INFOR);
-        }
-
         public void cmd_Cam_get_getStorageInfor() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_GET_GET_STORAGE_INFOR);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_GET_STORAGE_INFOR);
         }
 
 
@@ -1156,17 +1142,15 @@ public class VdtCamera {
 
 
         public void cmd_Cam_PowerOff() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_POWER_OFF);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_POWER_OFF);
         }
 
         public void cmd_Cam_Reboot() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_REBOOT);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_REBOOT);
         }
 
 
-        public void cmd_Network_GetWLanMode() {
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_GET_WLAN_MODE);
-        }
+
 
         private void ack_Network_GetWLanMode(String p1, String p2) {
             int mode = Integer.parseInt(p1);
@@ -1174,22 +1158,18 @@ public class VdtCamera {
         }
 
 
-        public void cmd_Network_GetHostNum() {
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_NUM);
-        }
+
 
         private void ack_Network_GetHostNum(String p1, String p2) {
             int num = Integer.parseInt(p1);
             mNumWifiAP = num;
             for (int i = 0; i < num; i++) {
-                cmd_Network_GetHostInfor(i);
+                sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, i);
             }
         }
 
 
-        public void cmd_Network_GetHostInfor(int index) {
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, index);
-        }
+
 
         private void ack_Network_GetHostInfor(String p1, String p2) {
             // TODO:
@@ -1198,33 +1178,14 @@ public class VdtCamera {
 //            }
         }
 
-        public void cmd_Network_AddHost(String hostName, String password) {
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_ADD_HOST, hostName, password);
-            cmd_Network_GetHostNum();
-        }
 
 
-        public void cmd_Network_RmvHost(String hostName) {
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_RMV_HOST, hostName, "");
-            cmd_Network_GetHostNum();
-        }
 
-        public void cmd_Network_ConnectHost(/*int mode,*/ String apName) {
-            if (apName == null) {
-                apName = "";
-            }
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_CONNECTHOTSPOT, /*Integer.toString(mode),*/ apName, "");
-        }
 
-        public void cmd_Network_Synctime(long time, int timezone) {
-            String p1 = Long.toString(time);
-            String p2 = Integer.toString(timezone);
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_SYNCTIME, p1, p2);
-        }
 
-        public void cmd_Network_ScanHost() {
-            postRequest(CMD_DOMAIN_CAM, CMD_NETWORK_SCANHOST);
-        }
+
+
+
 
 
         private void ack_Rec_error(String p1, String p2) {
@@ -1238,29 +1199,21 @@ public class VdtCamera {
             }
             String p1 = Integer.toString(state);
             String p2 = Integer.toString(gain);
-            postRequest(CMD_DOMAIN_CAM, CMD_AUDIO_SET_MIC, p1, p2);
+            sendCommand(CMD_DOMAIN_CAM, CMD_AUDIO_SET_MIC, p1, p2);
         }
 
-        public void cmd_audio_getMicState() {
-            postRequest(CMD_DOMAIN_CAM, CMD_AUDIO_GET_MIC_STATE);
-        }
 
-        public void cmd_fw_getVersion() {
-            postRequest(CMD_DOMAIN_CAM, CMD_FW_GET_VERSION);
-        }
+
+
 
         private void ack_fw_getVersion(String p1, String p2) {
             Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
             setFirmwareVersion(p1, p2);
         }
 
-        public void sendCmdFwNewVersion(String md5) {
-            postRequest(CMD_DOMAIN_CAM, CMD_FW_NEW_VERSION, md5);
-        }
 
-        public void sendUpgradeFirmware() {
-            postRequest(CMD_DOMAIN_CAM, CMD_FW_DO_UPGRADE);
-        }
+
+
 
         private static final String XML_CCEV = "ccev";
         private static final String XML_CMD = "cmd";
@@ -1269,11 +1222,7 @@ public class VdtCamera {
         private static final String XML_P2 = "p2";
         private static final int HEAD_SIZE = 128;
 
-        public void cmd_CAM_BT_isEnabled() {
 
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
-
-        }
 
         private void ack_CAM_BT_isEnabled(String p1) {
             int enabled = Integer.parseInt(p1);
@@ -1286,13 +1235,13 @@ public class VdtCamera {
 
         public void cmd_CAM_BT_Enable(boolean bEnable) {
 
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_ENABLE, bEnable ? 1 : 0);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_ENABLE, bEnable ? 1 : 0);
 
         }
 
         public void cmd_CAM_BT_getDEVStatus(int type) {
 
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
 
         }
 
@@ -1325,7 +1274,7 @@ public class VdtCamera {
         }
 
         public void cmd_CAM_BT_getHostNum() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_HOST_NUM);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_HOST_NUM);
         }
 
         private void ack_CAM_BT_getHostNum(String p1) {
@@ -1342,7 +1291,7 @@ public class VdtCamera {
         }
 
         public void cmd_CAM_BT_getHostInfor(int index) {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_HOST_INFOR, index);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_HOST_INFOR, index);
         }
 
 
@@ -1369,7 +1318,7 @@ public class VdtCamera {
 
 
         public void cmd_CAM_BT_doScan() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_SCAN);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_SCAN);
 
         }
 
@@ -1381,17 +1330,14 @@ public class VdtCamera {
             }
         }
 
-        public void cmd_CAM_BT_doBind(int type, String mac) {
-            Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
-        }
+
 
         private void ack_CAM_BT_doBind(String p1, String p2) {
             int type = Integer.parseInt(p1);
             int result = Integer.parseInt(p2);
             if (result == 0) {
                 if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
-                    postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
+                    sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
                 }
             }
             mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_BIND_FINISHED));
@@ -1399,13 +1345,13 @@ public class VdtCamera {
 
         public void cmd_CAM_BT_doUnBind(int type, String mac) {
             Log.d(TAG, "cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
         }
 
         private void ack_CAM_BT_doUnBind(String p1, String p2) {
             int type = Integer.parseInt(p1);
             if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
-                postRequest(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
+                sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_GET_DEV_STATUS, type);
             }
 
             mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_UNBIND_FINISHED));
@@ -1413,32 +1359,21 @@ public class VdtCamera {
 
 
         public void cmd_CAM_WantIdle() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_WANT_IDLE);
+            sendCommand(CMD_DOMAIN_CAM, CMD_CAM_WANT_IDLE);
         }
 
 
-        public void cmd_CAM_WantPreview() {
-            postRequest(CMD_DOMAIN_CAM, CMD_CAM_WANT_PREVIEW);
-        }
 
 
-        public void cmd_Rec_List_Resolutions() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_RESOLUTIONS);
-        }
 
         private void ack_Rec_List_Resolutions(String p1, String p2) {
             int list = Integer.parseInt(p1);
             mVideoResolutionList = list;
         }
 
-        public void cmd_Rec_Set_Resolution(int index) {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_RESOLUTION, index);
-        }
 
 
-        public void cmd_Rec_get_Resolution() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_GET_RESOLUTION);
-        }
+
 
         private void ack_Rec_get_Resolution(String p1, String p2) {
             int index = Integer.parseInt(p1);
@@ -1447,23 +1382,14 @@ public class VdtCamera {
         }
 
 
-        public void cmd_Rec_List_Qualities() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_QUALITIES);
-        }
+
 
         private void ack_Rec_List_Qualities(String p1, String p2) {
             int list = Integer.parseInt(p1);
             mVideoQualityList = list;
         }
 
-        public void cmd_Rec_Set_Quality(int index) {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_QUALITY, index);
-        }
 
-
-        public void cmd_Rec_get_Quality() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_GET_QUALITY);
-        }
 
         private void ack_Rec_get_Quality(String p1, String p2) {
             int index = Integer.parseInt(p1);
@@ -1472,9 +1398,7 @@ public class VdtCamera {
         }
 
 
-        public void cmd_Rec_List_RecModes() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_REC_MODES);
-        }
+
 
         private void ack_Rec_List_RecModes(String p1, String p2) {
             int list = Integer.parseInt(p1);
@@ -1483,13 +1407,11 @@ public class VdtCamera {
 
 
         public void cmd_Rec_Set_RecMode(int index) {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_REC_MODE, index);
+            sendCommand(CMD_DOMAIN_REC, CMD_REC_SET_REC_MODE, index);
         }
 
 
-        public void cmd_Rec_get_RecMode() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_GET_REC_MODE);
-        }
+
 
         private void ack_Rec_get_RecMode(String p1, String p2) {
             int index = Integer.parseInt(p1);
@@ -1500,9 +1422,6 @@ public class VdtCamera {
         }
 
 
-        public void cmd_Rec_List_ColorModes() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_LIST_COLOR_MODES);
-        }
 
         private void ack_Rec_List_ColorModes(String p1, String p2) {
             int list = Integer.parseInt(p1);
@@ -1510,13 +1429,10 @@ public class VdtCamera {
         }
 
         public void cmd_Rec_Set_ColorMode(int index) {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_COLOR_MODE, index);
+            sendCommand(CMD_DOMAIN_REC, CMD_REC_SET_COLOR_MODE, index);
         }
 
 
-        public void cmd_Rec_get_ColorMode() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_GET_COLOR_MODE);
-        }
 
         private void ack_Rec_get_ColorMode(String p1, String p2) {
             int index = Integer.parseInt(p1);
@@ -1525,12 +1441,9 @@ public class VdtCamera {
 
 
         public void cmd_Rec_setOverlay(int flags) {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_OVERLAY, flags);
+            sendCommand(CMD_DOMAIN_REC, CMD_REC_SET_OVERLAY, flags);
         }
 
-        public void cmd_Rec_getOverlayState() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_GET_OVERLAY_STATE);
-        }
 
         private void ack_Rec_getOverlayState(String p1, String p2) {
             int flags = Integer.parseInt(p1);
@@ -1538,16 +1451,9 @@ public class VdtCamera {
         }
 
 
-        /**
-         * This cmd does not have response.
-         */
-        public void cmd_Rec_MarkLiveVideo() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_MARK_LIVE_VIDEO);
-        }
 
-        public void cmd_Rec_GetMarkTime() {
-            postRequest(CMD_DOMAIN_REC, CMD_REC_GET_MARK_TIME);
-        }
+
+
 
         private void ack_Rec_GetMarkTime(String p1, String p2) {
 //            Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2));
@@ -1559,12 +1465,7 @@ public class VdtCamera {
             }
         }
 
-        public void cmd_Rec_SetMarkTime(int before, int after) {
-            if (before < 0 || after < 0) {
-                return;
-            }
-            postRequest(CMD_DOMAIN_REC, CMD_REC_SET_MARK_TIME, String.valueOf(before), String.valueOf(after));
-        }
+
 
         private void ack_Rec_SetMarkTime(String p1, String p2) {
             Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
@@ -1594,27 +1495,27 @@ public class VdtCamera {
             switch (command.mCmd) {
                 case USER_CMD_GET_SETUP:
 
-                    this.cmd_Cam_get_getAllInfor();
+                    sendCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_GET_ALL_INFOR);
 
-                    this.cmd_Rec_List_Resolutions();
-                    this.cmd_Rec_get_Resolution();
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_LIST_RESOLUTIONS);
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_RESOLUTION);
 
-                    this.cmd_Rec_List_Qualities();
-                    this.cmd_Rec_get_Quality();
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_LIST_QUALITIES);
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_QUALITY);
 
-                    this.cmd_Rec_List_ColorModes();
-                    this.cmd_Rec_get_ColorMode();
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_LIST_COLOR_MODES);
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_COLOR_MODE);
 
-                    this.cmd_Rec_List_RecModes();
-                    this.cmd_Rec_get_RecMode();
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_LIST_REC_MODES);
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_REC_MODE);
 
-                    this.cmd_audio_getMicState();
-                    this.cmd_Rec_getOverlayState();
+                    sendCommand(CMD_DOMAIN_CAM, CMD_AUDIO_GET_MIC_STATE);
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_OVERLAY_STATE);
 
-                    this.cmd_Network_GetWLanMode();
+                    sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_WLAN_MODE);
 //                    this.cmd_CAM_BT_isSupported();
-                    this.cmd_CAM_BT_isEnabled();
-                    this.cmd_Rec_GetMarkTime();
+                    sendCommand(CMD_DOMAIN_CAM, CMD_CAM_BT_IS_ENABLED);
+                    sendCommand(CMD_DOMAIN_REC, CMD_REC_GET_MARK_TIME);
                     break;
 
                 case USER_CMD_EXIT_THREAD:
