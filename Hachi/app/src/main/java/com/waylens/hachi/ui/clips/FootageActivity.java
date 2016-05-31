@@ -201,7 +201,7 @@ public class FootageActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-
+        refreshBookmarkClipSet();
         mEventBus.register(this);
         mEventBus.register(mClipSetProgressBar);
     }
@@ -288,7 +288,7 @@ public class FootageActivity extends BaseActivity {
 
         setupClipPlayFragment(mFootageClipSet);
         //setupClipProgressBar(clipSet);
-        refreshBookmarkClipSet();
+
 
     }
 
