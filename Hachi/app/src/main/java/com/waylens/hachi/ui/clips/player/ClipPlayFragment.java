@@ -337,6 +337,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         mWvGauge.showGauge(false);
 
+
+
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
 
 

@@ -1,10 +1,7 @@
 package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -408,9 +405,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
     private void launchFootageActivity(ClipSet clipSet) {
-
-        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_MENUAL, clipSet);
-        FootageActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_MENUAL);
+        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_MANUAL, clipSet);
+        FootageActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_MANUAL);
     }
 
 

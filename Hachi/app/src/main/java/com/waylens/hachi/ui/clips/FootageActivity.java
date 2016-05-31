@@ -193,6 +193,7 @@ public class FootageActivity extends BaseActivity {
 
             }
         });
+        refreshFootageClipSet();
 
     }
 
@@ -200,7 +201,7 @@ public class FootageActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-        refreshFootageClipSet();
+
         mEventBus.register(this);
         mEventBus.register(mClipSetProgressBar);
     }
@@ -265,7 +266,7 @@ public class FootageActivity extends BaseActivity {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
-                mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
+
                 mEventBus.post(new ClipSetChangeEvent(mClipSetIndex));
             }
         });
@@ -282,7 +283,9 @@ public class FootageActivity extends BaseActivity {
             return;
         }
 
-        mFootageClipSet = ClipSetManager.getManager().getClipSet(mClipSetIndex);
+        mFootageClipSet = mClipSetManager.getClipSet(mClipSetIndex);
+        mClipSetManager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_TMP, mFootageClipSet);
+
         setupClipPlayFragment(mFootageClipSet);
         //setupClipProgressBar(clipSet);
         refreshBookmarkClipSet();
