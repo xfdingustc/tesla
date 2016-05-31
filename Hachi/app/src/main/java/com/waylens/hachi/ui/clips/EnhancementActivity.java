@@ -521,7 +521,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             public void onResponse(ClipDownloadInfo response) {
                 Logger.t(TAG).d("on response:!!!!: " + response.main.url);
                 Logger.t(TAG).d("on response: " + response.sub.url);
-                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
+//                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
 
 
                 ClipDownloadInfo.StreamDownloadInfo downloadInfo;

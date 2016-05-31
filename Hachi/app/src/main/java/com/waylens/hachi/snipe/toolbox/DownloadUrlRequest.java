@@ -53,7 +53,7 @@ public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
 
     @Override
     protected VdbCommand createVdbCommand() {
-        int downloadOption = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_SUB_STREAM_1 | DOWNLOAD_OPT_INDEX_PICT | DOWNLOAD_OPT_PLAYLIST;
+        int downloadOption = DOWNLOAD_OPT_MAIN_STREAM | DOWNLOAD_OPT_SUB_STREAM_1 | DOWNLOAD_OPT_PLAYLIST;
         mVdbCommand = VdbCommand.Factory.createCmdGetClipDownloadUrl(cid, mStartTime, mLength, downloadOption, true);
         return mVdbCommand;
     }
