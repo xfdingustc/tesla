@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.appyvet.rangebar.RangeBar;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -30,6 +31,8 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Collections;
 import java.util.List;
@@ -73,6 +76,8 @@ public class ClipsEditView extends LinearLayout {
     int mSelectedPosition = POSITION_UNKNOWN;
 
     int mOriginalSize;
+
+    private EventBus mEventBus = EventBus.getDefault();
 
     public ClipsEditView(Context context) {
         this(context, null, 0);
@@ -161,9 +166,7 @@ public class ClipsEditView extends LinearLayout {
             clip.editInfo.selectedStartValue = rangeBar.getLeftIndex();
             clip.editInfo.selectedEndValue = rangeBar.getRightIndex();
             updateClipDuration(clip);
-            if (mOnClipEditListener != null) {
-                mOnClipEditListener.onTrimming(clip);
-            }
+            mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE, false));
         }
     };
 

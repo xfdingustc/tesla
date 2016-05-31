@@ -376,7 +376,7 @@ public class EnhanceFragment extends BaseFragment {
 
             @Override
             public void onTrimming(Clip clip) {
-                mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+
             }
 
             @Override
@@ -390,7 +390,7 @@ public class EnhanceFragment extends BaseFragment {
                         @Override
                         public void onTrimCompleted(ClipSet clipSet) {
                             Logger.t(TAG).d("on trip complete");
-                            mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE));
+                            mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE, true));
                         }
                     });
             }

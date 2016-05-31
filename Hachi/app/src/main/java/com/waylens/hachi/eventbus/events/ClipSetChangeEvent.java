@@ -7,13 +7,21 @@ import com.waylens.hachi.vdb.ClipSetPos;
  */
 public class ClipSetChangeEvent {
     private final int mClipSetIndex;
+    private final boolean mNeedRebuildList;
 
-    public ClipSetChangeEvent(int clipSetIndex) {
+    public ClipSetChangeEvent(int clipSetIndex, boolean needRebuildList) {
         this.mClipSetIndex = clipSetIndex;
+        this.mNeedRebuildList = needRebuildList;
     }
 
     public int getIndex() {
         return mClipSetIndex;
     }
+
+    public boolean getNeedRebuildList() {
+        return mNeedRebuildList;
+    }
+
+
 
 }

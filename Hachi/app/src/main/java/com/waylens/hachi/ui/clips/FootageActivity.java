@@ -267,7 +267,7 @@ public class FootageActivity extends BaseActivity {
             public void onBuildComplete(ClipSet clipSet) {
                 Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
 
-                mEventBus.post(new ClipSetChangeEvent(mClipSetIndex));
+//                mEventBus.post(new ClipSetChangeEvent(mClipSetIndex));
             }
         });
     }

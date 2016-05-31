@@ -16,6 +16,7 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -56,6 +57,13 @@ public class PlaylistEditor {
 
     public int getPlaylistId() {
         return mPlayListID;
+    }
+
+    @Subscribe
+    public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        if (event.getNeedRebuildList()) {
+          doRebuildPlaylist(-1);
+        }
     }
 
 
@@ -150,7 +158,7 @@ public class PlaylistEditor {
             }
         }
 
-        mEventBus.post(new ClipSetChangeEvent(mClipSetIndex));
+        mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, false));
     }
 
     private void doClearPlayList(final int action) {
