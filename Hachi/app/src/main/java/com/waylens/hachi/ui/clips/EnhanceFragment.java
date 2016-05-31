@@ -392,14 +392,7 @@ public class EnhanceFragment extends BaseFragment {
                 if (selectedPosition == ClipsEditView.POSITION_UNKNOWN) {
                     return;
                 }
-                mPlaylistEditor.trimClip(selectedPosition, clip,
-                    new PlaylistEditor.OnTrimCompletedListener() {
-                        @Override
-                        public void onTrimCompleted(ClipSet clipSet) {
-                            Logger.t(TAG).d("on trip complete");
-                            mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE, true));
-                        }
-                    });
+
             }
         });
 

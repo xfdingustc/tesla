@@ -86,10 +86,7 @@ public class PlaylistEditor {
         doRebuildPlaylist(ACTION_MOVE);
     }
 
-    public void trimClip(int position, Clip clip, OnTrimCompletedListener listener) {
-        mOnTrimCompletedListener = listener;
-        doRebuildPlaylist(ACTION_TRIM);
-    }
+
 
     private void doGetPlaylistInfo(final int action) {
         Logger.t(TAG).d("do get play list info");

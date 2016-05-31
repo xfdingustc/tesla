@@ -144,6 +144,7 @@ public class ClipsEditView extends LinearLayout {
                     Clip clip = getClipSet().getClip(mSelectedPosition);
                     mOnClipEditListener.onStopTrimming(clip);
                 }
+                mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, true));
             }
         });
         mRangeSeekBar.setOnRangeBarChangeListener(mRangeBarchangeListener);
