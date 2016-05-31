@@ -201,6 +201,8 @@ public class ClipsEditView extends LinearLayout {
             if (mOnClipEditListener != null) {
                 mOnClipEditListener.onClipsAppended(clips, mAdapter.getItemCount());
             }
+            Logger.t(TAG).d("post event");
+            mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, true));
         }
 
         return true;

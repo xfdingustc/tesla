@@ -249,10 +249,17 @@ public class EnhanceFragment extends BaseFragment {
             }
         });
         mClipsEditView.setVisibility(View.VISIBLE);
+        mEventBus.register(mPlaylistEditor);
 
         configEnhanceView();
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mEventBus.unregister(mPlaylistEditor);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -345,7 +352,7 @@ public class EnhanceFragment extends BaseFragment {
                 if (clips == null) {
                     return;
                 }
-                mPlaylistEditor.appendClips(clips, null);
+
                 if (clipCount > 0 && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
                     btnGauge.setEnabled(true);
                     btnMusic.setEnabled(true);

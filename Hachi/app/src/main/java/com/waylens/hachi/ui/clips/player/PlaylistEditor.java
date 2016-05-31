@@ -7,8 +7,6 @@ import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
-import com.waylens.hachi.snipe.toolbox.ClipMoveRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
 import com.waylens.hachi.vdb.Clip;
@@ -17,8 +15,6 @@ import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.List;
 
 
 public class PlaylistEditor {
@@ -61,8 +57,9 @@ public class PlaylistEditor {
 
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        Logger.t(TAG).d("receive event");
         if (event.getNeedRebuildList()) {
-          doRebuildPlaylist(-1);
+            doRebuildPlaylist(-1);
         }
     }
 
@@ -78,14 +75,6 @@ public class PlaylistEditor {
         doClearPlayList(actionAdd);
     }
 
-    public void appendClips(List<Clip> clips, OnBuildCompleteListener listener) {
-        ClipSet clipSet = getClipSet();
-
-        ClipSetManager.getManager().updateClipSet(mClipSetIndex, clipSet);
-        doRebuildPlaylist(ACTION_ADD);
-
-        mOnBuildCompleteListener = listener;
-    }
 
     public void delete(int position, OnDeleteCompleteListener listener) {
         mOnDeleteCompleteListener = listener;
@@ -205,8 +194,6 @@ public class PlaylistEditor {
             mVdbRequestQueue.add(playRequest);
         }
     }
-
-
 
 
     public interface OnBuildCompleteListener {
