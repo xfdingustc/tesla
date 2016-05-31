@@ -275,13 +275,15 @@ public class ClipsEditView extends LinearLayout {
             1000));
     }
 
-    void internalOnClipMoved(int fromPosition, int toPosition) {
+    private void internalOnClipMoved(int fromPosition, int toPosition) {
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onClipMoved(fromPosition, toPosition, getClipSet().getClip(toPosition));
         }
+
+        mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, true));
     }
 
-    void internalOnClipRemoved(Clip clip, int position) {
+    private void internalOnClipRemoved(Clip clip, int position) {
         updateClipCount(getClipSet().getCount());
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onClipRemoved(clip, position, mAdapter.getItemCount());
@@ -290,6 +292,7 @@ public class ClipsEditView extends LinearLayout {
         if (mSelectedPosition == position) {
             internalOnExitEditing();
         }
+        mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, true));
     }
 
     void exitClipEditing() {

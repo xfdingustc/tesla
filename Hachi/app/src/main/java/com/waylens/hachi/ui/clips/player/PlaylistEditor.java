@@ -32,7 +32,7 @@ public class PlaylistEditor {
     private OnBuildCompleteListener mOnBuildCompleteListener;
     private OnDeleteCompleteListener mOnDeleteCompleteListener;
     private OnMoveCompletedListener mOnMoveCompletedListener;
-    private OnTrimCompletedListener mOnTrimCompletedListener;
+
 
     private int mClipAdded;
 
@@ -76,16 +76,6 @@ public class PlaylistEditor {
     }
 
 
-    public void delete(int position, OnDeleteCompleteListener listener) {
-        mOnDeleteCompleteListener = listener;
-        doRebuildPlaylist(ACTION_DELETE);
-    }
-
-    public void move(int fromPosition, int toPosition, OnMoveCompletedListener listener) {
-        mOnMoveCompletedListener = listener;
-        doRebuildPlaylist(ACTION_MOVE);
-    }
-
 
 
     private void doGetPlaylistInfo(final int action) {
@@ -112,11 +102,7 @@ public class PlaylistEditor {
                                 mOnMoveCompletedListener.onMoveCompleted(clipSet);
                             }
                             break;
-                        case ACTION_TRIM:
-                            if (mOnTrimCompletedListener != null) {
-                                mOnTrimCompletedListener.onTrimCompleted(clipSet);
-                            }
-                            break;
+
                     }
 
                 }
@@ -205,8 +191,6 @@ public class PlaylistEditor {
         void onMoveCompleted(ClipSet clipSet);
     }
 
-    public interface OnTrimCompletedListener {
-        void onTrimCompleted(ClipSet clipSet);
-    }
+
 
 }

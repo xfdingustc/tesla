@@ -19,7 +19,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
-import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.MusicDownloadActivity;
@@ -330,21 +329,16 @@ public class EnhanceFragment extends BaseFragment {
 
             @Override
             public void onClipMoved(int fromPosition, final int toPosition, final Clip clip) {
-                mPlaylistEditor.move(fromPosition, toPosition, new PlaylistEditor.OnMoveCompletedListener() {
-                    @Override
-                    public void onMoveCompleted(ClipSet clipSet) {
-                        int selectedPosition = mClipsEditView.getSelectedPosition();
-                        ClipSetPos clipSetPos = getClipPlayFragment().getClipSetPos();
-                        if (selectedPosition == -1) {
-                            getClipPlayFragment().showClipPosThumbnail(clip, clip.editInfo.selectedStartValue);
-                        } else if (selectedPosition != clipSetPos.getClipIndex()) {
-                            ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.editInfo.selectedStartValue);
-                            getClipPlayFragment().setClipSetPos(newClipSetPos, false);
-                        }
 
+                int selectedPosition = mClipsEditView.getSelectedPosition();
+                ClipSetPos clipSetPos = getClipPlayFragment().getClipSetPos();
+                if (selectedPosition == -1) {
+                    getClipPlayFragment().showClipPosThumbnail(clip, clip.editInfo.selectedStartValue);
+                } else if (selectedPosition != clipSetPos.getClipIndex()) {
+                    ClipSetPos newClipSetPos = new ClipSetPos(selectedPosition, clip.editInfo.selectedStartValue);
+                    getClipPlayFragment().setClipSetPos(newClipSetPos, false);
+                }
 
-                    }
-                });
             }
 
             @Override
@@ -362,7 +356,7 @@ public class EnhanceFragment extends BaseFragment {
 
             @Override
             public void onClipRemoved(Clip clip, int position, int clipCount) {
-                mPlaylistEditor.delete(position, null);
+
                 if (clipCount == 0) {
                     btnGauge.setEnabled(false);
                     btnMusic.setEnabled(false);
