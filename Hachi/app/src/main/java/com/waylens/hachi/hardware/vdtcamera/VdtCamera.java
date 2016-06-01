@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -190,7 +191,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private InetSocketAddress mPreviewAddress;
 
 
-    private OnScanHostListener mOnScanHostListener;
+    private WeakReference<OnScanHostListener> mOnScanHostListener;
 
     private List<BtDevice> mScannedBtDeviceList = new ArrayList<>();
     private int mScannedBtDeviceNumber = 0;
@@ -722,7 +723,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     public void scanHost(OnScanHostListener listener) {
-        mOnScanHostListener = listener;
+        mOnScanHostListener = new WeakReference<OnScanHostListener>(listener);
         mCommunicationBus.sendCommand(CMD_NETWORK_SCANHOST);
     }
 
@@ -1323,8 +1324,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
             e.printStackTrace();
         }
 
+
         if (mOnScanHostListener != null) {
-            mOnScanHostListener.OnScanHostResult(addedNetworkItemBeanList, networkItemBeanList);
+            OnScanHostListener listener = mOnScanHostListener.get();
+            if (listener != null) {
+                listener.OnScanHostResult(addedNetworkItemBeanList, networkItemBeanList);
+            }
         }
 
     }
