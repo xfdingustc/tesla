@@ -336,7 +336,11 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
         mProgressLoading.setVisibility(View.VISIBLE);
         try {
-            mMediaPlayer.reset();
+            if (mMediaPlayer == null) {
+                mMediaPlayer = new MediaPlayer();
+            } else {
+                mMediaPlayer.reset();
+            }
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
@@ -446,7 +450,6 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     }
 
     void release(final boolean clearTargetState) {
-        final MediaPlayer mediaPlayer = mMediaPlayer;
         mMediaPlayer = null;
 
     }

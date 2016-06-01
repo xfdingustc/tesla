@@ -285,7 +285,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void setCameraName(String name) {
-        Logger.t(TAG).d("set Camera Name: " + name);
         if (name == null || name.isEmpty()) {
             // use empty string for unnamed camera
             name = "No name";
