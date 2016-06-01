@@ -814,78 +814,35 @@ public class VdtCamera implements VdtCameraCmdConsts {
     class VdtCameraController implements VdtCameraCmdConsts {
 
         private InetSocketAddress mAddress;
-        private final BlockingQueue<VdtCameraCommand> mCameraCommandQueue;
 
-        private Socket mSocket;
 
-        private boolean mRunCmdAndMsgLoop = true;
+
+        private VdtCameraCommunicationBus mCommunicationBus;
 
         public VdtCameraController(InetAddress host, int port) {
             mAddress = new InetSocketAddress(host, port);
 
-            mCameraCommandQueue = new LinkedBlockingQueue<>();
-            createCmdObserver(mAddress);
-
-
-        }
-
-        private void createCmdObserver(final InetSocketAddress address) {
-            Observable.create(new Observable.OnSubscribe<Integer>() {
+            mCommunicationBus = new VdtCameraCommunicationBus(mAddress, new VdtCameraCommunicationBus.ConnectionChangeListener() {
                 @Override
-                public void call(Subscriber<? super Integer> subscriber) {
-                    mSocket = new Socket();
-                    try {
-                        mSocket.setReceiveBufferSize(8192);
-                        mSocket.connect(address);
-                        subscriber.onCompleted();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                public void onConnected() {
+                    initCameraState();
+                    onCameraConnected();
                 }
-            })
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
-                        initCameraState();
-                        onCameraConnected();
-                        createCmdThread();
-                        createMsgThread();
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Integer integer) {
-
-
-                    }
-                });
-        }
-
-
-        private void createCmdThread() {
-            Logger.t(TAG).d("create cmd thread");
-            CommandThread thread = new CommandThread(mSocket, mCameraCommandQueue);
-            thread.start();
-        }
-
-
-        private void createMsgThread() {
-            Logger.t(TAG).d("create msg thread");
-            MessageThread thread = new MessageThread(mSocket, new MessageThread.CameraMessageHandler() {
+                @Override
+                public void onDisconnected() {
+                    onCameraDisconnected();
+                }
+            }, new VdtCameraCommunicationBus.CameraMessageHandler() {
                 @Override
                 public void handleMessage(int code, String p1, String p2) {
                     handleCameraMessage(code, p1, p2);
                 }
             });
-            thread.start();
-        }
 
+            mCommunicationBus.start();
+
+        }
 
 
 
@@ -917,7 +874,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 command = new VdtCameraCommand(CMD_DOMAIN_CAM, cmd - CMD_DOMAIN_CAM_START, p1, p2);
             }
 
-            mCameraCommandQueue.offer(command);
+            mCommunicationBus.sendCommand(command);
 
         }
 
@@ -1256,10 +1213,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
         // API
         public void stop() {
-            mRunCmdAndMsgLoop = false;
+//
         }
-
-
 
 
 
