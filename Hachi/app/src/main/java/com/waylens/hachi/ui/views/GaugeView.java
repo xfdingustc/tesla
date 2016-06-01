@@ -132,7 +132,7 @@ public class GaugeView extends FrameLayout {
 
         }
 
-        Logger.t(TAG).d("call api: " + jsApi);
+//        Logger.t(TAG).d("call api: " + jsApi);
         mWebView.loadUrl(jsApi);
     }
 

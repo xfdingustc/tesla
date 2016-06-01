@@ -1,7 +1,6 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
 import android.util.Log;
-import android.util.Xml;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
@@ -27,8 +26,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -40,13 +37,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
@@ -489,7 +483,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     public InetSocketAddress getInetSocketAddress() {
-        return mController.getInetSocketAddress();
+        return mController.mAddress;
     }
 
     public InetSocketAddress getPreviewAddress() {
@@ -497,7 +491,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void onCameraConnected() {
-        InetSocketAddress addr = mController.getInetSocketAddress();
+        InetSocketAddress addr = mController.mAddress;
         if (addr != null) {
             mPreviewAddress = new InetSocketAddress(addr.getAddress(), 8081);
             if (mOnConnectionChangeListener != null) {
@@ -836,7 +830,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
 
         private void createCmdObserver(final InetSocketAddress address) {
-            Logger.t(TAG).d("create cmd observer");
             Observable.create(new Observable.OnSubscribe<Integer>() {
                 @Override
                 public void call(Subscriber<? super Integer> subscriber) {
@@ -844,32 +837,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
                     try {
                         mSocket.setReceiveBufferSize(8192);
                         mSocket.connect(address);
-
-                        subscriber.onNext(0);
-
-
-                        while (mRunCmdAndMsgLoop) {
-                            VdtCameraCommand command = mCameraCommandQueue.take();
-
-
-                            if (command.mDomain == CMD_DOMAIN_USER) {
-                                if (!createUserCmd(command)) {
-                                    break;
-                                }
-                                continue;
-                            }
-
-                            SocketUtils.writeCommand(mSocket, command);
-                        }
-
                         subscriber.onCompleted();
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } finally {
-                        mRunCmdAndMsgLoop = false;
-                        onCameraDisconnected();
                     }
                 }
             })
@@ -878,89 +848,10 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 .subscribe(new Observer<Integer>() {
                     @Override
                     public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Integer integer) {
                         initCameraState();
                         onCameraConnected();
-                        createMsgObserver();
-                    }
-                });
-        }
-
-        private void createMsgObserver() {
-            Logger.t(TAG).d("create msg observer");
-            Observable.create(new Observable.OnSubscribe<Integer>() {
-                @Override
-                public void call(Subscriber<? super Integer> subscriber) {
-                    try {
-                        while (mRunCmdAndMsgLoop) {
-                            SimpleInputStream sis = new SimpleInputStream(8192);
-                            XmlPullParser xpp = Xml.newPullParser();
-                            int length = 0;
-                            int appended = 0;
-
-
-                            sis.clear();
-
-                            SocketUtils.readFully(mSocket, sis.getBuffer(), 0, HEAD_SIZE);
-                            length = sis.readi32(0);
-                            appended = sis.readi32(4);
-                            if (appended > 0) {
-                                sis.expand(HEAD_SIZE + appended);
-                                SocketUtils.readFully(mSocket, sis.getBuffer(), HEAD_SIZE, appended);
-                            }
-                            sis.setRange(8, length);
-
-                            xpp.setInput(sis, "UTF-8");
-
-
-                            int eventType = xpp.getEventType();
-
-
-                            while (true) {
-                                switch (eventType) {
-                                    case XmlPullParser.START_TAG:
-                                        if (xpp.getName().equals(XML_CMD)) {
-                                            parseCmdTag(xpp);
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                if (eventType == XmlPullParser.END_DOCUMENT) {
-                                    break;
-                                }
-                                eventType = xpp.next();
-                            }
-
-
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (XmlPullParserException e) {
-                        Logger.t(TAG).d("XmlPullParserException: length=");
-                        e.printStackTrace();
-                    } finally {
-                        mRunCmdAndMsgLoop = false;
-                        onCameraDisconnected();
-                    }
-
-                }
-            })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
-
+                        createCmdThread();
+                        createMsgThread();
                     }
 
                     @Override
@@ -971,14 +862,32 @@ public class VdtCamera implements VdtCameraCmdConsts {
                     @Override
                     public void onNext(Integer integer) {
 
+
                     }
                 });
         }
 
 
-        public InetSocketAddress getInetSocketAddress() {
-            return mAddress;
+        private void createCmdThread() {
+            Logger.t(TAG).d("create cmd thread");
+            CommandThread thread = new CommandThread(mSocket, mCameraCommandQueue);
+            thread.start();
         }
+
+
+        private void createMsgThread() {
+            Logger.t(TAG).d("create msg thread");
+            MessageThread thread = new MessageThread(mSocket, new MessageThread.CameraMessageHandler() {
+                @Override
+                public void handleMessage(int code, String p1, String p2) {
+                    handleCameraMessage(code, p1, p2);
+                }
+            });
+            thread.start();
+        }
+
+
+
 
         public void cmd_NetWork_SetWLandMode(int wifiMode) {
             sendCommand(CMD_NETWORK_CONNECT_HOST, wifiMode);
@@ -1011,8 +920,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
             mCameraCommandQueue.offer(command);
 
         }
-
-
 
 
         private void ack_Cam_getApiVersion(String p1) {
@@ -1151,14 +1058,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
             Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
             setFirmwareVersion(p1, p2);
         }
-
-
-        private static final String XML_CCEV = "ccev";
-        private static final String XML_CMD = "cmd";
-        private static final String XML_ACT = "act";
-        private static final String XML_P1 = "p1";
-        private static final String XML_P2 = "p2";
-        private static final int HEAD_SIZE = 128;
 
 
         private void ack_CAM_BT_isEnabled(String p1) {
@@ -1361,93 +1260,10 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
 
 
-        private boolean createUserCmd(VdtCameraCommand command) {
-            switch (command.mCmd) {
-                case USER_CMD_GET_SETUP:
-
-                    sendCommand(CMD_CAM_GET_GET_ALL_INFOR);
-
-                    sendCommand(CMD_REC_LIST_RESOLUTIONS);
-                    sendCommand(CMD_REC_GET_RESOLUTION);
-
-                    sendCommand(CMD_REC_LIST_QUALITIES);
-                    sendCommand(CMD_REC_GET_QUALITY);
-
-                    sendCommand(CMD_REC_LIST_COLOR_MODES);
-                    sendCommand(CMD_REC_GET_COLOR_MODE);
-
-                    sendCommand(CMD_REC_LIST_REC_MODES);
-                    sendCommand(CMD_REC_GET_REC_MODE);
-
-                    sendCommand(CMD_AUDIO_GET_MIC_STATE);
-                    sendCommand(CMD_REC_GET_OVERLAY_STATE);
-
-                    sendCommand(CMD_NETWORK_GET_WLAN_MODE);
-//                    this.cmd_CAM_BT_isSupported();
-                    sendCommand(CMD_CAM_BT_IS_ENABLED);
-                    sendCommand(CMD_REC_GET_MARK_TIME);
-                    break;
-
-                case USER_CMD_EXIT_THREAD:
-                    return false;
-
-                default:
-                    Logger.t(TAG).d("unknown user cmd " + command.mCmd);
-                    break;
-            }
-
-            return true;
-        }
 
 
-        private final Pattern mPattern = Pattern.compile("ECMD(\\d+).(\\d+)", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
 
-        private void parseCmdTag(XmlPullParser xpp) {
-            int count = xpp.getAttributeCount();
-            if (count >= 1) {
-                String act = "";
-                String p1 = "";
-                String p2 = "";
-                if (xpp.getAttributeName(0).equals(XML_ACT)) {
-                    act = xpp.getAttributeValue(0);
-                }
-                if (count >= 2) {
-                    if (xpp.getAttributeName(1).equals(XML_P1)) {
-                        p1 = xpp.getAttributeValue(1);
-                    }
-                    if (count >= 3) {
-                        if (xpp.getAttributeName(2).equals(XML_P2)) {
-                            p2 = xpp.getAttributeValue(2);
-                        }
-                    }
-                }
-
-
-                // ECMD0.5
-                Matcher matcher = mPattern.matcher(act);
-                if (matcher.find() && matcher.groupCount() == 2) {
-                    int domain = Integer.parseInt(matcher.group(1));
-                    int cmd = Integer.parseInt(matcher.group(2));
-
-                    switch (domain) {
-                        case CMD_DOMAIN_CAM:
-//                            Logger.t(TAG).d("Domain = " + domain + " cmd = " + cmd);
-                            camDomainMsg(cmd + CMD_DOMAIN_CAM_START, p1, p2);
-                            break;
-                        case CMD_DOMAIN_REC:
-//                            Logger.t(TAG).d("Domain = " + domain + " cmd =" + cmd);
-                            recDomainMsg(cmd + CMD_DOMAIN_REC_START, p1, p2);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-
-
-        private void camDomainMsg(int cmd, String p1, String p2) {
+        private void handleCameraMessage(int cmd, String p1, String p2) {
             switch (cmd) {
                 case CMD_CAM_GET_API_VERSION:
                     ack_Cam_getApiVersion(p1);
@@ -1489,10 +1305,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
                     ack_Network_GetHostInfor(p1, p2);
                     break;
                 case CMD_NETWORK_ADD_HOST:
-//                    ackNotHandled("CMD_NETWORK_ADD_HOST", p1, p2);
                     handleOnNetworkAddHost(p1, p2);
                     break;
-
                 case CMD_NETWORK_CONNECT_HOST:
                     handleOnNetworkConnectHost(p1, p2);
                     break;
@@ -1502,7 +1316,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 case CMD_NETWORK_CONNECTHOTSPOT:
                     handleNetworkConnectHost(p1, p2);
                     break;
-
                 case CMD_REC_ERROR:
                     ack_Rec_error(p1, p2);
                     break;
@@ -1533,9 +1346,43 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 case CMD_CAM_BT_DO_UNBIND:
                     ack_CAM_BT_doUnBind(p1, p2);
                     break;
+                case CMD_REC_LIST_RESOLUTIONS:
+                    ack_Rec_List_Resolutions(p1, p2);
+                    break;
+                case CMD_REC_GET_RESOLUTION:
+                    ack_Rec_get_Resolution(p1, p2);
+                    break;
+                case CMD_REC_LIST_QUALITIES:
+                    ack_Rec_List_Qualities(p1, p2);
+                    break;
+                case CMD_REC_GET_QUALITY:
+                    ack_Rec_get_Quality(p1, p2);
+                    break;
+                case CMD_REC_LIST_REC_MODES:
+                    ack_Rec_List_RecModes(p1, p2);
+                    break;
+                case CMD_REC_GET_REC_MODE:
+                    ack_Rec_get_RecMode(p1, p2);
+                    break;
+                case CMD_REC_LIST_COLOR_MODES:
+                    ack_Rec_List_ColorModes(p1, p2);
+                    break;
+                case CMD_REC_GET_COLOR_MODE:
+                    ack_Rec_get_ColorMode(p1, p2);
+                    break;
+                case CMD_REC_GET_OVERLAY_STATE:
+                    ack_Rec_getOverlayState(p1, p2);
+                    break;
+                case CMD_REC_GET_MARK_TIME:
+                    ack_Rec_GetMarkTime(p1, p2);
+                    break;
+                case CMD_REC_SET_MARK_TIME:
+                    ack_Rec_SetMarkTime(p1, p2);
+                    break;
                 default:
                     Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                     break;
+
             }
         }
 
@@ -1597,47 +1444,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
         }
 
-        private void recDomainMsg(int cmd, String p1, String p2) {
-            switch (cmd) {
-                case CMD_REC_LIST_RESOLUTIONS:
-                    ack_Rec_List_Resolutions(p1, p2);
-                    break;
 
-                case CMD_REC_GET_RESOLUTION:
-                    ack_Rec_get_Resolution(p1, p2);
-                    break;
-                case CMD_REC_LIST_QUALITIES:
-                    ack_Rec_List_Qualities(p1, p2);
-                    break;
-                case CMD_REC_GET_QUALITY:
-                    ack_Rec_get_Quality(p1, p2);
-                    break;
-                case CMD_REC_LIST_REC_MODES:
-                    ack_Rec_List_RecModes(p1, p2);
-                    break;
-                case CMD_REC_GET_REC_MODE:
-                    ack_Rec_get_RecMode(p1, p2);
-                    break;
-                case CMD_REC_LIST_COLOR_MODES:
-                    ack_Rec_List_ColorModes(p1, p2);
-                    break;
-                case CMD_REC_GET_COLOR_MODE:
-                    ack_Rec_get_ColorMode(p1, p2);
-                    break;
-                case CMD_REC_GET_OVERLAY_STATE:
-                    ack_Rec_getOverlayState(p1, p2);
-                    break;
-                case CMD_REC_GET_MARK_TIME:
-                    ack_Rec_GetMarkTime(p1, p2);
-                    break;
-                case CMD_REC_SET_MARK_TIME:
-                    ack_Rec_SetMarkTime(p1, p2);
-                    break;
-                default:
-                    Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
-                    break;
-            }
-        }
 
 
     }

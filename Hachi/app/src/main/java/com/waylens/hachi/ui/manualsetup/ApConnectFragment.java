@@ -146,7 +146,6 @@ public class ApConnectFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-        Logger.t(TAG).d("on stop");
         mEventBus.unregister(this);
         getActivity().unregisterReceiver(mWifiStateReceiver);
         mLiveView.stopStream();
