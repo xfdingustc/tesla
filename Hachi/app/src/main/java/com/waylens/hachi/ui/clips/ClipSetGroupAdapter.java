@@ -292,12 +292,13 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     } else {
                         clipGridItem.isItemSelected = !clipGridItem.isItemSelected;
                         toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem.isItemSelected);
-                        mClipClickListener.onClipClicked(null);
+
                         if (clipGridItem.isItemSelected) {
                             mSelectedClipList.add((Clip) clipGridItem.itemObject);
                         } else {
                             mSelectedClipList.remove((Clip) clipGridItem.itemObject);
                         }
+                        mClipClickListener.onClipClicked(null);
                     }
 
                 }
@@ -319,9 +320,9 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     clipGridItem.isItemSelected = true;
                     holder.mBtnSelect.setImageResource(R.drawable.edit_select);
                     mSelectedMask.setVisibility(View.VISIBLE);
-                    mClipClickListener.onClipLongClicked((Clip) clipGridItem.itemObject);
-                    mSelectedClipList.add((Clip) clipGridItem.itemObject);
 
+                    mSelectedClipList.add((Clip) clipGridItem.itemObject);
+                    mClipClickListener.onClipLongClicked((Clip) clipGridItem.itemObject);
                     return true;
                 }
             });

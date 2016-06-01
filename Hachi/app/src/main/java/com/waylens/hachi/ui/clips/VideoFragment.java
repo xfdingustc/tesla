@@ -41,6 +41,8 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
             getToolbar().inflateMenu(R.menu.menu_clip_list);
             if (event.getSelectClipCount() > 1) {
                 getToolbar().getMenu().removeItem(R.id.menu_to_upload);
+            } else if (event.getSelectClipCount() == 0) {
+                getToolbar().getMenu().clear();
             }
             getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override

@@ -37,28 +37,30 @@ public class MusicDownloadActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        setSupportActionBar(getToolbar());
-        setTitle(R.string.musics);
+        setupToolbar();
+
         setHomeAsUpIndicator(R.drawable.navbar_close);
 
-        View view = findViewById(R.id.tabs);
-        if (view != null) {
-            view.setVisibility(View.GONE);
-        }
+
         mMusicFragment = new MusicFragment();
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_content, mMusicFragment).commit();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
+    public void setupToolbar() {
+        super.setupToolbar();
+        getToolbar().setTitle(R.string.musics);
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+            }
+        });
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
