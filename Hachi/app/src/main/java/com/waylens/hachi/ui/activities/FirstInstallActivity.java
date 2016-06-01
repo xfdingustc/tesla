@@ -127,6 +127,13 @@ public class FirstInstallActivity extends BaseActivity {
             writeVersionName();
         }
 
+        @OnClick(R.id.withoutCamera)
+        public void OnWithoutCameraClicked() {
+            MainActivity.launch(getActivity());
+            getActivity().finish();
+            writeVersionName();
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = createFragmentView(inflater, container, R.layout.fragment_simple_image, savedInstanceState);
