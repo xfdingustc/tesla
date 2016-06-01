@@ -34,7 +34,7 @@ public class SocketUtils {
         }
     }
 
-    public static void writeCommand(Socket socket, VdtCameraCommand request) throws IOException, InterruptedException {
+    public static void writeCommand(Socket socket, VdtCameraCommunicationBus.VdtCameraCommand request) throws IOException, InterruptedException {
         SimpleOutputStream sos = new SimpleOutputStream(1024);
         XmlSerializer xml = Xml.newSerializer();
 

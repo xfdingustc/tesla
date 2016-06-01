@@ -30,18 +30,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.schedulers.Schedulers;
 
 
 public class VdtCamera implements VdtCameraCmdConsts {
@@ -192,8 +184,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private final ServiceInfo mServiceInfo;
-    private final VdtCameraController mController;
 
+
+    private InetSocketAddress mAddress;
     private InetSocketAddress mPreviewAddress;
 
 
@@ -205,6 +198,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private VdbRequestQueue mVdbRequestQueue;
 
     private EventBus mEventBus = EventBus.getDefault();
+
+    private VdtCameraCommunicationBus mCommunicationBus;
 
 
     public static class ServiceInfo {
@@ -264,8 +259,28 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
         mServiceInfo = serviceInfo;
-        mController = new VdtCameraController(serviceInfo.inetAddr, serviceInfo.port);
-        startClient();
+
+        mAddress = new InetSocketAddress(serviceInfo.inetAddr, serviceInfo.port);
+        mCommunicationBus = new VdtCameraCommunicationBus(mAddress, new VdtCameraCommunicationBus.ConnectionChangeListener() {
+            @Override
+            public void onConnected() {
+                initCameraState();
+                onCameraConnected();
+            }
+
+            @Override
+            public void onDisconnected() {
+                onCameraDisconnected();
+            }
+        }, new VdtCameraCommunicationBus.CameraMessageHandler() {
+            @Override
+            public void handleMessage(int code, String p1, String p2) {
+                handleCameraMessage(code, p1, p2);
+            }
+        });
+
+        mCommunicationBus.start();
+
     }
 
     public void setCameraName(String name) {
@@ -357,12 +372,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public BtDevice getObdDevice() {
-        mController.sendCommand(CMD_CAM_BT_IS_ENABLED);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
         return mObdDevice;
     }
 
     public BtDevice getRemoteCtrlDevice() {
-        mController.sendCommand(CMD_CAM_BT_IS_ENABLED);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
         return mRemoteCtrlDevice;
     }
 
@@ -379,30 +394,30 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
 
 
-        mController.sendCommand(CMD_AUDIO_SET_MIC, micState, gain);
+        mCommunicationBus.sendCommand(CMD_AUDIO_SET_MIC, micState, gain);
     }
 
     public void setWifiMode(int wifiMode) {
-        mController.cmd_NetWork_SetWLandMode(wifiMode);
+        mCommunicationBus.sendCommand(CMD_NETWORK_CONNECT_HOST, wifiMode);
     }
 
     public int getWifiMode() {
-        mController.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
         return mWifiMode;
     }
 
     public String getBspFirmware() {
-        mController.sendCommand(CMD_FW_GET_VERSION);
+        mCommunicationBus.sendCommand(CMD_FW_GET_VERSION);
         return mBspVersion;
     }
 
     public void sendNewFirmware(String md5, OnNewFwVersionListern listener) {
         mOnNewFwVersionListerner = listener;
-        mController.sendCommand(CMD_FW_NEW_VERSION, md5);
+        mCommunicationBus.sendCommand(CMD_FW_NEW_VERSION, md5);
     }
 
     public void upgradeFirmware() {
-        mController.sendCommand(CMD_FW_DO_UPGRADE);
+        mCommunicationBus.sendCommand(CMD_FW_DO_UPGRADE);
     }
 
     public VdbRequestQueue getRequestQueue() {
@@ -441,7 +456,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public int getVideoResolution() {
-        mController.sendCommand(CMD_REC_GET_RESOLUTION);
+        mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
         Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
@@ -453,7 +468,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public int getVideoFramerate() {
-        mController.sendCommand(CMD_REC_GET_RESOLUTION);
+        mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
         Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
@@ -483,7 +498,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     public InetSocketAddress getInetSocketAddress() {
-        return mController.mAddress;
+        return mAddress;
     }
 
     public InetSocketAddress getPreviewAddress() {
@@ -491,7 +506,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void onCameraConnected() {
-        InetSocketAddress addr = mController.mAddress;
+        InetSocketAddress addr = mAddress;
         if (addr != null) {
             mPreviewAddress = new InetSocketAddress(addr.getAddress(), 8081);
             if (mOnConnectionChangeListener != null) {
@@ -582,62 +597,61 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void initCameraState() {
-        mController.sendCommand(CMD_CAM_GET_API_VERSION);
-        mController.sendCommand(CMD_FW_GET_VERSION);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_API_VERSION);
+        mCommunicationBus.sendCommand(CMD_FW_GET_VERSION);
 
-//        mController.getName();
-        mController.sendCommand(CMD_CAM_GET_NAME);
-        mController.sendCommand(CMD_REC_GET_REC_MODE);
-        mController.sendCommand(CMD_REC_LIST_RESOLUTIONS);
-        mController.sendCommand(CMD_CAM_GET_GET_ALL_INFOR);
-        mController.sendCommand(CMD_CAM_GET_STATE);
-        mController.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
-        mController.sendCommand(CMD_NETWORK_GET_HOST_NUM);
-        mController.sendCommand(CMD_REC_GET_MARK_TIME);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_NAME);
+        mCommunicationBus.sendCommand(CMD_REC_GET_REC_MODE);
+        mCommunicationBus.sendCommand(CMD_REC_LIST_RESOLUTIONS);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_GET_ALL_INFOR);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_STATE);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_REC_GET_MARK_TIME);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
 
-        mController.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
+        mCommunicationBus.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
             ((Integer) (timeZone / (3600 * 1000))).toString());
 
-        mController.sendCommand(CMD_CAM_BT_IS_ENABLED);
-        mController.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
-        mController.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
 
     }
 
 
     public void setBtEnable(boolean enable) {
-        mController.sendCommand(CMD_CAM_BT_ENABLE, enable ? 1 : 0);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_ENABLE, enable ? 1 : 0);
     }
 
     public void scanBluetoothDevices() {
-        mController.sendCommand(CMD_CAM_BT_DO_SCAN);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_DO_SCAN);
     }
 
     public void getBtHostNumber() {
-        mController.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
     }
 
     public void doBtUnbind(int type, String mac) {
         Logger.t(TAG).d("cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
-        mController.sendCommand(CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
 
     }
 
     public void doBind(int type, String mac) {
         Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
-        mController.sendCommand(CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
     }
 
 
     public void setName(String name) {
-        mController.sendCommand(CMD_CAM_SET_NAME, name);
+        mCommunicationBus.sendCommand(CMD_CAM_SET_NAME, name);
     }
 
     public String getName() {
-        mController.sendCommand(CMD_CAM_GET_NAME);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_NAME);
         return mCameraName;
     }
 
@@ -668,78 +682,70 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void setVideoResolution(int resolutionIndex) {
-        mController.sendCommand(CMD_REC_SET_RESOLUTION, resolutionIndex);
+        mCommunicationBus.sendCommand(CMD_REC_SET_RESOLUTION, resolutionIndex);
     }
 
 
     public void setVideoQuality(int qualityIndex) {
-        mController.sendCommand(CMD_REC_SET_QUALITY, qualityIndex);
+        mCommunicationBus.sendCommand(CMD_REC_SET_QUALITY, qualityIndex);
     }
 
     public void getRecordQuality() {
-        mController.sendCommand(CMD_REC_GET_QUALITY);
+        mCommunicationBus.sendCommand(CMD_REC_GET_QUALITY);
 
     }
 
     public void setRecordColorMode(int index) {
-        mController.sendCommand(CMD_REC_SET_COLOR_MODE, index);
+        mCommunicationBus.sendCommand(CMD_REC_SET_COLOR_MODE, index);
     }
 
     public void getRecordColorMode() {
-        mController.sendCommand(CMD_REC_GET_COLOR_MODE);
+        mCommunicationBus.sendCommand(CMD_REC_GET_COLOR_MODE);
     }
 
     public void setRecordRecMode(int flags) {
-        mController.sendCommand(CMD_REC_SET_REC_MODE, flags);
+        mCommunicationBus.sendCommand(CMD_REC_SET_REC_MODE, flags);
     }
 
     public void getRecordRecMode() {
-        mController.sendCommand(CMD_REC_GET_REC_MODE);
+        mCommunicationBus.sendCommand(CMD_REC_GET_REC_MODE);
     }
 
     public void setAudioMic(boolean isOn, int vol) {
         int state = isOn ? STATE_MIC_ON : STATE_MIC_OFF;
-        mController.sendCommand(CMD_AUDIO_SET_MIC, state, vol);
+        mCommunicationBus.sendCommand(CMD_AUDIO_SET_MIC, state, vol);
     }
 
     public void getAudioMicState() {
-        mController.sendCommand(CMD_AUDIO_GET_MIC_STATE);
+        mCommunicationBus.sendCommand(CMD_AUDIO_GET_MIC_STATE);
     }
 
 
     public void scanHost(OnScanHostListener listener) {
         mOnScanHostListener = listener;
-        mController.sendCommand(CMD_NETWORK_SCANHOST);
+        mCommunicationBus.sendCommand(CMD_NETWORK_SCANHOST);
     }
 
     public void getSetup() {
-        mController.sendCommand(USER_CMD_GET_SETUP);
-    }
-
-    private void startClient() {
-        mController.start();
-    }
-
-    public void stopClient() {
-        mController.stop();
+        mCommunicationBus.sendCommand(USER_CMD_GET_SETUP);
     }
 
 
     public void startPreview() {
-        mController.sendCommand(CMD_CAM_WANT_PREVIEW);
+        mCommunicationBus.sendCommand(CMD_CAM_WANT_PREVIEW);
     }
 
     public int getRecordTime() {
-        mController.sendCommand(CMD_CAM_GET_TIME);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_TIME);
         return mRecordTime;
     }
 
     public void getRecordResolutionList() {
-        mController.sendCommand(CMD_REC_LIST_RESOLUTIONS);
+        mCommunicationBus.sendCommand(CMD_REC_LIST_RESOLUTIONS);
     }
 
     public void markLiveVideo() {
-        mController.sendCommand(CMD_REC_MARK_LIVE_VIDEO);
+        mCommunicationBus.sendCommand(CMD_REC_MARK_LIVE_VIDEO);
     }
 
     public int getMarkBeforeTime() {
@@ -754,30 +760,30 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (before < 0 || after < 0) {
             return;
         }
-        mController.sendCommand(CMD_REC_SET_MARK_TIME, before, before);
+        mCommunicationBus.sendCommand(CMD_REC_SET_MARK_TIME, before, before);
     }
 
     public void stopRecording() {
-        mController.sendCommand(CMD_CAM_STOP_REC);
+        mCommunicationBus.sendCommand(CMD_CAM_STOP_REC);
     }
 
     public void startRecording() {
-        mController.sendCommand(CMD_CAM_START_REC);
+        mCommunicationBus.sendCommand(CMD_CAM_START_REC);
     }
 
 
     public void getNetworkHostHum() {
-        mController.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
     }
 
     public void setNetworkRmvHost(String ssid) {
-        mController.sendCommand(CMD_NETWORK_RMV_HOST, ssid, "");
-        mController.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_NETWORK_RMV_HOST, ssid, "");
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
     }
 
     public void addNetworkHost(String ssid, String password) {
-        mController.sendCommand(CMD_NETWORK_ADD_HOST, ssid, password);
-        mController.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_NETWORK_ADD_HOST, ssid, password);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
     }
 
 
@@ -785,7 +791,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (ssid == null) {
             ssid = "";
         }
-        mController.sendCommand(CMD_NETWORK_CONNECTHOTSPOT, ssid);
+        mCommunicationBus.sendCommand(CMD_NETWORK_CONNECTHOTSPOT, ssid);
 
     }
 
@@ -811,596 +817,515 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    class VdtCameraController implements VdtCameraCmdConsts {
-
-        private InetSocketAddress mAddress;
 
 
 
-        private VdtCameraCommunicationBus mCommunicationBus;
-
-        public VdtCameraController(InetAddress host, int port) {
-            mAddress = new InetSocketAddress(host, port);
-
-            mCommunicationBus = new VdtCameraCommunicationBus(mAddress, new VdtCameraCommunicationBus.ConnectionChangeListener() {
-                @Override
-                public void onConnected() {
-                    initCameraState();
-                    onCameraConnected();
-                }
-
-                @Override
-                public void onDisconnected() {
-                    onCameraDisconnected();
-                }
-            }, new VdtCameraCommunicationBus.CameraMessageHandler() {
-                @Override
-                public void handleMessage(int code, String p1, String p2) {
-                    handleCameraMessage(code, p1, p2);
-                }
-            });
-
-            mCommunicationBus.start();
-
-        }
-
-
-
-        public void cmd_NetWork_SetWLandMode(int wifiMode) {
-            sendCommand(CMD_NETWORK_CONNECT_HOST, wifiMode);
-        }
-
-        private void sendCommand(int cmd) {
-            sendCommand(cmd, "", "");
-        }
-
-        private void sendCommand(int cmd, int p1) {
-            sendCommand(cmd, Integer.toString(p1), "");
-        }
-
-        private void sendCommand(int cmd, int p1, int p2) {
-            sendCommand(cmd, Integer.toString(p1), Integer.toString(p2));
-        }
-
-        private void sendCommand(int cmd, String p1) {
-            sendCommand(cmd, p1, "");
-        }
-
-        private void sendCommand(int cmd, String p1, String p2) {
-            VdtCameraCommand command;
-            if (cmd >= CMD_DOMAIN_REC_START) {
-                command = new VdtCameraCommand(CMD_DOMAIN_REC, cmd - CMD_DOMAIN_REC_START, p1, p2);
-            } else {
-                command = new VdtCameraCommand(CMD_DOMAIN_CAM, cmd - CMD_DOMAIN_CAM_START, p1, p2);
-            }
-
-            mCommunicationBus.sendCommand(command);
-
-        }
-
-
-        private void ack_Cam_getApiVersion(String p1) {
-            mApiVersionStr = p1;
-            int main = 0, sub = 0;
-            String build = "";
-            int i_main = p1.indexOf('.', 0);
-            if (i_main >= 0) {
-                String t = p1.substring(0, i_main);
-                main = Integer.parseInt(t);
-                i_main++;
-                int i_sub = p1.indexOf('.', i_main);
-                if (i_sub >= 0) {
-                    t = p1.substring(i_main, i_sub);
-                    sub = Integer.parseInt(t);
-                    i_sub++;
-                    build = p1.substring(i_sub);
-                }
-            }
-            setApiVersion(main, sub, build);
-        }
-
-
-        private void ack_Cam_get_Name_result(String p1, String p2) {
-            setCameraName(p1);
-        }
-
-
-        private void ack_Cam_get_State_result(String p1, String p2) {
-            int state = Integer.parseInt(p1);
-            boolean is_still = p2.length() > 0 ? Integer.parseInt(p2) != 0 : false;
-            if (mRecordState != state) {
-                mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
-                mRecordState = state;
-            }
-
-
-        }
-
-
-        private void ack_Cam_get_time_result(String p1, String p2) {
-            int duration = Integer.parseInt(p1);
-
-            if (mRecordTime != duration) {
-                mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_DURATION, VdtCamera.this, duration));
-                mRecordTime = duration;
-            }
-
-
-        }
-
-
-        private void ack_Cam_msg_Storage_infor(String p1, String p2) {
-            mStorageState = Integer.parseInt(p1);
-        }
-
-        private void ack_Cam_msg_StorageSpace_infor(String p1, String p2) {
-            long totalSpace = p1.length() > 0 ? Long.parseLong(p1) : 0;
-            long freeSpace = p2.length() > 0 ? Long.parseLong(p2) : 0;
-
-            mStorageTotalSpace = totalSpace;
-            mStorageFreeSpace = freeSpace;
-        }
-
-
-        private void ack_Cam_msg_Battery_infor(String p1, String p2) {
-            int vol = Integer.parseInt(p2);
-            mBatteryVol = vol;
-        }
-
-        private void ack_Cam_msg_power_infor(String p1, String p2) {
-            if (p1.length() == 0 || p2.length() == 0) {
-                Logger.t(TAG).d("bad power info, schedule update");
-
-            } else {
-                int batteryState = STATE_BATTERY_UNKNOWN;
-                if (p1.equals("Full")) {
-                    batteryState = STATE_BATTERY_FULL;
-                } else if (p1.equals("Not charging")) {
-                    batteryState = STATE_BATTERY_NOT_CHARGING;
-                } else if (p1.equals("Discharging")) {
-                    batteryState = STATE_BATTERY_DISCHARGING;
-                } else if (p1.equals("Charging")) {
-                    batteryState = STATE_BATTERY_CHARGING;
-                }
-                int powerState = Integer.parseInt(p2);
-                mBatteryState = batteryState;
-                mPowerState = powerState;
+    private void ack_Cam_getApiVersion(String p1) {
+        mApiVersionStr = p1;
+        int main = 0, sub = 0;
+        String build = "";
+        int i_main = p1.indexOf('.', 0);
+        if (i_main >= 0) {
+            String t = p1.substring(0, i_main);
+            main = Integer.parseInt(t);
+            i_main++;
+            int i_sub = p1.indexOf('.', i_main);
+            if (i_sub >= 0) {
+                t = p1.substring(i_main, i_sub);
+                sub = Integer.parseInt(t);
+                i_sub++;
+                build = p1.substring(i_sub);
             }
         }
+        setApiVersion(main, sub, build);
+    }
 
 
-        private void ack_Cam_msg_GPS_infor(String p1, String p2) {
-            int state = Integer.parseInt(p1);
-
-        }
-
-        private void ack_Cam_msg_Mic_infor(String p1, String p2) {
-            int state = Integer.parseInt(p1);
-            int vol = Integer.parseInt(p2);
-            mMicState = state;
-            mMicVol = vol;
-
-        }
+    private void ack_Cam_get_Name_result(String p1, String p2) {
+        setCameraName(p1);
+    }
 
 
-        private void ack_Network_GetWLanMode(String p1, String p2) {
-            int mode = Integer.parseInt(p1);
-            mWifiMode = mode;
+    private void ack_Cam_get_State_result(String p1, String p2) {
+        int state = Integer.parseInt(p1);
+        boolean is_still = p2.length() > 0 ? Integer.parseInt(p2) != 0 : false;
+        if (mRecordState != state) {
+            mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
+            mRecordState = state;
         }
 
 
-        private void ack_Network_GetHostNum(String p1, String p2) {
-            int num = Integer.parseInt(p1);
-            mNumWifiAP = num;
-            for (int i = 0; i < num; i++) {
-                sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, i);
+    }
+
+
+    private void ack_Cam_get_time_result(String p1, String p2) {
+        int duration = Integer.parseInt(p1);
+
+        if (mRecordTime != duration) {
+            mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_DURATION, VdtCamera.this, duration));
+            mRecordTime = duration;
+        }
+
+
+    }
+
+
+    private void ack_Cam_msg_Storage_infor(String p1, String p2) {
+        mStorageState = Integer.parseInt(p1);
+    }
+
+    private void ack_Cam_msg_StorageSpace_infor(String p1, String p2) {
+        long totalSpace = p1.length() > 0 ? Long.parseLong(p1) : 0;
+        long freeSpace = p2.length() > 0 ? Long.parseLong(p2) : 0;
+
+        mStorageTotalSpace = totalSpace;
+        mStorageFreeSpace = freeSpace;
+    }
+
+
+    private void ack_Cam_msg_Battery_infor(String p1, String p2) {
+        int vol = Integer.parseInt(p2);
+        mBatteryVol = vol;
+    }
+
+    private void ack_Cam_msg_power_infor(String p1, String p2) {
+        if (p1.length() == 0 || p2.length() == 0) {
+            Logger.t(TAG).d("bad power info, schedule update");
+
+        } else {
+            int batteryState = STATE_BATTERY_UNKNOWN;
+            if (p1.equals("Full")) {
+                batteryState = STATE_BATTERY_FULL;
+            } else if (p1.equals("Not charging")) {
+                batteryState = STATE_BATTERY_NOT_CHARGING;
+            } else if (p1.equals("Discharging")) {
+                batteryState = STATE_BATTERY_DISCHARGING;
+            } else if (p1.equals("Charging")) {
+                batteryState = STATE_BATTERY_CHARGING;
             }
+            int powerState = Integer.parseInt(p2);
+            mBatteryState = batteryState;
+            mPowerState = powerState;
         }
+    }
 
 
-        private void ack_Network_GetHostInfor(String p1, String p2) {
-            // TODO:
+    private void ack_Cam_msg_GPS_infor(String p1, String p2) {
+        int state = Integer.parseInt(p1);
+
+    }
+
+    private void ack_Cam_msg_Mic_infor(String p1, String p2) {
+        int state = Integer.parseInt(p1);
+        int vol = Integer.parseInt(p2);
+        mMicState = state;
+        mMicVol = vol;
+
+    }
+
+
+    private void ack_Network_GetWLanMode(String p1, String p2) {
+        int mode = Integer.parseInt(p1);
+        mWifiMode = mode;
+    }
+
+
+    private void ack_Network_GetHostNum(String p1, String p2) {
+        int num = Integer.parseInt(p1);
+        mNumWifiAP = num;
+        for (int i = 0; i < num; i++) {
+            mCommunicationBus.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, i);
+        }
+    }
+
+
+    private void ack_Network_GetHostInfor(String p1, String p2) {
+        // TODO:
 //            if (mListener != null) {
 //                mListener.onHostSSIDFetched(p1);
 //            }
+    }
+
+    private void ack_Rec_error(String p1, String p2) {
+        int error = Integer.parseInt(p1);
+        mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_ERROR, VdtCamera.this, error));
+    }
+
+
+    private void ack_fw_getVersion(String p1, String p2) {
+        Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
+        setFirmwareVersion(p1, p2);
+    }
+
+
+    private void ack_CAM_BT_isEnabled(String p1) {
+        int enabled = Integer.parseInt(p1);
+        mBtState = enabled;
+        if (enabled == BT_STATE_ENABLED) {
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
         }
+    }
 
-        private void ack_Rec_error(String p1, String p2) {
-            int error = Integer.parseInt(p1);
-            mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_ERROR, VdtCamera.this, error));
+
+    private void ack_CAM_BT_getDEVStatus(String p1, String p2) {
+        int i_p1 = Integer.parseInt(p1);
+        int devType = (i_p1 >> 8) & 0xff;
+        int devState = i_p1 & 0xff;
+        String mac = "";
+        String name = "";
+        int index = p2.indexOf('#');
+        if (index >= 0) {
+            mac = p2.substring(0, index);
+            name = p2.substring(index + 1);
         }
-
-
-        private void ack_fw_getVersion(String p1, String p2) {
-            Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
-            setFirmwareVersion(p1, p2);
+        if (mac.equals("NA")) {
+            //cmd_CAM_BT_getDEVStatus(dev_type);
+            //return;
+            devState = BtDevice.BT_DEVICE_STATE_OFF;
+            mac = "";
+            name = "";
         }
-
-
-        private void ack_CAM_BT_isEnabled(String p1) {
-            int enabled = Integer.parseInt(p1);
-            mBtState = enabled;
-            if (enabled == BT_STATE_ENABLED) {
-                sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
-                sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
-            }
-        }
-
-
-        private void ack_CAM_BT_getDEVStatus(String p1, String p2) {
-            int i_p1 = Integer.parseInt(p1);
-            int devType = (i_p1 >> 8) & 0xff;
-            int devState = i_p1 & 0xff;
-            String mac = "";
-            String name = "";
-            int index = p2.indexOf('#');
-            if (index >= 0) {
-                mac = p2.substring(0, index);
-                name = p2.substring(index + 1);
-            }
-            if (mac.equals("NA")) {
-                //cmd_CAM_BT_getDEVStatus(dev_type);
-                //return;
-                devState = BtDevice.BT_DEVICE_STATE_OFF;
-                mac = "";
-                name = "";
-            }
 
 //            Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
-            if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
-                mObdDevice.setDevState(devState, mac, name);
-            } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {
-                mRemoteCtrlDevice.setDevState(devState, mac, name);
-            }
-
+        if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
+            mObdDevice.setDevState(devState, mac, name);
+        } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {
+            mRemoteCtrlDevice.setDevState(devState, mac, name);
         }
 
+    }
 
-        private void ack_CAM_BT_getHostNum(String p1) {
-            int numDevs = Integer.parseInt(p1);
-            if (numDevs < 0) {
-                numDevs = 0;
-            }
-            mScannedBtDeviceNumber = numDevs;
-            Logger.t(TAG).d("find devices: " + mScannedBtDeviceNumber);
-            mScannedBtDeviceList.clear();
-            for (int i = 0; i < numDevs; i++) {
-                sendCommand(CMD_CAM_BT_GET_HOST_INFOR, i);
-            }
+
+    private void ack_CAM_BT_getHostNum(String p1) {
+        int numDevs = Integer.parseInt(p1);
+        if (numDevs < 0) {
+            numDevs = 0;
+        }
+        mScannedBtDeviceNumber = numDevs;
+        Logger.t(TAG).d("find devices: " + mScannedBtDeviceNumber);
+        mScannedBtDeviceList.clear();
+        for (int i = 0; i < numDevs; i++) {
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_INFOR, i);
+        }
+    }
+
+
+    private void ack_CAM_BT_getHostInfor(String name, String mac) {
+        int type;
+        if (name.indexOf("OBD") >= 0) {
+            type = BtDevice.BT_DEVICE_TYPE_OBD;
+        } else if (name.indexOf("RC") >= 0) {
+            type = BtDevice.BT_DEVICE_TYPE_REMOTE_CTR;
+        } else {
+            type = BtDevice.BT_DEVICE_TYPE_OTHER;
         }
 
+        Logger.t(TAG).d("type: " + type + " mac: " + mac + " name: " + name);
+        BtDevice device = new BtDevice(type);
+        device.setDevState(BtDevice.BT_DEVICE_STATE_UNKNOWN, mac, name);
 
-        private void ack_CAM_BT_getHostInfor(String name, String mac) {
-            int type;
-            if (name.indexOf("OBD") >= 0) {
-                type = BtDevice.BT_DEVICE_TYPE_OBD;
-            } else if (name.indexOf("RC") >= 0) {
-                type = BtDevice.BT_DEVICE_TYPE_REMOTE_CTR;
-            } else {
-                type = BtDevice.BT_DEVICE_TYPE_OTHER;
-            }
-
-            Logger.t(TAG).d("type: " + type + " mac: " + mac + " name: " + name);
-            BtDevice device = new BtDevice(type);
-            device.setDevState(BtDevice.BT_DEVICE_STATE_UNKNOWN, mac, name);
-
-            mScannedBtDeviceList.add(device);
-            if (mScannedBtDeviceList.size() == mScannedBtDeviceNumber) {
-                mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_SCAN_COMPLETE, mScannedBtDeviceList));
-            }
-
+        mScannedBtDeviceList.add(device);
+        if (mScannedBtDeviceList.size() == mScannedBtDeviceNumber) {
+            mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_SCAN_COMPLETE, mScannedBtDeviceList));
         }
 
+    }
 
-        private void ack_CAM_BT_doScan(String p1) {
-            int ret = Integer.parseInt(p1);
-            Logger.t(TAG).d("ret: " + ret);
-            if (ret == 0) {
-                sendCommand(CMD_CAM_BT_GET_HOST_NUM);
-            }
+
+    private void ack_CAM_BT_doScan(String p1) {
+        int ret = Integer.parseInt(p1);
+        Logger.t(TAG).d("ret: " + ret);
+        if (ret == 0) {
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
         }
+    }
 
 
-        private void ack_CAM_BT_doBind(String p1, String p2) {
-            int type = Integer.parseInt(p1);
-            int result = Integer.parseInt(p2);
-            if (result == 0) {
-                if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
-                    sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
-                }
-            }
-            mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_BIND_FINISHED));
-        }
-
-
-        private void ack_CAM_BT_doUnBind(String p1, String p2) {
-            int type = Integer.parseInt(p1);
+    private void ack_CAM_BT_doBind(String p1, String p2) {
+        int type = Integer.parseInt(p1);
+        int result = Integer.parseInt(p2);
+        if (result == 0) {
             if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
-                sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
+                mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
             }
+        }
+        mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_BIND_FINISHED));
+    }
 
-            mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_UNBIND_FINISHED));
+
+    private void ack_CAM_BT_doUnBind(String p1, String p2) {
+        int type = Integer.parseInt(p1);
+        if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
         }
 
-
-        private void ack_Rec_List_Resolutions(String p1, String p2) {
-            int list = Integer.parseInt(p1);
-            mVideoResolutionList = list;
-        }
+        mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_UNBIND_FINISHED));
+    }
 
 
-        private void ack_Rec_get_Resolution(String p1, String p2) {
-            int index = Integer.parseInt(p1);
+    private void ack_Rec_List_Resolutions(String p1, String p2) {
+        int list = Integer.parseInt(p1);
+        mVideoResolutionList = list;
+    }
+
+
+    private void ack_Rec_get_Resolution(String p1, String p2) {
+        int index = Integer.parseInt(p1);
 //            Logger.t(TAG).d("set video resolution index: " + index);
-            mVideoResolutionIndex = index;
+        mVideoResolutionIndex = index;
+    }
+
+
+    private void ack_Rec_List_Qualities(String p1, String p2) {
+        int list = Integer.parseInt(p1);
+        mVideoQualityList = list;
+    }
+
+
+    private void ack_Rec_get_Quality(String p1, String p2) {
+        int index = Integer.parseInt(p1);
+
+        mVideoQualityIndex = index;
+    }
+
+
+    private void ack_Rec_List_RecModes(String p1, String p2) {
+        int list = Integer.parseInt(p1);
+        mRecordModeList = list;
+    }
+
+
+    private void ack_Rec_get_RecMode(String p1, String p2) {
+        int index = Integer.parseInt(p1);
+        if (mRecordModeIndex != index) {
+            mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
+            mRecordModeIndex = index;
         }
+    }
 
 
-        private void ack_Rec_List_Qualities(String p1, String p2) {
-            int list = Integer.parseInt(p1);
-            mVideoQualityList = list;
-        }
+    private void ack_Rec_List_ColorModes(String p1, String p2) {
+        int list = Integer.parseInt(p1);
+        mColorModeList = list;
+    }
 
 
-        private void ack_Rec_get_Quality(String p1, String p2) {
-            int index = Integer.parseInt(p1);
-
-            mVideoQualityIndex = index;
-        }
-
-
-        private void ack_Rec_List_RecModes(String p1, String p2) {
-            int list = Integer.parseInt(p1);
-            mRecordModeList = list;
-        }
+    private void ack_Rec_get_ColorMode(String p1, String p2) {
+        int index = Integer.parseInt(p1);
+        mColorModeIndex = index;
+    }
 
 
-        private void ack_Rec_get_RecMode(String p1, String p2) {
-            int index = Integer.parseInt(p1);
-            if (mRecordModeIndex != index) {
-                mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
-                mRecordModeIndex = index;
-            }
-        }
+    private void ack_Rec_getOverlayState(String p1, String p2) {
+        int flags = Integer.parseInt(p1);
+        mOverlayFlags = flags;
+    }
 
 
-        private void ack_Rec_List_ColorModes(String p1, String p2) {
-            int list = Integer.parseInt(p1);
-            mColorModeList = list;
-        }
-
-
-        private void ack_Rec_get_ColorMode(String p1, String p2) {
-            int index = Integer.parseInt(p1);
-            mColorModeIndex = index;
-        }
-
-
-        private void ack_Rec_getOverlayState(String p1, String p2) {
-            int flags = Integer.parseInt(p1);
-            mOverlayFlags = flags;
-        }
-
-
-        private void ack_Rec_GetMarkTime(String p1, String p2) {
+    private void ack_Rec_GetMarkTime(String p1, String p2) {
 //            Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2));
-            try {
-                mMarkBeforeTime = Integer.parseInt(p1);
-                mMarkAfterTime = Integer.parseInt(p2);
-            } catch (Exception e) {
-                Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2), e);
-            }
+        try {
+            mMarkBeforeTime = Integer.parseInt(p1);
+            mMarkAfterTime = Integer.parseInt(p2);
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("cmd_Rec_GetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
+    }
 
 
-        private void ack_Rec_SetMarkTime(String p1, String p2) {
-            Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
-            try {
-                mMarkBeforeTime = Integer.parseInt(p1);
-                mMarkAfterTime = Integer.parseInt(p2);
-            } catch (Exception e) {
-                Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
-            }
+    private void ack_Rec_SetMarkTime(String p1, String p2) {
+        Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
+        try {
+            mMarkBeforeTime = Integer.parseInt(p1);
+            mMarkAfterTime = Integer.parseInt(p2);
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
+    }
 
 
-        // ========================================================
 
 
-        public void start() {
-//            mConnection.start(null);
+
+    private void handleCameraMessage(int cmd, String p1, String p2) {
+        switch (cmd) {
+            case CMD_CAM_GET_API_VERSION:
+                ack_Cam_getApiVersion(p1);
+                break;
+            case CMD_CAM_GET_NAME_RESULT:
+                ack_Cam_get_Name_result(p1, p2);
+                break;
+            case CMD_CAM_GET_STATE_RESULT:
+                ack_Cam_get_State_result(p1, p2);
+                break;
+            case CMD_CAM_GET_TIME_RESULT:
+                ack_Cam_get_time_result(p1, p2);
+                break;
+            case CMD_CAM_MSG_STORAGE_INFOR:
+                ack_Cam_msg_Storage_infor(p1, p2);
+                break;
+            case CMD_CAM_MSG_STORAGE_SPACE_INFOR:
+                ack_Cam_msg_StorageSpace_infor(p1, p2);
+                break;
+            case CMD_CAM_MSG_BATTERY_INFOR:
+                ack_Cam_msg_Battery_infor(p1, p2);
+                break;
+            case CMD_CAM_MSG_POWER_INFOR:
+                ack_Cam_msg_power_infor(p1, p2);
+                break;
+            case CMD_CAM_MSG_GPS_INFOR:
+                ack_Cam_msg_GPS_infor(p1, p2);
+                break;
+            case CMD_CAM_MSG_MIC_INFOR:
+                ack_Cam_msg_Mic_infor(p1, p2);
+                break;
+            case CMD_NETWORK_GET_WLAN_MODE:
+                ack_Network_GetWLanMode(p1, p2);
+                break;
+            case CMD_NETWORK_GET_HOST_NUM:
+                ack_Network_GetHostNum(p1, p2);
+                break;
+            case CMD_NETWORK_GET_HOST_INFOR:
+                ack_Network_GetHostInfor(p1, p2);
+                break;
+            case CMD_NETWORK_ADD_HOST:
+                handleOnNetworkAddHost(p1, p2);
+                break;
+            case CMD_NETWORK_CONNECT_HOST:
+                handleOnNetworkConnectHost(p1, p2);
+                break;
+            case CMD_NETWORK_SCANHOST:
+                handleNetWorkScanHostResult(p1, p2);
+                break;
+            case CMD_NETWORK_CONNECTHOTSPOT:
+                handleNetworkConnectHost(p1, p2);
+                break;
+            case CMD_REC_ERROR:
+                ack_Rec_error(p1, p2);
+                break;
+            case CMD_FW_GET_VERSION:
+                ack_fw_getVersion(p1, p2);
+                break;
+            case CMD_FW_NEW_VERSION:
+                handleNewFwVersion(p1, p2);
+                break;
+            case CMD_CAM_BT_IS_ENABLED:
+                ack_CAM_BT_isEnabled(p1);
+                break;
+            case CMD_CAM_BT_GET_DEV_STATUS:
+                ack_CAM_BT_getDEVStatus(p1, p2);
+                break;
+            case CMD_CAM_BT_GET_HOST_NUM:
+                ack_CAM_BT_getHostNum(p1);
+                break;
+            case CMD_CAM_BT_GET_HOST_INFOR:
+                ack_CAM_BT_getHostInfor(p1, p2);
+                break;
+            case CMD_CAM_BT_DO_SCAN:
+                ack_CAM_BT_doScan(p1);
+                break;
+            case CMD_CAM_BT_DO_BIND:
+                ack_CAM_BT_doBind(p1, p2);
+                break;
+            case CMD_CAM_BT_DO_UNBIND:
+                ack_CAM_BT_doUnBind(p1, p2);
+                break;
+            case CMD_REC_LIST_RESOLUTIONS:
+                ack_Rec_List_Resolutions(p1, p2);
+                break;
+            case CMD_REC_GET_RESOLUTION:
+                ack_Rec_get_Resolution(p1, p2);
+                break;
+            case CMD_REC_LIST_QUALITIES:
+                ack_Rec_List_Qualities(p1, p2);
+                break;
+            case CMD_REC_GET_QUALITY:
+                ack_Rec_get_Quality(p1, p2);
+                break;
+            case CMD_REC_LIST_REC_MODES:
+                ack_Rec_List_RecModes(p1, p2);
+                break;
+            case CMD_REC_GET_REC_MODE:
+                ack_Rec_get_RecMode(p1, p2);
+                break;
+            case CMD_REC_LIST_COLOR_MODES:
+                ack_Rec_List_ColorModes(p1, p2);
+                break;
+            case CMD_REC_GET_COLOR_MODE:
+                ack_Rec_get_ColorMode(p1, p2);
+                break;
+            case CMD_REC_GET_OVERLAY_STATE:
+                ack_Rec_getOverlayState(p1, p2);
+                break;
+            case CMD_REC_GET_MARK_TIME:
+                ack_Rec_GetMarkTime(p1, p2);
+                break;
+            case CMD_REC_SET_MARK_TIME:
+                ack_Rec_SetMarkTime(p1, p2);
+                break;
+            default:
+                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
+                break;
+
         }
+    }
 
-        // API
-        public void stop() {
-//
+    private void handleNewFwVersion(String p1, String p2) {
+        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
+        if (mOnNewFwVersionListerner != null) {
+            mOnNewFwVersionListerner.onNewVersion(Integer.valueOf(p1));
         }
+    }
 
+    private void handleOnNetworkConnectHost(String p1, String p2) {
+        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
+    }
 
+    private void handleNetworkConnectHost(String p1, String p2) {
+        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
 
-        private void handleCameraMessage(int cmd, String p1, String p2) {
-            switch (cmd) {
-                case CMD_CAM_GET_API_VERSION:
-                    ack_Cam_getApiVersion(p1);
-                    break;
-                case CMD_CAM_GET_NAME_RESULT:
-                    ack_Cam_get_Name_result(p1, p2);
-                    break;
-                case CMD_CAM_GET_STATE_RESULT:
-                    ack_Cam_get_State_result(p1, p2);
-                    break;
-                case CMD_CAM_GET_TIME_RESULT:
-                    ack_Cam_get_time_result(p1, p2);
-                    break;
-                case CMD_CAM_MSG_STORAGE_INFOR:
-                    ack_Cam_msg_Storage_infor(p1, p2);
-                    break;
-                case CMD_CAM_MSG_STORAGE_SPACE_INFOR:
-                    ack_Cam_msg_StorageSpace_infor(p1, p2);
-                    break;
-                case CMD_CAM_MSG_BATTERY_INFOR:
-                    ack_Cam_msg_Battery_infor(p1, p2);
-                    break;
-                case CMD_CAM_MSG_POWER_INFOR:
-                    ack_Cam_msg_power_infor(p1, p2);
-                    break;
-                case CMD_CAM_MSG_GPS_INFOR:
-                    ack_Cam_msg_GPS_infor(p1, p2);
-                    break;
-                case CMD_CAM_MSG_MIC_INFOR:
-                    ack_Cam_msg_Mic_infor(p1, p2);
-                    break;
-                case CMD_NETWORK_GET_WLAN_MODE:
-                    ack_Network_GetWLanMode(p1, p2);
-                    break;
-                case CMD_NETWORK_GET_HOST_NUM:
-                    ack_Network_GetHostNum(p1, p2);
-                    break;
-                case CMD_NETWORK_GET_HOST_INFOR:
-                    ack_Network_GetHostInfor(p1, p2);
-                    break;
-                case CMD_NETWORK_ADD_HOST:
-                    handleOnNetworkAddHost(p1, p2);
-                    break;
-                case CMD_NETWORK_CONNECT_HOST:
-                    handleOnNetworkConnectHost(p1, p2);
-                    break;
-                case CMD_NETWORK_SCANHOST:
-                    handleNetWorkScanHostResult(p1, p2);
-                    break;
-                case CMD_NETWORK_CONNECTHOTSPOT:
-                    handleNetworkConnectHost(p1, p2);
-                    break;
-                case CMD_REC_ERROR:
-                    ack_Rec_error(p1, p2);
-                    break;
-                case CMD_FW_GET_VERSION:
-                    ack_fw_getVersion(p1, p2);
-                    break;
-                case CMD_FW_NEW_VERSION:
-                    handleNewFwVersion(p1, p2);
-                    break;
-                case CMD_CAM_BT_IS_ENABLED:
-                    ack_CAM_BT_isEnabled(p1);
-                    break;
-                case CMD_CAM_BT_GET_DEV_STATUS:
-                    ack_CAM_BT_getDEVStatus(p1, p2);
-                    break;
-                case CMD_CAM_BT_GET_HOST_NUM:
-                    ack_CAM_BT_getHostNum(p1);
-                    break;
-                case CMD_CAM_BT_GET_HOST_INFOR:
-                    ack_CAM_BT_getHostInfor(p1, p2);
-                    break;
-                case CMD_CAM_BT_DO_SCAN:
-                    ack_CAM_BT_doScan(p1);
-                    break;
-                case CMD_CAM_BT_DO_BIND:
-                    ack_CAM_BT_doBind(p1, p2);
-                    break;
-                case CMD_CAM_BT_DO_UNBIND:
-                    ack_CAM_BT_doUnBind(p1, p2);
-                    break;
-                case CMD_REC_LIST_RESOLUTIONS:
-                    ack_Rec_List_Resolutions(p1, p2);
-                    break;
-                case CMD_REC_GET_RESOLUTION:
-                    ack_Rec_get_Resolution(p1, p2);
-                    break;
-                case CMD_REC_LIST_QUALITIES:
-                    ack_Rec_List_Qualities(p1, p2);
-                    break;
-                case CMD_REC_GET_QUALITY:
-                    ack_Rec_get_Quality(p1, p2);
-                    break;
-                case CMD_REC_LIST_REC_MODES:
-                    ack_Rec_List_RecModes(p1, p2);
-                    break;
-                case CMD_REC_GET_REC_MODE:
-                    ack_Rec_get_RecMode(p1, p2);
-                    break;
-                case CMD_REC_LIST_COLOR_MODES:
-                    ack_Rec_List_ColorModes(p1, p2);
-                    break;
-                case CMD_REC_GET_COLOR_MODE:
-                    ack_Rec_get_ColorMode(p1, p2);
-                    break;
-                case CMD_REC_GET_OVERLAY_STATE:
-                    ack_Rec_getOverlayState(p1, p2);
-                    break;
-                case CMD_REC_GET_MARK_TIME:
-                    ack_Rec_GetMarkTime(p1, p2);
-                    break;
-                case CMD_REC_SET_MARK_TIME:
-                    ack_Rec_SetMarkTime(p1, p2);
-                    break;
-                default:
-                    Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
-                    break;
+        mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED));
+    }
 
-            }
+    private void handleOnNetworkAddHost(String p1, String p2) {
+        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
+
+        mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_ADDED));
+    }
+
+    private void handleNetWorkScanHostResult(String p1, String p2) {
+        if (p1 == null || p1.isEmpty()) {
+            return;
         }
-
-        private void handleNewFwVersion(String p1, String p2) {
-            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
-            if (mOnNewFwVersionListerner != null) {
-                mOnNewFwVersionListerner.onNewVersion(Integer.valueOf(p1));
-            }
-        }
-
-        private void handleOnNetworkConnectHost(String p1, String p2) {
-            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
-        }
-
-        private void handleNetworkConnectHost(String p1, String p2) {
-            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
-
-            mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED));
-        }
-
-        private void handleOnNetworkAddHost(String p1, String p2) {
-            Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
-
-            mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_ADDED));
-        }
-
-        private void handleNetWorkScanHostResult(String p1, String p2) {
-            if (p1 == null || p1.isEmpty()) {
-                return;
-            }
-            Logger.t(TAG).json(p1);
-            List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
-            List<NetworkItemBean> addedNetworkItemBeanList = new ArrayList<>();
-            try {
-                JSONObject object = new JSONObject(p1);
-                JSONArray networks = object.getJSONArray("networks");
-                for (int i = 0; i < networks.length(); i++) {
-                    JSONObject networkObject = networks.getJSONObject(i);
-                    NetworkItemBean networkItem = new NetworkItemBean();
-                    networkItem.ssid = networkObject.optString("ssid");
-                    networkItem.bssid = networkObject.optString("bssid");
-                    networkItem.flags = networkObject.optString("flags");
-                    networkItem.frequency = networkObject.optInt("frequency");
-                    networkItem.singalLevel = networkObject.optInt("signal_level");
-                    networkItem.added = networkObject.optBoolean("added");
-                    if (networkItem.added) {
-                        addedNetworkItemBeanList.add(networkItem);
-                    } else {
-                        networkItemBeanList.add(networkItem);
-                    }
+        Logger.t(TAG).json(p1);
+        List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
+        List<NetworkItemBean> addedNetworkItemBeanList = new ArrayList<>();
+        try {
+            JSONObject object = new JSONObject(p1);
+            JSONArray networks = object.getJSONArray("networks");
+            for (int i = 0; i < networks.length(); i++) {
+                JSONObject networkObject = networks.getJSONObject(i);
+                NetworkItemBean networkItem = new NetworkItemBean();
+                networkItem.ssid = networkObject.optString("ssid");
+                networkItem.bssid = networkObject.optString("bssid");
+                networkItem.flags = networkObject.optString("flags");
+                networkItem.frequency = networkObject.optInt("frequency");
+                networkItem.singalLevel = networkObject.optInt("signal_level");
+                networkItem.added = networkObject.optBoolean("added");
+                if (networkItem.added) {
+                    addedNetworkItemBeanList.add(networkItem);
+                } else {
+                    networkItemBeanList.add(networkItem);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-
-            if (mOnScanHostListener != null) {
-                mOnScanHostListener.OnScanHostResult(addedNetworkItemBeanList, networkItemBeanList);
-            }
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-
-
+        if (mOnScanHostListener != null) {
+            mOnScanHostListener.OnScanHostResult(addedNetworkItemBeanList, networkItemBeanList);
+        }
 
     }
 

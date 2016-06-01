@@ -151,7 +151,7 @@ public class VdtCameraManager {
         }
 
         Logger.t(TAG).d("camera connected, but was not connecting, stop it");
-        vdtCamera.stopClient();
+
 
     }
 
@@ -162,7 +162,7 @@ public class VdtCameraManager {
         // disconnect msg may be sent from msg thread,
         // need to stop it fully
         //vdtCamera.removeCallback(mCameraCallback);
-        vdtCamera.stopClient();
+
 
         for (int i = 0; i < mConnectedVdtCameras.size(); i++) {
             if (mConnectedVdtCameras.get(i) == vdtCamera) {

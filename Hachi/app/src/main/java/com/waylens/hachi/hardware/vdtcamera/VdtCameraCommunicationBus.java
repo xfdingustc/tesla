@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Xiaofei on 2016/6/1.
  */
-public class VdtCameraCommunicationBus {
+public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
     private static final String TAG = VdtCameraCommunicationBus.class.getSimpleName();
     private final InetSocketAddress mAddress;
     private final ConnectionChangeListener mConnectionListener;
@@ -51,7 +51,35 @@ public class VdtCameraCommunicationBus {
 
     }
 
-    public void sendCommand(VdtCameraCommand command) {
+    public void sendCommand(int cmd) {
+        sendCommand(cmd, "", "");
+    }
+
+    public void sendCommand(int cmd, int p1) {
+        sendCommand(cmd, Integer.toString(p1), "");
+    }
+
+    public void sendCommand(int cmd, int p1, int p2) {
+        sendCommand(cmd, Integer.toString(p1), Integer.toString(p2));
+    }
+
+    public void sendCommand(int cmd, String p1) {
+        sendCommand(cmd, p1, "");
+    }
+
+    public void sendCommand(int cmd, String p1, String p2) {
+        VdtCameraCommand command;
+        if (cmd >= CMD_DOMAIN_REC_START) {
+            command = new VdtCameraCommand(CMD_DOMAIN_REC, cmd - CMD_DOMAIN_REC_START, p1, p2);
+        } else {
+            command = new VdtCameraCommand(CMD_DOMAIN_CAM, cmd - CMD_DOMAIN_CAM_START, p1, p2);
+        }
+
+        sendCommand(command);
+
+    }
+
+    private void sendCommand(VdtCameraCommand command) {
         mCameraCommandQueue.offer(command);
     }
 
@@ -92,7 +120,7 @@ public class VdtCameraCommunicationBus {
 
 
 
-    public class MessageThread extends Thread implements VdtCameraCmdConsts{
+    public class MessageThread extends Thread {
 
         private static final String XML_CCEV = "ccev";
         private static final String XML_CMD = "cmd";
@@ -203,6 +231,21 @@ public class VdtCameraCommunicationBus {
 
 
 
+    }
+
+
+    public static class VdtCameraCommand {
+        final int mDomain;
+        final int mCmd;
+        final String mP1;
+        final String mP2;
+
+        VdtCameraCommand(int domain, int cmd, String p1, String p2) {
+            mDomain = domain;
+            mCmd = cmd;
+            mP1 = p1;
+            mP2 = p2;
+        }
     }
 
     public interface ConnectionChangeListener {
