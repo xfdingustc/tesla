@@ -44,6 +44,10 @@ import butterknife.ButterKnife;
 public class ClientConnectFragment extends BaseFragment {
     private static final String TAG = ClientConnectFragment.class.getSimpleName();
 
+    public static final int CONNECTION_STAGE_CAMERA_2_ROUTE = 0;
+    public static final int CONNECTION_STAGE_PHONE_2_ROUTE = 1;
+    public static final int CONNECTION_STAGE_PHONE_2_CAMERA = 2;
+
     @BindView(R.id.rvWifiList)
     RecyclerView mRvWifiList;
 
@@ -58,6 +62,12 @@ public class ClientConnectFragment extends BaseFragment {
 
     @BindView(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
+
+    @BindView(R.id.connection_left)
+    ImageView mIvConnectionLeft;
+
+    @BindView(R.id.connection_right)
+    ImageView mIvConnectionRight;
 
 
     private NetworkItemAdapter mNetworkItemAdapter;
@@ -95,12 +105,7 @@ public class ClientConnectFragment extends BaseFragment {
                 mVdtCamera.connectNetworkHost(mSelectedNetworkItem.ssid);
                 break;
             case NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED:
-                mVsConnect.showNext();
-                mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
-                AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
-                animationDrawable.start();
-
-
+                switchConnectionStage(CONNECTION_STAGE_PHONE_2_ROUTE);
                 WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
                     (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
                         @Override
@@ -203,9 +208,7 @@ public class ClientConnectFragment extends BaseFragment {
 
         if (itemBean.added) {
             connect2AddedWifi(itemBean.ssid);
-            if (mTimer != null) {
-                mTimer.cancel();
-            }
+            showCameraConnect2Wifi();
         } else {
 
             mPasswordDialog = new MaterialDialog.Builder(getActivity())
@@ -216,16 +219,45 @@ public class ClientConnectFragment extends BaseFragment {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         super.onPositive(dialog);
-
                         setNetwork2Camera(itemBean.ssid, mEtPassword.getText().toString());
+                        showCameraConnect2Wifi();
                     }
                 })
                 .build();
             mPasswordDialog.show();
             mEtPassword = (EditText) mPasswordDialog.getCustomView().findViewById(R.id.password);
-            if (mTimer != null) {
-                mTimer.cancel();
-            }
+
+        }
+    }
+
+
+    private void showCameraConnect2Wifi() {
+        mVsConnect.showNext();
+        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+        animationDrawable.start();
+
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+        switchConnectionStage(CONNECTION_STAGE_CAMERA_2_ROUTE);
+
+    }
+
+    private void switchConnectionStage(int stage) {
+        switch (stage) {
+            case CONNECTION_STAGE_CAMERA_2_ROUTE:
+                mIvConnectionLeft.setImageResource(R.drawable.camera_connecting_camera);
+                mIvConnectionRight.setImageResource(R.drawable.camera_connecting_router);
+                break;
+            case CONNECTION_STAGE_PHONE_2_ROUTE:
+                mIvConnectionLeft.setImageResource(R.drawable.camera_connecting_phone);
+                mIvConnectionRight.setImageResource(R.drawable.camera_connecting_router);
+                break;
+            case CONNECTION_STAGE_PHONE_2_CAMERA:
+                mIvConnectionLeft.setImageResource(R.drawable.camera_connecting_phone);
+                mIvConnectionRight.setImageResource(R.drawable.camera_connecting_camera);
+                break;
         }
     }
 
