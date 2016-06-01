@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.clips;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -45,6 +45,8 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private VdbImageLoader mVdbImageLoader;
     private boolean mMultiSelectedMode = false;
 
+    private ArrayList<Clip> mSelectedClipList = new ArrayList<>();
+
 
     public interface OnClipClickListener {
         void onClipClicked(Clip clip);
@@ -74,6 +76,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void setClipSetGroup(List<ClipSet> clipSetGroup) {
         mClipSetGroup = clipSetGroup;
+        mSelectedClipList.clear();
         recalculateGridItemList();
         notifyDataSetChanged();
     }
@@ -209,12 +212,6 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public ArrayList<Clip> getSelectedClipList() {
-        ArrayList<Clip> mSelectedClipList = new ArrayList<>();
-        for (ClipGridItem gridItem : mClipGridItemList) {
-            if (gridItem.itemType == ITEM_TYPE_CLIPVIEW && gridItem.isItemSelected == true) {
-                mSelectedClipList.add((Clip) gridItem.itemObject);
-            }
-        }
         return mSelectedClipList;
     }
 
@@ -296,6 +293,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         clipGridItem.isItemSelected = !clipGridItem.isItemSelected;
                         toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem.isItemSelected);
                         mClipClickListener.onClipClicked(null);
+                        if (clipGridItem.isItemSelected) {
+                            mSelectedClipList.add((Clip) clipGridItem.itemObject);
+                        } else {
+                            mSelectedClipList.remove((Clip) clipGridItem.itemObject);
+                        }
                     }
 
                 }
@@ -318,6 +320,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     holder.mBtnSelect.setImageResource(R.drawable.edit_select);
                     mSelectedMask.setVisibility(View.VISIBLE);
                     mClipClickListener.onClipLongClicked((Clip) clipGridItem.itemObject);
+                    mSelectedClipList.add((Clip) clipGridItem.itemObject);
 
                     return true;
                 }

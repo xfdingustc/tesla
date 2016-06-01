@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.clips;
 
 import android.Manifest;
 import android.app.Activity;
@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.MusicFragment;
 
 /**
@@ -36,7 +37,7 @@ public class MusicDownloadActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(getToolbar());
         setTitle(R.string.musics);
         setHomeAsUpIndicator(R.drawable.navbar_close);
 

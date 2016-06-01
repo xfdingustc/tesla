@@ -176,7 +176,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.MusicDownloadActivity"
+            android:name=".ui.clips.MusicDownloadActivity"
             android:screenOrientation="portrait"/>
 
         <activity

@@ -21,7 +21,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
-import com.waylens.hachi.ui.activities.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
