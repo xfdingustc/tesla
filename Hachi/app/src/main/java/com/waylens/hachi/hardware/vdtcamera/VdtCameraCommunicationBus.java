@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,12 +103,18 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
 
                 mSocket.setReceiveBufferSize(8192);
                 mSocket.connect(mAddress);
+                mSocket.setKeepAlive(true);
+                mSocket.setSoTimeout(2000);
 
                 mConnectionListener.onConnected();
                 mMessageThread.start();
 
                 while (true) {
-                    VdtCameraCommand command = mCameraCommandQueue.take();
+                    VdtCameraCommand command = mCameraCommandQueue.poll(1, TimeUnit.SECONDS);
+                    if (command == null) {
+                        command = new VdtCameraCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME, "", "");
+                    }
+
                     SocketUtils.writeCommand(mSocket, command);
                 }
             } catch (Exception e) {
