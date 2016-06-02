@@ -29,7 +29,7 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.ui.authorization.LoginActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -431,7 +431,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
             EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
         } else {
-            LoginActivity.launch(getActivity());
+            AuthorizeActivity.launch(getActivity());
         }
     }
 

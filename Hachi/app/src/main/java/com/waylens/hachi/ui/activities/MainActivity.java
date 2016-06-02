@@ -24,13 +24,12 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.authorization.LoginActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.ui.clips.VideoFragment;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
-import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
@@ -284,7 +283,7 @@ public class MainActivity extends BaseActivity {
         if (mSessionManager.isLoggedIn()) {
             UserProfileActivity.launch(this, mSessionManager.getUserId());
         } else {
-            LoginActivity.launch(this);
+            AuthorizeActivity.launch(this);
         }
     }
 

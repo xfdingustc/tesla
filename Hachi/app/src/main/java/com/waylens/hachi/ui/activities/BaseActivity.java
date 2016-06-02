@@ -2,12 +2,14 @@ package com.waylens.hachi.ui.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
@@ -39,6 +41,8 @@ public class BaseActivity extends AppCompatActivity {
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
     protected VdbImageLoader mVdbImageLoader;
+
+    protected MaterialDialog mProgressDialog;
 
 //    protected ImageLoader mImageLoader = ImageLoader.getInstance();
     /**
@@ -170,6 +174,24 @@ public class BaseActivity extends AppCompatActivity {
         return bundle.getBoolean(IS_PC_SERVER, false);
     }
 
+
+    public void showDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            return;
+        }
+        mProgressDialog = new MaterialDialog.Builder(this)
+            .progress(true, 0)
+            .progressIndeterminateStyle(false)
+            .build();
+
+        mProgressDialog.show();
+    }
+
+    public void hideDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
 
     protected String getServerAddress(Bundle bundle) {
         return bundle.getString(HOST_STRING);

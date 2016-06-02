@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -53,8 +54,7 @@ public class SignUpFragment extends BaseFragment {
     private static final String TAG_REQUEST_SIGN_UP = "SignInFragment.request.sign.up";
     private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
-    @BindView(R.id.login_button)
-    LoginButton mFBLoginButton;
+
 
     @BindView(R.id.button_animator)
     ViewAnimator mButtonAnimator;
@@ -68,59 +68,13 @@ public class SignUpFragment extends BaseFragment {
     @BindView(R.id.sign_up_password)
     CompoundEditView mEvPassword;
 
-    CallbackManager mCallbackManager;
+
 
     RequestQueue mVolleyRequestQueue;
 
     String mEmail;
     String mPassword;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mCallbackManager = CallbackManager.Factory.create();
-        mVolleyRequestQueue = Volley.newRequestQueue(getActivity());
-        mVolleyRequestQueue.start();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_signup, savedInstanceState);
-        initViews();
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        if (TextUtils.isEmpty(SessionManager.getInstance().getToken())
-            && AccessToken.getCurrentAccessToken() != null
-            && !AccessToken.getCurrentAccessToken().isExpired()) {
-            Logger.t(TAG).d("refresh facebook token");
-            signUpWithFacebook(AccessToken.getCurrentAccessToken());
-        }
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-    void initViews() {
-        mRootView.requestFocus();
-        mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends", "user_location",
-            "user_birthday");
-
-        mFBLoginButton.registerCallback(mCallbackManager, new FBCallback());
-        String email = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, null);
-        if (email != null) {
-            mTvSignUpEmail.setText(email);
-        }
-    }
 
 
     @OnClick(R.id.btn_sign_in)
@@ -148,6 +102,38 @@ public class SignUpFragment extends BaseFragment {
         mButtonAnimator.setDisplayedChild(1);
         performSignUp();
     }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mVolleyRequestQueue = Volley.newRequestQueue(getActivity());
+        mVolleyRequestQueue.start();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = createFragmentView(inflater, container, R.layout.fragment_signup, savedInstanceState);
+        initViews();
+        return view;
+    }
+
+
+
+
+
+    void initViews() {
+        mRootView.requestFocus();
+
+        String email = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, null);
+        if (email != null) {
+            mTvSignUpEmail.setText(email);
+        }
+    }
+
+
 
     void performSignUp() {
         JSONObject params = new JSONObject();
@@ -252,54 +238,8 @@ public class SignUpFragment extends BaseFragment {
         getActivity().finish();
     }
 
-    private void signUpWithFacebook(final AccessToken accessToken) {
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).d("Response: " + response);
-                    SessionManager.getInstance().saveLoginInfo(response, true);
-                    hideDialog();
-
-                    getActivity().setResult(Activity.RESULT_OK);
-                    getActivity().finish();
-
-                }
-            }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                Logger.t(TAG).d("error: " + error.toString());
-
-                showMessage(errorInfo.msgResID);
-                hideDialog();
-            }
-        }));
 
 
-        showDialog();
-    }
 
 
-    class FBCallback implements FacebookCallback<LoginResult> {
-        @Override
-        public void onSuccess(final LoginResult loginResult) {
-            Logger.t(TAG).d("signup with facebooke");
-
-            signUpWithFacebook(loginResult.getAccessToken());
-
-
-        }
-
-        @Override
-        public void onCancel() {
-            showMessage(R.string.login_cancelled);
-        }
-
-        @Override
-        public void onError(FacebookException e) {
-            Logger.t(TAG).d("facebook login", e);
-            showMessage(R.string.login_error_facebook);
-        }
-    }
 }

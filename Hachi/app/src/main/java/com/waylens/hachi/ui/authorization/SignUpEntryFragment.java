@@ -25,7 +25,7 @@ public class SignUpEntryFragment extends BaseFragment {
 
     @OnClick(R.id.btn_sign_up)
     void clickSignUp() {
-        LoginActivity.launchForResult(getActivity(), MainActivity.REQUEST_CODE_SIGN_UP_FROM_MOMENTS);
+        AuthorizeActivity.launchForResult(getActivity(), MainActivity.REQUEST_CODE_SIGN_UP_FROM_MOMENTS);
     }
 }
 

@@ -31,7 +31,7 @@ import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
 import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
 import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.authorization.LoginActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
@@ -292,7 +292,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
             case LAUNCH_MODE_SHARE:
                 mClipTrimmer.setVisibility(View.GONE);
                 if (!SessionManager.getInstance().isLoggedIn()) {
-                    LoginActivity.launchForResult(this, REQUEST_CODE_SIGN_UP_FROM_ENHANCE);
+                    AuthorizeActivity.launchForResult(this, REQUEST_CODE_SIGN_UP_FROM_ENHANCE);
                     return;
                 } else {
                     adjustPlayerPosition(false);
