@@ -38,15 +38,12 @@
             app:farfl_yratio="1dp"
             tools:background="@android:color/holo_blue_bright">
 
-            <!--<com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView-->
-                <!--android:id="@+id/cameraLiveView"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"/>-->
-
-            <com.waylens.hachi.ui.liveview.camerapreviewrx.CameraLiveViewRx
+            <com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView
                 android:id="@+id/live_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></com.waylens.hachi.ui.liveview.camerapreviewrx.CameraLiveViewRx>
+                android:layout_height="match_parent"/>
+
+
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 

@@ -43,7 +43,8 @@ import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 
-import com.waylens.hachi.ui.liveview.camerapreviewrx.CameraLiveViewRx;
+
+import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.SpaceInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
@@ -86,8 +87,8 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    @BindView(R.id.camera_preview_rx)
-    CameraLiveViewRx mLiveViewRx;
+    @BindView(R.id.camera_preview)
+    CameraLiveView mLiveViewRx;
 
     @Nullable
     @BindView(R.id.spinner)
@@ -522,7 +523,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void initCameraPreview() {
-//        mLiveView.setBackgroundColor(Color.BLACK);
+        mLiveViewRx.setBackgroundColor(Color.BLACK);
         if (mVdtCamera != null) {
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {

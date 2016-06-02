@@ -30,7 +30,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.liveview.camerapreviewrx.CameraLiveViewRx;
+import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,7 +67,7 @@ public class ApConnectFragment extends BaseFragment {
     ViewSwitcher mVsRootView;
 
     @BindView(R.id.live_view)
-    CameraLiveViewRx mLiveView;
+    CameraLiveView mLiveView;
 
     @BindView(R.id.skip)
     TextView mSkip;
