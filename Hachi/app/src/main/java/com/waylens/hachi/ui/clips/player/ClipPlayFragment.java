@@ -193,7 +193,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onEventClipSetChanged(ClipSetPosChangeEvent event) {
         final ClipSetPos clipSetPos = event.getClipSetPos();
         boolean refreshThumbnail = false;
-        Logger.t(TAG).d("broadcast: " + event.getBroadcaster());
+//        Logger.t(TAG).d("broadcast: " + event.getBroadcaster());
         if (!event.getBroadcaster().equals("clipplay")) {
             refreshThumbnail = true;
             if (event.getIntent() == ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL) {

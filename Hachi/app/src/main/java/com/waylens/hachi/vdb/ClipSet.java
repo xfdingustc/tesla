@@ -255,6 +255,9 @@ public class ClipSet {
     }
 
     public long getTimeOffsetByClipSetPos(ClipSetPos clipSetPos) {
+        if (clipSetPos == null) {
+            return 0;
+        }
         long total = 0;
         for (int i = 0; i < mClipList.size(); i++) {
             Clip clip = mClipList.get(i);
