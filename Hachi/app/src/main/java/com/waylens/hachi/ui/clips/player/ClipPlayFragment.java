@@ -196,6 +196,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         if (!event.getBroadcaster().equals("clipplay")) {
             refreshThumbnail = true;
         }
+        if (event.getIntent() == ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL) {
+            changeState(STATE_FAST_PREVIEW);
+        }
         setClipSetPos(clipSetPos, refreshThumbnail);
 
     }
@@ -337,8 +340,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         mWvGauge.showGauge(false);
 
-
-
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
 
 
@@ -450,7 +451,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 }
             }
 
-            //          Logger.t(TAG).d("show cilpPos");
+            Logger.t(TAG).d("show cilpPos " + mClipCover.getVisibility());
             mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
             mPreviousShownClipPos = clipPos;
             mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
@@ -582,6 +583,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     private void changeState(int targetState) {
+        if (mCurrentState == targetState) {
+            return;
+        }
+
+        Logger.t(TAG).d("Change state to: " + targetState);
         switch (targetState) {
             case STATE_IDLE:
                 mVsCover.setVisibility(View.VISIBLE);

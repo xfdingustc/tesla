@@ -26,6 +26,7 @@ import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
+import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.player.PlaylistEditor;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
@@ -250,9 +251,8 @@ public class FootageActivity extends BaseActivity {
         mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
         UrlProvider urlProvider1 = new PlaylistUrlProvider(mVdbRequestQueue, 0x101);
 
-
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
-            ClipPlayFragment.ClipMode.SINGLE, ClipPlayFragment.CoverMode.BANNER);
+            ClipPlayFragment.ClipMode.SINGLE, ClipPlayFragment.CoverMode.NORMAL);
 
         getFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
         Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
@@ -266,8 +266,6 @@ public class FootageActivity extends BaseActivity {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
-
-//                mEventBus.post(new ClipSetChangeEvent(mClipSetIndex));
             }
         });
     }

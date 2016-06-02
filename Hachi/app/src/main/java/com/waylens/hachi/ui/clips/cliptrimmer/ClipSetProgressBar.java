@@ -164,7 +164,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
                 ClipSetPos clipSetPos = getCurrentClipSetPos();
                 if (clipSetPos != null) {
-                    ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, TAG);
+                    ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, TAG, ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL);
                     mEventBus.post(event);
                 }
 
