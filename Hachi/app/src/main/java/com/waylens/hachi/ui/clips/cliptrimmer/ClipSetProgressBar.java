@@ -164,7 +164,12 @@ public class ClipSetProgressBar extends FrameLayout {
 
                 ClipSetPos clipSetPos = getCurrentClipSetPos();
                 if (clipSetPos != null) {
-                    ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, TAG, ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL);
+                    ClipSetPosChangeEvent event;
+                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        event = new ClipSetPosChangeEvent(clipSetPos, TAG, ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL);
+                    } else {
+                        event = new ClipSetPosChangeEvent(clipSetPos, TAG);
+                    }
                     mEventBus.post(event);
                 }
 

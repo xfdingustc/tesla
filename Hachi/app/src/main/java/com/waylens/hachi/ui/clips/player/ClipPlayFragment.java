@@ -193,12 +193,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onEventClipSetChanged(ClipSetPosChangeEvent event) {
         final ClipSetPos clipSetPos = event.getClipSetPos();
         boolean refreshThumbnail = false;
+        Logger.t(TAG).d("broadcast: " + event.getBroadcaster());
         if (!event.getBroadcaster().equals("clipplay")) {
             refreshThumbnail = true;
+            if (event.getIntent() == ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL) {
+                changeState(STATE_FAST_PREVIEW);
+            }
         }
-        if (event.getIntent() == ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL) {
-            changeState(STATE_FAST_PREVIEW);
-        }
+
         setClipSetPos(clipSetPos, refreshThumbnail);
 
     }
@@ -451,7 +453,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 }
             }
 
-            Logger.t(TAG).d("show cilpPos " + mClipCover.getVisibility());
+//            Logger.t(TAG).d("show cilpPos " + mClipCover.getVisibility());
             mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
             mPreviousShownClipPos = clipPos;
             mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
