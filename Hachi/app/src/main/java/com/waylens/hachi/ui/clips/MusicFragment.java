@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.fragments;
+package com.waylens.hachi.ui.clips;
 
 import android.Manifest;
 import android.app.Activity;
@@ -26,9 +26,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.ui.clips.MusicDownloadActivity;
 import com.waylens.hachi.ui.adapters.MusicListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
+import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.DownloadHelper;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -157,7 +157,7 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
     DownloadHelper.OnDownloadListener mListener = new DownloadHelper.OnDownloadListener() {
         @Override
         public void onSuccess(DownloadHelper.Downloadable downloadable, String filePath) {
-            Log.e("test", "Download: " + downloadable);
+            Logger.t(TAG).d("Download: " + downloadable);
             MusicItem musicItem = (MusicItem) downloadable;
             musicItem.localPath = filePath;
             musicItem.status = MusicItem.STATUS_LOCAL;

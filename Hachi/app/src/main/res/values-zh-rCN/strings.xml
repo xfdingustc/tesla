@@ -50,7 +50,7 @@
 	<string name="continuous_recording">连续录制中</string>
 	<string name="create_new_account">创建新用户</string>
 	<string name="create_smart_remix">创建智能选取</string>
-	<string name="current_version">目前版本号是：%s</string>
+	<string name="current_version">目前版本号是：</string>
 	<string name="delete">删除</string>
 	<string name="delete_bookmark_confirm">确定删除这些标签</string>
 	<string name="discard">放弃</string>
@@ -70,7 +70,7 @@
 	<string name="error_no_write_external_storage_permission">请打开写入外部存储器权限</string>
 	<string name="failed">失败</string>
 	<string name="female">女</string>
-	<string name="fir_version">最新版本是%s</string>
+	<string name="fir_version">最新版本是</string>
 	<string name="followers">他的关注</string>
 	<string name="following">关注</string>
 	<string name="forget_password">忘记密码</string>
@@ -91,7 +91,7 @@
 	<string name="leave">离开</string>
 	<string name="length_of_remix">Length of Remix</string>
 	<string name="like">赞</string>
-	<string name="like_your_post">%s 喜欢</string>
+	<string name="like_your_post">喜欢</string>
 	<string name="live_view">相机预览</string>
 	<string name="loading">载入中</string>
 	<string name="login">登录</string>
@@ -142,7 +142,6 @@
 	<string name="recording_setting">录制设置</string>
 	<string name="region">区域</string>
 	<string name="remove">删除</string>
-	<string name="reply_to">\@%s</string>
 	<string name="resend">重新发送</string>
 	<string name="resolution_framerate">分辨率/帧率</string>
 	<string name="resolution_not_correct">不同分辨率的视频无法添加</string>

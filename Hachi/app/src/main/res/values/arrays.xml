@@ -6,4 +6,174 @@
         <item>@string/client</item>
         <item>@string/off</item>
     </string-array>
+
+    <string-array name="resolution_list" translatable="false">
+        <item>720P</item>
+        <item>1080P</item>
+    </string-array>
+
+    <string-array name="framerate_1080_list" translatable="false">
+        <item>30fps</item>
+        <item>60fps</item>
+    </string-array>
+
+    <string-array name="framerate_list" translatable="false">
+        <item>30fps</item>
+        <item>60fps</item>
+        <item>120fps</item>
+    </string-array>
+
+    <string-array name="videoOptions" translatable="false">
+        <item>Tag</item>
+        <item>Buffer</item>
+    </string-array>
+
+    <string-array name="quality" translatable="false">
+        <item>Unknown</item>
+        <item>Super</item>
+        <item>High</item>
+        <item>Normal</item>
+        <item>Low</item>
+    </string-array>
+    <string-array name="colormode" translatable="false">
+        <item>Unknown</item>
+        <item>Normal</item>
+        <item>Sport</item>
+        <item>Car</item>
+        <item>Scenery</item>
+    </string-array>
+
+    <string-array name="rangesRPM" translatable="false">
+        <item>20</item>
+        <item>40</item>
+        <item>60</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="rangeColors" translatable="false">
+        <item>#1BCA21</item>
+        <item>#E8E721</item>
+        <item>#E86F21</item>
+        <item>#E7202B</item>
+    </string-array>
+
+    <string-array name="rangesSpeed" translatable="false">
+        <item>90</item>
+        <item>120</item>
+        <item>150</item>
+        <item>300</item>
+    </string-array>
+
+    <string-array name="rangeColorsTemp" translatable="false">
+        <item>#1BCA21</item>
+        <item>#E7202B</item>
+    </string-array>
+
+    <string-array name="rangesTemp" translatable="false">
+        <item>90</item>
+        <item>170</item>
+    </string-array>
+
+    <string-array name="avatarSource" translatable="false">
+        <item>Take Photo</item>
+        <item>Choose from Gallery</item>
+    </string-array>
+
+    <integer-array name="videoMarkTime" translatable="false">
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </integer-array>
+
+    <string-array name="videoMarkTimeDesc" translatable="false">
+        <item>2s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>15s</item>
+        <item>20s</item>
+        <item>30s</item>
+    </string-array>
+
+    <!-- NOTE: Code update might be required after changing this array. -->
+    <string-array name="supported_gauges" translatable="false">
+        <item>SpeedThrottle</item>
+        <item>Rpm</item>
+        <item>Ambient</item>
+        <item>Psi</item>
+        <item>TimeDate</item>
+        <item>Gforce</item>
+        <item>RollPitch</item>
+        <item>Gps</item>
+    </string-array>
+
+    <string-array name="theme_remix" translatable="false">
+        <item>default</item>
+        <item>neo</item>
+        <item>Theme Three</item>
+        <item>Theme Four</item>
+    </string-array>
+
+    <string-array name="theme_length" translatable="false">
+        <item>5 sec</item>
+        <item>10 sec</item>
+        <item>20 sec</item>
+        <item>30 sec</item>
+        <item>45 sec</item>
+        <item>60 sec</item>
+        <item>90 sec</item>
+
+    </string-array>
+
+    <string-array name="theme_clip_src" translatable="false">
+        <item>Timeline Only</item>
+        <item>Last Hour</item>
+        <item>Today</item>
+        <item>Last 3 Days</item>
+    </string-array>
+
+    <string-array name="social_privacy_text" translatable="false">
+        <item>Everyone</item>
+        <item>Followers</item>
+        <item>Only Me</item>
+    </string-array>
+
+    <string-array name="social_privacy_value" translatable="false">
+        <item>PUBLIC</item>
+        <item>FOLLOWERS</item>
+        <item>PRIVATE</item>
+    </string-array>
+
+    <string-array name="setup_items" translatable="false">
+        <item>SmartConfig</item>
+        <item>Menual</item>
+    </string-array>
+
+
+    <integer-array name="social_privacy_icon" translatable="false">
+        <item>@drawable/social_privacy_everyone</item>
+        <item>@drawable/social_privacy_followers</item>
+        <item>@drawable/social_privacy_me</item>
+    </integer-array>
+
+    <string-array name="gender_list" translatable="false">
+        <item>@string/male</item>
+        <item>@string/female</item>
+        <item>@string/rather_not_to_say</item>
+    </string-array>
+
+    <string-array name="report_reason" translatable="false">
+        <item>Porn</item>
+        <item>Scam</item>
+        <item>Spam</item>
+        <item>Infringement</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="download_resolution" translatable="false">
+        <item>@string/sd</item>
+        <item>@string/fullhd</item>
+    </string-array>
 </resources>

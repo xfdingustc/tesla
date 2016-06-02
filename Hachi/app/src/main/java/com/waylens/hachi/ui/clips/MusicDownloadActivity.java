@@ -7,12 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.fragments.MusicFragment;
 
 /**
  * Created by Richard on 3/7/16.

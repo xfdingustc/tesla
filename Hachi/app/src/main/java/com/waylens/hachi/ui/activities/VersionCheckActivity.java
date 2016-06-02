@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -100,7 +101,7 @@ public class VersionCheckActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_vesion);
-        mCurrentVersionView.setText(getString(R.string.current_version, BuildConfig.VERSION_NAME));
+        mCurrentVersionView.setText(getString(R.string.current_version) + BuildConfig.VERSION_NAME);
         mViewAnimator.setDisplayedChild(2);
     }
 
@@ -125,7 +126,7 @@ public class VersionCheckActivity extends BaseActivity {
             @Override
             public void onSuccess(String response) {
                 super.onSuccess(response);
-                Log.e("test", "Msg: " + response);
+                Logger.t(TAG).d("Msg: " + response);
                 if (response == null) {
                     return;
                 }
@@ -139,11 +140,11 @@ public class VersionCheckActivity extends BaseActivity {
                         mFirVersionView.setText(R.string.version_up_to_date);
                         mViewAnimator.setDisplayedChild(1);
                     } else {
-                        mFirVersionView.setText(getString(R.string.fir_version, mVersionName));
+                        mFirVersionView.setText(getString(R.string.fir_version) + mVersionName);
                         mViewAnimator.setDisplayedChild(3);
                     }
                 } catch (Exception e) {
-                    Log.e("test", "", e);
+                    Logger.t(TAG).d("" + e);
                     mFirVersionView.setText(R.string.error_check_fir);
                     mViewAnimator.setDisplayedChild(2);
                 }
@@ -152,7 +153,7 @@ public class VersionCheckActivity extends BaseActivity {
             @Override
             public void onFail(Exception e) {
                 super.onFail(e);
-                Log.e("FIR", "", e);
+                Logger.t(TAG).d("" + e);
                 mFirVersionView.setText(R.string.error_check_fir);
                 mViewAnimator.setDisplayedChild(2);
             }
@@ -160,7 +161,7 @@ public class VersionCheckActivity extends BaseActivity {
             @Override
             public void onStart() {
                 super.onStart();
-                Log.e("FIR", "onStart");
+                Logger.t(TAG).d("onStart");
             }
 
             @Override

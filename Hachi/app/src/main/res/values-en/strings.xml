@@ -50,7 +50,7 @@
 	<string name="continuous_recording">Continuous Recording</string>
 	<string name="create_new_account">Create New Account</string>
 	<string name="create_smart_remix">Create Remix</string>
-	<string name="current_version">Current Version: %s</string>
+	<string name="current_version">Current Version: </string>
 	<string name="delete">Delete</string>
 	<string name="delete_bookmark_confirm">Are you sure you want to delete these bookmarks?</string>
 	<string name="discard">Discard </string>
@@ -70,7 +70,7 @@
 	<string name="error_no_write_external_storage_permission">Grant write external storage persmision and try again</string>
 	<string name="failed">Failed</string>
 	<string name="female">Female</string>
-	<string name="fir_version">The latest version is %s</string>
+	<string name="fir_version">The latest version is</string>
 	<string name="followers">Followers</string>
 	<string name="following">Following</string>
 	<string name="forget_password">Forgot Password</string>
@@ -91,7 +91,7 @@
 	<string name="leave">Leave</string>
 	<string name="length_of_remix">Length of Remix</string>
 	<string name="like">like</string>
-	<string name="like_your_post">%s like your post</string>
+	<string name="like_your_post">like your post</string>
 	<string name="live_view">Live View</string>
 	<string name="loading">Loading</string>
 	<string name="login">Login</string>
@@ -142,7 +142,6 @@
 	<string name="recording_setting">Recording Settings</string>
 	<string name="region">Region</string>
 	<string name="remove">Remove</string>
-	<string name="reply_to">\@%s</string>
 	<string name="resend">Resend</string>
 	<string name="resolution_framerate">Resolution/Frame Rate</string>
 	<string name="resolution_not_correct">Video with other resolution cannot be added</string>
