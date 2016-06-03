@@ -9,10 +9,11 @@ import com.waylens.hachi.utils.Utils;
  * Created by Xiaofei on 2016/1/6.
  */
 public class RawDataItem {
-    public static final int DATA_TYPE_UNKNOWN = 0;
+    public static final int DATA_TYPE_NONE = 0;
     public static final int DATA_TYPE_GPS = 1;
     public static final int DATA_TYPE_IIO = 2;
     public static final int DATA_TYPE_OBD = 3;
+
 
     private final int mType;
     private final long mPtsMs;

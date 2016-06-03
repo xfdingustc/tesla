@@ -2,7 +2,6 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
@@ -33,7 +32,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
                                VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         this.mCid = cid;
-        this.mDataType = params.getInt(PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_UNKNOWN);
+        this.mDataType = params.getInt(PARAM_DATA_TYPE, RawDataItem.DATA_TYPE_NONE);
         mClipTimeMs = params.getLong(PARAM_CLIP_TIME, 0);
         mDuration = params.getInt(PARAM_CLIP_LENGTH, 0);
     }

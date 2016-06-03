@@ -274,6 +274,13 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventUpdateCameraStatus(UpdateCameraStatusEvent event) {
+        updateCameraState();
+
+    }
+
     @Subscribe
     public void onEventRawDataItem(RawDataItemEvent event) {
         if (mVdtCamera != event.getCamera()) {
@@ -402,7 +409,9 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        mTimer = new Timer();
+        mRecordTimeTask = new UpdateRecordTimeTask();
+        mTimer.schedule(mRecordTimeTask, 1000, 1000);
         mEventBus.register(this);
     }
 
@@ -410,7 +419,11 @@ public class CameraPreviewFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         closeLiveRawData();
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
         mEventBus.unregister(this);
+
     }
 
     @Override
@@ -423,9 +436,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
-        if (mTimer != null) {
-            mTimer.cancel();
-        }
+
 
 
     }
@@ -508,9 +519,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void initViews() {
-        mTimer = new Timer();
-        mRecordTimeTask = new UpdateRecordTimeTask();
-        mTimer.schedule(mRecordTimeTask, 1000, 1000);
+
 
         updateMicControlButton();
         // Start record red dot indicator animation
@@ -873,12 +882,7 @@ public class CameraPreviewFragment extends BaseFragment {
         public void run() {
             if (mVdtCamera != null) {
                 mVdtCamera.getRecordTime();
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateCameraState();
-                    }
-                });
+                mEventBus.post(new UpdateCameraStatusEvent());
 
             }
         }
