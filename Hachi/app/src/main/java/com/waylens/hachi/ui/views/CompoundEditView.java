@@ -26,20 +26,24 @@ import com.waylens.hachi.utils.ViewUtils;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Created by Richard on 3/25/16.
  */
-public class CompoundEditView extends FrameLayout implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
+public class CompoundEditView extends FrameLayout implements TextWatcher, View.OnFocusChangeListener {
 
     private static final int TYPE_EMAIL = 0;
     private static final int TYPE_PASSWORD = 1;
     private static final int TYPE_CODE = 2;
 
-    TextInputLayout mTextInputLayout;
-    AppCompatAutoCompleteTextView mInputText;
-    View mControlsContainer;
-    View mShowPasswordControl;
-    View mClearTextControl;
+
+
+
+
+
 
     int mInputType;
     String mInputHint;
@@ -50,6 +54,34 @@ public class CompoundEditView extends FrameLayout implements View.OnClickListene
     PasswordTransformationMethod mTransformationMethod;
 
     int mControlsBottomMargin;
+
+    @BindView(R.id.cev_text_input)
+    TextInputLayout mTextInputLayout;
+
+    @BindView(R.id.cev_edit_text)
+    AppCompatAutoCompleteTextView mInputText;
+
+    @BindView(R.id.cev_input_controls)
+    View mControlsContainer;
+
+    @BindView(R.id.cev_btn_show_password)
+    View mShowPasswordControl;
+
+    @BindView(R.id.cev_btn_clear_text)
+    View mClearTextControl;
+
+    @OnClick(R.id.cev_btn_clear_text)
+    public void onCevBtnClearTextClicked() {
+        mInputText.getText().clear();
+    }
+
+    @OnClick(R.id.cev_btn_show_password)
+    public void onCevBtnShowPasswordClicked(View view) {
+        view.setSelected(!view.isSelected());
+        mInputText.setTransformationMethod(view.isSelected() ? null : mTransformationMethod);
+    }
+
+
 
     public CompoundEditView(Context context) {
         this(context, null, 0);
@@ -91,11 +123,8 @@ public class CompoundEditView extends FrameLayout implements View.OnClickListene
 
     private void initViews(Context context) {
         View.inflate(context, R.layout.layout_compound_edit_text, this);
-        mTextInputLayout = (TextInputLayout) findViewById(R.id.cev_text_input);
-        mInputText = (AppCompatAutoCompleteTextView) findViewById(R.id.cev_edit_text);
-        mControlsContainer = findViewById(R.id.cev_input_controls);
-        mShowPasswordControl = findViewById(R.id.cev_btn_show_password);
-        mClearTextControl = findViewById(R.id.cev_btn_clear_text);
+        ButterKnife.bind(this);
+
         mControlsBottomMargin = ViewUtils.dp2px(12);
         if (mInputHint != null) {
             mTextInputLayout.setHint(mInputHint);
@@ -106,8 +135,8 @@ public class CompoundEditView extends FrameLayout implements View.OnClickListene
         }
         mInputText.addTextChangedListener(this);
         mInputText.setOnFocusChangeListener(this);
-        mClearTextControl.setOnClickListener(this);
-        mShowPasswordControl.setOnClickListener(this);
+
+
     }
 
     void initConfigure() {
@@ -157,27 +186,8 @@ public class CompoundEditView extends FrameLayout implements View.OnClickListene
         */
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.cev_btn_clear_text:
-                clearText();
-                break;
-            case R.id.cev_btn_show_password:
-                showPassword(v);
-                break;
 
-        }
-    }
 
-    private void showPassword(View view) {
-        view.setSelected(!view.isSelected());
-        mInputText.setTransformationMethod(view.isSelected() ? null : mTransformationMethod);
-    }
-
-    private void clearText() {
-        mInputText.getText().clear();
-    }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {

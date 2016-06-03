@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/cev_text_input"
         style="@style/TextAppearance.AppCompat.Body2"
@@ -11,17 +16,20 @@
             android:id="@+id/cev_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
+
     </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
         android:id="@+id/cev_input_controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
+        android:layout_gravity="end|center_vertical"
         android:layout_marginEnd="4dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:background="@color/material_red_50">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/cev_btn_show_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +38,7 @@
             android:contentDescription="@null"
             android:src="@drawable/password_input_control"/>
 
-        <ImageView
+        <ImageButton
             android:id="@+id/cev_btn_clear_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,4 +48,4 @@
             android:contentDescription="@null"
             android:src="@drawable/text_input_clean"/>
     </LinearLayout>
-</merge>
+</FrameLayout>
