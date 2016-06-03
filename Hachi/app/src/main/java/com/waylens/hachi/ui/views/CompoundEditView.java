@@ -132,11 +132,11 @@ public class CompoundEditView extends FrameLayout implements View.OnClickListene
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        int b = mInputText.getBottom();
-        int h = mControlsContainer.getHeight();
-        MarginLayoutParams layoutParams = (MarginLayoutParams) mControlsContainer.getLayoutParams();
-        layoutParams.topMargin = b - h - mControlsBottomMargin;
-        mControlsContainer.setLayoutParams(layoutParams);
+//        int b = mInputText.getBottom();
+//        int h = mControlsContainer.getHeight();
+//        MarginLayoutParams layoutParams = (MarginLayoutParams) mControlsContainer.getLayoutParams();
+//        layoutParams.topMargin = b - h - mControlsBottomMargin;
+//        mControlsContainer.setLayoutParams(layoutParams);
     }
 
     public Editable getText() {

@@ -90,11 +90,7 @@ public class BaseActivity extends AppCompatActivity {
         thisApp = (Hachi) getApplication();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        setupToolbar();
-    }
+
 
     @Override
     public void setContentView(int layoutResID) {

@@ -42,6 +42,12 @@ import butterknife.OnClick;
 public class AuthorizeActivity extends BaseActivity {
     private static final String TAG = AuthorizeActivity.class.getSimpleName();
 
+    public static final int STEP_SIGN_IN = 0;
+    public static final int STEP_SIGN_UP = 1;
+    public static final int STEP_FIND_PASSWORD = 2;
+
+    private int mCurrentStep = STEP_SIGN_IN;
+
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
     public static void launch(Activity startActivity) {
@@ -80,6 +86,7 @@ public class AuthorizeActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_authorize);
+        setupToolbar();
         mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends");
         mFBLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
 
@@ -109,7 +116,6 @@ public class AuthorizeActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        setTitle(R.string.login);
         getToolbar().setNavigationIcon(R.drawable.navbar_close);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,26 +123,45 @@ public class AuthorizeActivity extends BaseActivity {
                 finish();
             }
         });
-        getToolbar().inflateMenu(R.menu.menu_login);
-        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.sign_up:
-                        setTitle(R.string.sign_up);
-                        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignUpFragment()).commit();
-                        setupSignupToolbar();
-                        break;
-                }
-                return true;
-            }
-        });
-    }
-
-    private void setupSignupToolbar() {
         getToolbar().getMenu().clear();
+        switch (mCurrentStep) {
+            case STEP_SIGN_IN:
+                setTitle(R.string.login);
+                getToolbar().inflateMenu(R.menu.menu_login);
+                getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.sign_up:
+                                getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignUpFragment()).commit();
+                                switchStep(STEP_SIGN_UP);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                break;
+            case STEP_SIGN_UP:
+                setTitle(R.string.sign_up);
+                break;
+            case STEP_FIND_PASSWORD:
+                setTitle(R.string.forget_password);
+                break;
+        }
+
+
+
 
     }
+
+    public void switchStep(int stepSignUp) {
+        if (mCurrentStep == stepSignUp) {
+            return;
+        }
+        mCurrentStep = stepSignUp;
+        setupToolbar();
+    }
+
 
     void onSignInSuccessful(JSONObject response) {
         SessionManager.getInstance().saveLoginInfo(response);

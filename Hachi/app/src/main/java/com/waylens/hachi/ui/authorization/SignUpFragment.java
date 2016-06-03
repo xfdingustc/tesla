@@ -79,8 +79,10 @@ public class SignUpFragment extends BaseFragment {
 
     @OnClick(R.id.btn_sign_in)
     void onClickSignIn() {
-        getActivity().setTitle(R.string.login);
+        AuthorizeActivity authorizeActivity = (AuthorizeActivity)getActivity();
+        authorizeActivity.switchStep(AuthorizeActivity.STEP_SIGN_IN);
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
+
     }
 
     @OnClick(R.id.sign_up_next)
