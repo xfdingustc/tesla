@@ -238,7 +238,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
 
     private void initViews() {
         setContentView(R.layout.activity_enhance);
-
+        setupToolbar();
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
         mOriginalTopMargin = layoutParams.topMargin;
         mOriginalHeight = layoutParams.height;
@@ -249,7 +249,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         int launchMode = getIntent().getIntExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_QUICK_VIEW);
         switchToMode(launchMode);
     }
-
 
 
     private boolean checkIfResolutionUnity(List<Clip> clipList) {
@@ -271,7 +270,6 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
     private void switchToMode(int launchMode) {
-//        Logger.t(TAG).d("switch to mode: " + launchMode);
         if (mLaunchMode == launchMode) {
             return;
         }
