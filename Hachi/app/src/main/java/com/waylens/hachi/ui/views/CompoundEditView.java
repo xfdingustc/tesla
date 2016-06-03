@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.text.Editable;
@@ -33,17 +34,11 @@ import butterknife.OnClick;
 /**
  * Created by Richard on 3/25/16.
  */
-public class CompoundEditView extends FrameLayout implements TextWatcher, View.OnFocusChangeListener {
+public class CompoundEditView extends FrameLayout {
 
     private static final int TYPE_EMAIL = 0;
     private static final int TYPE_PASSWORD = 1;
     private static final int TYPE_CODE = 2;
-
-
-
-
-
-
 
     int mInputType;
     String mInputHint;
@@ -59,7 +54,7 @@ public class CompoundEditView extends FrameLayout implements TextWatcher, View.O
     TextInputLayout mTextInputLayout;
 
     @BindView(R.id.cev_edit_text)
-    AppCompatAutoCompleteTextView mInputText;
+    TextInputEditText mInputText;
 
     @BindView(R.id.cev_input_controls)
     View mControlsContainer;
@@ -125,6 +120,10 @@ public class CompoundEditView extends FrameLayout implements TextWatcher, View.O
         View.inflate(context, R.layout.layout_compound_edit_text, this);
         ButterKnife.bind(this);
 
+        if (isInEditMode()) {
+            return;
+        }
+
         mControlsBottomMargin = ViewUtils.dp2px(12);
         if (mInputHint != null) {
             mTextInputLayout.setHint(mInputHint);
@@ -133,13 +132,37 @@ public class CompoundEditView extends FrameLayout implements TextWatcher, View.O
         if (mInputType == TYPE_EMAIL) {
             initAccountsView();
         }
-        mInputText.addTextChangedListener(this);
-        mInputText.setOnFocusChangeListener(this);
+        mInputText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mTextInputLayout.setError(null);
+                mClearTextControl.setVisibility(TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        mInputText.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (mInputText == null || hasFocus) {
+                    return;
+                }
+                isValid();
+            }
+        });
 
 
     }
 
-    void initConfigure() {
+    private void initConfigure() {
         int visibility = mInputType == TYPE_EMAIL ? GONE : VISIBLE;
         mClearTextControl.setVisibility(GONE);
         mShowPasswordControl.setVisibility(visibility);
@@ -187,32 +210,6 @@ public class CompoundEditView extends FrameLayout implements TextWatcher, View.O
     }
 
 
-
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        //
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        mTextInputLayout.setError(null);
-        mClearTextControl.setVisibility(TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        //
-    }
-
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        if (mInputText == null || hasFocus) {
-            return;
-        }
-        isValid();
-    }
-
     public boolean isValid() {
         String text = mInputText.getText().toString();
         if (mValidPattern != null) {
@@ -225,7 +222,7 @@ public class CompoundEditView extends FrameLayout implements TextWatcher, View.O
         return true;
     }
 
-    void initAccountsView() {
+    private void initAccountsView() {
         if (isInEditMode()) {
             return;
         }
@@ -238,7 +235,7 @@ public class CompoundEditView extends FrameLayout implements TextWatcher, View.O
             }
         }
         mAccountAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, selectedAccounts);
-        mInputText.setAdapter(mAccountAdapter);
+//        mInputText.setAdapter(mAccountAdapter);
         if (mAccountAdapter.getCount() > 0) {
             mInputText.setText(mAccountAdapter.getItem(0));
         }

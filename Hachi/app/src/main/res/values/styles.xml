@@ -42,8 +42,8 @@
     </style>
 
     <style name="ActionButton" parent="Base.TextAppearance.AppCompat.Button">
-        <item name="android:background">@color/style_color_accent</item>
-        <item name="android:textColor">?attr/appTextColorPrimary</item>
+        <item name="android:background">@drawable/action_button_default_bg</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">14sp</item>
     </style>
 

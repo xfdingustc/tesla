@@ -16,7 +16,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
         android:text="@string/welcome_back"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/HachiTextViewTitle"
         />
     <com.waylens.hachi.ui.views.CompoundEditView
         android:id="@+id/sign_in_email"
@@ -44,11 +44,11 @@
 
         <Button
             android:id="@+id/btn_sign_in"
-            style="@style/Widget.AppCompat.Button.Colored"
+            style="@style/ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login"
-            android:textColor="?attr/appTextColorPrimary"/>
+            />
 
         <ProgressBar
             android:layout_width="wrap_content"
