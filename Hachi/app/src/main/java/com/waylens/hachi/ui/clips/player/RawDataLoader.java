@@ -124,10 +124,13 @@ public class RawDataLoader {
         int clipIndex = clipSetPos.getClipIndex();
         RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(clipIndex);
 
+        Clip clip = getClipSet().getClip(clipIndex);
+
         List<RawDataItem> itemList = new ArrayList<>();
 
         if (rawDataBlockAll.gpsDataBlock != null) {
             RawDataItem gpsItem = rawDataBlockAll.gpsDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+            gpsItem.setPtsMs((long)(clip.getDate() * 1000) + gpsItem.getPtsMs());
             if (gpsItem != null) {
                 itemList.add(gpsItem);
             }
@@ -135,6 +138,7 @@ public class RawDataLoader {
 
         if (rawDataBlockAll.iioDataBlock != null) {
             RawDataItem iioItem = rawDataBlockAll.iioDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+            iioItem.setPtsMs((long)(clip.getDate() * 1000) + iioItem.getPtsMs());
             if (iioItem != null) {
                 itemList.add(iioItem);
             }
@@ -142,6 +146,7 @@ public class RawDataLoader {
 
         if (rawDataBlockAll.accDataBlock != null) {
             RawDataItem accItem = rawDataBlockAll.accDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+            accItem.setPtsMs((long)(clip.getDate() * 1000) + accItem.getPtsMs());
             if (accItem != null) {
                 itemList.add(accItem);
             }

@@ -16,7 +16,7 @@ public class RawDataItem {
 
 
     private final int mType;
-    private final long mPtsMs;
+    private long mPtsMs;
     public Object data;
 
     public RawDataItem(int type, long ptsMs) {
@@ -30,6 +30,10 @@ public class RawDataItem {
 
     public long getPtsMs() {
         return mPtsMs;
+    }
+
+    public void setPtsMs(long pts) {
+        mPtsMs = pts;
     }
 
 }
