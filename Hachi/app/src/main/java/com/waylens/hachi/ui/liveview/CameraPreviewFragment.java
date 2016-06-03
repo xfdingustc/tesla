@@ -876,13 +876,14 @@ public class CameraPreviewFragment extends BaseFragment {
         }
     };
 
-    private class UpdateRecordTimeTask extends TimerTask {
+    private static class UpdateRecordTimeTask extends TimerTask {
 
         @Override
         public void run() {
-            if (mVdtCamera != null) {
-                mVdtCamera.getRecordTime();
-                mEventBus.post(new UpdateCameraStatusEvent());
+            VdtCamera vdtCamera = VdtCameraManager.getManager().getCurrentCamera();
+            if (vdtCamera != null) {
+                vdtCamera.getRecordTime();
+                EventBus.getDefault().post(new UpdateCameraStatusEvent());
 
             }
         }
