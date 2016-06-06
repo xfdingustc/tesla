@@ -42,8 +42,6 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-
-
 import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.SpaceInfo;
@@ -59,7 +57,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -440,8 +437,6 @@ public class CameraPreviewFragment extends BaseFragment {
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
 
-
-
     }
 
     @Override
@@ -529,15 +524,14 @@ public class CameraPreviewFragment extends BaseFragment {
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
         animationDrawable.start();
         handleOnCameraConnected();
+        updateCameraState();
 
         updateSpaceInfo();
 
     }
 
     private void initCameraPreview() {
-        mLiveView.setBackgroundColor(Color.BLACK);
         if (mVdtCamera != null) {
-            Logger.t(TAG).d("Start camera preview");
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
                 mVdtCamera = null;
@@ -545,6 +539,7 @@ public class CameraPreviewFragment extends BaseFragment {
             }
             mVdtCamera.startPreview();
             mLiveView.startStream(serverAddr);
+            mLiveView.bindCamera(mVdtCamera);
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
@@ -569,7 +564,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void updateCameraState() {
-
+        updateCameraInfoPanel();
         updateCameraStatusInfo();
         updateFloatActionButton();
         toggleRecordDot();
@@ -582,9 +577,9 @@ public class CameraPreviewFragment extends BaseFragment {
                 public void onResponse(SpaceInfo response) {
                     Logger.t(TAG).d("response: " + response.toString());
 
-                    mStorageView.setMax((int)(response.total / (1024 * 1024)));
-                    mStorageView.setProgress((int)(response.marked / (1024 * 1024)));
-                    mStorageView.setSecondaryProgress((int)(response.used / (1024 * 1024)));
+                    mStorageView.setMax((int) (response.total / (1024 * 1024)));
+                    mStorageView.setProgress((int) (response.marked / (1024 * 1024)));
+                    mStorageView.setSecondaryProgress((int) (response.used / (1024 * 1024)));
                 }
             }, new VdbResponse.ErrorListener() {
                 @Override
@@ -815,7 +810,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void updateCameraInfoPanel() {
-        if (mInfoView == null) {
+        if (mInfoView == null && mInfoView.getVisibility() != View.VISIBLE) {
             return;
         }
 
@@ -828,13 +823,14 @@ public class CameraPreviewFragment extends BaseFragment {
         }
 
         int batterVol = mVdtCamera.getBatteryVolume();
+
         if (batterVol < 25) {
             mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_4);
         } else if (batterVol < 50) {
             mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_3);
         } else if (batterVol < 75) {
             mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_2);
-        } else if (batterVol < 100) {
+        } else if (batterVol <= 100) {
             mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_1);
         }
 

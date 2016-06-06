@@ -344,6 +344,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public int getBatteryVolume() {
+        mCommunicationBus.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
         return mBatteryVol;
     }
 
@@ -608,6 +609,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
         mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
         mCommunicationBus.sendCommand(CMD_REC_GET_MARK_TIME);
+        mCommunicationBus.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
@@ -632,6 +634,10 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public void getBtHostNumber() {
         mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
+    }
+
+    public void onPreviewSocketDisconnect() {
+        onCameraDisconnected();
     }
 
     public void doBtUnbind(int type, String mac) {
@@ -884,6 +890,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void ack_Cam_msg_Battery_infor(String p1, String p2) {
+        Logger.t(TAG).d("ack_Cam_msg_Battery_infor: " + p1 + " p2: " + p2);
         int vol = Integer.parseInt(p2);
         mBatteryVol = vol;
     }
@@ -1265,7 +1272,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 ack_Rec_SetMarkTime(p1, p2);
                 break;
             default:
-                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
+//                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
 
         }

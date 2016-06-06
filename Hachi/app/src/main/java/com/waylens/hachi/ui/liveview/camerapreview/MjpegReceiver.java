@@ -106,6 +106,8 @@ abstract public class MjpegReceiver extends Thread {
             openSocket();
             try {
                 mSocket.connect(mServerAddress);
+                mSocket.setKeepAlive(true);
+                mSocket.setSoTimeout(30000);
                 break;
             } catch (IOException e) {
                 Log.d(TAG, "IOException: " + e.getMessage());

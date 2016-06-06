@@ -218,7 +218,6 @@ public class ApConnectFragment extends BaseFragment {
     }
 
     private void startCameraPreview() {
-        mLiveView.setBackgroundColor(Color.BLACK);
         if (mVdtCamera != null) {
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
