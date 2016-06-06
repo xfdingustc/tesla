@@ -28,18 +28,7 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
 
     private SurfaceHolder mSurfaceHolder;
 
-    private WeakReference<VdtCamera> mCameraRef;
 
-    private DrawBitmapThread mDrawBitmapThread;
-
-
-    private final Runnable mDrawBitmapAction = new Runnable() {
-        @Override
-        public void run() {
-
-            invalidate();
-        }
-    };
 
 
     public CameraLiveView(Context context) {
@@ -60,8 +49,6 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
-        mDrawBitmapThread.start();
-
     }
 
     @Override
@@ -80,11 +67,9 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
         mMjpegStream = new MyMjpegStream();
-        mDrawBitmapThread = new DrawBitmapThread();
+
 
     }
-
-
 
 
     public void startStream(InetSocketAddress serverAddr) {
@@ -92,36 +77,11 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
         mMjpegStream.start(serverAddr);
     }
 
-    public void bindCamera(VdtCamera camera) {
-        mCameraRef = new WeakReference<VdtCamera>(camera);
-    }
+
 
     public void stopStream() {
         mMjpegStream.stop();
     }
-
-    private Bitmap getCurrentBitmap() {
-        Bitmap bitmap = null;
-        BitmapBuffer bb = mMjpegStream.getOutputBitmapBuffer(null);
-        if (bb != null) {
-            bitmap = bb.getBitmap();
-
-
-        }
-        return bitmap;
-    }
-
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        Bitmap bitmap = getCurrentBitmap();
-//
-//        if (bitmap != null) {
-//            Rect rect = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
-//            canvas.drawBitmap(bitmap, null, rect, null);
-//        }
-//
-//        mHandler.post(mDrawBitmapAction);
-//    }
 
 
     class MyMjpegStream extends MjpegStream {
@@ -130,7 +90,7 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
         protected void onBitmapReadyAsync(MjpegDecoder decoder, MjpegStream stream) {
             BitmapBuffer bb = stream.getOutputBitmapBuffer(decoder);
             if (bb != null) {
-                mHandler.post(mDrawBitmapAction);
+                drawBitmap(bb.getBitmap());
             }
         }
 
@@ -140,37 +100,18 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
 
         @Override
         protected void onIoErrorAsync(MjpegStream stream, final int error) {
-            if (mCameraRef == null) {
-                return;
-            }
-            VdtCamera camera = mCameraRef.get();
-            if (camera != null) {
-                camera.onPreviewSocketDisconnect();
-            }
+
         }
 
     }
 
 
-    private class DrawBitmapThread extends Thread {
-        @Override
-        public void run() {
-            super.run();
-            while (true) {
-                Bitmap bitmap = getCurrentBitmap();
-                if (bitmap != null) {
-                    drawBitmap(bitmap);
-                }
-                try {
-                    Thread.sleep(16);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+
 
     private void drawBitmap(Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
         Canvas canvas = mSurfaceHolder.lockCanvas();
         Rect rect = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.drawBitmap(bitmap, null, rect, null);
