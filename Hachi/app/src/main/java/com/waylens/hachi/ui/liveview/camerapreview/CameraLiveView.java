@@ -3,9 +3,12 @@ package com.waylens.hachi.ui.liveview.camerapreview;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
@@ -16,19 +19,18 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 
-public class CameraLiveView extends View {
-    private final int MAX_STATES = 4;
-    private int mMaskCounter;
+public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Handler mHandler;
 
     private MjpegStream mMjpegStream;
-    private Bitmap mMaskedBitmap;
-    private BitmapCanvas mBitmapCanvas;
 
-    private Drawable[] mStates = new Drawable[MAX_STATES];
+
+    private SurfaceHolder mSurfaceHolder;
 
     private WeakReference<VdtCamera> mCameraRef;
+
+    private DrawBitmapThread mDrawBitmapThread;
 
 
     private final Runnable mDrawBitmapAction = new Runnable() {
@@ -55,24 +57,34 @@ public class CameraLiveView extends View {
         initView();
     }
 
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        mDrawBitmapThread.start();
+
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+
     private void initView() {
         mHandler = new Handler();
 
+        mSurfaceHolder = getHolder();
+        mSurfaceHolder.addCallback(this);
         mMjpegStream = new MyMjpegStream();
-
-        mBitmapCanvas = new BitmapCanvas(this) {
-            @Override
-            public void invalidate() {
-                mHandler.post(mDrawBitmapAction);
-            }
-
-            @Override
-            public void invalidateRect(int left, int top, int right, int bottom) {
-                mHandler.post(mDrawBitmapAction);
-            }
-        };
+        mDrawBitmapThread = new DrawBitmapThread();
 
     }
+
+
 
 
     public void startStream(InetSocketAddress serverAddr) {
@@ -86,10 +98,6 @@ public class CameraLiveView extends View {
 
     public void stopStream() {
         mMjpegStream.stop();
-        if (mMaskedBitmap != null) {
-            mMaskedBitmap.recycle();
-            mMaskedBitmap = null;
-        }
     }
 
     private Bitmap getCurrentBitmap() {
@@ -97,17 +105,23 @@ public class CameraLiveView extends View {
         BitmapBuffer bb = mMjpegStream.getOutputBitmapBuffer(null);
         if (bb != null) {
             bitmap = bb.getBitmap();
+
+
         }
         return bitmap;
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        Bitmap bitmap = getCurrentBitmap();
-
-
-        mBitmapCanvas.drawBitmap(canvas, bitmap, null);
-    }
+//    @Override
+//    protected void onDraw(Canvas canvas) {
+//        Bitmap bitmap = getCurrentBitmap();
+//
+//        if (bitmap != null) {
+//            Rect rect = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+//            canvas.drawBitmap(bitmap, null, rect, null);
+//        }
+//
+//        mHandler.post(mDrawBitmapAction);
+//    }
 
 
     class MyMjpegStream extends MjpegStream {
@@ -137,6 +151,30 @@ public class CameraLiveView extends View {
 
     }
 
-//
+
+    private class DrawBitmapThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            while (true) {
+                Bitmap bitmap = getCurrentBitmap();
+                if (bitmap != null) {
+                    drawBitmap(bitmap);
+                }
+                try {
+                    Thread.sleep(16);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void drawBitmap(Bitmap bitmap) {
+        Canvas canvas = mSurfaceHolder.lockCanvas();
+        Rect rect = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+        canvas.drawBitmap(bitmap, null, rect, null);
+        mSurfaceHolder.unlockCanvasAndPost(canvas);
+    }
 
 }
