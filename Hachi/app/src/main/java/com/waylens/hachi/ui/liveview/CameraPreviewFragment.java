@@ -88,7 +88,7 @@ public class CameraPreviewFragment extends BaseFragment {
     private EventBus mEventBus = EventBus.getDefault();
 
     @BindView(R.id.camera_preview)
-    CameraLiveView mLiveViewRx;
+    CameraLiveView mLiveView;
 
     @Nullable
     @BindView(R.id.spinner)
@@ -223,6 +223,9 @@ public class CameraPreviewFragment extends BaseFragment {
                 mCameraConnecting.setVisibility(View.VISIBLE);
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
+                if (mVdtCamera != null) {
+                    mLiveView.stopStream();
+                }
                 mCameraNoSignal.setVisibility(View.VISIBLE);
                 mCameraConnecting.setVisibility(View.GONE);
                 mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
@@ -429,9 +432,9 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (mLiveViewRx != null) {
+        if (mLiveView != null) {
             Logger.t(TAG).d("Stop camera preview");
-            mLiveViewRx.stopStream();
+            mLiveView.stopStream();
         }
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
@@ -532,15 +535,16 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void initCameraPreview() {
-        mLiveViewRx.setBackgroundColor(Color.BLACK);
+        mLiveView.setBackgroundColor(Color.BLACK);
         if (mVdtCamera != null) {
+            Logger.t(TAG).d("Start camera preview");
             InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
             if (serverAddr == null) {
                 mVdtCamera = null;
                 return;
             }
             mVdtCamera.startPreview();
-            mLiveViewRx.startStream(serverAddr);
+            mLiveView.startStream(serverAddr);
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
@@ -560,7 +564,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void stopCameraPreview() {
-        mLiveViewRx.stopStream();
+        mLiveView.stopStream();
     }
 
 

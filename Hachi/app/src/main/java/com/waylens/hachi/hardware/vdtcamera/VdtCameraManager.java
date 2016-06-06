@@ -69,6 +69,7 @@ public class VdtCameraManager {
             @Override
             public void onConnected(VdtCamera vdtCamera) {
                 onCameraConnected(vdtCamera);
+                mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_CONNECTING, vdtCamera));
             }
 
             @Override
@@ -90,7 +91,7 @@ public class VdtCameraManager {
 //        vdtCamera.startClient();
 
 
-        mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_CONNECTING, vdtCamera));
+
     }
 
     private boolean cameraExistsIn(InetAddress inetAddr, int port, List<VdtCamera> list) {

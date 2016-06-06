@@ -238,4 +238,6 @@
 	<string name="resolution">分辨率</string>
 	<string name="framerate">帧率</string>
 	<string name="download_progress">下载进度</string>
+	<string name="wake_up_camera">唤醒相机</string>
+	<string name="without_camera">没有相机</string>
 </resources>

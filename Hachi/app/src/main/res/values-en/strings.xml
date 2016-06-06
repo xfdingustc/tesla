@@ -238,4 +238,6 @@
 	<string name="resolution">Resolution</string>
 	<string name="framerate">Framerate</string>
 	<string name="download_progress">Download Progress</string>
+	<string name="wake_up_camera">Wake Up Camera</string>
+	<string name="without_camera">Without Camera</string>
 </resources>

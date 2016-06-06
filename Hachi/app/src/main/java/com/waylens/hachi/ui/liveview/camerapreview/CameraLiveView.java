@@ -72,11 +72,11 @@ public class CameraLiveView extends View {
 		mBitmapCanvas.setBackgroundColor(color);
 	}
 
-	public final void startStream(InetSocketAddress serverAddr) {
+	public void startStream(InetSocketAddress serverAddr) {
 		mMjpegStream.start(serverAddr);
 	}
 
-	public final void stopStream() {
+	public void stopStream() {
 		mMjpegStream.stop();
 		if (mMaskedBitmap != null) {
 			mMaskedBitmap.recycle();

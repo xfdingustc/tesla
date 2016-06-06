@@ -45,7 +45,7 @@ public class DeviceScanner extends Thread {
     private boolean mbRunning;
 
     public DeviceScanner(Context context) {
-        super("ServiceDiscovery");
+        super(TAG);
         this.mContext = context;
         this.mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
@@ -99,7 +99,7 @@ public class DeviceScanner extends Thread {
 
             }
 
-            threadLoop();
+//            threadLoop();
 
             for (JmDNS dns : mDns) {
                 dns.close();
@@ -150,7 +150,7 @@ public class DeviceScanner extends Thread {
 
         @Override
         public void serviceResolved(ServiceEvent event) {
-//            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
+            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
 //            Logger.t(TAG).d(event.getInfo().toString());
 
             ServiceInfo info = event.getInfo();

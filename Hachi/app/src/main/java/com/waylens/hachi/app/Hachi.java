@@ -14,6 +14,7 @@ import com.squareup.leakcanary.LeakCanary;
 
 import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
+import com.waylens.hachi.hardware.VdtCameraFounder;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
@@ -97,26 +98,10 @@ public class Hachi extends Application {
 //        FIR.init(this);
 
 
-        CameraDiscovery.discoverCameras(this, new CameraDiscovery.Callback() {
-            @Override
-            public void onCameraFound(NsdServiceInfo cameraService) {
-                String serviceName = cameraService.getServiceName();
-                boolean bIsPcServer = serviceName.equals("Vidit Studio");
-                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-                    cameraService.getHost(),
-                    cameraService.getPort(),
-                    "", serviceName, bIsPcServer);
-//                Logger.t("testconnect").d("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-                VdtCameraManager.getManager().connectCamera(serviceInfo);
-            }
+        VdtCameraFounder founder = new VdtCameraFounder();
+        founder.start();
 
-            @Override
-            public void onError(int errorCode) {
-                Logger.t(TAG).e("errorCode: " + errorCode);
-            }
-        });
-
-        startDeviceScanner();
+//        startDeviceScanner();
     }
 
     private void configureJobManager() {

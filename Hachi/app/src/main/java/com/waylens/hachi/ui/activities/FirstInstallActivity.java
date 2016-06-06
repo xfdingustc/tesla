@@ -53,7 +53,7 @@ public class FirstInstallActivity extends BaseActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activitiy_first_install);
+        setContentView(R.layout.activity_first_install);
         setupViewPager();
     }
 

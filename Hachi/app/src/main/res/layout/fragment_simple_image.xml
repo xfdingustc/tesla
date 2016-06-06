@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="32dp"
             android:layout_gravity="bottom|center_horizontal"
-            android:text="Wake Up Camera"
+            android:text="@string/wake_up_camera"
             android:textSize="14sp"
             android:background="@color/style_color_accent">
         </Button>
@@ -48,7 +48,7 @@
             android:id="@+id/withoutCamera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Withou Camera"
+            android:text="@string/without_camera"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp"
             android:textColor="?attr/appTextColorPrimary"
