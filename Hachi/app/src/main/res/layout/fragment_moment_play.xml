@@ -68,7 +68,7 @@
         android:layout_marginBottom="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        tools:background="#CC000000">
+        android:background="#7f000000">
 
         <TextView
             android:id="@+id/text_video_time"
@@ -78,6 +78,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:gravity="start"
+            android:textColor="#fff"
             android:text="00:00"/>
 
 
@@ -99,6 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:textColor="#fff"
             android:text="00:00"/>
 
         <ImageButton

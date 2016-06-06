@@ -270,7 +270,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     public void onStop() {
         super.onStop();
         if (mMediaPlayer != null) {
-            release(true);
+            stopPlayer();
         }
         mTimer.cancel();
     }
