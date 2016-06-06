@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.views;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -178,6 +179,18 @@ public class GaugeView extends FrameLayout {
         mWebView.loadUrl(callJS2);
         mWebView.loadUrl("javascript:update()");
     }
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return false;
+    }
+    
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        return false;
+    }
+
 
 
 }

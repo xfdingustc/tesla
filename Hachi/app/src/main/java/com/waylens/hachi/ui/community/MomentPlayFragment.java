@@ -6,14 +6,17 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,12 +53,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 
 public class MomentPlayFragment extends BaseFragment implements View.OnClickListener, SurfaceHolder.Callback {
@@ -104,6 +109,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
 
+    private Timer mPanelTimer;
+
 
     OnProgressListener mProgressListener;
 
@@ -129,6 +136,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     @BindView(R.id.video_surface)
     SurfaceView mSurfaceView;
+
 
     @BindView(R.id.progress_loading)
     ProgressBar mProgressLoading;
@@ -159,14 +167,26 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                 start();
                 break;
             case STATE_PAUSE:
+                mPanelTimer.cancel();
+                mPanelTimer = new Timer();
+                mPanelTimer.schedule(new HidePanelTimeTask(), 3 * 1000);
                 changeState(STATE_PLAYING);
                 break;
             case STATE_PLAYING:
+                showController(0);
+                showInfoPanel();
+                Logger.d("should pause here");
+                mBtnPlayPause.setAlpha((float) 1);
                 changeState(STATE_PAUSE);
                 break;
             case STATE_PREPAREING:
                 break;
         }
+    }
+
+    @OnClick(R.id.video_surface)
+    public void onSurfaceClicked() {
+        onBtnPlayClicked();
     }
 
     @OnClick(R.id.btn_fullscreen)
@@ -217,6 +237,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                 }
             }
         });
+        readRawURL();
     }
 
     @Nullable
@@ -242,6 +263,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
+        mPanelTimer = new Timer();
     }
 
     @Override
@@ -279,6 +301,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         mIsFullScreen = fullScreen;
+        disableStatusBar(fullScreen);
     }
 
 
@@ -290,6 +313,16 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 //                break;
 
         }
+    }
+
+    public void disableStatusBar(boolean fullScreen) {
+        int flag;
+        if(fullScreen)
+            flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        else
+            flag = WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN;
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(flag);
+        getActivity().getWindow().setFlags(flag, flag);
     }
 
 
@@ -347,6 +380,10 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                     Logger.t(TAG).d("prepared finished");
                     changeState(STATE_PREPARED);
                     changeState(STATE_PLAYING);
+                    mPanelTimer.cancel();
+                    mPanelTimer = new Timer();
+                    mBtnPlayPause.setVisibility(View.VISIBLE);
+                    mPanelTimer.schedule(new HidePanelTimeTask(), 3 * 1000);
                 }
             });
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -495,6 +532,18 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             ) {
             hideSystemUI();
         }
+    }
+    void showInfoPanel() {
+        if (mInfoPanel == null) {
+            return;
+        }
+        mInfoPanel.setVisibility(View.VISIBLE);
+
+    }
+
+
+    private void hideInfoPanel() {
+        mInfoPanel.setVisibility(View.INVISIBLE);
     }
 
     void showProgress() {
@@ -844,10 +893,33 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                 @Override
                 public void run() {
                     setProgress(currentPos, mMediaPlayer.getDuration());
+                    //
+                    mRawDataAdapter.updateCurrentTime(currentPos);
                 }
             });
+        }
+    }
 
+    public class HidePanelTimeTask extends TimerTask {
 
+        @Override
+        public void run() {
+            hidePanel();
+        }
+
+        private void hidePanel() {
+            if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+                return;
+            }
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    hideControllers();
+                    hideInfoPanel();
+                    mBtnPlayPause.setAlpha((float) 0.6);
+                }
+            });
         }
     }
 }
