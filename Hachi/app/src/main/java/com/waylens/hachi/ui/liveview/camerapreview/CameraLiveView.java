@@ -58,7 +58,7 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        mSurfaceHolder = null;
     }
 
     private void initView() {
@@ -109,7 +109,7 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
 
 
     private void drawBitmap(Bitmap bitmap) {
-        if (bitmap == null) {
+        if (bitmap == null || mSurfaceHolder == null) {
             return;
         }
         Canvas canvas = mSurfaceHolder.lockCanvas();

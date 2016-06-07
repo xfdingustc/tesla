@@ -446,18 +446,6 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-    @Override
-    protected void onCameraConnecting(VdtCamera vdtCamera) {
-        super.onCameraConnecting(vdtCamera);
-        handleOnCameraConnecting();
-    }
-
-    @Override
-    protected void onCameraDisconnected(VdtCamera vdtCamera) {
-        super.onCameraDisconnected(vdtCamera);
-        handleOnCameraDisconnected();
-
-    }
 
 
     private void changeCurrentCamera(int position) {
@@ -481,18 +469,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
-    private void handleOnCameraConnecting() {
-        if (mCameraNoSignal != null) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mCameraNoSignal.setVisibility(View.GONE);
-                    mCameraConnecting.setVisibility(View.VISIBLE);
-                }
-            });
 
-        }
-    }
 
     private void handleOnCameraDisconnected() {
         if (mCameraConnecting != null) {
@@ -537,6 +514,8 @@ public class CameraPreviewFragment extends BaseFragment {
                 mVdtCamera = null;
                 return;
             }
+
+            Logger.t(TAG).d("start preview view");
             mVdtCamera.startPreview();
             mLiveView.startStream(serverAddr);
             mVdtCamera.getRecordRecMode();
@@ -809,7 +788,7 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     private void updateCameraInfoPanel() {
-        if (mInfoView == null && mInfoView.getVisibility() != View.VISIBLE) {
+        if (mInfoView == null || mInfoView.getVisibility() != View.VISIBLE) {
             return;
         }
 

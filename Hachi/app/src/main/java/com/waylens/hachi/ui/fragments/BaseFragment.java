@@ -96,19 +96,8 @@ public class BaseFragment extends Fragment {
     }
 
 
-    protected void onCameraConnecting(VdtCamera vdtCamera) {
-
-    }
-
-    protected void onCameraDisconnected(VdtCamera vdtCamera) {
-        //
-    }
 
 
-    public void onCameraVdbConnected(VdtCamera camera) {
-        mVdtCamera = camera;
-        mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), camera);
-    }
 
 
     public void setupToolbar() {
