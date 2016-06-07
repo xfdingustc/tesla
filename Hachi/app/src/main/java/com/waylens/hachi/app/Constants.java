@@ -15,7 +15,7 @@ public class Constants {
     public static final String HOST_URL = getHostUrl();
 
     public static String getHostUrl() {
-        return PreferenceUtils.getString("server", "http://ws.waylens.com:9000/");
+        return PreferenceUtils.getString("server", "https://agent.waylens.com/");
     }
 
 //    public static final String HOST_URL = "http://192.168.20.97:9000/";
