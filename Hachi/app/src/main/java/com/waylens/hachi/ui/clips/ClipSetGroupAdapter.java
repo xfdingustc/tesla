@@ -90,7 +90,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         for (ClipSet clipSet : mClipSetGroup) {
             ClipGridItem headItem = new ClipGridItem();
             headItem.itemType = ITEM_TYPE_HEAD;
-            headItem.itemObject = clipSet.getClip(0).getDate();
+            headItem.itemObject = clipSet.getClip(0).getClipDate();
             mClipGridItemList.add(headItem);
 
             for (Clip clip : clipSet.getClipList()) {
@@ -148,7 +148,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void onBindClipSetHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
         ClipGroupHeaderViewHolder viewHolder = (ClipGroupHeaderViewHolder) holder;
-        Integer clipDate = (Integer) mClipGridItemList.get(position).itemObject;
+        Long clipDate = (Long) mClipGridItemList.get(position).itemObject;
 
         viewHolder.mClipSetDate.setText(getFormattedDate(clipDate));
     }
@@ -216,10 +216,10 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-    private String getFormattedDate(int date) {
+    private String getFormattedDate(long date) {
         SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy");
 
-        long clipDate = (long) date * 1000;
+        long clipDate = date ;
         long currentTime = System.currentTimeMillis();
 
         Calendar calendar = Calendar.getInstance();

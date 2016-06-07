@@ -41,6 +41,7 @@ public class DateTime {
         return mDateFormat.format(mDate);
     }
 
+
     public static String getDateString(long date) {
         mDate.setTime(date);
         return mDateFormat.format(mDate);
@@ -52,14 +53,14 @@ public class DateTime {
         return mTimeFormat.format(mDate);
     }
 
-    public static String toString(int date, long startTimeMs) {
-        long time = startTimeMs + (long) date * 1000;
+    public static String toString(long date, long startTimeMs) {
+        long time = startTimeMs + date;
         mDate.setTime(time - mTimezone);
         return mDateFormat.format(mDate) + " " + mTimeFormat.format(mDate);
     }
 
-    public static Date getTimeDate(int date, long timeMs) {
-        long time = timeMs + (long) date * 1000;
+    public static Date getTimeDate(long date, long timeMs) {
+        long time = timeMs + date;
         mDate.setTime(time - mTimezone);
         return mDate;
     }

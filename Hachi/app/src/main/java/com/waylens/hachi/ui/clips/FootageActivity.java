@@ -112,7 +112,7 @@ public class FootageActivity extends BaseActivity {
         Clip clip = getClipSet().getClip(clipSetPos.getClipIndex());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy, MMM dd, hh:mm:ss, a");
 
-        mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getDate(), clipSetPos.getClipTimeMs())));
+        mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getClipDate(), clipSetPos.getClipTimeMs())));
     }
 
     @Subscribe

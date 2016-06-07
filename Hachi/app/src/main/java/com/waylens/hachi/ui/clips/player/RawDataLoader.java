@@ -15,6 +15,7 @@ import com.waylens.hachi.vdb.ClipSetPos;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,11 +97,11 @@ public class RawDataLoader {
 
         switch (dataType) {
             case RawDataItem.DATA_TYPE_OBD:
-                rawDataBlockAll.iioDataBlock = block;
+                rawDataBlockAll.obdDataBlock = block;
                 loadRawData(RawDataItem.DATA_TYPE_IIO);
                 break;
             case RawDataItem.DATA_TYPE_IIO:
-                rawDataBlockAll.accDataBlock = block;
+                rawDataBlockAll.iioDataBlock = block;
                 loadRawData(RawDataItem.DATA_TYPE_GPS);
                 break;
             case RawDataItem.DATA_TYPE_GPS:
@@ -130,25 +131,27 @@ public class RawDataLoader {
 
         if (rawDataBlockAll.gpsDataBlock != null) {
             RawDataItem gpsItem = rawDataBlockAll.gpsDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
-            gpsItem.setPtsMs((long)(clip.getDate() * 1000) + gpsItem.getPtsMs());
+
             if (gpsItem != null) {
+                gpsItem.setPtsMs(clip.getClipDate()  + gpsItem.getPtsMs());
                 itemList.add(gpsItem);
             }
         }
 
         if (rawDataBlockAll.iioDataBlock != null) {
             RawDataItem iioItem = rawDataBlockAll.iioDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
-            iioItem.setPtsMs((long)(clip.getDate() * 1000) + iioItem.getPtsMs());
             if (iioItem != null) {
+                iioItem.setPtsMs(clip.getClipDate()  + iioItem.getPtsMs());
                 itemList.add(iioItem);
             }
         }
 
-        if (rawDataBlockAll.accDataBlock != null) {
-            RawDataItem accItem = rawDataBlockAll.accDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
-            accItem.setPtsMs((long)(clip.getDate() * 1000) + accItem.getPtsMs());
-            if (accItem != null) {
-                itemList.add(accItem);
+        if (rawDataBlockAll.obdDataBlock != null) {
+            RawDataItem obdItem = rawDataBlockAll.obdDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+
+            if (obdItem != null) {
+                obdItem.setPtsMs(clip.getClipDate()  + obdItem.getPtsMs());
+                itemList.add(obdItem);
             }
         }
 
@@ -160,7 +163,7 @@ public class RawDataLoader {
     }
 
     private class RawDataBlockAll {
-        private RawDataBlock accDataBlock = null;
+        private RawDataBlock obdDataBlock = null;
         private RawDataBlock gpsDataBlock = null;
         private RawDataBlock iioDataBlock = null;
     }

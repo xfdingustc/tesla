@@ -7,6 +7,7 @@ import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.utils.ToStringUtils;
 
 import java.io.Serializable;
+import java.util.TimeZone;
 
 public class Clip implements Parcelable, Serializable {
     public static final int TYPE_REAL = -1;
@@ -222,8 +223,8 @@ public class Clip implements Parcelable, Serializable {
         return (index < 0 || index >= streams.length) ? null : streams[index];
     }
 
-    public int getDate() {
-        return mClipDate;
+    public long getClipDate() {
+        return ((long)mClipDate) * 1000 - TimeZone.getDefault().getRawOffset();
     }
 
     public void setStartTime(long startTimeMs) {

@@ -36,7 +36,7 @@ public class ClipSetGroupHelper {
         Collections.sort(clipSetGroup, new Comparator<ClipSet>() {
             @Override
             public int compare(ClipSet lhs, ClipSet rhs) {
-                return rhs.getClip(0).getDate() - lhs.getClip(0).getDate();
+                return (int)(rhs.getClip(0).getClipDate() - lhs.getClip(0).getClipDate());
             }
         });
 

@@ -167,7 +167,7 @@ public class MomentBuilder {
 
         Logger.t(TAG).d("getClipThumbnail");
         final Clip clip = mClipSet.getClip(0);
-        ClipPos clipPos = new ClipPos(clip.getVdbId(), clip.cid, clip.getDate(), clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
+        ClipPos clipPos = new ClipPos(clip.getVdbId(), clip.cid, clip.getClipDate(), clip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         VdbImageRequest request = new VdbImageRequest(
             clipPos,
             new VdbResponse.Listener<Bitmap>() {

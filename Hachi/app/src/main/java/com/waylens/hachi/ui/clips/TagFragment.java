@@ -378,7 +378,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
                 if (response.getCount() > 0) {
                     Clip clip = response.getClip(0);
-                    Date date = new Date((long) clip.getDate() * 1000);
+                    Date date = new Date(clip.getClipDate());
                     PrettyTime t = new PrettyTime(new Date());
 
                     mTvBufferTime.setText(t.format(date));

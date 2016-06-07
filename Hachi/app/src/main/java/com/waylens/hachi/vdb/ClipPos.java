@@ -30,14 +30,14 @@ public class ClipPos {
     }
 
     public ClipPos(Clip clip, long clipTimeMs, int type, boolean bIsLast) {
-        this(clip.getVdbId(), clip.cid, clip.getDate(), clipTimeMs, type, bIsLast);
+        this(clip.getVdbId(), clip.cid, clip.getClipDate(), clipTimeMs, type, bIsLast);
     }
 
-    public ClipPos(String vdbId, Clip.ID cid, int date, long timeMs, int type, boolean bIsLast) {
+    public ClipPos(String vdbId, Clip.ID cid, long date, long timeMs, int type, boolean bIsLast) {
         this.vdbId = vdbId;
         this.cid = cid;
         this.mbIsLast = bIsLast;
-        this.mDate = date;
+        this.mDate = (int)(date / 1000);
         this.mType = type;
         this.mClipTimeMs = timeMs;
         this.mRealTimeMs = timeMs; // fixed later by server

@@ -82,7 +82,7 @@ public class LocalMoment implements Serializable {
 
         public String getClipCaptureTime() {
             long offset = uploadURL.realTimeMs - clip.getStartTimeMs();
-            return DateTime.toString(clip.getDate(), offset);
+            return DateTime.toString(clip.getClipDate(), offset);
         }
     }
 }
