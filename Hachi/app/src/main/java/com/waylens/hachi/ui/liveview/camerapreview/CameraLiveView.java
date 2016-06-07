@@ -113,6 +113,9 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
             return;
         }
         Canvas canvas = mSurfaceHolder.lockCanvas();
+        if (canvas == null) {
+            return;
+        }
         Rect rect = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.drawBitmap(bitmap, null, rect, null);
         mSurfaceHolder.unlockCanvasAndPost(canvas);
