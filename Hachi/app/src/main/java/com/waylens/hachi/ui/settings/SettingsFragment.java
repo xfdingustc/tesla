@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.ui.activities.VersionCheckActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 

@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.settings;
 
 import android.Manifest;
 import android.app.Activity;
@@ -11,7 +11,9 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -19,9 +21,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.json.JSONObject;
@@ -43,6 +48,15 @@ public class VersionCheckActivity extends BaseActivity {
     private static final String TAG = "FIR";
     private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0x10;
 
+    private int mVersionCode;
+    private String mVersionName;
+    private String mInstallURL;
+    String mDownloadedFile;
+    DownloadManager downloadManager;
+
+    private Snackbar mChangeWebServerSnack;
+    private int mClickCount = 5;
+
     @BindView(R.id.current_version_view)
     TextView mCurrentVersionView;
 
@@ -55,9 +69,44 @@ public class VersionCheckActivity extends BaseActivity {
     @BindView(R.id.btn_update_now)
     View mBtnUpdateNow;
 
-    private int mVersionCode;
-    private String mVersionName;
-    private String mInstallURL;
+    @OnClick(R.id.waylens_logo)
+    public void onWaylensLogoClicked() {
+        if (mChangeWebServerSnack == null || !mChangeWebServerSnack.isShown()) {
+            mClickCount = 5;
+            String snakeBar = "" + mClickCount + " clicks to change web server";
+            mChangeWebServerSnack = Snackbar.make(mFirVersionView, snakeBar, Snackbar.LENGTH_SHORT);
+            mChangeWebServerSnack.show();
+        } else {
+            mClickCount--;
+            if (mClickCount == 0) {
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .items(R.array.server_list)
+                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                            return false;
+                        }
+                    })
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Logger.t(TAG).d("select index: " + getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
+                            PreferenceUtils.putString("server", getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
+                        }
+                    })
+                    .show();
+            } else {
+                String snakeBar = "" + mClickCount + " clicks to change web server";
+                mChangeWebServerSnack = Snackbar.make(mFirVersionView, snakeBar, Snackbar.LENGTH_SHORT);
+                mChangeWebServerSnack.show();
+            }
+        }
+
+    }
+
+
 
 
     @OnClick(R.id.btn_update_now)
@@ -78,8 +127,7 @@ public class VersionCheckActivity extends BaseActivity {
         }
     }
 
-    String mDownloadedFile;
-    DownloadManager downloadManager;
+
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, VersionCheckActivity.class);

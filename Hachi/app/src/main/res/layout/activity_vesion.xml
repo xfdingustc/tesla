@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/waylens_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -18,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/current_version"
-        android:textColor="#FFF5F5F5"
+        android:textColor="?attr/appTextColorPrimary"
         android:textSize="18sp"/>
 
     <TextView
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/fir_version"
-        android:textColor="#FFF5F5F5"
+        android:textColor="?attr/appTextColorPrimary"
         android:textSize="18sp"
         android:layout_marginTop="16dp"
         android:visibility="invisible"/>

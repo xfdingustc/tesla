@@ -7,7 +7,6 @@ import android.preference.PreferenceScreen;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.VersionCheckActivity;
 import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
 
 /**

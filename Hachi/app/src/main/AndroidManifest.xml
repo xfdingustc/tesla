@@ -75,7 +75,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.VersionCheckActivity"
+            android:name=".ui.settings.VersionCheckActivity"
             android:screenOrientation="portrait"/>
 
         <activity

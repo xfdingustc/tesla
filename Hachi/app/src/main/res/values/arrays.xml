@@ -23,6 +23,12 @@
         <item>120fps</item>
     </string-array>
 
+    <string-array name="server_list" translatable="false">
+        <item>http://192.168.20.97:9000/</item>
+        <item>http://ws.waylens.com:9000/</item>
+        <item>https://agent.waylens.com/</item>
+    </string-array>
+
     <string-array name="videoOptions" translatable="false">
         <item>Tag</item>
         <item>Buffer</item>

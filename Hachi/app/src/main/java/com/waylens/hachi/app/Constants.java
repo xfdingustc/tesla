@@ -1,5 +1,7 @@
 package com.waylens.hachi.app;
 
+import com.waylens.hachi.utils.PreferenceUtils;
+
 /**
  * Created by Xiaofei on 2015/8/5.
  */
@@ -10,7 +12,11 @@ public class Constants {
 
     public static final String API_WEATHER = "http://api.worldweatheronline.com/free/v2/weather.ashx?format=json&num_of_days=1&tp=12&key=e081e88edf6ffe4bcd0d12f34b26e&q=%s";
 
-    public static final String HOST_URL = "http://ws.waylens.com:9000/";
+    public static final String HOST_URL = getHostUrl();
+
+    public static String getHostUrl() {
+        return PreferenceUtils.getString("server", "http://ws.waylens.com:9000/");
+    }
 
 //    public static final String HOST_URL = "http://192.168.20.97:9000/";
 
