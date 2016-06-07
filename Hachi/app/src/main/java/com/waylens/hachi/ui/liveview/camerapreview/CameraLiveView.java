@@ -12,6 +12,7 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+import com.waylens.hachi.hardware.vdtcamera.PreviewConnection;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,7 +22,6 @@ import java.net.InetSocketAddress;
 
 public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private Handler mHandler;
 
     private MjpegStream mMjpegStream;
 
@@ -62,19 +62,15 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
     }
 
     private void initView() {
-        mHandler = new Handler();
-
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
-        mMjpegStream = new MyMjpegStream();
-
 
     }
 
 
-    public void startStream(InetSocketAddress serverAddr) {
-
-        mMjpegStream.start(serverAddr);
+    public void startStream(PreviewConnection connection) {
+        mMjpegStream = new MyMjpegStream();
+        mMjpegStream.start(connection);
     }
 
 

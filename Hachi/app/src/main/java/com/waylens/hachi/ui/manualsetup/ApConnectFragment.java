@@ -219,13 +219,9 @@ public class ApConnectFragment extends BaseFragment {
 
     private void startCameraPreview() {
         if (mVdtCamera != null) {
-            InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
-            if (serverAddr == null) {
-                mVdtCamera = null;
-                return;
-            }
+
             mVdtCamera.startPreview();
-            mLiveView.startStream(serverAddr);
+            mLiveView.startStream(mVdtCamera.getPreviewConnection());
 //            mVdtCamera.getRecordRecMode();
 //            mVdtCamera.getRecordTime();
 //            mVdtCamera.getAudioMicState();

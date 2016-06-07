@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.liveview.camerapreview;
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.hardware.vdtcamera.PreviewConnection;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,15 +19,16 @@ abstract public class MjpegReceiver extends Thread {
     abstract public void onIOError(int error);
 
     private boolean mbRunning;
-    private final InetSocketAddress mServerAddress;
+    private final PreviewConnection mPreviewConnection;
+
     private final ByteArrayBuffer.Manager mBufferManager;
     private final SimpleQueue<ByteArrayBuffer> mOutputQ;
-    private Socket mSocket;
+
     private MjpegBuffer mBuffer;
 
-    public MjpegReceiver(InetSocketAddress serverAddress, SimpleQueue<ByteArrayBuffer> outputQ) {
+    public MjpegReceiver(PreviewConnection connection, SimpleQueue<ByteArrayBuffer> outputQ) {
         super("MjpegReceiver");
-        mServerAddress = serverAddress;
+        mPreviewConnection = connection;
         // 3 buffers: receiving; in queue; decoding
         mBufferManager = new ByteArrayBuffer.Manager(3);
         mOutputQ = outputQ;
@@ -36,7 +38,7 @@ abstract public class MjpegReceiver extends Thread {
     public void shutdown() {
         mbRunning = false;
         interrupt();
-        closeSocket();
+
 
         Logger.t(TAG).d("shutdown");
         try {
@@ -47,21 +49,9 @@ abstract public class MjpegReceiver extends Thread {
         Logger.t(TAG).d("join");
     }
 
-    synchronized private void openSocket() throws SocketException {
-        mSocket = new Socket();
-        mSocket.setReceiveBufferSize(64 * 1024);
-    }
 
-    synchronized private void closeSocket() {
-        if (mSocket != null) {
-            try {
-                mSocket.close();
-            } catch (Exception ex) {
 
-            }
-            mSocket = null;
-        }
-    }
+
 
     private void runOnce() {
         int error = ERROR_CANNOT_CONNECT;
@@ -86,7 +76,7 @@ abstract public class MjpegReceiver extends Thread {
     @Override
     public void run() {
         runOnce();
-        closeSocket();
+
         checkRunning();
     }
 
@@ -100,44 +90,8 @@ abstract public class MjpegReceiver extends Thread {
     }
 
     private void connect() throws IOException {
-        Logger.t(TAG).d("connecting to " + mServerAddress);
 
-        while (true) {
-            openSocket();
-            try {
-                mSocket.connect(mServerAddress);
-                mSocket.setKeepAlive(true);
-                mSocket.setSoTimeout(30000);
-                break;
-            } catch (IOException e) {
-                Log.d(TAG, "IOException: " + e.getMessage());
-
-            }
-            if (!checkRunning()) {
-                return;
-            }
-            closeSocket();
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                Logger.t(TAG).d("sleep interrupted");
-            }
-            if (!checkRunning()) {
-                return;
-            }
-        }
-
-
-        Logger.t(TAG).d("connected to " + mServerAddress);
-
-        PrintWriter out = new PrintWriter(mSocket.getOutputStream());
-        String request = "GET / HTTP/1.1\r\n" + "Host: " + mServerAddress + "\r\n" + "Connection: keep-alive\r\n"
-            + "Cache-Control: no-cache\r\n" + "\r\n";
-        out.print(request);
-        out.flush();
-
-        mBuffer = new MjpegBuffer(mSocket.getInputStream());
+        mBuffer = new MjpegBuffer(mPreviewConnection.getSocket().getInputStream());
         mBuffer.refill();
         mBuffer.skipHttpEnd();
     }

@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.liveview.camerapreview;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.hardware.vdtcamera.PreviewConnection;
 
 import java.net.InetSocketAddress;
 
@@ -26,12 +27,12 @@ abstract public class MjpegStream {
         mBitmapQ = new SimpleQueue<BitmapBuffer>();
     }
 
-    public void start(InetSocketAddress serverAddr) {
+    public void start(PreviewConnection connection) {
         if (mbRunning) {
             return;
         }
 
-        mReceiver = new MjpegReceiver(serverAddr, mFrameQ) {
+        mReceiver = new MjpegReceiver(connection, mFrameQ) {
             @Override
             public void onIOError(int error) {
                 MjpegStream.this.onIoErrorAsync(MjpegStream.this, error);

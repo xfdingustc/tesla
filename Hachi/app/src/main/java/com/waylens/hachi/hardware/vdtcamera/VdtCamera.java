@@ -131,9 +131,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     public static final int BT_STATE_DISABLED = 0;
     public static final int BT_STATE_ENABLED = 1;
 
-
-    private boolean mIsConnected = false;
-    private boolean mIsVdbConnected = false;
+    private static final int CAMERA_PREVIEW_PORT = 8081;
 
 
     private String mCameraName = new String();
@@ -252,6 +250,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private VdbConnection mVdbConnection;
+
+    private PreviewConnection mPreviewConnection;
 
     public VdbConnection getVdbConnection() {
         return mVdbConnection;
@@ -502,23 +502,32 @@ public class VdtCamera implements VdtCameraCmdConsts {
         return mAddress;
     }
 
-    public InetSocketAddress getPreviewAddress() {
-        return mPreviewAddress;
+    public PreviewConnection getPreviewConnection() {
+        return mPreviewConnection;
     }
 
     private void onCameraConnected() {
         InetSocketAddress addr = mAddress;
-        if (addr != null) {
-            mPreviewAddress = new InetSocketAddress(addr.getAddress(), 8081);
-            if (mOnConnectionChangeListener != null) {
-                mOnConnectionChangeListener.onConnected(this);
-            }
+        if (addr == null) {
+            return;
         }
+
+        mPreviewAddress = new InetSocketAddress(addr.getAddress(), CAMERA_PREVIEW_PORT);
+        mPreviewConnection = new PreviewConnection(mPreviewAddress);
+        try {
+            mPreviewConnection.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (mOnConnectionChangeListener != null) {
+            mOnConnectionChangeListener.onConnected(this);
+        }
+
         mVdbConnection = new VdbConnection(getHostString());
 
         try {
             mVdbConnection.connect();
-            mIsVdbConnected = true;
+
             VdbSocket vdbSocket = new BasicVdbSocket(getVdbConnection());
             mVdbRequestQueue = new VdbRequestQueue(vdbSocket);
             mVdbRequestQueue.start();
@@ -531,7 +540,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             e.printStackTrace();
         }
 
-        mIsConnected = true;
+
     }
 
     private void registerMessageHandler() {
@@ -593,7 +602,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (mOnConnectionChangeListener != null) {
             mOnConnectionChangeListener.onDisconnected(this);
         }
-        mIsConnected = false;
+
     }
 
 
@@ -821,9 +830,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
     public interface OnScanHostListener {
         void OnScanHostResult(List<NetworkItemBean> addedNetworkList, List<NetworkItemBean> networkList);
     }
-
-
-
 
 
     private void ack_Cam_getApiVersion(String p1) {
@@ -1150,9 +1156,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
             Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
     }
-
-
-
 
 
     private void handleCameraMessage(int cmd, String p1, String p2) {
