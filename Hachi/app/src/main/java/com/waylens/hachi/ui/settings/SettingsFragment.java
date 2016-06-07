@@ -12,6 +12,7 @@ import com.waylens.hachi.ui.activities.VersionCheckActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -19,25 +20,11 @@ import butterknife.OnClick;
  */
 public class SettingsFragment extends BaseFragment {
     private static final String TAG = SettingsFragment.class.getSimpleName();
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_settings, savedInstanceState);
-        return view;
-    }
 
-    @Override
-    public void setupToolbar() {
-        getToolbar().setTitle(R.string.settings);
-        super.setupToolbar();
-    }
+    @BindView(R.id.camera_setting)
+    View mCameraSetting;
 
-//    @OnClick(R.id.general)
-//    public void onGeneralClicked() {
-//        GeneralSettingActivity.launch(getActivity());
-//    }
-
-    @OnClick(R.id.cameraSetting)
+    @OnClick(R.id.camera_setting)
     public void onCameraSettingClicked() {
         if (VdtCameraManager.getManager().isConnected()) {
             CameraSettingActivity.launch(getActivity());
@@ -81,4 +68,38 @@ public class SettingsFragment extends BaseFragment {
         //ManualSetupActivity.launch(getActivity());
         StartupActivity.launch(getActivity());
     }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = createFragmentView(inflater, container, R.layout.fragment_settings, savedInstanceState);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initViews();
+    }
+
+    private void initViews() {
+        if (!VdtCameraManager.getManager().isConnected()) {
+            mCameraSetting.setVisibility(View.GONE);
+        } else {
+            mCameraSetting.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void setupToolbar() {
+        getToolbar().setTitle(R.string.settings);
+        super.setupToolbar();
+    }
+
+//    @OnClick(R.id.general)
+//    public void onGeneralClicked() {
+//        GeneralSettingActivity.launch(getActivity());
+//    }
+
+
 }
