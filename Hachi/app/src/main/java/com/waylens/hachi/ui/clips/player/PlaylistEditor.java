@@ -125,6 +125,13 @@ public class PlaylistEditor {
                 if (origClip.realCid.equals(newClip.realCid)) {
                     origClip.editInfo.selectedStartValue = newClip.getStartTimeMs();
                     origClip.editInfo.selectedEndValue = newClip.getEndTimeMs();
+                    if (origClip.editInfo.selectedStartValue < origClip.editInfo.minExtensibleValue) {
+                        origClip.editInfo.minExtensibleValue = origClip.editInfo.selectedStartValue;
+                    }
+
+                    if (origClip.editInfo.selectedEndValue > origClip.editInfo.maxExtensibleValue) {
+                        origClip.editInfo.maxExtensibleValue = origClip.editInfo.selectedEndValue;
+                    }
                     break;
                 }
             }
