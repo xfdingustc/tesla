@@ -60,19 +60,19 @@ public class CameraDiscovery {
             @Override
             public void onDiscoveryStarted(String serviceType) {
                 mIsStarted.set(true);
-//                Logger.t(TAG).d("onDiscoveryStarted: " + serviceType);
+                Logger.t(TAG).d("onDiscoveryStarted: " + serviceType);
             }
 
             @Override
             public void onDiscoveryStopped(String serviceType) {
                 mIsStarted.set(false);
-//                Logger.t(TAG).d("onDiscoveryStopped: " + serviceType);
+                Logger.t(TAG).d("onDiscoveryStopped: " + serviceType);
             }
 
             @Override
             public void onServiceFound(NsdServiceInfo serviceInfo) {
                 mIsStarted.set(true);
-//                Logger.t(TAG).d("onServiceFound");
+                Logger.t(TAG).d("onServiceFound");
                 mNsdManager.resolveService(serviceInfo, createResolveListener(callback));
             }
 

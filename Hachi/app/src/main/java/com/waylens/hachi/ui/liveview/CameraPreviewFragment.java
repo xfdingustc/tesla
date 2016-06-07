@@ -419,11 +419,6 @@ public class CameraPreviewFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         closeLiveRawData();
-
-        if (mLiveView != null) {
-            Logger.t(TAG).d("Stop camera preview");
-            mLiveView.stopStream();
-        }
         if (mTimer != null) {
             mTimer.cancel();
         }
@@ -434,7 +429,10 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-
+        if (mLiveView != null) {
+            Logger.t(TAG).d("Stop camera preview");
+            mLiveView.stopStream();
+        }
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
@@ -511,11 +509,15 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private void initCameraPreview() {
         if (mVdtCamera != null) {
-
+            InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
+            if (serverAddr == null) {
+                mVdtCamera = null;
+                return;
+            }
 
             Logger.t(TAG).d("start preview view");
             mVdtCamera.startPreview();
-            mLiveView.startStream(mVdtCamera.getPreviewConnection());
+            mLiveView.startStream(serverAddr);
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
