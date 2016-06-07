@@ -4,31 +4,22 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
-import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.orhanobut.logger.Logger;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 
 public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callback {
-
-    private Handler mHandler;
+    private static final String TAG = CameraLiveView.class.getSimpleName();
 
     private MjpegStream mMjpegStream;
 
 
     private SurfaceHolder mSurfaceHolder;
-
-
 
 
     public CameraLiveView(Context context) {
@@ -48,7 +39,7 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
+        mSurfaceHolder = holder;
     }
 
     @Override
@@ -62,7 +53,7 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
     }
 
     private void initView() {
-        mHandler = new Handler();
+
 
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
@@ -76,7 +67,6 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
 
         mMjpegStream.start(serverAddr);
     }
-
 
 
     public void stopStream() {
@@ -106,12 +96,12 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
     }
 
 
-
-
     private void drawBitmap(Bitmap bitmap) {
         if (bitmap == null || mSurfaceHolder == null) {
+            Logger.t(TAG).d("mSurfaceHolder " + mSurfaceHolder);
             return;
         }
+
         Canvas canvas = mSurfaceHolder.lockCanvas();
         if (canvas == null) {
             return;
