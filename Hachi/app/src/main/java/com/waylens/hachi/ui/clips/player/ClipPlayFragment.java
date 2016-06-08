@@ -26,6 +26,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
@@ -136,6 +137,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @BindView(R.id.media_window)
     FrameLayout mMediaWindow;
 
+    private int uiOptions;
+
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
@@ -167,7 +170,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onBtnFullscreenClicked() {
         mIsFullScreen = !mIsFullScreen;
         if (mIsFullScreen) {
-            hideSystemUI();
+
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
             mBtnFullscreen.setImageResource(R.drawable.screen_narrow);
@@ -186,6 +189,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
             mBtnFullscreen.setImageResource(R.drawable.screen_full);
         }
+        ((BaseActivity)getActivity()).setImmersiveMode(mIsFullScreen);
+
     }
 
 
@@ -358,6 +363,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
 
+        uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+
     }
 
     private void setupCoverBanner() {
@@ -388,12 +395,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         });
     }
 
-    private void hideSystemUI() {
-        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
-        int newUiOptions = uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-    }
 
 
     private ClipSet getClipSet() {

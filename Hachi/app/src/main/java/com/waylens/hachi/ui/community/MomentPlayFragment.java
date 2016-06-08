@@ -6,12 +6,10 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -37,7 +35,6 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
-import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
@@ -53,14 +50,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTouch;
 
 
 public class MomentPlayFragment extends BaseFragment implements View.OnClickListener, SurfaceHolder.Callback {
@@ -317,10 +312,11 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     public void disableStatusBar(boolean fullScreen) {
         int flag;
-        if(fullScreen)
+        if (fullScreen) {
             flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        else
+        } else {
             flag = WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN;
+        }
         getActivity().getWindow().getDecorView().setSystemUiVisibility(flag);
         getActivity().getWindow().setFlags(flag, flag);
     }
@@ -451,7 +447,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             return;
         }
 
-        mMediaPlayer.setDisplay(holder);
+//        mMediaPlayer.setDisplay(holder);
 
     }
 
@@ -533,6 +529,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             hideSystemUI();
         }
     }
+
     void showInfoPanel() {
         if (mInfoPanel == null) {
             return;
