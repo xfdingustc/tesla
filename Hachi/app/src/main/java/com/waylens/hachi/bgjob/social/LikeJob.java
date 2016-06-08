@@ -10,12 +10,20 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
+import com.rest.body.LikePostBody;
+import com.rest.response.LikeResponse;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.entities.Moment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LikeJob extends Job {
@@ -36,24 +44,9 @@ public class LikeJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        Context context = getApplicationContext();
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-
-        JSONObject postBody = new JSONObject();
-        try {
-            postBody.put("momentID", mMoment.id);
-            postBody.put("cancel", mIsCancel);
-        } catch (JSONException e) {
-            Logger.t(TAG).e("test", "", e);
-        }
-
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
-            Constants.API_MOMENT_LIKE, postBody, future, future);
-        requestQueue.add(request);
-
-        JSONObject response = future.get();
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        Call<LikeResponse> response = hachiApi.like(new LikePostBody(mMoment.id, mIsCancel));
+        Logger.t(TAG).d("response: " + response.execute().body().count);
     }
 
     @Override

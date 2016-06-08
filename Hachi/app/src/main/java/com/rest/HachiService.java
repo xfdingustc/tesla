@@ -28,7 +28,7 @@ public class HachiService {
     public static HachiApi createHachiApiService() {
         Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://ws.waylens.com:9000");
+            .baseUrl(Constants.HOST_URL);
 
         final String token = SessionManager.getInstance().getToken();
         if (!TextUtils.isEmpty(token)) {

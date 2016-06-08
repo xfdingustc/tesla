@@ -435,7 +435,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
-        Logger.t(TAG).d("surface created");
+//        Logger.t(TAG).d("surface created");
     }
 
 
@@ -444,7 +444,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         if (mMediaPlayer == null) {
             return;
         }
-        Logger.t(TAG).d("surfaceChanged");
+//        Logger.t(TAG).d("surfaceChanged");
         mMediaPlayer.setDisplay(holder);
 
     }
@@ -475,7 +475,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Logger.t(TAG).d("surfaceDestroyed");
+//        Logger.t(TAG).d("surfaceDestroyed");
         mSurfaceHolder = null;
 
     }
