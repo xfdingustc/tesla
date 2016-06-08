@@ -241,7 +241,7 @@ public class UserProfileActivity extends BaseActivity {
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-//                    Logger.t(TAG).json(response.toString());
+                    Logger.t(TAG).json(response.toString());
                     Gson gson = new GsonBuilder()
                         .excludeFieldsWithoutExposeAnnotation()
                         .create();

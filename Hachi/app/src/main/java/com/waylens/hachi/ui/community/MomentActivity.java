@@ -37,6 +37,8 @@ import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -49,6 +51,7 @@ import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
+import com.waylens.hachi.ui.entities.UserProfile;
 import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
@@ -62,6 +65,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Xiaofei on 2016/5/19.
@@ -216,6 +221,7 @@ public class MomentActivity extends BaseActivity {
 
         setupCommentList();
     }
+
 
 
     private void doUpdateLikeStateAnimator() {
