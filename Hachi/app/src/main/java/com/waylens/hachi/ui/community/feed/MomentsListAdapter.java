@@ -18,6 +18,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.LikeJob;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.Moment;
@@ -125,7 +126,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         holder.videoCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MomentActivity.launch(mContext, moment);
+                MomentActivity.launch((BaseActivity)mContext, moment, holder.videoCover);
             }
         });
 

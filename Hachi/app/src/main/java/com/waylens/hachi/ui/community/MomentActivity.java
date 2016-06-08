@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -11,6 +12,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -67,6 +71,8 @@ public class MomentActivity extends BaseActivity {
     private static final int DEFAULT_COUNT = 10;
     private Moment mMoment;
 
+    public static final String EXTRA_IMAGE = "MomentActivity:image";
+
     private CommentsAdapter mAdapter;
     private int mCurrentCursor;
 
@@ -80,12 +86,16 @@ public class MomentActivity extends BaseActivity {
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
-    public static void launch(Context activity, Moment moment) {
+    public static void launch(Activity activity, Moment moment, View transitionView) {
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transitionView, EXTRA_IMAGE);
         Intent intent = new Intent(activity, MomentActivity.class);
         intent.putExtra("moment", moment);
-        activity.startActivity(intent);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
+
+    @BindView(R.id.moment_play_container)
+    View mPlayContainer;
 
     @BindView(R.id.momemt_title)
     TextView mMomentTitle;
@@ -198,6 +208,7 @@ public class MomentActivity extends BaseActivity {
 
         Glide.with(this).load(mMoment.owner.avatarUrl).crossFade().into(mUserAvatar);
 
+        ViewCompat.setTransitionName(mPlayContainer, EXTRA_IMAGE);
 
         MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMoment);
 
