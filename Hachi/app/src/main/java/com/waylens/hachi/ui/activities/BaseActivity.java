@@ -44,6 +44,8 @@ public class BaseActivity extends AppCompatActivity {
 
     protected MaterialDialog mProgressDialog;
 
+    private boolean mIsImmersive = false;
+
 //    protected ImageLoader mImageLoader = ImageLoader.getInstance();
     /**
      * Bugtags call
@@ -216,9 +218,11 @@ public class BaseActivity extends AppCompatActivity {
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+            mIsImmersive = true;
         } else {
             getWindow().getDecorView().setSystemUiVisibility(
                 0);
+            mIsImmersive = false;
         }
     }
 
