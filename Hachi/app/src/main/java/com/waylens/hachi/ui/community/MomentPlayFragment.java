@@ -212,10 +212,6 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mRequestQueue.start();
 
-//        mHandler = new VideoHandler(this);
-//        mNonUIThread = new HandlerThread("ReleaseMediaPlayer");
-//        mNonUIThread.start();
-//        mNonUIHandler = new Handler(mNonUIThread.getLooper());
     }
 
     @Override
@@ -413,6 +409,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
             mMediaPlayer.setDataSource(mMoment.videoURL);
             mMediaPlayer.setDisplay(mSurfaceHolder);
+            Logger.t(TAG).d("mSurfaceHolder: " + mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
                 @Override
@@ -438,6 +435,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
+        Logger.t(TAG).d("surface created");
     }
 
 
@@ -446,8 +444,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         if (mMediaPlayer == null) {
             return;
         }
-
-//        mMediaPlayer.setDisplay(holder);
+        Logger.t(TAG).d("surfaceChanged");
+        mMediaPlayer.setDisplay(holder);
 
     }
 
@@ -839,7 +837,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
                 mProgressLoading.setVisibility(View.GONE);
                 break;
             case STATE_PLAYING:
-                mVsCover.setVisibility(View.INVISIBLE);
+                mVsCover.setVisibility(View.GONE);
                 mBtnPlayPause.toggle(false);
                 startPlayer();
                 mProgressLoading.setVisibility(View.GONE);

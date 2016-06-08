@@ -22,14 +22,11 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
-import com.waylens.hachi.utils.ImageUtils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
-
-
 
 
 public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
@@ -93,10 +90,18 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     public void onBindViewHolder(final MomentViewHolder holder, final int position) {
         final Moment moment = mMoments.get(position);
         if (moment.owner != null && moment.owner.avatarUrl != null) {
-            Glide.with(mContext).load(moment.owner.avatarUrl).crossFade().into(holder.userAvatar);
+            Glide.with(mContext)
+                .load(moment.owner.avatarUrl)
+                .placeholder(R.drawable.waylens_logo_76x86)
+                .crossFade()
+                .into(holder.userAvatar);
             holder.userName.setText(moment.owner.userName);
         } else if (mUser != null) {
-            Glide.with(mContext).load(mUser.avatarUrl).crossFade().into(holder.userAvatar);
+            Glide.with(mContext)
+                .load(mUser.avatarUrl)
+                .placeholder(R.drawable.loadingpic)
+                .crossFade()
+                .into(holder.userAvatar);
             holder.userName.setText(mUser.userName);
         }
 
