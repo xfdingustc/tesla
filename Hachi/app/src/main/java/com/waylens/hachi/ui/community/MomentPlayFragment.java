@@ -53,6 +53,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -75,6 +76,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
+
 
     private final int STATE_IDLE = 0;
     private final int STATE_PREPAREING = 1;
@@ -114,8 +116,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
-
-    private Timer mPanelTimer;
 
 
     OnProgressListener mProgressListener;
@@ -173,15 +173,10 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 start();
                 break;
             case STATE_PAUSE:
-                mPanelTimer.cancel();
-                mPanelTimer = new Timer();
-                mPanelTimer.schedule(new HidePanelTimeTask(), 3 * 1000);
                 changeState(STATE_PLAYING);
                 break;
             case STATE_PLAYING:
-                showController(0);
-                showInfoPanel();
-                Logger.d("should pause here");
+                showControllers();
                 mBtnPlayPause.setAlpha((float) 1);
                 changeState(STATE_PAUSE);
                 break;
@@ -192,7 +187,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @OnClick(R.id.video_surface)
     public void onSurfaceClicked() {
-        onBtnPlayClicked();
+//        onBtnPlayClicked();
+        showControllers();
     }
 
     @OnClick(R.id.btn_fullscreen)
@@ -235,7 +231,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             @Override
             public void onSystemUiVisibilityChange(int visibility) {
                 if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                    showController(0);
+                    showControllers();
                 }
             }
         });
@@ -247,6 +243,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moment_play, container, false);
         ButterKnife.bind(this, view);
+        mHandler = new VideoHandler(this);
         initViews();
         return view;
     }
@@ -265,7 +262,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
-        mPanelTimer = new Timer();
+
     }
 
     @Override
@@ -362,10 +359,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     Logger.t(TAG).d("prepared finished");
                     changeState(STATE_PREPARED);
                     changeState(STATE_PLAYING);
-                    mPanelTimer.cancel();
-                    mPanelTimer = new Timer();
                     mBtnPlayPause.setVisibility(View.VISIBLE);
-                    mPanelTimer.schedule(new HidePanelTimeTask(), 3 * 1000);
+                    showControllers();
                 }
             });
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -399,7 +394,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
             mMediaPlayer.setDataSource(mMoment.moment.videoUrl);
             mMediaPlayer.setDisplay(mSurfaceHolder);
-            Logger.t(TAG).d("mSurfaceHolder: " + mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
                 @Override
@@ -425,7 +419,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
-//        Logger.t(TAG).d("surface created");
     }
 
 
@@ -434,7 +427,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         if (mMediaPlayer == null) {
             return;
         }
-//        Logger.t(TAG).d("surfaceChanged");
+
         mMediaPlayer.setDisplay(holder);
 
     }
@@ -444,7 +437,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-//        Logger.t(TAG).d("surfaceDestroyed");
         mSurfaceHolder = null;
 
     }
@@ -480,35 +472,32 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mInfoPanel.setVisibility(visibitliy);
     }
 
-    void showController(int timeout) {
+    private void showControllers() {
         if (mVideoController == null) {
             return;
         }
+        if (mInfoPanel == null) {
+            return;
+        }
+        mInfoPanel.setVisibility(View.VISIBLE);
         mVideoController.setVisibility(View.VISIBLE);
+        mHandler.removeMessages(FADE_OUT);
+        mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), 3000);
 
     }
 
 
     private void hideControllers() {
-        mVideoController.setVisibility(View.INVISIBLE);
+        mVideoController.setVisibility(View.GONE);
+        mInfoPanel.setVisibility(View.GONE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             ) {
 //            hideSystemUI();
         }
     }
 
-    void showInfoPanel() {
-        if (mInfoPanel == null) {
-            return;
-        }
-        mInfoPanel.setVisibility(View.VISIBLE);
-
-    }
 
 
-    private void hideInfoPanel() {
-        mInfoPanel.setVisibility(View.INVISIBLE);
-    }
 
     void showProgress() {
         if (mMediaPlayer == null) {
@@ -709,26 +698,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    static class VideoHandler extends Handler {
-        MomentPlayFragment thisFragment;
 
-        VideoHandler(MomentPlayFragment fragment) {
-            super();
-            thisFragment = fragment;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case FADE_OUT:
-                    thisFragment.hideControllers();
-                    break;
-                case SHOW_PROGRESS:
-                    thisFragment.showProgress();
-                    break;
-            }
-        }
-    }
 
     public interface OnProgressListener {
         void onProgress(int position, int duration);
@@ -896,26 +866,30 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         }
     }
 
-    public class HidePanelTimeTask extends TimerTask {
+    private static class VideoHandler extends Handler {
+        private WeakReference<MomentPlayFragment> mFragmentRef;
+
+        VideoHandler(MomentPlayFragment fragment) {
+            super();
+            mFragmentRef = new WeakReference<>(fragment);
+        }
 
         @Override
-        public void run() {
-            hidePanel();
-        }
-
-        private void hidePanel() {
-            if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+        public void handleMessage(Message msg) {
+            MomentPlayFragment fragment = mFragmentRef.get();
+            if (fragment == null) {
                 return;
             }
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    hideControllers();
-                    hideInfoPanel();
-                    mBtnPlayPause.setAlpha((float) 0.6);
-                }
-            });
+            switch (msg.what) {
+                case FADE_OUT:
+                    fragment.hideControllers();
+                    break;
+                case SHOW_PROGRESS:
+                    fragment.showProgress();
+                    break;
+            }
         }
     }
+
+
 }
