@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -189,6 +190,16 @@ public class MomentActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setImmersiveMode(false);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void init() {
         super.init();
         Intent intent = getIntent();
@@ -205,7 +216,10 @@ public class MomentActivity extends BaseActivity {
         } else {
             mMomentTitle.setText(mMoment.title);
         }
-        mUserName.setText(mMoment.owner.userName);
+
+        if (mMoment.owner != null) {
+            mUserName.setText(mMoment.owner.userName);
+        }
         updateLikeState();
 
         mTsLikeCount.setCurrentText(String.valueOf(mMoment.likesCount));

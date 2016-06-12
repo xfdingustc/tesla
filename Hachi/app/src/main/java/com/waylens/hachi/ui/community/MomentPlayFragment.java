@@ -35,6 +35,7 @@ import com.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
@@ -295,13 +296,13 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
         if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
-            hideSystemUI();
+//            hideSystemUI();
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         mIsFullScreen = fullScreen;
-        disableStatusBar(fullScreen);
+        ((BaseActivity)getActivity()).setImmersiveMode(mIsFullScreen);
     }
 
 
@@ -458,28 +459,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     }
 
-    private void hideSystemUI() {
-        /*
-        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
-        int newUiOptions = uiOptions;
-        if (Build.VERSION.SDK_INT >= 14) {
-            newUiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
-        if (Build.VERSION.SDK_INT >= 16) {
-            newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
-        /*
-        if (Build.VERSION.SDK_INT >= 18) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
 
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions); */
-
-        int uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
-        int newUiOptions = uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-    }
 
 
     @Override
@@ -533,7 +513,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mVideoController.setVisibility(View.INVISIBLE);
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             ) {
-            hideSystemUI();
+//            hideSystemUI();
         }
     }
 
