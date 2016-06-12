@@ -240,4 +240,6 @@
 	<string name="download_progress">下载进度</string>
 	<string name="wake_up_camera">唤醒相机</string>
 	<string name="without_camera">没有相机</string>
+	<string name="unfollow">取消关注</string>
+	<string name="follow">关注</string>
 </resources>

@@ -1,8 +1,10 @@
 package com.rest;
 
+import com.rest.body.FollowPostBody;
 import com.rest.body.LikePostBody;
 import com.rest.response.LikeResponse;
 import com.rest.response.MomentPlayInfo;
+import com.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.entities.UserProfile;
 
 import java.util.List;
@@ -30,5 +32,10 @@ public interface HachiApi {
     @POST("/api/likes")
     Call<LikeResponse> like(@Body LikePostBody likePostBody);
 
+    @POST("/api/friends/follow")
+    Call<SimpleBoolResponse> follow(@Body FollowPostBody followPostBody);
+
+    @POST("/api/friends/unfollow")
+    Call<SimpleBoolResponse> unfollow(@Body FollowPostBody followPostBody);
 
 }

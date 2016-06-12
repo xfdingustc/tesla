@@ -40,10 +40,13 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.rest.HachiApi;
 import com.rest.HachiService;
+import com.rest.body.FollowPostBody;
+import com.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -99,6 +102,8 @@ public class MomentActivity extends BaseActivity {
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
+    @BindView(R.id.comment_new)
+    EditText mNewCommentView;
 
     @BindView(R.id.moment_play_container)
     View mPlayContainer;
@@ -121,6 +126,9 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.comment_list)
     RecyclerView mCommentList;
 
+    @BindView(R.id.add_follow)
+    TextView mAddFollow;
+
     @OnClick(R.id.btn_like)
     public void onBtnLikeClicked() {
         boolean isCancel = mMoment.isLiked;
@@ -142,8 +150,6 @@ public class MomentActivity extends BaseActivity {
         UserProfileActivity.launch(this, mMoment.owner.userID);
     }
 
-    @BindView(R.id.comment_new)
-    EditText mNewCommentView;
 
 
     @OnClick(R.id.btn_send)
@@ -168,6 +174,19 @@ public class MomentActivity extends BaseActivity {
         mCommentList.scrollToPosition(position);
         mNewCommentView.setText("");
         publishComment(comment, position);
+    }
+
+    @OnClick(R.id.add_follow)
+    public void addFollow() {
+        JobManager jobManager = BgJobManager.getManager();
+        FollowJob job = new FollowJob(mMoment.owner.userID, !mMoment.owner.getIsFollowing());
+        jobManager.addJobInBackground(job);
+        mMoment.owner.setIsFollowing(!mMoment.owner.getIsFollowing());
+        if (mMoment.owner.getIsFollowing()) {
+            mAddFollow.setText(R.string.unfollow);
+        } else {
+            mAddFollow.setText(R.string.follow);
+        }
     }
 
 
@@ -220,6 +239,11 @@ public class MomentActivity extends BaseActivity {
         if (mMoment.owner != null) {
             mUserName.setText(mMoment.owner.userName);
         }
+
+        if (mMoment.owner.getIsFollowing()) {
+            mAddFollow.setText(R.string.unfollow);
+        }
+
         updateLikeState();
 
         mTsLikeCount.setCurrentText(String.valueOf(mMoment.likesCount));

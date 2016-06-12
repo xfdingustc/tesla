@@ -117,6 +117,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_margin="16dp"
                     android:text="@string/add_follow"
+                    android:textAllCaps="true"
                     android:textColor="@color/style_color_accent"
                     android:textSize="18sp"
                     />
