@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.rest.HachiApi;
 import com.rest.HachiService;
+import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -68,7 +69,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class MomentPlayFragment extends BaseFragment implements View.OnClickListener, SurfaceHolder.Callback {
+public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Callback {
     private static final String TAG = MomentPlayFragment.class.getSimpleName();
 
 
@@ -103,7 +104,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
     VideoHandler mHandler;
 
-    private Moment mMoment;
+    private MomentInfo mMoment;
 
 
     boolean mIsFullScreen;
@@ -205,7 +206,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         mGaugeView.setVisibility(visibility);
     }
 
-    public static MomentPlayFragment newInstance(Moment moment) {
+    public static MomentPlayFragment newInstance(MomentInfo moment) {
         MomentPlayFragment fragment = new MomentPlayFragment();
         Bundle args = new Bundle();
         args.putSerializable("moment", moment);
@@ -217,7 +218,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        mMoment = (Moment) args.getSerializable("moment");
+        mMoment = (MomentInfo) args.getSerializable("moment");
 
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mRequestQueue.start();
@@ -251,7 +252,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     }
 
     private void initViews() {
-        Glide.with(this).load(mMoment.thumbnail).crossFade().into(mVsCover);
+        Glide.with(this).load(mMoment.moment.thumbnail).crossFade().into(mVsCover);
         mBtnPlayPause.toggle(true);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
@@ -306,27 +307,6 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     }
 
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-//            case R.id.waylens_video_container:
-//                toggleController();
-//                break;
-
-        }
-    }
-
-    public void disableStatusBar(boolean fullScreen) {
-        int flag;
-        if (fullScreen) {
-            flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        } else {
-            flag = WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN;
-        }
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(flag);
-        getActivity().getWindow().setFlags(flag, flag);
-    }
-
 
     private void playVideo() {
         openVideo();
@@ -359,8 +339,8 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
 
     private void openVideo() {
-        if (mMoment.videoURL == null || mSurfaceView == null || mSurfaceHolder == null) {
-            Logger.t(TAG).d("source: " + mMoment.videoURL + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
+        if (mMoment.moment.videoUrl == null || mSurfaceView == null || mSurfaceHolder == null) {
+            Logger.t(TAG).d("source: " + mMoment.moment.videoUrl + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
             return;
         }
 
@@ -417,7 +397,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
             });
 
 
-            mMediaPlayer.setDataSource(mMoment.videoURL);
+            mMediaPlayer.setDataSource(mMoment.moment.videoUrl);
             mMediaPlayer.setDisplay(mSurfaceHolder);
             Logger.t(TAG).d("mSurfaceHolder: " + mSurfaceHolder);
             mMediaPlayer.prepareAsync();
@@ -565,7 +545,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     }
 
     private void readRawURL() {
-        if (mMoment.id == Moment.INVALID_MOMENT_ID) {
+        if (mMoment.moment.id == Moment.INVALID_MOMENT_ID) {
             return;
         }
 
@@ -600,7 +580,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
 
 
 
-        String url = Constants.API_MOMENT_PLAY + mMoment.id;
+        String url = Constants.API_MOMENT_PLAY + mMoment.moment.id;
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

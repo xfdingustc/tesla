@@ -3,6 +3,7 @@ package com.rest;
 import com.rest.body.FollowPostBody;
 import com.rest.body.LikePostBody;
 import com.rest.response.LikeResponse;
+import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
 import com.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.entities.UserProfile;
@@ -37,5 +38,8 @@ public interface HachiApi {
 
     @POST("/api/friends/unfollow")
     Call<SimpleBoolResponse> unfollow(@Body FollowPostBody followPostBody);
+
+    @GET("/api/moments/{momentId}")
+    Call<MomentInfo> getMomentInfo(@Path("momentId") long momentId);
 
 }

@@ -26,6 +26,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
@@ -41,10 +42,12 @@ import com.orhanobut.logger.Logger;
 import com.rest.HachiApi;
 import com.rest.HachiService;
 import com.rest.body.FollowPostBody;
+import com.rest.response.MomentInfo;
 import com.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
@@ -72,16 +75,23 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.http.Body;
 
 /**
  * Created by Xiaofei on 2016/5/19.
  */
 public class MomentActivity extends BaseActivity {
     private static final String TAG = MomentActivity.class.getSimpleName();
-    private static final int DEFAULT_COUNT = 10;
-    private Moment mMoment;
-
     public static final String EXTRA_IMAGE = "MomentActivity:image";
+
+    private static final int DEFAULT_COUNT = 10;
+    private long mMomentId;
+    public static final String EXTRA_THUMBNAIL = "thumbnail";
+    public static final String EXTRA_MOMENT_ID = "momentId";
+
+    private MomentInfo mMomentInfo;
+
+    private String mThumbnail;
 
     private CommentsAdapter mAdapter;
     private int mCurrentCursor;
@@ -96,10 +106,12 @@ public class MomentActivity extends BaseActivity {
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
-    public static void launch(Activity activity, Moment moment, View transitionView) {
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transitionView, EXTRA_IMAGE);
+    public static void launch(Activity activity, long momentId, String thumbnail, View transitionView) {
+        ActivityOptionsCompat options = ActivityOptionsCompat
+            .makeSceneTransitionAnimation(activity, transitionView, EXTRA_IMAGE);
         Intent intent = new Intent(activity, MomentActivity.class);
-        intent.putExtra("moment", moment);
+        intent.putExtra(EXTRA_MOMENT_ID, momentId);
+        intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
@@ -130,17 +142,20 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.add_follow)
     TextView mAddFollow;
 
+    @BindView(R.id.video_thumbnail)
+    ImageView mVideoThumbnail;
+
     @OnClick(R.id.btn_like)
     public void onBtnLikeClicked() {
-        boolean isCancel = mMoment.isLiked;
+        boolean isCancel = mMomentInfo.moment.isLiked;
         JobManager jobManager = BgJobManager.getManager();
-        LikeJob job = new LikeJob(mMoment.id, isCancel);
+        LikeJob job = new LikeJob(mMomentInfo.moment.id, isCancel);
         jobManager.addJobInBackground(job);
-        mMoment.isLiked = !mMoment.isLiked;
-        if (mMoment.isLiked) {
-            mMoment.likesCount++;
+        mMomentInfo.moment.isLiked = !mMomentInfo.moment.isLiked;
+        if (mMomentInfo.moment.isLiked) {
+            mMomentInfo.moment.likesCount++;
         } else {
-            mMoment.likesCount--;
+            mMomentInfo.moment.likesCount--;
         }
         doUpdateLikeStateAnimator();
         updateLikeCount();
@@ -148,7 +163,7 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.user_avatar)
     public void onUserAvatarClick() {
-        UserProfileActivity.launch(this, mMoment.owner.userID);
+        UserProfileActivity.launch(this, mMomentInfo.owner.userID);
     }
 
 
@@ -179,15 +194,15 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.add_follow)
     public void addFollow() {
-        JobManager jobManager = BgJobManager.getManager();
-        FollowJob job = new FollowJob(mMoment.owner.userID, !mMoment.owner.getIsFollowing());
-        jobManager.addJobInBackground(job);
-        mMoment.owner.setIsFollowing(!mMoment.owner.getIsFollowing());
-        if (mMoment.owner.getIsFollowing()) {
-            mAddFollow.setText(R.string.unfollow);
-        } else {
-            mAddFollow.setText(R.string.follow);
-        }
+//        JobManager jobManager = BgJobManager.getManager();
+//        FollowJob job = new FollowJob(mMomentInfo.owner.userID, !mMomentInfo.owner.getIsFollowing());
+//        jobManager.addJobInBackground(job);
+//        mMomentInfo.owner.setIsFollowing(!mMomentInfo.owner.getIsFollowing());
+//        if (mMoment.owner.getIsFollowing()) {
+//            mAddFollow.setText(R.string.unfollow);
+//        } else {
+//            mAddFollow.setText(R.string.follow);
+//        }
     }
 
 
@@ -223,57 +238,79 @@ public class MomentActivity extends BaseActivity {
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        mMoment = (Moment) intent.getSerializableExtra("moment");
-        Logger.t(TAG).d("moment: " + mMoment.toString());
+        mMomentId = intent.getLongExtra(EXTRA_MOMENT_ID, -1);
+        mThumbnail = intent.getStringExtra(EXTRA_THUMBNAIL);
         mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_moment);
-        if (mMoment.title == null || mMoment.title.isEmpty()) {
-            mMomentTitle.setText("No Title");
-        } else {
-            mMomentTitle.setText(mMoment.title);
-        }
+        Glide.with(this).load(mThumbnail).into(mVideoThumbnail);
+        ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
 
-        if (mMoment.owner != null) {
-            mUserName.setText(mMoment.owner.userName);
-        }
-
-        if (mMoment.owner.getIsFollowing()) {
-            mAddFollow.setText(R.string.unfollow);
-        }
 
         queryMomentInfo();
 
-        updateLikeState();
 
-        mTsLikeCount.setCurrentText(String.valueOf(mMoment.likesCount));
-
-
-        Glide.with(this).load(mMoment.owner.avatarUrl).crossFade().into(mUserAvatar);
-
-        ViewCompat.setTransitionName(mPlayContainer, EXTRA_IMAGE);
-
-        MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMoment);
-
-        getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
-
-        setupCommentList();
     }
 
     private void queryMomentInfo() {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_MOMENTS + "/" + mMoment.id)
-            .listner(new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                }
-            }).build();
+        Logger.t(TAG).d("moment id: " + mMomentId);
 
-        mRequestQueue.add(request);
+//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+//            .url(Constants.API_MOMENTS + "/" + mMomentId)
+//            .listner(new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    Logger.t(TAG).json(response.toString());
+//                }
+//            }).build();
+//        mRequestQueue.add(request);
+        Call<MomentInfo> momentInfoCall = HachiService.createHachiApiService().getMomentInfo(mMomentId);
+        momentInfoCall.enqueue(new Callback<MomentInfo>() {
+            @Override
+            public void onResponse(Call<MomentInfo> call, retrofit2.Response<MomentInfo> response) {
+                mMomentInfo = response.body();
+                Logger.t(TAG).d("moment info: " + response.body().toString());
+                Logger.t(TAG).d("user info: " + mMomentInfo.owner.avatarUrl);
+                if (TextUtils.isEmpty(mMomentInfo.moment.title)) {
+                    mMomentTitle.setText("No Title");
+                } else {
+                    mMomentTitle.setText(mMomentInfo.moment.title);
+                }
+
+                if (mMomentInfo.owner != null) {
+                    mUserName.setText(mMomentInfo.owner.userName);
+                }
+
+//                if (mMomentInfo.owner.getIsFollowing()) {
+//                    mAddFollow.setText(R.string.unfollow);
+//                }
+
+                updateLikeState();
+
+                mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
+
+
+                Glide.with(MomentActivity.this).load(mMomentInfo.owner.avatarUrl).crossFade().into(mUserAvatar);
+
+
+
+                MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
+
+                getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
+
+                setupCommentList();
+            }
+
+            @Override
+            public void onFailure(Call<MomentInfo> call, Throwable t) {
+
+            }
+        });
+
+
     }
 
 
@@ -308,7 +345,7 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void updateLikeState() {
-        if (mMoment.isLiked) {
+        if (mMomentInfo.moment.isLiked) {
             //vh.btnLike.setImageResource(R.drawable.social_like_click);
             mBtnLike.setImageResource(R.drawable.social_like_click);
         } else {
@@ -318,15 +355,15 @@ public class MomentActivity extends BaseActivity {
 
     private void updateLikeCount() {
         int fromValue;
-        if (mMoment.isLiked) {
-            fromValue = mMoment.likesCount - 1;
+        if (mMomentInfo.moment.isLiked) {
+            fromValue = mMomentInfo.moment.likesCount - 1;
         } else {
-            fromValue = mMoment.likesCount + 1;
+            fromValue = mMomentInfo.moment.likesCount + 1;
         }
 
         mTsLikeCount.setCurrentText(String.valueOf(fromValue));
 
-        String toValue = String.valueOf(mMoment.likesCount);
+        String toValue = String.valueOf(mMomentInfo.moment.likesCount);
         mTsLikeCount.setText(toValue);
 
     }
@@ -402,12 +439,13 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void loadComments(int cursor, final boolean isRefresh) {
-        if (mMoment == null || mMoment.id == Moment.INVALID_MOMENT_ID) {
+        if (mMomentInfo == null || mMomentInfo.moment.id == Moment.INVALID_MOMENT_ID) {
             return;
         }
 
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING, mMoment.id, cursor, DEFAULT_COUNT))
+            .url(Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING,
+                mMomentInfo.moment.id, cursor, DEFAULT_COUNT))
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -501,7 +539,7 @@ public class MomentActivity extends BaseActivity {
     private void publishComment(final Comment comment, final int position) {
         JSONObject params = new JSONObject();
         try {
-            params.put("momentID", mMoment.id);
+            params.put("momentID", mMomentInfo.moment.id);
             params.put("content", comment.content);
 
         } catch (JSONException e) {
@@ -510,7 +548,7 @@ public class MomentActivity extends BaseActivity {
 
         AuthorizedJsonRequest.Builder requestBuilder = new AuthorizedJsonRequest.Builder()
             .url(Constants.API_COMMENTS)
-            .postBody("momentID", mMoment.id)
+            .postBody("momentID", mMomentInfo.moment.id)
             .postBody("content", comment.content)
             .listner(new Response.Listener<JSONObject>() {
                 @Override

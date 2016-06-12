@@ -368,10 +368,10 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 //            mVideoFragment = youTubeFragment;
 //            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
         } else {
-            MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment);
+//            MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment);
 //            vh.videoFragment = videoPlayFragment;
-            mVideoFragment = videoPlayFragment;
-            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
+//            mVideoFragment = videoPlayFragment;
+//            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
 
         }
         //vh.videoControl.setVisibility(View.GONE);

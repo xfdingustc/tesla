@@ -127,7 +127,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         holder.videoCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MomentActivity.launch((BaseActivity)mContext, moment, holder.videoCover);
+                MomentActivity.launch((BaseActivity)mContext, moment.id, moment.thumbnail, holder.videoCover);
             }
         });
 
