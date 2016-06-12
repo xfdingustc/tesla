@@ -2,8 +2,6 @@ package com.waylens.hachi.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.net.VpnService;
-import android.net.nsd.NsdServiceInfo;
 
 //import com.bugtags.library.Bugtags;
 //import com.bugtags.library.BugtagsOptions;
@@ -12,15 +10,11 @@ import com.orhanobut.logger.Logger;
 import com.squareup.leakcanary.LeakCanary;
 //import com.tencent.bugly.crashreport.CrashReport;
 
-import com.waylens.hachi.hardware.CameraDiscovery;
-import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.VdtCameraFounder;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 
@@ -33,7 +27,7 @@ public class Hachi extends Application {
 
     private static Context mSharedContext = null;
 
-    private DeviceScanner mScanner;
+
 
 
 
@@ -65,7 +59,7 @@ public class Hachi extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        mScanner.stopWork();
+//        mScanner.stopWork();
     }
 
     @Override
@@ -108,13 +102,13 @@ public class Hachi extends Application {
         BgJobManager.init(this);
     }
 
-    public void startDeviceScanner() {
-        if (mScanner != null) {
-            mScanner.stopWork();
-        }
-        mScanner = new DeviceScanner(this);
-        mScanner.startWork();
-    }
+//    public void startDeviceScanner() {
+//        if (mScanner != null) {
+//            mScanner.stopWork();
+//        }
+//        mScanner = new DeviceScanner(this);
+//        mScanner.startWork();
+//    }
 
 
     private void initCameraManager() {

@@ -20,13 +20,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class HachiService {
 
+    public static HachiApi mHachiApiInstance = null;
+
 
     private HachiService() {
 
     }
 
     public static HachiApi createHachiApiService() {
-        Retrofit.Builder builder = new Retrofit.Builder()
+        if (mHachiApiInstance != null) {
+            return mHachiApiInstance;
+        }
+        Retrofit.Builder builder = new Retrofit.Builder().addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.HOST_URL);
 
@@ -46,6 +51,7 @@ public class HachiService {
             builder.client(client);
         }
 
-        return builder.build().create(HachiApi.class);
+        mHachiApiInstance = builder.build().create(HachiApi.class);
+        return mHachiApiInstance;
     }
 }

@@ -29,6 +29,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
+import com.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -56,6 +59,12 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class MomentPlayFragment extends BaseFragment implements View.OnClickListener, SurfaceHolder.Callback {
@@ -579,6 +588,38 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
         if (mMoment.id == Moment.INVALID_MOMENT_ID) {
             return;
         }
+
+//        HachiApi hachiApi = HachiService.createHachiApiService();
+//        Call<MomentPlayInfo> momentPlayInfoCall = hachiApi.getRawDataUrl(mMoment.id);
+//
+//        hachiApi.getMomentPlayInfo(mMoment.id)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe(new Observer<MomentPlayInfo>() {
+//                @Override
+//                public void onCompleted() {
+//
+//                }
+//
+//                @Override
+//                public void onError(Throwable e) {
+//
+//                }
+//
+//                @Override
+//                public void onNext(MomentPlayInfo momentPlayInfo) {
+//                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
+//                    for (MomentPlayInfo.RawDataUrl rawDataUrl : momentPlayInfo.rawDataUrl) {
+//                        Logger.t(TAG).d("response: " + rawDataUrl.url);
+//
+//                    }
+//                }
+//            });
+
+
+
+
+
         String url = Constants.API_MOMENT_PLAY + mMoment.id;
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
@@ -822,7 +863,7 @@ public class MomentPlayFragment extends BaseFragment implements View.OnClickList
     }
 
     private void changeState(int targetState) {
-        Logger.t(TAG).d("target state: " + targetState);
+//        Logger.t(TAG).d("target state: " + targetState);
         switch (targetState) {
             case STATE_IDLE:
                 mVsCover.setVisibility(View.VISIBLE);
