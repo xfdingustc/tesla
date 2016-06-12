@@ -14,7 +14,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,10 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
-import com.rest.HachiApi;
-import com.rest.HachiService;
 import com.rest.response.MomentInfo;
-import com.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -62,12 +58,6 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import rx.Observable;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 
 public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Callback {
@@ -300,9 +290,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         mIsFullScreen = fullScreen;
-        ((BaseActivity)getActivity()).setImmersiveMode(mIsFullScreen);
+        ((BaseActivity) getActivity()).setImmersiveMode(mIsFullScreen);
     }
-
 
 
     private void playVideo() {
@@ -432,9 +421,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     }
 
-
-
-
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mSurfaceHolder = null;
@@ -462,15 +448,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         }
     }
 
-    void toggleController() {
-        if (mProgressLoading.getVisibility() == View.VISIBLE) {
-            return;
-        }
-        int visibitliy = mVideoController.getVisibility() == View.VISIBLE ? View.INVISIBLE : View
-            .VISIBLE;
-        mVideoController.setVisibility(visibitliy);
-        mInfoPanel.setVisibility(visibitliy);
-    }
 
     private void showControllers() {
         if (mVideoController == null) {
@@ -490,13 +467,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private void hideControllers() {
         mVideoController.setVisibility(View.GONE);
         mInfoPanel.setVisibility(View.GONE);
-        if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            ) {
-//            hideSystemUI();
-        }
     }
-
-
 
 
     void showProgress() {
@@ -564,9 +535,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 //                    }
 //                }
 //            });
-
-
-
 
 
         String url = Constants.API_MOMENT_PLAY + mMoment.moment.id;
@@ -696,8 +664,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     public void setOnProgressListener(OnProgressListener listener) {
         mProgressListener = listener;
     }
-
-
 
 
     public interface OnProgressListener {
