@@ -40,6 +40,8 @@ public class FollowJob extends Job{
         FollowPostBody body = new FollowPostBody();
         body.userID = mUserId;
 
+        Logger.t(TAG).d("add follow: " + mAddFollow);
+
         if (mAddFollow) {
             responseCall = hachiApi.follow(body);
         } else {

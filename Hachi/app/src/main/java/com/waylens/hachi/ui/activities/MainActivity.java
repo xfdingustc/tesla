@@ -111,13 +111,9 @@ public class MainActivity extends BaseActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-//            mTabLayout.setVisibility(View.GONE);
-//            mToolbar.setVisibility(View.GONE);
             hideSystemUI(true);
 
         } else {
-//            mTabLayout.setVisibility(View.VISIBLE);
-//            mToolbar.setVisibility(View.VISIBLE);
             hideSystemUI(false);
         }
     }
@@ -125,7 +121,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-
         mMenuId2Tab.put(R.id.moments, TAB_TAG_MOMENTS);
         mMenuId2Tab.put(R.id.setting, TAB_TAG_SETTINGS);
         mMenuId2Tab.put(R.id.video, TAB_TAG_VIDEO);
@@ -146,7 +141,6 @@ public class MainActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_main);
-
         setupNavigationView();
 
         if (VdtCameraManager.getManager().isConnected()) {
@@ -271,7 +265,11 @@ public class MainActivity extends BaseActivity {
         if (mSessionManager.isLoggedIn()) {
             mUsername.setText(mSessionManager.getUserName());
 
-            Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(mUserAvatar);
+            Glide.with(this)
+                .load(mSessionManager.getAvatarUrl())
+                .placeholder(R.drawable.waylens_logo_76x86)
+                .crossFade()
+                .into(mUserAvatar);
         } else {
             mUsername.setText(getText(R.string.click_2_login));
 

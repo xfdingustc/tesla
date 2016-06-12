@@ -2,6 +2,7 @@ package com.rest;
 
 import com.rest.body.FollowPostBody;
 import com.rest.body.LikePostBody;
+import com.rest.response.FollowInfo;
 import com.rest.response.LikeResponse;
 import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
@@ -11,6 +12,7 @@ import com.waylens.hachi.ui.entities.UserProfile;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -42,4 +44,9 @@ public interface HachiApi {
     @GET("/api/moments/{momentId}")
     Call<MomentInfo> getMomentInfo(@Path("momentId") long momentId);
 
+    @GET("/api/moments/{momentId}")
+    Observable<MomentInfo> getMomentInfoRx(@Path("momentId") long momentId);
+
+    @GET("/api/friends/{userId}")
+    Call<FollowInfo>getFollowInfo(@Path("userId") String userId);
 }

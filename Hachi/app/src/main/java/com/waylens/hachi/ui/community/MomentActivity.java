@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -41,27 +40,21 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.rest.HachiApi;
 import com.rest.HachiService;
-import com.rest.body.FollowPostBody;
+import com.rest.response.FollowInfo;
 import com.rest.response.MomentInfo;
-import com.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
-import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
-import com.waylens.hachi.ui.entities.UserProfile;
-import com.waylens.hachi.ui.views.OnViewDragListener;
-import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONArray;
@@ -75,7 +68,9 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.http.Body;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/5/19.
@@ -90,6 +85,7 @@ public class MomentActivity extends BaseActivity {
     public static final String EXTRA_MOMENT_ID = "momentId";
 
     private MomentInfo mMomentInfo;
+    private FollowInfo mFollowInfo;
 
     private String mThumbnail;
 
@@ -105,6 +101,8 @@ public class MomentActivity extends BaseActivity {
     private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
+
+    private HachiApi mHachi = HachiService.createHachiApiService();
 
     public static void launch(Activity activity, long momentId, String thumbnail, View transitionView) {
         ActivityOptionsCompat options = ActivityOptionsCompat
@@ -167,7 +165,6 @@ public class MomentActivity extends BaseActivity {
     }
 
 
-
     @OnClick(R.id.btn_send)
     public void sendComment() {
         if (TextUtils.isEmpty(mNewCommentView.getText())) {
@@ -194,15 +191,12 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.add_follow)
     public void addFollow() {
-//        JobManager jobManager = BgJobManager.getManager();
-//        FollowJob job = new FollowJob(mMomentInfo.owner.userID, !mMomentInfo.owner.getIsFollowing());
-//        jobManager.addJobInBackground(job);
-//        mMomentInfo.owner.setIsFollowing(!mMomentInfo.owner.getIsFollowing());
-//        if (mMoment.owner.getIsFollowing()) {
-//            mAddFollow.setText(R.string.unfollow);
-//        } else {
-//            mAddFollow.setText(R.string.follow);
-//        }
+        JobManager jobManager = BgJobManager.getManager();
+        mFollowInfo.isMyFollowing = !mFollowInfo.isMyFollowing;
+        FollowJob job = new FollowJob(mMomentInfo.owner.userID, mFollowInfo.isMyFollowing);
+        jobManager.addJobInBackground(job);
+
+        updateFollowTextView();
     }
 
 
@@ -249,68 +243,90 @@ public class MomentActivity extends BaseActivity {
         Glide.with(this).load(mThumbnail).into(mVideoThumbnail);
         ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
 
-
         queryMomentInfo();
-
-
     }
 
     private void queryMomentInfo() {
-        Logger.t(TAG).d("moment id: " + mMomentId);
 
-//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-//            .url(Constants.API_MOMENTS + "/" + mMomentId)
-//            .listner(new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//                    Logger.t(TAG).json(response.toString());
-//                }
-//            }).build();
-//        mRequestQueue.add(request);
-        Call<MomentInfo> momentInfoCall = HachiService.createHachiApiService().getMomentInfo(mMomentId);
-        momentInfoCall.enqueue(new Callback<MomentInfo>() {
+        mHachi.getMomentInfoRx(mMomentId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext(new Action1<MomentInfo>() {
+                @Override
+                public void call(MomentInfo momentInfo) {
+                    updateFollowInfo(momentInfo.owner.userID);
+                }
+            })
+            .subscribe(new rx.Observer<MomentInfo>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(MomentInfo momentInfo) {
+                    mMomentInfo = momentInfo;
+                    Logger.t(TAG).d("moment info: " + momentInfo.moment.toString());
+
+                    if (TextUtils.isEmpty(mMomentInfo.moment.title)) {
+                        mMomentTitle.setText("No Title");
+                    } else {
+                        mMomentTitle.setText(mMomentInfo.moment.title);
+                    }
+
+                    if (mMomentInfo.owner != null) {
+                        mUserName.setText(mMomentInfo.owner.userName);
+                    }
+
+
+                    updateLikeState();
+
+                    mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
+
+
+                    Glide.with(MomentActivity.this).load(mMomentInfo.owner.avatarUrl).crossFade().into(mUserAvatar);
+
+                    MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
+
+                    getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
+
+                    setupCommentList();
+                }
+            });
+
+    }
+
+    private void updateFollowInfo(String userID) {
+        Logger.t(TAG).d("load userId: " + userID);
+        Call<FollowInfo> followInfoCall = mHachi.getFollowInfo(userID);
+        followInfoCall.enqueue(new Callback<FollowInfo>() {
             @Override
-            public void onResponse(Call<MomentInfo> call, retrofit2.Response<MomentInfo> response) {
-                mMomentInfo = response.body();
-                Logger.t(TAG).d("moment info: " + response.body().toString());
-                Logger.t(TAG).d("user info: " + mMomentInfo.owner.avatarUrl);
-                if (TextUtils.isEmpty(mMomentInfo.moment.title)) {
-                    mMomentTitle.setText("No Title");
-                } else {
-                    mMomentTitle.setText(mMomentInfo.moment.title);
-                }
+            public void onResponse(Call<FollowInfo> call, retrofit2.Response<FollowInfo> response) {
+                Logger.t(TAG).d(response.body().toString());
+                mFollowInfo = response.body();
+                updateFollowTextView();
 
-                if (mMomentInfo.owner != null) {
-                    mUserName.setText(mMomentInfo.owner.userName);
-                }
-
-//                if (mMomentInfo.owner.getIsFollowing()) {
-//                    mAddFollow.setText(R.string.unfollow);
-//                }
-
-                updateLikeState();
-
-                mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
-
-
-                Glide.with(MomentActivity.this).load(mMomentInfo.owner.avatarUrl).crossFade().into(mUserAvatar);
-
-
-
-                MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
-
-                getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
-
-                setupCommentList();
             }
 
             @Override
-            public void onFailure(Call<MomentInfo> call, Throwable t) {
+            public void onFailure(Call<FollowInfo> call, Throwable t) {
 
             }
         });
 
+    }
 
+    private void updateFollowTextView() {
+        if (mFollowInfo.isMyFollowing) {
+            mAddFollow.setText(R.string.unfollow);
+        } else {
+            mAddFollow.setText(R.string.follow);
+        }
     }
 
 
@@ -573,9 +589,6 @@ public class MomentActivity extends BaseActivity {
         }
 
         mRequestQueue.add(requestBuilder.build());
-
-
-
 
 
     }
