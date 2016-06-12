@@ -102,7 +102,7 @@
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
     <TextView
-        android:id="@+id/moment_desc_view"
+        android:id="@+id/title"
         style="@style/HachiTextViewBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

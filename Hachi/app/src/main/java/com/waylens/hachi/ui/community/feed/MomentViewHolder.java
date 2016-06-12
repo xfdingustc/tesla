@@ -1,12 +1,10 @@
 package com.waylens.hachi.ui.community.feed;
 
-import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
@@ -28,8 +26,8 @@ public class MomentViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.user_car)
     TextView userCar;
 
-    @BindView(R.id.moment_desc_view)
-    TextView descView;
+    @BindView(R.id.title)
+    TextView title;
 
     @BindView(R.id.video_time)
     TextView videoTime;

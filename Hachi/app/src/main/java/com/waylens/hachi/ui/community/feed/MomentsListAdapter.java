@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,11 +108,11 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         }
 
         holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
-        if (moment.description != null && !moment.description.isEmpty()) {
-            holder.descView.setVisibility(View.VISIBLE);
-            holder.descView.setText(moment.description);
+        if (!TextUtils.isEmpty(moment.title)) {
+            holder.title.setVisibility(View.VISIBLE);
+            holder.title.setText(moment.title);
         } else {
-            holder.descView.setVisibility(View.GONE);
+            holder.title.setVisibility(View.GONE);
         }
         Glide.with(mContext).load(moment.thumbnail).crossFade().into(holder.videoCover);
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));

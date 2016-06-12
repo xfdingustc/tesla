@@ -297,6 +297,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
+        Logger.t(TAG).json(response.toString());
         JSONArray jsonMoments = response.optJSONArray("moments");
         if (jsonMoments == null) {
             return;
@@ -334,42 +335,8 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
         showMessage(errorInfo.msgResID);
     }
 
-    public void loadComment(final long momentID, final int position) {
-        if (momentID == Moment.INVALID_MOMENT_ID) {
-            return;
-        }
-        String url = Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING, momentID, 0, 3);
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                refreshComment(momentID, position, response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                showMessage(errorInfo.msgResID);
-            }
-        }).setTag(getRequestTag()));
-    }
 
-    void refreshComment(long momentID, int position, JSONObject response) {
-        JSONArray jsonComments = response.optJSONArray("comments");
-        if (jsonComments == null || jsonComments.length() == 0) {
-            return;
-        }
 
-        SpannableStringBuilder ssb = new SpannableStringBuilder();
-
-        for (int i = jsonComments.length() - 1; i >= 0; i--) {
-            Comment comment = Comment.fromJson(jsonComments.optJSONObject(i));
-            ssb.append(comment.toSpannable());
-            if (i > 0) {
-                ssb.append("\n");
-            }
-        }
-        mAdapter.updateMoment(ssb, position);
-    }
 
 
     @Override
