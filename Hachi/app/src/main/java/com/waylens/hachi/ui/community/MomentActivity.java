@@ -51,6 +51,7 @@ import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
@@ -133,7 +134,7 @@ public class MomentActivity extends BaseActivity {
     public void onBtnLikeClicked() {
         boolean isCancel = mMoment.isLiked;
         JobManager jobManager = BgJobManager.getManager();
-        LikeJob job = new LikeJob(mMoment, isCancel);
+        LikeJob job = new LikeJob(mMoment.id, isCancel);
         jobManager.addJobInBackground(job);
         mMoment.isLiked = !mMoment.isLiked;
         if (mMoment.isLiked) {
@@ -244,6 +245,8 @@ public class MomentActivity extends BaseActivity {
             mAddFollow.setText(R.string.unfollow);
         }
 
+        queryMomentInfo();
+
         updateLikeState();
 
         mTsLikeCount.setCurrentText(String.valueOf(mMoment.likesCount));
@@ -260,6 +263,18 @@ public class MomentActivity extends BaseActivity {
         setupCommentList();
     }
 
+    private void queryMomentInfo() {
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(Constants.API_MOMENTS + "/" + mMoment.id)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                }
+            }).build();
+
+        mRequestQueue.add(request);
+    }
 
 
     private void doUpdateLikeStateAnimator() {

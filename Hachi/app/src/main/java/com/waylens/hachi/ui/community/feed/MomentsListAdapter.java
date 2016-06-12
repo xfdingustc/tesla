@@ -211,7 +211,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     private void doAddLike(final MomentViewHolder vh, final Moment moment) {
         boolean isCancel = moment.isLiked;
         JobManager jobManager = BgJobManager.getManager();
-        LikeJob job = new LikeJob(moment, isCancel);
+        LikeJob job = new LikeJob(moment.id, isCancel);
         jobManager.addJobInBackground(job);
         moment.isLiked = !moment.isLiked;
 //        doUpdateLikeStateAnimator(vh, moment);

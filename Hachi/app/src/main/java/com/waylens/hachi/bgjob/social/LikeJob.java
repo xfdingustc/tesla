@@ -28,12 +28,12 @@ import retrofit2.Response;
 
 public class LikeJob extends Job {
     private static final String TAG = LikeJob.class.getSimpleName();
-    private final Moment mMoment;
+    private final long mMomentId;
     private final boolean mIsCancel;
 
-    public LikeJob(Moment moment, boolean isCancel) {
+    public LikeJob(long momentId, boolean isCancel) {
         super(new Params(0).requireNetwork());
-        this.mMoment = moment;
+        this.mMomentId = momentId;
         this.mIsCancel = isCancel;
     }
 
@@ -45,7 +45,7 @@ public class LikeJob extends Job {
     @Override
     public void onRun() throws Throwable {
         HachiApi hachiApi = HachiService.createHachiApiService();
-        Call<LikeResponse> response = hachiApi.like(new LikePostBody(mMoment.id, mIsCancel));
+        Call<LikeResponse> response = hachiApi.like(new LikePostBody(mMomentId, mIsCancel));
         Logger.t(TAG).d("response: " + response.execute().body().count);
     }
 
