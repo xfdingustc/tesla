@@ -389,7 +389,6 @@ public class UserProfileActivity extends BaseActivity {
 
     private void setupUserMomentsFeed() {
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
-        //mMomentRvAdapter = new UserProfileFeedAdapter(this);
 
 
         String requestUrl = Constants.API_USERS + "/" + mUserID + "/moments";
@@ -402,7 +401,6 @@ public class UserProfileActivity extends BaseActivity {
                     mMomentList = parseMomentArray(response);
 //                    mMomentRvAdapter.setMomentList(mMomentList);
                     mMomentRvAdapter = new MomentsListAdapter(UserProfileActivity.this, mMomentList);
-                    mMomentRvAdapter.setUserInfo(mUser);
                     mRvUserMomentList.setAdapter(mMomentRvAdapter);
                 }
             },
@@ -427,7 +425,11 @@ public class UserProfileActivity extends BaseActivity {
                     .excludeFieldsWithoutExposeAnnotation()
                     .create();
                 Moment moment = gson.fromJson(momentObject.toString(), Moment.class);
+                moment.owner = new User();
+                moment.owner.userID = mUserID;
+                moment.owner.avatarUrl = mUserInfo.avatarUrl;
                 moments.add(moment);
+
 //                Logger.t(TAG).d("Add one moment: " + moment.toString());
             }
         } catch (JSONException e) {
@@ -437,9 +439,7 @@ public class UserProfileActivity extends BaseActivity {
         return moments;
     }
 
-    private void setFollowButton(boolean isFollowing) {
 
-    }
 
 
 }
