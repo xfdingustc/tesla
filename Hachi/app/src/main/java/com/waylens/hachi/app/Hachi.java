@@ -10,6 +10,7 @@ import com.orhanobut.logger.Logger;
 import com.squareup.leakcanary.LeakCanary;
 //import com.tencent.bugly.crashreport.CrashReport;
 
+import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.VdtCameraFounder;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
@@ -28,7 +29,7 @@ public class Hachi extends Application {
     private static Context mSharedContext = null;
 
 
-
+    private DeviceScanner mScanner;
 
 
 
@@ -59,7 +60,7 @@ public class Hachi extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-//        mScanner.stopWork();
+        mScanner.stopWork();
     }
 
     @Override
@@ -95,20 +96,20 @@ public class Hachi extends Application {
         VdtCameraFounder founder = new VdtCameraFounder();
         founder.start();
 
-//        startDeviceScanner();
+        startDeviceScanner();
     }
 
     private void configureJobManager() {
         BgJobManager.init(this);
     }
 
-//    public void startDeviceScanner() {
-//        if (mScanner != null) {
-//            mScanner.stopWork();
-//        }
-//        mScanner = new DeviceScanner(this);
-//        mScanner.startWork();
-//    }
+    public void startDeviceScanner() {
+        if (mScanner != null) {
+            mScanner.stopWork();
+        }
+        mScanner = new DeviceScanner(this);
+        mScanner.startWork();
+    }
 
 
     private void initCameraManager() {

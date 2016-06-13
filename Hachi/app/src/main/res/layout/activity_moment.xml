@@ -48,7 +48,7 @@
                     android:id="@+id/btn_like"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/btn_default_bg"
+                    android:background="?android:attr/selectableItemBackground"
                     android:src="@drawable/social_like"/>
 
                 <TextSwitcher
