@@ -25,6 +25,10 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
+import com.rest.response.FollowInfo;
+import com.rest.response.UserInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -47,6 +51,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Xiaofei on 2015/9/21.
@@ -57,14 +63,19 @@ public class UserProfileActivity extends BaseActivity {
     private static final String EXTRA_REVEAL_START_LOCATION = "reveal_start_location";
     private String mUserID;
     private MomentsListAdapter mMomentRvAdapter;
+
     private User mUser;
+    private UserInfo mUserInfo;
 
     private String mReportReason;
 
     private int[] mStartRevealLocation;
 
+    private HachiApi mHachiApi = HachiService.createHachiApiService();
 
     private ArrayList<Moment> mMomentList;
+
+    private FollowInfo mFollowInfo;
 
     @BindView(R.id.reveal_bg)
     RevealBackgroundView mRevealBg;
@@ -103,10 +114,15 @@ public class UserProfileActivity extends BaseActivity {
     @OnClick(R.id.btnFollow)
     public void onBtnFollowClicked() {
         JobManager jobManager = BgJobManager.getManager();
-        FollowJob job = new FollowJob(mUserID, !mUser.getIsFollowing());
+        FollowJob job = new FollowJob(mUserID, !mFollowInfo.isMyFollowing);
         jobManager.addJobInBackground(job);
-        mUser.setIsFollowing(!mUser.getIsFollowing());
-        setFollowButton(mUser.getIsFollowing());
+        mFollowInfo.isMyFollowing = !mFollowInfo.isMyFollowing;
+        if (!mFollowInfo.isMyFollowing) {
+            mFollowInfo.followers--;
+        } else {
+            mFollowInfo.followers++;
+        }
+        updateFollowInfo();
     }
 
     public static void launch(Activity activity, String userID, View startView) {
@@ -197,7 +213,7 @@ public class UserProfileActivity extends BaseActivity {
                     mUserProfileRoot.setVisibility(View.VISIBLE);
                     mRvUserMomentList.setVisibility(View.VISIBLE);
                     setupUserProfile();
-                    doGetUserList();
+                    doGetFollowInfo();
                 } else {
 //            tlUserProfileTabs.setVisibility(View.INVISIBLE);
                     mProfileContent.setVisibility(View.INVISIBLE);
@@ -269,57 +285,64 @@ public class UserProfileActivity extends BaseActivity {
         }
     }
 
-    private void doGetUserList() {
-        String requestUrl = Constants.API_FRIENDS + mUserID;
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(requestUrl, new Response.Listener<JSONObject>() {
+    private void doGetFollowInfo() {
+
+        Call<FollowInfo> followInfoCall = mHachiApi.getFollowInfo(mUserID);
+        followInfoCall.enqueue(new Callback<FollowInfo>() {
             @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                int followerCount = response.optInt("followers", 0);
-                int followingCount = response.optInt("followings", 0);
-//                mFollowerUserList = User.parseUserListFromJson(response);
-                mTvFollowersCount.setText(getString(R.string.followers) + " " + followerCount);
-                mTvFollowingCount.setText(getString(R.string.following) + " " + followingCount);
+            public void onResponse(Call<FollowInfo> call, retrofit2.Response<FollowInfo> response) {
+                mFollowInfo = response.body();
+                updateFollowInfo();
             }
-        }, new Response.ErrorListener() {
+
+
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onFailure(Call<FollowInfo> call, Throwable t) {
 
             }
         });
-        mRequestQueue.add(request);
+    }
+
+    private void updateFollowInfo() {
+        mTvFollowersCount.setText(getString(R.string.followers) + " " + mFollowInfo.followers);
+        mTvFollowingCount.setText(getString(R.string.following) + " " + mFollowInfo.followings);
+
+        if (mFollowInfo.isMyFollowing) {
+            mBtnFollow.setText(R.string.unfollow);
+            mBtnFollow.setTextColor(getResources().getColor(R.color.windowBackgroundDark));
+            mBtnFollow.setBackgroundResource(R.color.app_text_color_primary);
+        } else {
+            mBtnFollow.setText(R.string.add_follow);
+            mBtnFollow.setTextColor(getResources().getColor(R.color.app_text_color_primary));
+            mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
+        }
+
     }
 
 
     private void setupUserProfile() {
-        final String requestUrl = Constants.API_USERS + "/" + mUserID;
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(requestUrl,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    Gson gson = new GsonBuilder()
-                        .excludeFieldsWithoutExposeAnnotation()
-                        .create();
-                    mUser = gson.fromJson(response.toString(), User.class);
-                    Logger.t(TAG).d("userInfo: " + mUser.toString());
-                    showUserInfo(mUser);
-                    setupUserMomentsFeed();
-                }
-            }, new Response.ErrorListener() {
+        Call<UserInfo> userInfoCall = mHachiApi.getUserInfo(mUserID);
+        userInfoCall.enqueue(new Callback<UserInfo>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {
+                Logger.t(TAG).d("userInfo: " + response.body().toString());
+                mUserInfo = response.body();
+                updateUserInfo();
+                setupUserMomentsFeed();
+            }
+
+            @Override
+            public void onFailure(Call<UserInfo> call, Throwable t) {
 
             }
         });
-        mRequestQueue.add(request);
     }
 
-    private void showUserInfo(User userInfo) {
+    private void updateUserInfo() {
 
-        Glide.with(this).load(userInfo.avatarUrl).crossFade().into(civUserAvatar);
+        Glide.with(this).load(mUserInfo.avatarUrl).crossFade().into(civUserAvatar);
 
-        mToolbar.setTitle(userInfo.userName);
+        mToolbar.setTitle(mUserInfo.displayName);
         mToolbar.setNavigationIcon(R.drawable.navbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -329,7 +352,7 @@ public class UserProfileActivity extends BaseActivity {
         });
 
 
-        if (isCurrentUser(userInfo)) {
+        if (isCurrentUser(mUserInfo.userName)) {
             mBtnFollow.setVisibility(View.GONE);
             mToolbar.getMenu().clear();
             mToolbar.inflateMenu(R.menu.menu_profile_edit);
@@ -349,17 +372,15 @@ public class UserProfileActivity extends BaseActivity {
             setupToolbar();
         }
 
-//        mTvFollowersCount.setText(getString(R.string.followers) + " " + userInfo.getFollowersCount());
-//        mTvFollowingCount.setText(getString(R.string.following) + " " + userInfo.getFollowingsCount());
 
-        setFollowButton(userInfo.getIsFollowing());
+//        setFollowButton(userInfo.getIsFollowing());
     }
 
 
-    public boolean isCurrentUser(User userInfo) {
+    public boolean isCurrentUser(String userName) {
         SessionManager sessionManager = SessionManager.getInstance();
         String currentUserName = sessionManager.getUserName();
-        if (userInfo.userName.equals(currentUserName)) {
+        if (userName.equals(currentUserName)) {
             return true;
         }
 
@@ -417,15 +438,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void setFollowButton(boolean isFollowing) {
-        if (isFollowing) {
-            mBtnFollow.setText(R.string.unfollow);
-            mBtnFollow.setTextColor(getResources().getColor(R.color.windowBackgroundDark));
-            mBtnFollow.setBackgroundResource(R.color.app_text_color_primary);
-        } else {
-            mBtnFollow.setText(R.string.add_follow);
-            mBtnFollow.setTextColor(getResources().getColor(R.color.app_text_color_primary));
-            mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
-        }
+
     }
 
 

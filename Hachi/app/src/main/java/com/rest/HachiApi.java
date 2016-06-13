@@ -7,12 +7,10 @@ import com.rest.response.LikeResponse;
 import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
 import com.rest.response.SimpleBoolResponse;
+import com.rest.response.UserInfo;
 import com.waylens.hachi.ui.entities.UserProfile;
 
-import java.util.List;
-
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -24,7 +22,7 @@ import rx.Observable;
  */
 public interface HachiApi {
     @GET("/api/users/{userId}")
-    Call<UserProfile> getUserInfo(@Path("userId") String userId);
+    Call<UserProfile> getUserProfile(@Path("userId") String userId);
 
     @GET("/api/moments/play/{momentId}")
     Call<MomentPlayInfo> getRawDataUrl(@Path("momentId") long momentId);
@@ -48,5 +46,8 @@ public interface HachiApi {
     Observable<MomentInfo> getMomentInfoRx(@Path("momentId") long momentId);
 
     @GET("/api/friends/{userId}")
-    Call<FollowInfo>getFollowInfo(@Path("userId") String userId);
+    Call<FollowInfo> getFollowInfo(@Path("userId") String userId);
+
+    @GET("/api/users/{userId}")
+    Call<UserInfo> getUserInfo(@Path("userId") String userId);
 }
