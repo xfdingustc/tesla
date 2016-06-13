@@ -18,6 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,6 +27,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.Moment;
@@ -84,11 +87,11 @@ public class UserProfileActivity extends BaseActivity {
 
     @OnClick(R.id.btnFollow)
     public void onBtnFollowClicked() {
-        if (mUser.getIsFollowing()) {
-            unfollowUser(mUserID);
-        } else {
-            followUser(mUserID);
-        }
+        JobManager jobManager = BgJobManager.getManager();
+        FollowJob job = new FollowJob(mUserID, !mUser.getIsFollowing());
+        jobManager.addJobInBackground(job);
+        mUser.setIsFollowing(!mUser.getIsFollowing());
+        setFollowButton(mUser.getIsFollowing());
     }
 
     public static void launch(Context context, String userID) {
@@ -362,7 +365,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private void setFollowButton(boolean isFollowing) {
         if (isFollowing) {
-            mBtnFollow.setText(R.string.following);
+            mBtnFollow.setText(R.string.unfollow);
             mBtnFollow.setTextColor(getResources().getColor(R.color.windowBackgroundDark));
             mBtnFollow.setBackgroundResource(R.color.app_text_color_primary);
         } else {
@@ -372,64 +375,7 @@ public class UserProfileActivity extends BaseActivity {
         }
     }
 
-    public void followUser(final String userID) {
-        String requestUrl = Constants.API_FRIENDS_FOLLOW;
-        JSONObject requestBody = new JSONObject();
-        try {
-            requestBody.put(JsonKey.USER_ID, userID);
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
-                requestUrl, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).d("Follow user: " + userID);
-                    setFollowButton(true);
-                    mUser.setIsFollowing(true);
-                    mBtnFollow.setEnabled(true);
-                    doGetUserList();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-            mRequestQueue.add(request);
-            mBtnFollow.setEnabled(false);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void unfollowUser(final String userID) {
-        String requestUrl = Constants.API_FRIENDS_UNFOLLOW;
-        JSONObject requestBody = new JSONObject();
-
-        try {
-            requestBody.put(JsonKey.USER_ID, userID);
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
-                requestUrl, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    setFollowButton(false);
-                    mUser.setIsFollowing(false);
-                    Logger.t(TAG).d("Unfollow user: " + userID);
-                    mBtnFollow.setEnabled(true);
-                    doGetUserList();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-            mRequestQueue.add(request);
-            mBtnFollow.setEnabled(false);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
+    
 
 
 }
