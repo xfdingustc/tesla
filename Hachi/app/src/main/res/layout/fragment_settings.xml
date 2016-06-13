@@ -62,9 +62,9 @@
 
     <LinearLayout
         android:id="@+id/settings_account"
+        style="@style/SelectableRippleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/default_bg"
         android:orientation="horizontal">
 
         <ImageView
@@ -105,9 +105,9 @@
 
     <LinearLayout
         android:id="@+id/waylens_cloud"
+        style="@style/SelectableRippleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/default_bg"
         android:orientation="horizontal">
 
         <ImageView
@@ -153,9 +153,9 @@
 
     <LinearLayout
         android:id="@+id/camera_setting"
+        style="@style/SelectableRippleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/default_bg"
         android:orientation="horizontal">
 
         <ImageView
@@ -196,9 +196,9 @@
 
     <LinearLayout
         android:id="@+id/addNewCamera"
+        style="@style/SelectableRippleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/default_bg"
         android:clickable="true"
         android:orientation="horizontal">
 
@@ -245,9 +245,9 @@
 
     <LinearLayout
         android:id="@+id/settings_help"
+        style="@style/SelectableRippleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/default_bg"
         android:orientation="horizontal">
 
         <ImageView

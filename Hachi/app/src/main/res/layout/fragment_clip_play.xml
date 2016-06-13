@@ -57,8 +57,6 @@
                 android:background="@android:color/transparent"/>
 
 
-
-
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
         <LinearLayout
@@ -85,9 +83,9 @@
 
                 <ImageButton
                     android:id="@+id/btnPlayPause"
+                    style="@style/SelectableRippleButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/btn_default_bg"
                     android:src="@drawable/playbar_play"/>
 
                 <FrameLayout
@@ -107,17 +105,17 @@
 
                 <ImageButton
                     android:id="@+id/btnShowOverlay"
+                    style="@style/SelectableRippleButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/btn_default_bg"
                     android:src="@drawable/btn_gauge_overlay"/>
 
 
                 <ImageButton
                     android:id="@+id/btnFullscreen"
+                    style="@style/SelectableRippleButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/btn_default_bg"
                     android:src="@drawable/screen_full"/>
 
             </LinearLayout>

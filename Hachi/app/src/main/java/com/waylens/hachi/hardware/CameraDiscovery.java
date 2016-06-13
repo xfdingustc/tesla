@@ -90,7 +90,7 @@ public class CameraDiscovery {
         return new NsdManager.ResolveListener() {
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Logger.t(TAG).d("onResolveFailed: " + errorCode);
+//                Logger.t(TAG).d("onResolveFailed: " + errorCode);
             }
 
             @Override

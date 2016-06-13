@@ -69,7 +69,7 @@
             android:id="@+id/btn_more"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/btn_default_bg"
+            style="@style/SelectableRippleButton"
             android:src="@drawable/ic_more_grey"/>
 
     </LinearLayout>

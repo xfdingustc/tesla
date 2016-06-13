@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:tools="http://schemas.android.com/tools"
               android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
@@ -29,7 +29,6 @@
                 <include layout="@layout/fragment_camera_preview_status_panel"/>
 
 
-
                 <include layout="@layout/fragment_camera_preview_error_panel"/>
 
             </FrameLayout>
@@ -45,7 +44,6 @@
                     android:id="@+id/camera_preview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
-
 
 
                 <com.waylens.hachi.ui.views.GaugeView
@@ -66,33 +64,34 @@
 
                 <ImageButton
                     android:id="@+id/btnMicControl"
+                    style="@style/SelectableRippleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
-                    android:background="@android:color/transparent"
                     android:src="@drawable/btn_mic_on"/>
 
 
                 <ImageButton
                     android:id="@+id/btnFullscreen"
+                    style="@style/SelectableRippleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="8dp"
-                    android:background="@android:color/transparent"
+
                     android:src="@drawable/screen_full"/>
 
 
                 <ImageButton
                     android:id="@+id/btnShowOverlay"
+                    style="@style/SelectableRippleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@id/btnFullscreen"
-                    android:background="@android:color/transparent"
                     android:src="@drawable/btn_gauge_overlay"/>
             </RelativeLayout>
 
@@ -105,24 +104,24 @@
 
         <ImageButton
             android:id="@+id/fabBookmark"
+            style="@style/SelectableRippleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="32dp"
-            android:background="@android:color/transparent"
             android:src="@drawable/camera_control_bookmark"/>
 
         <ImageButton
             android:id="@+id/btnStop"
+            style="@style/SelectableRippleButton"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="32dp"
             android:layout_toRightOf="@id/fabBookmark"
-            android:background="@android:color/transparent"
-            android:src="@drawable/camera_control_stop"
             android:scaleType="fitCenter"
+            android:src="@drawable/camera_control_stop"
             android:visibility="gone"
             tools:visibility="visible"/>
 
