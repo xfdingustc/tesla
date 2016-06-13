@@ -188,6 +188,11 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
+        <activity
+            android:name=".ui.authorization.SignUpSucceedActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
 
 
         <provider

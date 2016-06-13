@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -17,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -75,9 +78,8 @@ public class SignInFragment extends BaseFragment {
     String mPassword;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mTransformationMethod = new PasswordTransformationMethod();
     }
@@ -86,6 +88,10 @@ public class SignInFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_signin, savedInstanceState);
+        if(getArguments() != null)
+            mEmail = getArguments().getString("email");
+            mTvSignInEmail.setText(mEmail);
+        Logger.d("Signin frament is invoked", this, mEmail);
         initViews();
         return view;
     }
@@ -172,6 +178,23 @@ public class SignInFragment extends BaseFragment {
     void onSignInFailed(VolleyError error) {
         mButtonAnimator.setDisplayedChild(0);
         showMessage(ServerMessage.parseServerError(error).msgResID);
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .content(R.string.sign_up_with_this_email)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        SignUpFragment signUpFragment = new SignUpFragment();
+                        Bundle mbundle = new Bundle();
+                        mbundle.putString("email", mEmail);
+                        signUpFragment.setArguments(mbundle);
+                        AuthorizeActivity authorizeActivity = (AuthorizeActivity)getActivity();
+                        authorizeActivity.switchStep(AuthorizeActivity.STEP_SIGN_UP);
+                        getFragmentManager().beginTransaction().replace(R.id.fragment_content, signUpFragment).commit();
+                    }
+                }).show();
+
     }
 
     void onSignInSuccessful(JSONObject response) {
