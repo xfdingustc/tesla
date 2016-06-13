@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.community.feed;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Resources;
@@ -15,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
@@ -38,21 +40,17 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     private final Context mContext;
 
     PrettyTime mPrettyTime;
-    FragmentManager mFragmentManager;
-    RequestQueue mRequestQueue;
-    Resources mResources;
+
+
     OnMomentActionListener mOnMomentActionListener;
 
     private User mUser;
 
 
-    public MomentsListAdapter(Context context, ArrayList<Moment> moments, FragmentManager fm, RequestQueue requestQueue, Resources resources) {
+    public MomentsListAdapter(Context context, ArrayList<Moment> moments) {
         this.mContext = context;
         mMoments = moments;
         mPrettyTime = new PrettyTime();
-        mFragmentManager = fm;
-        mRequestQueue = requestQueue;
-        mResources = resources;
     }
 
     public void setUserInfo(User user) {
@@ -116,11 +114,21 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         }
         Glide.with(mContext).load(moment.thumbnail).crossFade().into(holder.videoCover);
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
+        Logger.t("test").d("owner: " + moment.owner);
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userId = moment.owner.userID;
-                UserProfileActivity.launch(mContext, userId);
+
+                String userId;
+                if (moment.owner != null) {
+
+                    userId = moment.owner.userID;
+                } else {
+
+                    userId = mUser.userID;
+                }
+                Logger.t("test").d("userId: " + userId);
+                UserProfileActivity.launch((Activity)mContext, userId, holder.userAvatar);
             }
         });
 
@@ -131,32 +139,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
             }
         });
 
-//        updateLikeState(holder, moment);
 
-
-//        holder.btnLike.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                doAddLike(holder, moment);
-//            }
-//        });
-//
-//        holder.btnComment.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                CommentsActivity.launch((Activity) mContext, moment.id, 0);
-//            }
-//        });
-//
-//
-//        holder.videoControl.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (mOnMomentActionListener != null) {
-//                    mOnMomentActionListener.onRequestVideoPlay(holder, moment, position);
-//                }
-//            }
-//        });
 
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,21 +158,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
 //        holder.videoControl.setVisibility(View.VISIBLE);
 //    }
 
-    @Override
-    public void onViewDetachedFromWindow(MomentViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-//        if (holder.videoFragment != null) {
-//            mFragmentManager.beginTransaction().remove(holder.videoFragment).commit();
-//        }
 
-        mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
-            @Override
-            public boolean apply(Request<?> request) {
-                return request.getOriginUrl().startsWith(Constants.API_MOMENT_PLAY);
-            }
-        });
-
-    }
 
     @Override
     public int getItemCount() {

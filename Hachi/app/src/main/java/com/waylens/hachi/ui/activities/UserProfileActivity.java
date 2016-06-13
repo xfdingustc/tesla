@@ -1,6 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -34,6 +36,7 @@ import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.settings.AccountActivity;
+import com.waylens.hachi.ui.views.RevealBackgroundView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,18 +53,30 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class UserProfileActivity extends BaseActivity {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
-    private static final String USER_ID = "user_id";
+    private static final String EXTRA_USER_ID = "user_id";
+    private static final String EXTRA_REVEAL_START_LOCATION = "reveal_start_location";
     private String mUserID;
     private MomentsListAdapter mMomentRvAdapter;
     private User mUser;
 
     private String mReportReason;
 
+    private int[] mStartRevealLocation;
+
 
     private ArrayList<Moment> mMomentList;
 
+    @BindView(R.id.reveal_bg)
+    RevealBackgroundView mRevealBg;
+
+    @BindView(R.id.profile_content)
+    View mProfileContent;
+
     @BindView(R.id.rvUserMomentList)
     RecyclerView mRvUserMomentList;
+
+    @BindView(R.id.user_profile_root)
+    LinearLayout mUserProfileRoot;
 
     @BindView(R.id.userAvatar)
     CircleImageView civUserAvatar;
@@ -94,18 +109,22 @@ public class UserProfileActivity extends BaseActivity {
         setFollowButton(mUser.getIsFollowing());
     }
 
-    public static void launch(Context context, String userID) {
-        Intent intent = new Intent(context, UserProfileActivity.class);
-        intent.putExtra(USER_ID, userID);
-        context.startActivity(intent);
+    public static void launch(Activity activity, String userID, View startView) {
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+        int[] startLocation = new int[2];
+        startView.getLocationOnScreen(startLocation);
+        startLocation[0] += startView.getWidth() / 2;
+        intent.putExtra(EXTRA_USER_ID, userID);
+        intent.putExtra(EXTRA_REVEAL_START_LOCATION, startLocation);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        mUserID = intent.getStringExtra(USER_ID);
+
         init();
     }
 
@@ -113,16 +132,20 @@ public class UserProfileActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+        Intent intent = getIntent();
+        mUserID = intent.getStringExtra(EXTRA_USER_ID);
+        mStartRevealLocation = intent.getIntArrayExtra(EXTRA_REVEAL_START_LOCATION);
         mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         initViews();
     }
 
+
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
+        setupRevealBackground();
 
-        setupUserProfile();
-        doGetUserList();
     }
+
 
     @Override
     public void setupToolbar() {
@@ -162,6 +185,36 @@ public class UserProfileActivity extends BaseActivity {
                 return true;
             }
         });
+    }
+
+    private void setupRevealBackground() {
+        mRevealBg.setFillPaintColor(getResources().getColor(R.color.windowBackground));
+        mRevealBg.setOnStateChangeListener(new RevealBackgroundView.OnStateChangeListener() {
+            @Override
+            public void onStateChange(int state) {
+                if (RevealBackgroundView.STATE_FINISHED == state) {
+                    mProfileContent.setVisibility(View.VISIBLE);
+                    mUserProfileRoot.setVisibility(View.VISIBLE);
+                    mRvUserMomentList.setVisibility(View.VISIBLE);
+                    setupUserProfile();
+                    doGetUserList();
+                } else {
+//            tlUserProfileTabs.setVisibility(View.INVISIBLE);
+                    mProfileContent.setVisibility(View.INVISIBLE);
+                    mUserProfileRoot.setVisibility(View.INVISIBLE);
+                    mRvUserMomentList.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        mRevealBg.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRevealBg.getViewTreeObserver().removeOnPreDrawListener(this);
+                mRevealBg.startFromLocation(mStartRevealLocation);
+                return true;
+            }
+        });
+
     }
 
     private void doBlockUser() {
@@ -327,7 +380,7 @@ public class UserProfileActivity extends BaseActivity {
 //                    Logger.t(TAG).json(response.toString());
                     mMomentList = parseMomentArray(response);
 //                    mMomentRvAdapter.setMomentList(mMomentList);
-                    mMomentRvAdapter = new MomentsListAdapter(UserProfileActivity.this, mMomentList, getFragmentManager(), mRequestQueue, getResources());
+                    mMomentRvAdapter = new MomentsListAdapter(UserProfileActivity.this, mMomentList);
                     mMomentRvAdapter.setUserInfo(mUser);
                     mRvUserMomentList.setAdapter(mMomentRvAdapter);
                 }
@@ -374,8 +427,6 @@ public class UserProfileActivity extends BaseActivity {
             mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
         }
     }
-
-    
 
 
 }

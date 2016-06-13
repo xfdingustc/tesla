@@ -279,7 +279,7 @@ public class MainActivity extends BaseActivity {
 
     private void onUserAvatarClicked() {
         if (mSessionManager.isLoggedIn()) {
-            UserProfileActivity.launch(this, mSessionManager.getUserId());
+            UserProfileActivity.launch(this, mSessionManager.getUserId(), mUserAvatar);
         } else {
             AuthorizeActivity.launch(this);
         }

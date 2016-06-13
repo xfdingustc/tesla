@@ -109,7 +109,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_MY_FEED);
         }
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
-        mAdapter = new MomentsListAdapter(getActivity(), null, getFragmentManager(), mRequestQueue, getResources());
+        mAdapter = new MomentsListAdapter(getActivity(), null);
         mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mReportReason = getResources().getStringArray(R.array.report_reason)[0];
