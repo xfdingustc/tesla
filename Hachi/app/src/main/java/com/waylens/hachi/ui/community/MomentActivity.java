@@ -5,12 +5,16 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -24,6 +28,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -101,11 +106,17 @@ public class MomentActivity extends BaseActivity {
 
     private boolean hasUpdates;
 
+
     private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
     private HachiApi mHachi = HachiService.createHachiApiService();
+    private BottomSheetDialog mBottomSheetDialog;
+    private BottomSheetBehavior mDialogBehavior;
+
+    private SessionManager mSessionManager = SessionManager.getInstance();
+
 
     public static void launch(Activity activity, long momentId, String thumbnail, View transitionView) {
         ActivityOptionsCompat options = ActivityOptionsCompat
@@ -116,8 +127,9 @@ public class MomentActivity extends BaseActivity {
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
-    @BindView(R.id.comment_new)
-    EditText mNewCommentView;
+
+
+
 
     @BindView(R.id.content_root)
     ViewSwitcher mContentRoot;
@@ -140,6 +152,9 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.user_avatar)
     CircleImageView mUserAvatar;
 
+    @BindView(R.id.current_user_avatar)
+    CircleImageView mCurrentUserAvatar;
+
     @BindView(R.id.comment_list)
     RecyclerView mCommentList;
 
@@ -149,8 +164,10 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.video_thumbnail)
     ImageView mVideoThumbnail;
 
-    @BindView(R.id.btn_send)
+
     SendCommentButton mBtnSendComment;
+
+    EditText mNewCommentView;
 
     @OnClick(R.id.btn_like)
     public void onBtnLikeClicked() {
@@ -182,6 +199,11 @@ public class MomentActivity extends BaseActivity {
         jobManager.addJobInBackground(job);
 
         updateFollowTextView();
+    }
+
+    @OnClick(R.id.comment_new)
+    public void onCommentNewClicked() {
+        showBottomSheetDialog();
     }
 
 
@@ -225,6 +247,32 @@ public class MomentActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_moment);
+
+        Glide.with(this).load(mThumbnail).into(mVideoThumbnail);
+        ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
+
+        queryMomentInfo();
+
+    }
+
+
+    private void showBottomSheetDialog() {
+        mBottomSheetDialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_add_comment, null);
+        mNewCommentView = (EditText) view.findViewById(R.id.comment_edit);
+
+        CircleImageView avatar = (CircleImageView)view.findViewById(R.id.current_user_avatar) ;
+        Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(avatar);
+
+
+        mBottomSheetDialog.setContentView(view);
+
+        mNewCommentView.setFocusable(true);
+        mNewCommentView.setFocusableInTouchMode(true);
+        mNewCommentView.requestFocus();
+
+        mBtnSendComment = (SendCommentButton) view.findViewById(R.id.btn_send);
+
         mBtnSendComment.setOnSendClickListener(new SendCommentButton.OnSendClickListener() {
             @Override
             public void onSendClickListener(View v) {
@@ -247,13 +295,30 @@ public class MomentActivity extends BaseActivity {
                     mNewCommentView.setText("");
                     mBtnSendComment.setCurrentState(SendCommentButton.STATE_DONE);
                     publishComment(comment, position);
+                    mBottomSheetDialog.dismiss();
                 }
             }
         });
-        Glide.with(this).load(mThumbnail).into(mVideoThumbnail);
-        ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
 
-        queryMomentInfo();
+        mDialogBehavior = BottomSheetBehavior.from((View) view.getParent());
+
+        mBottomSheetDialog.show();
+        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mBottomSheetDialog = null;
+            }
+        });
+
+        mNewCommentView.post(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.showSoftInput(mNewCommentView, 0);
+            }
+        });
+
+
     }
 
     private boolean validateComment() {
@@ -305,6 +370,8 @@ public class MomentActivity extends BaseActivity {
                     updateLikeState();
 
                     mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
+
+                    Glide.with(MomentActivity.this).load(mSessionManager.getAvatarUrl()).crossFade().into(mCurrentUserAvatar);
 
 
                     Glide.with(MomentActivity.this).load(mMomentInfo.owner.avatarUrl).crossFade().into(mUserAvatar);
@@ -476,7 +543,7 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void loadComments(int cursor, final boolean isRefresh) {
-        Logger.t(TAG).d("loadcomment  "  + mMomentInfo + " moment id: " + mMomentInfo.moment.id);
+        Logger.t(TAG).d("loadcomment  " + mMomentInfo + " moment id: " + mMomentInfo.moment.id);
         if (mMomentInfo == null || mMomentInfo.moment.id == Moment.INVALID_MOMENT_ID) {
             Logger.t(TAG).d("null");
             return;

@@ -1,197 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:id="@+id/moment_play_container"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp"
-        tools:layout_height="202dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/video_thumbnail"
+        <com.xfdingustc.far.FixedAspectRatioFrameLayout
+            android:id="@+id/moment_play_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0dp"
+            app:farfl_xratio="16dp"
+            app:farfl_yratio="9dp"
+            tools:layout_height="202dp">
 
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
-    <ViewSwitcher
-        android:id="@+id/content_root"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/momemt_title"
-                style="@style/HachiTextViewTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                tools:text="Momemnt Title"/>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/btn_like"
-                    style="@style/SelectableRippleButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/social_like"/>
-
-                <TextSwitcher
-                    android:id="@+id/like_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
-                    android:inAnimation="@anim/slide_in_likes_counter"
-                    android:outAnimation="@anim/slide_out_likes_counter">
-
-
-                    <TextView
-                        style="@style/HachiTextViewBody"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="123"/>
-
-                    <TextView
-                        style="@style/HachiTextViewBody"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-
-                </TextSwitcher>
-
-
-                <TextSwitcher
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"></TextSwitcher>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@color/settings_line_separator"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/user_avatar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/waylens_logo_76x86"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/user_name"
-                        style="@style/HachiTextViewTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        tools:text="User Name"/>
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/add_follow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="16dp"
-                    android:text="@string/add_follow"
-                    android:textAllCaps="true"
-                    android:textColor="@color/style_color_accent"
-                    android:textSize="18sp"
-                    />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@color/settings_line_separator"/>
-
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/comment_list"
+            <ImageView
+                android:id="@+id/video_thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
+        </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+        <ViewSwitcher
+            android:id="@+id/content_root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:orientation="horizontal"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp">
+                android:layout_gravity="center"
+                android:visibility="gone"/>
 
 
-                <EditText
-                    android:id="@+id/comment_new"
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="1"
-                    android:background="@color/app_text_color_disabled"
-                    android:hint="@string/add_one_comment"
-                    android:inputType="text"
-                    android:minHeight="36dp"
-                    android:textCursorDrawable="@drawable/color_cursor"
-                    />
+            <include layout="@layout/layout_moment_detail"/>
+
+        </ViewSwitcher>
+    </LinearLayout>
 
 
-                
-                <com.waylens.hachi.ui.views.SendCommentButton
-                    android:id="@+id/btn_send"
-                    android:layout_width="72dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:background="@drawable/btn_send_comment"
-                    android:elevation="4dp"
-                    android:orientation="vertical"></com.waylens.hachi.ui.views.SendCommentButton>
-            </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
-
-    </ViewSwitcher>
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

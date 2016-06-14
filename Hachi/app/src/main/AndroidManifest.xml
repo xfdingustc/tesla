@@ -140,9 +140,7 @@
             android:name=".ui.clips.ClipChooserActivity"
             android:screenOrientation="portrait"/>
 
-        <activity
-            android:name="com.soundcloud.android.crop.CropImageActivity"
-            android:screenOrientation="portrait"/>
+
 
         <activity
             android:name=".ui.clips.ClipModifyActivity"
