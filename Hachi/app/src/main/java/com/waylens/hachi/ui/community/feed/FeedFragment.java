@@ -26,6 +26,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.community.MomentPlayFragment;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
@@ -160,11 +161,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     }
 
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
 
-    }
 
     @Override
     public void onReportClick(final int feedItem) {
@@ -222,6 +219,27 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     @Override
     public void onCancelClick(int feedItem) {
         FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onDeleteClick(int feedItem) {
+        FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
+        doDeleteMoment(feedItem);
+    }
+
+    private void doDeleteMoment(int feedItem) {
+        Moment moment = mAdapter.getMomemnt(feedItem);
+
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .delete()
+            .url(Constants.API_MOMENTS + "/" + moment.id)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            }).build();
+        mRequestQueue.add(request);
     }
 
 
@@ -361,26 +379,17 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             mVideoFragment = null;
         }
 
-        if (moment.type == Moment.TYPE_YOUTUBE) {
-//            YouTubeFragment youTubeFragment = YouTubeFragment.newInstance();
-//            youTubeFragment.setVideoId(moment.videoID);
-////            vh.videoFragment = youTubeFragment;
-//            mVideoFragment = youTubeFragment;
-//            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), youTubeFragment).commit();
-        } else {
-//            MomentPlayFragment videoPlayFragment = MomentPlayFragment.newInstance(moment);
-//            vh.videoFragment = videoPlayFragment;
-//            mVideoFragment = videoPlayFragment;
-//            mFragmentManager.beginTransaction().replace(vh.fragmentContainer.getId(), videoPlayFragment).commit();
-
-        }
-        //vh.videoControl.setVisibility(View.GONE);
 
     }
 
     @Override
     public void onMoreClick(View v, int position) {
-        FeedContextMenu.FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this);
+        Moment moment = mAdapter.getMomemnt(position);
+        boolean isCurrentUser = false;
+        if (moment.owner.userID.equals(SessionManager.getInstance().getUserId())) {
+            isCurrentUser = true;
+        }
+        FeedContextMenu.FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this, isCurrentUser);
     }
 
     @Override

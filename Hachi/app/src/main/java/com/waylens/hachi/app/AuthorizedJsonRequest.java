@@ -104,6 +104,11 @@ public class AuthorizedJsonRequest extends JsonObjectRequest {
             mPostBody = new JSONObject();
         }
 
+        public Builder delete() {
+            mMethod = Method.DELETE;
+            return this;
+        }
+
         public Builder url(String url) {
             mUrl = url;
             return this;

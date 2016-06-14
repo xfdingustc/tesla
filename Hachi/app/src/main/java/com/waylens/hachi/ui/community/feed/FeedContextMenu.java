@@ -10,11 +10,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.utils.Utils;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -28,6 +30,37 @@ public class FeedContextMenu extends LinearLayout {
 
     private OnFeedContextMenuItemClickListener onItemClickListener;
 
+    @BindView(R.id.btnReport)
+    Button mBtnReport;
+
+    @BindView(R.id.btnDelete)
+    Button mBtnDelete;
+
+    @BindView(R.id.btnCancel)
+    Button mBtnCancel;
+
+    @OnClick(R.id.btnReport)
+    public void onReportClick() {
+        if (onItemClickListener != null) {
+            onItemClickListener.onReportClick(feedItem);
+        }
+    }
+
+
+    @OnClick(R.id.btnCancel)
+    public void onCancelClick() {
+        if (onItemClickListener != null) {
+            onItemClickListener.onCancelClick(feedItem);
+        }
+    }
+
+    @OnClick(R.id.btnDelete)
+    public void onDeleteClick() {
+        if (onItemClickListener != null) {
+            onItemClickListener.onDeleteClick(feedItem);
+        }
+    }
+
     public FeedContextMenu(Context context) {
         super(context);
         init();
@@ -35,6 +68,7 @@ public class FeedContextMenu extends LinearLayout {
 
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_context_menu, this, true);
+        ButterKnife.bind(this);
         setBackgroundResource(R.drawable.bg_container_shadow);
         setOrientation(VERTICAL);
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -48,40 +82,14 @@ public class FeedContextMenu extends LinearLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        ButterKnife.bind(this);
+
     }
 
     public void dismiss() {
         ((ViewGroup) getParent()).removeView(FeedContextMenu.this);
     }
 
-    @OnClick(R.id.btnReport)
-    public void onReportClick() {
-        if (onItemClickListener != null) {
-            onItemClickListener.onReportClick(feedItem);
-        }
-    }
 
-//    @OnClick(R.id.btnSharePhoto)
-//    public void onSharePhotoClick() {
-//        if (onItemClickListener != null) {
-//            onItemClickListener.onSharePhotoClick(feedItem);
-//        }
-//    }
-//
-//    @OnClick(R.id.btnCopyShareUrl)
-//    public void onCopyShareUrlClick() {
-//        if (onItemClickListener != null) {
-//            onItemClickListener.onCopyShareUrlClick(feedItem);
-//        }
-//    }
-
-    @OnClick(R.id.btnCancel)
-    public void onCancelClick() {
-        if (onItemClickListener != null) {
-            onItemClickListener.onCancelClick(feedItem);
-        }
-    }
 
     public void setOnFeedMenuItemClickListener(OnFeedContextMenuItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
@@ -91,6 +99,8 @@ public class FeedContextMenu extends LinearLayout {
         void onReportClick(int feedItem);
 
         void onCancelClick(int feedItem);
+
+        void onDeleteClick(int feedItem);
     }
 
     public static class FeedContextMenuManager extends RecyclerView.OnScrollListener implements OnAttachStateChangeListener {
@@ -113,21 +123,23 @@ public class FeedContextMenu extends LinearLayout {
 
         }
 
-        public void toggleContextMenuFromView(View openingView, int feedItem, OnFeedContextMenuItemClickListener listener) {
+        public void toggleContextMenuFromView(View openingView, int feedItem, OnFeedContextMenuItemClickListener listener, boolean isCurrentUser) {
             if (contextMenuView == null) {
-                showContextMenuFromView(openingView, feedItem, listener);
+                showContextMenuFromView(openingView, feedItem, listener, isCurrentUser);
             } else {
                 hideContextMenu();
             }
         }
 
-        private void showContextMenuFromView(final View openingView, int feedItem, OnFeedContextMenuItemClickListener listener) {
+        private void showContextMenuFromView(final View openingView, int feedItem, OnFeedContextMenuItemClickListener listener, boolean isCurrentUser) {
             if (!isContextMenuShowing) {
                 isContextMenuShowing = true;
                 contextMenuView = new FeedContextMenu(openingView.getContext());
                 contextMenuView.bindToItem(feedItem);
                 contextMenuView.addOnAttachStateChangeListener(this);
                 contextMenuView.setOnFeedMenuItemClickListener(listener);
+
+                contextMenuView.setIsCurrentUser(isCurrentUser);
 
                 ((ViewGroup) openingView.getRootView().findViewById(android.R.id.content)).addView(contextMenuView);
 
@@ -214,6 +226,16 @@ public class FeedContextMenu extends LinearLayout {
         @Override
         public void onViewDetachedFromWindow(View v) {
             contextMenuView = null;
+        }
+    }
+
+    private void setIsCurrentUser(boolean isCurrentUser) {
+        if (isCurrentUser) {
+            mBtnDelete.setVisibility(VISIBLE);
+            mBtnReport.setVisibility(GONE);
+        } else {
+            mBtnDelete.setVisibility(GONE);
+            mBtnReport.setVisibility(VISIBLE);
         }
     }
 }

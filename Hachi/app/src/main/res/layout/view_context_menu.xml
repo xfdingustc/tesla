@@ -4,7 +4,7 @@
     <Button
         android:id="@+id/btnReport"
         style="@style/ContextMenuButton"
-        android:text="REPORT"
+        android:text="@string/report"
         android:textColor="@color/style_color_accent" />
 
     <!--<Button-->
@@ -23,8 +23,13 @@
         <!--android:background="#eeeeee" />-->
 
     <Button
+        android:id="@+id/btnDelete"
+        style="@style/ContextMenuButton"
+        android:text="@string/delete" />
+
+    <Button
         android:id="@+id/btnCancel"
         style="@style/ContextMenuButton"
-        android:text="CANCEL" />
+        android:text="@android:string/cancel" />
 
 </merge>
