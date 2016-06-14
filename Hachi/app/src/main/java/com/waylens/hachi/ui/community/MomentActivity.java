@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
@@ -55,6 +56,7 @@ import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
+import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONArray;
@@ -143,6 +145,9 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.video_thumbnail)
     ImageView mVideoThumbnail;
 
+    @BindView(R.id.btn_send)
+    SendCommentButton mBtnSendComment;
+
     @OnClick(R.id.btn_like)
     public void onBtnLikeClicked() {
         boolean isCancel = mMomentInfo.moment.isLiked;
@@ -164,30 +169,6 @@ public class MomentActivity extends BaseActivity {
         UserProfileActivity.launch(this, mMomentInfo.owner.userID, mUserAvatar);
     }
 
-
-    @OnClick(R.id.btn_send)
-    public void sendComment() {
-        if (TextUtils.isEmpty(mNewCommentView.getText())) {
-            return;
-        }
-        Comment comment = new Comment();
-        comment.content = mNewCommentView.getText().toString();
-        comment.createTime = System.currentTimeMillis();
-        User basicUserInfo = new User();
-        basicUserInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();
-        basicUserInfo.userName = SessionManager.getInstance().getUserName();
-        basicUserInfo.userID = SessionManager.getInstance().getUserId();
-        comment.author = basicUserInfo;
-        if (mReplyTo != null) {
-            comment.replyTo = mReplyTo;
-            mReplyTo = null;
-            mNewCommentView.setHint(R.string.add_one_comment);
-        }
-        int position = mAdapter.addComment(comment);
-        mCommentList.scrollToPosition(position);
-        mNewCommentView.setText("");
-        publishComment(comment, position);
-    }
 
     @OnClick(R.id.add_follow)
     public void addFollow() {
@@ -215,7 +196,7 @@ public class MomentActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        refreshComments();
+
     }
 
     @Override
@@ -240,10 +221,43 @@ public class MomentActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_moment);
+        mBtnSendComment.setOnSendClickListener(new SendCommentButton.OnSendClickListener() {
+            @Override
+            public void onSendClickListener(View v) {
+                if (validateComment()) {
+                    Comment comment = new Comment();
+                    comment.content = mNewCommentView.getText().toString();
+                    comment.createTime = System.currentTimeMillis();
+                    User basicUserInfo = new User();
+                    basicUserInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();
+                    basicUserInfo.userName = SessionManager.getInstance().getUserName();
+                    basicUserInfo.userID = SessionManager.getInstance().getUserId();
+                    comment.author = basicUserInfo;
+                    if (mReplyTo != null) {
+                        comment.replyTo = mReplyTo;
+                        mReplyTo = null;
+                        mNewCommentView.setHint(R.string.add_one_comment);
+                    }
+                    int position = mAdapter.addComment(comment);
+                    mCommentList.scrollToPosition(position);
+                    mNewCommentView.setText("");
+                    mBtnSendComment.setCurrentState(SendCommentButton.STATE_DONE);
+                    publishComment(comment, position);
+                }
+            }
+        });
         Glide.with(this).load(mThumbnail).into(mVideoThumbnail);
         ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
 
         queryMomentInfo();
+    }
+
+    private boolean validateComment() {
+        if (TextUtils.isEmpty(mNewCommentView.getText())) {
+            mBtnSendComment.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_error));
+            return false;
+        }
+        return true;
     }
 
     private void queryMomentInfo() {
@@ -444,6 +458,7 @@ public class MomentActivity extends BaseActivity {
             }
         });
         mCommentList.setAdapter(mAdapter);
+        refreshComments();
     }
 
 
@@ -455,7 +470,9 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void loadComments(int cursor, final boolean isRefresh) {
+        Logger.t(TAG).d("loadcomment  "  + mMomentInfo + " moment id: " + mMomentInfo.moment.id);
         if (mMomentInfo == null || mMomentInfo.moment.id == Moment.INVALID_MOMENT_ID) {
+            Logger.t(TAG).d("null");
             return;
         }
 
@@ -465,6 +482,7 @@ public class MomentActivity extends BaseActivity {
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
                     onLoadCommentsSuccessful(response, isRefresh);
                 }
             })
