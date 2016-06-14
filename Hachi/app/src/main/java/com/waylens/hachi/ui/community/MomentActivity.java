@@ -29,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -117,6 +118,9 @@ public class MomentActivity extends BaseActivity {
 
     @BindView(R.id.comment_new)
     EditText mNewCommentView;
+
+    @BindView(R.id.content_root)
+    ViewSwitcher mContentRoot;
 
     @BindView(R.id.moment_play_container)
     View mPlayContainer;
@@ -309,6 +313,8 @@ public class MomentActivity extends BaseActivity {
 
                     getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
 
+
+                    mContentRoot.showNext();
                     setupCommentList();
                 }
             });

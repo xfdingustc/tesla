@@ -21,6 +21,17 @@
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
+    <ViewSwitcher
+        android:id="@+id/content_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -173,7 +184,6 @@
                     android:id="@+id/btn_send"
                     android:layout_width="72dp"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="2dp"
                     android:layout_marginLeft="8dp"
                     android:background="@drawable/btn_send_comment"
                     android:elevation="4dp"
@@ -182,4 +192,6 @@
 
         </LinearLayout>
     </ScrollView>
+
+    </ViewSwitcher>
 </LinearLayout>
