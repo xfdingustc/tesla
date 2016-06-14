@@ -6,8 +6,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="SEND"
-        android:textColor="#ffffff"
+        android:text="@string/send"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
         android:textSize="12sp" />
 
     <TextView
@@ -16,6 +17,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="✓"
-        android:textColor="#ffffff"
+        android:textColor="@android:color/white"
         android:textSize="12sp" />
 </merge>
