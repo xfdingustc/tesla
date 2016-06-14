@@ -4,6 +4,7 @@ import com.rest.body.FollowPostBody;
 import com.rest.body.LikePostBody;
 import com.rest.response.FollowInfo;
 import com.rest.response.LikeResponse;
+import com.rest.response.LinkedAccounts;
 import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
 import com.rest.response.SimpleBoolResponse;
@@ -50,4 +51,7 @@ public interface HachiApi {
 
     @GET("/api/users/{userId}")
     Call<UserInfo> getUserInfo(@Path("userId") String userId);
+
+    @GET("api/share/accounts")
+    Call<LinkedAccounts> getLinkedAccounts();
 }

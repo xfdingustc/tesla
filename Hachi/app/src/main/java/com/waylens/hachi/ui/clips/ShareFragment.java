@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.orhanobut.logger.Logger;
+import com.rest.response.LinkedAccounts;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -53,6 +55,8 @@ import java.util.Map;
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 public class ShareFragment extends BaseFragment implements MomentShareHelper.OnShareMomentListener {
@@ -62,6 +66,8 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     private final int mClipSetIndex = ClipSetManager.CLIP_SET_TYPE_SHARE;
 
     private boolean mIsFacebookShareChecked = false;
+
+    private LinkedAccounts mLinkedAccounts;
 
 
     @BindView(R.id.spinner_social_privacy)
@@ -89,6 +95,15 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         }
     }
 
+
+    @OnClick(R.id.btn_share)
+    public void shareVideo() {
+        ClipSetManager manager = ClipSetManager.getManager();
+        manager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_SHARE, mClipSet);
+
+        checkPermission();
+
+    }
 
     private ClipSet mClipSet = new ClipSet(Clip.TYPE_TEMP);
 
@@ -184,36 +199,49 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         }
     }
 
-    @OnClick(R.id.btn_share)
-    void shareVideo() {
-        ClipSetManager manager = ClipSetManager.getManager();
-        manager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_SHARE, mClipSet);
 
-        checkPermission();
-
-    }
 
     private void checkPermission() {
         Logger.t(TAG).d("send check permission");
-        String url = Constants.API_SHARE_ACCOUNTS;
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(url, new Response.Listener<JSONObject>() {
+//        String url = Constants.API_SHARE_ACCOUNTS;
+//        AuthorizedJsonRequest request = new AuthorizedJsonRequest(url, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                Logger.t(TAG).json(response.toString());
+//                boolean hasFacebookPermission = hasFacebookPermission(response);
+//                if (hasFacebookPermission) {
+//                    doShare();
+//                } else {
+//                    requestPublishPermission();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Logger.t(TAG).d("error");
+//            }
+//        });
+//        mRequestQueue.add(request);
+
+        Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
+        callLinkedAccount.enqueue(new Callback<LinkedAccounts>() {
             @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                boolean hasFacebookPermission = hasFacebookPermission(response);
-                if (hasFacebookPermission) {
-                    doShare();
-                } else {
+            public void onResponse(Call<LinkedAccounts> call, retrofit2.Response<LinkedAccounts> response) {
+                Logger.t(TAG).d("Get response");
+                mLinkedAccounts = response.body();
+                if (checkIfNeedGetFacebookPermission()) {
                     requestPublishPermission();
+                } else {
+                    doShare();
                 }
+
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Logger.t(TAG).d("error");
+            public void onFailure(Call<LinkedAccounts> call, Throwable t) {
+                    Logger.t(TAG).d(t.toString());
             }
         });
-        mRequestQueue.add(request);
     }
 
     private boolean hasFacebookPermission(JSONObject response) {
@@ -229,6 +257,17 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    private boolean checkIfNeedGetFacebookPermission() {
+
+        for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
+            if (account.provider.equals("facebook") && TextUtils.isEmpty(account.accountName)) {
+                return true;
+            }
+        }
+
         return false;
     }
 

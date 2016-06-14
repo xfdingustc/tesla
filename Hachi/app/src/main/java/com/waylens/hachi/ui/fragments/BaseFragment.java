@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.rest.HachiApi;
+import com.rest.HachiService;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
@@ -33,6 +35,8 @@ public class BaseFragment extends Fragment {
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
     protected VdbImageLoader mVdbImageLoader;
+
+    protected HachiApi mHachi = HachiService.createHachiApiService();
 
 
     @Nullable
