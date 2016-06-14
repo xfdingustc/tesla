@@ -1,7 +1,9 @@
 package com.rest.response;
 
+import com.google.gson.annotations.SerializedName;
 import com.waylens.hachi.utils.ToStringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +28,8 @@ public class UserInfo {
 
     public int socialProviders;
 
-    public List<String> facebookName;
+
+    public String facebookName;
 
     @Override
     public String toString() {

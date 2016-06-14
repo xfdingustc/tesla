@@ -321,11 +321,12 @@ public class UserProfileActivity extends BaseActivity {
 
 
     private void setupUserProfile() {
+        Logger.t(TAG).d("userId: " + mUserID);
         Call<UserInfo> userInfoCall = mHachiApi.getUserInfo(mUserID);
         userInfoCall.enqueue(new Callback<UserInfo>() {
             @Override
             public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {
-                Logger.t(TAG).d("userInfo: " + response.body().toString());
+                Logger.t(TAG).d("userInfo: " + response.raw().toString());
                 mUserInfo = response.body();
                 updateUserInfo();
                 setupUserMomentsFeed();
@@ -333,7 +334,7 @@ public class UserProfileActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<UserInfo> call, Throwable t) {
-
+                Logger.t(TAG).e(t.getMessage());
             }
         });
     }
