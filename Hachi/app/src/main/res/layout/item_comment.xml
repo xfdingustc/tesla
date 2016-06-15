@@ -8,8 +8,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_gravity="left|top"
         android:layout_marginRight="16dp"
         android:src="@drawable/waylens_logo_76x86"
@@ -30,10 +30,9 @@
 
             <TextView
                 android:id="@+id/tvUserName"
+                style="@style/HachiTextViewSubHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/appTextColorPrimary"
-                android:textSize="16sp"
                 tools:text="xfding"/>
 
             <LinearLayout
@@ -54,11 +53,9 @@
 
         <TextView
             android:id="@+id/comment_content"
-            style="@style/TextAppearance.AppCompat.Subhead"
+            style="@style/HachiTextViewBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/appTextColorPrimary"
-            android:textSize="16sp"
             tools:text="GodZilla: the best off road technique ever!"/>
 
 

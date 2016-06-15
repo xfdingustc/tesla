@@ -15,7 +15,8 @@
             style="@style/HachiTextViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
             tools:text="Momemnt Title"/>
 
 
@@ -63,9 +64,9 @@
         </LinearLayout>
 
         <View
+            style="@style/HachiSepatator"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/settings_line_separator"/>
+            android:layout_height="1dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,8 +75,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_avatar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_margin="16dp"
                 android:src="@drawable/waylens_logo_76x86"/>
 
@@ -101,18 +102,26 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="16dp"
-                android:text="@string/add_follow"
                 android:textAllCaps="true"
                 android:textColor="@color/style_color_accent"
-                android:textSize="18sp"
+                android:textSize="14sp"
+                tools:text="@string/add_follow"
                 />
 
         </LinearLayout>
 
         <View
+            style="@style/HachiSepatator"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/settings_line_separator"/>
+            android:layout_height="1dp"
+            />
+
+        <TextView
+            style="@style/HachiTextViewSubHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@string/comment"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -126,9 +135,9 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/current_user_avatar"
-                android:layout_marginRight="16dp"
                 android:layout_width="32dp"
-                android:layout_height="32dp"/>
+                android:layout_height="32dp"
+                android:layout_marginRight="16dp"/>
 
 
             <EditText
@@ -137,15 +146,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="8dp"
-                android:focusable="false"
                 android:layout_weight="1"
+                android:focusable="false"
                 android:hint="@string/add_one_comment"
                 android:inputType="text"
                 android:minHeight="36dp"
                 android:textCursorDrawable="@drawable/color_cursor"
                 />
-
 
 
         </LinearLayout>

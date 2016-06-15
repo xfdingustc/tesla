@@ -113,7 +113,7 @@ public class MomentActivity extends BaseActivity {
 
     private HachiApi mHachi = HachiService.createHachiApiService();
     private BottomSheetDialog mBottomSheetDialog;
-    private BottomSheetBehavior mDialogBehavior;
+
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
@@ -300,7 +300,7 @@ public class MomentActivity extends BaseActivity {
             }
         });
 
-        mDialogBehavior = BottomSheetBehavior.from((View) view.getParent());
+
 
         mBottomSheetDialog.show();
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
