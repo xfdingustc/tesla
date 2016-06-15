@@ -63,9 +63,6 @@ public class GaugeView extends FrameLayout {
             }
         });
 
-
-//        mWebView.l
-
     }
 
 

@@ -193,12 +193,21 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.add_follow)
     public void addFollow() {
-        JobManager jobManager = BgJobManager.getManager();
-        mFollowInfo.isMyFollowing = !mFollowInfo.isMyFollowing;
-        FollowJob job = new FollowJob(mMomentInfo.owner.userID, mFollowInfo.isMyFollowing);
-        jobManager.addJobInBackground(job);
+        if (mFollowInfo.isMyFollowing) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .content(getResources().getString(R.string.unfollow) + " " + mMomentInfo.owner.userName)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        toggleFollowState();
+                    }
+                }).show();
+        } else {
+           toggleFollowState();
+        }
 
-        updateFollowTextView();
     }
 
     @OnClick(R.id.comment_new)
@@ -319,6 +328,14 @@ public class MomentActivity extends BaseActivity {
         });
 
 
+    }
+
+    private void toggleFollowState() {
+        final JobManager jobManager = BgJobManager.getManager();
+        mFollowInfo.isMyFollowing = !mFollowInfo.isMyFollowing;
+        FollowJob job = new FollowJob(mMomentInfo.owner.userID, mFollowInfo.isMyFollowing);
+        jobManager.addJobInBackground(job);
+        updateFollowTextView();
     }
 
     private boolean validateComment() {

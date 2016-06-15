@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:progressDrawable="@drawable/default_progress_bar"/>
+                android:indeterminateTint="@color/style_color_accent"/>
 
 
             <include layout="@layout/layout_moment_detail"/>

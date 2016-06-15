@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    tools:background="@android:color/holo_red_dark"
     app:farfl_xratio="16dp"
     app:farfl_yratio="9dp">
 
@@ -27,16 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
-
-
-        <!--<ImageView-->
-        <!--android:id="@+id/btn_play"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:background="?android:attr/selectableItemBackground"-->
-        <!--android:contentDescription="@null"-->
-        <!--android:src="@drawable/btn_music_pause"/>-->
 
         <com.xfdingustc.mdplaypausebutton.PlayPauseButton
             android:id="@+id/btn_play_pause"
@@ -59,6 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:indeterminateTint="@color/style_color_accent"
         android:visibility="gone"/>
 
 
@@ -67,9 +57,11 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
+        android:background="#7f000000"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:background="#7f000000">
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
 
         <TextView
             android:id="@+id/text_video_time"
@@ -77,45 +69,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:gravity="start"
-            android:textColor="#fff"
-            android:text="00:00"/>
+            android:text="00:00"
+            android:textColor="#fff"/>
 
 
         <SeekBar
             android:id="@+id/video_seek_bar"
-            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="-6dp"
-            android:layout_marginTop="-6dp"
-            android:minHeight="16dp"/>
+            android:layout_weight="1"
+            android:progressTint="@color/style_color_accent"
+            android:thumbTint="@color/style_color_accent"
+            tools:progress="50"/>
 
         <TextView
             android:id="@+id/text_video_duration"
             style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:textColor="#fff"
-            android:text="00:00"/>
+            android:text="00:00"
+            android:textColor="#fff"/>
 
         <ImageButton
             android:id="@+id/btnShowOverlay"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground"
+            style="@style/SelectableRippleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+
             android:src="@drawable/btn_gauge_overlay"/>
 
         <ImageButton
             android:id="@+id/btn_fullscreen"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground"
+            style="@style/SelectableRippleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:contentDescription="@null"
             android:src="@drawable/screen_full"
             tools:ignore="RtlHardcoded"/>
