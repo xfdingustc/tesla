@@ -29,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.rest.response.MomentInfo;
+import com.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -58,6 +59,9 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Callback {
@@ -98,6 +102,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     private MomentInfo mMoment;
 
+    private MomentPlayInfo mMomentPlayInfo;
+
 
     boolean mIsFullScreen;
 
@@ -108,11 +114,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
 
 
-    OnProgressListener mProgressListener;
-
-
     private RequestQueue mRequestQueue;
-    JSONArray mRawDataUrls;
+//    JSONArray mRawDataUrls;
 
 
     private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
@@ -225,7 +228,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 }
             }
         });
-        readRawURL();
+        getMomentPlayInfo();
     }
 
     @Nullable
@@ -426,8 +429,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-
-
     protected void setProgress(int position, int duration) {
         if (mVideoSeekBar != null) {
             if (duration > 0) {
@@ -438,9 +439,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         }
         updateVideoTime(position, duration);
 //        displayOverlay(position);
-        if (mProgressListener != null) {
-            mProgressListener.onProgress(position, duration);
-        }
+
     }
 
 
@@ -499,96 +498,91 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         openVideo();
     }
 
-    private void readRawURL() {
+    private void getMomentPlayInfo() {
         if (mMoment.moment.id == Moment.INVALID_MOMENT_ID) {
             return;
         }
 
-//        HachiApi hachiApi = HachiService.createHachiApiService();
-//        Call<MomentPlayInfo> momentPlayInfoCall = hachiApi.getRawDataUrl(mMoment.id);
-//
-//        hachiApi.getMomentPlayInfo(mMoment.id)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(new Observer<MomentPlayInfo>() {
-//                @Override
-//                public void onCompleted() {
-//
-//                }
-//
-//                @Override
-//                public void onError(Throwable e) {
-//
-//                }
-//
-//                @Override
-//                public void onNext(MomentPlayInfo momentPlayInfo) {
+
+        mHachi.getMomentPlayInfo(mMoment.moment.id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<MomentPlayInfo>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(MomentPlayInfo momentPlayInfo) {
 //                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
-//                    for (MomentPlayInfo.RawDataUrl rawDataUrl : momentPlayInfo.rawDataUrl) {
-//                        Logger.t(TAG).d("response: " + rawDataUrl.url);
-//
-//                    }
-//                }
-//            });
+                    mMomentPlayInfo = momentPlayInfo;
+
+                    loadRawData(0);
+                }
+            });
 
 
-        String url = Constants.API_MOMENT_PLAY + mMoment.moment.id;
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                mRawDataUrls = response.optJSONArray("rawDataUrl");
-                loadRawData(0);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
-            }
-        }).setTag(TAG));
+//        String url = Constants.API_MOMENT_PLAY + mMoment.moment.id;
+//        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                Logger.t(TAG).json(response.toString());
+////                mRawDataUrls = response.optJSONArray("rawDataUrl");
+//                loadRawData(0);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+//                onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
+//            }
+//        }).setTag(TAG));
         mProgressLoading.setVisibility(View.VISIBLE);
     }
 
+
     private void loadRawData(final int index) {
-        if (mRawDataUrls == null || index >= mRawDataUrls.length()) {
+        if (mMomentPlayInfo.rawDataUrl == null || index >= mMomentPlayInfo.rawDataUrl.size()) {
             onLoadRawDataSuccessfully();
             return;
         }
 
-        try {
-            JSONObject jsonObject = mRawDataUrls.getJSONObject(index);
-            String url = jsonObject.getString("url");
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                .url(jsonObject.getString("url"))
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (parseRawData(response)) {
-                            int nextIndex = index + 1;
-                            if (nextIndex < mRawDataUrls.length()) {
-                                loadRawData(nextIndex);
-                            } else {
-                                onLoadRawDataSuccessfully();
-                            }
-                        } else {
-                            onLoadRawDataError("Load Raw data error");
-                        }
-                    }
-                })
-                .errorListener(new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                        onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
-                    }
-                })
-                .build();
-            request.setTag(TAG);
-            mRequestQueue.add(request);
 
-        } catch (JSONException e) {
-            Logger.t(TAG).d(e.toString());
-        }
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(mMomentPlayInfo.rawDataUrl.get(index).url)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if (parseRawData(response)) {
+                        int nextIndex = index + 1;
+                        if (nextIndex < mMomentPlayInfo.rawDataUrl.size()) {
+                            loadRawData(nextIndex);
+                        } else {
+                            onLoadRawDataSuccessfully();
+                        }
+                    } else {
+                        onLoadRawDataError("Load Raw data error");
+                    }
+                }
+            })
+            .errorListener(new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+                    onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
+                }
+            })
+            .build();
+        request.setTag(TAG);
+        mRequestQueue.add(request);
+
+
     }
 
     boolean parseRawData(JSONObject response) {
@@ -656,14 +650,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         }
     }
 
-    public void setOnProgressListener(OnProgressListener listener) {
-        mProgressListener = listener;
-    }
-
-
-    public interface OnProgressListener {
-        void onProgress(int position, int duration);
-    }
 
     private class MomentRawDataAdapter {
         List<RawDataItem> mOBDData = new ArrayList<>();

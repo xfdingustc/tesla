@@ -12,9 +12,14 @@ public class MomentPlayInfo {
 
     public long momentID;
 
-    public List<RawDataUrl> rawDataUrl;
+    public String captureTime;
+
+    public int duration;
 
     public String videoUrl;
+
+    public List<RawDataUrl> rawDataUrl;
+
 
     public static class RawDataUrl {
         public String captureTime;
