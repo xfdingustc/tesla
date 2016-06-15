@@ -330,11 +330,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             return;
         }
 
-//        if (mOverlayShouldDisplay && mRawDataState == RAW_DATA_STATE_UNKNOWN) {
-//            Logger.t(TAG).d("overlay show display: " + mOverlayShouldDisplay + " rawdata state: " + mRawDataState);
-//            return;
-//        }
-
         mProgressLoading.setVisibility(View.VISIBLE);
         try {
             if (mMediaPlayer == null) {
@@ -352,10 +347,13 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     showControllers();
                 }
             });
+
+
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-
+                    mVideoSeekBar.setProgress(0);
+                    setProgress(0, mMediaPlayer.getDuration());
                     changeState(STATE_IDLE);
                 }
             });
@@ -427,10 +425,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     }
 
-    void release(final boolean clearTargetState) {
-        mMediaPlayer = null;
 
-    }
 
 
     protected void setProgress(int position, int duration) {
@@ -764,6 +759,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             case STATE_IDLE:
                 mVsCover.setVisibility(View.VISIBLE);
                 mProgressLoading.setVisibility(View.INVISIBLE);
+                mBtnPlayPause.toggle(true);
 //                mBtnPlayPause.setImageResource(R.drawable.playbar_play);
                 break;
             case STATE_PREPAREING:
