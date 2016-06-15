@@ -17,10 +17,13 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.Response;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
@@ -30,6 +33,7 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.Moment;
 
+import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
@@ -209,6 +213,21 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         moment.isLiked = !moment.isLiked;
 //        doUpdateLikeStateAnimator(vh, moment);
     }
+
+//    private void doDeleteMoment(int feedItem) {
+//        Moment moment = mAdapter.getMomemnt(feedItem);
+//
+//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+//            .delete()
+//            .url(Constants.API_MOMENTS + "/" + moment.id)
+//            .listner(new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//
+//                }
+//            }).build();
+//        mRequestQueue.add(request);
+//    }
 
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 

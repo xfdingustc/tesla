@@ -23,7 +23,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -45,7 +44,8 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener, FeedContextMenu.OnFeedContextMenuItemClickListener {
+public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
+    Refreshable, FragmentNavigator, OnViewDragListener {
     private static final String TAG = FeedFragment.class.getSimpleName();
     static final int DEFAULT_COUNT = 10;
 
@@ -83,7 +83,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     private int mFeedTag;
 
-    private String mReportReason;
 
     public static FeedFragment newInstance(int tag) {
 
@@ -105,18 +104,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new MomentsListAdapter(getActivity(), null);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mReportReason = getResources().getStringArray(R.array.report_reason)[0];
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-
-//        mCurrentCursor = 0;
-//        loadFeed(mCurrentCursor, true);
 
     }
+
+
 
     @Override
     public void onStop() {
@@ -137,12 +128,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 loadFeed(mCurrentCursor, false);
             }
         });
-        mRvVideoList.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                FeedContextMenu.FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
-            }
-        });
+
         return view;
     }
 
@@ -151,86 +137,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         super.onViewCreated(view, savedInstanceState);
         mCurrentCursor = 0;
         loadFeed(mCurrentCursor, true);
-    }
-
-
-    @Override
-    public void onReportClick(final int feedItem) {
-        FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-            .title(R.string.report)
-            .items(R.array.report_reason)
-            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                @Override
-                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                    mReportReason = getResources().getStringArray(R.array.report_reason)[which];
-                    return true;
-                }
-            })
-            .positiveText(R.string.report)
-            .negativeText(android.R.string.cancel)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    Moment moment = mAdapter.getMomemnt(feedItem);
-                    doReportMoment(moment);
-                }
-            })
-            .show();
-    }
-
-    private void doReportMoment(Moment moment) {
-        String url = Constants.API_REPORT;
-        final JSONObject requestBody = new JSONObject();
-        try {
-            requestBody.put("momentID", moment.id);
-            requestBody.put("reason", mReportReason);
-
-            Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    Snackbar.make(mRvVideoList, "Report moment successfully", Snackbar.LENGTH_LONG).show();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-
-            mRequestQueue.add(request);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @Override
-    public void onCancelClick(int feedItem) {
-        FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
-    }
-
-    @Override
-    public void onDeleteClick(int feedItem) {
-        FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
-        doDeleteMoment(feedItem);
-    }
-
-    private void doDeleteMoment(int feedItem) {
-        Moment moment = mAdapter.getMomemnt(feedItem);
-
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .delete()
-            .url(Constants.API_MOMENTS + "/" + moment.id)
-            .listner(new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-
-                }
-            }).build();
-        mRequestQueue.add(request);
     }
 
 
@@ -358,8 +264,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             mRefreshLayout.setEnabled(enabled);
         }
     }
-
-
 
 
     @Override
