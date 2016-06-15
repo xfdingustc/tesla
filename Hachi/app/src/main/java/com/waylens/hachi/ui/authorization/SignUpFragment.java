@@ -26,9 +26,17 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
+import com.rest.body.SignInPostBody;
+import com.rest.body.SignUpPostBody;
+import com.rest.response.SignInResponse;
+import com.rest.response.SignUpResponse;
+import com.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -44,6 +52,8 @@ import java.net.URLEncoder;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Richard on 8/20/15.
@@ -131,8 +141,6 @@ public class SignUpFragment extends BaseFragment {
 
 
 
-
-
     void initViews() {
         mRootView.requestFocus();
         String email = null;
@@ -146,72 +154,59 @@ public class SignUpFragment extends BaseFragment {
 
 
     void performSignUp() {
-        JSONObject params = new JSONObject();
-        try {
-            params.put(JsonKey.EMAIL, mEmail);
-            params.put(JsonKey.USERNAME, mEmail.substring(0, mEmail.indexOf("@")));
-            params.put(JsonKey.PASSWORD, mPassword);
-        } catch (JSONException e) {
-            Logger.t(TAG).e(e, "");
-        }
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_UP, params,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    onSignUpSuccessful(response);
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onSignUpFailed(error);
-                }
-            }).setTag(TAG_REQUEST_SIGN_UP));
+
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        SignUpPostBody signUpPostBody = new SignUpPostBody(mEmail, mEmail.substring(0, mEmail.indexOf("@")), mPassword);
+        Call<SignUpResponse> signUpResponseCall = hachiApi.signUp(signUpPostBody);
+        signUpResponseCall.enqueue(new Callback<SignUpResponse>() {
+            @Override
+            public void onResponse(Call<SignUpResponse> call, retrofit2.Response<SignUpResponse> response) {
+                onSignUpSuccessful(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<SignUpResponse> call, Throwable t) {
+                onSignUpFailed(t);
+            }
+        });
+
     }
 
-    void onSignUpFailed(VolleyError error) {
-        showMessage(ServerMessage.parseServerError(error).msgResID);
+    void onSignUpFailed(Throwable error) {
+        Logger.d(error.getMessage(), this);
+        //showMessage(ServerMessage.parseServerError(error).msgResID);
     }
 
-    void onSignUpSuccessful(JSONObject response) {
+    void onSignUpSuccessful(SignUpResponse response) {
         performSignIn();
-        /*add for test welcome page
-        getActivity().setResult(Activity.RESULT_OK);
-        getActivity().finish();
-        Logger.d("go to welcome page", this);
-        SignUpSucceedActivity.launch(getActivity());
-        */
     }
 
     private void verifyEmailOnCloud() {
-        String url = Constants.API_CHECK_EMAIL;
-        try {
-            url = url + URLEncoder.encode(mEmail, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            Logger.t(TAG).e(e, "");
-        }
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        Call<SimpleBoolResponse> simpleBoolResponseCall = hachiApi.checkEmail(mEmail);
+        simpleBoolResponseCall.enqueue(new Callback<SimpleBoolResponse>() {
+            @Override
+            public void onResponse(Call<SimpleBoolResponse> call, retrofit2.Response<SimpleBoolResponse> response) {
+                onValidEmail(response.body());
+            }
 
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
-                onValidEmail(response);
+            public void onFailure(Call<SimpleBoolResponse> call, Throwable t) {
+                onInvalidEmail(t);
+
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                onInvalidEmail(error);
-            }
-        }).setTag(TAG_REQUEST_VERIFY_EMAIL));
+        });
     }
 
-    void onInvalidEmail(VolleyError error) {
-        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.msgResID);
+    void onInvalidEmail(Throwable error) {
+        Logger.d(error.getMessage(), this);
+        //ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        //showMessage(errorInfo.msgResID);
         mButtonAnimator.setDisplayedChild(0);
     }
 
-    void onValidEmail(JSONObject response) {
-        if (response.optBoolean("result")) {
+    void onValidEmail(SimpleBoolResponse response) {
+        if (response.result) {
             PreferenceUtils.putString(PreferenceUtils.KEY_SIGN_UP_EMAIL, mEmail);
             mInputAnimator.setDisplayedChild(1);
             mButtonAnimator.setDisplayedChild(2);
@@ -239,32 +234,31 @@ public class SignUpFragment extends BaseFragment {
     }
 
     void performSignIn() {
-        AuthorizedJsonRequest.Builder requestBuilder = new AuthorizedJsonRequest.Builder()
-                .url(Constants.API_SIGN_IN)
-                .postBody(JsonKey.EMAIL, mEmail)
-                .postBody(JsonKey.PASSWORD, mPassword)
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onSignInSuccessful(response);
-                    }
-                })
-                .errorListener(new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onSignInFailed(error);
-                        Logger.d("fail to sign in", this);
-                    }
-                });
 
-        mVolleyRequestQueue.add(requestBuilder.build().setTag(TAG_REQUEST_SIGN_IN));
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        SignInPostBody signInPostBody = new SignInPostBody(mEmail, mPassword);
+        Call<SignInResponse> signInResponseCall = hachiApi.signin(signInPostBody);
+        signInResponseCall.enqueue(new Callback<SignInResponse>() {
+            @Override
+            public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
+                onSignInSuccessful(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<SignInResponse> call, Throwable t) {
+                onSignInFailed(t);
+                Logger.d(t.getMessage());
+            }
+        });
+
     }
 
-    void onSignInFailed(VolleyError error) {
+    void onSignInFailed(Throwable error) {
+        Logger.d(error.getMessage(), this);
         //showMessage(ServerMessage.parseServerError(error).msgResID);
     }
 
-    void onSignInSuccessful(JSONObject response) {
+    void onSignInSuccessful(SignInResponse response) {
         SessionManager.getInstance().saveLoginInfo(response);
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();

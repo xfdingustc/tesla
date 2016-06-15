@@ -6,6 +6,7 @@ import android.preference.PreferenceFragment;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.orhanobut.logger.Logger;
+import com.rest.response.SignInResponse;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -143,6 +144,34 @@ public class SessionManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void saveLoginInfo(SignInResponse response) {
+        saveLoginInfo(response, false);
+    }
+
+    public void saveLoginInfo(SignInResponse response, boolean isLoginWithSNS) {
+
+        mUserName = response.user.userName;
+        mUserId = response.user.userID;
+        mAvatarUrl = response.user.avatarUrl;
+        mToken = response.token;
+        mIsLinked = false;
+
+        if(isLoginWithSNS) {
+            mLoginType = LOGIN_TYPE_SNS;
+        } else {
+            mLoginType = LOGIN_TYPE_USERNAME_PASSWORD;
+        }
+
+        setLoginInternal();
+
+        PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
+        PreferenceUtils.putString(PreferenceUtils.USER_ID, mUserId);
+        PreferenceUtils.putString(PreferenceUtils.TOKEN, mToken);
+        PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
+        PreferenceUtils.putInt(PreferenceUtils.LOGIN_TYPE, mLoginType);
+        PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, mIsLinked);
     }
 
 

@@ -32,6 +32,12 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
+import com.rest.body.DeviceLoginBody;
+import com.rest.body.FollowPostBody;
+import com.rest.body.SignInPostBody;
+import com.rest.response.SignInResponse;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -48,6 +54,8 @@ import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 public class SignInFragment extends BaseFragment {
@@ -152,32 +160,27 @@ public class SignInFragment extends BaseFragment {
     void performSignIn() {
         mEmail = mTvSignInEmail.getText().toString();
         mPassword = mTvPassword.getText().toString();
-        JSONObject params = new JSONObject();
-        try {
-            params.put(JsonKey.EMAIL, mEmail);
-            params.put(JsonKey.PASSWORD, mPassword);
-        } catch (JSONException e) {
-            Logger.t(TAG).e(e, "");
-        }
-        Logger.t(TAG).d("signin : " + params.toString());
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_SIGN_IN, params,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    onSignInSuccessful(response);
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onSignInFailed(error);
-                }
-            }).setTag(TAG_REQUEST_SIGN_IN));
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        SignInPostBody signInPostBody = new SignInPostBody(mEmail, mPassword);
+        Call<SignInResponse> signInResponseCall = hachiApi.signin(signInPostBody);
+        signInResponseCall.enqueue(new Callback<SignInResponse>() {
+            @Override
+            public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
+                onSignInSuccessful(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<SignInResponse> call, Throwable t) {
+                onSignInFailed(t);
+                Logger.d(t.getMessage());
+            }
+        });
+
     }
 
-    void onSignInFailed(VolleyError error) {
+    void onSignInFailed(Throwable error) {
         mButtonAnimator.setDisplayedChild(0);
-        showMessage(ServerMessage.parseServerError(error).msgResID);
+        //showMessage(ServerMessage.parseServerError(error).msgResID);
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .content(R.string.sign_up_with_this_email)
                 .positiveText(android.R.string.ok)
@@ -197,31 +200,45 @@ public class SignInFragment extends BaseFragment {
 
     }
 
-    void onSignInSuccessful(JSONObject response) {
+    void onSignInSuccessful(SignInResponse response) {
         SessionManager.getInstance().saveLoginInfo(response);
         doDeviceLogin();
 
     }
 
     private void doDeviceLogin() {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_DEVICE_LOGIN)
-            .postBody("deviceType", "ANDROID")
-            .postBody("deviceID", "xfding")
-            .listner(new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    SessionManager.getInstance().saveLoginInfo(response);
-                    getActivity().setResult(Activity.RESULT_OK);
-                    getActivity().finish();
-                }
-            })
-            .build();
+/*        HachiApi hachiApi = HachiService.createHachiApiService();
+        DeviceLoginBody deviceLoginBody = new DeviceLoginBody("ANDROID", "xfding");
+        Call<SignInResponse> deviceLoginResponseCall = hachiApi.deviceLogin(deviceLoginBody);
+        deviceLoginResponseCall.enqueue(new Callback<SignInResponse>() {
+            @Override
+            public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
+                Logger.t(TAG).d(response.body().token);
+                SessionManager.getInstance().saveLoginInfo(response.body());
+                getActivity().setResult(Activity.RESULT_OK);
+                getActivity().finish();
+            }
 
+            @Override
+            public void onFailure(Call<SignInResponse> call, Throwable t) {
+
+            }
+        });*/
+
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+                .url(Constants.API_DEVICE_LOGIN)
+                .postBody("deviceType", "ANDROID")
+                .postBody("deviceID", "xfding")
+                .listner(new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Logger.d(response.toString());
+                        SessionManager.getInstance().saveLoginInfo(response);
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
+                    }
+                })
+                .build();
         mVolleyRequestQueue.add(request);
     }
-
-
-
-
 }
