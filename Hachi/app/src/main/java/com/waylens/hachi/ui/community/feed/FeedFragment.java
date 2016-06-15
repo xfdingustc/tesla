@@ -1,7 +1,5 @@
 package com.waylens.hachi.ui.community.feed;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +24,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.community.MomentPlayFragment;
-import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -50,8 +45,7 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnMomentActionListener,
-    SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener, FeedContextMenu.OnFeedContextMenuItemClickListener {
+public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Refreshable, FragmentNavigator, OnViewDragListener, FeedContextMenu.OnFeedContextMenuItemClickListener {
     private static final String TAG = FeedFragment.class.getSimpleName();
     static final int DEFAULT_COUNT = 10;
 
@@ -84,7 +78,6 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
     LinearLayoutManager mLinearLayoutManager;
 
-    Fragment mVideoFragment;
 
     int mCurrentCursor;
 
@@ -111,7 +104,6 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
         }
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new MomentsListAdapter(getActivity(), null);
-        mAdapter.setOnMomentActionListener(this);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mReportReason = getResources().getStringArray(R.array.report_reason)[0];
     }
@@ -123,6 +115,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
 
 //        mCurrentCursor = 0;
 //        loadFeed(mCurrentCursor, true);
+
     }
 
     @Override
@@ -161,8 +154,6 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     }
 
 
-
-
     @Override
     public void onReportClick(final int feedItem) {
         FeedContextMenu.FeedContextMenuManager.getInstance().hideContextMenu();
@@ -196,7 +187,7 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
             requestBody.put("reason", mReportReason);
 
             Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody,  new Response.Listener<JSONObject>() {
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.t(TAG).json(response.toString());
@@ -354,9 +345,6 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
     }
 
 
-
-
-
     @Override
     public void onRefresh() {
         mCurrentCursor = 0;
@@ -371,26 +359,8 @@ public class FeedFragment extends BaseFragment implements MomentsListAdapter.OnM
         }
     }
 
-    @Override
-    public void onRequestVideoPlay(MomentViewHolder vh, Moment moment, int position) {
-        FragmentManager mFragmentManager = getFragmentManager();
-        if (mVideoFragment != null) {
-            mFragmentManager.beginTransaction().remove(mVideoFragment).commit();
-            mVideoFragment = null;
-        }
 
 
-    }
-
-    @Override
-    public void onMoreClick(View v, int position) {
-        Moment moment = mAdapter.getMomemnt(position);
-        boolean isCurrentUser = false;
-        if (moment.owner.userID.equals(SessionManager.getInstance().getUserId())) {
-            isCurrentUser = true;
-        }
-        FeedContextMenu.FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this, isCurrentUser);
-    }
 
     @Override
     public boolean onInterceptBackPressed() {

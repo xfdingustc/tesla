@@ -2,6 +2,7 @@ package com.rest;
 
 import com.rest.body.FollowPostBody;
 import com.rest.body.LikePostBody;
+import com.rest.body.ReportBody;
 import com.rest.response.FollowInfo;
 import com.rest.response.LikeResponse;
 import com.rest.response.LinkedAccounts;
@@ -52,6 +53,9 @@ public interface HachiApi {
     @GET("/api/users/{userId}")
     Call<UserInfo> getUserInfo(@Path("userId") String userId);
 
-    @GET("api/share/accounts")
+    @GET("/api/share/accounts")
     Call<LinkedAccounts> getLinkedAccounts();
+
+    @POST("/api/reports")
+    Call<SimpleBoolResponse> report(@Body ReportBody reportBody);
 }

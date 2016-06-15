@@ -7,32 +7,43 @@ import com.orhanobut.logger.Logger;
 import com.rest.HachiApi;
 import com.rest.HachiService;
 import com.rest.body.LikePostBody;
+import com.rest.body.ReportBody;
 import com.rest.response.LikeResponse;
+import com.rest.response.SimpleBoolResponse;
 
 import retrofit2.Call;
 
+/**
+ * Created by Xiaofei on 2016/6/14.
+ */
+public class ReportJob extends Job {
+    private static final String TAG = ReportJob.class.getSimpleName();
+    private final String mReason;
+    private long mMomentId;
 
-public class LikeJob extends Job {
-    private static final String TAG = LikeJob.class.getSimpleName();
-    private final long mMomentId;
-    private final boolean mIsCancel;
 
-    public LikeJob(long momentId, boolean isCancel) {
+    public ReportJob(long momentId, String reason) {
         super(new Params(0).requireNetwork());
-        this.mMomentId = momentId;
-        this.mIsCancel = isCancel;
+        mMomentId = momentId;
+        mReason = reason;
     }
 
     @Override
     public void onAdded() {
-
     }
 
     @Override
     public void onRun() throws Throwable {
+        Logger.t(TAG).d("do report");
         HachiApi hachiApi = HachiService.createHachiApiService();
-        Call<LikeResponse> response = hachiApi.like(new LikePostBody(mMomentId, mIsCancel));
-        Logger.t(TAG).d("response: " + response.execute().body().count);
+        ReportBody reportBody = new ReportBody();
+        if (mMomentId != -1) {
+            reportBody.momentID = mMomentId;
+        }
+
+        reportBody.reason = mReason;
+        Call<SimpleBoolResponse> response = hachiApi.report(reportBody);
+        Logger.t(TAG).d("response: " + response.execute().body().result);
     }
 
     @Override

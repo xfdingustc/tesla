@@ -65,12 +65,12 @@
             android:textSize="14sp"
             tools:text="5H"/>
 
-        <ImageButton
-            android:id="@+id/btn_more"
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            style="@style/SelectableRippleButton"
-            android:src="@drawable/ic_more_grey"/>
+            android:layout_height="48dp"></android.support.v7.widget.Toolbar>
 
     </LinearLayout>
 

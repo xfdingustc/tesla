@@ -2,20 +2,29 @@ package com.waylens.hachi.ui.community.feed;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.LikeJob;
+import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
@@ -26,8 +35,12 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
+
+public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.MomentViewHolder> {
     private static final String TAG = MomentsListAdapter.class.getSimpleName();
     public ArrayList<Moment> mMoments;
 
@@ -36,13 +49,14 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
     PrettyTime mPrettyTime;
 
 
-    OnMomentActionListener mOnMomentActionListener;
+    private String mReportReason;
 
 
     public MomentsListAdapter(Context context, ArrayList<Moment> moments) {
         this.mContext = context;
         mMoments = moments;
         mPrettyTime = new PrettyTime();
+        mReportReason = context.getResources().getStringArray(R.array.report_reason)[0];
     }
 
 
@@ -65,9 +79,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         notifyItemRangeInserted(start, count);
     }
 
-    public void setOnMomentActionListener(OnMomentActionListener listener) {
-        mOnMomentActionListener = listener;
-    }
 
     @Override
     public MomentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -112,14 +123,57 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
         });
 
 
-        holder.btnMore.setOnClickListener(new View.OnClickListener() {
+        holder.toolbar.getMenu().clear();
+        holder.toolbar.inflateMenu(R.menu.menu_moment);
+        if (moment.owner.userID.equals(SessionManager.getInstance().getUserId())) {
+            holder.toolbar.getMenu().removeItem(R.id.report);
+        } else {
+            holder.toolbar.getMenu().removeItem(R.id.delete);
+        }
+
+        holder.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-                if (mOnMomentActionListener != null) {
-                    mOnMomentActionListener.onMoreClick(v, position);
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.report:
+                        onReportClick(moment.id);
+                        break;
+                    case R.id.delete:
+                        break;
+
                 }
+                return true;
             }
         });
+    }
+
+    private void onReportClick(final long momentId) {
+        MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+            .title(R.string.report)
+            .items(R.array.report_reason)
+            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                @Override
+                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                    mReportReason = mContext.getResources().getStringArray(R.array.report_reason)[which];
+                    return true;
+                }
+            })
+            .positiveText(R.string.report)
+            .negativeText(android.R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                    doReportMoment(momentId);
+                }
+            })
+            .show();
+    }
+
+    private void doReportMoment(long momentId) {
+        JobManager jobManager = BgJobManager.getManager();
+        ReportJob job = new ReportJob(momentId, mReportReason);
+        jobManager.addJobInBackground(job);
     }
 
 
@@ -156,9 +210,38 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentViewHolder> {
 //        doUpdateLikeStateAnimator(vh, moment);
     }
 
-    public interface OnMomentActionListener {
-        void onRequestVideoPlay(MomentViewHolder vh, Moment moment, int position);
+    public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
-        void onMoreClick(View v, int position);
+        @BindView(R.id.user_avatar)
+        CircleImageView userAvatar;
+
+        @BindView(R.id.user_name)
+        TextView userName;
+
+        @BindView(R.id.user_car)
+        TextView userCar;
+
+        @BindView(R.id.title)
+        TextView title;
+
+        @BindView(R.id.video_time)
+        TextView videoTime;
+
+        @BindView(R.id.video_duration)
+        TextView videoDuration;
+
+        @BindView(R.id.video_cover)
+        ImageView videoCover;
+
+        @BindView(R.id.toolbar)
+        Toolbar toolbar;
+
+
+        public MomentViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+        }
     }
+
 }
