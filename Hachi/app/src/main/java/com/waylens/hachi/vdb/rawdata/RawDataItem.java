@@ -24,6 +24,15 @@ public class RawDataItem {
         this.mPtsMs = ptsMs;
     }
 
+    public RawDataItem(RawDataItem other) {
+        this.mType = other.mType;
+        this.mPtsMs = other.mPtsMs;
+        this.data = other.data;
+    }
+
+
+
+
     public int getType() {
         return mType;
     }

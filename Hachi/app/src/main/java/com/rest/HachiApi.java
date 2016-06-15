@@ -11,6 +11,7 @@ import com.rest.response.LikeResponse;
 import com.rest.response.LinkedAccounts;
 import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
+import com.rest.response.RawDataResponse;
 import com.rest.response.SignUpResponse;
 import com.rest.response.SimpleBoolResponse;
 import com.rest.response.UserInfo;
@@ -77,5 +78,9 @@ public interface HachiApi {
 
     @POST("/api/devices/login")
     Call<SignInResponse> deviceLogin(@Body DeviceLoginBody deviceLoginBody);
+
+
+    @GET("{url}")
+    Call<RawDataResponse> getRawData(@Path("url") String url);
 
 }

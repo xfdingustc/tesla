@@ -21,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -32,12 +31,12 @@ import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.ToStringUtils;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;
@@ -51,7 +50,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -98,11 +100,13 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private int mCurrentState = STATE_IDLE;
 
 
-    VideoHandler mHandler;
+    private VideoHandler mHandler;
 
     private MomentInfo mMoment;
 
     private MomentPlayInfo mMomentPlayInfo;
+
+    private List<RawDataTimeInfo> mRawDataTimeInfoList = new ArrayList<>();
 
 
     boolean mIsFullScreen;
@@ -486,6 +490,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     void onLoadRawDataSuccessfully() {
         mRawDataState = RAW_DATA_STATE_READY;
+        Logger.t(TAG).d("Raw data load finished");
         mProgressLoading.setVisibility(View.GONE);
         openVideo();
     }
@@ -523,6 +528,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 //                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
                     mMomentPlayInfo = momentPlayInfo;
 
+                    calcRawDataTimeInfo();
+
                     loadRawData(0);
                 }
             });
@@ -534,7 +541,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 //            public void onResponse(JSONObject response) {
 //                Logger.t(TAG).json(response.toString());
 ////                mRawDataUrls = response.optJSONArray("rawDataUrl");
-//                loadRawData(0);
+////                loadRawData(0);
 //            }
 //        }, new Response.ErrorListener() {
 //            @Override
@@ -546,6 +553,28 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mProgressLoading.setVisibility(View.VISIBLE);
     }
 
+    private void calcRawDataTimeInfo() {
+        int offset = 0;
+//        Logger.t(TAG).d("rawDataUrl size: " + mMomentPlayInfo.rawDataUrl.size());
+        for (int i = 0; i <= mMomentPlayInfo.rawDataUrl.size(); i++) {
+            MomentPlayInfo.RawDataUrl rawDataUrl = mMomentPlayInfo.rawDataUrl.get(i);
+            RawDataTimeInfo timeInfo = new RawDataTimeInfo();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            try {
+                Date date = dateFormat.parse(rawDataUrl.captureTime);
+                timeInfo.captureTime = date.getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            timeInfo.offset = offset;
+            offset += rawDataUrl.duration;
+
+            mRawDataTimeInfoList.add(timeInfo);
+//            Logger.t(TAG).d("add time info: " + timeInfo.toString());
+        }
+    }
+
 
     private void loadRawData(final int index) {
         if (mMomentPlayInfo.rawDataUrl == null || index >= mMomentPlayInfo.rawDataUrl.size()) {
@@ -553,13 +582,36 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             return;
         }
 
+//        HachiApi hachiApi = HachiService.createHachiApiServiceNoBaseUrl();
+//        Call<RawDataResponse> rawDataResponseCall = hachiApi.getRawData(mMomentPlayInfo.rawDataUrl.get(index).url);
+//        rawDataResponseCall.enqueue(new Callback<RawDataResponse>() {
+//            @Override
+//            public void onResponse(Call<RawDataResponse> call, retrofit2.Response<RawDataResponse> response) {
+//                RawDataResponse rawDataResponse = response.body();
+//                for (Long captureTime : rawDataResponse.acc.captureTime) {
+//                    Logger.t(TAG).d("capture time: " + captureTime);
+//                }
+//
+//                for (RawDataResponse.AccRawData.Acceleration acceleration : rawDataResponse.acc.acceleration) {
+//                    Logger.t(TAG).d(acceleration.toString());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RawDataResponse> call, Throwable t) {
+//                Logger.t(TAG).d("Failed");
+//            }
+//        });
+
 
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
             .url(mMomentPlayInfo.rawDataUrl.get(index).url)
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    if (parseRawData(response)) {
+//                    Logger.t(TAG).json(response.toString());
+                    Logger.t(TAG).d("finish loading index: " + index);
+                    if (parseRawData(index, response)) {
                         int nextIndex = index + 1;
                         if (nextIndex < mMomentPlayInfo.rawDataUrl.size()) {
                             loadRawData(nextIndex);
@@ -585,7 +637,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     }
 
-    boolean parseRawData(JSONObject response) {
+    private boolean parseRawData(int index, JSONObject response) {
+        int offset = mRawDataTimeInfoList.get(index).offset;
+
         try {
             JSONObject obd = response.optJSONObject("obd");
             if (obd != null) {
@@ -599,7 +653,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 JSONArray bhp = obd.getJSONArray("bhp");
                 for (int i = 0; i < captureTime.length(); i++) {
                     mRawDataAdapter.addObdData(
-                        captureTime.getLong(i),
+                        captureTime.getLong(i) + offset,
                         speed.getInt(i),
                         rpm.getInt(i),
                         temperature.getInt(i),
@@ -617,7 +671,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONObject accObj = acceleration.getJSONObject(i);
                     mRawDataAdapter.addAccData(
-                        captureTime.getLong(i),
+                        captureTime.getLong(i) + offset,
                         accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
                         accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
                         accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
@@ -635,7 +689,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONArray coordinateObj = coordinates.getJSONArray(i);
                     mRawDataAdapter.addGpsData(
-                        captureTime.getLong(i),
+                        captureTime.getLong(i) + offset,
                         coordinateObj.getDouble(0),
                         coordinateObj.getDouble(1),
                         coordinateObj.getDouble(2)
@@ -708,13 +762,13 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         }
 
         public void updateCurrentTime(int currentTime) {
-            if (checkIfUpdated(mAccData, mAccDataIndex, currentTime)) {
+            if (checkIfUpdated(mAccData, 0, currentTime)) {
                 mAccDataIndex++;
             }
-            if (checkIfUpdated(mGPSData, mGpsDataIndex, currentTime)) {
+            if (checkIfUpdated(mGPSData, 0, currentTime)) {
                 mGpsDataIndex++;
             }
-            if (checkIfUpdated(mOBDData, mObdDataIndex, currentTime)) {
+            if (checkIfUpdated(mOBDData, 0, currentTime)) {
                 mObdDataIndex++;
             }
         }
@@ -725,15 +779,31 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 return false;
             }
 
-            RawDataItem item = list.get(index);
-            if (item.getPtsMs() < currentTime) {
-                fromPosition++;
-                //notifyDataSetChanged(item);
-                mGaugeView.updateRawDateItem(item);
-                return true;
+            for (int i = 1; i < list.size(); i++) {
+                RawDataItem item = list.get(i);
+                if (currentTime < item.getPtsMs()) {
+//                    Logger.t(TAG).d("found rawdata: " + i + " currentTime: " + currentTime + " itempts: " + item.getPtsMs());
+                    RawDataItem updateItem = new RawDataItem(list.get(i - 1));
+                    long startTime = getRawDataIndex(currentTime);
+                    updateItem.setPtsMs(startTime + updateItem.getPtsMs());
+                    mGaugeView.updateRawDateItem(updateItem);
+                    return true;
+                }
             }
 
+
+
+
             return false;
+        }
+
+        private long getRawDataIndex(int currentTime) {
+            for (int i = 1; i < mRawDataTimeInfoList.size(); i++) {
+                if (currentTime < mRawDataTimeInfoList.get(i).offset) {
+                    return mRawDataTimeInfoList.get(i - 1).captureTime;
+                }
+            }
+            return mRawDataTimeInfoList.get(0).captureTime;
         }
 
 
@@ -785,6 +855,18 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             mMediaPlayer.stop();
         }
 
+    }
+
+
+    public class RawDataTimeInfo {
+        private long captureTime;
+
+        private int offset;
+
+        @Override
+        public String toString() {
+            return ToStringUtils.getString(this);
+        }
     }
 
     public class UpdatePlayTimeTask extends TimerTask {

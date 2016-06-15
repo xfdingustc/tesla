@@ -54,4 +54,6 @@ public class HachiService {
         mHachiApiInstance = builder.build().create(HachiApi.class);
         return mHachiApiInstance;
     }
+
+
 }
