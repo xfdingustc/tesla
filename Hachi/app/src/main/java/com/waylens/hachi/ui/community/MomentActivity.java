@@ -58,6 +58,7 @@ import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
@@ -171,6 +172,10 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.btn_like)
     public void onBtnLikeClicked() {
+        if (!mSessionManager.isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            return;
+        }
         boolean isCancel = mMomentInfo.moment.isLiked;
         JobManager jobManager = BgJobManager.getManager();
         LikeJob job = new LikeJob(mMomentInfo.moment.id, isCancel);
@@ -193,7 +198,17 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.add_follow)
     public void addFollow() {
-        if (mFollowInfo.isMyFollowing) {
+        if (!mSessionManager.isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            return;
+
+        }
+
+        if (mFollowInfo == null) {
+            updateFollowInfo(mMomentInfo.owner.userID);
+            return;
+        }
+        if (mFollowInfo != null && mFollowInfo.isMyFollowing) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .content(getResources().getString(R.string.unfollow) + " " + mMomentInfo.owner.userName)
                 .positiveText(android.R.string.ok)
@@ -228,10 +243,13 @@ public class MomentActivity extends BaseActivity {
         super.onConfigurationChanged(newConfig);
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
-
+        if (mMomentInfo != null && mMomentInfo.owner != null && mFollowInfo == null) {
+            updateFollowInfo(mMomentInfo.owner.userID);
+        }
     }
 
     @Override
