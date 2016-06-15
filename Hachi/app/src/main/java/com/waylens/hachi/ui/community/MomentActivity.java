@@ -411,7 +411,7 @@ public class MomentActivity extends BaseActivity {
         followInfoCall.enqueue(new Callback<FollowInfo>() {
             @Override
             public void onResponse(Call<FollowInfo> call, retrofit2.Response<FollowInfo> response) {
-                Logger.t(TAG).d(response.body().toString());
+//                Logger.t(TAG).d(response.body().toString());
                 mFollowInfo = response.body();
                 updateFollowTextView();
 
@@ -426,7 +426,7 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void updateFollowTextView() {
-        if (mFollowInfo.isMyFollowing) {
+        if (mFollowInfo != null && mFollowInfo.isMyFollowing) {
             mAddFollow.setText(R.string.unfollow);
         } else {
             mAddFollow.setText(R.string.follow);
@@ -640,7 +640,7 @@ public class MomentActivity extends BaseActivity {
         for (int i = jsonComments.length() - 1; i >= 0; i--) {
             Comment comment = Comment.fromJson(jsonComments.optJSONObject(i));
             commentList.add(comment);
-            Logger.t(TAG).d("Add comment: " + comment.toString());
+//            Logger.t(TAG).d("Add comment: " + comment.toString());
         }
 
         boolean hasMore = response.optBoolean("hasMore");

@@ -525,6 +525,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
                 @Override
                 public void onNext(MomentPlayInfo momentPlayInfo) {
+                    Logger.t(TAG).d("Get moment play info");
 //                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
                     mMomentPlayInfo = momentPlayInfo;
 
@@ -556,7 +557,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private void calcRawDataTimeInfo() {
         int offset = 0;
 //        Logger.t(TAG).d("rawDataUrl size: " + mMomentPlayInfo.rawDataUrl.size());
-        for (int i = 0; i <= mMomentPlayInfo.rawDataUrl.size(); i++) {
+        for (int i = 0; i < mMomentPlayInfo.rawDataUrl.size(); i++) {
             MomentPlayInfo.RawDataUrl rawDataUrl = mMomentPlayInfo.rawDataUrl.get(i);
             RawDataTimeInfo timeInfo = new RawDataTimeInfo();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -571,8 +572,10 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             offset += rawDataUrl.duration;
 
             mRawDataTimeInfoList.add(timeInfo);
-//            Logger.t(TAG).d("add time info: " + timeInfo.toString());
+//            Logger.t(TAG).d("add time info: " + timeInfo.toString() + " index: " + i);
         }
+
+
     }
 
 
@@ -610,7 +613,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 @Override
                 public void onResponse(JSONObject response) {
 //                    Logger.t(TAG).json(response.toString());
-                    Logger.t(TAG).d("finish loading index: " + index);
+//                    Logger.t(TAG).d("finish loading index: " + index);
                     if (parseRawData(index, response)) {
                         int nextIndex = index + 1;
                         if (nextIndex < mMomentPlayInfo.rawDataUrl.size()) {
@@ -803,7 +806,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     return mRawDataTimeInfoList.get(i - 1).captureTime;
                 }
             }
-            return mRawDataTimeInfoList.get(0).captureTime;
+            return mRawDataTimeInfoList.get(mRawDataTimeInfoList.size() - 1).captureTime;
         }
 
 

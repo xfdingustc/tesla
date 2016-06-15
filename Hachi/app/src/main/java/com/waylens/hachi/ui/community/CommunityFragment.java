@@ -73,6 +73,8 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         //        .all));
         mViewPager.setAdapter(mFeedPageAdapter);
 
+
+
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         getTablayout().setupWithViewPager(mViewPager);
 
