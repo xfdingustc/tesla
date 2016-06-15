@@ -100,10 +100,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
             .crossFade()
             .dontAnimate()
             .into(holder.userAvatar);
-        holder.userName.setText(moment.owner.userName);
 
-
-        holder.videoTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         if (!TextUtils.isEmpty(moment.title)) {
             holder.title.setVisibility(View.VISIBLE);
             holder.title.setText(moment.title);
@@ -234,17 +231,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         @BindView(R.id.user_avatar)
         CircleImageView userAvatar;
 
-        @BindView(R.id.user_name)
-        TextView userName;
-
-        @BindView(R.id.user_car)
-        TextView userCar;
-
         @BindView(R.id.title)
         TextView title;
 
-        @BindView(R.id.video_time)
-        TextView videoTime;
 
         @BindView(R.id.video_duration)
         TextView videoDuration;

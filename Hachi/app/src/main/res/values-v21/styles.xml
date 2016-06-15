@@ -83,6 +83,11 @@
         <item name="android:textSize">12dp</item>
     </style>
 
+    <style name="HachiSepatator">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:alpha">0.12</item>
+    </style>
+
 
     <style name="ContextMenuButton">
         <item name="android:layout_width">match_parent</item>
