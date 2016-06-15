@@ -18,8 +18,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/stroke_rect"
-            android:alpha="0.12"></FrameLayout>
+            android:alpha="0.12"
+            android:background="@drawable/stroke_rect"></FrameLayout>
 
         <ImageView
             android:id="@+id/video_cover"
@@ -66,7 +66,16 @@
                 style="@style/HachiTextViewSubHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Like the weather! Hope you were here too!"/>
+                tools:text="Moment Title"/>
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/app_text_color_secondary"
+                android:textSize="14dp"
+                tools:text="user name"/>
         </LinearLayout>
 
         <android.support.v7.widget.Toolbar

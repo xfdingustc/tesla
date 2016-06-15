@@ -107,6 +107,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         } else {
             holder.title.setVisibility(View.GONE);
         }
+
+        holder.userName.setText(moment.owner.userName + " • " + mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         Glide.with(mContext).load(moment.thumbnail).crossFade().into(holder.videoCover);
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
@@ -243,6 +245,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
 
         @BindView(R.id.toolbar)
         Toolbar toolbar;
+
+        @BindView(R.id.user_name)
+        TextView userName;
 
 
         public MomentViewHolder(View itemView) {

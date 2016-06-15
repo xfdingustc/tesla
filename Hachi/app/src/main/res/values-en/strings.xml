@@ -242,4 +242,5 @@
 	<string name="without_camera">Without Camera</string>
 	<string name="unfollow">unfollow</string>
 	<string name="follow">follow</string>
+	<string name="latest">latest</string>
 </resources>
