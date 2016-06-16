@@ -55,7 +55,10 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @Override
     public boolean onInterceptBackPressed() {
         Fragment fragment = mFeedPageAdapter.getItem(mViewPager.getCurrentItem());
-        return ((FragmentNavigator)fragment).onInterceptBackPressed();
+        if (fragment instanceof FragmentNavigator) {
+            return ((FragmentNavigator)fragment).onInterceptBackPressed();
+        }
+        return false;
     }
 
 
