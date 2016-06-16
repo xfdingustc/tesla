@@ -49,6 +49,7 @@ import com.rest.HachiApi;
 import com.rest.HachiService;
 import com.rest.response.FollowInfo;
 import com.rest.response.MomentInfo;
+import com.rest.response.UserInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -70,6 +71,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -176,6 +178,8 @@ public class MomentActivity extends BaseActivity {
             AuthorizeActivity.launch(this);
             return;
         }
+        if (!checkUserVerified())
+            return;
         boolean isCancel = mMomentInfo.moment.isLiked;
         JobManager jobManager = BgJobManager.getManager();
         LikeJob job = new LikeJob(mMomentInfo.moment.id, isCancel);
@@ -203,6 +207,8 @@ public class MomentActivity extends BaseActivity {
             return;
 
         }
+        if (!checkUserVerified())
+            return;
 
         if (mFollowInfo == null) {
             updateFollowInfo(mMomentInfo.owner.userID);
@@ -223,10 +229,17 @@ public class MomentActivity extends BaseActivity {
            toggleFollowState();
         }
 
+
     }
 
     @OnClick(R.id.comment_new)
     public void onCommentNewClicked() {
+        if (!mSessionManager.isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            return;
+        }
+        if (!checkUserVerified())
+            return;
         showBottomSheetDialog();
     }
 
@@ -716,6 +729,58 @@ public class MomentActivity extends BaseActivity {
 
         mRequestQueue.add(requestBuilder.build());
 
+    }
 
+    private boolean checkUserPermission() {
+        if (!checkUserLoggedIn()) {
+            return false;
+        }
+        if (!checkUserVerified())
+            return false;
+        return true;
+    }
+
+    private boolean checkUserLoggedIn() {
+        if (mSessionManager.isLoggedIn()) {
+            return true;
+        } else {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Please log in!")
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .show();
+            return false;
+        }
+    }
+
+    private boolean checkUserVerified() {
+        if (mSessionManager.isVerified()) {
+            return true;
+        } else {
+
+            Call<UserInfo> userInfoCall = mHachi.getUserInfo(mSessionManager.getUserId());
+            userInfoCall.enqueue(new Callback<UserInfo>() {
+                @Override
+                public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {
+                    if (response.body() != null) {
+                        mSessionManager = SessionManager.getInstance();
+                        mSessionManager.setIsVerified(response.body().isVerified);
+                        Logger.d("isVerified = " + response.body().isVerified, this);
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserInfo> call, Throwable t) {
+
+                }
+            });
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Please comfirm your registration in your email box")
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .show();
+            return false;
+        }
     }
 }

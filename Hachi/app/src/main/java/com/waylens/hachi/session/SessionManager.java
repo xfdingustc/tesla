@@ -31,6 +31,7 @@ public class SessionManager {
     private String mToken;
     private String mAvatarUrl;
     private String mEmail;
+    private boolean mIsVerified;
 
     private int mLoginType;
     private boolean mIsLinked;
@@ -122,6 +123,8 @@ public class SessionManager {
             mUserId = userInfo.getString(JsonKey.USER_ID);
             mAvatarUrl = userInfo.getString(JsonKey.AVATAR_URL);
 
+            mIsVerified = userInfo.getBoolean(JsonKey.IS_VERIFIED);
+
             mToken = response.getString(JsonKey.TOKEN);
             mIsLinked = response.optBoolean(JsonKey.IS_LINKED);
 
@@ -140,6 +143,7 @@ public class SessionManager {
 
             PreferenceUtils.putInt(PreferenceUtils.LOGIN_TYPE, mLoginType);
             PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, mIsLinked);
+            PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, mIsVerified);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -158,6 +162,8 @@ public class SessionManager {
         mToken = response.token;
         mIsLinked = false;
 
+        mIsVerified = response.user.isVerified;
+
         if(isLoginWithSNS) {
             mLoginType = LOGIN_TYPE_SNS;
         } else {
@@ -172,6 +178,7 @@ public class SessionManager {
         PreferenceUtils.putString(PreferenceUtils.AVATAR_URL, mAvatarUrl);
         PreferenceUtils.putInt(PreferenceUtils.LOGIN_TYPE, mLoginType);
         PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, mIsLinked);
+        PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, mIsVerified);
     }
 
 
@@ -183,6 +190,7 @@ public class SessionManager {
         this.mEmail = PreferenceUtils.getString(PreferenceUtils.EMAIL, null);
         mIsLinked = PreferenceUtils.getBoolean(PreferenceUtils.IS_LINKED, false);
         mLoginType = PreferenceUtils.getInt(PreferenceUtils.LOGIN_TYPE, LOGIN_TYPE_USERNAME_PASSWORD);
+        mIsVerified = PreferenceUtils.getBoolean(PreferenceUtils.IS_VERIFIED, false);
         setLoginInternal();
     }
 
@@ -197,6 +205,16 @@ public class SessionManager {
     public boolean isLinked() {
         mIsLinked = PreferenceUtils.getBoolean(PreferenceUtils.IS_LINKED, false);
         return mIsLinked;
+    }
+
+    public boolean isVerified() {
+        mIsVerified = PreferenceUtils.getBoolean(PreferenceUtils.IS_VERIFIED, false);
+        return mIsVerified;
+    }
+
+    public void setIsVerified(boolean isVerified) {
+        mIsVerified = isVerified;
+        PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, isVerified);
     }
 
     public boolean needLinkAccount() {
@@ -304,6 +322,7 @@ public class SessionManager {
         PreferenceUtils.remove(PreferenceUtils.AVATAR_URL);
         PreferenceUtils.remove(PreferenceUtils.LOGIN_TYPE);
         PreferenceUtils.remove(PreferenceUtils.IS_LINKED);
+        PreferenceUtils.remove(PreferenceUtils.IS_VERIFIED);
 
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();

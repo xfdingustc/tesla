@@ -24,6 +24,7 @@ public class PreferenceUtils {
     public static final String LOGIN_TYPE = "login_type";
     public static final String IS_LINKED = "is_linked";
     public static final String SEND_GCM_TOKEN_SERVER = "send.gcm.token.to.server";
+    public static final String IS_VERIFIED = "is_verified";
 
     public static final String KEY_WEATHER_TEMP_F = "weather.temp.f";
     public static final String KEY_WEATHER_WIND_SPEED = "weather.wind.speed";

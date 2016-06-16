@@ -12,6 +12,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.settings.AccountActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -29,9 +30,8 @@ public class SignUpSucceedActivity extends BaseActivity {
 
     @OnClick(R.id.btn_complete_profile)
     public void onBtnCompleteProfileClicked(){
-        Intent intent = new Intent(Intent.ACTION_SEND);
         Logger.d("butterknife works here", this);
-        startActivity(intent);
+        AccountActivity.launch(this);
     }
 
     @OnClick(R.id.sign_up_get_started)

@@ -197,7 +197,6 @@ public class SignInFragment extends BaseFragment {
                         getFragmentManager().beginTransaction().replace(R.id.fragment_content, signUpFragment).commit();
                     }
                 }).show();
-
     }
 
     void onSignInSuccessful(SignInResponse response) {
@@ -232,7 +231,7 @@ public class SignInFragment extends BaseFragment {
                 .listner(new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Logger.d(response.toString());
+                        Logger.d(response.toString(), this);
                         SessionManager.getInstance().saveLoginInfo(response);
                         getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();

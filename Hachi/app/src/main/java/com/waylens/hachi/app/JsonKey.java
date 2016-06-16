@@ -15,5 +15,7 @@ public class JsonKey {
     public static final String TOKEN = "token";
     public static final String IS_LINKED = "isLinked";
 
+    public static final String IS_VERIFIED = "isVerified";
+
     public static final String MOMENTS = "moments";
 }
