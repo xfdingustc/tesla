@@ -141,9 +141,17 @@
             android:screenOrientation="portrait"/>
 
 
-
         <activity
             android:name=".ui.clips.ClipModifyActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.clips.preview.PreviewActivity"
+            android:screenOrientation="portrait"/>
+
+
+        <activity
+            android:name=".ui.clips.share.ShareActivity"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -166,8 +174,9 @@
             android:name=".ui.settings.WifiSettingActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.ChooseWifiActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.settings.ChooseWifiActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.settings.WaylensCloudActivity"
@@ -192,7 +201,6 @@
             android:name=".ui.authorization.SignUpSucceedActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
-
 
 
         <provider
@@ -231,8 +239,9 @@
             android:exported="false">
         </service>
 
-        <service android:name=".ui.services.download.InetDownloadService"
-                 android:exported="false"/>
+        <service
+            android:name=".ui.services.download.InetDownloadService"
+            android:exported="false"/>
 
         <service
             android:name=".bgjob.BgJobService"

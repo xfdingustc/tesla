@@ -36,6 +36,7 @@ import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
+import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.SharableClip;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ViewUtils;
@@ -378,7 +379,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, clip.cid, clip.getStartTimeMs(), clip.getDurationMs());
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, ClipSetManager.CLIP_SET_TYPE_ENHANCE, vdtUriProvider, ClipPlayFragment.ClipMode.MULTI);
-//        mClipPlayFragment.setShowsDialog(false);
+
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
 
@@ -398,6 +399,7 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
                 switchToMode(LAUNCH_MODE_ENHANCE);
                 break;
             case R.id.menu_to_share:
+//                ShareActivity.launch(this, );
                 switchToMode(LAUNCH_MODE_SHARE);
                 break;
             case R.id.menu_to_modify:

@@ -45,8 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="8dp"
-            android:textColor="@color/text_enhance_highlight"
-            android:textSize="12sp"/>
+            style="@style/HachiTextViewCaption"/>
 
     </LinearLayout>
 </FrameLayout>

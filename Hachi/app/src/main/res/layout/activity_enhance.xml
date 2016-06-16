@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/enhance_root_view"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    android:id="@+id/enhance_root_view"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+    >
 
     <include layout="@layout/toolbar_default"/>
 
@@ -16,7 +17,13 @@
         android:layout_marginTop="102dp"
         tools:layout_height="275dp"/>
 
-    <include layout="@layout/layout_line_break" />
+    <View
+        style="@style/HachiSepatator"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+
+        />
 
     <com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer
         android:id="@+id/clipTrimmer"

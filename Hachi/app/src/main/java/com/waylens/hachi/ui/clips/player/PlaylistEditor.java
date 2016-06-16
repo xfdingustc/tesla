@@ -21,17 +21,13 @@ public class PlaylistEditor {
     private static final String TAG = PlaylistEditor.class.getSimpleName();
 
     static final int ACTION_ADD = 0;
-    static final int ACTION_DELETE = 1;
-    static final int ACTION_MOVE = 2;
-    static final int ACTION_TRIM = 3;
+
 
     private final VdbRequestQueue mVdbRequestQueue;
     private int mClipSetIndex;
     private final int mEditSetIndex = ClipSetManager.CLIP_SET_TYPE_ENHANCE_EDITING;
 
     private OnBuildCompleteListener mOnBuildCompleteListener;
-    private OnDeleteCompleteListener mOnDeleteCompleteListener;
-    private OnMoveCompletedListener mOnMoveCompletedListener;
 
 
     private int mClipAdded;
@@ -92,16 +88,7 @@ public class PlaylistEditor {
                                 mOnBuildCompleteListener.onBuildComplete(clipSet);
                             }
                             break;
-                        case ACTION_DELETE:
-                            if (mOnDeleteCompleteListener != null) {
-                                mOnDeleteCompleteListener.onDeleteComplete();
-                            }
-                            break;
-                        case ACTION_MOVE:
-                            if (mOnMoveCompletedListener != null) {
-                                mOnMoveCompletedListener.onMoveCompleted(clipSet);
-                            }
-                            break;
+
 
                     }
 
@@ -189,15 +176,6 @@ public class PlaylistEditor {
     public interface OnBuildCompleteListener {
         void onBuildComplete(ClipSet clipSet);
     }
-
-    public interface OnDeleteCompleteListener {
-        void onDeleteComplete();
-    }
-
-    public interface OnMoveCompletedListener {
-        void onMoveCompleted(ClipSet clipSet);
-    }
-
 
 
 }

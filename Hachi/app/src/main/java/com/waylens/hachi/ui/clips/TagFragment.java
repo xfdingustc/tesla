@@ -30,6 +30,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.clips.preview.PreviewActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -400,7 +401,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
         Logger.t(TAG).d("clip id: " + clip.cid.toString());
-        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_QUICK_VIEW);
+//        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_QUICK_VIEW);
+        PreviewActivity.launch(getActivity(), clipList);
     }
 
     private void launchFootageActivity(ClipSet clipSet) {
