@@ -72,6 +72,12 @@ public class ScanQrCodeFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mQrCodeReaderView.getCameraManager().startPreview();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mQrCodeReaderView.getCameraManager().stopPreview();
@@ -92,7 +98,7 @@ public class ScanQrCodeFragment extends BaseFragment {
     }
 
     private void initViews() {
-        mQrCodeReaderView.getCameraManager().startPreview();
+
 
         mQrCodeReaderView.setOnQRCodeReadListener(new QRCodeReaderView.OnQRCodeReadListener() {
             @Override
