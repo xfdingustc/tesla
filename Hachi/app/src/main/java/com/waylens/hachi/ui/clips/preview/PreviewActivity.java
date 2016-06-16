@@ -10,10 +10,8 @@ import android.view.MenuItem;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
-import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
-import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
-import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 
@@ -67,6 +65,7 @@ public class PreviewActivity extends ClipPlayActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
+                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
                         break;
                     case R.id.menu_to_enhance:
                         EnhanceActivity2.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
