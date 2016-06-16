@@ -9,6 +9,10 @@ public class ClipSetChangeEvent {
     private final int mClipSetIndex;
     private final boolean mNeedRebuildList;
 
+    public ClipSetChangeEvent() {
+        this(-1, false);
+    }
+
     public ClipSetChangeEvent(int clipSetIndex, boolean needRebuildList) {
         this.mClipSetIndex = clipSetIndex;
         this.mNeedRebuildList = needRebuildList;

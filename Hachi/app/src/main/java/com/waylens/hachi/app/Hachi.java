@@ -10,6 +10,7 @@ import com.orhanobut.logger.Logger;
 import com.squareup.leakcanary.LeakCanary;
 //import com.tencent.bugly.crashreport.CrashReport;
 
+import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.VdtCameraFounder;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
@@ -17,6 +18,9 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.utils.PreferenceUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 
 /**
@@ -32,6 +36,10 @@ public class Hachi extends Application {
     private DeviceScanner mScanner;
 
 
+    @Subscribe
+    public void OnRawDataItemEvent(RawDataItemEvent event) {
+
+    }
 
     @Override
     public void onCreate() {
@@ -92,6 +100,7 @@ public class Hachi extends Application {
         VdbImageLoader.init(this, 1024 * 64);
 //        FIR.init(this);
 
+        EventBus.getDefault().register(this);
 
         VdtCameraFounder founder = new VdtCameraFounder();
         founder.start();

@@ -105,7 +105,7 @@ public class EnhanceActivity2 extends ClipPlayActivity {
 
 
     @OnClick(R.id.btn_music)
-    void onClickMusic(View view) {
+    public void onClickMusic(View view) {
         btnGauge.setSelected(false);
 //        btnRemix.setSelected(false);
         view.setSelected(!view.isSelected());
@@ -174,9 +174,17 @@ public class EnhanceActivity2 extends ClipPlayActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mEventBus.register(mPlaylistEditor);
+        mEventBus.register(mClipsEditView);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         mEventBus.unregister(mPlaylistEditor);
+        mEventBus.unregister(mClipsEditView);
     }
 
     @Override
@@ -186,13 +194,14 @@ public class EnhanceActivity2 extends ClipPlayActivity {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND);
                     Logger.t(TAG).d("append clips: " + clips.size());
-                    if (!mClipsEditView.appendSharableClips(clips)) {
-                        MaterialDialog dialog = new MaterialDialog.Builder(this)
-                            .content(R.string.resolution_not_correct)
-                            .positiveText(android.R.string.ok)
-                            .build();
-                        dialog.show();
-                    }
+                    mPlaylistEditor.add(clips);
+//                    if (!mClipsEditView.appendSharableClips(clips)) {
+//                        MaterialDialog dialog = new MaterialDialog.Builder(this)
+//                            .content(R.string.resolution_not_correct)
+//                            .positiveText(android.R.string.ok)
+//                            .build();
+//                        dialog.show();
+//                    }
 //                    mClipPlayFragment.setPosition(0);
                 }
                 break;
@@ -223,12 +232,7 @@ public class EnhanceActivity2 extends ClipPlayActivity {
         mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, mPlaylistId);
         mPlaylistEditor.reconstruct();
         embedVideoPlayFragment();
-        embedEnhanceFragment();
-        mClipsEditView.setVisibility(View.INVISIBLE);
-
-
         mClipsEditView.setVisibility(View.VISIBLE);
-        mEventBus.register(mPlaylistEditor);
         configEnhanceView();
     }
 
@@ -241,9 +245,7 @@ public class EnhanceActivity2 extends ClipPlayActivity {
     }
 
 
-    private void embedEnhanceFragment() {
 
-    }
 
     private void configureActionUI(int child, boolean isShow) {
         if (isShow && (child != ACTION_NONE)) {
@@ -268,7 +270,8 @@ public class EnhanceActivity2 extends ClipPlayActivity {
     }
 
     private void configEnhanceView() {
-        mClipsEditView.setClipIndex(mPlaylistEditor.getPlaylistId());
+//        mClipsEditView.setClipIndex(mPlaylistEditor.getPlaylistId());
+        mClipsEditView.setPlayListEditor(mPlaylistEditor);
         mClipsEditView.setOnClipEditListener(new ClipsEditView.OnClipEditListener() {
             @Override
             public void onClipSelected(int position, Clip clip) {

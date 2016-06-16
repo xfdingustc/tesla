@@ -26,6 +26,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -33,6 +34,8 @@ import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +68,8 @@ public class ClipsEditView extends LinearLayout {
 
     LinearLayoutManager mLayoutManager;
     private int mClipSetIndex;
-    RecyclerViewAdapter mAdapter;
+
+    private RecyclerViewAdapter mClipCoverGridAdapter;
     ItemTouchHelper mItemTouchHelper;
     OnClipEditListener mOnClipEditListener;
 
@@ -73,11 +77,21 @@ public class ClipsEditView extends LinearLayout {
     private VdbRequestQueue mVdbRequestQueue;
     private VdbImageLoader mVdbImageLoader;
 
+    private PlayListEditor2 mPlayListEditor;
+
     int mSelectedPosition = POSITION_UNKNOWN;
 
     int mOriginalSize;
 
     private EventBus mEventBus = EventBus.getDefault();
+
+
+    @Subscribe
+    public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        Logger.t(TAG).d("clip set change");
+        mClipCoverGridAdapter.notifyDataSetChanged();
+        updateClipCount(getClipSet().getCount());
+    }
 
     public ClipsEditView(Context context) {
         this(context, null, 0);
@@ -92,7 +106,12 @@ public class ClipsEditView extends LinearLayout {
         init(context);
     }
 
-    void init(Context context) {
+    public void setPlayListEditor(PlayListEditor2 playlistEditor) {
+        mPlayListEditor = playlistEditor;
+        setClipIndex(mPlayListEditor.getPlaylistId());
+    }
+
+    private void init(Context context) {
         setOrientation(VERTICAL);
         View.inflate(context, R.layout.layout_clips_edit_view, this);
         ButterKnife.bind(this);
@@ -103,9 +122,9 @@ public class ClipsEditView extends LinearLayout {
         mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecyclerViewAdapter(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
+        mClipCoverGridAdapter = new RecyclerViewAdapter(mLayoutManager);
+        mRecyclerView.setAdapter(mClipCoverGridAdapter);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mClipCoverGridAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
@@ -164,8 +183,8 @@ public class ClipsEditView extends LinearLayout {
                 return;
             }
             Clip clip = getClipSet().getClip(mSelectedPosition);
-            clip.editInfo.selectedStartValue = rangeBar.getLeftIndex();
-            clip.editInfo.selectedEndValue = rangeBar.getRightIndex();
+            clip.editInfo.selectedStartValue = rangeBar.getLeftIndex() * 1000;
+            clip.editInfo.selectedEndValue = rangeBar.getRightIndex() * 1000;
             updateClipDuration(clip);
             mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE, false));
         }
@@ -173,14 +192,14 @@ public class ClipsEditView extends LinearLayout {
 
 
     private ClipSet getClipSet() {
-        return ClipSetManager.getManager().getClipSet(mClipSetIndex);
+        return ClipSetManager.getManager().getClipSet(mPlayListEditor.getPlaylistId());
     }
 
 
     public void setClipIndex(int clipSetIndex) {
-        if (mAdapter != null) {
+        if (mClipCoverGridAdapter != null) {
             mClipSetIndex = clipSetIndex;
-            mAdapter.notifyDataSetChanged();
+            mClipCoverGridAdapter.notifyDataSetChanged();
             updateClipCount(getClipSet().getCount());
         }
     }
@@ -194,13 +213,13 @@ public class ClipsEditView extends LinearLayout {
         if (!checkIfResolutionUnity(clips)) {
             return false;
         }
-        if (mAdapter != null && getClipSet() != null && clips != null) {
+        if (mClipCoverGridAdapter != null && getClipSet() != null && clips != null) {
             getClipSet().getClipList().addAll(clips);
             int size = clips.size();
-            mAdapter.notifyItemRangeInserted(getClipSet().getCount() - size, size);
+            mClipCoverGridAdapter.notifyItemRangeInserted(getClipSet().getCount() - size, size);
             updateClipCount(getClipSet().getCount());
             if (mOnClipEditListener != null) {
-                mOnClipEditListener.onClipsAppended(clips, mAdapter.getItemCount());
+                mOnClipEditListener.onClipsAppended(clips, mClipCoverGridAdapter.getItemCount());
             }
             Logger.t(TAG).d("post event");
             mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, true));
@@ -249,9 +268,10 @@ public class ClipsEditView extends LinearLayout {
         if (mOnClipEditListener != null) {
             mOnClipEditListener.onExitEditing();
         }
+        Logger.t(TAG).d("internalOnExitEditing exit");
     }
 
-    void internalOnSelectClip(int selectedPosition, Clip clip) {
+    private void internalOnSelectClip(int selectedPosition, Clip clip) {
         mTrimmingBar.setVisibility(VISIBLE);
         mClipsCountView.setVisibility(INVISIBLE);
 
@@ -259,10 +279,10 @@ public class ClipsEditView extends LinearLayout {
         mRangeSeekBar.setOnRangeBarChangeListener(null);
         Logger.t(TAG).d("tickStart: " + clip.editInfo.minExtensibleValue + " tickEnd: " + clip.editInfo.maxExtensibleValue);
         mRangeSeekBar.setTickStart(0);
-        mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue);
-        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue);
+        mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue / 1000);
+        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue / 1000);
 
-        mRangeSeekBar.setRangePinsByValue((int) clip.editInfo.selectedStartValue, (int) clip.editInfo.selectedEndValue);
+        mRangeSeekBar.setRangePinsByValue((int) clip.editInfo.selectedStartValue / 1000, (int) clip.editInfo.selectedEndValue / 1000);
 
         updateClipDuration(clip);
         if (mOnClipEditListener != null) {
@@ -287,7 +307,7 @@ public class ClipsEditView extends LinearLayout {
     private void internalOnClipRemoved(Clip clip, int position) {
         updateClipCount(getClipSet().getCount());
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onClipRemoved(clip, position, mAdapter.getItemCount());
+            mOnClipEditListener.onClipRemoved(clip, position, mClipCoverGridAdapter.getItemCount());
         }
 
         if (mSelectedPosition == position) {

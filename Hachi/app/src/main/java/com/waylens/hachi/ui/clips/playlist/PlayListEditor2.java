@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.clips.playlist;
 
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 
 import com.orhanobut.logger.Logger;
@@ -15,6 +16,9 @@ import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -35,7 +39,7 @@ public class PlayListEditor2 {
 
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
-        Logger.t(TAG).d("receive event");
+        Logger.t(TAG).d("receive event " + event.getNeedRebuildList());
         if (event.getNeedRebuildList()) {
             doRebuildPlaylist();
         }
@@ -60,6 +64,14 @@ public class PlayListEditor2 {
         mOnBuildCompleteListener = listener;
         mClipSet.addClip(clip);
         ClipSetManager.getManager().updateClipSet(mPlayListId, mClipSet);
+
+        doRebuildPlaylist();
+    }
+
+    public void add(ArrayList<Clip> clips) {
+        for (Clip clip : clips) {
+            mClipSet.addClip(clip);
+        }
 
         doRebuildPlaylist();
     }
@@ -99,7 +111,7 @@ public class PlayListEditor2 {
                 public void onResponse(Integer response) {
                     Logger.t(TAG).d("Add one clip to playlist: " + clip.toString());
                     mClipAdded++;
-                    if (mClipAdded == mClipSet.getClipList().size() && mOnBuildCompleteListener != null) {
+                    if (mClipAdded == mClipSet.getClipList().size()) {
                         doGetPlaylistInfo();
                     }
                 }
