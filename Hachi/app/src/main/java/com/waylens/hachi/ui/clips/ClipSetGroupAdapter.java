@@ -162,7 +162,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
         viewHolder.tvDuration.setText(clipDuration);
 
-        mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover);
+        mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover, true);
 
         if (viewHolder.mBtnSelect != null) {
             if (mMultiSelectedMode == true) {

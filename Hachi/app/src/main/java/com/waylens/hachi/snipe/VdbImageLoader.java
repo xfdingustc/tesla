@@ -3,12 +3,16 @@ package com.waylens.hachi.snipe;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.StatFs;
 import android.util.Log;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -47,7 +51,6 @@ public class VdbImageLoader {
 
 
     private static DiskCache mCache;
-
 
 
     public static VdbImageLoader getImageLoader(VdbRequestQueue queue) {
@@ -121,7 +124,29 @@ public class VdbImageLoader {
                     return;
                 }
                 if (imageContainer.getBitmap() != null) {
-                    view.setImageBitmap(imageContainer.getBitmap());
+
+
+                    if (!imageContainer.mCrossFade) {
+                        view.setImageBitmap(imageContainer.getBitmap());
+                    } else {
+                        Drawable previous = view.getDrawable();
+                        Drawable current = new BitmapDrawable(imageContainer.getBitmap());
+                        if (previous != null) {
+
+                            TransitionDrawable transitionDrawable = new TransitionDrawable(new Drawable[]{previous, current});
+                            transitionDrawable.setCrossFadeEnabled(true);
+                            transitionDrawable.startTransition(300);
+                            view.setImageDrawable(transitionDrawable);
+
+                        } else {
+                            AlphaAnimation animation = new AlphaAnimation(0f, 1f);
+                            animation.setDuration(300);
+                            view.setImageDrawable(current);
+                            view.setAnimation(animation);
+                            view.animate();
+                        }
+                    }
+
 
                 } else if (defaultImageResId != 0) {
                     view.setImageResource(defaultImageResId);
@@ -143,27 +168,29 @@ public class VdbImageLoader {
     }
 
     public void displayVdbImage(ClipPos clipPos, ImageView imageView) {
-        displayVdbImage(clipPos, imageView, false, true);
+        displayVdbImage(clipPos, imageView, false);
     }
 
-    public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean isIgnorable) {
-        displayVdbImage(clipPos, imageView, isIgnorable, true);
+    public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean crossFade) {
+        displayVdbImage(clipPos, imageView, crossFade, false);
     }
 
-    public void displayVdbImage(ClipPos clipPos, ImageView imageView, int maxWidth, int maxHeight) {
+
+    public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean crossFade, int maxWidth, int maxHeight) {
         //mUseCache = true;
         VdbImageListener listener = VdbImageLoader.getImageListener(imageView, 0, 0);
-        get(clipPos, listener, maxWidth, maxHeight, ImageView.ScaleType.CENTER_INSIDE, false);
+        get(clipPos, listener, maxWidth, maxHeight, ImageView.ScaleType.CENTER_INSIDE, crossFade, false);
     }
 
-    public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean isIgnorable, boolean useCache) {
+    public void displayVdbImage(ClipPos clipPos, ImageView imageView, boolean crossFade, boolean isIgnorable) {
         //mUseCache = useCache;
         VdbImageListener listener = VdbImageLoader.getImageListener(imageView, 0, 0);
-        get(clipPos, listener, imageView.getWidth(), imageView.getHeight(), ImageView.ScaleType.CENTER_INSIDE, isIgnorable);
+        get(clipPos, listener, imageView.getWidth(), imageView.getHeight(),
+            ImageView.ScaleType.CENTER_INSIDE, crossFade, isIgnorable);
     }
 
     VdbImageContainer get(final ClipPos clipPos, final VdbImageListener listener, final int maxWidth,
-                          final int maxHeight, final ScaleType scaleType, final boolean isIgnorable) {
+                          final int maxHeight, final ScaleType scaleType, final boolean crossFade, final boolean isIgnorable) {
 
         throwIfNotOnMainThread();
 
@@ -193,13 +220,13 @@ public class VdbImageLoader {
                 Bitmap cachedBitmap = tryLoadBitmap(cacheKey);
                 if (cachedBitmap != null) {
 //                    Logger.t(TAG).d("hit cache");
-                    VdbImageContainer container = new VdbImageContainer(cachedBitmap, clipPos, null, listener);
+                    VdbImageContainer container = new VdbImageContainer(cachedBitmap, clipPos, null, listener, crossFade);
 //                    listener.onResponse(container, true);
                     showImage(container);
                     return;
                 }
 
-                VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, cacheKey, listener);
+                VdbImageContainer imageContainer = new VdbImageContainer(null, clipPos, cacheKey, listener, crossFade);
 
                 listener.onResponse(imageContainer, true);
 
@@ -286,16 +313,18 @@ public class VdbImageLoader {
 
 
     public class VdbImageContainer {
+        private final boolean mCrossFade;
         private Bitmap mBitmap;
         private final VdbImageListener mListener;
         private final ClipPos mClipPos;
         private final String mCacheKey;
 
-        public VdbImageContainer(Bitmap bitmap, ClipPos clipPos, String cacheKey, VdbImageListener listener) {
+        public VdbImageContainer(Bitmap bitmap, ClipPos clipPos, String cacheKey, VdbImageListener listener, boolean crossFade) {
             this.mBitmap = bitmap;
             this.mClipPos = clipPos;
             this.mCacheKey = cacheKey;
             this.mListener = listener;
+            this.mCrossFade = crossFade;
         }
 
         public Bitmap getBitmap() {

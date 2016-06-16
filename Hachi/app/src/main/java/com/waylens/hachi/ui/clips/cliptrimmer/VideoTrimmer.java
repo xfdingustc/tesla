@@ -276,7 +276,7 @@ public class VideoTrimmer extends FrameLayout {
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            mImageLoader.displayVdbImage(mItems.get(position), holder.imageView, mItemWidth, mItemHeight);
+            mImageLoader.displayVdbImage(mItems.get(position), holder.imageView, true, mItemWidth, mItemHeight);
         }
 
         @Override

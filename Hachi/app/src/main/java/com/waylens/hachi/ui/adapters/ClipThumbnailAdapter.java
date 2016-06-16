@@ -39,7 +39,7 @@ public class ClipThumbnailAdapter extends RecyclerView.Adapter<ClipThumbnailAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        mImageLoader.displayVdbImage(mItems.get(position), holder.imageView, mItemWidth, mItemHeight);
+        mImageLoader.displayVdbImage(mItems.get(position), holder.imageView, true, mItemWidth, mItemHeight);
     }
 
     @Override
