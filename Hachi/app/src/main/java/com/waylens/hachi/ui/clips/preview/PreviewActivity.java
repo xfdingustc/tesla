@@ -4,32 +4,30 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.clips.ClipPlayActivity;
+import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
-import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
-import com.waylens.hachi.ui.clips.player.PlaylistEditor;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipSetManager;
-import com.waylens.hachi.vdb.Playlist;
 
 import java.util.ArrayList;
 
 /**
  * Created by Xiaofei on 2016/6/16.
  */
-public class PreviewActivity extends BaseActivity {
+public class PreviewActivity extends ClipPlayActivity {
 
     private Clip mClip;
 
     public static final int PLAYLIST_INDEX = 0x100;
 
-    private PlayListEditor2 mPlaylistEditor;
 
     public static void launch(Activity activity, ArrayList<Clip> clip) {
         Intent intent = new Intent(activity, PreviewActivity.class);
@@ -55,10 +53,34 @@ public class PreviewActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_preview);
+        setupToolbar();
         buildPlaylist();
     }
 
 
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
+        getToolbar().inflateMenu(R.menu.menu_clip_play_fragment);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_to_share:
+                        break;
+                    case R.id.menu_to_enhance:
+                        EnhanceActivity2.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
+                        break;
+                    case R.id.menu_to_modify:
+                        break;
+                    case R.id.menu_to_delete:
+                        break;
+                }
+
+                return true;
+            }
+        });
+    }
 
     private void buildPlaylist() {
         mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, PLAYLIST_INDEX);
@@ -70,12 +92,5 @@ public class PreviewActivity extends BaseActivity {
         });
     }
 
-    private void embedVideoPlayFragment() {
 
-        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlaylistId());
-
-        ClipPlayFragment mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, PLAYLIST_INDEX, vdtUriProvider, ClipPlayFragment.ClipMode.MULTI);
-
-        getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
-    }
 }

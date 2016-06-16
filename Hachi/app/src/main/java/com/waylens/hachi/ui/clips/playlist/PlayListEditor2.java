@@ -13,6 +13,9 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 /**
  * Created by Xiaofei on 2016/6/16.
  */
@@ -27,6 +30,16 @@ public class PlayListEditor2 {
 
     private int mClipAdded;
 
+    private EventBus mEventBus = EventBus.getDefault();
+
+
+    @Subscribe
+    public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        Logger.t(TAG).d("receive event");
+        if (event.getNeedRebuildList()) {
+            doRebuildPlaylist();
+        }
+    }
 
     public PlayListEditor2(@NonNull VdbRequestQueue requestQueue, int playListId) {
         this.mVdbRequestQueue = requestQueue;
@@ -36,6 +49,11 @@ public class PlayListEditor2 {
 
     public int getPlaylistId() {
         return mPlayListId;
+    }
+
+
+    public void reconstruct() {
+        mClipSet = ClipSetManager.getManager().getClipSet(mPlayListId);
     }
 
     public void build(Clip clip, @NonNull OnBuildCompleteListener listener) {
@@ -147,7 +165,7 @@ public class PlayListEditor2 {
             }
         }
 
-//        mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, false));
+        mEventBus.post(new ClipSetChangeEvent(mPlayListId, false));
     }
 
     public interface OnBuildCompleteListener {

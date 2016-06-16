@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar_default"/>
+
+    <FrameLayout
+        android:id="@+id/player_fragment_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_height="275dp"/>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 xmlns:tools="http://schemas.android.com/tools"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+
+        <com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView
+            android:id="@+id/clips_edit_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/enhance_action_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btn_gauge"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/btn_enhance_gauge"/>
+
+                <ImageView
+                    android:id="@+id/btn_add_video"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/btn_enhance_addvideo"/>
+
+                <ImageView
+                    android:id="@+id/btn_music"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/btn_enhance_music"/>
+
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_line_break"/>
+
+            <ViewAnimator
+                android:id="@+id/view_animator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:layout_height="match_parent"
+                tools:visibility="visible">
+                <include layout="@layout/layout_enhance_gauge"/>
+
+                <include layout="@layout/layout_enhance_add_video" />
+
+                <include layout="@layout/layout_enhance_music"/>
+
+                <include layout="@layout/layout_enhance_remix"/>
+
+            </ViewAnimator>
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>
