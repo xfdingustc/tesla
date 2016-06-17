@@ -41,6 +41,11 @@ public class BgJobManager {
                 public void e(String text, Object... args) {
 
                 }
+
+                @Override
+                public void v(String text, Object... args) {
+
+                }
             })
             .minConsumerCount(1)
             .maxConsumerCount(3)

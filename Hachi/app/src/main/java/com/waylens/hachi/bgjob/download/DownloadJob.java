@@ -1,5 +1,7 @@
 package com.waylens.hachi.bgjob.download;
 
+import android.support.annotation.Nullable;
+
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -45,7 +47,7 @@ public class DownloadJob extends Job {
     }
 
     @Override
-    protected void onCancel(int cancelReason) {
+    protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
 
     }
 

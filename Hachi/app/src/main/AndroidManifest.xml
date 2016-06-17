@@ -151,13 +151,18 @@
             android:screenOrientation="portrait"/>
 
 
-        <activity android:name=".ui.clips.enhance.EnhanceActivity2"
-                  android:configChanges="orientation|screenSize"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.clips.enhance.EnhanceActivity2"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
 
         <activity
             android:name=".ui.clips.share.ShareActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.clips.upload.UploadActivity"
             android:screenOrientation="portrait"/>
 
         <activity

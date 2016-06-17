@@ -1,6 +1,7 @@
 package com.waylens.hachi.bgjob.upload;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.RequestFuture;
@@ -56,9 +57,11 @@ public class UploadAvatarJob extends Job {
     }
 
     @Override
-    protected void onCancel(int cancelReason) {
+    protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
 
     }
+
+
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(Throwable throwable, int runCount, int maxRunCount) {

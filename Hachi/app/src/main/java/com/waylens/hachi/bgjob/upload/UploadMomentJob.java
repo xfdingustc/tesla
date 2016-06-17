@@ -1,5 +1,7 @@
 package com.waylens.hachi.bgjob.upload;
 
+import android.support.annotation.Nullable;
+
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -32,9 +34,11 @@ public class UploadMomentJob extends Job {
     }
 
     @Override
-    protected void onCancel(int cancelReason) {
+    protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
 
     }
+
+
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(Throwable throwable, int runCount, int maxRunCount) {

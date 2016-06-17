@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,11 +30,15 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.EnhanceFragment;
 import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.upload.UploadActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.ViewUtils;
 
 import org.json.JSONObject;
+import org.ocpsoft.prettytime.format.SimpleTimeFormat;
+
+import java.text.SimpleDateFormat;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -233,6 +238,10 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     private void doShareMoment() {
         mShareHelper = new MomentShareHelper(this, mVdbRequestQueue, this);
         String title = mEtMomentTitle.getEditableText().toString();
+        if (TextUtils.isEmpty(title)) {
+            SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
+            title = "Created " + format.format(System.currentTimeMillis());
+        }
         String[] tags = new String[]{"Shanghai", "car"};
         Activity activity = this;
         int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
@@ -244,5 +253,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
         Logger.t(TAG).d("share title: " + title);
         mShareHelper.shareMoment(mPlaylistEditor.getPlaylistId(), title, tags, mSocialPrivacy, audioID, gaugeSettings, false);
+
+        UploadActivity.launch(this);
     }
 }
