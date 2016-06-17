@@ -3,17 +3,25 @@ package com.waylens.hachi.ui.clips.preview;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
+import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.ArrayList;
 
@@ -73,12 +81,26 @@ public class PreviewActivity extends ClipPlayActivity {
                     case R.id.menu_to_modify:
                         break;
                     case R.id.menu_to_delete:
+                        confirmDeleteClip();
                         break;
                 }
 
                 return true;
             }
         });
+    }
+
+    private void confirmDeleteClip() {
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+            .content(R.string.delete_bookmark_confirm)
+            .negativeText(android.R.string.cancel)
+            .positiveText(android.R.string.ok)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    doDeleteClip();
+                }
+            }).show();
     }
 
     private void buildPlaylist() {
@@ -90,6 +112,23 @@ public class PreviewActivity extends ClipPlayActivity {
             }
         });
     }
+
+    private void doDeleteClip() {
+
+        ClipDeleteRequest request = new ClipDeleteRequest(mClip.cid, new VdbResponse.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                finish();
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
+    }
+
 
 
 }
