@@ -248,7 +248,8 @@
 	<string name="sign_up_with_this_email">It is a new address. Sign up with this email?</string>
 	<string name="sign_up_success">SUCCESS!</string>
 	<string name="sign_up_welcome">Welcome to Waylens Moments!</string>
-	<string name="sign_up_get_started">sign_up_get_started</string>
+	<string name="sign_up_get_started">Get started</string>
 	<string name="complete_my_profile">Complete My Profile</string>
 	<string name="preview">Preview</string>
+	<string name="description">Description</string>
 </resources>

@@ -166,7 +166,11 @@ public class SignInFragment extends BaseFragment {
         signInResponseCall.enqueue(new Callback<SignInResponse>() {
             @Override
             public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
-                onSignInSuccessful(response.body());
+                if (response.body() == null) {
+                    onSignInFailed(new Throwable("Sign in failed"));
+                } else {
+                    onSignInSuccessful(response.body());
+                }
             }
 
             @Override

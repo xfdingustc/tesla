@@ -1,11 +1,13 @@
 package com.rest;
 
+import com.rest.body.CreateMomentBody;
 import com.rest.body.DeviceLoginBody;
 import com.rest.body.FollowPostBody;
 import com.rest.body.LikePostBody;
 import com.rest.body.ReportBody;
 import com.rest.body.SignInPostBody;
 import com.rest.body.SignUpPostBody;
+import com.rest.response.CreateMomentResponse;
 import com.rest.response.FollowInfo;
 import com.rest.response.LikeResponse;
 import com.rest.response.LinkedAccounts;
@@ -87,5 +89,8 @@ public interface HachiApi {
 
     @DELETE("/api/moments/{momentId}")
     Call<SimpleBoolResponse> deleteMoment(@Path("momentId") long momentId);
+
+    @POST("/api/moments")
+    Call<CreateMomentResponse> createMoment(@Body CreateMomentBody createMomentBody);
 
 }

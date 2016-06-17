@@ -244,11 +244,12 @@
 	<string name="follow">关注</string>
 	<string name="latest">最新</string>
 	<string name="unfollow_confirm"></string>
-	<string name="sign_in_with_this_email">Sign in with this email address?</string>
-	<string name="sign_up_with_this_email">It is a new address. Sign up with this email?</string>
-	<string name="sign_up_success">SUCCESS!</string>
-	<string name="sign_up_welcome">Welcome to Waylens Moments!</string>
-	<string name="sign_up_get_started">sign_up_get_started</string>
+	<string name="sign_in_with_this_email">使用这个邮箱地址登录？</string>
+	<string name="sign_up_with_this_email">这是一个新的地址，使用此地址注册？</string>
+	<string name="sign_up_success">成功</string>
+	<string name="sign_up_welcome">欢迎来到纬路</string>
+	<string name="sign_up_get_started">开始</string>
 	<string name="complete_my_profile">Complete My Profile</string>
 	<string name="preview">预览</string>
+	<string name="description">描述</string>
 </resources>

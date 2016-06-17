@@ -285,14 +285,10 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
         }
 
 
-        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings, mIsFacebookShareChecked);
+        mShareHelper.shareMoment(PLAYLIST_SHARE, title, null, tags, mSocialPrivacy, audioID, gaugeSettings, mIsFacebookShareChecked);
     }
 
-    @Override
-    public void onShareSuccessful(LocalMoment localMoment) {
-        Logger.t(TAG).e("onShareSuccessful");
-        mViewAnimator.setDisplayedChild(2);
-    }
+
 
     @Override
     public void onCancelShare() {
@@ -307,9 +303,11 @@ public class ShareFragment extends BaseFragment implements MomentShareHelper.OnS
     }
 
     @Override
-    public void onUploadProgress(int uploadPercentage) {
-        //Logger.t(TAG).e("onUploadProgress: "+ uploadPercentage);
+    public void onUploadStarted() {
+
     }
+
+
 
 
     private void requestPublishPermission() {

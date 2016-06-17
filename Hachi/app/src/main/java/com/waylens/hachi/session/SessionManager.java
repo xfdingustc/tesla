@@ -155,7 +155,9 @@ public class SessionManager {
     }
 
     public void saveLoginInfo(SignInResponse response, boolean isLoginWithSNS) {
-
+        if (response.user == null) {
+            return;
+        }
         mUserName = response.user.userName;
         mUserId = response.user.userID;
         mAvatarUrl = response.user.avatarUrl;

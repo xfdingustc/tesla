@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.entities;
 
 
+import com.rest.response.CreateMomentResponse;
 import com.waylens.hachi.bgjob.upload.CloudInfo;
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 public class LocalMoment implements Serializable {
 
     public String title;
+
+    public String description;
 
     public String[] tags;
 
@@ -39,8 +42,10 @@ public class LocalMoment implements Serializable {
 
     public boolean isFbShare;
 
-    public LocalMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
+
+    public LocalMoment(String title, String description, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
         this.title = title;
+        this.description = description;
         this.tags = tags;
         this.accessLevel = accessLevel;
         this.audioID = audioID;
@@ -51,6 +56,12 @@ public class LocalMoment implements Serializable {
     public void setFragments(ArrayList<Segment> segments, String thumbnailPath) {
         this.mSegments = segments;
         this.thumbnailPath = thumbnailPath;
+    }
+
+    public void updateUploadInfo(CreateMomentResponse response) {
+        this.momentID = response.momentID;
+        CreateMomentResponse.UploadServer uploadServer = response.uploadServer;
+        this.cloudInfo = new CloudInfo(uploadServer.ip, uploadServer.port, uploadServer.privateKey);
     }
 
     public void updateUploadInfo(long momentID, String address, int port, String privateKey) {

@@ -10,6 +10,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
+import com.rest.body.CreateMomentBody;
+import com.rest.response.CreateMomentResponse;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.snipe.SnipeError;
@@ -37,6 +41,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import crs_svr.v2.CrsCommand;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Richard on 3/10/16.
@@ -81,8 +87,9 @@ public class MomentBuilder {
         return this;
     }
 
-    public MomentBuilder asMoment(String title, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
-        mLocalMoment = new LocalMoment(title, tags, accessLevel, audioID, gaugeSettings, isFbShare);
+    public MomentBuilder asMoment(String title, String description, String[] tags,
+                                  String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
+        mLocalMoment = new LocalMoment(title, description, tags, accessLevel, audioID, gaugeSettings, isFbShare);
         return this;
     }
 
@@ -91,11 +98,29 @@ public class MomentBuilder {
         retrievePlayListInfo();
     }
 
-    void retrievePlayListInfo() {
+    public void retrievePlayListInfo() {
         if (isCancelled) {
             mOnBuildListener.onCancelBuild();
             return;
         }
+
+
+//        HachiApi hachiApi = HachiService.createHachiApiService();
+//        CreateMomentBody momentBody = new CreateMomentBody(mLocalMoment);
+//
+//
+//        Call<CreateMomentResponse>  createMomentResponseCall = hachiApi.createMoment(momentBody);
+//        createMomentResponseCall.enqueue(new Callback<CreateMomentResponse>() {
+//            @Override
+//            public void onResponse(Call<CreateMomentResponse> call, retrofit2.Response<CreateMomentResponse> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<CreateMomentResponse> call, Throwable t) {
+//
+//            }
+//        });
 
         Logger.t(TAG).d("retrievePlayListInfo: " + mPlayListID);
         mVdbRequestQueue.add(new ClipSetExRequest(mPlayListID, ClipSetExRequest.FLAG_CLIP_EXTRA,
@@ -216,63 +241,84 @@ public class MomentBuilder {
         mOnBuildListener.onBuildSuccessful(mLocalMoment);
     }
 
-    void createMoment() {
+    private void createMoment() {
         if (isCancelled) {
             mOnBuildListener.onCancelBuild();
             return;
         }
 
         Logger.t(TAG).d("createMoment");
-        JSONObject params = new JSONObject();
-        try {
-            params.put("title", mLocalMoment.title);
-            JSONArray hashTags = new JSONArray();
-            for (String tag : mLocalMoment.tags) {
-                hashTags.put(tag);
-            }
-            params.put("hashTags", hashTags);
-            params.put("accessLevel", mLocalMoment.accessLevel);
-            if (mLocalMoment.audioID > 0) {
-                params.put("audioType", 1);
-                params.put("musicSource", "" + mLocalMoment.audioID);
-            } else {
-                params.put("audioType", 0);
-            }
 
-            params.put("overlay", mLocalMoment.gaugeSettings);
-            JSONArray array = new JSONArray();
-            if (mLocalMoment.isFbShare) {
-                array.put("facebook");
-            }
-
-            if (array.length() > 0) {
-                params.put("shareProviders", array);
-            }
-
-            Logger.t(TAG).d("params: " + params);
-        } catch (JSONException e) {
-            Logger.t(TAG).e("", e);
-        }
-
-        mVolleyRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENTS, params,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject momentInfo) {
-                    JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
-                    String ip = uploadServer.optString("ip");
-                    int port = uploadServer.optInt("port");
-                    String privateKey = uploadServer.optString("privateKey");
-                    long momentID = momentInfo.optLong("momentID");
-                    mLocalMoment.updateUploadInfo(momentID, ip, port, privateKey);
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
+        Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
+        createMomentResponseCall.enqueue(new Callback<CreateMomentResponse>() {
+            @Override
+            public void onResponse(Call<CreateMomentResponse> call, retrofit2.Response<CreateMomentResponse> response) {
+                CreateMomentResponse momentResponse = response.body();
+                if (momentResponse != null) {
+                    Logger.t(TAG).d("Get moment response: " + momentResponse.toString());
+                    mLocalMoment.updateUploadInfo(momentResponse);
                     prepareUpload();
                 }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    mOnBuildListener.onBuildError(MomentShareHelper.ERROR_CREATE_MOMENT, 0);
-                }
-            }));
+            }
+
+            @Override
+            public void onFailure(Call<CreateMomentResponse> call, Throwable t) {
+
+            }
+        });
+
+//        JSONObject params = new JSONObject();
+//        try {
+//            params.put("title", mLocalMoment.title);
+//            JSONArray hashTags = new JSONArray();
+//            for (String tag : mLocalMoment.tags) {
+//                hashTags.put(tag);
+//            }
+//            params.put("hashTags", hashTags);
+//            params.put("accessLevel", mLocalMoment.accessLevel);
+//            if (mLocalMoment.audioID > 0) {
+//                params.put("audioType", 1);
+//                params.put("musicSource", "" + mLocalMoment.audioID);
+//            } else {
+//                params.put("audioType", 0);
+//            }
+//
+//            params.put("overlay", mLocalMoment.gaugeSettings);
+//            JSONArray array = new JSONArray();
+//            if (mLocalMoment.isFbShare) {
+//                array.put("facebook");
+//            }
+//
+//            if (array.length() > 0) {
+//                params.put("shareProviders", array);
+//            }
+//
+//            Logger.t(TAG).d("params: " + params);
+//        } catch (JSONException e) {
+//            Logger.t(TAG).e("", e);
+//        }
+//
+//        mVolleyRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_MOMENTS, params,
+//            new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject momentInfo) {
+//                    JSONObject uploadServer = momentInfo.optJSONObject("uploadServer");
+//                    String ip = uploadServer.optString("ip");
+//                    int port = uploadServer.optInt("port");
+//                    String privateKey = uploadServer.optString("privateKey");
+//                    long momentID = momentInfo.optLong("momentID");
+//                    mLocalMoment.updateUploadInfo(momentID, ip, port, privateKey);
+//                    prepareUpload();
+//                }
+//            },
+//            new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    mOnBuildListener.onBuildError(MomentShareHelper.ERROR_CREATE_MOMENT, 0);
+//                }
+//            }));
     }
 
     public void cancel() {

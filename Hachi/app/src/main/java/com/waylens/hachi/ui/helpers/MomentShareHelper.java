@@ -64,11 +64,11 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
      * @param tags
      * @param accessLevel
      */
-    public void shareMoment(final int playListID, final String title, final String[] tags,
+    public void shareMoment(final int playListID, final String title, String descripion, final String[] tags,
                             final String accessLevel, final int audioID, JSONObject gaugeSettings,
                             boolean isFbShare) {
         mMomentBuilder = new MomentBuilder(mContext, mVdbRequestQueue);
-        mMomentBuilder.forPlayList(playListID).asMoment(title, tags, accessLevel, audioID, gaugeSettings, isFbShare).build(this);
+        mMomentBuilder.forPlayList(playListID).asMoment(title, descripion, tags, accessLevel, audioID, gaugeSettings, isFbShare).build(this);
     }
 
     private void uploadData() {
@@ -84,6 +84,9 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
     public void onBuildSuccessful(LocalMoment localMoment) {
         mLocalMoment = localMoment;
         uploadData();
+        if (mShareListener != null) {
+            mShareListener.onUploadStarted();
+        }
     }
 
     @Override
@@ -102,12 +105,13 @@ public class MomentShareHelper implements MomentBuilder.OnBuildListener {
 
 
     public interface OnShareMomentListener {
-        void onShareSuccessful(LocalMoment localMoment);
 
         void onCancelShare();
 
         void onShareError(int errorCode, int errorResId);
 
-        void onUploadProgress(int uploadPercentage);
+
+
+        void onUploadStarted();
     }
 }

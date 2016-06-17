@@ -292,7 +292,9 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onResponse(Call<FollowInfo> call, retrofit2.Response<FollowInfo> response) {
                 mFollowInfo = response.body();
-                updateFollowInfo();
+                if (mFollowInfo != null) {
+                    updateFollowInfo();
+                }
             }
 
 
