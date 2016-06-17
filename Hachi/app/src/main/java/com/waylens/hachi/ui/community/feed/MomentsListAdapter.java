@@ -25,6 +25,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.session.SessionManager;
@@ -142,6 +143,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
                         onReportClick(moment.id);
                         break;
                     case R.id.delete:
+                        onDeleteClick(moment.id);
                         break;
 
                 }
@@ -180,11 +182,18 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
     }
 
 
-//    @Override
-//    public void onViewAttachedToWindow(MomentViewHolder holder) {
-//        super.onViewAttachedToWindow(holder);
-//        holder.videoControl.setVisibility(View.VISIBLE);
-//    }
+    private void onDeleteClick(final long momentId) {
+        MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+            .title(R.string.delete)
+            .positiveText(android.R.string.ok)
+            .negativeText(android.R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    doDeleteMoment(momentId);
+                }
+            }).show();
+    }
 
 
     @Override
@@ -213,20 +222,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
 //        doUpdateLikeStateAnimator(vh, moment);
     }
 
-//    private void doDeleteMoment(int feedItem) {
-//        Moment moment = mAdapter.getMomemnt(feedItem);
-//
-//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-//            .delete()
-//            .url(Constants.API_MOMENTS + "/" + moment.id)
-//            .listner(new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//
-//                }
-//            }).build();
-//        mRequestQueue.add(request);
-//    }
+    private void doDeleteMoment(long momentId) {
+        JobManager jobManager = BgJobManager.getManager();
+        DeleteMomentJob job = new DeleteMomentJob(momentId);
+        jobManager.addJobInBackground(job);
+
+
+    }
 
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
