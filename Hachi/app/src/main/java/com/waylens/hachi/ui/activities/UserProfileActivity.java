@@ -328,8 +328,10 @@ public class UserProfileActivity extends BaseActivity {
             public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {
                 Logger.t(TAG).d("userInfo: " + response.raw().toString());
                 mUserInfo = response.body();
-                updateUserInfo();
-                setupUserMomentsFeed();
+                if (mUserInfo != null) {
+                    updateUserInfo();
+                    setupUserMomentsFeed();
+                }
             }
 
             @Override

@@ -12,9 +12,11 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipModifyActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
@@ -75,8 +77,11 @@ public class PreviewActivity extends ClipPlayActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
-                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
-                        finish();
+                        if (verifyLogin()) {
+                            ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
+                            finish();
+                        }
+
                         break;
                     case R.id.menu_to_enhance:
                         EnhanceActivity2.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
@@ -94,6 +99,16 @@ public class PreviewActivity extends ClipPlayActivity {
                 return true;
             }
         });
+    }
+
+    private boolean verifyLogin() {
+        SessionManager sessionManager = SessionManager.getInstance();
+        if (!sessionManager.isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            return false;
+        }
+
+        return true;
     }
 
     private void confirmDeleteClip() {

@@ -199,7 +199,7 @@ public class SignInFragment extends BaseFragment {
                 }).show();
     }
 
-    void onSignInSuccessful(SignInResponse response) {
+    private void onSignInSuccessful(SignInResponse response) {
         SessionManager.getInstance().saveLoginInfo(response);
         doDeviceLogin();
 
