@@ -79,7 +79,7 @@ public class CameraDiscovery {
             @Override
             public void onServiceLost(NsdServiceInfo serviceInfo) {
                 mIsStarted.set(false);
-                Logger.t(TAG).d("onServiceLost");
+//                Logger.t(TAG).d("onServiceLost");
             }
         };
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);

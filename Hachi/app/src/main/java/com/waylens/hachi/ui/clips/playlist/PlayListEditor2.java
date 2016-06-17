@@ -63,6 +63,7 @@ public class PlayListEditor2 {
 
     public void build(Clip clip, @NonNull OnBuildCompleteListener listener) {
         mOnBuildCompleteListener = listener;
+        mClipSet.clear();
         mClipSet.addClip(clip);
         ClipSetManager.getManager().updateClipSet(mPlayListId, mClipSet);
 
@@ -71,6 +72,7 @@ public class PlayListEditor2 {
 
     public void build(List<Clip> clipList, @NonNull OnBuildCompleteListener listener) {
         mOnBuildCompleteListener = listener;
+        mClipSet.clear();
         for (Clip clip : clipList) {
             mClipSet.addClip(clip);
         }

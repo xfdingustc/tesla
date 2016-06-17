@@ -64,6 +64,7 @@ public class SessionManager {
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                 Logger.t(TAG).d("userinfo: " + response.body().toString());
+                saveLoginInfo(response.body());
             }
 
             @Override
@@ -174,12 +175,18 @@ public class SessionManager {
         }
     }
 
+
+    public void saveLoginInfo(UserInfo userinfo) {
+        mIsVerified = userinfo.isVerified;
+        PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, mIsVerified);
+    }
+
     public void saveLoginInfo(SignInResponse response) {
         saveLoginInfo(response, false);
     }
 
     public void saveLoginInfo(SignInResponse response, boolean isLoginWithSNS) {
-        if (response.user == null) {
+        if (response == null) {
             return;
         }
         mUserName = response.user.userName;
@@ -206,6 +213,8 @@ public class SessionManager {
         PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, mIsLinked);
         PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, mIsVerified);
     }
+
+
 
 
     public void reloadLoginInfo() {

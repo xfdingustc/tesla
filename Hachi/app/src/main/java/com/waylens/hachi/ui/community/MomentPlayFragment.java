@@ -88,6 +88,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     protected static final int RAW_DATA_STATE_READY = 0;
     protected static final int RAW_DATA_STATE_ERROR = 1;
 
+    private static final int PENDING_ACTION_NONE = 0;
+    private static final int PENDING_ACTION_PlAY = 1;
+
 
     protected int mRawDataState = RAW_DATA_STATE_UNKNOWN;
 
@@ -107,6 +110,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private MomentPlayInfo mMomentPlayInfo;
 
     private List<RawDataTimeInfo> mRawDataTimeInfoList = new ArrayList<>();
+
+    private int mPendingAction = PENDING_ACTION_NONE;
 
 
     boolean mIsFullScreen;
@@ -438,7 +443,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        mSurfaceHolder = null;
+//        mSurfaceHolder = null;
 
     }
 
@@ -502,6 +507,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mRawDataState = RAW_DATA_STATE_READY;
         Logger.t(TAG).d("Raw data load finished");
         mProgressLoading.setVisibility(View.GONE);
+        if (mSurfaceHolder == null) {
+            return;
+        }
         openVideo();
     }
 
@@ -546,21 +554,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             });
 
 
-//        String url = Constants.API_MOMENT_PLAY + mMoment.moment.id;
-//        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                Logger.t(TAG).json(response.toString());
-////                mRawDataUrls = response.optJSONArray("rawDataUrl");
-////                loadRawData(0);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-//                onLoadRawDataError("ErrorCode: " + errorInfo.errorCode);
-//            }
-//        }).setTag(TAG));
+
         mProgressLoading.setVisibility(View.VISIBLE);
     }
 
@@ -594,27 +588,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             onLoadRawDataSuccessfully();
             return;
         }
-
-//        HachiApi hachiApi = HachiService.createHachiApiServiceNoBaseUrl();
-//        Call<RawDataResponse> rawDataResponseCall = hachiApi.getRawData(mMomentPlayInfo.rawDataUrl.get(index).url);
-//        rawDataResponseCall.enqueue(new Callback<RawDataResponse>() {
-//            @Override
-//            public void onResponse(Call<RawDataResponse> call, retrofit2.Response<RawDataResponse> response) {
-//                RawDataResponse rawDataResponse = response.body();
-//                for (Long captureTime : rawDataResponse.acc.captureTime) {
-//                    Logger.t(TAG).d("capture time: " + captureTime);
-//                }
-//
-//                for (RawDataResponse.AccRawData.Acceleration acceleration : rawDataResponse.acc.acceleration) {
-//                    Logger.t(TAG).d(acceleration.toString());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<RawDataResponse> call, Throwable t) {
-//                Logger.t(TAG).d("Failed");
-//            }
-//        });
 
 
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
