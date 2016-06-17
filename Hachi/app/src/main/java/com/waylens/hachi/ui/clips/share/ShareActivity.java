@@ -18,9 +18,12 @@ import android.view.ViewOutlineProvider;
 import android.widget.AdapterView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.EnhanceFragment;
@@ -34,6 +37,7 @@ import org.json.JSONObject;
 
 import butterknife.BindArray;
 import butterknife.BindView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -50,6 +54,15 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     private String mSocialPrivacy;
 
     private String[] mSupportedPrivacy;
+
+    @BindView(R.id.user_avatar)
+    CircleImageView mUserAvatar;
+
+    @BindView(R.id.user_name)
+    TextView mUserName;
+
+    @BindView(R.id.user_email)
+    TextView mUserEmail;
 
     @BindView(R.id.root_scroll_view)
     ScrollView mRootScrollView;
@@ -109,10 +122,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
         embedVideoPlayFragment();
-//        mShareRv.setLayoutManager(new LinearLayoutManager(this));
-//
-//        mAdapter = new ShareContentAdapter();
-//        mShareRv.setAdapter(mAdapter);
+
         setupSocialPolicy();
         mPlayerContainer.post(new Runnable() {
             @Override
@@ -120,6 +130,11 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
                 setupParallex();
             }
         });
+
+        SessionManager sessionManager = SessionManager.getInstance();
+        Glide.with(this).load(sessionManager.getAvatarUrl()).crossFade().into(mUserAvatar);
+        mUserName.setText(sessionManager.getUserName());
+        mUserEmail.setText(sessionManager.getEmail());
 
     }
 
@@ -199,6 +214,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
 //                ViewGroup.LayoutParams newParam = new ViewGroup.LayoutParams(width, height - scrollY);
 //                frame.setLayoutParams(newParam);
+
                     mPlayerContainer.setClipToOutline(true);
                     mPlayerContainer.setOutlineProvider(new ViewOutlineProvider() {
                         @Override

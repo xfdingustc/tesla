@@ -250,4 +250,5 @@
 	<string name="sign_up_welcome">Welcome to Waylens Moments!</string>
 	<string name="sign_up_get_started">sign_up_get_started</string>
 	<string name="complete_my_profile">Complete My Profile</string>
+	<string name="preview">Preview</string>
 </resources>

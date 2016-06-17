@@ -20,11 +20,57 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
             <FrameLayout
                 android:id="@+id/player_fragment_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:layout_height="275dp"></FrameLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_avatar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    tools:src="@drawable/defaultpic"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        style="@style/HachiTextViewTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="user name"/>
+
+
+                    <TextView
+                        android:id="@+id/user_email"
+                        style="@style/HachiTextViewSubHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/app_text_color_secondary"
+                        android:textSize="12sp"
+                        tools:text="email"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                style="@style/HachiSepatator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
 
             <android.support.design.widget.TextInputLayout
                 style="@style/TextAppearance.AppCompat.Body2"

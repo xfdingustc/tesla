@@ -68,6 +68,7 @@ public class PreviewActivity extends ClipPlayActivity {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
+        getToolbar().setTitle(R.string.preview);
         getToolbar().inflateMenu(R.menu.menu_clip_play_fragment);
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -75,12 +76,15 @@ public class PreviewActivity extends ClipPlayActivity {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
                         ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
+                        finish();
                         break;
                     case R.id.menu_to_enhance:
                         EnhanceActivity2.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
+                        finish();
                         break;
                     case R.id.menu_to_modify:
                         ClipModifyActivity.launch(PreviewActivity.this, mClip);
+                        finish();
                         break;
                     case R.id.menu_to_delete:
                         confirmDeleteClip();
