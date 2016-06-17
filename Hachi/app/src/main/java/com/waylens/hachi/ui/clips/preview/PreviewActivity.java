@@ -15,6 +15,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.ui.clips.ClipModifyActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
@@ -79,6 +80,7 @@ public class PreviewActivity extends ClipPlayActivity {
                         EnhanceActivity2.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
                         break;
                     case R.id.menu_to_modify:
+                        ClipModifyActivity.launch(PreviewActivity.this, mClip);
                         break;
                     case R.id.menu_to_delete:
                         confirmDeleteClip();

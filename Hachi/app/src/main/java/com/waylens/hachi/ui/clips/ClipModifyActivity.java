@@ -87,6 +87,7 @@ public class ClipModifyActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_clip_modify);
+        setupToolbar();
         mViewAnimator.setDisplayedChild(0);
         embedVideoPlayFragment();
         getClipExtent();
