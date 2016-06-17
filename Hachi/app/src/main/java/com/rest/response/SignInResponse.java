@@ -8,8 +8,6 @@ import com.waylens.hachi.utils.ToStringUtils;
 public class SignInResponse {
     public User user;
 
-
-
     public static class User {
         public String userID;
 

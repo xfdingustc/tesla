@@ -64,6 +64,9 @@ public interface HachiApi {
     @GET("/api/users/{userId}")
     Call<UserInfo> getUserInfo(@Path("userId") String userId);
 
+    @GET("/api/users/me")
+    Call<UserInfo> getMyUserInfo();
+
     @GET("/api/share/accounts")
     Call<LinkedAccounts> getLinkedAccounts();
 

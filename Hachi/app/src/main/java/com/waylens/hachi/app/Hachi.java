@@ -88,10 +88,7 @@ public class Hachi extends Application {
 
         PreferenceUtils.initialize(this);
 
-        SessionManager.initialize(this);
-        SessionManager.getInstance().reloadLoginInfo();
-
-
+        initSessionInfo();
 
         initCameraManager();
 
@@ -106,6 +103,16 @@ public class Hachi extends Application {
         founder.start();
 
         startDeviceScanner();
+    }
+
+    private void initSessionInfo() {
+        SessionManager.initialize(this);
+        SessionManager sessionManager = SessionManager.getInstance();
+        sessionManager.reloadLoginInfo();
+        if (sessionManager.isLoggedIn() && !sessionManager.isVerified()) {
+            sessionManager.reloadVerifyInfo();
+        }
+
     }
 
     private void configureJobManager() {

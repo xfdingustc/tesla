@@ -6,12 +6,20 @@ import android.preference.PreferenceFragment;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
 import com.rest.response.SignInResponse;
+import com.rest.response.UserInfo;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Xiaofei on 2015/8/6.
@@ -47,6 +55,22 @@ public class SessionManager {
     public void saveUserName(String newUserName) {
         mUserName = newUserName;
         PreferenceUtils.putString(PreferenceUtils.USER_NAME, mUserName);
+    }
+
+    public void reloadVerifyInfo() {
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        Call<UserInfo> userInfoCall = hachiApi.getMyUserInfo();
+        userInfoCall.enqueue(new Callback<UserInfo>() {
+            @Override
+            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                Logger.t(TAG).d("userinfo: " + response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<UserInfo> call, Throwable t) {
+
+            }
+        });
     }
 
 
