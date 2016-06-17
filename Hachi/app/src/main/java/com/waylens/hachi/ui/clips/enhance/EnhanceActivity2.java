@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -28,6 +30,7 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.player.PlaylistEditor;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
@@ -73,6 +76,8 @@ public class EnhanceActivity2 extends ClipPlayActivity {
 //        intent.putExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_CLIP_LIST);
 //        activity.startActivity(intent);
 //    }
+
+
 
     public static void launch(Activity activity, int playlistId) {
         Intent intent = new Intent(activity, EnhanceActivity2.class);
@@ -275,6 +280,20 @@ public class EnhanceActivity2 extends ClipPlayActivity {
     public void setupToolbar() {
         super.setupToolbar();
         getToolbar().setTitle(R.string.enhance);
+        getToolbar().inflateMenu(R.menu.menu_enhance);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_to_share:
+                        ShareActivity.launch(EnhanceActivity2.this, mPlaylistEditor.getPlaylistId());
+                        finish();
+                        break;
+                }
+                return true;
+            }
+
+        });
 
     }
 

@@ -20,9 +20,12 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
@@ -34,6 +37,8 @@ import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.ViewUtils;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -51,7 +56,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
     private int mPlayListId;
 
-
+    private MaterialDialog mUploadDialog;
     private MomentShareHelper mShareHelper;
 
     private String mSocialPrivacy;
@@ -81,6 +86,34 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
     @BindView(R.id.spinner_social_privacy)
     Spinner mPrivacySpinner;
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventUpload(UploadEvent event) {
+        switch (event.getWhat()) {
+            case UploadEvent.UPLOAD_WHAT_START:
+                mUploadDialog = new MaterialDialog.Builder(this)
+                    .title(R.string.upload)
+                    .contentGravity(GravityEnum.CENTER)
+                    .progress(false, 100, true)
+                    .show();
+                mUploadDialog.setCanceledOnTouchOutside(false);
+                break;
+            case UploadEvent.UPLOAD_WHAT_PROGRESS:
+                if (mUploadDialog != null) {
+                    int progress = event.getExtra();
+                    mUploadDialog.getProgressBar().setProgress(progress);
+                }
+                break;
+            case UploadEvent.UPLOAD_WHAT_FINISHED:
+                if (mUploadDialog != null) {
+                    mUploadDialog.dismiss();
+                }
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Uploading finished")
+                    .show();
+                break;
+        }
+    }
 
     public static void launch(Activity activity, int playListId) {
         Intent intent = new Intent(activity, ShareActivity.class);
@@ -116,7 +149,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
     @Override
     public void onUploadStarted() {
-        UploadActivity.launch(this);
+//        UploadActivity.launch(this);
     }
 
 
