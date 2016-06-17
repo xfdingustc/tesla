@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 
 import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.Comment;
-import com.waylens.hachi.utils.ImageUtils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -101,19 +103,23 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == Comment.TYPE_NORMAL) {
-            CommentViewHolder vh = (CommentViewHolder) holder;
+            CommentViewHolder viewHolder = (CommentViewHolder) holder;
             final Comment comment = mComments.get(position);
 
-            Context context = vh.avatarView.getContext();
-            Glide.with(context).load(comment.author.avatarUrl).crossFade().into(vh.avatarView);
-            vh.tvUserName.setText(comment.author.userName);
-            vh.commentContentViews.setText(comment.toSpannable());
-            vh.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
+            Context context = viewHolder.avatarView.getContext();
+            Glide.with(context)
+                .load(comment.author.avatarUrl)
+                .placeholder(R.drawable.default_avatar)
+                .crossFade()
+                .into(viewHolder.avatarView);
+            viewHolder.tvUserName.setText(comment.author.userName);
+            viewHolder.commentContentViews.setText(comment.toSpannable());
+            viewHolder.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
             if (comment.commentID == Comment.UNASSIGNED_ID) {
-                vh.commentViewAnimator.setVisibility(View.VISIBLE);
-                vh.commentViewAnimator.setDisplayedChild(0);
+                viewHolder.commentViewAnimator.setVisibility(View.VISIBLE);
+                viewHolder.commentViewAnimator.setDisplayedChild(0);
             } else {
-                vh.commentViewAnimator.setVisibility(View.GONE);
+                viewHolder.commentViewAnimator.setVisibility(View.GONE);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -207,6 +213,30 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ProgressBar loadMoreProgressBar;
 
         public CommentLoadMoreVH(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class CommentViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.user_avatar)
+        CircleImageView avatarView;
+
+        @BindView(R.id.tvUserName)
+        TextView tvUserName;
+
+        @BindView(R.id.comment_content)
+        TextView commentContentViews;
+
+        @BindView(R.id.comment_time)
+        TextView commentTimeView;
+
+        @BindView(R.id.status_container)
+        ViewAnimator commentViewAnimator;
+
+
+        public CommentViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

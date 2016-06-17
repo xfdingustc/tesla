@@ -27,6 +27,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.ui.clips.VideoFragment;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
@@ -267,7 +268,7 @@ public class MainActivity extends BaseActivity {
 
             Glide.with(this)
                 .load(mSessionManager.getAvatarUrl())
-                .placeholder(R.drawable.waylens_logo_76x86)
+                .placeholder(R.drawable.default_avatar)
                 .crossFade()
                 .into(mUserAvatar);
         } else {
@@ -279,7 +280,8 @@ public class MainActivity extends BaseActivity {
 
     private void onUserAvatarClicked() {
         if (mSessionManager.isLoggedIn()) {
-            UserProfileActivity.launch(this, mSessionManager.getUserId(), mUserAvatar);
+//            UserProfileActivity.launch(this, mSessionManager.getUserId(), mUserAvatar);
+            AccountActivity.launch(this);
         } else {
             AuthorizeActivity.launch(this);
         }

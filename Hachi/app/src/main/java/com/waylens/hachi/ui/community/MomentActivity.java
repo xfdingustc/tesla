@@ -305,7 +305,11 @@ public class MomentActivity extends BaseActivity {
         mNewCommentView = (EditText) view.findViewById(R.id.comment_edit);
 
         CircleImageView avatar = (CircleImageView)view.findViewById(R.id.current_user_avatar) ;
-        Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(avatar);
+        Glide.with(this)
+            .load(mSessionManager.getAvatarUrl())
+            .placeholder(R.drawable.default_avatar)
+            .crossFade()
+            .into(avatar);
 
 
         mBottomSheetDialog.setContentView(view);
@@ -422,10 +426,18 @@ public class MomentActivity extends BaseActivity {
 
                     mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
 
-                    Glide.with(MomentActivity.this).load(mSessionManager.getAvatarUrl()).crossFade().into(mCurrentUserAvatar);
+                    Glide.with(MomentActivity.this)
+                        .load(mSessionManager.getAvatarUrl())
+                        .placeholder(R.drawable.default_avatar)
+                        .crossFade()
+                        .into(mCurrentUserAvatar);
 
 
-                    Glide.with(MomentActivity.this).load(mMomentInfo.owner.avatarUrl).crossFade().into(mUserAvatar);
+                    Glide.with(MomentActivity.this)
+                        .load(mMomentInfo.owner.avatarUrl)
+                        .placeholder(R.drawable.default_avatar)
+                        .crossFade()
+                        .into(mUserAvatar);
 
                     MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
 

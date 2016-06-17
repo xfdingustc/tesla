@@ -97,7 +97,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
         Glide.with(mContext)
             .load(moment.owner.avatarUrl)
-            .placeholder(R.drawable.waylens_logo_76x86)
+            .placeholder(R.drawable.default_avatar)
             .crossFade()
             .dontAnimate()
             .into(holder.userAvatar);

@@ -169,7 +169,11 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         });
 
         SessionManager sessionManager = SessionManager.getInstance();
-        Glide.with(this).load(sessionManager.getAvatarUrl()).crossFade().into(mUserAvatar);
+        Glide.with(this)
+            .load(sessionManager.getAvatarUrl())
+            .placeholder(R.drawable.default_avatar)
+            .crossFade()
+            .into(mUserAvatar);
         mUserName.setText(sessionManager.getUserName());
         mUserEmail.setText(sessionManager.getEmail());
 

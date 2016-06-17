@@ -90,7 +90,11 @@ public class AccountActivity extends BaseActivity {
         Logger.t(TAG).d("avatart: " + mSessionManager.getAvatarUrl());
 
 
-        Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(mAvatar);
+        Glide.with(this)
+            .load(mSessionManager.getAvatarUrl())
+            .placeholder(R.drawable.default_avatar)
+            .crossFade()
+            .into(mAvatar);
     }
 
 
