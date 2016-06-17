@@ -27,7 +27,7 @@ public class ClipPlayActivity extends BaseActivity {
     private static final String TAG = ClipPlayActivity.class.getSimpleName();
 
     @BindView(R.id.player_fragment_content)
-    FrameLayout mPlayerContainer;
+    public FrameLayout mPlayerContainer;
 
     private int mOriginalTopMargin;
     private int mOriginalHeight;

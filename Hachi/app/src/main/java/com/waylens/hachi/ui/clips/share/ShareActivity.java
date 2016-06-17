@@ -2,47 +2,66 @@ package com.waylens.hachi.ui.clips.share;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.Outline;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewOutlineProvider;
+import android.widget.AdapterView;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.EnhanceFragment;
 import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
+import com.waylens.hachi.utils.ViewUtils;
 
 import org.json.JSONObject;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 
 /**
  * Created by Xiaofei on 2016/6/16.
  */
-public class ShareActivity extends ClipPlayActivity {
+public class ShareActivity extends ClipPlayActivity implements MomentShareHelper.OnShareMomentListener {
     private static final String TAG = ShareActivity.class.getSimpleName();
     private static final String EXTRA_PLAYLIST_ID = "playlist_id";
 
     private int mPlayListId;
 
-    private ShareContentAdapter mAdapter;
 
     private MomentShareHelper mShareHelper;
 
-    @BindView(R.id.share_description)
-    RecyclerView mShareRv;
+    private String mSocialPrivacy;
 
+    private String[] mSupportedPrivacy;
 
+    @BindView(R.id.root_scroll_view)
+    ScrollView mRootScrollView;
 
-    @BindView(R.id.collapse_toolbar)
-    CollapsingToolbarLayout mCollapseToolbar;
+    @BindView(R.id.moment_title)
+    TextInputEditText mEtMomentTitle;
+
+    @BindArray(R.array.social_privacy_text)
+    CharSequence[] mPrivacyText;
+
+    @BindView(R.id.spinner_social_privacy)
+    Spinner mPrivacySpinner;
 
     public static void launch(Activity activity, int playListId) {
         Intent intent = new Intent(activity, ShareActivity.class);
@@ -64,17 +83,72 @@ public class ShareActivity extends ClipPlayActivity {
         initViews();
     }
 
+    @Override
+    public void onShareSuccessful(LocalMoment localMoment) {
+
+    }
+
+    @Override
+    public void onCancelShare() {
+
+    }
+
+    @Override
+    public void onShareError(int errorCode, int errorResId) {
+
+    }
+
+    @Override
+    public void onUploadProgress(int uploadPercentage) {
+
+    }
+
     private void initViews() {
         setContentView(R.layout.activity_share);
         setupToolbar();
         mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
         embedVideoPlayFragment();
-        mShareRv.setLayoutManager(new LinearLayoutManager(this));
+//        mShareRv.setLayoutManager(new LinearLayoutManager(this));
+//
+//        mAdapter = new ShareContentAdapter();
+//        mShareRv.setAdapter(mAdapter);
+        setupSocialPolicy();
+        mPlayerContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                setupParallex();
+            }
+        });
 
-        mAdapter = new ShareContentAdapter();
-        mShareRv.setAdapter(mAdapter);
     }
+
+    private void setupSocialPolicy() {
+        TypedArray typedArray = getResources().obtainTypedArray(R.array.social_privacy_icon);
+        Drawable[] drawables = new Drawable[typedArray.length()];
+        for (int i = 0; i < drawables.length; i++) {
+            drawables[i] = typedArray.getDrawable(i);
+        }
+        IconSpinnerAdapter mAdapter = new IconSpinnerAdapter(this, android.R.layout.simple_spinner_item, mPrivacyText, drawables,
+            ViewUtils.dp2px(16));
+        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mPrivacySpinner.setAdapter(mAdapter);
+
+        mSupportedPrivacy = getResources().getStringArray(R.array.social_privacy_value);
+        mSocialPrivacy = mSupportedPrivacy[0];
+        mPrivacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSocialPrivacy = mSupportedPrivacy[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                mSocialPrivacy = mSupportedPrivacy[0];
+            }
+        });
+    }
+
 
     @Override
     public void setupToolbar() {
@@ -102,12 +176,47 @@ public class ShareActivity extends ClipPlayActivity {
             }
         });
 
-        mCollapseToolbar.setTitleEnabled(false);
+
+    }
+
+
+    private void setupParallex() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            final int width = mPlayerContainer.getMeasuredWidth();
+            final int height = mPlayerContainer.getMeasuredHeight();
+
+            final float originY = mPlayerContainer.getY();
+
+
+            mRootScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, final int scrollY, int oldScrollX, int oldScrollY) {
+//                Log.i("test", "scroolY = " + scrollY);
+
+                    mPlayerContainer.setY(originY + scrollY / 2);
+
+//                ViewGroup.LayoutParams newParam = new ViewGroup.LayoutParams(width, height - scrollY);
+//                frame.setLayoutParams(newParam);
+                    mPlayerContainer.setClipToOutline(true);
+                    mPlayerContainer.setOutlineProvider(new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            Rect rect = new Rect(0, scrollY / 2, width, height - scrollY / 2);
+                            outline.setRect(rect);
+                        }
+                    });
+
+                }
+            });
+        }
+
     }
 
     private void doShareMoment() {
-//        mShareHelper = new MomentShareHelper(this, mVdbRequestQueue, this);
-        String title = mAdapter.getMomentTitle();
+        mShareHelper = new MomentShareHelper(this, mVdbRequestQueue, this);
+        String title = mEtMomentTitle.getEditableText().toString();
         String[] tags = new String[]{"Shanghai", "car"};
         Activity activity = this;
         int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
@@ -118,6 +227,6 @@ public class ShareActivity extends ClipPlayActivity {
         }
 
         Logger.t(TAG).d("share title: " + title);
-//        mShareHelper.shareMoment(PLAYLIST_SHARE, title, tags, mSocialPrivacy, audioID, gaugeSettings, mIsFacebookShareChecked);
+        mShareHelper.shareMoment(mPlaylistEditor.getPlaylistId(), title, tags, mSocialPrivacy, audioID, gaugeSettings, false);
     }
 }
