@@ -45,10 +45,15 @@ import butterknife.OnClick;
  */
 public class EnhanceActivity2 extends ClipPlayActivity {
     private static final String TAG = EnhanceActivity2.class.getSimpleName();
+    private static final String EXTRA_LAUNCH_MODE = "launch_mode";
+    private static final String EXTRA_CLIP_LIST = "clip_list";
     private static final String EXTRA_PLAYLIST_ID = "playlist_id";
 
     private static final int REQUEST_CODE_ENHANCE = 1000;
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
+
+    private static final int LAUNCH_MODE_PLAYLIST = 100;
+    private static final int LAUNCH_MODE_CLIP_LIST = 200;
 
     private static final int ACTION_NONE = -1;
     private static final int ACTION_OVERLAY = 0;
@@ -56,13 +61,23 @@ public class EnhanceActivity2 extends ClipPlayActivity {
     private static final int ACTION_ADD_MUSIC = 2;
     private static final int ACTION_SMART_REMIX = 3;
 
+    public static final int PLAYLIST_INDEX = 0x100;
+
     private MusicItem mMusicItem;
     private int mPlaylistId;
     private GaugeListAdapter mGaugeListAdapter;
 
+//    public static void launch(Activity activity, ArrayList<Clip> clipList) {
+//        Intent intent = new Intent(activity, EnhanceActivity2.class);
+//        intent.putParcelableArrayListExtra(EXTRA_CLIP_LIST, clipList);
+//        intent.putExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_CLIP_LIST);
+//        activity.startActivity(intent);
+//    }
+
     public static void launch(Activity activity, int playlistId) {
         Intent intent = new Intent(activity, EnhanceActivity2.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
+        intent.putExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_PLAYLIST);
         activity.startActivity(intent);
     }
 
@@ -222,18 +237,37 @@ public class EnhanceActivity2 extends ClipPlayActivity {
     @Override
     protected void init() {
         super.init();
-        mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
         initViews();
+        Intent intent = getIntent();
+        int launchMode = intent.getIntExtra(EXTRA_LAUNCH_MODE, 0);
+        if (launchMode == LAUNCH_MODE_PLAYLIST) {
+            mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
+            mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, mPlaylistId);
+            mPlaylistEditor.reconstruct();
+            embedVideoPlayFragment();
+            configEnhanceView();
+        } else {
+            mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, PLAYLIST_INDEX);
+            ArrayList<Clip> clipArrayList = intent.getParcelableArrayListExtra(EXTRA_CLIP_LIST);
+            mPlaylistEditor.build(clipArrayList, new PlayListEditor2.OnBuildCompleteListener() {
+
+                @Override
+                public void onBuildComplete(ClipSet clipSet) {
+                    embedVideoPlayFragment();
+                    configEnhanceView();
+                }
+            });
+        }
+
     }
 
     private void initViews() {
         setContentView(R.layout.activity_enhance2);
         setupToolbar();
-        mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, mPlaylistId);
-        mPlaylistEditor.reconstruct();
-        embedVideoPlayFragment();
+
+
         mClipsEditView.setVisibility(View.VISIBLE);
-        configEnhanceView();
+
     }
 
 

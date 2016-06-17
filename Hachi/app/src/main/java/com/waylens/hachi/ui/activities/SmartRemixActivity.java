@@ -27,6 +27,7 @@ import com.waylens.hachi.snipe.cache.DiskCache;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.ui.clips.EnhancementActivity;
+import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipSet;
@@ -369,7 +370,8 @@ public class SmartRemixActivity extends BaseActivity {
             clip.setEndTime(clipSegment.getEndTimeMs());
             selectedList.add(clip);
         }
-        EnhancementActivity.launch(this, selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+//        EnhancementActivity.launch(this, selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+//        EnhanceActivity2.launch(this, selectedList);
     }
 
     private List<ClipSegment> analyseRawData() {

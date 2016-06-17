@@ -155,12 +155,12 @@ public class EnhancementActivity extends BaseActivity implements FragmentNavigat
     }
 
 
-    public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
-        Intent intent = new Intent(activity, EnhancementActivity.class);
-        intent.putParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE, clipList);
-        intent.putExtra(EXTRA_LAUNCH_MODE, launchMode);
-        activity.startActivity(intent);
-    }
+//    public static void launch(Activity activity, ArrayList<Clip> clipList, int launchMode) {
+//        Intent intent = new Intent(activity, EnhancementActivity.class);
+//        intent.putParcelableArrayListExtra(EXTRA_CLIPS_TO_ENHANCE, clipList);
+//        intent.putExtra(EXTRA_LAUNCH_MODE, launchMode);
+//        activity.startActivity(intent);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

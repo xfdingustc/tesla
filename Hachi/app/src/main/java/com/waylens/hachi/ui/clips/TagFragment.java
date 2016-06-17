@@ -30,7 +30,10 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
+import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -276,7 +279,17 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             getActivity().finish();
         } else {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+//            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+//            EnhanceActivity2.launch(getActivity(), selectedList);
+
+            final int playlistId = 0x100;
+            PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
+            playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
+                @Override
+                public void onBuildComplete(ClipSet clipSet) {
+                    EnhanceActivity2.launch(getActivity(), playlistId);
+                }
+            });
         }
     }
 
@@ -431,7 +444,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     private void toShare() {
         if (SessionManager.getInstance().isLoggedIn()) {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
+//            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
+//            ShareActivity.launch(getActivity());
         } else {
             AuthorizeActivity.launch(getActivity());
         }

@@ -25,12 +25,14 @@ import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.player.PlaylistEditor;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.utils.DateTime;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -348,7 +350,16 @@ public class FootageActivity extends BaseActivity {
     }
 
     private void toEnhance(List<Clip> clipList) {
-        EnhancementActivity.launch(this, (ArrayList<Clip>)clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+//        EnhancementActivity.launch(this, (ArrayList<Clip>)clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+        final int playlistId = 0x100;
+        PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
+        playListEditor2.build(clipList, new PlayListEditor2.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(ClipSet clipSet) {
+                EnhanceActivity2.launch(FootageActivity.this, playlistId);
+            }
+        });
+
     }
 
     private void toModify(Clip clip) {

@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -63,6 +64,16 @@ public class PlayListEditor2 {
     public void build(Clip clip, @NonNull OnBuildCompleteListener listener) {
         mOnBuildCompleteListener = listener;
         mClipSet.addClip(clip);
+        ClipSetManager.getManager().updateClipSet(mPlayListId, mClipSet);
+
+        doRebuildPlaylist();
+    }
+
+    public void build(List<Clip> clipList, @NonNull OnBuildCompleteListener listener) {
+        mOnBuildCompleteListener = listener;
+        for (Clip clip : clipList) {
+            mClipSet.addClip(clip);
+        }
         ClipSetManager.getManager().updateClipSet(mPlayListId, mClipSet);
 
         doRebuildPlaylist();
