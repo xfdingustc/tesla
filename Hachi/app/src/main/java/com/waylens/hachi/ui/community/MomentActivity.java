@@ -178,8 +178,9 @@ public class MomentActivity extends BaseActivity {
             AuthorizeActivity.launch(this);
             return;
         }
-        if (!checkUserVerified())
+        if (!checkUserVerified()) {
             return;
+        }
         boolean isCancel = mMomentInfo.moment.isLiked;
         JobManager jobManager = BgJobManager.getManager();
         LikeJob job = new LikeJob(mMomentInfo.moment.id, isCancel);
@@ -207,8 +208,9 @@ public class MomentActivity extends BaseActivity {
             return;
 
         }
-        if (!checkUserVerified())
+        if (!checkUserVerified()) {
             return;
+        }
 
         if (mFollowInfo == null) {
             updateFollowInfo(mMomentInfo.owner.userID);
@@ -238,8 +240,9 @@ public class MomentActivity extends BaseActivity {
             AuthorizeActivity.launch(this);
             return;
         }
-        if (!checkUserVerified())
+        if (!checkUserVerified()) {
             return;
+        }
         showBottomSheetDialog();
     }
 
@@ -735,8 +738,9 @@ public class MomentActivity extends BaseActivity {
         if (!checkUserLoggedIn()) {
             return false;
         }
-        if (!checkUserVerified())
+        if (!checkUserVerified()) {
             return false;
+        }
         return true;
     }
 
@@ -765,7 +769,7 @@ public class MomentActivity extends BaseActivity {
                     if (response.body() != null) {
                         mSessionManager = SessionManager.getInstance();
                         mSessionManager.setIsVerified(response.body().isVerified);
-                        Logger.d("isVerified = " + response.body().isVerified, this);
+                        Logger.t(TAG).d("isVerified = " + response.body().isVerified, this);
 
                     }
                 }

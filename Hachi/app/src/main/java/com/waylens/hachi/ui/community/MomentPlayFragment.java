@@ -403,10 +403,20 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     return false;
                 }
             });
+            mMediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                @Override
+                public void onSeekComplete(MediaPlayer mediaPlayer) {
+                    changeState(STATE_PLAYING);
+                    mBtnPlayPause.setVisibility(View.VISIBLE);
+                    showControllers();
+                }
+            });
 
         } catch (IOException e) {
             Logger.t(TAG).e(e.toString());
         }
+
+        mVideoSeekBar.setOnSeekBarChangeListener(new SeekBarChangeEvent());
     }
 
 
@@ -923,6 +933,30 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
         }
     }
+
+    class SeekBarChangeEvent implements SeekBar.OnSeekBarChangeListener {
+        int progress;
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                this.progress = progress * mMediaPlayer.getDuration() / seekBar.getMax();
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            mMediaPlayer.seekTo(progress);
+            changeState(STATE_PREPARED);
+        }
+
+    }
+
 
 
 }
