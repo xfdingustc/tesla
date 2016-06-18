@@ -2,6 +2,7 @@
 <FrameLayout android:id="@+id/root_container"
              xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:background="?attr/defaultBgColor">
@@ -73,19 +74,21 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 app:barHeight="8dp"
-                app:circleColor="?attr/appTextColorPrimary"/>
+                app:circleColor="?attr/appTextColorPrimary"
+                tools:visibility="gone"/>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <ImageButton
                     android:id="@+id/btnPlayPause"
                     style="@style/SelectableRippleButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
                     android:src="@drawable/playbar_play"/>
 
                 <FrameLayout
@@ -106,21 +109,31 @@
                 <ImageButton
                     android:id="@+id/btnShowOverlay"
                     style="@style/SelectableRippleButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
                     android:src="@drawable/btn_gauge_overlay"/>
 
 
                 <ImageButton
                     android:id="@+id/btnFullscreen"
                     style="@style/SelectableRippleButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
                     android:src="@drawable/screen_full"/>
 
             </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
+
+    <View
+        style="@style/HachiSepatator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"/>
 
 </FrameLayout>
