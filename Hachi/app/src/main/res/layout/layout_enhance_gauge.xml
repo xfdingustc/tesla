@@ -21,7 +21,7 @@
             android:layout_height="36dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/btn_gauge_style"
+            android:background="@drawable/btn_gauge_theme_none"
             android:button="@android:color/transparent"/>
 
         <RadioButton
@@ -31,7 +31,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:checked="true"
-            android:background="@drawable/btn_gauge_style"
+            android:background="@drawable/btn_gauge_theme_1"
             android:button="@android:color/transparent"/>
 
         <RadioButton
@@ -40,7 +40,7 @@
             android:layout_height="36dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/btn_gauge_style"
+            android:background="@drawable/btn_gauge_theme_2"
             android:button="@android:color/transparent"/>
     </RadioGroup>
 
