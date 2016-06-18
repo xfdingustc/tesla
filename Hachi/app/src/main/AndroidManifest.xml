@@ -88,10 +88,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.avatar.LocalPhotoActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity
             android:name=".ui.manualsetup.StartupActivity"
             android:screenOrientation="portrait"/>
 
