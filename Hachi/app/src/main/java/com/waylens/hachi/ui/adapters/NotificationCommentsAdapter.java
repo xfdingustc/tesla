@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.utils.ImageUtils;
@@ -71,7 +72,11 @@ public class NotificationCommentsAdapter extends RecyclerView.Adapter<Notificati
     public void onBindViewHolder(NotificationCommentVH holder, int position) {
         CommentEvent commentEvent = mCommentEvents.get(position);
         Context context = holder.commentUserAvatar.getContext();
-        Glide.with(context).load(commentEvent.author.avatarUrl).crossFade().into(holder.commentUserAvatar);
+        Glide.with(context)
+            .load(commentEvent.author.avatarUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(holder.commentUserAvatar);
         holder.commentUserName.setText(commentEvent.author.userName);
         holder.commentTime.setText(mPrettyTime.formatUnrounded(new Date(commentEvent.createTime)));
         holder.commentContent.setText(commentEvent.commentToSpannable());
@@ -79,7 +84,11 @@ public class NotificationCommentsAdapter extends RecyclerView.Adapter<Notificati
             holder.momentTitle.setText(commentEvent.title);
         }
 
-        Glide.with(context).load(commentEvent.thumbnail).crossFade().into(holder.momentThumbnail);
+        Glide.with(context)
+            .load(commentEvent.thumbnail)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(holder.momentThumbnail);
     }
 
     public static class NotificationCommentVH extends RecyclerView.ViewHolder {

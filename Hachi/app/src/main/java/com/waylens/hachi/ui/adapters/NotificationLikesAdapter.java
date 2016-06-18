@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.LikeEvent;
 import com.waylens.hachi.utils.ImageUtils;
@@ -76,7 +77,11 @@ public class NotificationLikesAdapter extends RecyclerView.Adapter<NotificationL
     public void onBindViewHolder(NotificationLikeVH holder, int position) {
         LikeEvent likeEvent = mLikeEvents.get(position);
         Context context = holder.likeUserAvatar.getContext();
-        Glide.with(context).load(likeEvent.liker.avatarUrl).crossFade().into(holder.likeUserAvatar);
+        Glide.with(context)
+            .load(likeEvent.liker.avatarUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(holder.likeUserAvatar);
 
 
         holder.likeUserName.setText(mResources.getString(R.string.like_your_post, likeEvent.liker.userName));
@@ -85,7 +90,11 @@ public class NotificationLikesAdapter extends RecyclerView.Adapter<NotificationL
             holder.momentTitle.setText(likeEvent.title);
         }
 
-        Glide.with(context).load(likeEvent.thumbnail).crossFade().into(holder.momentThumbnail);
+        Glide.with(context)
+            .load(likeEvent.thumbnail)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(holder.momentThumbnail);
     }
 
     public static class NotificationLikeVH extends RecyclerView.ViewHolder {

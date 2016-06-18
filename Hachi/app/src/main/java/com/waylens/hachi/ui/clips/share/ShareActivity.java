@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
@@ -172,6 +173,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         Glide.with(this)
             .load(sessionManager.getAvatarUrl())
             .placeholder(R.drawable.default_avatar)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .crossFade()
             .into(mUserAvatar);
         mUserName.setText(sessionManager.getUserName());

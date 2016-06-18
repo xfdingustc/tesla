@@ -61,15 +61,15 @@ public class RegistrationIntentService extends IntentService {
             // Initially this call goes out to the network to retrieve the token, subsequent calls
             // are local.
             // [START get_token]
-            InstanceID instanceID = InstanceID.getInstance(this);
-            String id = instanceID.getId();
-            Log.e(TAG, "ID: " + id);
-            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-            // [END get_token]
-
-            sendRegistrationToServer(token);
-            subscribeTopics(token);
+//            InstanceID instanceID = InstanceID.getInstance(this);
+//            String id = instanceID.getId();
+//            Log.e(TAG, "ID: " + id);
+//            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
+//                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+//            // [END get_token]
+//
+//            sendRegistrationToServer(token);
+//            subscribeTopics(token);
         } catch (Exception e) {
             Log.d(TAG, "Failed to complete token refresh", e);
             PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, null);

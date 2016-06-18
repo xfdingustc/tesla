@@ -43,6 +43,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.rest.HachiApi;
@@ -291,7 +292,10 @@ public class MomentActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_moment);
 
-        Glide.with(this).load(mThumbnail).into(mVideoThumbnail);
+        Glide.with(this)
+            .load(mThumbnail)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(mVideoThumbnail);
         ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
 
         queryMomentInfo();
@@ -307,6 +311,7 @@ public class MomentActivity extends BaseActivity {
         CircleImageView avatar = (CircleImageView)view.findViewById(R.id.current_user_avatar) ;
         Glide.with(this)
             .load(mSessionManager.getAvatarUrl())
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.default_avatar)
             .crossFade()
             .into(avatar);
@@ -428,6 +433,7 @@ public class MomentActivity extends BaseActivity {
 
                     Glide.with(MomentActivity.this)
                         .load(mSessionManager.getAvatarUrl())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.drawable.default_avatar)
                         .crossFade()
                         .into(mCurrentUserAvatar);
@@ -435,6 +441,7 @@ public class MomentActivity extends BaseActivity {
 
                     Glide.with(MomentActivity.this)
                         .load(mMomentInfo.owner.avatarUrl)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.drawable.default_avatar)
                         .crossFade()
                         .into(mUserAvatar);

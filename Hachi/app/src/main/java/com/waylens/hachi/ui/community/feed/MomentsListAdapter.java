@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -110,7 +111,11 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         }
 
         holder.userName.setText(moment.owner.userName + " • " + mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
-        Glide.with(mContext).load(moment.thumbnail).crossFade().into(holder.videoCover);
+        Glide.with(mContext)
+            .load(moment.thumbnail)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(holder.videoCover);
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override

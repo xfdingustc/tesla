@@ -26,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
@@ -251,7 +252,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
     private void initViews() {
-        Glide.with(this).load(mMoment.moment.thumbnail).crossFade().into(mVsCover);
+        Glide.with(this)
+            .load(mMoment.moment.thumbnail)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(mVsCover);
         mBtnPlayPause.toggle(true);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);

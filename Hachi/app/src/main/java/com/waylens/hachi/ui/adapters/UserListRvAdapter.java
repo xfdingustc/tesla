@@ -12,6 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -66,7 +67,11 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         viewHolder.mTvUserName.setText(userInfo.userName);
 
-        Glide.with(mContext).load(userInfo.avatarUrl).crossFade().into(viewHolder.mUserAvater);
+        Glide.with(mContext)
+            .load(userInfo.avatarUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(viewHolder.mUserAvater);
 
         if (userInfo.getIsFollowing()) {
             setFollowButton(viewHolder, true);

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -270,6 +271,7 @@ public class MainActivity extends BaseActivity {
                 .load(mSessionManager.getAvatarUrl())
                 .placeholder(R.drawable.default_avatar)
                 .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(mUserAvatar);
         } else {
             mUsername.setText(getText(R.string.click_2_login));

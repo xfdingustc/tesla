@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 
 import com.android.volley.Response;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -92,6 +93,7 @@ public class AccountActivity extends BaseActivity {
 
         Glide.with(this)
             .load(mSessionManager.getAvatarUrl())
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.default_avatar)
             .crossFade()
             .into(mAvatar);
@@ -108,7 +110,11 @@ public class AccountActivity extends BaseActivity {
         setContentView(R.layout.activity_account);
         setupToolbar();
 
-        Glide.with(this).load(mSessionManager.getAvatarUrl()).crossFade().into(mAvatar);
+        Glide.with(this)
+            .load(mSessionManager.getAvatarUrl())
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(mAvatar);
     }
 
 

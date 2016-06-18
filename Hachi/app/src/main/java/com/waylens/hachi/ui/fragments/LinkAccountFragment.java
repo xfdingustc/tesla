@@ -15,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -76,7 +77,11 @@ public class LinkAccountFragment extends BaseFragment {
             }
         }
 
-        Glide.with(this).load(SessionManager.getInstance().getAvatarUrl()).crossFade().into(ivAvatar);
+        Glide.with(this)
+            .load(SessionManager.getInstance().getAvatarUrl())
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(ivAvatar);
     }
 
     @OnClick(R.id.btn_next)

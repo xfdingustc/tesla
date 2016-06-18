@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
@@ -345,7 +346,11 @@ public class UserProfileActivity extends BaseActivity {
 
     private void updateUserInfo() {
 
-        Glide.with(this).load(mUserInfo.avatarUrl).crossFade().into(civUserAvatar);
+        Glide.with(this)
+            .load(mUserInfo.avatarUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(civUserAvatar);
 
         mToolbar.setTitle(mUserInfo.displayName);
         mToolbar.setNavigationIcon(R.drawable.navbar_back);

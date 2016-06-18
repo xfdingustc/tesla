@@ -11,6 +11,7 @@ import android.widget.ViewAnimator;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.entities.Comment;
 
@@ -109,6 +110,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Context context = viewHolder.avatarView.getContext();
             Glide.with(context)
                 .load(comment.author.avatarUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.default_avatar)
                 .crossFade()
                 .into(viewHolder.avatarView);
