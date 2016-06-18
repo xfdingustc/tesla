@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.avatar.serializables.AlbumInfo;
 import com.waylens.hachi.ui.avatar.serializables.AlbumSerializable;
@@ -102,7 +103,9 @@ public class AlbumFragment extends BaseFragment implements View.OnClickListener 
 
             String displayItemUri = ThumbnailsUtil.MapgetHashValue(item.getImage_id(), item.getPath_file());
 
-            Glide.with(AlbumFragment.this).load(displayItemUri).crossFade().into(viewHolder.ivCover);
+
+            Logger.t("TAG").d(displayItemUri);
+            Glide.with(AlbumFragment.this).load("file:///storage/emulated/0/DCIM/Camera/IMG_20160617_200859.jpg").crossFade().into(viewHolder.ivCover);
 
             viewHolder.tvAlbumTitle.setText(item.getName_album());
             viewHolder.tvAlbumItemCount.setText("" + item.getList().size());

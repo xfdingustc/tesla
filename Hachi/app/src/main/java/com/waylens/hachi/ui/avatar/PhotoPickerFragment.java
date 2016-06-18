@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 
 import com.bumptech.glide.Glide;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.avatar.serializables.Photo;
 import com.waylens.hachi.ui.avatar.serializables.PhotoSerializable;
@@ -120,6 +121,7 @@ public class PhotoPickerFragment extends BaseFragment implements View.OnClickLis
             Photo photo = dataList.get(position);
             String displayItemUri = ThumbnailsUtil.MapgetHashValue(photo.getImageId(), photo.getUrl());
 
+            Logger.t(TAG).d("display item url: " + displayItemUri);
             Glide.with(PhotoPickerFragment.this).load(displayItemUri).crossFade().into(viewHolder.imageView);
 
         }

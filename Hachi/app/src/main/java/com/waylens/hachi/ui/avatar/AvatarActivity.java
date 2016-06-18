@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -120,7 +122,8 @@ public class AvatarActivity extends BaseActivity {
         if (fromCamera) {
             jump2TakePhoto();
         } else {
-            LocalPhotoActivity.launch(this, albumName, FROM_LOCAL);
+//            LocalPhotoActivity.launch(this, albumName, FROM_LOCAL);
+            jump2Picker();
         }
 
         init();
@@ -135,6 +138,13 @@ public class AvatarActivity extends BaseActivity {
         mAvatarUri = Uri.fromFile(new File(GlobalVariables.getPictureName()));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mAvatarUri);
         startActivityForResult(intent, TAKE_PHOTO);
+    }
+
+
+    private void jump2Picker() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, FROM_LOCAL);
     }
 
 
@@ -185,8 +195,14 @@ public class AvatarActivity extends BaseActivity {
             Logger.d("Avatar uri: " + mAvatarUri.getPath());
             mReturnImagePath = mAvatarUri.getPath();
         } else if (requestCode == FROM_LOCAL) {
-            albumName = data.getStringExtra("albumName");
-            mReturnImagePath = data.getStringExtra("photoPath");
+            Uri imageUri= data.getData();
+            Log.d("image selected path", imageUri.getPath());
+
+            String[] projection = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            mReturnImagePath = cursor.getString(column_index);
         }
 
         getToolbar().inflateMenu(R.menu.menu_confirm);
