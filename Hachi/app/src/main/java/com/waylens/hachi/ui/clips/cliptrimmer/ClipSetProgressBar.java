@@ -15,11 +15,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -52,7 +55,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
 
     private int mScreenWidth;
-    private VdbImageLoader mVdbImageLoader;
+    private VdbRequestQueue mVdbRequestQueue;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -120,7 +123,7 @@ public class ClipSetProgressBar extends FrameLayout {
     }
 
 
-    public void init(VdbImageLoader vdbImageLoader, OnBookmarkClickListener listener) {
+    public void init(VdbRequestQueue vdbRequestQueue, OnBookmarkClickListener listener) {
 
         mBookmarkClickListener = listener;
         mScreenWidth = getScreenWidth();
@@ -137,7 +140,7 @@ public class ClipSetProgressBar extends FrameLayout {
         mRecyclerView.setItemViewCacheSize(4);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mVdbImageLoader = vdbImageLoader;
+        mVdbRequestQueue = vdbRequestQueue;
         mAdapter = new ThumbnailListAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
@@ -245,6 +248,9 @@ public class ClipSetProgressBar extends FrameLayout {
     public class ThumbnailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private static final int DEFAULT_PERIOD_MS = 1000 * 30;
+
+        private static final int ID_THUMBNAIL = 0x1000;
+        private static final int ID_BOOKMARK = 0x2000;
 
         private int mClipFragmentDruation = DEFAULT_PERIOD_MS;
 
@@ -357,7 +363,7 @@ public class ClipSetProgressBar extends FrameLayout {
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setLayoutParams(params);
 
-                imageView.setTag("thumbnail");
+                imageView.setId(R.id.clip_thumbnail);
                 frameLayout.addView(imageView);
 
 
@@ -365,7 +371,8 @@ public class ClipSetProgressBar extends FrameLayout {
 
                 BookmarkView bookmarkView = new BookmarkView(context);
 
-                bookmarkView.setTag("bookmark");
+
+                bookmarkView.setId(R.id.bookmark_message_view);
                 bookmarkView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 //                bookmarkView.setVisibility(GONE);
                 frameLayout.addView(bookmarkView);
@@ -393,7 +400,13 @@ public class ClipSetProgressBar extends FrameLayout {
                 ItemViewHolder viewHolder = (ItemViewHolder) holder;
                 ClipSegment clipSegment = (ClipSegment) clipFragmentItem.item;
                 ClipPos clipPos = new ClipPos(clipSegment.getClip(), clipSegment.getStartTimeMs());
-                mVdbImageLoader.displayVdbImage(clipPos, viewHolder.clipFragmentThumbnail, false, true);
+//                mVdbImageLoader.displayVdbImage(clipPos, viewHolder.clipFragmentThumbnail, false, true);
+                Glide.with(getContext())
+                    .using(new SnipeGlideLoader(mVdbRequestQueue))
+                    .load(clipPos)
+                    .placeholder(R.drawable.defaultpic)
+                    .crossFade()
+                    .into(viewHolder.clipFragmentThumbnail);
                 setupBookmarkView(clipSegment, viewHolder.bookmarkView);
             }
 
@@ -489,8 +502,8 @@ public class ClipSetProgressBar extends FrameLayout {
             super(itemView);
 
             FrameLayout container = (FrameLayout) itemView;
-            clipFragmentThumbnail = (ImageView) container.findViewWithTag("thumbnail");
-            bookmarkView = (BookmarkView) container.findViewWithTag("bookmark");
+            clipFragmentThumbnail = (ImageView) container.findViewById(R.id.clip_thumbnail);
+            bookmarkView = (BookmarkView) container.findViewById(R.id.bookmark_message_view);
 
         }
 

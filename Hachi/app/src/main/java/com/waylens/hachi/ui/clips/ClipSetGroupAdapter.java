@@ -163,10 +163,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
         viewHolder.tvDuration.setText(clipDuration);
 
-//        mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover, true);
+
         Glide.with(mContext)
             .using(new SnipeGlideLoader(mVdbRequestQueue))
             .load(clipPos)
+            .placeholder(R.drawable.defaultpic)
             .crossFade()
             .into(viewHolder.ivClipCover);
 

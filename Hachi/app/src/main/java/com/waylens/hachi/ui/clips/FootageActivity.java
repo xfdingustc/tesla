@@ -190,7 +190,7 @@ public class FootageActivity extends BaseActivity {
             }
         });
         setupToolbar();
-        mClipSetProgressBar.init(mVdbImageLoader, new ClipSetProgressBar.OnBookmarkClickListener() {
+        mClipSetProgressBar.init(mVdbRequestQueue, new ClipSetProgressBar.OnBookmarkClickListener() {
             @Override
             public void onBookmarkClick(Clip clip) {
 
