@@ -13,9 +13,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
@@ -24,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -162,7 +163,12 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
         viewHolder.tvDuration.setText(clipDuration);
 
-        mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover, true);
+//        mVdbImageLoader.displayVdbImage(clipPos, viewHolder.ivClipCover, true);
+        Glide.with(mContext)
+            .using(new SnipeGlideLoader(mVdbRequestQueue))
+            .load(clipPos)
+            .crossFade()
+            .into(viewHolder.ivClipCover);
 
         if (viewHolder.mBtnSelect != null) {
             if (mMultiSelectedMode == true) {
@@ -219,7 +225,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private String getFormattedDate(long date) {
         SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy");
 
-        long clipDate = date ;
+        long clipDate = date;
         long currentTime = System.currentTimeMillis();
 
         Calendar calendar = Calendar.getInstance();
@@ -276,7 +282,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            ivClipCover.setTag(this);
+//            ivClipCover.setTag(this);
             ivClipCover.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -284,7 +290,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         return;
                     }
 
-                    ClipGridViewHolder holder = (ClipGridViewHolder) v.getTag();
+                    ClipGridViewHolder holder = ClipGridViewHolder.this;
                     ClipGridItem clipGridItem = mClipGridItemList.get(holder.getPosition());
 
                     if (!mMultiSelectedMode) {
@@ -307,11 +313,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ivClipCover.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (mClipClickListener == null ) {
+                    if (mClipClickListener == null) {
                         return true;
                     }
 
-                    ClipGridViewHolder holder = (ClipGridViewHolder) v.getTag();
+                    ClipGridViewHolder holder = ClipGridViewHolder.this;
                     ClipGridItem clipGridItem = mClipGridItemList.get(holder.getPosition());
                     if (holder.mBtnSelect == null) {
                         return true;

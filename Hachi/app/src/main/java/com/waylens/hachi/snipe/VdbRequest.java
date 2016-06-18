@@ -115,7 +115,7 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     }
 
 
-    final protected void deliverResponse(T response) {
+    protected void deliverResponse(T response) {
         if (mListener != null) {
             mListener.onResponse(response);
         }

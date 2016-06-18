@@ -259,6 +259,10 @@
             android:name="BUG_HD_SDK_GENERAL_KEY"
             android:value="111f96d8caee6c27d509925c4fb204ae"/>
 
+        <meta-data
+            android:name="com.waylens.hachi.snipe.glide.SnipeGlideModule"
+            android:value="GlideModule" />
+
         <service
             android:name=".ui.services.download.DownloadIntentService"
             android:exported="false">
