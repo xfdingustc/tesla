@@ -44,7 +44,6 @@ import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.cocosw.bottomsheet.BottomSheet;
 import com.orhanobut.logger.Logger;
 import com.rest.HachiApi;
 import com.rest.HachiService;
@@ -237,6 +236,11 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.comment_new)
     public void onCommentNewClicked() {
+        addComment();
+
+    }
+
+    private void addComment() {
         if (!mSessionManager.isLoggedIn()) {
             AuthorizeActivity.launch(this);
             return;
@@ -549,48 +553,50 @@ public class MomentActivity extends BaseActivity {
             public void onCommentClicked(Comment comment) {
                 mReplyTo = comment.author;
 //                mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+                addComment();
+                mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
             }
 
             @Override
             public void onCommentLongClicked(final Comment comment) {
-                BottomSheet builder = new BottomSheet.Builder(MomentActivity.this)
-                    .sheet(R.menu.menu_report_comment)
-                    .darkTheme()
-                    .listener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.report:
-
-                                    MaterialDialog dialog = new MaterialDialog.Builder(MomentActivity.this)
-                                        .title(R.string.report)
-                                        .items(R.array.report_reason)
-                                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                                            @Override
-                                            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                                mReportReason = getResources().getStringArray(R.array.report_reason)[which];
-                                                return true;
-                                            }
-                                        })
-                                        .positiveText(R.string.report)
-                                        .negativeText(android.R.string.cancel)
-                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                doReportComment(comment);
-                                            }
-                                        })
-                                        .show();
-
-
-                                    break;
-                            }
-                            return true;
-                        }
-                    })
-                    .build();
-
-                builder.show();
+//                BottomSheet builder = new BottomSheet.Builder(MomentActivity.this)
+//                    .sheet(R.menu.menu_report_comment)
+//                    .darkTheme()
+//                    .listener(new MenuItem.OnMenuItemClickListener() {
+//                        @Override
+//                        public boolean onMenuItemClick(MenuItem item) {
+//                            switch (item.getItemId()) {
+//                                case R.id.report:
+//
+//                                    MaterialDialog dialog = new MaterialDialog.Builder(MomentActivity.this)
+//                                        .title(R.string.report)
+//                                        .items(R.array.report_reason)
+//                                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+//                                            @Override
+//                                            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+//                                                mReportReason = getResources().getStringArray(R.array.report_reason)[which];
+//                                                return true;
+//                                            }
+//                                        })
+//                                        .positiveText(R.string.report)
+//                                        .negativeText(android.R.string.cancel)
+//                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                                            @Override
+//                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                                doReportComment(comment);
+//                                            }
+//                                        })
+//                                        .show();
+//
+//
+//                                    break;
+//                            }
+//                            return true;
+//                        }
+//                    })
+//                    .build();
+//
+//                builder.show();
 
             }
         });
