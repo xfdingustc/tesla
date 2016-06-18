@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
@@ -357,6 +358,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             Glide.with(this)
                 .using(new SnipeGlideLoader(mVdbRequestQueue))
                 .load(clipPos)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate()
                 .into(mClipCover);
         } else {
@@ -465,6 +467,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             Glide.with(this)
                 .using(new SnipeGlideLoader(mVdbRequestQueue))
                 .load(clipPos)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate()
                 .placeholder(mClipCover.getDrawable())
                 .into(mClipCover);

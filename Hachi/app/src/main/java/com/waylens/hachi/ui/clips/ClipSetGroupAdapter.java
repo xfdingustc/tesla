@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -167,6 +168,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Glide.with(mContext)
             .using(new SnipeGlideLoader(mVdbRequestQueue))
             .load(clipPos)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.defaultpic)
             .crossFade()
             .into(viewHolder.ivClipCover);

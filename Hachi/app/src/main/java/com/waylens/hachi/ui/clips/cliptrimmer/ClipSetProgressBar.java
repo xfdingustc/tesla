@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
@@ -404,6 +405,7 @@ public class ClipSetProgressBar extends FrameLayout {
                 Glide.with(getContext())
                     .using(new SnipeGlideLoader(mVdbRequestQueue))
                     .load(clipPos)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.defaultpic)
                     .crossFade()
                     .into(viewHolder.clipFragmentThumbnail);
