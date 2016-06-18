@@ -373,7 +373,7 @@ public class ClipSetProgressBar extends FrameLayout {
                 BookmarkView bookmarkView = new BookmarkView(context);
 
 
-                bookmarkView.setId(R.id.bookmark_message_view);
+                bookmarkView.setId(android.R.id.custom);
                 bookmarkView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 //                bookmarkView.setVisibility(GONE);
                 frameLayout.addView(bookmarkView);
@@ -505,7 +505,7 @@ public class ClipSetProgressBar extends FrameLayout {
 
             FrameLayout container = (FrameLayout) itemView;
             clipFragmentThumbnail = (ImageView) container.findViewById(R.id.clip_thumbnail);
-            bookmarkView = (BookmarkView) container.findViewById(R.id.bookmark_message_view);
+            bookmarkView = (BookmarkView) container.findViewById(android.R.id.custom);
 
         }
 
