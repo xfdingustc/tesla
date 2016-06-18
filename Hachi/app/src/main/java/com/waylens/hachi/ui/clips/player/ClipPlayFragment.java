@@ -21,11 +21,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -189,7 +191,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
             mBtnFullscreen.setImageResource(R.drawable.screen_full);
         }
-        ((BaseActivity)getActivity()).setImmersiveMode(mIsFullScreen);
+        ((BaseActivity) getActivity()).setImmersiveMode(mIsFullScreen);
 
     }
 
@@ -351,7 +353,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
         if (mCoverMode == CoverMode.NORMAL) {
-            mVdbImageLoader.displayVdbImage(clipPos, mClipCover);
+
+            Glide.with(this)
+                .using(new SnipeGlideLoader(mVdbRequestQueue))
+                .load(clipPos)
+                .dontAnimate()
+                .into(mClipCover);
         } else {
             mVsCover.showNext();
             setupCoverBanner();
@@ -394,8 +401,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             }
         });
     }
-
-
 
 
     private ClipSet getClipSet() {
@@ -456,7 +461,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             }
 
 //            Logger.t(TAG).d("show cilpPos " + mClipCover.getVisibility());
-            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+//            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+            Glide.with(this)
+                .using(new SnipeGlideLoader(mVdbRequestQueue))
+                .load(clipPos)
+                .dontAnimate()
+                .placeholder(mClipCover.getDrawable())
+                .into(mClipCover);
+
             mPreviousShownClipPos = clipPos;
             mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
         }
