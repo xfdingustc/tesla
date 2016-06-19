@@ -27,7 +27,10 @@ public class SnipeGlideLoader implements StreamModelLoader<ClipPos> {
             if (internalQueue == null) {
                 synchronized (Factory.class) {
                     if (internalQueue == null) {
-                        internalQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
+                        VdtCameraManager manager = VdtCameraManager.getManager();
+                        if (manager.isConnected()) {
+                            internalQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
+                        }
                     }
                 }
             }

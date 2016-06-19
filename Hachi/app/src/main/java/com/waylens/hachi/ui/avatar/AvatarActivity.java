@@ -57,7 +57,7 @@ public class AvatarActivity extends BaseActivity {
 
     private String mCroppedImagePath = null;
 
-    private String albumName;
+
     private String mReturnImagePath = null;
 
     @BindView(R.id.civ_cropper_preview)
