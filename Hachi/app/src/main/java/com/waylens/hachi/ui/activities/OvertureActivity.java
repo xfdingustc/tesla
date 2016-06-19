@@ -38,6 +38,7 @@ public class OvertureActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_overture);
+        hideStatusBar();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -46,6 +47,8 @@ public class OvertureActivity extends BaseActivity {
             }
         }, 2000);
     }
+
+
 
     private boolean isUpdated() {
         int oldVersionCode = PreferenceUtils.getInt(PreferenceUtils.VERSION_CODE, 0);

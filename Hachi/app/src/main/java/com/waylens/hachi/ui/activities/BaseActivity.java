@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -91,7 +90,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         thisApp = (Hachi) getApplication();
     }
-
 
 
     @Override
@@ -224,6 +222,10 @@ public class BaseActivity extends AppCompatActivity {
                 0);
             mIsImmersive = false;
         }
+    }
+
+    public void hideStatusBar() {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
 

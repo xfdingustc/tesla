@@ -54,6 +54,7 @@ public class FirstInstallActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_first_install);
+        hideStatusBar();
         setupViewPager();
     }
 
