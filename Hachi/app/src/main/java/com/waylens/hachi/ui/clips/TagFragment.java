@@ -79,6 +79,9 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     private EventBus mEventBus = EventBus.getDefault();
 
 
+    @BindView(R.id.rootViewSwitcher)
+    ViewSwitcher mRootViewSwitcher;
+
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
@@ -354,6 +357,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
+                    showClipSetLayout(true);
                     mRefreshLayout.setRefreshing(false);
                     if (clipSet.getCount() == 0) {
                         mVsNoBookmark.setVisibility(View.VISIBLE);
@@ -368,6 +372,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                     }
 
                 }
+
+
             },
             new VdbResponse.ErrorListener() {
                 @Override
@@ -376,6 +382,17 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
                 }
             }));
+
+    }
+
+    private void showClipSetLayout(boolean showClipSet) {
+        int displayChild = mRootViewSwitcher.getDisplayedChild();
+        if (showClipSet == true && displayChild == 0) {
+            mRootViewSwitcher.showNext();
+        } else if (showClipSet == false && displayChild == 1) {
+            mRootViewSwitcher.showPrevious();
+        }
+
 
     }
 
