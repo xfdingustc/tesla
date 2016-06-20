@@ -30,8 +30,8 @@
     </string-array>
 
     <string-array name="videoOptions" translatable="false">
-        <item>Tag</item>
-        <item>Buffer</item>
+        <item>@string/highlights</item>
+        <item>@string/lable_buffered_video</item>
     </string-array>
 
     <string-array name="quality" translatable="false">

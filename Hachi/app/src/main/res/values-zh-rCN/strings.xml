@@ -251,4 +251,5 @@
 	<string name="complete_my_profile">Complete My Profile</string>
 	<string name="preview">预览</string>
 	<string name="description">描述</string>
+	<string name="highlights">标签</string>
 </resources>
