@@ -200,7 +200,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    private VdtCameraClient mClient;
+    private VdtCameraCommunicationBus mCommunicationBus;
 
 
     public static class ServiceInfo {
@@ -262,7 +262,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mServiceInfo = serviceInfo;
 
         mAddress = new InetSocketAddress(serviceInfo.inetAddr, serviceInfo.port);
-        mClient = new VdtCameraClient(mAddress, new VdtCameraClient.ConnectionChangeListener() {
+        mCommunicationBus = new VdtCameraCommunicationBus(mAddress, new VdtCameraCommunicationBus.ConnectionChangeListener() {
             @Override
             public void onConnected() {
                 initCameraState();
@@ -273,14 +273,14 @@ public class VdtCamera implements VdtCameraCmdConsts {
             public void onDisconnected() {
                 onCameraDisconnected();
             }
-        }, new VdtCameraClient.CameraMessageHandler() {
+        }, new VdtCameraCommunicationBus.CameraMessageHandler() {
             @Override
             public void handleMessage(int code, String p1, String p2) {
                 handleCameraMessage(code, p1, p2);
             }
         });
 
-        mClient.start();
+        mCommunicationBus.start();
 
     }
 
@@ -344,7 +344,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public int getBatteryVolume() {
-        mClient.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
+        mCommunicationBus.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
         return mBatteryVol;
     }
 
@@ -373,12 +373,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public BtDevice getObdDevice() {
-        mClient.sendCommand(CMD_CAM_BT_IS_ENABLED);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
         return mObdDevice;
     }
 
     public BtDevice getRemoteCtrlDevice() {
-        mClient.sendCommand(CMD_CAM_BT_IS_ENABLED);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
         return mRemoteCtrlDevice;
     }
 
@@ -395,30 +395,30 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
 
 
-        mClient.sendCommand(CMD_AUDIO_SET_MIC, micState, gain);
+        mCommunicationBus.sendCommand(CMD_AUDIO_SET_MIC, micState, gain);
     }
 
     public void setWifiMode(int wifiMode) {
-        mClient.sendCommand(CMD_NETWORK_CONNECT_HOST, wifiMode);
+        mCommunicationBus.sendCommand(CMD_NETWORK_CONNECT_HOST, wifiMode);
     }
 
     public int getWifiMode() {
-        mClient.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
         return mWifiMode;
     }
 
     public String getBspFirmware() {
-        mClient.sendCommand(CMD_FW_GET_VERSION);
+        mCommunicationBus.sendCommand(CMD_FW_GET_VERSION);
         return mBspVersion;
     }
 
     public void sendNewFirmware(String md5, OnNewFwVersionListern listener) {
         mOnNewFwVersionListerner = listener;
-        mClient.sendCommand(CMD_FW_NEW_VERSION, md5);
+        mCommunicationBus.sendCommand(CMD_FW_NEW_VERSION, md5);
     }
 
     public void upgradeFirmware() {
-        mClient.sendCommand(CMD_FW_DO_UPGRADE);
+        mCommunicationBus.sendCommand(CMD_FW_DO_UPGRADE);
     }
 
     public VdbRequestQueue getRequestQueue() {
@@ -457,7 +457,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public int getVideoResolution() {
-        mClient.sendCommand(CMD_REC_GET_RESOLUTION);
+        mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
         Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
@@ -469,7 +469,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public int getVideoFramerate() {
-        mClient.sendCommand(CMD_REC_GET_RESOLUTION);
+        mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
         Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
@@ -598,42 +598,42 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void initCameraState() {
-        mClient.sendCommand(CMD_CAM_GET_API_VERSION);
-        mClient.sendCommand(CMD_FW_GET_VERSION);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_API_VERSION);
+        mCommunicationBus.sendCommand(CMD_FW_GET_VERSION);
 
-        mClient.sendCommand(CMD_CAM_GET_NAME);
-        mClient.sendCommand(CMD_REC_GET_REC_MODE);
-        mClient.sendCommand(CMD_REC_LIST_RESOLUTIONS);
-        mClient.sendCommand(CMD_CAM_GET_GET_ALL_INFOR);
-        mClient.sendCommand(CMD_CAM_GET_STATE);
-        mClient.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
-        mClient.sendCommand(CMD_NETWORK_GET_HOST_NUM);
-        mClient.sendCommand(CMD_REC_GET_MARK_TIME);
-        mClient.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_NAME);
+        mCommunicationBus.sendCommand(CMD_REC_GET_REC_MODE);
+        mCommunicationBus.sendCommand(CMD_REC_LIST_RESOLUTIONS);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_GET_ALL_INFOR);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_STATE);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_WLAN_MODE);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_REC_GET_MARK_TIME);
+        mCommunicationBus.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
 
-        mClient.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
+        mCommunicationBus.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
             ((Integer) (timeZone / (3600 * 1000))).toString());
 
-        mClient.sendCommand(CMD_CAM_BT_IS_ENABLED);
-        mClient.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
-        mClient.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
 
     }
 
 
     public void setBtEnable(boolean enable) {
-        mClient.sendCommand(CMD_CAM_BT_ENABLE, enable ? 1 : 0);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_ENABLE, enable ? 1 : 0);
     }
 
     public void scanBluetoothDevices() {
-        mClient.sendCommand(CMD_CAM_BT_DO_SCAN);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_DO_SCAN);
     }
 
     public void getBtHostNumber() {
-        mClient.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
     }
 
     public void onPreviewSocketDisconnect() {
@@ -642,22 +642,22 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public void doBtUnbind(int type, String mac) {
         Logger.t(TAG).d("cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
-        mClient.sendCommand(CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
 
     }
 
     public void doBind(int type, String mac) {
         Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
-        mClient.sendCommand(CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
+        mCommunicationBus.sendCommand(CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
     }
 
 
     public void setName(String name) {
-        mClient.sendCommand(CMD_CAM_SET_NAME, name);
+        mCommunicationBus.sendCommand(CMD_CAM_SET_NAME, name);
     }
 
     public String getName() {
-        mClient.sendCommand(CMD_CAM_GET_NAME);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_NAME);
         return mCameraName;
     }
 
@@ -688,70 +688,70 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void setVideoResolution(int resolutionIndex) {
-        mClient.sendCommand(CMD_REC_SET_RESOLUTION, resolutionIndex);
+        mCommunicationBus.sendCommand(CMD_REC_SET_RESOLUTION, resolutionIndex);
     }
 
 
     public void setVideoQuality(int qualityIndex) {
-        mClient.sendCommand(CMD_REC_SET_QUALITY, qualityIndex);
+        mCommunicationBus.sendCommand(CMD_REC_SET_QUALITY, qualityIndex);
     }
 
     public void getRecordQuality() {
-        mClient.sendCommand(CMD_REC_GET_QUALITY);
+        mCommunicationBus.sendCommand(CMD_REC_GET_QUALITY);
 
     }
 
     public void setRecordColorMode(int index) {
-        mClient.sendCommand(CMD_REC_SET_COLOR_MODE, index);
+        mCommunicationBus.sendCommand(CMD_REC_SET_COLOR_MODE, index);
     }
 
     public void getRecordColorMode() {
-        mClient.sendCommand(CMD_REC_GET_COLOR_MODE);
+        mCommunicationBus.sendCommand(CMD_REC_GET_COLOR_MODE);
     }
 
     public void setRecordRecMode(int flags) {
-        mClient.sendCommand(CMD_REC_SET_REC_MODE, flags);
+        mCommunicationBus.sendCommand(CMD_REC_SET_REC_MODE, flags);
     }
 
     public void getRecordRecMode() {
-        mClient.sendCommand(CMD_REC_GET_REC_MODE);
+        mCommunicationBus.sendCommand(CMD_REC_GET_REC_MODE);
     }
 
     public void setAudioMic(boolean isOn, int vol) {
         int state = isOn ? STATE_MIC_ON : STATE_MIC_OFF;
-        mClient.sendCommand(CMD_AUDIO_SET_MIC, state, vol);
+        mCommunicationBus.sendCommand(CMD_AUDIO_SET_MIC, state, vol);
     }
 
     public void getAudioMicState() {
-        mClient.sendCommand(CMD_AUDIO_GET_MIC_STATE);
+        mCommunicationBus.sendCommand(CMD_AUDIO_GET_MIC_STATE);
     }
 
 
     public void scanHost(OnScanHostListener listener) {
         mOnScanHostListener = new WeakReference<OnScanHostListener>(listener);
-        mClient.sendCommand(CMD_NETWORK_SCANHOST);
+        mCommunicationBus.sendCommand(CMD_NETWORK_SCANHOST);
     }
 
     public void getSetup() {
-        mClient.sendCommand(USER_CMD_GET_SETUP);
+        mCommunicationBus.sendCommand(USER_CMD_GET_SETUP);
     }
 
 
     public void startPreview() {
-        mClient.sendCommand(CMD_CAM_WANT_PREVIEW);
+        mCommunicationBus.sendCommand(CMD_CAM_WANT_PREVIEW);
     }
 
     public int getRecordTime() {
-        mClient.sendCommand(CMD_CAM_GET_TIME);
+        mCommunicationBus.sendCommand(CMD_CAM_GET_TIME);
         return mRecordTime;
     }
 
     public void getRecordResolutionList() {
-        mClient.sendCommand(CMD_REC_LIST_RESOLUTIONS);
+        mCommunicationBus.sendCommand(CMD_REC_LIST_RESOLUTIONS);
     }
 
     public void markLiveVideo() {
-        mClient.sendCommand(CMD_REC_MARK_LIVE_VIDEO);
+        mCommunicationBus.sendCommand(CMD_REC_MARK_LIVE_VIDEO);
     }
 
     public int getMarkBeforeTime() {
@@ -766,30 +766,30 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (before < 0 || after < 0) {
             return;
         }
-        mClient.sendCommand(CMD_REC_SET_MARK_TIME, before, before);
+        mCommunicationBus.sendCommand(CMD_REC_SET_MARK_TIME, before, before);
     }
 
     public void stopRecording() {
-        mClient.sendCommand(CMD_CAM_STOP_REC);
+        mCommunicationBus.sendCommand(CMD_CAM_STOP_REC);
     }
 
     public void startRecording() {
-        mClient.sendCommand(CMD_CAM_START_REC);
+        mCommunicationBus.sendCommand(CMD_CAM_START_REC);
     }
 
 
     public void getNetworkHostHum() {
-        mClient.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
     }
 
     public void setNetworkRmvHost(String ssid) {
-        mClient.sendCommand(CMD_NETWORK_RMV_HOST, ssid, "");
-        mClient.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_NETWORK_RMV_HOST, ssid, "");
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
     }
 
     public void addNetworkHost(String ssid, String password) {
-        mClient.sendCommand(CMD_NETWORK_ADD_HOST, ssid, password);
-        mClient.sendCommand(CMD_NETWORK_GET_HOST_NUM);
+        mCommunicationBus.sendCommand(CMD_NETWORK_ADD_HOST, ssid, password);
+        mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
     }
 
 
@@ -797,7 +797,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (ssid == null) {
             ssid = "";
         }
-        mClient.sendCommand(CMD_NETWORK_CONNECTHOTSPOT, ssid);
+        mCommunicationBus.sendCommand(CMD_NETWORK_CONNECTHOTSPOT, ssid);
 
     }
 
@@ -941,7 +941,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         int num = Integer.parseInt(p1);
         mNumWifiAP = num;
         for (int i = 0; i < num; i++) {
-            mClient.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, i);
+            mCommunicationBus.sendCommand(CMD_DOMAIN_CAM, CMD_NETWORK_GET_HOST_INFOR, i);
         }
     }
 
@@ -969,8 +969,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
         int enabled = 0;//Integer.parseInt(p1);
         mBtState = enabled;
         if (enabled == BT_STATE_ENABLED) {
-            mClient.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
-            mClient.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
         }
     }
 
@@ -1013,7 +1013,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         Logger.t(TAG).d("find devices: " + mScannedBtDeviceNumber);
         mScannedBtDeviceList.clear();
         for (int i = 0; i < numDevs; i++) {
-            mClient.sendCommand(CMD_CAM_BT_GET_HOST_INFOR, i);
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_INFOR, i);
         }
     }
 
@@ -1044,7 +1044,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         int ret = Integer.parseInt(p1);
         Logger.t(TAG).d("ret: " + ret);
         if (ret == 0) {
-            mClient.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
         }
     }
 
@@ -1054,7 +1054,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         int result = Integer.parseInt(p2);
         if (result == 0) {
             if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
-                mClient.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
+                mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
             }
         }
         mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_BIND_FINISHED));
@@ -1064,7 +1064,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void ack_CAM_BT_doUnBind(String p1, String p2) {
         int type = Integer.parseInt(p1);
         if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
-            mClient.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
+            mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
         }
 
         mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_UNBIND_FINISHED));
