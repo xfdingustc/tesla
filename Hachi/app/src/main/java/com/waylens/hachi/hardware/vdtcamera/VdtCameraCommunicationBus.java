@@ -104,7 +104,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                 mSocket.setReceiveBufferSize(8192);
                 mSocket.connect(mAddress);
                 mSocket.setKeepAlive(true);
-                mSocket.setSoTimeout(3000);
+                mSocket.setSoTimeout(0);
 
 
                 mConnectionListener.onConnected();
@@ -148,6 +148,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
 
                     sis.clear();
 
+                    mSocket.setSoTimeout(3000);
                     SocketUtils.readFully(mSocket, sis.getBuffer(), 0, HEAD_SIZE);
                     length = sis.readi32(0);
                     appended = sis.readi32(4);
