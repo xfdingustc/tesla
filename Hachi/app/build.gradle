@@ -17,8 +17,8 @@ android {
         applicationId "com.waylens.hachi"
         minSdkVersion 18
         targetSdkVersion 22
-        versionCode 70
-        versionName "0.2.160619.1"
+        versionCode 71
+        versionName "0.2.160621.1"
 //        renderscriptTargetApi 22
 //        renderscriptSupportModeEnabled true
 //        multiDexEnabled true
