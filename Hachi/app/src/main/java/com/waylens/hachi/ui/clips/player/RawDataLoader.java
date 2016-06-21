@@ -122,6 +122,10 @@ public class RawDataLoader {
     }
 
     public List<RawDataItem> getRawDataItemList(ClipSetPos clipSetPos) {
+
+        if (clipSetPos == null) {
+            return null;
+        }
         int clipIndex = clipSetPos.getClipIndex();
         RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(clipIndex);
 

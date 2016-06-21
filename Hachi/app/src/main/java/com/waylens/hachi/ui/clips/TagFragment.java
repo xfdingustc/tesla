@@ -291,6 +291,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
 //            EnhanceActivity2.launch(getActivity(), selectedList);
 
+            Logger.t(TAG).d("selected list size: " + selectedList.size());
+
             final int playlistId = 0x100;
             PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
             playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
