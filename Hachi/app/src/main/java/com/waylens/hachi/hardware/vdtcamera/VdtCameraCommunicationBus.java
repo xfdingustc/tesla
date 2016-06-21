@@ -6,6 +6,7 @@ import com.orhanobut.logger.Logger;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
@@ -89,6 +90,11 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
             Logger.t(TAG).d("connectError");
             mConnectError = true;
             mConnectionListener.onDisconnected();
+            try {
+                mSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -104,8 +110,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                 mSocket.setReceiveBufferSize(8192);
                 mSocket.connect(mAddress);
                 mSocket.setKeepAlive(true);
-                mSocket.setSoTimeout(0);
-
+                mSocket.setSoTimeout(3000);
 
                 mConnectionListener.onConnected();
                 mMessageThread.start();
@@ -148,7 +153,8 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
 
                     sis.clear();
 
-                    mSocket.setSoTimeout(3000);
+
+
                     SocketUtils.readFully(mSocket, sis.getBuffer(), 0, HEAD_SIZE);
                     length = sis.readi32(0);
                     appended = sis.readi32(4);
@@ -156,6 +162,9 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                         sis.expand(HEAD_SIZE + appended);
                         SocketUtils.readFully(mSocket, sis.getBuffer(), HEAD_SIZE, appended);
                     }
+
+
+
                     sis.setRange(8, length);
 
                     xpp.setInput(sis, "UTF-8");
