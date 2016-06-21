@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.StackView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -45,6 +47,7 @@ import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
@@ -64,6 +67,10 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
+    private static final int ROOT_CHILD_CAMERA_DISCONNECT = 0;
+    private static final int ROOT_CHILD_LOADING_PROGRESS = 1;
+    private static final int ROOT_CHILD_CLIPSET = 2;
+
     private ClipSetGroupAdapter mAdapter;
 
     private int mClipSetType;
@@ -79,8 +86,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     private EventBus mEventBus = EventBus.getDefault();
 
 
-    @BindView(R.id.rootViewSwitcher)
-    ViewSwitcher mRootViewSwitcher;
+    @BindView(R.id.rootViewAnimator)
+    ViewAnimator mRootViewAnimator;
 
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
@@ -150,15 +157,27 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventCameraConnection(CameraConnectionEvent event) {
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
+//                if (getChildFragmentManager().getBackStackEntryCount() > 0) {
+//                    getChildFragmentManager().popBackStackImmediate();
+//                }
+                initCamera();
+                initViews();
+                break;
+            case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
+                showRootViewChild(ROOT_CHILD_CAMERA_DISCONNECT);
+                break;
+
+            case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 initCamera();
                 initViews();
                 break;
         }
     }
+
 
 
     public static TagFragment newInstance(int clipSetType) {
@@ -232,6 +251,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
 
     private void initViews() {
+
         if (mClipSetType == Clip.TYPE_MARKED) {
             mVsNoBookmark.showNext();
         }
@@ -340,6 +360,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
 
     private void doGetClips() {
+        showRootViewChild(ROOT_CHILD_LOADING_PROGRESS);
         if (mVdbRequestQueue == null) {
             return;
         }
@@ -359,7 +380,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
-                    showClipSetLayout(true);
+                    Logger.t(TAG).d("clip set got");
+                    showRootViewChild(ROOT_CHILD_CLIPSET);
                     mRefreshLayout.setRefreshing(false);
                     if (clipSet.getCount() == 0) {
                         mVsNoBookmark.setVisibility(View.VISIBLE);
@@ -387,15 +409,14 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     }
 
-    private void showClipSetLayout(boolean showClipSet) {
-        int displayChild = mRootViewSwitcher.getDisplayedChild();
-        if (showClipSet == true && displayChild == 0) {
-            mRootViewSwitcher.showNext();
-        } else if (showClipSet == false && displayChild == 1) {
-            mRootViewSwitcher.showPrevious();
-        }
-
-
+    private void showRootViewChild(int child) {
+        int displayChild = mRootViewAnimator.getDisplayedChild();
+        mRootViewAnimator.setDisplayedChild(child);
+//        if (showClipSet == true && displayChild == 0) {
+//            mRootViewSwitcher.showNext();
+//        } else if (showClipSet == false && displayChild == 1) {
+//            mRootViewSwitcher.showPrevious();
+//        }
     }
 
     private void doGetBufferedClips() {

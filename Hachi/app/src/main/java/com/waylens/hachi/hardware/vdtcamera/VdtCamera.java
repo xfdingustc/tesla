@@ -890,7 +890,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void ack_Cam_msg_Battery_infor(String p1, String p2) {
-        Logger.t(TAG).d("ack_Cam_msg_Battery_infor: " + p1 + " p2: " + p2);
+//        Logger.t(TAG).d("ack_Cam_msg_Battery_infor: " + p1 + " p2: " + p2);
         int vol = Integer.parseInt(p2);
         mBatteryVol = vol;
     }

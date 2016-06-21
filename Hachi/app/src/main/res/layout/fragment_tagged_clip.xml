@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewSwitcher android:id="@+id/rootViewSwitcher"
+<ViewAnimator android:id="@+id/rootViewAnimator"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools">
+
+    <include layout="@layout/fragment_camera_disconnected"/>
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -97,4 +99,4 @@
         </android.support.v4.widget.SwipeRefreshLayout>
     </RelativeLayout>
 
-</ViewSwitcher>
+</ViewAnimator>

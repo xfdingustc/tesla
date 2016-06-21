@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/cannotFindcamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp"
+        android:text="@string/cannot_find_camera"
+        android:textColor="@color/text_camera_info"/>
+
+    <TextView
+        android:id="@+id/tvNoSignal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/cannotFindcamera"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/no_signal"
+        android:textColor="@color/text_camera_info"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvNoSignal"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/camera_lost_connection"/>
+
+    <TextView
+        android:id="@+id/tvInfo1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/cannotFindcamera"
+        android:layout_below="@+id/cannotFindcamera"
+        android:layout_marginTop="16dp"
+        android:text="@string/camera_power_is_on"
+        android:textColor="@color/text_camera_info"/>
+
+    <TextView
+        android:id="@+id/tvInfo2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/cannotFindcamera"
+        android:layout_below="@+id/tvInfo1"
+        android:layout_marginTop="16dp"
+        android:text="@string/mobile_wifi_is_on"
+        android:textColor="@color/text_camera_info"/>
+
+    <TextView
+        android:id="@+id/tvInfo3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/cannotFindcamera"
+        android:layout_below="@+id/tvInfo2"
+        android:layout_marginTop="16dp"
+        android:text="@string/distance_restrict"
+        android:textColor="@color/text_camera_info"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="48dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:background="@color/style_color_accent"
+
+        android:text="@string/try_again"/>
+</RelativeLayout>

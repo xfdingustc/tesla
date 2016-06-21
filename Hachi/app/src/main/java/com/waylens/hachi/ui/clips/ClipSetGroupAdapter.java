@@ -190,6 +190,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             for (ClipGridItem item : mClipGridItemList) {
                 item.isItemSelected = false;
             }
+            mSelectedClipList.clear();
         }
         notifyDataSetChanged();
     }
