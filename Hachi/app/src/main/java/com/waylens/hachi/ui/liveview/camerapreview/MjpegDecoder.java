@@ -9,7 +9,7 @@ abstract public class MjpegDecoder extends Thread {
     protected static final boolean DEBUG = false;
     protected static final String TAG = "MjpegDecoder";
 
-    protected final SimpleQueue<ByteArrayBuffer2> mInputQ;
+    protected final SimpleQueue<ByteArrayBuffer> mInputQ;
     protected final SimpleQueue<BitmapBuffer> mOutputQ;
     protected final BitmapBuffer.Manager mBitmapManager;
     protected final BitmapFactory.Options mOptions;
@@ -17,7 +17,7 @@ abstract public class MjpegDecoder extends Thread {
     // callback - bb may be null
     abstract public void onBitmapDecodedAsync(MjpegDecoder decoder, boolean isEvent);
 
-    public MjpegDecoder(SimpleQueue<ByteArrayBuffer2> inputQ, SimpleQueue<BitmapBuffer> outputQ) {
+    public MjpegDecoder(SimpleQueue<ByteArrayBuffer> inputQ, SimpleQueue<BitmapBuffer> outputQ) {
         super("JpegDecoder");
 
         mInputQ = inputQ;
@@ -42,7 +42,7 @@ abstract public class MjpegDecoder extends Thread {
     public void run() {
         try {
             while (!isInterrupted()) {
-                ByteArrayBuffer2 buffer = mInputQ.waitForObjectAndEvent();
+                ByteArrayBuffer buffer = mInputQ.waitForObjectAndEvent();
                 if (buffer == null) {
                     // this is an event
                     onBitmapDecodedAsync(this, true);
@@ -62,7 +62,7 @@ abstract public class MjpegDecoder extends Thread {
         mBitmapManager.clear();
     }
 
-    private void decodeOneFrame(ByteArrayBuffer2 buffer) throws InterruptedException {
+    private void decodeOneFrame(ByteArrayBuffer buffer) throws InterruptedException {
 
         byte[] data = buffer.getBuffer();
         BitmapBuffer bb = mBitmapManager.allocateBitmap();

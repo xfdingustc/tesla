@@ -542,7 +542,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private void updateCameraState() {
-//        updateCameraInfoPanel();
+        updateCameraInfoPanel();
         updateCameraStatusInfo();
         updateFloatActionButton();
         toggleRecordDot();

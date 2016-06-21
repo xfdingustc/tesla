@@ -1,11 +1,11 @@
 package com.waylens.hachi.ui.liveview.camerapreview;
 
-public class ByteArrayBuffer2 implements IRecyclable {
+public class ByteArrayBuffer implements IRecyclable {
 
 	protected Manager mManager;
 	protected byte[] mBuffer;
 
-	protected ByteArrayBuffer2(Manager manager, byte[] buffer) {
+	protected ByteArrayBuffer(Manager manager, byte[] buffer) {
 		mManager = manager;
 		mBuffer = buffer;
 	}
@@ -25,23 +25,23 @@ public class ByteArrayBuffer2 implements IRecyclable {
 
 	static public class Manager {
 
-		private final ByteArrayBuffer2[] mArray;
+		private final ByteArrayBuffer[] mArray;
 		private final int mMax;
 
 		int mAllocated;
 		int mRecycled;
 
 		public Manager(int max) {
-			mArray = new ByteArrayBuffer2[max];
+			mArray = new ByteArrayBuffer[max];
 			mMax = max;
 		}
 
-		public ByteArrayBuffer2 allocateBuffer(int size) {
+		public ByteArrayBuffer allocateBuffer(int size) {
 			synchronized (this) {
 				mAllocated++;
 				int i, n = mMax;
 				for (i = 0; i < n; i++) {
-					ByteArrayBuffer2 buf = mArray[i];
+					ByteArrayBuffer buf = mArray[i];
 					if (buf != null && buf.getBuffer().length >= size) {
 						mArray[i] = null;
 						return buf;
@@ -49,10 +49,10 @@ public class ByteArrayBuffer2 implements IRecyclable {
 				}
 			}
 			byte[] buffer = new byte[size + 4 * 1024];
-			return new ByteArrayBuffer2(this, buffer);
+			return new ByteArrayBuffer(this, buffer);
 		}
 
-		protected void recycleObject(ByteArrayBuffer2 object) {
+		protected void recycleObject(ByteArrayBuffer object) {
 			synchronized (this) {
 				mRecycled++;
 				int i, n = mMax, index = 0, min_size = Integer.MAX_VALUE;

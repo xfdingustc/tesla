@@ -33,6 +33,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
+import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -156,12 +157,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 initCamera();
                 initViews();
                 break;
-            case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
-                if (event.getVdtCamera() == mVdtCamera) {
-                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.camera_disconnected)
-                        .show();
-                }
         }
     }
 
@@ -237,7 +232,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
 
     private void initViews() {
-        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent);
         if (mClipSetType == Clip.TYPE_MARKED) {
             mVsNoBookmark.showNext();
         }
@@ -341,7 +335,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         mAdapter.setMultiSelectedMode(mIsMultipleMode);
 
         mRvClipGroupList.setAdapter(mAdapter);
-
 
     }
 

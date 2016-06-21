@@ -966,7 +966,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void ack_CAM_BT_isEnabled(String p1) {
-        int enabled = 0;//Integer.parseInt(p1);
+        int enabled = Integer.parseInt(p1);
         mBtState = enabled;
         if (enabled == BT_STATE_ENABLED) {
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);

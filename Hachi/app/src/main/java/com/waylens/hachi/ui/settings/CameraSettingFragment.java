@@ -25,7 +25,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
@@ -82,7 +87,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Switch mSpeakerSwitch;
     private SeekBar mAudioSeekbar;
 
-//    private PieChart mStorageChart;
+    private PieChart mStorageChart;
 
 
     private static final int MAX_BOOKMARK_LENGHT = 30;
@@ -398,39 +403,39 @@ public class CameraSettingFragment extends PreferenceFragment {
             .customView(R.layout.dialog_storage_info, true)
             .show();
 
-//        mStorageChart = (PieChart) dialog.getCustomView().findViewById(R.id.pieChart);
-//
-//
-//        List<String> storageName = Arrays.asList("Marked", "Used", "Free");
-//        List<Entry> spaces = new ArrayList<>();
-//        spaces.add(new Entry(response.marked / (1024 * 1024), 1));
-//        spaces.add(new Entry((response.used - response.marked) / (1024 * 1024), 2));
-//        spaces.add(new Entry((response.total - response.used) / (1024 * 1024), 3));
-//
-//        ArrayList<Integer> colors = new ArrayList<>();
-//        colors.add(getResources().getColor(R.color.style_color_accent));
-//        colors.add(getResources().getColor(R.color.material_deep_orange_300));
-//        colors.add(Color.BLACK);
-//
-//        PieDataSet dataSet = new PieDataSet(spaces, "Storage Info");
-//        dataSet.setSliceSpace(3f);
-//        dataSet.setSelectionShift(5f);
-//        dataSet.setColors(colors);
-//
-//        PieData data = new PieData(storageName, dataSet);
-//        data.setValueFormatter(new ValueFormatter() {
-//            @Override
-//            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-//                return String.valueOf(value) + " M";
-//            }
-//        });
-//        data.setValueTextSize(11f);
-//        data.setValueTextColor(Color.WHITE);
-//
-//        mStorageChart.setData(data);
-//        mStorageChart.setCenterText("Storage Info");
-//        mStorageChart.highlightValue(null);
-//        mStorageChart.invalidate();
+        mStorageChart = (PieChart) dialog.getCustomView().findViewById(R.id.pieChart);
+
+
+        List<String> storageName = Arrays.asList("Marked", "Used", "Free");
+        List<Entry> spaces = new ArrayList<>();
+        spaces.add(new Entry(response.marked / (1024 * 1024), 1));
+        spaces.add(new Entry((response.used - response.marked) / (1024 * 1024), 2));
+        spaces.add(new Entry((response.total - response.used) / (1024 * 1024), 3));
+
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(getResources().getColor(R.color.style_color_accent));
+        colors.add(getResources().getColor(R.color.material_deep_orange_300));
+        colors.add(Color.BLACK);
+
+        PieDataSet dataSet = new PieDataSet(spaces, "Storage Info");
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(5f);
+        dataSet.setColors(colors);
+
+        PieData data = new PieData(storageName, dataSet);
+        data.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return String.valueOf(value) + " M";
+            }
+        });
+        data.setValueTextSize(11f);
+        data.setValueTextColor(Color.WHITE);
+
+        mStorageChart.setData(data);
+        mStorageChart.setCenterText("Storage Info");
+        mStorageChart.highlightValue(null);
+        mStorageChart.invalidate();
     }
 
     private void initAudioPreference() {

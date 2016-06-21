@@ -252,5 +252,4 @@
 	<string name="preview">Preview</string>
 	<string name="description">Description</string>
 	<string name="highlights">Highlights</string>
-	<string name="camera_disconnected">Camera disconnected</string>
 </resources>

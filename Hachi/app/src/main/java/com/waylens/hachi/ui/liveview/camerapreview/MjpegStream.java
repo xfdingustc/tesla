@@ -18,11 +18,11 @@ abstract public class MjpegStream {
     private MjpegReceiver mReceiver;
     private MjpegDecoder mDecoder;
 
-    private final SimpleQueue<ByteArrayBuffer2> mFrameQ;
+    private final SimpleQueue<ByteArrayBuffer> mFrameQ;
     private final SimpleQueue<BitmapBuffer> mBitmapQ;
 
     public MjpegStream() {
-        mFrameQ = new SimpleQueue<ByteArrayBuffer2>();
+        mFrameQ = new SimpleQueue<ByteArrayBuffer>();
         mBitmapQ = new SimpleQueue<BitmapBuffer>();
     }
 
