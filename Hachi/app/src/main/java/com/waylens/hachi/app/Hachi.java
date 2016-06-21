@@ -99,8 +99,8 @@ public class Hachi extends Application {
 
         EventBus.getDefault().register(this);
 
-        VdtCameraFounder founder = new VdtCameraFounder();
-        founder.start();
+//        VdtCameraFounder founder = new VdtCameraFounder();
+//        founder.start();
 
         startDeviceScanner();
     }

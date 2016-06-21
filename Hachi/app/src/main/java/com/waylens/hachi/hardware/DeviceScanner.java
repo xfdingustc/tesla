@@ -99,7 +99,7 @@ public class DeviceScanner extends Thread {
 
             }
 
-//            threadLoop();
+            threadLoop();
 
             for (JmDNS dns : mDns) {
                 dns.close();

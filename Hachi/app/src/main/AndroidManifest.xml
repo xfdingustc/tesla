@@ -155,6 +155,7 @@
 
         <activity
             android:name=".ui.clips.share.ShareActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 
         <activity
