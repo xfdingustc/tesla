@@ -22,6 +22,11 @@ public class SimpleInputStream extends InputStream {
         }
     }
 
+    public SimpleInputStream(byte[] bytes) {
+        buf = bytes;
+        count = bytes.length;
+    }
+
     // API
     public void expand(int maxSize) {
         if (maxSize > buf.length) {
@@ -136,5 +141,10 @@ public class SimpleInputStream extends InputStream {
         int temp = pos;
         pos = this.count - pos < byteCount ? this.count : (int) (pos + byteCount);
         return pos - temp;
+    }
+
+    public void append(byte[] array, int length) {
+        System.arraycopy(array, 0, buf, pos, length);
+        count += length;
     }
 }

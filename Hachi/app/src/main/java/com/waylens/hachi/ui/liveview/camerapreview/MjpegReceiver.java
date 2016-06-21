@@ -19,16 +19,16 @@ abstract public class MjpegReceiver extends Thread {
 
     private boolean mbRunning;
     private final InetSocketAddress mServerAddress;
-    private final ByteArrayBuffer.Manager mBufferManager;
-    private final SimpleQueue<ByteArrayBuffer> mOutputQ;
+    private final ByteArrayBuffer2.Manager mBufferManager;
+    private final SimpleQueue<ByteArrayBuffer2> mOutputQ;
     private Socket mSocket;
     private MjpegBuffer mBuffer;
 
-    public MjpegReceiver(InetSocketAddress serverAddress, SimpleQueue<ByteArrayBuffer> outputQ) {
+    public MjpegReceiver(InetSocketAddress serverAddress, SimpleQueue<ByteArrayBuffer2> outputQ) {
         super("MjpegReceiver");
         mServerAddress = serverAddress;
         // 3 buffers: receiving; in queue; decoding
-        mBufferManager = new ByteArrayBuffer.Manager(3);
+        mBufferManager = new ByteArrayBuffer2.Manager(3);
         mOutputQ = outputQ;
     }
 
@@ -157,7 +157,7 @@ abstract public class MjpegReceiver extends Thread {
         mBuffer.skipHttpEnd();
 
         // read frame
-        ByteArrayBuffer buffer = mBufferManager.allocateBuffer(frameLen);
+        ByteArrayBuffer2 buffer = mBufferManager.allocateBuffer(frameLen);
         mBuffer.read(buffer.getBuffer(), 0, frameLen);
 
         // send to decoder

@@ -252,4 +252,5 @@
 	<string name="preview">预览</string>
 	<string name="description">描述</string>
 	<string name="highlights">标签</string>
+	<string name="camera_disconnected">相机已断开</string>
 </resources>

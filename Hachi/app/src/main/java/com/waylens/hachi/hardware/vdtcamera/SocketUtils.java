@@ -2,11 +2,14 @@ package com.waylens.hachi.hardware.vdtcamera;
 
 import android.util.Xml;
 
+import com.orhanobut.logger.Logger;
+
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.Locale;
 
 
@@ -26,6 +29,18 @@ public class SocketUtils {
         InputStream input = socket.getInputStream();
         while (size > 0) {
             int ret = input.read(buffer, pos, size);
+            if (ret < 0) {
+                throw new IOException();
+            }
+            pos += ret;
+            size -= ret;
+        }
+    }
+
+    public static void readFully(InputStream inputStream, byte[] buffer, int pos, int size) throws IOException {
+
+        while (size > 0) {
+            int ret = inputStream.read(buffer, pos, size);
             if (ret < 0) {
                 throw new IOException();
             }
@@ -68,6 +83,12 @@ public class SocketUtils {
             size = HEAD_SIZE;
         }
 
+        ByteBuffer buffer = ByteBuffer.allocate(size);
+        buffer.put(sos.getBuffer(), 0, size);
+
+//        buffer.limit(size);
+
+        Logger.t(TAG).d(" size: " + buffer.array().length + " " + new String(buffer.array()));
 
         socket.getOutputStream().write(sos.getBuffer(), 0, size);
     }
