@@ -2,19 +2,14 @@ package com.waylens.hachi.ui.community.feed;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,13 +22,11 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
-import com.waylens.hachi.ui.views.OnViewDragListener;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -45,7 +38,7 @@ import butterknife.BindView;
  * Created by Xiaofei on 2015/8/4.
  */
 public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
-    Refreshable, FragmentNavigator, OnViewDragListener {
+    Refreshable, FragmentNavigator {
     private static final String TAG = FeedFragment.class.getSimpleName();
     static final int DEFAULT_COUNT = 10;
 
@@ -106,7 +99,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
     }
-
 
 
     @Override
@@ -274,17 +266,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         return false;
     }
 
-    @Override
-    public void onStartDragging() {
-        mRvVideoList.setLayoutFrozen(true);
-        mRefreshLayout.setEnabled(false);
-    }
-
-    @Override
-    public void onStopDragging() {
-        mRvVideoList.setLayoutFrozen(false);
-        mRefreshLayout.setEnabled(true);
-    }
 
     public boolean isLoginRequired() {
         Bundle args = getArguments();
