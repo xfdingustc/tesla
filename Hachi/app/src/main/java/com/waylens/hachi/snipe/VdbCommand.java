@@ -4,7 +4,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.ClipSegment;
 
 /**
  * Created by Xiaofei on 2015/8/19.
@@ -195,6 +194,11 @@ public class VdbCommand {
         protected static final int VDB_CMD_ReadPicture = 40;
         protected static final int VDB_CMD_RemovePicture = 41;
 
+        protected static final int VDB_CMD_CreatePlaylist = 50;
+        protected static final int VDB_CMD_DeletePlaylist = 51;
+        protected static final int CMD_InsertClipEx = 52;	// supersedes VDB_CMD_InsertClip
+        protected static final int VDB_CMD_GetPlaylistPath = 53;
+
         private static final int URL_MUTE_AUDIO = (1 << 31);
 
         public static final int DOWNLOAD_FOR_FILE = 1;
@@ -378,7 +382,7 @@ public class VdbCommand {
                                                      long endTimeMs, int playListId,
                                                      int playlistPos) {
             VdbCommand command = new Builder()
-                .writeCmdCode(CMD_InsertClip, 0)
+                .writeCmdCode(CMD_InsertClipEx, 0)
                 .writeClipId(clipId)
                 .writeInt64(startTimeMs)
                 .writeInt64(endTimeMs)
