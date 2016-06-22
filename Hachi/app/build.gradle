@@ -140,7 +140,7 @@ dependencies {
     compile 'com.xfdingustc.mdplaypausebutton:button:0.1.2@aar'
     compile 'com.github.bumptech.glide:glide:3.7.0'
 //    compile 'com.github.bumptech.glide:volley-integration:1.4.0'
-    compile 'cn.aigestudio.downloader:Downloader:1.4.3'
+//    compile 'cn.aigestudio.downloader:Downloader:1.4.3'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
