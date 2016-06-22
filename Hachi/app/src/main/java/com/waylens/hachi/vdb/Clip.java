@@ -147,7 +147,10 @@ public class Clip implements Parcelable, Serializable {
             return (int) (selectedEndValue - selectedStartValue);
         }
 
-
+        @Override
+        public String toString() {
+            return ToStringUtils.getString(this);
+        }
     }
 
     public ID cid;

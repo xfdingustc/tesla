@@ -108,6 +108,10 @@ public class ClipsEditView extends LinearLayout {
     public void setPlayListEditor(PlayListEditor2 playlistEditor) {
         mPlayListEditor = playlistEditor;
         setClipIndex(mPlayListEditor.getPlaylistId());
+        List<Clip> clipList = getClipSet().getClipList();
+        for (Clip clip : clipList) {
+            Logger.t(TAG).d(clip.editInfo.toString());
+        }
     }
 
     private void init(Context context) {
@@ -181,6 +185,7 @@ public class ClipsEditView extends LinearLayout {
             if (mSelectedPosition == -1) {
                 return;
             }
+            Logger.t(TAG).d("on range change listener");
             Clip clip = getClipSet().getClip(mSelectedPosition);
             clip.editInfo.selectedStartValue = rangeBar.getLeftIndex() * 1000;
             clip.editInfo.selectedEndValue = rangeBar.getRightIndex() * 1000;
@@ -276,12 +281,17 @@ public class ClipsEditView extends LinearLayout {
 
 
         mRangeSeekBar.setOnRangeBarChangeListener(null);
-        Logger.t(TAG).d("tickStart: " + clip.editInfo.minExtensibleValue + " tickEnd: " + clip.editInfo.maxExtensibleValue);
-        mRangeSeekBar.setTickStart(0);
-        mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue / 1000);
-        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue / 1000);
+        Logger.t(TAG).d("tickStart: " + clip.getStartTimeMs() + " tickEnd: " + clip.getEndTimeMs());
+        Logger.t(TAG).d("startValue: " + clip.editInfo.selectedStartValue + " endValue: " + clip.editInfo.selectedEndValue);
+//        mRangeSeekBar.setTickStart(0);
+//        mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue / 1000);
+//        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue / 1000);
+        mRangeSeekBar.setTicks(clip.getStartTimeMs() / 1000,
+            clip.getEndTimeMs() / 1000,
+            (int) clip.editInfo.selectedStartValue / 1000,
+            (int) clip.editInfo.selectedEndValue / 1000);
 
-        mRangeSeekBar.setRangePinsByValue((int) clip.editInfo.selectedStartValue / 1000, (int) clip.editInfo.selectedEndValue / 1000);
+//        mRangeSeekBar.setRangePinsByValue((int) clip.editInfo.selectedStartValue / 1000, (int) clip.editInfo.selectedEndValue / 1000);
 
         updateClipDuration(clip);
         if (mOnClipEditListener != null) {

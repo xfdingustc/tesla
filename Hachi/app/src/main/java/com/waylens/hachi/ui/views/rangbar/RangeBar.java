@@ -641,6 +641,18 @@ public class RangeBar extends View {
         }
     }
 
+    public void setTicks(float tickStart, float tickEnd, int leftValue, int rightValue) {
+        mTickStart = tickStart;
+        mTickEnd = tickEnd;
+        mLeftIndex = leftValue;
+        mRightIndex = rightValue;
+        mTickCount = (int) ((mTickEnd - mTickStart) / mTickInterval) + 1;
+        createBar();
+        createPins();
+        invalidate();
+        requestLayout();
+    }
+
     /**
      * Sets the height of the ticks in the range bar.
      *

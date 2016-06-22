@@ -170,25 +170,23 @@ public class PlayListEditor2 {
     }
 
     private void adjustClipSet(ClipSet clipSet) {
-        ClipSet originClipSet = mClipSet;
 
+        for (int i = 0; i < mClipSet.getCount(); i++) {
+            Clip originClip = mClipSet.getClip(i);
+            Clip newClip = clipSet.getClip(i);
+            originClip.editInfo.selectedStartValue = newClip.getStartTimeMs();
+            originClip.editInfo.selectedEndValue = newClip.getEndTimeMs();
+            if (originClip.editInfo.selectedStartValue < originClip.editInfo.minExtensibleValue) {
+                originClip.editInfo.minExtensibleValue = originClip.editInfo.selectedStartValue;
+            }
 
-        for (Clip origClip : originClipSet.getClipList()) {
-            for (Clip newClip : clipSet.getClipList()) {
-                if (origClip.realCid.equals(newClip.realCid)) {
-                    origClip.editInfo.selectedStartValue = newClip.getStartTimeMs();
-                    origClip.editInfo.selectedEndValue = newClip.getEndTimeMs();
-                    if (origClip.editInfo.selectedStartValue < origClip.editInfo.minExtensibleValue) {
-                        origClip.editInfo.minExtensibleValue = origClip.editInfo.selectedStartValue;
-                    }
-
-                    if (origClip.editInfo.selectedEndValue > origClip.editInfo.maxExtensibleValue) {
-                        origClip.editInfo.maxExtensibleValue = origClip.editInfo.selectedEndValue;
-                    }
-                    break;
-                }
+            if (originClip.editInfo.selectedEndValue > originClip.editInfo.maxExtensibleValue) {
+                originClip.editInfo.maxExtensibleValue = originClip.editInfo.selectedEndValue;
             }
         }
+
+
+
 
         mEventBus.post(new ClipSetChangeEvent(mPlayListId, false));
     }
