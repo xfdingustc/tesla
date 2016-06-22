@@ -43,6 +43,7 @@ import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
+import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.SpaceInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
@@ -202,6 +203,12 @@ public class CameraPreviewFragment extends BaseFragment {
     @OnClick(R.id.btnStop)
     public void onBtnStopClick() {
         mVdtCamera.stopRecording();
+    }
+
+    @Nullable
+    @OnClick(R.id.add_new_camera)
+    public void onAddNewCameraClicked() {
+        ManualSetupActivity.launch(getActivity());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

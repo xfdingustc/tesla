@@ -50,12 +50,12 @@ public class VdtCameraManager {
     synchronized public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
 //        Logger.t(TAG).d("connect Camera");
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectedVdtCameras)) {
-//            Logger.t(TAG).d("already existed 1");
+            Logger.t(TAG).d("already existed in connected");
             return;
         }
 
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectingVdtCameras)) {
-//            Logger.t(TAG).d("already existed 2");
+            Logger.t(TAG).d("already existed in connecting");
             return;
         }
 

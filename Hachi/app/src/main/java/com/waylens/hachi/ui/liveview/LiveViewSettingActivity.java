@@ -128,6 +128,7 @@ public class LiveViewSettingActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_live_view_setting);
+        setupToolbar();
         LiveViewSettingFragment fragment = new LiveViewSettingFragment();
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }

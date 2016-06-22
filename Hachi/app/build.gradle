@@ -9,8 +9,8 @@ bugtags {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.0"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
 
 
     defaultConfig {
@@ -101,15 +101,15 @@ dependencies {
 //    compile(name: 'rangebar-release', ext: 'aar')
     compile project(':library')
     //    compile project(':mediatranscoder')
-    compile 'com.android.support:support-v13:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:support-v13:24.0.0'
+    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:recyclerview-v7:24.0.0'
 
     //    compile 'com.android.support:multidex:1.0.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.orhanobut:logger:1.11'
     compile 'com.mcxiaoke.volley:library:1.0.18'
-    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
+    compile 'com.afollestad.material-dialogs:core:0.8.6.0'
     compile 'com.facebook.android:facebook-android-sdk:4.11.0'
     compile 'com.xfdingustc.fixaspectratiolayout:layout:0.2@aar'
 //    compile 'com.soundcloud.android:android-crop:1.0.0@aar'

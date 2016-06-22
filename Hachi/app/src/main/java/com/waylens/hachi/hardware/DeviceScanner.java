@@ -50,16 +50,16 @@ public class DeviceScanner extends Thread {
         this.mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
-    // API
-    synchronized public void startWork() {
+
+    public synchronized void startWork() {
         if (!mbRunning) {
             mbRunning = true;
             start();
         }
     }
 
-    // API
-    synchronized public void stopWork() {
+
+    public synchronized void stopWork() {
         if (mbRunning) {
             mbRunning = false;
             interrupt();

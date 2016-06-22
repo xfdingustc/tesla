@@ -90,10 +90,15 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
             Logger.t(TAG).d("connectError");
             mConnectError = true;
             mConnectionListener.onDisconnected();
-            try {
-                mSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (mSocket.isConnected()) {
+                try {
+                    mSocket.shutdownInput();
+                    mSocket.shutdownOutput();
+                    mSocket.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -110,7 +115,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                 mSocket.setReceiveBufferSize(8192);
                 mSocket.connect(mAddress);
                 mSocket.setKeepAlive(true);
-                mSocket.setSoTimeout(3000);
+                mSocket.setSoTimeout(5000);
 
                 mConnectionListener.onConnected();
                 mMessageThread.start();
