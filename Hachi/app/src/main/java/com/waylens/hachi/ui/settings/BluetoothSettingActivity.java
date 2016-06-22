@@ -64,6 +64,9 @@ public class BluetoothSettingActivity extends BaseActivity {
     @BindView(R.id.remote_ctrl_device_list)
     RecyclerView mRvRemoteCtrlList;
 
+    @BindView(R.id.bt_content)
+    View mBtContent;
+
 
     @OnClick(R.id.obd_name)
     public void onObdNameClicked() {
@@ -89,7 +92,18 @@ public class BluetoothSettingActivity extends BaseActivity {
 
     @OnClick(R.id.bt_switch)
     public void onBtnSwitchClicked() {
-//        mBtSwitch.isChecked()
+//        Logger.t(TAG).d("bt switch is : " + mBtSwitch.isChecked());
+        mVdtCamera.setBtEnable(mBtSwitch.isChecked());
+        updateBtContent();
+
+    }
+
+    private void updateBtContent() {
+        if (mBtSwitch.isChecked()) {
+            mBtContent.setVisibility(View.VISIBLE);
+        } else {
+            mBtContent.setVisibility(View.GONE);
+        }
     }
 
 
@@ -166,6 +180,7 @@ public class BluetoothSettingActivity extends BaseActivity {
         setContentView(R.layout.activity_bt_setting);
         setupToolbar();
         mBtSwitch.setChecked(mVdtCamera.getBtState() == VdtCamera.BT_STATE_ENABLED ? true : false);
+        updateBtContent();
 
         refreshBtDevices();
 

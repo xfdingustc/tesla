@@ -33,6 +33,7 @@ public class ConnectivitySettingActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_connectivity_setting);
+        setupToolbar();
         ConnectivitySettingFragment fragment = new ConnectivitySettingFragment();
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
