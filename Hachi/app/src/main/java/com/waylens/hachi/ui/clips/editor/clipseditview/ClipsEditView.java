@@ -187,8 +187,8 @@ public class ClipsEditView extends LinearLayout {
             }
             Logger.t(TAG).d("on range change listener");
             Clip clip = getClipSet().getClip(mSelectedPosition);
-            clip.editInfo.selectedStartValue = rangeBar.getLeftIndex() * 1000;
-            clip.editInfo.selectedEndValue = rangeBar.getRightIndex() * 1000;
+            clip.editInfo.selectedStartValue = rangeBar.getLeftIndex();
+            clip.editInfo.selectedEndValue = rangeBar.getRightIndex();
             updateClipDuration(clip);
             mEventBus.post(new ClipSetChangeEvent(ClipSetManager.CLIP_SET_TYPE_ENHANCE, false));
         }
@@ -286,10 +286,10 @@ public class ClipsEditView extends LinearLayout {
 //        mRangeSeekBar.setTickStart(0);
 //        mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue / 1000);
 //        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue / 1000);
-        mRangeSeekBar.setTicks(clip.getStartTimeMs() / 1000,
-            clip.getEndTimeMs() / 1000,
-            (int) clip.editInfo.selectedStartValue / 1000,
-            (int) clip.editInfo.selectedEndValue / 1000);
+        mRangeSeekBar.setTicks(clip.getStartTimeMs() ,
+            clip.getEndTimeMs(),
+            (int) clip.editInfo.selectedStartValue,
+            (int) clip.editInfo.selectedEndValue);
 
 //        mRangeSeekBar.setRangePinsByValue((int) clip.editInfo.selectedStartValue / 1000, (int) clip.editInfo.selectedEndValue / 1000);
 

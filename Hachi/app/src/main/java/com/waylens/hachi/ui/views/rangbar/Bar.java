@@ -18,12 +18,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.TypedValue;
 
+import com.orhanobut.logger.Logger;
+
 /**
  * This class represents the underlying gray bar in the RangeBar (without the
  * thumbs).
  */
 public class Bar {
-
+    private static final String TAG = Bar.class.getSimpleName();
     // Member Variables ////////////////////////////////////////////////////////
 
     private final Paint mBarPaint;

@@ -39,6 +39,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 
 import java.util.HashMap;
@@ -57,10 +58,8 @@ import java.util.HashMap;
  * been moved.
  */
 public class RangeBar extends View {
+    private static final String TAG = RangeBar.class.getSimpleName();
 
-    // Member Variables ////////////////////////////////////////////////////////
-
-    private static final String TAG = "RangeBar";
 
     // Default values for variables
     private static final float DEFAULT_TICK_START = 0;
@@ -370,7 +369,9 @@ public class RangeBar extends View {
 
         // Initialize thumbs to the desired indices
         if (mIsRangeBar) {
+            float xPos =  marginLeft + (mLeftIndex / (float) (mTickCount - 1)) * barLength;
             mLeftThumb.setX(marginLeft + (mLeftIndex / (float) (mTickCount - 1)) * barLength);
+            Logger.t(TAG).d("xPos: " + xPos);
             mLeftThumb.setXValue(getPinValue(mLeftIndex));
         }
         mRightThumb.setX(marginLeft + (mRightIndex / (float) (mTickCount - 1)) * barLength);
@@ -401,6 +402,7 @@ public class RangeBar extends View {
 
         mBar.draw(canvas);
         if (mIsRangeBar) {
+
             mConnectingLine.draw(canvas, mLeftThumb, mRightThumb);
             if (drawTicks) {
                 mBar.drawTicks(canvas);
@@ -1180,10 +1182,12 @@ public class RangeBar extends View {
 
         // Initialize thumbs to the desired indices
         if (mIsRangeBar) {
-            mLeftThumb.setX(marginLeft + (mLeftIndex / (float) (mTickCount - 1)) * barLength);
+            float xPos = marginLeft + ((mLeftIndex - mTickStart) / (float) (mTickCount - 1)) * barLength;
+            Logger.t(TAG).d("xPos: " + xPos);
+            mLeftThumb.setX(marginLeft + ((mLeftIndex - mTickStart) / (float) (mTickCount - 1)) * barLength);
             mLeftThumb.setXValue(getPinValue(mLeftIndex));
         }
-        mRightThumb.setX(marginLeft + (mRightIndex / (float) (mTickCount - 1)) * barLength);
+        mRightThumb.setX(marginLeft + ((mRightIndex - mTickStart) / (float) (mTickCount - 1)) * barLength);
         mRightThumb.setXValue(getPinValue(mRightIndex));
 
         invalidate();
