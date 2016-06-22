@@ -602,6 +602,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_FW_GET_VERSION);
 
         mCommunicationBus.sendCommand(CMD_CAM_GET_NAME);
+        mCommunicationBus.sendCommand(CMD_CAM_MSG_MIC_INFOR);
         mCommunicationBus.sendCommand(CMD_REC_GET_REC_MODE);
         mCommunicationBus.sendCommand(CMD_REC_LIST_RESOLUTIONS);
         mCommunicationBus.sendCommand(CMD_CAM_GET_GET_ALL_INFOR);
@@ -636,9 +637,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
     }
 
-    public void onPreviewSocketDisconnect() {
-        onCameraDisconnected();
-    }
+
 
     public void doBtUnbind(int type, String mac) {
         Logger.t(TAG).d("cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
@@ -923,6 +922,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void ack_Cam_msg_Mic_infor(String p1, String p2) {
+        Logger.t(TAG).d("get mic state: p1: " + p1 + " p2: " + p2);
         int state = Integer.parseInt(p1);
         int vol = Integer.parseInt(p2);
         mMicState = state;

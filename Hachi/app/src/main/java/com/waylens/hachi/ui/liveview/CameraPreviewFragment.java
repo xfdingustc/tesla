@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -179,6 +178,13 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @BindView(R.id.btnStop)
     ImageButton mBtnStop;
+
+    @OnClick(R.id.btnMicControl)
+    public void onBtnMicControlClicked() {
+        boolean isMicOn = mVdtCamera.isMicOn();
+        mVdtCamera.setMicOn(!isMicOn);
+        updateMicControlButton();
+    }
 
 
     @OnClick(R.id.btnFullscreen)
@@ -453,8 +459,6 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
 
-
-
     private void changeCurrentCamera(int position) {
         closeLiveRawData();
         stopCameraPreview();
@@ -475,7 +479,6 @@ public class CameraPreviewFragment extends BaseFragment {
         }
 
     }
-
 
 
     private void handleOnCameraDisconnected() {
@@ -584,9 +587,9 @@ public class CameraPreviewFragment extends BaseFragment {
         if (mVdtCamera != null) {
             boolean micEnabled = mVdtCamera.isMicEnabled();
             if (micEnabled) {
-                mBtnMicControl.setColorFilter(getResources().getColor(R.color.style_color_primary));
+                mBtnMicControl.setImageResource(R.drawable.btn_mic_on);
             } else {
-                mBtnMicControl.clearColorFilter();
+                mBtnMicControl.setImageResource(R.drawable.btn_mic_off);
             }
         }
     }
