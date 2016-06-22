@@ -3,24 +3,22 @@ package com.waylens.hachi.app;
 import android.app.Application;
 import android.content.Context;
 
-//import com.bugtags.library.Bugtags;
-//import com.bugtags.library.BugtagsOptions;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.squareup.leakcanary.LeakCanary;
-//import com.tencent.bugly.crashreport.CrashReport;
-
+import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.DeviceScanner;
-import com.waylens.hachi.hardware.VdtCameraFounder;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
-import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+//import com.bugtags.library.Bugtags;
+//import com.bugtags.library.BugtagsOptions;
+//import com.tencent.bugly.crashreport.CrashReport;
 
 
 /**
@@ -80,7 +78,7 @@ public class Hachi extends Application {
     private void init() {
         mSharedContext = getApplicationContext();
 
-        LeakCanary.install(this);
+//        LeakCanary.install(this);
 
         initLogger();
 
@@ -147,10 +145,6 @@ public class Hachi extends Application {
             .setMethodCount(1)
             .hideThreadInfo();
     }
-
-
-
-
 
 
 }
