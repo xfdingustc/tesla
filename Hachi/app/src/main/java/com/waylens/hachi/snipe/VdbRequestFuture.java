@@ -111,7 +111,7 @@ public class VdbRequestFuture<T> implements Future<T>, VdbResponse.Listener<T>, 
     }
 
     @Override
-    public void onErrorResponse(SnipeError error) {
+    public synchronized void onErrorResponse(SnipeError error) {
         mException = error;
         notifyAll();
     }
