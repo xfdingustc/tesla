@@ -116,6 +116,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                 mSocket.connect(mAddress);
                 mSocket.setKeepAlive(true);
                 mSocket.setSoTimeout(5000);
+                mSocket.setTcpNoDelay(true);
 
                 mConnectionListener.onConnected();
                 mMessageThread.start();
@@ -124,9 +125,12 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                     VdtCameraCommand command = mCameraCommandQueue.poll(1, TimeUnit.SECONDS);
                     if (command == null) {
                         command = new VdtCameraCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME, "", "");
-                    }
 
+                    }
                     SocketUtils.writeCommand(mSocket, command);
+
+
+
                 }
             } catch (Exception e) {
                 connectError();

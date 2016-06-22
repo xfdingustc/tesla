@@ -70,6 +70,7 @@ public class SocketUtils {
 
 
         socket.getOutputStream().write(sos.getBuffer(), 0, size);
+        socket.getOutputStream().flush();
     }
 
 

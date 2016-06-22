@@ -8,7 +8,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 
-import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -78,6 +77,7 @@ public class DeviceScanner extends Thread {
                 while (enumIpAddr.hasMoreElements()) {
                     InetAddress addr = enumIpAddr.nextElement();
                     if (!addr.isLoopbackAddress()) {
+                        Logger.t(TAG).d("addr: " + addr);
                         mAddress.add(addr);
                     }
                 }
@@ -150,7 +150,7 @@ public class DeviceScanner extends Thread {
 
         @Override
         public void serviceResolved(ServiceEvent event) {
-            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
+//            Logger.t(TAG).d("serviceResolved: " + event.getName() + ", " + event.getType());
 //            Logger.t(TAG).d(event.getInfo().toString());
 
             ServiceInfo info = event.getInfo();
@@ -164,8 +164,7 @@ public class DeviceScanner extends Thread {
                     serverName = serverName.substring(0, index);
                 }
                 VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(addresses[0], info
-                    .getPort(), serverName,
-                    name, bIsPcServer);
+                    .getPort(), serverName, name, bIsPcServer);
                 mVdtCameraManager.connectCamera(serviceInfo);
 
             }
