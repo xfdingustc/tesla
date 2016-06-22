@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.appyvet.rangebar.RangeBar;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -26,8 +25,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.cache.DiskCache;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
-import com.waylens.hachi.ui.clips.EnhancementActivity;
-import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
+import com.waylens.hachi.ui.views.rangbar.RangeBar;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSegment;
 import com.waylens.hachi.vdb.ClipSet;
@@ -40,7 +38,6 @@ import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -203,9 +200,6 @@ public class SmartRemixActivity extends BaseActivity {
             }
         });
     }
-
-
-
 
 
     @Override

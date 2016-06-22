@@ -14,7 +14,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <com.appyvet.rangebar.RangeBar
+        <com.waylens.hachi.ui.views.rangbar.RangeBar
             android:id="@+id/range_seek_bar"
             android:layout_width="match_parent"
             android:layout_height="72dp"

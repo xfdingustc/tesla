@@ -63,7 +63,7 @@
                     android:textSize="18sp" />
 
 
-                <com.appyvet.rangebar.RangeBar
+                <com.waylens.hachi.ui.views.rangbar.RangeBar
                     android:id="@+id/rangeBarSpeed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
