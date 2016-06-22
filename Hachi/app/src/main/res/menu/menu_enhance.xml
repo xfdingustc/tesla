@@ -5,4 +5,9 @@
         android:icon="@drawable/btn_edit_action_share"
         android:title="@string/share"
         app:showAsAction="always"/>
+
+    <item android:id="@+id/menu_to_download"
+          android:icon="@drawable/btn_edit_action_download"
+          android:title="@string/download"
+          app:showAsAction="always"/>
 </menu>

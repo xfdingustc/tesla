@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.clips.enhance;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +15,21 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.ViewAnimator;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.download.DownloadJob;
+import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
@@ -33,9 +43,13 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 import com.waylens.hachi.vdb.ClipSetPos;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +83,8 @@ public class EnhanceActivity2 extends ClipPlayActivity {
     private MusicItem mMusicItem;
     private int mPlaylistId;
     private GaugeListAdapter mGaugeListAdapter;
+
+    private MaterialDialog mDownloadDialog;
 
 //    public static void launch(Activity activity, ArrayList<Clip> clipList) {
 //        Intent intent = new Intent(activity, EnhanceActivity2.class);
@@ -122,6 +138,9 @@ public class EnhanceActivity2 extends ClipPlayActivity {
 
     @BindView(R.id.style_radio_group)
     RadioGroup mStyleRadioGroup;
+
+
+
 
 
     @OnClick(R.id.btn_music)
@@ -185,6 +204,35 @@ public class EnhanceActivity2 extends ClipPlayActivity {
         }
         Intent intent = new Intent(this, ClipChooserActivity.class);
         startActivityForResult(intent, REQUEST_CODE_ENHANCE);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventDownload(DownloadEvent event) {
+        switch (event.getWhat()) {
+            case DownloadEvent.DOWNLOAD_WHAT_START:
+                mDownloadDialog = new MaterialDialog.Builder(this)
+                    .title(R.string.downloading)
+                    .contentGravity(GravityEnum.CENTER)
+                    .progress(false, 100, true)
+                    .show();
+                mDownloadDialog.setCanceledOnTouchOutside(false);
+                break;
+            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
+                if (mDownloadDialog != null) {
+                    int progress = (Integer) event.getExtra();
+                    mDownloadDialog.getProgressBar().setProgress(progress);
+                }
+                break;
+            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
+                if (mDownloadDialog != null) {
+                    mDownloadDialog.dismiss();
+                }
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Stream has been download into " + (String) event.getExtra())
+                    .show();
+                break;
+        }
     }
 
     @Override
@@ -289,6 +337,28 @@ public class EnhanceActivity2 extends ClipPlayActivity {
                         ShareActivity.launch(EnhanceActivity2.this, mPlaylistEditor.getPlaylistId());
                         finish();
                         break;
+                    case R.id.menu_to_download:
+                        new MaterialDialog.Builder(EnhanceActivity2.this)
+                            .title(R.string.download)
+                            .items(R.array.download_resolution)
+                            .itemsCallbackSingleChoice(2, new MaterialDialog.ListCallbackSingleChoice() {
+                                @Override
+                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+//                            showToast(which + ": " + text);
+                                    return true; // allow selection
+                                }
+                            })
+                            .positiveText(R.string.download)
+                            .negativeText(android.R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                    doDownloadClips(dialog.getSelectedIndex());
+                                }
+                            })
+                            .show();
+                        break;
                 }
                 return true;
             }
@@ -319,6 +389,42 @@ public class EnhanceActivity2 extends ClipPlayActivity {
             btnAddMusic.setText(R.string.swap);
             btnRemove.setVisibility(View.VISIBLE);
         }
+
+    }
+
+    private void doDownloadClips(final int selectIndex) {
+//        DownloadUrlRequest request =
+//        ClipSegment clipSegment = new ClipSegment(getClipSet().getClip(0));
+        Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
+        DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
+            .Listener<ClipDownloadInfo>() {
+            @Override
+            public void onResponse(ClipDownloadInfo response) {
+                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
+                Logger.t(TAG).d("on response: " + response.sub.url);
+//                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
+
+
+                ClipDownloadInfo.StreamDownloadInfo downloadInfo;
+                if (selectIndex == 0) {
+                    downloadInfo = response.sub;
+                } else {
+                    downloadInfo = response.main;
+                }
+
+                JobManager jobManager = BgJobManager.getManager();
+                DownloadJob job = new DownloadJob(getClipSet().getClip(0).streams[0], downloadInfo);
+                jobManager.addJobInBackground(job);
+
+                //startDownload(response, 0, clipSegment.getClip().streams[0]);
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
 
     }
 
@@ -410,5 +516,13 @@ public class EnhanceActivity2 extends ClipPlayActivity {
         });
         mGaugeListView.setAdapter(mGaugeListAdapter);
         configureActionUI(ACTION_NONE, false);
+    }
+
+
+    public ClipSet getClipSet() {
+        if (mPlaylistEditor != null) {
+            return ClipSetManager.getManager().getClipSet(mPlaylistEditor.getPlaylistId());
+        }
+        return null;
     }
 }

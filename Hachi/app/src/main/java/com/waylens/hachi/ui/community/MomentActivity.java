@@ -22,6 +22,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.transition.Transition;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -301,6 +302,7 @@ public class MomentActivity extends BaseActivity {
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(mVideoThumbnail);
         ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
+
 
         queryMomentInfo();
 
