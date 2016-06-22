@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -10,8 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ViewAnimator;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -48,6 +52,9 @@ public class ClipModifyActivity extends BaseActivity {
 
     boolean hasUpdated;
 
+    private int mOriginalTopMargin;
+    private int mOriginalHeight;
+
     public static void launch(Activity activity, Clip clip) {
         Intent intent = new Intent(activity, ClipModifyActivity.class);
         Bundle bundle = new Bundle();
@@ -55,6 +62,9 @@ public class ClipModifyActivity extends BaseActivity {
         intent.putExtras(bundle);
         activity.startActivity(intent);
     }
+
+    @BindView(R.id.clipPlayFragment)
+    FrameLayout mPlayerContainer;
 
     @BindView(R.id.clipTrimmer)
     VideoTrimmer mClipTrimmer;
@@ -64,6 +74,26 @@ public class ClipModifyActivity extends BaseActivity {
 
     @BindView(R.id.root_view)
     View mRootView;
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
+        Logger.t(TAG).d("newConfig.orientation " + newConfig.orientation);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            getToolbar().setVisibility(View.GONE);
+            layoutParams.topMargin = 0;
+            layoutParams.width = ViewGroup.MarginLayoutParams.MATCH_PARENT;
+            layoutParams.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;
+            mPlayerContainer.setLayoutParams(layoutParams);
+        } else {
+            getToolbar().setVisibility(View.VISIBLE);
+            layoutParams.width = ViewGroup.MarginLayoutParams.MATCH_PARENT;
+            layoutParams.height = mOriginalHeight;
+
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +117,9 @@ public class ClipModifyActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_clip_modify);
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mPlayerContainer.getLayoutParams();
+        mOriginalTopMargin = layoutParams.topMargin;
+        mOriginalHeight = layoutParams.height;
         setupToolbar();
         mViewAnimator.setDisplayedChild(0);
         embedVideoPlayFragment();

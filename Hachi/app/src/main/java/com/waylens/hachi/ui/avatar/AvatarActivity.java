@@ -192,11 +192,11 @@ public class AvatarActivity extends BaseActivity {
         }
 
         if (requestCode == TAKE_PHOTO) {
-            Logger.d("Avatar uri: " + mAvatarUri.getPath());
+            Logger.t(TAG).d("Get photo: " + mAvatarUri.getPath());
             mReturnImagePath = mAvatarUri.getPath();
         } else if (requestCode == FROM_LOCAL) {
             Uri imageUri= data.getData();
-            Log.d("image selected path", imageUri.getPath());
+            Logger.t(TAG).d("image selected path", imageUri.getPath());
 
             String[] projection = { MediaStore.Images.Media.DATA };
             Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
