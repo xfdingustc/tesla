@@ -53,6 +53,9 @@ public class ClipPlayActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         mEventBus.unregister(this);
+        if (mPlaylistEditor != null) {
+            mPlaylistEditor.cancel();
+        }
     }
 
 

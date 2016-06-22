@@ -81,6 +81,12 @@ public class PlayListEditor2 {
         doRebuildPlaylist();
     }
 
+    public void cancel() {
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.cancelAll(TAG);
+        }
+    }
+
     public void add(ArrayList<Clip> clips) {
         for (Clip clip : clips) {
             mClipSet.addClip(clip);
@@ -110,7 +116,7 @@ public class PlayListEditor2 {
                     Logger.t(TAG).d("clear play list error");
                 }
             });
-        mVdbRequestQueue.add(request);
+        mVdbRequestQueue.add(request.setTag(TAG));
     }
 
 
@@ -137,7 +143,7 @@ public class PlayListEditor2 {
                     }
                 });
 
-            mVdbRequestQueue.add(playRequest);
+            mVdbRequestQueue.add(playRequest.setTag(TAG));
         }
     }
 
@@ -166,7 +172,7 @@ public class PlayListEditor2 {
             }
         }
 
-        ));
+        ).setTag(TAG));
     }
 
     private void adjustClipSet(ClipSet clipSet) {
