@@ -64,24 +64,7 @@ public class Playlist {
         return mClipSet;
     }
 
-    public void insertClip(Clip clip) {
-        mClipSet.insertClipByIndex(clip);
-        mTotalLengthMs += clip.getDurationMs();
-    }
 
-
-
-    public boolean moveClip(Clip clip) {
-        return mClipSet.moveClip(clip.cid, clip.index);
-    }
-
-    public boolean removeClip(Clip.ID cid) {
-        if (mClipSet.removeClip(cid)) {
-            mTotalLengthMs = mClipSet.getTotalLengthMs();
-            return true;
-        }
-        return false;
-    }
 
 
 }
