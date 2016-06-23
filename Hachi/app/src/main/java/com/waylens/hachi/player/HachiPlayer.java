@@ -320,6 +320,9 @@ public class HachiPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventL
         player.setPlayWhenReady(playWhenReady);
     }
 
+
+
+
     public void seekTo(long positionMs) {
         player.seekTo(positionMs);
     }
@@ -580,7 +583,5 @@ public class HachiPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventL
         }
     }
 
-    public boolean isPlaying() {
-        return false;
-    }
+
 }
