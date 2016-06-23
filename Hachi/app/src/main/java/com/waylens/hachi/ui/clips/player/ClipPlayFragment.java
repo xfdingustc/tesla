@@ -246,6 +246,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         Logger.t(TAG).d("playWhenReady: " + playWhenReady + " playbackState: " + playbackState);
+        switch (playbackState) {
+            case HachiPlayer.STATE_ENDED:
+                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
+                setClipSetPos(clipSetPos, true);
+                break;
+        }
         updateControls(playWhenReady, playbackState);
     }
 
@@ -274,6 +280,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                     mBtnPlayPause.setImageResource(R.drawable.playbar_play);
                 }
                 break;
+
+
 
         }
     }

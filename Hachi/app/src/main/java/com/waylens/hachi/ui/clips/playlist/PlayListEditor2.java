@@ -40,7 +40,7 @@ public class PlayListEditor2 {
 
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
-        Logger.t(TAG).d("receive event " + event.getNeedRebuildList());
+//        Logger.t(TAG).d("receive event " + event.getNeedRebuildList());
         if (event.getNeedRebuildList()) {
             doRebuildPlaylist();
         }
@@ -125,12 +125,12 @@ public class PlayListEditor2 {
     private void doBuildPlaylist() {
         mClipAdded = 0;
         for (final Clip clip : mClipSet.getClipList()) {
-            Logger.t(TAG).d("Clip: " + clip.toString());
             PlaylistEditRequest playRequest = new PlaylistEditRequest(clip, clip.editInfo.selectedStartValue,
                 clip.editInfo.selectedEndValue, mPlayListId, new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    Logger.t(TAG).d("Add one clip to playlist: " + clip.toString());
+                    Logger.t("fuck").d("Add one clip to playlist: " + clip.toString()
+                        + " editinfo: " + clip.editInfo.toString());
                     mClipAdded++;
                     if (mClipAdded == mClipSet.getClipList().size()) {
                         doGetPlaylistInfo();
@@ -178,18 +178,20 @@ public class PlayListEditor2 {
     }
 
     private void adjustClipSet(ClipSet clipSet) {
-
+        Logger.t(TAG).d("origin count: " + mClipSet.getCount() + " new clip: " + clipSet.getCount());
         for (int i = 0; i < mClipSet.getCount(); i++) {
             Clip originClip = mClipSet.getClip(i);
             Clip newClip = clipSet.getClip(i);
-            originClip.editInfo.selectedStartValue = newClip.getStartTimeMs();
-            originClip.editInfo.selectedEndValue = newClip.getEndTimeMs();
-            if (originClip.editInfo.selectedStartValue < originClip.editInfo.minExtensibleValue) {
-                originClip.editInfo.minExtensibleValue = originClip.editInfo.selectedStartValue;
-            }
+            if (newClip != null) {
+                originClip.editInfo.selectedStartValue = newClip.getStartTimeMs();
+                originClip.editInfo.selectedEndValue = newClip.getEndTimeMs();
+                if (originClip.editInfo.selectedStartValue < originClip.editInfo.minExtensibleValue) {
+                    originClip.editInfo.minExtensibleValue = originClip.editInfo.selectedStartValue;
+                }
 
-            if (originClip.editInfo.selectedEndValue > originClip.editInfo.maxExtensibleValue) {
-                originClip.editInfo.maxExtensibleValue = originClip.editInfo.selectedEndValue;
+                if (originClip.editInfo.selectedEndValue > originClip.editInfo.maxExtensibleValue) {
+                    originClip.editInfo.maxExtensibleValue = originClip.editInfo.selectedEndValue;
+                }
             }
         }
 
