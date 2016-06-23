@@ -8,6 +8,7 @@ import android.text.Html;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -22,6 +23,8 @@ import butterknife.OnClick;
  * Created by liushuwei on 2016/6/8.
  */
 public class SignUpSucceedActivity extends BaseActivity {
+
+    private static final String TAG = SignUpSucceedActivity.class.getSimpleName();
 
     @BindView(R.id.btn_complete_profile)
     Button mcompleteProfileButton;
@@ -50,8 +53,11 @@ public class SignUpSucceedActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_succeed);
-        //mgetStarted.setText(Html.fromHtml("<u>" + R.id.sign_up_get_started + ＂));
-
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .content(R.string.verify_email_address)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .show();
     }
 
 }

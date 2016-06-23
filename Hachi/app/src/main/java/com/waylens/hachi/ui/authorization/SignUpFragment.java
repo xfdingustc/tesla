@@ -134,7 +134,7 @@ public class SignUpFragment extends BaseFragment {
         if(getArguments() != null)
             mEmail = getArguments().getString("email");
         mTvSignUpEmail.setText(mEmail);
-        Logger.d("Signup frament is invoked", this, mEmail);
+        Logger.t(TAG).d("Signup frament is invoked", this, mEmail);
         initViews();
         return view;
     }

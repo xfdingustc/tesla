@@ -43,6 +43,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -99,7 +100,7 @@ public class SignInFragment extends BaseFragment {
         if(getArguments() != null)
             mEmail = getArguments().getString("email");
             mTvSignInEmail.setText(mEmail);
-        Logger.d("Signin frament is invoked", this, mEmail);
+        Logger.t(TAG).d("Signin frament is invoked", this, mEmail);
         initViews();
         return view;
     }
@@ -166,10 +167,16 @@ public class SignInFragment extends BaseFragment {
         signInResponseCall.enqueue(new Callback<SignInResponse>() {
             @Override
             public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
-                if (response.body() == null) {
-                    onSignInFailed(new Throwable("Sign in failed"));
-                } else {
+                if (response.code() == 200) {
                     onSignInSuccessful(response.body());
+                } else if(response.code() == 401) {
+                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                            .content(R.string.incorrect_email_or_password)
+                            .positiveText(android.R.string.ok)
+                            .negativeText(android.R.string.cancel)
+                            .show();
+                } else {
+                    onSignInFailed(new Throwable("Sign in failed"));
                 }
             }
 
@@ -186,21 +193,10 @@ public class SignInFragment extends BaseFragment {
         mButtonAnimator.setDisplayedChild(0);
         //showMessage(ServerMessage.parseServerError(error).msgResID);
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .content(R.string.sign_up_with_this_email)
+                .content(R.string.failed_to_sign_in)
                 .positiveText(android.R.string.ok)
                 .negativeText(android.R.string.cancel)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SignUpFragment signUpFragment = new SignUpFragment();
-                        Bundle mbundle = new Bundle();
-                        mbundle.putString("email", mEmail);
-                        signUpFragment.setArguments(mbundle);
-                        AuthorizeActivity authorizeActivity = (AuthorizeActivity)getActivity();
-                        authorizeActivity.switchStep(AuthorizeActivity.STEP_SIGN_UP);
-                        getFragmentManager().beginTransaction().replace(R.id.fragment_content, signUpFragment).commit();
-                    }
-                }).show();
+                .show();
     }
 
     private void onSignInSuccessful(SignInResponse response) {

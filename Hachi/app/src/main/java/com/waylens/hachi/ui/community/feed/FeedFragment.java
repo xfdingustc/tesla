@@ -59,6 +59,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     private static final String FEED_TAG = "feed_tag";
 
+    private static final int CHILD_SIGNUP_ENTRY = 0;
+    private static final int CHILD_LOADING_PROGRESS = 1;
+    private static final int CHILD_MOMENTS = 2;
+
     public static final int FEED_TAG_MY_FEED = 0;
     public static final int FEED_TAG_ME = 1;
     public static final int FEED_TAG_LIKES = 2;
@@ -126,11 +130,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onStart() {
         super.onStart();
         if (this.isLoginRequired() && !SessionManager.getInstance().isLoggedIn()) {
-            mViewAnimator.setDisplayedChild(0);
+            mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
         }
         if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
-            if (mViewAnimator.getDisplayedChild() == 0) {
-                mViewAnimator.setDisplayedChild(1);
+            if (mViewAnimator.getDisplayedChild() == CHILD_SIGNUP_ENTRY) {
+                mViewAnimator.setDisplayedChild(CHILD_LOADING_PROGRESS);
                 onRefresh();
             }
 
@@ -151,9 +155,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             }
         });
         if (this.isLoginRequired()) {
-            mViewAnimator.setDisplayedChild(0);
+            mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
         } else {
-            mViewAnimator.setDisplayedChild(1);
+            mViewAnimator.setDisplayedChild(CHILD_LOADING_PROGRESS);
         }
 
         return view;
@@ -163,10 +167,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentCursor = 0;
-        if (!this.isLoginRequired())
+        if (!this.isLoginRequired()) {
             loadFeed(mCurrentCursor, true);
-        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn())
+        }
+        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
             loadFeed(mCurrentCursor, true);
+        }
     }
 
 
@@ -263,8 +269,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             mRvVideoList.setEnableLoadMore(false);
         }
 
-        if (mViewAnimator.getDisplayedChild() == 1) {
-            mViewAnimator.setDisplayedChild(2);
+        if (mViewAnimator.getDisplayedChild() == CHILD_LOADING_PROGRESS) {
+            mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
         }
 
         /*TODO disable it? Richard
@@ -285,10 +291,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         mCurrentCursor = 0;
         mRvVideoList.setEnableLoadMore(true);
-        if (!this.isLoginRequired())
+        if (!this.isLoginRequired()) {
             loadFeed(mCurrentCursor, true);
-        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn())
+        }
+        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
             loadFeed(mCurrentCursor, true);
+        }
     }
 
     @Override
