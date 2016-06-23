@@ -48,8 +48,8 @@
 
 
     <declare-styleable name="RangeBar">
-        <attr name="tickStart" format="float" />
-        <attr name="tickEnd" format="float" />
+        <attr name="tickStart" format="integer" />
+        <attr name="tickEnd" format="integer" />
         <attr name="tickInterval" format="float" />
         <attr name="tickHeight" format="dimension" />
         <attr name="tickColor" format="color" />

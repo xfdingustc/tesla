@@ -49,11 +49,10 @@ public class RangeBar extends View {
 
 
     // Default values for variables
-    private static final float DEFAULT_TICK_START = 0;
+    private static final int DEFAULT_TICK_START = 0;
 
-    private static final float DEFAULT_TICK_END = 5;
+    private static final int DEFAULT_TICK_END = 5;
 
-    private static final float DEFAULT_TICK_INTERVAL = 1;
 
     private static final float DEFAULT_TICK_HEIGHT_DP = 1;
 
@@ -89,11 +88,10 @@ public class RangeBar extends View {
 
     private float mTickHeightDP = DEFAULT_TICK_HEIGHT_DP;
 
-    private float mTickStart = DEFAULT_TICK_START;
+    private int mTickStart = DEFAULT_TICK_START;
 
-    private float mTickEnd = DEFAULT_TICK_END;
+    private int mTickEnd = DEFAULT_TICK_END;
 
-    private float mTickInterval = DEFAULT_TICK_INTERVAL;
 
     private float mBarWeight = DEFAULT_BAR_WEIGHT_PX;
 
@@ -129,7 +127,7 @@ public class RangeBar extends View {
 
     private int mDefaultHeight = 150;
 
-    private int mTickCount = (int) ((mTickEnd - mTickStart) / mTickInterval) + 1;
+    private int mTickCount = (int) ((mTickEnd - mTickStart)) + 1;
 
     private PinView mLeftThumb;
 
@@ -175,7 +173,6 @@ public class RangeBar extends View {
 
     private IRangeBarFormatter mFormatter;
 
-    private boolean drawTicks = true;
 
     private boolean mArePinsTemporary = true;
 
@@ -218,7 +215,7 @@ public class RangeBar extends View {
         bundle.putInt("TICK_COUNT", mTickCount);
         bundle.putFloat("TICK_START", mTickStart);
         bundle.putFloat("TICK_END", mTickEnd);
-        bundle.putFloat("TICK_INTERVAL", mTickInterval);
+
         bundle.putInt("TICK_COLOR", mTickColor);
 
         bundle.putFloat("TICK_HEIGHT_DP", mTickHeightDP);
@@ -253,9 +250,9 @@ public class RangeBar extends View {
             Bundle bundle = (Bundle) state;
 
             mTickCount = bundle.getInt("TICK_COUNT");
-            mTickStart = bundle.getFloat("TICK_START");
-            mTickEnd = bundle.getFloat("TICK_END");
-            mTickInterval = bundle.getFloat("TICK_INTERVAL");
+            mTickStart = bundle.getInt("TICK_START");
+            mTickEnd = bundle.getInt("TICK_END");
+
             mTickColor = bundle.getInt("TICK_COLOR");
             mTickHeightDP = bundle.getFloat("TICK_HEIGHT_DP");
             mBarWeight = bundle.getFloat("BAR_WEIGHT");
@@ -361,8 +358,8 @@ public class RangeBar extends View {
         mRightThumb.setXValue(getPinValue(mRightIndex));
 
         // Set the thumb indices.
-        final int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb);
-        final int newRightIndex = mBar.getNearestTickIndex(mRightThumb);
+        final int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb) + (int) mTickStart;
+        final int newRightIndex = mBar.getNearestTickIndex(mRightThumb) + (int) mTickStart;
 
         // Call the listener.
         if (newLeftIndex != mLeftIndex || newRightIndex != mRightIndex) {
@@ -387,9 +384,7 @@ public class RangeBar extends View {
 
 
         mConnectingLine.draw(canvas, mLeftThumb, mRightThumb);
-        if (drawTicks) {
-            mBar.drawTicks(canvas);
-        }
+
         mLeftThumb.draw(canvas);
         mRightThumb.draw(canvas);
 
@@ -494,138 +489,13 @@ public class RangeBar extends View {
         mFormatter = formatter;
     }
 
-    public void setDrawTicks(boolean drawTicks) {
-        this.drawTicks = drawTicks;
-    }
 
-    /**
-     * Sets the start tick in the RangeBar.
-     *
-     * @param tickStart Integer specifying the number of ticks.
-     */
-    public void setTickStart(float tickStart) {
-        int tickCount = (int) ((mTickEnd - tickStart) / mTickInterval) + 1;
-        if (isValidTickCount(tickCount)) {
-            mTickCount = tickCount;
-            mTickStart = tickStart;
-
-            // Prevents resetting the indices when creating new activity, but
-            // allows it on the first setting.
-            if (mFirstSetTickCount) {
-                mLeftIndex = 0;
-                mRightIndex = mTickCount - 1;
-
-                if (mListener != null) {
-                    mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
-                        getPinValue(mLeftIndex),
-                        getPinValue(mRightIndex));
-                }
-            }
-            if (indexOutOfRange(mLeftIndex, mRightIndex)) {
-                mLeftIndex = 0;
-                mRightIndex = mTickCount - 1;
-
-                if (mListener != null) {
-                    mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
-                        getPinValue(mLeftIndex),
-                        getPinValue(mRightIndex));
-                }
-            }
-
-            createBar();
-            createPins();
-        } else {
-            Log.e(TAG, "tickCount less than 2; invalid tickCount.");
-            throw new IllegalArgumentException("tickCount less than 2; invalid tickCount.");
-        }
-    }
-
-    /**
-     * Sets the start tick in the RangeBar.
-     *
-     * @param tickInterval Integer specifying the number of ticks.
-     */
-    public void setTickInterval(float tickInterval) {
-        int tickCount = (int) ((mTickEnd - mTickStart) / tickInterval) + 1;
-        if (isValidTickCount(tickCount)) {
-            mTickCount = tickCount;
-            mTickInterval = tickInterval;
-
-            // Prevents resetting the indices when creating new activity, but
-            // allows it on the first setting.
-            if (mFirstSetTickCount) {
-                mLeftIndex = 0;
-                mRightIndex = mTickCount - 1;
-
-                if (mListener != null) {
-                    mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
-                        getPinValue(mLeftIndex), getPinValue(mRightIndex));
-                }
-            }
-            if (indexOutOfRange(mLeftIndex, mRightIndex)) {
-                mLeftIndex = 0;
-                mRightIndex = mTickCount - 1;
-
-                if (mListener != null) {
-                    mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
-                        getPinValue(mLeftIndex), getPinValue(mRightIndex));
-                }
-            }
-
-            createBar();
-            createPins();
-        } else {
-            Log.e(TAG, "tickCount less than 2; invalid tickCount.");
-            throw new IllegalArgumentException("tickCount less than 2; invalid tickCount.");
-        }
-    }
-
-    /**
-     * Sets the end tick in the RangeBar.
-     *
-     * @param tickEnd Integer specifying the number of ticks.
-     */
-    public void setTickEnd(float tickEnd) {
-        int tickCount = (int) ((tickEnd - mTickStart) / mTickInterval) + 1;
-        if (isValidTickCount(tickCount)) {
-            mTickCount = tickCount;
-            mTickEnd = tickEnd;
-
-            // Prevents resetting the indices when creating new activity, but
-            // allows it on the first setting.
-            if (mFirstSetTickCount) {
-                mLeftIndex = 0;
-                mRightIndex = mTickCount - 1;
-
-                if (mListener != null) {
-                    mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
-                        getPinValue(mLeftIndex), getPinValue(mRightIndex));
-                }
-            }
-            if (indexOutOfRange(mLeftIndex, mRightIndex)) {
-                mLeftIndex = 0;
-                mRightIndex = mTickCount - 1;
-
-                if (mListener != null) {
-                    mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
-                        getPinValue(mLeftIndex), getPinValue(mRightIndex));
-                }
-            }
-
-            createBar();
-            createPins();
-        } else {
-            Log.e(TAG, "tickCount less than 2; invalid tickCount.");
-            throw new IllegalArgumentException("tickCount less than 2; invalid tickCount.");
-        }
-    }
-
-    public void setTicks(float tickStart, float tickEnd, int leftValue, int rightValue) {
+    public void setTicks(int tickStart, int tickEnd, int leftValue, int rightValue) {
         mTickStart = tickStart;
         mTickEnd = tickEnd;
         mLeftIndex = leftValue;
         mRightIndex = rightValue;
-        mTickCount = (int) ((mTickEnd - mTickStart) / mTickInterval) + 1;
+        mTickCount = (int) ((mTickEnd - mTickStart)) + 1;
         createBar();
         createPins();
         invalidate();
@@ -879,42 +749,8 @@ public class RangeBar extends View {
                 mFirstSetTickCount = false;
             }
 
-            mLeftIndex = (int) ((leftPinValue - mTickStart) / mTickInterval);
-            mRightIndex = (int) ((rightPinValue - mTickStart) / mTickInterval);
-            createPins();
-
-            if (mListener != null) {
-                mListener.onRangeChangeListener(this, mLeftIndex, mRightIndex,
-                    getPinValue(mLeftIndex), getPinValue(mRightIndex));
-            }
-        }
-        invalidate();
-        requestLayout();
-    }
-
-    /**
-     * Sets the location of pin according by the supplied value.
-     *
-     * @param pinValue Float specifying the value of the pin
-     */
-    public void setSeekPinByValue(float pinValue) {
-        if (pinValue > mTickEnd || pinValue < mTickStart) {
-            Log.e(TAG,
-                "Pin value " + pinValue
-                    + " is out of bounds. Check that it is greater than the minimum ("
-                    + mTickStart + ") and less than the maximum value ("
-                    + mTickEnd + ")");
-            throw new IllegalArgumentException(
-                "Pin value " + pinValue
-                    + " is out of bounds. Check that it is greater than the minimum ("
-                    + mTickStart + ") and less than the maximum value ("
-                    + mTickEnd + ")");
-
-        } else {
-            if (mFirstSetTickCount) {
-                mFirstSetTickCount = false;
-            }
-            mRightIndex = (int) ((pinValue - mTickStart) / mTickInterval);
+            mLeftIndex = (int) ((leftPinValue - mTickStart));
+            mRightIndex = (int) ((rightPinValue - mTickStart));
             createPins();
 
             if (mListener != null) {
@@ -963,14 +799,6 @@ public class RangeBar extends View {
         return mRightIndex;
     }
 
-    /**
-     * Gets the tick interval.
-     *
-     * @return the tick interval
-     */
-    public double getTickInterval() {
-        return mTickInterval;
-    }
 
     @Override
     public void setEnabled(boolean enabled) {
@@ -1016,13 +844,12 @@ public class RangeBar extends View {
 
             // Sets the values of the user-defined attributes based on the XML
             // attributes.
-            final float tickStart = ta
-                .getFloat(R.styleable.RangeBar_tickStart, DEFAULT_TICK_START);
-            final float tickEnd = ta
-                .getFloat(R.styleable.RangeBar_tickEnd, DEFAULT_TICK_END);
-            final float tickInterval = ta
-                .getFloat(R.styleable.RangeBar_tickInterval, DEFAULT_TICK_INTERVAL);
-            int tickCount = (int) ((tickEnd - tickStart) / tickInterval) + 1;
+            final int tickStart = ta
+                .getInt(R.styleable.RangeBar_tickStart, DEFAULT_TICK_START);
+            final int tickEnd = ta
+                .getInt(R.styleable.RangeBar_tickEnd, DEFAULT_TICK_END);
+
+            int tickCount = tickEnd - tickStart + 1;
             if (isValidTickCount(tickCount)) {
 
                 // Similar functions performed above in setTickCount; make sure
@@ -1030,7 +857,7 @@ public class RangeBar extends View {
                 mTickCount = tickCount;
                 mTickStart = tickStart;
                 mTickEnd = tickEnd;
-                mTickInterval = tickInterval;
+
                 mLeftIndex = 0;
                 mRightIndex = mTickCount - 1;
 
@@ -1131,9 +958,8 @@ public class RangeBar extends View {
         mLeftThumb.init(ctx, yPos, 0, mPinColor, mTextColor, mCircleSize, mCircleColor,
             mMinPinFont, mMaxPinFont, false);
         mRightThumb = new PinView(ctx);
-        mRightThumb
-            .init(ctx, yPos, 0, mPinColor, mTextColor, mCircleSize, mCircleColor, mMinPinFont,
-                mMaxPinFont, false);
+        mRightThumb.init(ctx, yPos, 0, mPinColor, mTextColor, mCircleSize, mCircleColor, mMinPinFont,
+            mMaxPinFont, false);
 
         float marginLeft = getMarginLeft();
         float barLength = getBarLength();
@@ -1252,16 +1078,18 @@ public class RangeBar extends View {
 
             if (leftThumbXDistance < rightThumbXDistance) {
 
-                    mLeftThumb.setX(x);
-                    releasePin(mLeftThumb);
+                mLeftThumb.setX(x);
+                releasePin(mLeftThumb);
             } else {
                 mRightThumb.setX(x);
                 releasePin(mRightThumb);
             }
 
             // Get the updated nearest tick marks for each thumb.
-            final int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb);
-            final int newRightIndex = mBar.getNearestTickIndex(mRightThumb);
+            final int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb) + mTickStart;
+            final int newRightIndex = mBar.getNearestTickIndex(mRightThumb) + mTickStart;
+
+
             // If either of the indices have changed, update and call the listener.
             if (newLeftIndex != mLeftIndex || newRightIndex != mRightIndex) {
 
@@ -1299,17 +1127,17 @@ public class RangeBar extends View {
         }
 
         // Get the updated nearest tick marks for each thumb.
-        int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb);
-        int newRightIndex = mBar.getNearestTickIndex(mRightThumb);
+        int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb) + mTickStart;
+        int newRightIndex = mBar.getNearestTickIndex(mRightThumb) + mTickStart;
 
         final int componentLeft = getLeft() + getPaddingLeft();
         final int componentRight = getRight() - getPaddingRight() - componentLeft;
 
         if (x <= componentLeft) {
-            newLeftIndex = 0;
+            newLeftIndex = mTickStart;
             movePin(mLeftThumb, mBar.getLeftX());
         } else if (x >= componentRight) {
-            newRightIndex = getTickCount() - 1;
+            newRightIndex = getTickCount() - 1 + mTickStart;
             movePin(mRightThumb, mBar.getRightX());
         }
         /// end added code
@@ -1419,7 +1247,7 @@ public class RangeBar extends View {
         }
         float tickValue = (tickIndex == (mTickCount - 1))
             ? mTickEnd
-            : (tickIndex * mTickInterval) + mTickStart;
+            : (tickIndex) + mTickStart;
         String xValue = mTickMap.get(tickValue);
         if (xValue == null) {
             if (tickValue == Math.ceil(tickValue)) {

@@ -148,36 +148,7 @@ public class Bar {
     }
 
 
-    /**
-     * Set the number of ticks that will appear in the RangeBar.
-     *
-     * @param tickCount the number of ticks
-     */
-    public void setTickCount(int tickCount) {
 
-        final float barLength = mRightX - mLeftX;
 
-        mNumSegments = tickCount - 1;
-        mTickDistance = barLength / mNumSegments;
-    }
 
-    // Private Methods /////////////////////////////////////////////////////////
-
-    /**
-     * Draws the tick marks on the bar.
-     *
-     * @param canvas Canvas to draw on; should be the Canvas passed into {#link
-     *               View#onDraw()}
-     */
-    public void drawTicks(Canvas canvas) {
-
-        // Loop through and draw each tick (except final tick).
-        for (int i = 0; i < mNumSegments; i++) {
-            final float x = i * mTickDistance + mLeftX;
-            canvas.drawCircle(x, mY, mTickHeight, mTickPaint);
-        }
-        // Draw final tick. We draw the final tick outside the loop to avoid any
-        // rounding discrepancies.
-        canvas.drawCircle(mRightX, mY, mTickHeight, mTickPaint);
-    }
 }

@@ -87,7 +87,7 @@ public class ClipsEditView extends LinearLayout {
 
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
-        Logger.t(TAG).d("clip set change");
+//        Logger.t(TAG).d("clip set change");
         mClipCoverGridAdapter.notifyDataSetChanged();
         updateClipCount(getClipSet().getCount());
     }
@@ -185,7 +185,7 @@ public class ClipsEditView extends LinearLayout {
             if (mSelectedPosition == -1) {
                 return;
             }
-            Logger.t(TAG).d("on range change listener");
+//            Logger.t(TAG).d("on range change listener");
             Clip clip = getClipSet().getClip(mSelectedPosition);
             clip.editInfo.selectedStartValue = rangeBar.getLeftIndex();
             clip.editInfo.selectedEndValue = rangeBar.getRightIndex();
@@ -281,13 +281,13 @@ public class ClipsEditView extends LinearLayout {
 
 
         mRangeSeekBar.setOnRangeBarChangeListener(null);
-        Logger.t(TAG).d("tickStart: " + clip.getStartTimeMs() + " tickEnd: " + clip.getEndTimeMs());
-        Logger.t(TAG).d("startValue: " + clip.editInfo.selectedStartValue + " endValue: " + clip.editInfo.selectedEndValue);
+//        Logger.t(TAG).d("tickStart: " + clip.getStartTimeMs() + " tickEnd: " + clip.getEndTimeMs());
+//        Logger.t(TAG).d("startValue: " + clip.editInfo.selectedStartValue + " endValue: " + clip.editInfo.selectedEndValue);
 //        mRangeSeekBar.setTickStart(0);
 //        mRangeSeekBar.setTickEnd(clip.editInfo.maxExtensibleValue / 1000);
 //        mRangeSeekBar.setTickStart(clip.editInfo.minExtensibleValue / 1000);
-        mRangeSeekBar.setTicks(clip.getStartTimeMs() ,
-            clip.getEndTimeMs(),
+        mRangeSeekBar.setTicks((int)clip.getStartTimeMs() ,
+            (int)clip.getEndTimeMs(),
             (int) clip.editInfo.selectedStartValue,
             (int) clip.editInfo.selectedEndValue);
 
