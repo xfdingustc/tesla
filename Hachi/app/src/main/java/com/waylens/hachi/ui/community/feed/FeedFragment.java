@@ -1,13 +1,19 @@
 package com.waylens.hachi.ui.community.feed;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+
+import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
@@ -18,6 +24,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -32,6 +41,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -65,6 +75,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
+
+    @OnClick(R.id.btn_sign_up)
+    public void onBtnSignupClicked() {
+        AuthorizeActivity.launchForResult(getActivity(), MainActivity.REQUEST_CODE_SIGN_UP_FROM_MOMENTS);
+    }
+
     MomentsListAdapter mAdapter;
 
     RequestQueue mRequestQueue;
@@ -89,7 +105,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle arguments = getArguments();
         if (arguments != null) {
             mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_MY_FEED);
@@ -107,6 +122,21 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mRequestQueue.cancelAll(getRequestTag());
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (this.isLoginRequired() && !SessionManager.getInstance().isLoggedIn()) {
+            mViewAnimator.setDisplayedChild(0);
+        }
+        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
+            if (mViewAnimator.getDisplayedChild() == 0) {
+                mViewAnimator.setDisplayedChild(1);
+                onRefresh();
+            }
+
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -120,6 +150,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 loadFeed(mCurrentCursor, false);
             }
         });
+        if (this.isLoginRequired()) {
+            mViewAnimator.setDisplayedChild(0);
+        } else {
+            mViewAnimator.setDisplayedChild(1);
+        }
 
         return view;
     }
@@ -128,7 +163,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentCursor = 0;
-        loadFeed(mCurrentCursor, true);
+        if (!this.isLoginRequired())
+            loadFeed(mCurrentCursor, true);
+        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn())
+            loadFeed(mCurrentCursor, true);
     }
 
 
@@ -225,8 +263,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             mRvVideoList.setEnableLoadMore(false);
         }
 
-        if (mViewAnimator.getDisplayedChild() == 0) {
-            mViewAnimator.setDisplayedChild(1);
+        if (mViewAnimator.getDisplayedChild() == 1) {
+            mViewAnimator.setDisplayedChild(2);
         }
 
         /*TODO disable it? Richard
@@ -247,7 +285,10 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         mCurrentCursor = 0;
         mRvVideoList.setEnableLoadMore(true);
-        loadFeed(mCurrentCursor, true);
+        if (!this.isLoginRequired())
+            loadFeed(mCurrentCursor, true);
+        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn())
+            loadFeed(mCurrentCursor, true);
     }
 
     @Override
@@ -286,4 +327,5 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 return false;
         }
     }
+
 }
