@@ -203,6 +203,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             refreshThumbnail = true;
             if (event.getIntent() == ClipSetPosChangeEvent.INTENT_SHOW_THUMBNAIL) {
 //                changeState(STATE_FAST_PREVIEW);
+                enterFastPreview();
             }
         }
 
@@ -488,6 +489,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 //            playerPosition = mMediaPlayer.getCurrentPosition();
             mMediaPlayer.release();
             mMediaPlayer = null;
+            mPlayerControl = null;
 //            eventLogger.endSession();
 //            eventLogger = null;
         }
@@ -511,12 +513,13 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             @Override
             public void onStartTrackingTouch(MultiSegSeekbar seekBar) {
 //                changeState(STATE_FAST_PREVIEW);
+                enterFastPreview();
             }
 
             @Override
             public void onProgressChanged(MultiSegSeekbar seekBar, ClipSetPos clipSetPos) {
 //                if (mCurrentState == STATE_FAST_PREVIEW) {
-//                    setClipSetPos(clipSetPos, true);
+                    setClipSetPos(clipSetPos, true);
 //                }
 
                 mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
@@ -524,9 +527,17 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
             @Override
             public void onStopTrackingTouch(MultiSegSeekbar seekBar) {
-                //startPreparingClip(getSeekbarTimeMs());
+                startPreparingClip(seekBar.getCurrentClipSetPos(), false);
             }
         });
+    }
+
+    private void enterFastPreview() {
+        if (mPlayerControl != null && mPlayerControl.isPlaying()) {
+            releasePlayer();
+        }
+
+        mVsCover.setVisibility(View.VISIBLE);
     }
 
 
@@ -650,6 +661,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     public void setClipSetPos(ClipSetPos clipSetPos, boolean refreshThumbnail) {
+
         ClipPos clipPos = getClipSet().getClipPosByClipSetPos(clipSetPos);
         if (refreshThumbnail == true) {
             showThumbnail(clipPos);
@@ -682,9 +694,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         }
 
         int currentPos = mPlayerControl.getCurrentPosition();
-//        if (mPositionAdjuster != null) {
-//            currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
-//        }
+        if (mPositionAdjuster != null) {
+            currentPos = mPositionAdjuster.getAdjustedPostion(currentPos);
+        }
         return currentPos;
     }
 

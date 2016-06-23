@@ -321,7 +321,9 @@ public class HachiPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventL
     }
 
 
-
+    public void stop() {
+        player.stop();
+    }
 
     public void seekTo(long positionMs) {
         player.seekTo(positionMs);
