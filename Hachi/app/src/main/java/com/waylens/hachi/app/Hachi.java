@@ -34,10 +34,7 @@ public class Hachi extends Application {
     private DeviceScanner mScanner;
 
 
-    @Subscribe
-    public void OnRawDataItemEvent(RawDataItemEvent event) {
 
-    }
 
     @Override
     public void onCreate() {
@@ -95,7 +92,7 @@ public class Hachi extends Application {
         VdbImageLoader.init(this, 1024 * 64);
 //        FIR.init(this);
 
-        EventBus.getDefault().register(this);
+
 
 //        VdtCameraFounder founder = new VdtCameraFounder();
 //        founder.start();
