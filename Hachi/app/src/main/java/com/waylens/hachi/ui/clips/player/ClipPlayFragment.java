@@ -510,7 +510,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mMultiSegSeekbar.setOnMultiSegSeekbarChangListener(new MultiSegSeekbar.OnMultiSegSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(MultiSegSeekbar seekBar) {
-                changeState(STATE_FAST_PREVIEW);
+//                changeState(STATE_FAST_PREVIEW);
             }
 
             @Override
