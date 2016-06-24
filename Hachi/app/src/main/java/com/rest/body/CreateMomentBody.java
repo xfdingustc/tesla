@@ -2,6 +2,7 @@ package com.rest.body;
 
 import com.waylens.hachi.ui.entities.LocalMoment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,10 +24,15 @@ public class CreateMomentBody {
 
     public String musicSource;
 
+    public List<String> shareProviders = new ArrayList<>();
+
     public CreateMomentBody(LocalMoment localMoment) {
         this.title = localMoment.title;
         this.desc = localMoment.description;
         this.accessLevel = localMoment.accessLevel;
+        if (localMoment.isFbShare) {
+            shareProviders.add("facebook");
+        }
 
     }
 }
