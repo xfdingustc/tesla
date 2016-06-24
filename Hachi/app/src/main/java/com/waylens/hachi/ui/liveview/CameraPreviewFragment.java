@@ -32,6 +32,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
+import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.BtDevice;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -183,7 +184,7 @@ public class CameraPreviewFragment extends BaseFragment {
     public void onBtnMicControlClicked() {
         boolean isMicOn = mVdtCamera.isMicOn();
         mVdtCamera.setMicOn(!isMicOn);
-        updateMicControlButton();
+        //updateMicControlButton();
     }
 
 
@@ -302,6 +303,11 @@ public class CameraPreviewFragment extends BaseFragment {
 
         RawDataItem item = event.getRawDataItem();
         mGaugeView.updateRawDateItem(item);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMicInfor(MicStateChangeEvent event) {
+        updateMicControlButton();
     }
 
 

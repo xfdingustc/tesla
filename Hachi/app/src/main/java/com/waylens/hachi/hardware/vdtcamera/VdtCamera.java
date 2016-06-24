@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
+import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.events.BluetoothEvent;
 import com.waylens.hachi.hardware.vdtcamera.events.NetworkEvent;
@@ -927,7 +928,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         int vol = Integer.parseInt(p2);
         mMicState = state;
         mMicVol = vol;
-
+        mEventBus.post(new MicStateChangeEvent(mMicState, mMicVol));
     }
 
 
