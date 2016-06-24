@@ -115,18 +115,18 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                 mSocket.setReceiveBufferSize(8192);
                 mSocket.connect(mAddress);
                 mSocket.setKeepAlive(true);
-                mSocket.setSoTimeout(10000);
+//                mSocket.setSoTimeout(10000);
                 mSocket.setTcpNoDelay(true);
 
                 mConnectionListener.onConnected();
                 mMessageThread.start();
 
                 while (true) {
-                    VdtCameraCommand command = mCameraCommandQueue.poll(1, TimeUnit.SECONDS);
-                    if (command == null) {
-                        command = new VdtCameraCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME, "", "");
-
-                    }
+                    VdtCameraCommand command = mCameraCommandQueue.take();
+//                    if (command == null) {
+//                        command = new VdtCameraCommand(CMD_DOMAIN_CAM, CMD_CAM_GET_NAME, "", "");
+//
+//                    }
                     SocketUtils.writeCommand(mSocket, command);
 
 
