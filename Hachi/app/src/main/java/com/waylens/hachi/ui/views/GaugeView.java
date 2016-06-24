@@ -143,8 +143,8 @@ public class GaugeView extends FrameLayout {
             switch (item.getType()) {
                 case RawDataItem.DATA_TYPE_IIO:
                     IioData iioData = (IioData) item.data;
-                    state.put("roll", -iioData.euler_roll);
-                    state.put("pitch", -iioData.euler_pitch);
+                    state.put("roll", iioData.euler_roll);
+                    state.put("pitch", iioData.euler_pitch);
                     state.put("gforceBA", iioData.accX);
                     state.put("gforceLR", iioData.accZ);
                     break;
