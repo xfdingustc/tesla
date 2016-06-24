@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.adapters;
 
 
 import android.app.FragmentManager;
-import android.support.v13.app.FragmentPagerAdapter;
 
 import com.waylens.hachi.ui.fragments.BaseFragment;
 
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Created by Xiaofei on 2015/7/22.
  */
-public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
+public class SimpleFragmentPagerAdapter extends BaseFragmentStatePagerAdapter {
     private final List<BaseFragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitles = new ArrayList<>();
 
