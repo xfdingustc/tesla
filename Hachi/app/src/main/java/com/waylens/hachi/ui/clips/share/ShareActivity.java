@@ -16,16 +16,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.orhanobut.logger.Logger;
+import com.rest.HachiApi;
+import com.rest.HachiService;
+import com.rest.response.LinkedAccounts;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
@@ -33,8 +47,6 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.EnhanceFragment;
 import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
-import com.waylens.hachi.ui.clips.upload.UploadActivity;
-import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.ViewUtils;
 
@@ -43,10 +55,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindArray;
 import butterknife.BindView;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -63,6 +81,14 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     private String mSocialPrivacy;
 
     private String[] mSupportedPrivacy;
+
+    private boolean mIsFacebookShareChecked = false;
+
+    private LinkedAccounts mLinkedAccounts;
+
+    private HachiApi mHachi = HachiService.createHachiApiService();
+
+    private CallbackManager callbackManager = CallbackManager.Factory.create();
 
     @BindView(R.id.user_avatar)
     CircleImageView mUserAvatar;
@@ -87,6 +113,20 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
     @BindView(R.id.spinner_social_privacy)
     Spinner mPrivacySpinner;
+
+    @BindView(R.id.btn_facebook)
+    ImageView mBtnFaceBook;
+
+    @OnClick(R.id.btn_facebook)
+    public void onBtnFackBookChecked() {
+        mIsFacebookShareChecked = !mIsFacebookShareChecked;
+        if (mIsFacebookShareChecked) {
+            mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_s);
+        } else {
+            mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_n);
+        }
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventUpload(UploadEvent event) {
@@ -128,6 +168,12 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         init();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     @Override
     protected void init() {
@@ -135,7 +181,6 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         mPlayListId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
         initViews();
     }
-
 
 
     @Override
@@ -178,6 +223,14 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
             .into(mUserAvatar);
         mUserName.setText(sessionManager.getUserName());
         mUserEmail.setText(sessionManager.getEmail());
+
+
+        Logger.t(TAG).d("is linked with facebook: " + sessionManager.isLinked());
+        if (sessionManager.isLinked()) {
+            mBtnFaceBook.setVisibility(View.VISIBLE);
+        } else {
+            mBtnFaceBook.setVisibility(View.GONE);
+        }
 
     }
 
@@ -227,7 +280,8 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.share:
-                        doShareMoment();
+                        shareMoment();
+
                         break;
                 }
                 return true;
@@ -235,6 +289,105 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         });
 
 
+    }
+
+    private void shareMoment() {
+        if (mIsFacebookShareChecked) {
+            checkFackbookPermission();
+        } else {
+            doShareMoment();
+        }
+    }
+
+    private void checkFackbookPermission() {
+        Logger.t(TAG).d("send check permission");
+
+
+        Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
+        callLinkedAccount.enqueue(new Callback<LinkedAccounts>() {
+            @Override
+            public void onResponse(Call<LinkedAccounts> call, retrofit2.Response<LinkedAccounts> response) {
+                Logger.t(TAG).d("Get response");
+                mLinkedAccounts = response.body();
+                if (checkIfNeedGetFacebookPermission()) {
+                    requestPublishPermission();
+                } else {
+                    doShareMoment();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<LinkedAccounts> call, Throwable t) {
+                Logger.t(TAG).d(t.toString());
+            }
+        });
+
+    }
+
+    private boolean checkIfNeedGetFacebookPermission() {
+
+        for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
+            if (account.provider.equals("facebook") && TextUtils.isEmpty(account.accountName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void requestPublishPermission() {
+        Logger.t(TAG).d("request publish permission");
+        LoginManager loginManager = LoginManager.getInstance();
+
+
+        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Logger.t(TAG).d("on sucess!!!");
+                sendShareTokenToServer(loginResult.getAccessToken().getToken());
+
+            }
+
+            @Override
+            public void onCancel() {
+                Logger.t(TAG).d("on cancel");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Logger.t(TAG).d("on error");
+            }
+        });
+        loginManager.logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+
+
+
+    }
+
+    private void sendShareTokenToServer(String token) {
+        String url = Constants.API_SHARE_ACCOUNTS;
+        Map<String, String> param = new HashMap<>();
+        param.put("provider", "facebook");
+        param.put("accessToken", token);
+
+        final JSONObject requestBody = new JSONObject(param);
+
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Logger.t(TAG).json(response.toString());
+                doShareMoment();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        mRequestQueue.add(request);
     }
 
 
@@ -293,7 +446,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
         Logger.t(TAG).d("share title: " + title);
         mShareHelper.shareMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags,
-            mSocialPrivacy, audioID, gaugeSettings, false);
+            mSocialPrivacy, audioID, gaugeSettings, mIsFacebookShareChecked);
 
 //
     }

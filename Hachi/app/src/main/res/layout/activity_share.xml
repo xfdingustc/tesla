@@ -126,6 +126,27 @@
             </android.support.design.widget.TextInputLayout>
 
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:text="@string/also_post_on"
+                android:textColor="@color/style_color_primary"
+                android:textSize="15sp"/>
+
+            <ImageView
+                android:id="@+id/btn_facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/btn_platform_facebook"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@null"/>
+
+
         </LinearLayout>
 
     </ScrollView>

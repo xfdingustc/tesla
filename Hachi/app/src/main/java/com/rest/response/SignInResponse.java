@@ -20,6 +20,8 @@ public class SignInResponse {
 
     public String token;
 
+    public boolean isLinked;
+
     @Override
     public String toString() { return ToStringUtils.getString(this);}
 

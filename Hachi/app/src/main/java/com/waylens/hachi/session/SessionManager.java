@@ -151,7 +151,7 @@ public class SessionManager {
             mIsVerified = userInfo.getBoolean(JsonKey.IS_VERIFIED);
 
             mToken = response.getString(JsonKey.TOKEN);
-            mIsLinked = response.optBoolean(JsonKey.IS_LINKED);
+            mIsLinked = response.optBoolean(JsonKey.IS_LINKED, mIsLinked);
 
             if (isLoginWithSNS) {
                 mLoginType = LOGIN_TYPE_SNS;
@@ -169,6 +169,7 @@ public class SessionManager {
             PreferenceUtils.putInt(PreferenceUtils.LOGIN_TYPE, mLoginType);
             PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, mIsLinked);
             PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, mIsVerified);
+            Logger.t(TAG).d("save is linked: " + mIsLinked);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -193,7 +194,7 @@ public class SessionManager {
         mUserId = response.user.userID;
         mAvatarUrl = response.user.avatarUrl;
         mToken = response.token;
-        mIsLinked = false;
+        mIsLinked = response.isLinked;
 
         mIsVerified = response.user.isVerified;
 
@@ -212,6 +213,7 @@ public class SessionManager {
         PreferenceUtils.putInt(PreferenceUtils.LOGIN_TYPE, mLoginType);
         PreferenceUtils.putBoolean(PreferenceUtils.IS_LINKED, mIsLinked);
         PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, mIsVerified);
+        Logger.t(TAG).d("save is linked: " + mIsLinked);
     }
 
 
@@ -226,6 +228,8 @@ public class SessionManager {
         mIsLinked = PreferenceUtils.getBoolean(PreferenceUtils.IS_LINKED, false);
         mLoginType = PreferenceUtils.getInt(PreferenceUtils.LOGIN_TYPE, LOGIN_TYPE_USERNAME_PASSWORD);
         mIsVerified = PreferenceUtils.getBoolean(PreferenceUtils.IS_VERIFIED, false);
+
+        Logger.t(TAG).d("isLinked: " + mIsLinked);
         setLoginInternal();
     }
 
