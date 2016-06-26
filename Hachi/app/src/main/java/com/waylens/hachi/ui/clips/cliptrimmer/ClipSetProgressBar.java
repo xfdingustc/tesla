@@ -406,7 +406,8 @@ public class ClipSetProgressBar extends FrameLayout {
                     .using(new SnipeGlideLoader(mVdbRequestQueue))
                     .load(clipPos)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.defaultpic)
+                    .placeholder(R.drawable.icon_video_default)
+                    .centerCrop()
                     .crossFade()
                     .into(viewHolder.clipFragmentThumbnail);
                 setupBookmarkView(clipSegment, viewHolder.bookmarkView);

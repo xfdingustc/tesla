@@ -169,7 +169,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             .using(new SnipeGlideLoader(mVdbRequestQueue))
             .load(clipPos)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.defaultpic)
+            .placeholder(R.drawable.icon_video_default)
             .crossFade()
             .into(viewHolder.ivClipCover);
 
