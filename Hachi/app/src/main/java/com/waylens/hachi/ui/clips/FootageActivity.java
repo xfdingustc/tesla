@@ -56,7 +56,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/3/16.
  */
-public class FootageActivity extends BaseActivity {
+public class FootageActivity extends ClipPlayActivity {
     private static final String TAG = FootageActivity.class.getSimpleName();
 
     private ClipPlayFragment mClipPlayFragment;
@@ -78,7 +78,6 @@ public class FootageActivity extends BaseActivity {
 
     private PlaylistEditor mPlaylistEditor;
 
-    private EventBus mEventBus = EventBus.getDefault();
 
     @BindView(R.id.vsRoot)
     View mRootView;
@@ -205,14 +204,12 @@ public class FootageActivity extends BaseActivity {
     public void onStart() {
         super.onStart();
         refreshBookmarkClipSet();
-        mEventBus.register(this);
         mEventBus.register(mClipSetProgressBar);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mEventBus.unregister(this);
         mEventBus.unregister(mClipSetProgressBar);
     }
 
@@ -256,7 +253,7 @@ public class FootageActivity extends BaseActivity {
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
             ClipPlayFragment.ClipMode.SINGLE, ClipPlayFragment.CoverMode.NORMAL);
 
-        getFragmentManager().beginTransaction().add(R.id.fragmentContainer, mClipPlayFragment).commit();
+        getFragmentManager().beginTransaction().add(R.id.player_fragment_content, mClipPlayFragment).commit();
         Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
         doMakePlaylist();
 
