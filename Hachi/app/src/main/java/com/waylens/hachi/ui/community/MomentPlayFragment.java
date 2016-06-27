@@ -250,6 +250,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         switch (playbackState) {
             case HachiPlayer.STATE_ENDED:
                 releasePlayer();
+                mVideoSeekBar.setProgress(0);
 
 //                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
 //                setClipSetPos(clipSetPos, true);
@@ -828,9 +829,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    setProgress(currentPos, mPlayerControl.getDuration());
-                    //
-                    mRawDataAdapter.updateCurrentTime(currentPos);
+                    if (mPlayerControl != null) {
+                        setProgress(currentPos, mPlayerControl.getDuration());
+                        //
+                        mRawDataAdapter.updateCurrentTime(currentPos);
+                    }
                 }
             });
         }
