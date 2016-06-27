@@ -86,7 +86,8 @@ public class AvatarActivity extends BaseActivity {
             case UploadEvent.UPLOAD_WHAT_PROGRESS:
                 if (mUploadDialog != null) {
                     int progress = event.getExtra();
-                    mUploadDialog.getProgressBar().setProgress(progress);
+                    mUploadDialog.setProgress(progress);
+                    //mUploadDialog.getProgressBar().setProgress(progress);
                 }
                 break;
             case UploadEvent.UPLOAD_WHAT_FINISHED:

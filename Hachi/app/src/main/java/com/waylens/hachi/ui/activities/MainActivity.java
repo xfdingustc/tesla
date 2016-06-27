@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -269,10 +272,15 @@ public class MainActivity extends BaseActivity {
 
             Glide.with(this)
                 .load(mSessionManager.getAvatarUrl())
+                .asBitmap()
                 .placeholder(R.drawable.default_avatar)
-                .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(mUserAvatar);
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mUserAvatar.setImageBitmap(resource);
+                    }
+                });
         } else {
             mUsername.setText(getText(R.string.click_2_login));
 

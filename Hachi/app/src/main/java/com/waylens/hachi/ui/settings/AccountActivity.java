@@ -2,14 +2,23 @@ package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.android.volley.Response;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -65,7 +74,9 @@ public class AccountActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Logger.t(TAG).d("in onStart" + "avatart: i am here" );
         fetchUserProfile();
+
     }
 
     private void fetchUserProfile() {
@@ -78,7 +89,9 @@ public class AccountActivity extends BaseActivity {
                     mSessionManager.saveUserProfile(response);
                     showUserProfile(response);
                     AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
-                    getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commit();
+                    if (!isDestroyed()) {
+                        getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commit();
+                    }
                 }
             })
             .build();
@@ -90,13 +103,18 @@ public class AccountActivity extends BaseActivity {
 
         Logger.t(TAG).d("avatart: " + mSessionManager.getAvatarUrl());
 
-
-        Glide.with(this)
+        final Resources resources = this.getApplicationContext().getResources();
+        Glide.with(this.getApplicationContext())
             .load(mSessionManager.getAvatarUrl())
+            .asBitmap()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.default_avatar)
-            .crossFade()
-            .into(mAvatar);
+            .into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    mAvatar.setImageBitmap(resource);
+                }
+            });
     }
 
 
@@ -112,9 +130,14 @@ public class AccountActivity extends BaseActivity {
 
         Glide.with(this)
             .load(mSessionManager.getAvatarUrl())
+            .asBitmap()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .into(mAvatar);
+            .into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    mAvatar.setImageBitmap(resource);
+                }
+            });
     }
 
 
