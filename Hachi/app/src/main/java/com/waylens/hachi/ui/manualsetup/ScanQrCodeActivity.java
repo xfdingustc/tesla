@@ -13,6 +13,10 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -290,6 +294,13 @@ public class ScanQrCodeActivity extends BaseActivity implements SurfaceHolder.Ca
 //        mScanMaskObjectAnimator.setInterpolator(new DecelerateInterpolator());
 //        mScanMaskObjectAnimator.setRepeatCount(-1);
 //        mScanMaskObjectAnimator.start();
+
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, captureCropView.getMeasuredHeight());
+        animation.setRepeatCount(-1);
+        animation.setRepeatMode(Animation.RESTART);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.setDuration(1200);
+        mScanLine.startAnimation(animation);
     }
 
 
