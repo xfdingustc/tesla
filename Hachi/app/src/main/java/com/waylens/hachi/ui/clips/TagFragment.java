@@ -34,6 +34,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
+import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -484,6 +485,14 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 //            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
 //            ShareActivity.launch(getActivity());
+            final int playlistId = 0x100;
+            PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
+            playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
+                @Override
+                public void onBuildComplete(ClipSet clipSet) {
+                    ShareActivity.launch(getActivity(), playlistId);
+                }
+            });
         } else {
             AuthorizeActivity.launch(getActivity());
         }

@@ -43,7 +43,7 @@ public class SettingPrefFragment extends PreferenceFragment {
 //            }
 //        });
 
-        Logger.t(TAG).d("settTTTTTTTTTTTT");
+
 
         mAccountPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

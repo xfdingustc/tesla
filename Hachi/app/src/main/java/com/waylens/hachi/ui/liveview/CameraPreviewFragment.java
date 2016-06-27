@@ -183,8 +183,10 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
-        boolean isMicOn = mVdtCamera.isMicOn();
-        mVdtCamera.setMicOn(!isMicOn);
+        if (mVdtCamera != null) {
+            boolean isMicOn = mVdtCamera.isMicOn();
+            mVdtCamera.setMicOn(!isMicOn);
+        }
         //updateMicControlButton();
     }
 
