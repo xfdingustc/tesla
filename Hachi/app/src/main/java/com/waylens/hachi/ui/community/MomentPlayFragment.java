@@ -249,8 +249,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         Logger.t(TAG).d("playWhenReady: " + playWhenReady + " playbackState: " + playbackState);
         switch (playbackState) {
             case HachiPlayer.STATE_ENDED:
+                setProgress(0, mPlayerControl.getDuration());
                 releasePlayer();
-                mVideoSeekBar.setProgress(0);
 
 //                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
 //                setClipSetPos(clipSetPos, true);
