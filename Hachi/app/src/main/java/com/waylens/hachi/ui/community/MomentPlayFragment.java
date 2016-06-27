@@ -27,11 +27,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.rest.response.MomentInfo;
 import com.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.player.HachiPlayer;
+import com.waylens.hachi.player.HlsRendererBuilder;
+import com.waylens.hachi.player.Utils;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -67,19 +71,13 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Callback {
+public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Callback, HachiPlayer.Listener {
     private static final String TAG = MomentPlayFragment.class.getSimpleName();
 
 
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
 
-
-    private final int STATE_IDLE = 0;
-    private final int STATE_PREPAREING = 1;
-    private final int STATE_PREPARED = 2;
-    private final int STATE_PLAYING = 3;
-    private final int STATE_PAUSE = 4;
 
 
     private static final int DEFAULT_TIMEOUT = 3000;
@@ -89,19 +87,17 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     protected static final int RAW_DATA_STATE_READY = 0;
     protected static final int RAW_DATA_STATE_ERROR = 1;
 
-    private static final int PENDING_ACTION_NONE = 0;
-    private static final int PENDING_ACTION_PlAY = 1;
-
 
     protected int mRawDataState = RAW_DATA_STATE_UNKNOWN;
 
     protected boolean mOverlayShouldDisplay = true;
 
-    private MediaPlayer mMediaPlayer = new MediaPlayer();
+    private HachiPlayer mMediaPlayer;
+    private PlayerControl mPlayerControl;
 
     private SurfaceHolder mSurfaceHolder;
 
-    private int mCurrentState = STATE_IDLE;
+
 
 
     private VideoHandler mHandler;
@@ -112,7 +108,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     private List<RawDataTimeInfo> mRawDataTimeInfoList = new ArrayList<>();
 
-    private int mPendingAction = PENDING_ACTION_NONE;
 
 
     boolean mIsFullScreen;
@@ -129,6 +124,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
 
     private MomentRawDataAdapter mRawDataAdapter = new MomentRawDataAdapter();
+
+    private boolean playerNeedsPrepare;
 
     @BindView(R.id.video_thumbnail)
     ImageView mVsCover;
@@ -170,22 +167,18 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @OnClick(R.id.btn_play_pause)
     public void onBtnPlayClicked() {
-        switch (mCurrentState) {
-            case STATE_IDLE:
-            case STATE_PREPARED:
-                start();
-                break;
-            case STATE_PAUSE:
-                changeState(STATE_PLAYING);
-                break;
-            case STATE_PLAYING:
-                showControllers();
-                mBtnPlayPause.setAlpha((float) 1);
-                changeState(STATE_PAUSE);
-                break;
-            case STATE_PREPAREING:
-                break;
+        if (mPlayerControl == null) {
+            start();
+        } else {
+            if (mPlayerControl.isPlaying()) {
+                mPlayerControl.pause();
+            } else {
+
+                mPlayerControl.start();
+
+            }
         }
+
     }
 
     @OnClick(R.id.video_surface)
@@ -251,6 +244,64 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         return view;
     }
 
+    @Override
+    public void onStateChanged(boolean playWhenReady, int playbackState) {
+        Logger.t(TAG).d("playWhenReady: " + playWhenReady + " playbackState: " + playbackState);
+        switch (playbackState) {
+            case HachiPlayer.STATE_ENDED:
+                releasePlayer();
+
+//                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
+//                setClipSetPos(clipSetPos, true);
+                break;
+        }
+        updateControls(playWhenReady, playbackState);
+    }
+
+
+    private void updateControls(boolean playwhenReady, int playbackState) {
+        switch (playbackState) {
+            case HachiPlayer.STATE_IDLE:
+            case HachiPlayer.STATE_ENDED:
+                mVsCover.setVisibility(View.VISIBLE);
+                mProgressLoading.setVisibility(View.INVISIBLE);
+                mBtnPlayPause.toggle(true);
+                break;
+            case HachiPlayer.STATE_PREPARING:
+                mVsCover.setVisibility(View.VISIBLE);
+                mProgressLoading.setVisibility(View.VISIBLE);
+                break;
+
+            case HachiPlayer.STATE_BUFFERING:
+                mProgressLoading.setVisibility(View.VISIBLE);
+                mBtnPlayPause.setVisibility(View.GONE);
+                break;
+            case HachiPlayer.STATE_READY:
+                mProgressLoading.setVisibility(View.GONE);
+                mBtnPlayPause.setVisibility(View.VISIBLE);
+                mVsCover.setVisibility(View.INVISIBLE);
+                if (playwhenReady) {
+                    mBtnPlayPause.toggle(false);
+                } else {
+                    mBtnPlayPause.toggle(true);
+                }
+                break;
+
+
+
+        }
+    }
+
+    @Override
+    public void onError(Exception e) {
+
+    }
+
+    @Override
+    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+
+    }
+
     private void initViews() {
         Glide.with(this)
             .load(mMoment.moment.thumbnail)
@@ -275,24 +326,23 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     @Override
     public void onStop() {
         super.onStop();
-        if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-        }
         mTimer.cancel();
     }
+
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mRawDataState = RAW_DATA_STATE_UNKNOWN;
+        releasePlayer();
     }
 
 
     protected void setSource(String source) {
 
         mPausePosition = 0;
-        openVideo();
+        openVideo(true);
     }
 
 
@@ -311,120 +361,59 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    private void playVideo() {
-        openVideo();
-        if (mMediaPlayer.isPlaying()) {
-            pauseVideo();
-        } else {
-            resumeVideo();
+
+
+
+    private void start() {
+        openVideo(true);
+    }
+
+
+    private void releasePlayer() {
+        if (mMediaPlayer != null) {
+//            debugViewHelper.stop();
+//            debugViewHelper = null;
+//            playerPosition = mMediaPlayer.getCurrentPosition();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+            mPlayerControl = null;
+//            eventLogger.endSession();
+//            eventLogger = null;
         }
     }
 
-
-    private void resumeVideo() {
-        start();
-        mBtnPlayPause.toggle(false);
-
-    }
-
-    private void pauseVideo() {
-        mMediaPlayer.pause();
-        mPausePosition = mMediaPlayer.getCurrentPosition();
-
-        mBtnPlayPause.toggle(true);
-        mHandler.removeMessages(SHOW_PROGRESS);
-    }
-
-    private void start() {
-        openVideo();
-        changeState(STATE_PREPAREING);
-    }
-
-
-    private void openVideo() {
+    private void openVideo(boolean playWhenReady) {
         if (mMoment.moment.videoUrl == null || mSurfaceView == null || mSurfaceHolder == null) {
             Logger.t(TAG).d("source: " + mMoment.moment.videoUrl + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
             return;
         }
 
-        mProgressLoading.setVisibility(View.VISIBLE);
-        try {
-            if (mMediaPlayer == null) {
-                mMediaPlayer = new MediaPlayer();
-            } else {
-                mMediaPlayer.reset();
-            }
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    Logger.t(TAG).d("prepared finished");
-                    changeState(STATE_PREPARED);
-                    changeState(STATE_PLAYING);
-                    mBtnPlayPause.setVisibility(View.VISIBLE);
-                    showControllers();
-                }
-            });
-
-
-            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    mVideoSeekBar.setProgress(0);
-                    setProgress(0, mMediaPlayer.getDuration());
-                    changeState(STATE_IDLE);
-                }
-            });
-            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN && extra == MediaPlayer.MEDIA_ERROR_IO) {
-                        Snackbar.make(getView(), "Cannot load video.", Snackbar.LENGTH_SHORT).show();
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    getFragmentManager().beginTransaction().remove(MomentPlayFragment.this).commit();
-                                } catch (Exception e) {
-                                    Logger.t(TAG).d("", e);
-                                }
-                            }
-                        }, 1000);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-
-            mMediaPlayer.setDataSource(mMoment.moment.videoUrl);
-            mMediaPlayer.setDisplay(mSurfaceHolder);
-            mMediaPlayer.prepareAsync();
-            mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-                @Override
-                public boolean onInfo(MediaPlayer mp, int what, int extra) {
-                    switch (what) {
-                        case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-                            mProgressLoading.setVisibility(View.VISIBLE);
-                            break;
-                        case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-                            mProgressLoading.setVisibility(View.GONE);
-                            break;
-                    }
-                    return false;
-                }
-            });
-            mMediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-                @Override
-                public void onSeekComplete(MediaPlayer mediaPlayer) {
-                    changeState(STATE_PLAYING);
-                    mBtnPlayPause.setVisibility(View.VISIBLE);
-                    showControllers();
-                }
-            });
-
-        } catch (IOException e) {
-            Logger.t(TAG).e(e.toString());
+        if (mMediaPlayer == null) {
+            String userAgent = Utils.getUserAgent(getActivity(), getString(R.string.app_name));
+            mMediaPlayer = new HachiPlayer(new HlsRendererBuilder(getActivity(), userAgent, mMomentPlayInfo.videoUrl));
+            mMediaPlayer.addListener(this);
+//            mMediaPlayer.setCaptionListener(this);
+//            mMediaPlayer.setMetadataListener(this);
+            mMediaPlayer.seekTo(0);
+            playerNeedsPrepare = true;
+            mPlayerControl = mMediaPlayer.getPlayerControl();
+//            mediaController.setMediaPlayer(player.getPlayerControl());
+//            mediaController.setEnabled(true);
+//            eventLogger = new EventLogger();
+//            eventLogger.startSession();
+//            mMediaPlayer.addListener(eventLogger);
+//            mMediaPlayer.setInfoListener(eventLogger);
+//            mMediaPlayer.setInternalErrorListener(eventLogger);
+//            debugViewHelper = new DebugTextViewHelper(player, debugTextView);
+//            debugViewHelper.start();
         }
+        if (playerNeedsPrepare) {
+            mMediaPlayer.prepare();
+            playerNeedsPrepare = false;
+            updateButtonVisibilities();
+        }
+        mMediaPlayer.setSurface(mSurfaceView.getHolder().getSurface());
+        mMediaPlayer.setPlayWhenReady(playWhenReady);
 
         mVideoSeekBar.setOnSeekBarChangeListener(new SeekBarChangeEvent());
     }
@@ -432,26 +421,29 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        mSurfaceHolder = holder;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.setSurface(holder.getSurface());
+        }
     }
 
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        if (mMediaPlayer == null) {
-            return;
-        }
 
-        mMediaPlayer.setDisplay(holder);
 
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-//        mSurfaceHolder = null;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.blockingClearSurface();
+        }
 
     }
 
+
+    private void updateButtonVisibilities() {
+    }
 
     protected void setProgress(int position, int duration) {
         if (mVideoSeekBar != null) {
@@ -492,11 +484,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         if (mMediaPlayer == null) {
             return;
         }
-        int position = mMediaPlayer.getCurrentPosition();
-        int duration = mMediaPlayer.getDuration();
+        int position = mPlayerControl.getCurrentPosition();
+        int duration = mPlayerControl.getDuration();
         setProgress(position, duration);
         mRawDataAdapter.updateCurrentTime(position);
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+        if (mMediaPlayer != null && mPlayerControl.isPlaying()) {
             mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 20);
         }
     }
@@ -515,7 +507,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         if (mSurfaceHolder == null) {
             return;
         }
-        openVideo();
+        openVideo(true);
     }
 
 
@@ -523,7 +515,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         Logger.t(TAG).d("msg: " + msg);
         mRawDataState = RAW_DATA_STATE_ERROR;
         mProgressLoading.setVisibility(View.GONE);
-        openVideo();
+        openVideo(true);
     }
 
     private void getMomentPlayInfo() {
@@ -800,53 +792,10 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     }
 
-    private void changeState(int targetState) {
-//        Logger.t(TAG).d("target state: " + targetState);
-        switch (targetState) {
-            case STATE_IDLE:
-                mVsCover.setVisibility(View.VISIBLE);
-                mProgressLoading.setVisibility(View.INVISIBLE);
-                mBtnPlayPause.toggle(true);
-//                mBtnPlayPause.setImageResource(R.drawable.playbar_play);
-                break;
-            case STATE_PREPAREING:
-                mVsCover.setVisibility(View.VISIBLE);
-                mProgressLoading.setVisibility(View.VISIBLE);
-                break;
-            case STATE_PREPARED:
-                mProgressLoading.setVisibility(View.GONE);
-                break;
-            case STATE_PLAYING:
-                mVsCover.setVisibility(View.GONE);
-                mBtnPlayPause.toggle(false);
-                startPlayer();
-                mProgressLoading.setVisibility(View.GONE);
-                break;
-            case STATE_PAUSE:
-                mBtnPlayPause.toggle(true);
-                pausePlayer();
-                break;
 
-        }
-        mCurrentState = targetState;
-    }
 
-    private void startPlayer() {
-        mMediaPlayer.start();
 
-    }
 
-    private void pausePlayer() {
-        mMediaPlayer.pause();
-
-    }
-
-    private void stopPlayer() {
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.stop();
-        }
-
-    }
 
 
     public class RawDataTimeInfo {
@@ -864,22 +813,22 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
         @Override
         public void run() {
-            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            if (mPlayerControl != null && mPlayerControl.isPlaying()) {
                 refreshProgressBar();
 
             }
         }
 
         private void refreshProgressBar() {
-            if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+            if (mPlayerControl == null || !mPlayerControl.isPlaying()) {
                 return;
             }
-            final int currentPos = mMediaPlayer.getCurrentPosition();
+            final int currentPos = mPlayerControl.getCurrentPosition();
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    setProgress(currentPos, mMediaPlayer.getDuration());
+                    setProgress(currentPos, mPlayerControl.getDuration());
                     //
                     mRawDataAdapter.updateCurrentTime(currentPos);
                 }
@@ -917,8 +866,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-                this.progress = progress * mMediaPlayer.getDuration() / seekBar.getMax();
+            if (mPlayerControl != null && mPlayerControl.isPlaying()) {
+                this.progress = progress * mPlayerControl.getDuration() / seekBar.getMax();
             }
         }
 
@@ -930,7 +879,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mMediaPlayer.seekTo(progress);
-            changeState(STATE_PREPARED);
         }
 
     }
