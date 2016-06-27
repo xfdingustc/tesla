@@ -152,6 +152,12 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
                 MaterialDialog dialog = new MaterialDialog.Builder(this)
                     .content("Uploading finished")
                     .show();
+                mBtnFaceBook.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 2000);
                 break;
         }
     }
