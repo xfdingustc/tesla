@@ -50,7 +50,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initCamera();
+        initVdtCamera();
     }
 
 
@@ -91,7 +91,7 @@ public class BaseFragment extends Fragment {
     }
 
 
-    protected void initCamera() {
+    protected void initVdtCamera() {
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
         if (mVdtCamera != null) {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();

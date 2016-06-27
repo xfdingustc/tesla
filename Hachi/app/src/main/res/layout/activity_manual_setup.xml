@@ -3,9 +3,10 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="?attr/defaultBgColor"
+              android:fitsSystemWindows="true"
               android:orientation="vertical">
 
-    <include layout="@layout/toolbar_default"/>
+    <!--<include layout="@layout/toolbar_default"/>-->
 
     <FrameLayout
         android:id="@+id/fragmentContainer"

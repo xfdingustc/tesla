@@ -8,6 +8,7 @@ import android.preference.PreferenceScreen;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
+import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 
 /**
  * Created by Xiaofei on 2016/5/3.
@@ -63,7 +64,7 @@ public class SettingPrefFragment extends PreferenceFragment {
         mAddCameraPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                ManualSetupActivity.launch(getActivity());
+                ScanQrCodeActivity.launch(getActivity());
                 return true;
             }
         });

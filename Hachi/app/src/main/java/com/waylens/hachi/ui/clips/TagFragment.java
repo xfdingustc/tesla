@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,7 +34,6 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
-import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -164,7 +162,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //                if (getChildFragmentManager().getBackStackEntryCount() > 0) {
 //                    getChildFragmentManager().popBackStackImmediate();
 //                }
-                initCamera();
+                initVdtCamera();
                 initViews();
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
@@ -172,7 +170,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 break;
 
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
-                initCamera();
+                initVdtCamera();
                 initViews();
                 break;
         }

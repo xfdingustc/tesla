@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
 
     <application
@@ -90,6 +91,9 @@
         <activity
             android:name=".ui.manualsetup.StartupActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.manualsetup.ScanQrCodeActivity"
+                  android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.activities.WelcomeActivity"

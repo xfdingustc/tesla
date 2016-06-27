@@ -44,6 +44,7 @@ import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
+import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.SpaceInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
@@ -215,7 +216,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @Nullable
     @OnClick(R.id.add_new_camera)
     public void onAddNewCameraClicked() {
-        ManualSetupActivity.launch(getActivity());
+        ScanQrCodeActivity.launch(getActivity());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -223,7 +224,7 @@ public class CameraPreviewFragment extends BaseFragment {
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 Logger.t(TAG).d("on Camera connected");
-                initCamera();
+                initVdtCamera();
                 setupToolbar();
                 initViews();
                 initCameraPreview();

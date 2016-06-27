@@ -391,7 +391,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
     private void init() {
-        initCamera();
+        initVdtCamera();
         setRetainInstance(true);
     }
 
