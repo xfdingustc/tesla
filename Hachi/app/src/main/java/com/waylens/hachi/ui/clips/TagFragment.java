@@ -538,7 +538,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
-                    ShareActivity.launch(getActivity(), playlistId);
+                    ShareActivity.launch(getActivity(), playlistId, -1);
                 }
             });
         } else {

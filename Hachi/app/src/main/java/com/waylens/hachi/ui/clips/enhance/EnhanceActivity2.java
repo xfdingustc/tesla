@@ -334,7 +334,7 @@ public class EnhanceActivity2 extends ClipPlayActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
-                        ShareActivity.launch(EnhanceActivity2.this, mPlaylistEditor.getPlaylistId());
+                        ShareActivity.launch(EnhanceActivity2.this, mPlaylistEditor.getPlaylistId(), getAudioID());
                         finish();
                         break;
                     case R.id.menu_to_download:
@@ -524,5 +524,13 @@ public class EnhanceActivity2 extends ClipPlayActivity {
             return ClipSetManager.getManager().getClipSet(mPlaylistEditor.getPlaylistId());
         }
         return null;
+    }
+
+    private  int getAudioID() {
+        if (mMusicItem != null) {
+            return mMusicItem.id;
+        } else {
+            return -1;
+        }
     }
 }

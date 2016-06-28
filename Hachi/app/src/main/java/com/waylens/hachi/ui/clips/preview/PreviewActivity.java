@@ -78,7 +78,7 @@ public class PreviewActivity extends ClipPlayActivity {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
                         if (verifyLogin()) {
-                            ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
+                            ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1);
                             finish();
                         }
 

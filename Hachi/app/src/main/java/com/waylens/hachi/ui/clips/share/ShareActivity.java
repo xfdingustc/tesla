@@ -72,8 +72,10 @@ import retrofit2.Callback;
 public class ShareActivity extends ClipPlayActivity implements MomentShareHelper.OnShareMomentListener {
     private static final String TAG = ShareActivity.class.getSimpleName();
     private static final String EXTRA_PLAYLIST_ID = "playlist_id";
+    private static final String EXTRA_AUDIO_ID = "audio_id";
 
     private int mPlayListId;
+    private int mAudioId;
 
     private MaterialDialog mUploadDialog;
     private MomentShareHelper mShareHelper;
@@ -162,9 +164,10 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         }
     }
 
-    public static void launch(Activity activity, int playListId) {
+    public static void launch(Activity activity, int playListId, int audioId) {
         Intent intent = new Intent(activity, ShareActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
+        intent.putExtra(EXTRA_AUDIO_ID, audioId);
         activity.startActivity(intent);
     }
 
@@ -185,6 +188,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     protected void init() {
         super.init();
         mPlayListId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
+        mAudioId = getIntent().getIntExtra(EXTRA_AUDIO_ID, -1);
         initViews();
     }
 
@@ -443,16 +447,17 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         String descrption = mEtMomentDescription.getEditableText().toString();
         String[] tags = new String[]{"Shanghai", "car"};
         Activity activity = this;
-        int audioID = EnhanceFragment.DEFAULT_AUDIO_ID;
+
         JSONObject gaugeSettings = null;
+
         if (activity instanceof EnhancementActivity) {
-            audioID = ((EnhancementActivity) activity).getAudioID();
+
             gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
         }
 
         Logger.t(TAG).d("share title: " + title);
         mShareHelper.shareMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags,
-            mSocialPrivacy, audioID, gaugeSettings, mIsFacebookShareChecked);
+            mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked);
 
 //
     }

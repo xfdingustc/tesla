@@ -29,11 +29,9 @@ public class RawDataLoader {
 
     private final int mClipSetIndex;
     private final VdbRequestQueue mVdbRequestQueue;
-    private OnLoadCompleteListener mListener;
 
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
 
-    private int mCurrentLoadingIndex = 0;
 
     public RawDataLoader(int clipSetIndex, VdbRequestQueue requestQueue) {
         this.mClipSetIndex = clipSetIndex;
@@ -45,13 +43,9 @@ public class RawDataLoader {
         return ClipSetManager.getManager().getClipSet(mClipSetIndex);
     }
 
-    public void startLoad(OnLoadCompleteListener listener) {
-        this.mListener = listener;
-        loadRawData();
-    }
 
-    public void loadRawDataSync() {
-        mCurrentLoadingIndex = 0;
+
+    public void loadRawData() {
         for (int i = 0; i < getClipSet().getCount(); i++) {
             RawDataBlockAll rawDataBlockAll = new RawDataBlockAll();
 
@@ -80,85 +74,9 @@ public class RawDataLoader {
         try {
             RawDataBlock block = requestFuture.get();
             return block;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Logger.t(TAG).e("Load raw data: " + dataType + " error");
             return null;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
-    private void loadRawData() {
-        mCurrentLoadingIndex = 0;
-        for (int i = 0; i < getClipSet().getCount(); i++) {
-            RawDataBlockAll rawDataBlockAll = new RawDataBlockAll();
-            mRawDataBlockList.add(rawDataBlockAll);
-        }
-
-        loadRawData(RawDataItem.DATA_TYPE_OBD);
-    }
-
-    private void loadRawData(final int dataType) {
-        if (getClipSet() == null || mVdbRequestQueue == null) {
-            return;
-        }
-
-
-//        Logger.t(TAG).d("clipset count: " + getClipSet().getCount() + " loading index: " + mCurrentLoadingIndex);
-        Clip clip = getClipSet().getClip(mCurrentLoadingIndex);
-
-        ClipSegment clipSegment = new ClipSegment(clip);
-        Bundle params = new Bundle();
-        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
-        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipSegment.getStartTimeMs());
-        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipSegment.getDurationMs());
-
-        RawDataBlockRequest obdRequest = new RawDataBlockRequest(clipSegment.getClip().cid, params,
-                new VdbResponse.Listener<RawDataBlock>() {
-                    @Override
-                    public void onResponse(RawDataBlock response) {
-                        onLoadRawDataFinished(dataType, response);
-                    }
-                },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        onLoadRawDataFinished(dataType, null);
-                    }
-                });
-        mVdbRequestQueue.add(obdRequest);
-    }
-
-    private void onLoadRawDataFinished(int dataType, RawDataBlock block) {
-        RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(mCurrentLoadingIndex);
-
-//        Logger.t(TAG).d("Load finished type: " + dataType + " index: " + mCurrentLoadingIndex);
-
-        switch (dataType) {
-            case RawDataItem.DATA_TYPE_OBD:
-                rawDataBlockAll.obdDataBlock = block;
-                loadRawData(RawDataItem.DATA_TYPE_IIO);
-                break;
-            case RawDataItem.DATA_TYPE_IIO:
-                rawDataBlockAll.iioDataBlock = block;
-                loadRawData(RawDataItem.DATA_TYPE_GPS);
-                break;
-            case RawDataItem.DATA_TYPE_GPS:
-                rawDataBlockAll.gpsDataBlock = block;
-
-                if (++mCurrentLoadingIndex == getClipSet().getCount()) {
-                    if (mListener != null) {
-                        Logger.t(TAG).d("load finished!!!!!");
-                        mListener.onLoadComplete();
-                    }
-                } else {
-                    loadRawData(RawDataItem.DATA_TYPE_OBD);
-                }
-
-
-                break;
         }
     }
 
@@ -203,9 +121,6 @@ public class RawDataLoader {
         return itemList;
     }
 
-    public interface OnLoadCompleteListener {
-        void onLoadComplete();
-    }
 
     private class RawDataBlockAll {
         private RawDataBlock obdDataBlock = null;

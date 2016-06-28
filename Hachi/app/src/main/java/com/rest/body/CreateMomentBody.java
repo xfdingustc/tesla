@@ -30,6 +30,13 @@ public class CreateMomentBody {
         this.title = localMoment.title;
         this.desc = localMoment.description;
         this.accessLevel = localMoment.accessLevel;
+        if (localMoment.audioID > 0) {
+            this.audioType = 1;
+            this.musicSource = String.valueOf(localMoment.audioID);
+        } else {
+            this.audioType = 0;
+        }
+
         if (localMoment.isFbShare) {
             shareProviders.add("facebook");
         }

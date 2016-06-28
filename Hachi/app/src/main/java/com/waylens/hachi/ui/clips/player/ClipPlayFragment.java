@@ -4,7 +4,6 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.text.format.DateUtils;
 import android.view.Gravity;
@@ -79,7 +78,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private UrlProvider mUrlProvider;
 
     private HachiPlayer mMediaPlayer;
-    private MediaPlayer mAudioPlayer = new MediaPlayer();
+    private MediaPlayer mAudioPlayer;
 
     private PlayerControl mPlayerControl;
 
@@ -270,9 +269,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     private void updateAudioPlayerState(boolean playwhenReady, int playbackState) {
-//        Logger.t(TAG).d("playWhenReady: " + playwhenReady + " playbackState: " + playbackState);
+        Logger.t(TAG).d("playWhenReady: " + playwhenReady + " playbackState: " + playbackState);
         switch (playbackState) {
             case HachiPlayer.STATE_IDLE:
+                break;
             case HachiPlayer.STATE_ENDED:
                 mAudioPlayer.reset();
                 break;
@@ -281,7 +281,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 break;
             case HachiPlayer.STATE_READY:
                 if (playwhenReady) {
-                    Logger.t(TAG).d("start audio player");
+                    Logger.t(TAG).d("start audio player" );
                     mAudioPlayer.start();
                 } else {
                     mAudioPlayer.pause();
@@ -509,6 +509,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mMediaPlayer = null;
             mPlayerControl = null;
         }
+
+        if (mAudioPlayer != null) {
+            mAudioPlayer.reset();
+            mAudioPlayer.release();
+            mAudioPlayer = null;
+        }
     }
 
 
@@ -606,12 +612,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         Observable.create(new Observable.OnSubscribe<Integer>() {
 
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
+            public void call(final Subscriber<? super Integer> subscriber) {
                 Logger.t(TAG).d("start loading ");
                 // First load raw data into memory
                 if (loadRawData) {
                     mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
-                    mRawDataLoader.loadRawDataSync();
+                    mRawDataLoader.loadRawData();
                     subscriber.onNext(LOADING_STAGE_RAW_DATA);
                 }
 
@@ -637,16 +643,15 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                     try {
                         mAudioPlayer.setDataSource(mAudioUrl);
                         mAudioPlayer.prepare();
+                        mAudioPlayer.setLooping(true);
+                        mAudioPlayer.start();
+                        mAudioPlayer.pause();
                     } catch (IOException e) {
                         Logger.e("", e);
                     }
                 }
                 subscriber.onNext(LOADING_STAGE_PREPARE_AUDIO);
-
-                // prepare video:
-//                    preparePlayer(true);
                 subscriber.onNext(LOADING_STAGE_PREPARE_VIDEO);
-
 
             }
         })
