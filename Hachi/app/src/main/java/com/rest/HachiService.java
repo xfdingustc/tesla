@@ -28,9 +28,7 @@ public class HachiService {
     }
 
     public static HachiApi createHachiApiService() {
-        if (mHachiApiInstance != null) {
-            return mHachiApiInstance;
-        }
+
         Retrofit.Builder builder = new Retrofit.Builder().addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.HOST_URL);
