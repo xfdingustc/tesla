@@ -45,7 +45,6 @@
                     android:layout_height="48dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@null"
                     android:src="@drawable/btn_enhance_gauge"/>
 
@@ -55,7 +54,6 @@
                     android:layout_height="48dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@null"
                     android:src="@drawable/btn_enhance_addvideo"/>
 
@@ -65,7 +63,6 @@
                     android:layout_height="48dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@null"
                     android:src="@drawable/btn_enhance_music"/>
 

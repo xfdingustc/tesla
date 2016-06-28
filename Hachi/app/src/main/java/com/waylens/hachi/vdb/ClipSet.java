@@ -104,6 +104,10 @@ public class ClipSet {
         return false;
     }
 
+    public void remove(int position) {
+        mClipList.remove(position);
+    }
+
 
     public boolean clipChanged(Clip clip, boolean isLive, boolean bFinished) {
         int i = 0;

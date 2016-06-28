@@ -354,7 +354,7 @@ public class EnhanceFragment extends BaseFragment {
             }
 
             @Override
-            public void onClipRemoved(Clip clip, int position, int clipCount) {
+            public void onClipRemoved(int clipCount) {
 
                 if (clipCount == 0) {
                     btnGauge.setEnabled(false);

@@ -25,6 +25,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
@@ -202,7 +203,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventClipSetChanged(ClipSetPosChangeEvent event) {
+    public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
         final ClipSetPos clipSetPos = event.getClipSetPos();
         boolean refreshThumbnail = false;
 //        Logger.t(TAG).d("broadcast: " + event.getBroadcaster());
@@ -214,8 +215,21 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             }
         }
 
-        setClipSetPos(clipSetPos, refreshThumbnail);
+        if (refreshThumbnail == true) {
+            setClipSetPos(clipSetPos, refreshThumbnail);
+        } else if (mMediaPlayer != null) {
+            setClipSetPos(clipSetPos, refreshThumbnail);
+        }
 
+
+    }
+
+
+    @Subscribe
+    public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        releasePlayer();
+        mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+        updateProgressTextView(0, getClipSet().getTotalLengthMs());
     }
 
     @Subscribe
@@ -255,8 +269,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         switch (playbackState) {
             case HachiPlayer.STATE_ENDED:
+                Logger.t(TAG).d("playback ended");
                 releasePlayer();
-                mMultiSegSeekbar.reset();
+
 //                mMediaPlayer.seekTo(0);
 //                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
 //                setClipSetPos(clipSetPos, true);
@@ -515,6 +530,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mAudioPlayer.release();
             mAudioPlayer = null;
         }
+        mMultiSegSeekbar.reset();
     }
 
 
@@ -670,7 +686,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
                 @Override
                 public void onNext(Integer integer) {
-                    Logger.t(TAG).d("loading staget: " + integer);
+//                    Logger.t(TAG).d("loading staget: " + integer);
                     if (integer == LOADING_STAGE_PREPARE_VIDEO) {
                         preparePlayer(true);
                     }
@@ -748,7 +764,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         @Override
         public void run() {
-            if (mMediaPlayer != null && mPlayerControl.isPlaying()) {
+            if (mMediaPlayer != null && mPlayerControl != null && mPlayerControl.isPlaying()) {
                 refreshProgressBar();
 
             }

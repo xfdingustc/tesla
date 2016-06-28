@@ -468,7 +468,7 @@ public class EnhanceActivity2 extends ClipPlayActivity {
             }
 
             @Override
-            public void onClipRemoved(Clip clip, int position, int clipCount) {
+            public void onClipRemoved(int clipCount) {
 
                 if (clipCount == 0) {
                     btnGauge.setEnabled(false);

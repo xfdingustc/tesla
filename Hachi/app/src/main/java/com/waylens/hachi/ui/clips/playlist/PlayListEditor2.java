@@ -40,7 +40,7 @@ public class PlayListEditor2 {
 
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
-//        Logger.t(TAG).d("receive event " + event.getNeedRebuildList());
+        Logger.t(TAG).d("receive event " + event.getNeedRebuildList());
         if (event.getNeedRebuildList()) {
             doRebuildPlaylist();
         }
@@ -96,6 +96,13 @@ public class PlayListEditor2 {
     }
 
 
+    public void remove(int position) {
+        Logger.t(TAG).d("remove");
+        mClipSet.remove(position);
+        doRebuildPlaylist();
+    }
+
+
 
 
     private void doRebuildPlaylist() {
@@ -108,6 +115,7 @@ public class PlayListEditor2 {
             new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
+                    Logger.t(TAG).d("clear playlist finished");
                     doBuildPlaylist();
                 }
 
@@ -129,7 +137,7 @@ public class PlayListEditor2 {
                 clip.editInfo.selectedEndValue, mPlayListId, new VdbResponse.Listener<Integer>() {
                 @Override
                 public void onResponse(Integer response) {
-                    Logger.t("fuck").d("Add one clip to playlist: " + clip.toString()
+                    Logger.t(TAG).d("Add one clip to playlist: " + clip.toString()
                         + " editinfo: " + clip.editInfo.toString());
                     mClipAdded++;
                     if (mClipAdded == mClipSet.getClipList().size()) {

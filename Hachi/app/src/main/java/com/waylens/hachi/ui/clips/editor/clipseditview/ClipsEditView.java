@@ -65,12 +65,12 @@ public class ClipsEditView extends LinearLayout {
     @BindView(R.id.trimming_bar)
     View mTrimmingBar;
 
-    LinearLayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private int mClipSetIndex;
 
     private RecyclerViewAdapter mClipCoverGridAdapter;
-    ItemTouchHelper mItemTouchHelper;
-    OnClipEditListener mOnClipEditListener;
+    private ItemTouchHelper mItemTouchHelper;
+    private OnClipEditListener mOnClipEditListener;
 
     private VdtCamera mVdtCamera;
     private VdbRequestQueue mVdbRequestQueue;
@@ -78,9 +78,9 @@ public class ClipsEditView extends LinearLayout {
 
     private PlayListEditor2 mPlayListEditor;
 
-    int mSelectedPosition = POSITION_UNKNOWN;
+    private int mSelectedPosition = POSITION_UNKNOWN;
 
-    int mOriginalSize;
+    private int mOriginalSize;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -142,6 +142,7 @@ public class ClipsEditView extends LinearLayout {
             @Override
             public void onTouchEvent(RecyclerView rv, MotionEvent e) {
                 final int action = MotionEventCompat.getActionMasked(e);
+                Logger.t(TAG).d("action: " + action);
                 if (action == MotionEvent.ACTION_UP) {
                     exitClipEditing();
                 }
@@ -313,16 +314,15 @@ public class ClipsEditView extends LinearLayout {
         mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, true));
     }
 
-    private void internalOnClipRemoved(Clip clip, int position) {
+    private void internalOnClipRemoved(int position) {
         updateClipCount(getClipSet().getCount());
         if (mOnClipEditListener != null) {
-            mOnClipEditListener.onClipRemoved(clip, position, mClipCoverGridAdapter.getItemCount());
+            mOnClipEditListener.onClipRemoved(mClipCoverGridAdapter.getItemCount());
         }
 
         if (mSelectedPosition == position) {
             internalOnExitEditing();
         }
-        mEventBus.post(new ClipSetChangeEvent(mClipSetIndex, true));
     }
 
     void exitClipEditing() {
@@ -459,8 +459,8 @@ public class ClipsEditView extends LinearLayout {
 
         @Override
         public void onItemDismiss(int position) {
-            Clip clip = getClipSet().getClipList().remove(position);
-            internalOnClipRemoved(clip, position);
+            mPlayListEditor.remove(position);
+            internalOnClipRemoved(position);
             notifyItemRemoved(position);
         }
     }
@@ -497,7 +497,7 @@ public class ClipsEditView extends LinearLayout {
 
         void onClipsAppended(List<Clip> clips, int clipCount);
 
-        void onClipRemoved(Clip clip, int position, int clipCount);
+        void onClipRemoved(int clipCount);
 
         void onExitEditing();
 
