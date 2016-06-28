@@ -2,6 +2,8 @@ package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,6 +40,21 @@ public class VdbResponseDispatcher extends Thread {
                 return;
             }
             VdbAcknowledge vdbAcknowledge = null;
+
+            int timeoutMs;
+            if (mVdbRequestQueue.isEmpty()) {
+                timeoutMs = -1;
+            } else {
+                Iterator iter = mVdbRequestQueue.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iter.next();
+                    VdbRequest<?> value = (VdbRequest<?>)entry.getValue();
+                    timeoutMs = value.getTimeoutMs();
+                    break;
+                }
+            }
+
+//            mVdbSocket.
             try {
                 vdbAcknowledge = mVdbSocket.retrieveAcknowledge();
             } catch (Exception e) {

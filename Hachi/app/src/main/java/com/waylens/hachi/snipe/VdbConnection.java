@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by Xiaofei on 2015/8/18.
@@ -64,6 +65,10 @@ public class VdbConnection {
             size -= ret;
         }
 
+    }
+
+    public void setSoTimeout(int timeoutMs) throws SocketException {
+        mSocket.setSoTimeout(timeoutMs);
     }
 
     private void sendByteArray(byte[] data) throws IOException {

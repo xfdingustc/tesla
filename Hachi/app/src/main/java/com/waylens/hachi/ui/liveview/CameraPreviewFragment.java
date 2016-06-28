@@ -62,6 +62,7 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
  * Created by Xiaofei on 2016/3/7.
@@ -215,7 +216,7 @@ public class CameraPreviewFragment extends BaseFragment {
         mVdtCamera.stopRecording();
     }
 
-    @Nullable
+    @Optional
     @OnClick(R.id.add_new_camera)
     public void onAddNewCameraClicked() {
         ScanQrCodeActivity.launch(getActivity());

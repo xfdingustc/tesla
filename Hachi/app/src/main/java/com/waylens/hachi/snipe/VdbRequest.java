@@ -29,11 +29,19 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
     private Object mTag;
     private boolean mIsMessageHandler;
 
+    private RetryPolicy mRetryPolicy;
+
     public VdbRequest(int method, VdbResponse.Listener<T> listener, VdbResponse.ErrorListener errorListener) {
         this.mMethod = method;
         this.mListener = listener;
         this.mErrorListener = errorListener;
         mSequence = mSequenceGenerator.incrementAndGet();
+        setRetryPolicy(new DefaultRetryPolicy());
+    }
+
+    private VdbRequest<?> setRetryPolicy(RetryPolicy retryPolicy) {
+        mRetryPolicy = retryPolicy;
+        return this;
     }
 
     public enum Priority {
@@ -66,6 +74,10 @@ public abstract class VdbRequest<T> implements Comparable<VdbRequest<T>> {
 
     public boolean isCanceled() {
         return mCanceled;
+    }
+
+    public final int getTimeoutMs() {
+        return mRetryPolicy.getCurrentTimeout();
     }
 
 

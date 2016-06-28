@@ -54,6 +54,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -374,6 +375,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
 //            attr = Clip.CLIP_ATTR_MANUALLY;
         }
+
+
 
         mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, flag, attr,
             new VdbResponse.Listener<ClipSet>() {
