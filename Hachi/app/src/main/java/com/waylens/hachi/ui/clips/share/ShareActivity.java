@@ -134,12 +134,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     public void onEventUpload(UploadEvent event) {
         switch (event.getWhat()) {
             case UploadEvent.UPLOAD_WHAT_START:
-                mUploadDialog = new MaterialDialog.Builder(this)
-                    .title(R.string.upload)
-                    .contentGravity(GravityEnum.CENTER)
-                    .progress(false, 100, true)
-                    .show();
-                mUploadDialog.setCanceledOnTouchOutside(false);
+
                 break;
             case UploadEvent.UPLOAD_WHAT_PROGRESS:
                 if (mUploadDialog != null) {
@@ -458,7 +453,12 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
         Logger.t(TAG).d("share title: " + title);
         mShareHelper.shareMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags,
             mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked);
-
+        mUploadDialog = new MaterialDialog.Builder(this)
+            .title(R.string.upload)
+            .contentGravity(GravityEnum.CENTER)
+            .progress(false, 100, true)
+            .show();
+        mUploadDialog.setCanceledOnTouchOutside(false);
 //
     }
 }
