@@ -594,28 +594,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-    private void openAudio() {
-        if (mAudioUrl == null) {
-//            openVideo();
-            preparePlayer(true);
-            return;
-        }
 
-        mAudioPlayer = new MediaPlayer();
-        try {
-            mAudioPlayer.setDataSource(mAudioUrl);
-            mAudioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    preparePlayer(true);
-                }
-            });
-            mAudioPlayer.prepareAsync();
-        } catch (IOException e) {
-            Logger.e("", e);
-        }
-
-    }
 
 
     private void startPreparingClip(final ClipSetPos clipSetPos, final boolean loadRawData) {
