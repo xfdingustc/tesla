@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,6 +49,7 @@ import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.SpaceInfo;
+import com.waylens.hachi.vdb.VdbReadyInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
@@ -314,6 +317,25 @@ public class CameraPreviewFragment extends BaseFragment {
         updateMicControlButton();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventVdbReadyChanged(VdbReadyInfo event) {
+        Logger.t(TAG).d("change progressbar in camera preview page");
+        updateSpaceInfo();
+        /*
+        if(event.getIsReady()) {
+            if (mErrorPanel != null) {
+                mErrorPanel.setVisibility(View.INVISIBLE);
+                updateCameraStatusInfo();
+            }
+
+        } else if (mErrorPanel != null) {
+                mErrorPanel.setVisibility(View.VISIBLE);
+                mTvErrorIndicator.setText(R.string.recording_error);
+                mTvErrorMessage.setText(R.string.error_msg_no_card);
+        }
+        */
+    }
+
 
     public static CameraPreviewFragment newInstance(VdtCamera vdtCamera, boolean isGaugeVisible) {
         CameraPreviewFragment fragment = new CameraPreviewFragment();
@@ -574,7 +596,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 @Override
                 public void onResponse(SpaceInfo response) {
                     Logger.t(TAG).d("response: " + response.toString());
-
+                    mStorageView.getProgressDrawable().clearColorFilter();
                     mStorageView.setMax((int) (response.total / (1024 * 1024)));
                     mStorageView.setProgress((int) (response.marked / (1024 * 1024)));
                     mStorageView.setSecondaryProgress((int) (response.used / (1024 * 1024)));
@@ -582,7 +604,7 @@ public class CameraPreviewFragment extends BaseFragment {
             }, new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-
+                    mStorageView.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
                 }
             });
 

@@ -66,16 +66,17 @@ public class VdbResponseDispatcher extends Thread {
 
             VdbRequest<?> vdbRequest;
             if (vdbAcknowledge.isMessageAck()) {
-//                Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
+                //Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
                 if ((vdbRequest = mMessageHandlers.get(vdbAcknowledge.getMsgCode())) == null) {
-//                    Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
+                    Logger.t(TAG).e("MessageCode: " + vdbAcknowledge.getMsgCode());
                     continue;
                 }
             } else {
                 vdbRequest = mVdbRequestQueue.get(vdbAcknowledge.getUser1());
                 if (vdbRequest == null || vdbRequest.getVdbCommand().getCommandCode() != vdbAcknowledge.getMsgCode()) {
-//                    Logger.t(TAG).e(String.format("Fatal Error:msgCode[%d], " + "cmdCode[%d], seq[%d]",
-//                        vdbAcknowledge.getMsgCode(), vdbAcknowledge.getUser1(), vdbAcknowledge.getUser1()));
+                    /*Logger.t(TAG).e(String.format("Fatal Error:msgCode[%d], " + "cmdCode[%d], seq[%d]",
+                        vdbAcknowledge.getMsgCode(), vdbAcknowledge.getUser1(), vdbAcknowledge.getUser1()));
+                     */
                     continue;
                 }
             }

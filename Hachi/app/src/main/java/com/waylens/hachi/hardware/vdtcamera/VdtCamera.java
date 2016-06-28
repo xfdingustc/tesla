@@ -18,9 +18,12 @@ import com.waylens.hachi.snipe.VdbSocket;
 import com.waylens.hachi.snipe.toolbox.ClipInfoMsgHandler;
 import com.waylens.hachi.snipe.toolbox.MarkLiveMsgHandler;
 import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
+import com.waylens.hachi.snipe.toolbox.VdbReadyMsgHandler;
+import com.waylens.hachi.snipe.toolbox.VdbUnmountedMsgHandler;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
 import com.waylens.hachi.utils.ToStringUtils;
 import com.waylens.hachi.vdb.ClipActionInfo;
+import com.waylens.hachi.vdb.VdbReadyInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
 
 import org.greenrobot.eventbus.EventBus;
@@ -580,6 +583,40 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 }
             });
         mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
+
+        VdbReadyMsgHandler vdbReadyMsgHandler = new VdbReadyMsgHandler(
+            new VdbResponse.Listener<Object>() {
+                @Override
+                public void onResponse(Object response) {
+                    mEventBus.post(new VdbReadyInfo(true));
+                    Logger.t(TAG).d("handling vdbReadyMsg");
+
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("VdbReadyMsgHandler ERROR", error);
+                }
+            });
+        mVdbRequestQueue.registerMessageHandler(vdbReadyMsgHandler);
+
+        VdbUnmountedMsgHandler vdbUnmountedMsgHandler = new VdbUnmountedMsgHandler(
+            new VdbResponse.Listener<Object>() {
+                @Override
+                public void onResponse(Object response) {
+                    mEventBus.post(new VdbReadyInfo(false));
+                    Logger.t(TAG).d("handling vdbUnmountedMsg");
+                }
+            },
+            new VdbResponse.ErrorListener() {
+                @Override
+                public void onErrorResponse(SnipeError error) {
+                    Logger.t(TAG).e("VdbReadyMsgHandler ERROR");
+                }
+            });
+        mVdbRequestQueue.registerMessageHandler(vdbUnmountedMsgHandler);
+
     }
 
     private void onCameraDisconnected() {
@@ -1273,7 +1310,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 ack_Rec_SetMarkTime(p1, p2);
                 break;
             default:
-//                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
+                //Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
 
         }
@@ -1340,6 +1377,4 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
 
     }
-
-
 }
