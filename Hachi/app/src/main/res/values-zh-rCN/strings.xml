@@ -253,7 +253,6 @@
 	<string name="description">描述</string>
 	<string name="highlights">标签</string>
 	<string name="camera_disconnected">相机已断开</string>
-	<string name="failed_to_sign_in">登录失败，请重试</string>
-	<string name="incorrect_email_or_password">邮箱地址或密码错误</string>
-	<string name="verify_email_address">请确认邮箱地址以体验所有功能</string>
+	<string name="check_connection">请检查与相机的连接</string>
+	<string name="retry">重试</string>
 </resources>

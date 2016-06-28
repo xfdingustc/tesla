@@ -27,6 +27,7 @@ import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
@@ -51,10 +52,17 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -70,6 +78,9 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     private static final int ROOT_CHILD_CAMERA_DISCONNECT = 0;
     private static final int ROOT_CHILD_LOADING_PROGRESS = 1;
     private static final int ROOT_CHILD_CLIPSET = 2;
+    private static final int ROOT_CHILD_TIMEOUT = 3;
+
+    private static final int DEFAULT_TIMEOUT_SECOND = 10;
 
     private ClipSetGroupAdapter mAdapter;
 
@@ -125,6 +136,12 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         mVdbRequestQueue.add(request);
     }
 
+    @OnClick(R.id.btn_retry)
+    public void onBtnRetryClicked() {
+        showRootViewChild(ROOT_CHILD_LOADING_PROGRESS);
+        doGetClips();
+    }
+
     @Subscribe
     public void onEventMenuItemSelected(MenuItemSelectEvent event) {
         switch (event.getMenuItemId()) {
@@ -165,7 +182,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //                    getChildFragmentManager().popBackStackImmediate();
 //                }
                 initVdtCamera();
-                initViews();
+                initViews(true);
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
                 showRootViewChild(ROOT_CHILD_CAMERA_DISCONNECT);
@@ -173,7 +190,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 initVdtCamera();
-                initViews();
+                initViews(true);
                 break;
         }
     }
@@ -217,10 +234,11 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                initViews();
+                initViews(false);
             }
         });
-        initViews();
+        showRootViewChild(ROOT_CHILD_CLIPSET);
+        initViews(true);
         return view;
     }
 
@@ -250,12 +268,13 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
-    private void initViews() {
+    private void initViews(boolean showLoading) {
 
         if (mClipSetType == Clip.TYPE_MARKED) {
             mVsNoBookmark.showNext();
         }
         if (mVdtCamera != null) {
+            mRefreshLayout.setRefreshing(true);
             doGetClips();
             if (mClipSetType != Clip.TYPE_MARKED) {
                 //mBottomLayout.setVisibility(View.VISIBLE);
@@ -360,7 +379,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
 
     private void doGetClips() {
-        showRootViewChild(ROOT_CHILD_LOADING_PROGRESS);
+
         if (mVdbRequestQueue == null) {
             return;
         }
@@ -376,12 +395,46 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //            attr = Clip.CLIP_ATTR_MANUALLY;
         }
 
+        final int finalFlag = flag;
+        final int finalAttr = attr;
 
+        Observable.create(new Observable.OnSubscribe<ClipSet>(){
 
-        mVdbRequestQueue.add(new ClipSetExRequest(mClipSetType, flag, attr,
-            new VdbResponse.Listener<ClipSet>() {
+            @Override
+            public void call(Subscriber<? super ClipSet> subscriber) {
+                VdbRequestFuture<ClipSet> requestFuture = VdbRequestFuture.newFuture();
+                ClipSetExRequest request = new ClipSetExRequest(mClipSetType, finalFlag, finalAttr,requestFuture, requestFuture);
+                mVdbRequestQueue.add(request);
+                ClipSet clipSet;
+                try {
+                    clipSet = requestFuture.get(DEFAULT_TIMEOUT_SECOND, TimeUnit.SECONDS);
+                    subscriber.onNext(clipSet);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+
+            }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<ClipSet>(){
+
                 @Override
-                public void onResponse(ClipSet clipSet) {
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Logger.t(TAG).d(e.toString());
+                    if (e instanceof TimeoutException) {
+                        showRootViewChild(ROOT_CHILD_TIMEOUT);
+                    }
+                }
+
+                @Override
+                public void onNext(ClipSet clipSet) {
                     Logger.t(TAG).d("clip set got");
                     showRootViewChild(ROOT_CHILD_CLIPSET);
                     mRefreshLayout.setRefreshing(false);
@@ -396,18 +449,10 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
                         mAdapter.setClipSetGroup(helper.getClipSetGroup());
                     }
-
                 }
+            });
 
 
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("", error);
-
-                }
-            }));
 
     }
 

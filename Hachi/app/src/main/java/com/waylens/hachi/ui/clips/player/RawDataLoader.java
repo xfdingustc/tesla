@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
@@ -18,6 +19,7 @@ import com.waylens.hachi.vdb.rawdata.RawDataItem;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Xiaofei on 2016/3/8.
@@ -46,6 +48,45 @@ public class RawDataLoader {
     public void startLoad(OnLoadCompleteListener listener) {
         this.mListener = listener;
         loadRawData();
+    }
+
+    public void loadRawDataSync() {
+        mCurrentLoadingIndex = 0;
+        for (int i = 0; i < getClipSet().getCount(); i++) {
+            RawDataBlockAll rawDataBlockAll = new RawDataBlockAll();
+
+
+            Clip clip = getClipSet().getClip(i);
+            rawDataBlockAll.obdDataBlock = loadRawData(clip, RawDataItem.DATA_TYPE_OBD);
+            rawDataBlockAll.gpsDataBlock = loadRawData(clip, RawDataItem.DATA_TYPE_GPS);
+            rawDataBlockAll.iioDataBlock = loadRawData(clip, RawDataItem.DATA_TYPE_IIO);
+
+            mRawDataBlockList.add(rawDataBlockAll);
+
+        }
+    }
+
+
+    private RawDataBlock loadRawData(Clip clip, int dataType) {
+        ClipSegment clipSegment = new ClipSegment(clip);
+        Bundle params = new Bundle();
+        params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
+        params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, clipSegment.getStartTimeMs());
+        params.putInt(RawDataBlockRequest.PARAM_CLIP_LENGTH, clipSegment.getDurationMs());
+
+        VdbRequestFuture<RawDataBlock> requestFuture = VdbRequestFuture.newFuture();
+        RawDataBlockRequest request = new RawDataBlockRequest(clipSegment.getClip().cid, params, requestFuture, requestFuture);
+        mVdbRequestQueue.add(request);
+        try {
+            RawDataBlock block = requestFuture.get();
+            return block;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 

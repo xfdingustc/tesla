@@ -99,4 +99,6 @@
         </android.support.v4.widget.SwipeRefreshLayout>
     </RelativeLayout>
 
+    <include layout="@layout/timeout"/>
+
 </ViewAnimator>

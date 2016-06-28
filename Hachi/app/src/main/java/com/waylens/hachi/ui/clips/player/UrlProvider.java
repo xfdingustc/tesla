@@ -11,4 +11,7 @@ public interface UrlProvider {
     }
 
     void getUri(long clipTimeMs, OnUrlLoadedListener listener);
+
+
+    VdbUrl getUriSync(long clipTimeMs);
 }

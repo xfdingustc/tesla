@@ -57,12 +57,22 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/2/22.
  */
 public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Callback, HachiPlayer.Listener {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
+
+    private static final int LOADING_STAGE_RAW_DATA = 0;
+    private static final int LOADING_STAGE_GET_PLAYBACK_URL = 1;
+    private static final int LOADING_STAGE_PREPARE_AUDIO = 2;
+    private static final int LOADING_STAGE_PREPARE_VIDEO = 3;
 
     private int mClipSetIndex;
 
@@ -140,8 +150,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @BindView(R.id.media_window)
     FrameLayout mMediaWindow;
 
-    private int uiOptions;
-
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
@@ -153,7 +161,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
         if (mPlayerControl == null) {
-            start();
+            startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
         } else {
             if (mPlayerControl.isPlaying()) {
                 mPlayerControl.pause();
@@ -245,16 +253,41 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
-        Logger.t(TAG).d("playWhenReady: " + playWhenReady + " playbackState: " + playbackState);
+
         switch (playbackState) {
             case HachiPlayer.STATE_ENDED:
                 releasePlayer();
                 mMultiSegSeekbar.reset();
+//                mMediaPlayer.seekTo(0);
 //                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
 //                setClipSetPos(clipSetPos, true);
                 break;
         }
+        if (mAudioUrl != null) {
+            updateAudioPlayerState(playWhenReady, playbackState);
+        }
         updateControls(playWhenReady, playbackState);
+    }
+
+    private void updateAudioPlayerState(boolean playwhenReady, int playbackState) {
+//        Logger.t(TAG).d("playWhenReady: " + playwhenReady + " playbackState: " + playbackState);
+        switch (playbackState) {
+            case HachiPlayer.STATE_IDLE:
+            case HachiPlayer.STATE_ENDED:
+                mAudioPlayer.reset();
+                break;
+            case HachiPlayer.STATE_BUFFERING:
+                mAudioPlayer.pause();
+                break;
+            case HachiPlayer.STATE_READY:
+                if (playwhenReady) {
+                    Logger.t(TAG).d("start audio player");
+                    mAudioPlayer.start();
+                } else {
+                    mAudioPlayer.pause();
+                }
+                break;
+        }
     }
 
     private void updateControls(boolean playwhenReady, int playbackState) {
@@ -284,7 +317,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 break;
 
 
-
         }
     }
 
@@ -296,10 +328,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
 
-    }
-
-    private void start() {
-        startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), false);
     }
 
 
@@ -361,12 +389,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onStart() {
         super.onStart();
-//        if (getShowsDialog()) {
-//            DisplayMetrics dm = new DisplayMetrics();
-//            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-//            getDialog().getWindow().setLayout(dm.widthPixels, getDialog().getWindow().getAttributes().height);
-//        }
-
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
@@ -427,7 +449,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
 
-        uiOptions = getActivity().getWindow().getDecorView().getSystemUiVisibility();
 
     }
 
@@ -465,26 +486,16 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             String userAgent = Utils.getUserAgent(getActivity(), getString(R.string.app_name));
             mMediaPlayer = new HachiPlayer(new HlsRendererBuilder(getActivity(), userAgent, mVdbUrl.url));
             mMediaPlayer.addListener(this);
-//            mMediaPlayer.setCaptionListener(this);
-//            mMediaPlayer.setMetadataListener(this);
             mMediaPlayer.seekTo(0);
             playerNeedsPrepare = true;
             mPlayerControl = mMediaPlayer.getPlayerControl();
-//            mediaController.setMediaPlayer(player.getPlayerControl());
-//            mediaController.setEnabled(true);
-//            eventLogger = new EventLogger();
-//            eventLogger.startSession();
-//            mMediaPlayer.addListener(eventLogger);
-//            mMediaPlayer.setInfoListener(eventLogger);
-//            mMediaPlayer.setInternalErrorListener(eventLogger);
-//            debugViewHelper = new DebugTextViewHelper(player, debugTextView);
-//            debugViewHelper.start();
         }
         if (playerNeedsPrepare) {
             mMediaPlayer.prepare();
             playerNeedsPrepare = false;
             updateButtonVisibilities();
         }
+
         mMediaPlayer.setSurface(mSurfaceView.getHolder().getSurface());
         mMediaPlayer.setPlayWhenReady(playWhenReady);
     }
@@ -494,14 +505,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private void releasePlayer() {
         if (mMediaPlayer != null) {
-//            debugViewHelper.stop();
-//            debugViewHelper = null;
-//            playerPosition = mMediaPlayer.getCurrentPosition();
             mMediaPlayer.release();
             mMediaPlayer = null;
             mPlayerControl = null;
-//            eventLogger.endSession();
-//            eventLogger = null;
         }
     }
 
@@ -529,7 +535,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             @Override
             public void onProgressChanged(MultiSegSeekbar seekBar, ClipSetPos clipSetPos) {
 //                if (mCurrentState == STATE_FAST_PREVIEW) {
-                    setClipSetPos(clipSetPos, true);
+                setClipSetPos(clipSetPos, true);
 //                }
 
                 mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
@@ -588,8 +594,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-
-
     private void openAudio() {
         if (mAudioUrl == null) {
 //            openVideo();
@@ -603,7 +607,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mAudioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-//                    openVideo();
+                    preparePlayer(true);
                 }
             });
             mAudioPlayer.prepareAsync();
@@ -614,48 +618,84 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-    private void startPreparingClip(final ClipSetPos clipSetPos, boolean loadRawData) {
+    private void startPreparingClip(final ClipSetPos clipSetPos, final boolean loadRawData) {
         if (mBtnPlayPause.isEnabled() == false) {
             return;
         }
-        if (loadRawData == false) {
-            startLoadPlaybackUrl(clipSetPos);
-        } else {
-            mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
-            mRawDataLoader.startLoad(new RawDataLoader.OnLoadCompleteListener() {
-                @Override
-                public void onLoadComplete() {
-                    startLoadPlaybackUrl(clipSetPos);
-                }
-            });
-        }
-//        changeState(STATE_PREPAREING);
-    }
 
-    private void startLoadPlaybackUrl(ClipSetPos clipSetPos) {
-        long startTimeMs = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
-        Logger.t(TAG).d("startTimeMs: " + startTimeMs);
-        mUrlProvider.getUri(startTimeMs, new UrlProvider.OnUrlLoadedListener() {
+
+        Observable.create(new Observable.OnSubscribe<Integer>() {
 
             @Override
-            public void onUrlLoaded(VdbUrl url) {
-                if (url == null) {
-                    Snackbar.make(mBtnPlayPause, R.string.get_url_failed, Snackbar.LENGTH_SHORT).show();
-                    return;
+            public void call(Subscriber<? super Integer> subscriber) {
+                Logger.t(TAG).d("start loading ");
+                // First load raw data into memory
+                if (loadRawData) {
+                    mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
+                    mRawDataLoader.loadRawDataSync();
+                    subscriber.onNext(LOADING_STAGE_RAW_DATA);
                 }
-//                Logger.t(TAG).d("Get playback url: " + url.url);
-                mVdbUrl = url;
+
+
+                // Second fetch playback url
+                long startTimeMs = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
+                mVdbUrl = mUrlProvider.getUriSync(startTimeMs);
+                Logger.t(TAG).d("get playback url: " + mVdbUrl.url);
                 if (mUrlProvider instanceof ClipUrlProvider) {
-                    mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), url);
+                    mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), mVdbUrl);
                 } else {
-                    mPositionAdjuster = new PlaylistPositionAdjuster(url);
+                    mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
                 }
-                openAudio();
+                subscriber.onNext(LOADING_STAGE_GET_PLAYBACK_URL);
+
+                if (mVdbUrl == null) {
+
+                }
+
+                // prepare audio if audio is set:
+                if (mAudioUrl != null) {
+                    mAudioPlayer = new MediaPlayer();
+                    try {
+                        mAudioPlayer.setDataSource(mAudioUrl);
+                        mAudioPlayer.prepare();
+                    } catch (IOException e) {
+                        Logger.e("", e);
+                    }
+                }
+                subscriber.onNext(LOADING_STAGE_PREPARE_AUDIO);
+
+                // prepare video:
+//                    preparePlayer(true);
+                subscriber.onNext(LOADING_STAGE_PREPARE_VIDEO);
+
+
             }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<Integer>() {
+                @Override
+                public void onCompleted() {
 
+                }
 
-        });
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Integer integer) {
+                    Logger.t(TAG).d("loading staget: " + integer);
+                    if (integer == LOADING_STAGE_PREPARE_VIDEO) {
+                        preparePlayer(true);
+                    }
+                }
+            });
+
     }
+
+
 
     public void setAudioUrl(String audioUrl) {
         Logger.t(TAG).d("audio url: " + audioUrl);
