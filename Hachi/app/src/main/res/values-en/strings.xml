@@ -255,4 +255,7 @@
 	<string name="camera_disconnected">Camera disconnected</string>
 	<string name="check_connection">Please check your camera connection</string>
 	<string name="retry">retry</string>
+	<string name="failed_to_sign_in">Failed to sign in. Please try again</string>
+	<string name="incorrect_email_or_password">Incorrect Email address or password</string>
+	<string name="verify_email_address">Please verify your email address to access all of Waylens features.</string>
 </resources>
