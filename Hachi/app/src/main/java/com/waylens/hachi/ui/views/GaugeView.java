@@ -34,6 +34,12 @@ public class GaugeView extends FrameLayout {
 
     private WebView mWebView;
 
+    private boolean mIsOdbGaugeShow;
+
+    private boolean mIsIioGaugeShow;
+
+    private boolean mIsGpsGaugeShow;
+
     public GaugeView(Context context) {
         super(context);
         init(context);
@@ -62,7 +68,9 @@ public class GaugeView extends FrameLayout {
                 super.onPageFinished(view, url);
             }
         });
-
+        mIsGpsGaugeShow = false;
+        mIsIioGaugeShow = false;
+        mIsOdbGaugeShow = false;
     }
 
 
@@ -89,8 +97,20 @@ public class GaugeView extends FrameLayout {
         for (GaugeInfoItem item : itemList) {
             updateGaugeSetting(item);
         }
-
+        showGpsGauge(mIsGpsGaugeShow);
+        showIioGauge(mIsIioGaugeShow);
+        showOdbGauge(mIsOdbGaugeShow);
+        showTimeDateGauge(true);
         changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
+    }
+
+    public void setVisibility(boolean show) {
+        if (show) {
+            mWebView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mWebView.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -142,6 +162,10 @@ public class GaugeView extends FrameLayout {
         try {
             switch (item.getType()) {
                 case RawDataItem.DATA_TYPE_IIO:
+                    if (!mIsIioGaugeShow) {
+                        mIsIioGaugeShow = true;
+                        showIioGauge(mIsIioGaugeShow);
+                    }
                     IioData iioData = (IioData) item.data;
                     state.put("roll", iioData.euler_roll);
                     state.put("pitch", iioData.euler_pitch);
@@ -149,11 +173,19 @@ public class GaugeView extends FrameLayout {
                     state.put("gforceLR", iioData.accZ);
                     break;
                 case RawDataItem.DATA_TYPE_GPS:
+                    if (!mIsGpsGaugeShow) {
+                        mIsGpsGaugeShow = true;
+                        showIioGauge(mIsGpsGaugeShow);
+                    }
                     GpsData gpsData = (GpsData) item.data;
                     state.put("lng", gpsData.coord.lng);
                     state.put("lat", gpsData.coord.lat);
                     break;
                 case RawDataItem.DATA_TYPE_OBD:
+                    if (!mIsOdbGaugeShow) {
+                        mIsOdbGaugeShow = true;
+                        showOdbGauge(mIsOdbGaugeShow);
+                    }
                     ObdData obdData = (ObdData) item.data;
                     state.put("rpm", obdData.rpm);
                     state.put("mph", obdData.speed);
@@ -189,5 +221,75 @@ public class GaugeView extends FrameLayout {
     }
 
 
+    public void showTimeDateGauge(boolean show) {
+        JSONObject state = new JSONObject();
+        try {
+            if (show) {
+                state.put("showTimeDate", "M");
+            } else {
+                state.put("showTimeDate", "");
+            }
+        } catch (JSONException e) {
+            Logger.t(TAG).e("showTimeDate", e);
+        }
+        String callJS = "javascript:setState(" + state.toString() + ")";
+        mWebView.loadUrl(callJS);
+        mWebView.loadUrl("javascript:update");
+    }
 
+    public void showGpsGauge(boolean show) {
+        JSONObject state = new JSONObject();
+        try {
+            if (show) {
+                state.put("showGps", "M");
+                state.put("showAmbient", "M");
+            } else {
+                state.put("showGps", "");
+                state.put("showAmbient", "");
+            }
+        } catch (JSONException e) {
+            Logger.t(TAG).e("showGpsGauge", e);
+        }
+        String callJS = "javascript:setState(" + state.toString() + ")";
+        mWebView.loadUrl(callJS);
+        mWebView.loadUrl("javascript:update");
+    }
+
+    public void showOdbGauge(boolean show) {
+        JSONObject state = new JSONObject();
+        try {
+            if (show) {
+                state.put("showSpeedThrottle", "M");
+                state.put("showRpm", "M");
+                state.put("showPsi", "M");
+            } else {
+                state.put("showSpeedThrottle", "");
+                state.put("showRpm", "");
+                state.put("showPsi", "");
+            }
+        } catch (JSONException e) {
+            Logger.t(TAG).e("showOdbGauge", e);
+        }
+        String callJS = "javascript:setState(" + state.toString() + ")";
+        mWebView.loadUrl(callJS);
+        mWebView.loadUrl("javascript:update");
+    }
+
+    public void showIioGauge(boolean show) {
+        JSONObject state = new JSONObject();
+        try {
+            if (show) {
+                state.put("showGforce", "M");
+                state.put("showRollPitch", "M");
+            } else {
+                state.put("showGforce", "");
+                state.put("showRollPitch", "");
+            }
+        }catch (JSONException e) {
+            Logger.t(TAG).e("showIioGauge", e);
+        }
+        String callJS = "javascript:setState(" + state.toString() + ")";
+        mWebView.loadUrl(callJS);
+        mWebView.loadUrl("javascript:update");
+    }
 }

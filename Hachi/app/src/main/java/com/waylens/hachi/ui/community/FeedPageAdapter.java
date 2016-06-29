@@ -23,18 +23,19 @@ public class FeedPageAdapter extends SimpleFragmentPagerAdapter {
     @Override
     public BaseFragment getItem(int position) {
         FeedFragment fragment = (FeedFragment) super.getItem(position);
-        if (fragment.isLoginRequired() && !SessionManager.getInstance().isLoggedIn()) {
+            return fragment;
+/*        if (fragment.isLoginRequired() && !SessionManager.getInstance().isLoggedIn()) {
             return new SignUpEntryFragment();
         } else {
             return fragment;
-        }
+        }*/
     }
 
     @Override
     public int getItemPosition(Object object) {
-        if (!mOriginalLoginStatus && SessionManager.getInstance().isLoggedIn()) {
+/*      if (!mOriginalLoginStatus && SessionManager.getInstance().isLoggedIn()) {
             return POSITION_NONE;
-        }
+        }*/
         return super.getItemPosition(object);
     }
 }

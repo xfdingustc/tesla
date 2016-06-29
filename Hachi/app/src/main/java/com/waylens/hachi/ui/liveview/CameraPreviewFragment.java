@@ -211,7 +211,8 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
-        showOverlay(!mIsGaugeVisible);
+        mGaugeView.setVisibility(!mIsGaugeVisible);
+        mIsGaugeVisible = !mIsGaugeVisible;
     }
 
     @OnClick(R.id.btnStop)
@@ -356,7 +357,6 @@ public class CameraPreviewFragment extends BaseFragment {
         } else {
             mIsGaugeVisible = bundle.getBoolean("isGaugeVisible", false);
         }
-
     }
 
     @Nullable

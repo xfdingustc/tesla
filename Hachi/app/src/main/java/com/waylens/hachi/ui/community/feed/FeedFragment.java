@@ -65,8 +65,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     public static final int FEED_TAG_MY_FEED = 0;
     public static final int FEED_TAG_ME = 1;
-    public static final int FEED_TAG_LIKES = 2;
-    public static final int FEED_TAG_LATEST = 3;
+    public static final int FEED_TAG_LATEST = 2;
+    public static final int FEED_TAG_LIKES = 3;
     public static final int FEED_TAG_STAFF_PICKS = 4;
     public static final int FEED_TAG_ALL = 5;
 
@@ -129,13 +129,20 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onStart() {
         super.onStart();
+        Logger.t(TAG).d("onStart is calling");
+        Logger.t(TAG).d(Integer.toString(mFeedTag));
+        Logger.t(TAG).d(Boolean.toString(isLoginRequired()));
+        Logger.t(TAG).d(Boolean.toString(SessionManager.getInstance().isLoggedIn()));
         if (this.isLoginRequired() && !SessionManager.getInstance().isLoggedIn()) {
             mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
+            Logger.t(TAG).d("show sign up entry");
         }
         if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
             if (mViewAnimator.getDisplayedChild() == CHILD_SIGNUP_ENTRY) {
                 mViewAnimator.setDisplayedChild(CHILD_LOADING_PROGRESS);
+                Logger.t(TAG).d("show loading progress");
                 onRefresh();
+
             }
 
         }
@@ -317,11 +324,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
 
     public boolean isLoginRequired() {
-        Bundle args = getArguments();
+        /*Bundle args = getArguments();
         if (args == null) {
             return false;
-        }
-        int tag = mFeedTag = args.getInt(FEED_TAG, FEED_TAG_MY_FEED);
+        }*/
+        int tag = mFeedTag;
         switch (tag) {
             case FEED_TAG_MY_FEED:
                 return true;

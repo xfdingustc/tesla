@@ -84,7 +84,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         if (SessionManager.getInstance().isLoggedIn()) {
             mViewPager.setCurrentItem(0);
         } else {
-            mViewPager.setCurrentItem(3);
+            mViewPager.setCurrentItem(2);
         }
 
     }
@@ -94,5 +94,4 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
             mFeedPageAdapter.notifyDataSetChanged();
         }
     }
-
 }
