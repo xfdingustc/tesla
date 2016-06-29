@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:visibility="gone">
+        tools:visibility="visible">
 
 
 
@@ -69,31 +69,14 @@
             android:layout_height="wrap_content"
             android:text="@string/without_camera"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="56dp"
             android:textColor="?attr/appTextColorPrimary"
             />
 
     </LinearLayout>
 
 
-    <ImageView
-        android:id="@+id/top_shade"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/topshade"
-        android:scaleType="centerCrop"
-        android:layout_gravity="top"
-        tools:visibility="gone"/>
 
-
-    <ImageView
-        android:id="@+id/bottom_shade"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/bottomshade"
-        android:scaleType="centerCrop"
-        android:layout_gravity="bottom"
-        tools:visibility="gone"/>
 
     <TextView
         android:id="@+id/description"
@@ -106,6 +89,17 @@
         android:layout_gravity="bottom"
         android:textAlignment="center"
         tools:text="Effortlessly select the best moments of your footage and create a compelling story about your drive"/>
+
+
+    <TextView
+        android:id="@+id/skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/skip"
+        android:layout_gravity="end"
+        android:textSize="18sp"
+        android:textAllCaps="true"
+        android:layout_margin="16dp"/>
 
 
 </FrameLayout>

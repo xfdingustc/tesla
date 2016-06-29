@@ -22,9 +22,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
+
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -43,8 +45,18 @@ import butterknife.OnClick;
  */
 public class FirstInstallActivity extends BaseActivity {
     private static final String TAG = FirstInstallActivity.class.getSimpleName();
+
+    private int mCount;
+    private ImageView[] mImages;
+    private int mCurrentItem;
+
     @BindView(R.id.viewPager)
     ViewPager mViewPager;
+
+
+
+    @BindView(R.id.ll_point_indicator)
+    LinearLayout mllPointIndicator;
 
     private SimpleImageViewPagerAdapter mAdapter;
 
@@ -67,14 +79,48 @@ public class FirstInstallActivity extends BaseActivity {
     }
 
     private void setupViewPager() {
+
+
+
         mAdapter = new SimpleImageViewPagerAdapter(getFragmentManager());
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content0, R.string.description1, false, false));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content1, R.string.description4, false, true));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content2, R.string.description3, false, true));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content3, R.string.description2, false, true));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content4, -1, true, false));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content0, R.string.description1, false));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content1, R.string.description4, false));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content2, R.string.description3, false));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content3, R.string.description2, false));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content4, -1, true));
 
         mViewPager.setAdapter(mAdapter);
+
+        mCount = mAdapter.getCount();
+        mImages = new ImageView[mCount];
+        for (int i = 0; i < mCount; i++) {
+            mImages[i] = (ImageView) mllPointIndicator.getChildAt(i);
+            mImages[i].setEnabled(true);
+            mImages[i].setTag(i);
+        }
+        mCurrentItem = 0;
+        mImages[mCurrentItem].setEnabled(false);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position < 0 || position > mCount - 1 || mCurrentItem == position) {
+                    return;
+                }
+                mImages[mCurrentItem].setEnabled(true);
+                mImages[position].setEnabled(false);
+                mCurrentItem = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
 
@@ -104,11 +150,10 @@ public class FirstInstallActivity extends BaseActivity {
 
     public static class SimpleImageFragment extends BaseFragment {
 
-        public static SimpleImageFragment newInstance(@DrawableRes int imageRes, @StringRes int description, boolean hasEnther, boolean hasShadow) {
+        public static SimpleImageFragment newInstance(@DrawableRes int imageRes, @StringRes int description, boolean hasEnther) {
             SimpleImageFragment fragment = new SimpleImageFragment();
             fragment.imageRes = imageRes;
             fragment.hasEnter = hasEnther;
-            fragment.hasShadow = hasShadow;
             fragment.description = description;
             return fragment;
         }
@@ -122,7 +167,6 @@ public class FirstInstallActivity extends BaseActivity {
 
         boolean hasEnter;
 
-        boolean hasShadow;
 
         @BindView(R.id.policy_layout)
         View mPolicyLayout;
@@ -145,25 +189,13 @@ public class FirstInstallActivity extends BaseActivity {
         @BindView(R.id.withoutCamera)
         TextView mWithoutCamera;
 
-        @BindView(R.id.top_shade)
-        ImageView mTopShadow;
 
-        @BindView(R.id.bottom_shade)
-        ImageView mBottomShadow;
 
-        @OnClick(R.id.btnEnter)
+        @OnClick({R.id.skip, R.id.btnEnter})
         public void onBtnEnterClicked() {
-            Intent intent = new Intent();
-            boolean enterSetup = VdtCameraManager.getManager().isConnected();
-            if (!enterSetup) {
-                intent.setClass(getActivity(), StartupActivity.class);
-            } else {
-                intent.setClass(getActivity(), MainActivity.class);
-            }
-            startActivity(intent);
-            getActivity().finish();
-            writeVersionName();
+            enter();
         }
+
 
         @OnClick(R.id.withoutCamera)
         public void OnWithoutCameraClicked() {
@@ -182,13 +214,7 @@ public class FirstInstallActivity extends BaseActivity {
                 mPolicyLayout.setVisibility(View.GONE);
             }
 
-            int shadowVisibility = View.GONE;
-            if (hasShadow) {
-                shadowVisibility = View.VISIBLE;
-            }
 
-            mTopShadow.setVisibility(shadowVisibility);
-            mBottomShadow.setVisibility(shadowVisibility);
 
             if (description != -1) {
                 mDescripion.setText(getString(description));
@@ -219,6 +245,18 @@ public class FirstInstallActivity extends BaseActivity {
             return view;
         }
 
+        private void enter() {
+            Intent intent = new Intent();
+            boolean enterSetup = VdtCameraManager.getManager().isConnected();
+            if (!enterSetup) {
+                intent.setClass(getActivity(), StartupActivity.class);
+            } else {
+                intent.setClass(getActivity(), MainActivity.class);
+            }
+            startActivity(intent);
+            getActivity().finish();
+            writeVersionName();
+        }
 
         private void writeVersionName() {
             PackageInfo pi = null;

@@ -18,24 +18,7 @@ public class VdtCameraFounder extends Thread {
     public void run() {
         super.run();
         while (true) {
-            CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
-                @Override
-                public void onCameraFound(NsdServiceInfo cameraService) {
-                    String serviceName = cameraService.getServiceName();
-                    boolean bIsPcServer = serviceName.equals("Vidit Studio");
-                    final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-                        cameraService.getHost(),
-                        cameraService.getPort(),
-                        "", serviceName, bIsPcServer);
-                    VdtCameraManager.getManager().connectCamera(serviceInfo);
 
-                }
-
-                @Override
-                public void onError(int errorCode) {
-                    Logger.t(TAG).e("errorCode: " + errorCode);
-                }
-            });
 
             try {
                 sleep(10000);
@@ -43,7 +26,8 @@ public class VdtCameraFounder extends Thread {
                 e.printStackTrace();
             }
 
-            CameraDiscovery.stopDiscovery();
+            break;
+//            CameraDiscovery.stopDiscovery();
         }
     }
 }
