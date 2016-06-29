@@ -8,6 +8,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.DeviceScanner;
+import com.waylens.hachi.hardware.VdtCameraFounder;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -94,8 +95,8 @@ public class Hachi extends Application {
 
 
 
-//        VdtCameraFounder founder = new VdtCameraFounder();
-//        founder.start();
+        VdtCameraFounder founder = new VdtCameraFounder();
+        founder.start();
 
         startDeviceScanner();
     }
