@@ -2,13 +2,16 @@ package com.waylens.hachi.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.nsd.NsdServiceInfo;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
+import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
 import com.waylens.hachi.hardware.VdtCameraFounder;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
@@ -64,6 +67,7 @@ public class Hachi extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+        CameraDiscovery.stopDiscovery();
         mScanner.stopWork();
     }
 
@@ -95,8 +99,24 @@ public class Hachi extends Application {
 
 
 
-        VdtCameraFounder founder = new VdtCameraFounder();
-        founder.start();
+        CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
+            @Override
+            public void onCameraFound(NsdServiceInfo cameraService) {
+                String serviceName = cameraService.getServiceName();
+                boolean bIsPcServer = serviceName.equals("Vidit Studio");
+                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
+                    cameraService.getHost(),
+                    cameraService.getPort(),
+                    "", serviceName, bIsPcServer);
+                VdtCameraManager.getManager().connectCamera(serviceInfo);
+
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                Logger.t(TAG).e("errorCode: " + errorCode);
+            }
+        });
 
         startDeviceScanner();
     }
