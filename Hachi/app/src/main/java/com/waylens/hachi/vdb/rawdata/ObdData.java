@@ -17,6 +17,8 @@ public class ObdData implements Serializable {
     public int speed;
     public int temperature;
     public int rpm;
+    public double psi;
+    public boolean isIMP;
 
     public static final int OFF_revision = 0;
     public static final int OFF_total_size = 4;
@@ -61,10 +63,19 @@ public class ObdData implements Serializable {
     };
 
 
+    public ObdData(int speed, int temperature, int rpm, double psi, boolean isIMP) {
+        this.speed = speed;
+        this.temperature = temperature;
+        this.rpm = rpm;
+        this.psi = psi;
+        this.isIMP = isIMP;
+    }
     public ObdData(int speed, int temperature, int rpm) {
         this.speed = speed;
         this.temperature = temperature;
         this.rpm = rpm;
+        this.psi = 0;
+        this.isIMP = true;
     }
 
     public String toString() {
@@ -90,6 +101,16 @@ public class ObdData implements Serializable {
         int speed = 0;
         int rpm = 0;
         int temperature = 0;
+        double psi = 0;
+        int pid_0b = -1;
+        int pid_0c = -1;
+        int pid_33 = -1;
+        int pid_4f = -1;
+        int pid_62 = -1;
+        int pid_63 = -1;
+
+        boolean isIMP = true;
+
         int index = 1;
         while (index < data.length) {
             int pid = data[index];
@@ -99,8 +120,17 @@ public class ObdData implements Serializable {
             index++;
             int len = g_pid_data_size_table[pid];
             switch (pid) {
+                case PID_IMP:
+                    pid_0b = data[index] & 0x000000FF;
+                    break;
+                case 0x4f:
+                    pid_4f = data[index] & 0x000000FF;
+                    break;
+                case PID_BP:
+                    pid_33 = data[index] & 0x000000FF;
+                    break;
                 case PID_SPEED:
-                    speed = data[index] & 0x00FF;
+                    speed = data[index] & 0x000000FF;
                     break;
                 case PID_TEMP:
                     temperature = data[index] - 40;
@@ -117,8 +147,20 @@ public class ObdData implements Serializable {
             }
             index += len;
         }
-        //Log.e("test", String.format("speed[%d], t[%d], rpm[%d]", speed, temperature, rpm));
-        return new ObdData(speed, temperature, rpm);
+
+        //Log.d("test", String.format("pid_0b[%d], pid_33[%d], pid_4f[%d]", pid_0b, pid_33, pid_4f));
+        if (pid_4f > 0) {
+            pid_0b = pid_0b * pid_4f * 10 / 255;
+        }
+        if (pid_33 >= 0) {
+            psi = (pid_0b - pid_33) / 6.895;
+        } else {
+            psi = (pid_0b) / 6.895;
+            isIMP = false;
+        }
+
+        //Log.d("test", String.format("speed[%d], t[%d], rpm[%d], psi[%f]", speed, temperature, rpm, psi));
+        return new ObdData(speed, temperature, rpm, psi, isIMP);
     }
 
     private static ObdData parseVersion1(byte[] data) {

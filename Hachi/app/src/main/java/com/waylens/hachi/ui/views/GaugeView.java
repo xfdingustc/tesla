@@ -189,6 +189,8 @@ public class GaugeView extends FrameLayout {
                     ObdData obdData = (ObdData) item.data;
                     state.put("rpm", obdData.rpm);
                     state.put("mph", obdData.speed);
+                    state.put("psi", obdData.psi);
+                    Logger.t(TAG).d(Double.toString(obdData.psi));
                     break;
             }
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
