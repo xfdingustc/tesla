@@ -83,11 +83,11 @@ public class FirstInstallActivity extends BaseActivity {
 
 
         mAdapter = new SimpleImageViewPagerAdapter(getFragmentManager());
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content0, R.string.description1, false));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content1, R.string.description4, false));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content2, R.string.description3, false));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content3, R.string.description2, false));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content4, -1, true));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content0, R.string.description1, false, mOnSkipClickListener));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content1, R.string.description4, false, mOnSkipClickListener));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content2, R.string.description3, false, mOnSkipClickListener));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content3, R.string.description2, false, mOnSkipClickListener));
+        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content4, -1, true, mOnSkipClickListener));
 
         mViewPager.setAdapter(mAdapter);
 
@@ -123,6 +123,13 @@ public class FirstInstallActivity extends BaseActivity {
         });
     }
 
+    private SimpleImageFragment.OnSkipClickListener mOnSkipClickListener = new SimpleImageFragment.OnSkipClickListener() {
+        @Override
+        public void onSkipClick() {
+            mViewPager.setCurrentItem(mCount - 1);
+        }
+    };
+
 
     private class SimpleImageViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -150,11 +157,14 @@ public class FirstInstallActivity extends BaseActivity {
 
     public static class SimpleImageFragment extends BaseFragment {
 
-        public static SimpleImageFragment newInstance(@DrawableRes int imageRes, @StringRes int description, boolean hasEnther) {
+
+
+        public static SimpleImageFragment newInstance(@DrawableRes int imageRes, @StringRes int description, boolean hasEnther, OnSkipClickListener listener) {
             SimpleImageFragment fragment = new SimpleImageFragment();
             fragment.imageRes = imageRes;
             fragment.hasEnter = hasEnther;
             fragment.description = description;
+            fragment.mOnSkipClickListener = listener;
             return fragment;
         }
 
@@ -166,6 +176,8 @@ public class FirstInstallActivity extends BaseActivity {
 
 
         boolean hasEnter;
+
+        private OnSkipClickListener mOnSkipClickListener;
 
 
         @BindView(R.id.policy_layout)
@@ -189,9 +201,14 @@ public class FirstInstallActivity extends BaseActivity {
         @BindView(R.id.withoutCamera)
         TextView mWithoutCamera;
 
+        @OnClick(R.id.skip)
+        public void onBtnSkipClicked() {
+            if (mOnSkipClickListener != null) {
+                mOnSkipClickListener.onSkipClick();
+            }
+        }
 
-
-        @OnClick({R.id.skip, R.id.btnEnter})
+        @OnClick(R.id.btnEnter)
         public void onBtnEnterClicked() {
             enter();
         }
@@ -268,6 +285,10 @@ public class FirstInstallActivity extends BaseActivity {
             }
 
 
+        }
+
+        public interface OnSkipClickListener {
+            void onSkipClick();
         }
     }
 }
