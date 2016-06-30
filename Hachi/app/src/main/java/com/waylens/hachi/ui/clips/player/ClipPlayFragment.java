@@ -277,7 +277,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 //                setClipSetPos(clipSetPos, true);
                 break;
         }
-        if (mAudioUrl != null) {
+        if (mAudioUrl != null && mAudioPlayer != null) {
             updateAudioPlayerState(playWhenReady, playbackState);
         }
         updateControls(playWhenReady, playbackState);
