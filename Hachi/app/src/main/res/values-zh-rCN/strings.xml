@@ -265,4 +265,5 @@
 	<string name="description2"></string>
 	<string name="description3"></string>
 	<string name="description4"></string>
+	<string name="no_clip_selected">没有视频选择</string>
 </resources>

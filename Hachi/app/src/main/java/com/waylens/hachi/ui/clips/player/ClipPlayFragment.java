@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.clips.player;
 
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
@@ -160,6 +162,13 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @OnClick(R.id.btnPlayPause)
     public void onBtnPlayPauseClicked() {
+        if (getClipSet().getCount() == 0) {
+            MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .content(R.string.no_clip_selected)
+                .positiveText(android.R.string.ok)
+                .show();
+            return;
+        }
         if (mPlayerControl == null) {
             startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
         } else {
@@ -230,6 +239,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         releasePlayer();
         mBtnPlayPause.setImageResource(R.drawable.playbar_play);
         updateProgressTextView(0, getClipSet().getTotalLengthMs());
+        if (getClipSet().getCount() == 0) {
+            mClipCover.setVisibility(View.INVISIBLE);
+        } else {
+            mClipCover.setVisibility(View.VISIBLE);
+        }
     }
 
     @Subscribe

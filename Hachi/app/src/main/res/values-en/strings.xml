@@ -265,4 +265,5 @@
 	<string name="description2">"Share your story with the community, let them feel the excitement just like sitting behind the wheel."</string>
 	<string name="description3">"Effortlessly select the best moments of your footage and create a compelling story about your drive."</string>
 	<string name="description4">"Capture and tell a fuller story showing what's under the hood."</string>
+	<string name="no_clip_selected">No Clip Selected</string>
 </resources>

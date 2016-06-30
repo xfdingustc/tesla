@@ -155,7 +155,10 @@ public class MultiSegSeekbar extends View {
     }
 
     public void reset() {
-        ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
+        if (getClipSet().getCount() == 0) {
+            return;
+        }
+        ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
         mCurrentClipIndex = 0;
         float newX = mBar.setClipSetPos(clipSetPos);
         mThumb.setX(newX);
