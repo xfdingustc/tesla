@@ -177,10 +177,13 @@
 	<string name="smart_remix">Smart Remix</string>
 	<string name="speed">Speed</string>
 	<string name="staff_picks">Explore</string>
-	<string name="step1">1. Scan the QR code on your camera</string>
-	<string name="step2">"2. Connect your phone to the camera's Hotspot as a Wi-Fi client"</string>
-	<string name="step3">"3. Connect the camera to your preferred Wi-Fi network"</string>
-	<string name="steps">"3 steps to set up your camera's Wi-Fi connectivity"</string>
+	<string name="step1_des">Scan the QR code on your camera</string>
+	<string name="step2_des">"Connect your phone to the camera's Hotspot as a Wi-Fi client"</string>
+	<string name="step3_des">"Connect the camera to your preferred Wi-Fi network"</string>
+	<string name="steps">"Three steps to set up your camera's Wi-Fi connectivity"</string>
+	<string name="step1">Step1</string>
+	<string name="step2">Step2</string>
+	<string name="step3">Step3</string>
 	<string name="swap">Swap</string>
 	<string name="tap">Tap</string>
 	<string name="theme">Theme</string>

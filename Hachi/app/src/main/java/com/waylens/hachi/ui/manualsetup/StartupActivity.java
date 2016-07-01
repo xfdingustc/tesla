@@ -19,6 +19,7 @@ import com.waylens.hachi.ui.activities.MainActivity;
 
 
 import butterknife.OnClick;
+import butterknife.Optional;
 
 /**
  * Created by Xiaofei on 2016/3/18.
@@ -28,6 +29,7 @@ public class StartupActivity extends BaseActivity {
 
     private final int PERMISSION_REQUEST_CAMERA = 0;
 
+    @Optional
     @OnClick(R.id.btnGetStarted)
     public void onBtnGetStartedClicked() {
         if (checkIfCameraIsGranted()) {
@@ -67,6 +69,7 @@ public class StartupActivity extends BaseActivity {
         }
     }
 
+    @Optional
     @OnClick(R.id.skip)
     public void onSkipClicked() {
         MaterialDialog dialog =  new MaterialDialog.Builder(this)

@@ -177,10 +177,13 @@
 	<string name="smart_remix">智能选取</string>
 	<string name="speed">速度</string>
 	<string name="staff_picks">推荐</string>
-	<string name="step1">1. 扫描相机上二维码</string>
-	<string name="step2">2. 连接手机和相机</string>
-	<string name="step3">3. 连接相机到家庭WiFi</string>
+	<string name="step1_des">扫描相机上二维码</string>
+	<string name="step2_des">连接手机和相机</string>
+	<string name="step3_des">连接相机到家庭WiFi</string>
 	<string name="steps">3步唤醒相机</string>
+	<string name="step1">步骤1</string>
+	<string name="step2">步骤2</string>
+	<string name="step3">步骤3</string>
 	<string name="swap">交换</string>
 	<string name="tap">点击</string>
 	<string name="theme">主题</string>

@@ -47,6 +47,12 @@
     </declare-styleable>
 
 
+    <declare-styleable name="RoundView">
+
+        <attr name="text" format="string"/>
+    </declare-styleable>
+
+
     <declare-styleable name="RangeBar">
         <attr name="tickStart" format="integer" />
         <attr name="tickEnd" format="integer" />
