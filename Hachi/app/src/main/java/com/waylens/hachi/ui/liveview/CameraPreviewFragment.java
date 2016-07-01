@@ -879,7 +879,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
-    
+
 
     private static class UpdateRecordTimeTask extends TimerTask {
 

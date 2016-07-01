@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.StackView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
@@ -76,9 +77,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
     private static final int ROOT_CHILD_CAMERA_DISCONNECT = 0;
-    private static final int ROOT_CHILD_LOADING_PROGRESS = 1;
-    private static final int ROOT_CHILD_CLIPSET = 2;
-    private static final int ROOT_CHILD_TIMEOUT = 3;
+    private static final int ROOT_CHILD_CLIPSET = 1;
+    private static final int ROOT_CHILD_TIMEOUT = 2;
 
     private static final int DEFAULT_TIMEOUT_SECOND = 10;
 
@@ -118,6 +118,9 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     @BindView(R.id.tvBufferTime)
     TextView mTvBufferTime;
 
+    @BindView(R.id.loading_progress)
+    ProgressBar mLoadingProgress;
+
     @OnClick(R.id.bottomLayout)
     public void onBottomLayoutClicked() {
         ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA,
@@ -137,7 +140,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     @OnClick(R.id.btn_retry)
     public void onBtnRetryClicked() {
-        showRootViewChild(ROOT_CHILD_LOADING_PROGRESS);
         doGetClips();
     }
 
@@ -269,6 +271,9 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         }
         if (mVdtCamera != null) {
             mRefreshLayout.setRefreshing(true);
+            if (showLoading) {
+                mLoadingProgress.setVisibility(View.VISIBLE);
+            }
             doGetClips();
             if (mClipSetType != Clip.TYPE_MARKED) {
                 //mBottomLayout.setVisibility(View.VISIBLE);
@@ -306,30 +311,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         }
     }
 
-    private void toEnhance() {
-        if (mIsAddMore) {
-            Intent intent = new Intent();
-            intent.putParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
-            Logger.t(TAG).d("add clip size: " + mAdapter.getSelectedClipList().size());
-            getActivity().setResult(Activity.RESULT_OK, intent);
-            getActivity().finish();
-        } else {
-            ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-//            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
-//            EnhanceActivity2.launch(getActivity(), selectedList);
 
-            Logger.t(TAG).d("selected list size: " + selectedList.size());
-
-            final int playlistId = 0x100;
-            PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
-            playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
-                @Override
-                public void onBuildComplete(ClipSet clipSet) {
-                    EnhanceActivity2.launch(getActivity(), playlistId);
-                }
-            });
-        }
-    }
 
 
     private void setupClipSetGroup() {
@@ -373,7 +355,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
 
     private void doGetClips() {
-
         if (mVdbRequestQueue == null) {
             return;
         }
@@ -431,6 +412,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 public void onNext(ClipSet clipSet) {
                     Logger.t(TAG).d("clip set got");
                     showRootViewChild(ROOT_CHILD_CLIPSET);
+                    mLoadingProgress.setVisibility(View.GONE);
                     mRefreshLayout.setRefreshing(false);
                     if (clipSet.getCount() == 0) {
                         mVsNoBookmark.setVisibility(View.VISIBLE);
@@ -522,8 +504,35 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
+    private void toEnhance() {
+        if (mIsAddMore) {
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
+            Logger.t(TAG).d("add clip size: " + mAdapter.getSelectedClipList().size());
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
+        } else {
+            ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+//            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
+//            EnhanceActivity2.launch(getActivity(), selectedList);
+            mLoadingProgress.setVisibility(View.VISIBLE);
+            Logger.t(TAG).d("selected list size: " + selectedList.size());
+
+            final int playlistId = 0x100;
+            PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
+            playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
+                @Override
+                public void onBuildComplete(ClipSet clipSet) {
+                    mLoadingProgress.setVisibility(View.INVISIBLE);
+                    EnhanceActivity2.launch(getActivity(), playlistId);
+                }
+            });
+        }
+    }
+
     private void toShare() {
         if (SessionManager.getInstance().isLoggedIn()) {
+            mLoadingProgress.setVisibility(View.VISIBLE);
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 //            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
 //            ShareActivity.launch(getActivity());
@@ -532,6 +541,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
+                    mLoadingProgress.setVisibility(View.INVISIBLE);
                     ShareActivity.launch(getActivity(), playlistId, -1);
                 }
             });
