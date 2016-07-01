@@ -92,7 +92,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     private int mDeleteClipCount = 0;
 
-    private LocalBroadcastManager mBroadcastManager;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -247,11 +246,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRefreshLayout.setRefreshing(true);
-
-//        mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
-//        if (mBroadcastManager != null) {
-//            mBroadcastManager.registerReceiver(localReceiver, new IntentFilter(ACTION_RETRIEVE_CLIPS));
-//        }
     }
 
 
@@ -546,12 +540,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         }
     }
 
-//    BroadcastReceiver localReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            doGetClips();
-//        }
-//    };
+
 
 
     private class BufferClipAdapter extends BaseAdapter {

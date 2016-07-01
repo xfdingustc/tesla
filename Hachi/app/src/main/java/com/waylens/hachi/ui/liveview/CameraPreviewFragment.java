@@ -84,7 +84,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private boolean mIsGaugeVisible;
 
-    private LocalBroadcastManager mLocalBroadcastManager;
+
 
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
 
@@ -448,7 +448,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
-        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+
     }
 
     @Override
@@ -479,15 +479,9 @@ public class CameraPreviewFragment extends BaseFragment {
             mLiveView.stopStream();
         }
 
-        mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(LiveViewActivity.ACTION_IS_GAUGE_VISIBLE));
 
 
-    }
 
-    @Override
-    public void onDestroyView() {
-        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
-        super.onDestroyView();
     }
 
 
@@ -532,7 +526,6 @@ public class CameraPreviewFragment extends BaseFragment {
     protected void init() {
         mHandler = new Handler();
 
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
     }
 
     private void initViews() {
@@ -886,15 +879,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     }
 
-    /**
-     * This receiver is used to sync gauge settings during screen rotation.
-     */
-    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mIsGaugeVisible = intent.getBooleanExtra(LiveViewActivity.EXTRA_IS_GAUGE_VISIBLE, false);
-        }
-    };
+    
 
     private static class UpdateRecordTimeTask extends TimerTask {
 
