@@ -65,6 +65,12 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mRequestQueue.cancelAll(TAG);
+    }
+
     private void initPreferences() {
         mEmail = findPreference("email");
         mChangePassword = findPreference("change_password");
@@ -275,7 +281,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 }
             })
             .build();
-        mRequestQueue.add(request);
+        mRequestQueue.add(request.setTag(TAG));
     }
 
     private void updateGender(final String gender) {
@@ -297,7 +303,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 }
             })
             .build();
-        mRequestQueue.add(request);
+        mRequestQueue.add(request.setTag(TAG));
     }
 
 
@@ -329,7 +335,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             .build();
 
 
-        mRequestQueue.add(request);
+        mRequestQueue.add(request.setTag(TAG));
     }
 
 }
