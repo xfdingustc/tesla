@@ -10,6 +10,9 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.text.InputType;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -86,6 +89,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Switch mMicSwitch;
     private Switch mSpeakerSwitch;
     private SeekBar mAudioSeekbar;
+    private ImageView mSpeakerImage;
 
 //    private PieChart mStorageChart;
 
@@ -452,17 +456,35 @@ public class CameraSettingFragment extends PreferenceFragment {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             mVdtCamera.setAudioMic(mMicSwitch.isChecked(), 0);
-
+                            int volume = mAudioSeekbar.getProgress();
+                            mVdtCamera.setSpeakerStatus(mSpeakerSwitch.isChecked(), volume);
                         }
                     })
                     .show();
 
                 mMicSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swMic);
-                mAudioSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbMicVolume);
+                mAudioSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbSpeakerVolume);
                 mSpeakerSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swSpeaker);
+                mSpeakerImage = (ImageView) dialog.getCustomView().findViewById(R.id.speakerImage);
+                mAudioSeekbar.setMax(10);
 
                 boolean isMicOn = mVdtCamera.isMicOn();
+                boolean isSpeakerOn = mVdtCamera.isSpeakerOn();
+                int speakerVol = mVdtCamera.getSpeakerVol();
+                mSpeakerSwitch.setChecked(isSpeakerOn);
+                if (!isSpeakerOn) {
+                    mAudioSeekbar.setVisibility(View.INVISIBLE);
+                    mSpeakerImage.setVisibility(View.INVISIBLE);
+                }
+                mAudioSeekbar.setProgress(speakerVol);
                 mMicSwitch.setChecked(isMicOn);
+                mSpeakerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        mAudioSeekbar.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+                        mSpeakerImage.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+                    }
+                });
 
                 return true;
             }

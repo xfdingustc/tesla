@@ -53,12 +53,6 @@ public interface VdtCameraCmdConsts {
     int CMD_NETWORK_ADD_HOST = 30;
     int CMD_NETWORK_RMV_HOST = 31;
     int CMD_NETWORK_CONNECT_HOST = 32;
-
-
-
-    int CMD_NETWORK_SCANHOST = 74;
-    int CMD_NETWORK_CONNECTHOTSPOT  = 75;
-
     int CMD_NETWORK_SYNCTIME = 33;
     int CMD_NETWORK_GET_DEVICETIME = 34;
 
@@ -83,6 +77,43 @@ public interface VdtCameraCmdConsts {
     int CMD_CAM_BT_DO_UNBIND = 49;
     int CMD_CAM_BT_SET_OBD_TYPES = 50;
     int CMD_CAM_BT_RESERVED = 51;
+    // end of API v1.2
+
+    // 1.3
+    int CMD_CAM_FORMAT_TF           = 61;
+    int CMD_CAM_POWERSAVING_MODE    = 62;
+    int CMD_CAM_ENTER_PREVIEW       = 63;
+    int CMD_CAM_LEAVE_PREVIEW       = 64;
+    int CMD_CAM_START_PLAYBACK      = 65;
+    int CMD_CAM_STOP_PLAYBACK       = 66;
+    int CMD_CAM_GET_LANGUAGE_LIST   = 67;
+    int CMD_CAM_GET_LANGUAGE        = 68;
+    int CMD_CAM_SET_LANGUAGE        = 69;
+
+    int CMD_CAM_SET_WORKINGMODE     = 70;
+    int CMD_CAM_GET_WORKINGMODE     = 71;
+    int CMD_CAM_SET_PHOTOLAPSE_INTERVAL = 72;
+    int CMD_CAM_Get_PHOTOLAPSE_INTERVAL = 73;
+    // end of API v1.3
+
+
+    // 1.4
+    int CMD_NETWORK_SCANHOST = 74;
+    int CMD_NETWORK_CONNECTHOTSPOT  = 75;
+    int CMD_SET_AUTO_POWER_OFF_DELAY    = 76;
+    int CMD_GET_AUTO_POWER_OFF_DELAY    = 77;
+    int CMD_SET_SPEAKER_STATUS          = 78;
+    int CMD_GET_SPEAKER_STATUS          = 79;
+    int CMD_SET_DISPLAY_AUTO_BRIGHTNESS = 80;
+    int CMD_GET_DISPLAY_AUTO_BRIGHTNESS = 81;
+    int CMD_SET_DISPLAY_BRIGHTNESS      = 82;
+    int CMD_GET_DISPLAY_BRIGHTNESS      = 83;
+    int CMD_SET_DISPLAY_AUTO_OFF_TIME   = 84;
+    int CMD_GET_DISPLAY_AUTO_OFF_TIME   = 85;
+    int CMD_FACTORY_RESET               = 86;
+    int CMD_GET_CONNECTED_CLIENTS_INFO  = 87;
+    int CMD_CAM_NEW_CONNECTION          = 88;
+    int CMD_CAM_CLOSE_CONNECTION        = 89;
 
     // oliver
     int CMD_CAM_WANT_IDLE = 100;

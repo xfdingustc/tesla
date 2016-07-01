@@ -27,27 +27,7 @@
 
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal">
 
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/btn_mic_on"
-            android:layout_marginRight="8dp"/>
-
-        <SeekBar
-            android:id="@+id/sbMicVolume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
-
-    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -71,6 +51,29 @@
             android:layout_gravity="end"/>
 
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/speakerImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/settings_beeps_level"
+            android:layout_marginRight="8dp"/>
+
+        <SeekBar
+            android:id="@+id/sbSpeakerVolume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>

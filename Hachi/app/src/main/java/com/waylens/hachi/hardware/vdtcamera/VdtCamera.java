@@ -48,6 +48,10 @@ public class VdtCamera implements VdtCameraCmdConsts {
     public static final int STATE_MIC_ON = 0;
     public static final int STATE_MIC_OFF = 1;
 
+    public static final int STATE_SPEAKER_UNKNOWN = -1;
+    public static final int STATE_SPEAKER_OFF = 0;
+    public static final int STATE_SPEAKER_ON = 1;
+
     public static final int STATE_BATTERY_UNKNOWN = -1;
     public static final int STATE_BATTERY_FULL = 0;
     public static final int STATE_BATTERY_NOT_CHARGING = 1;
@@ -150,6 +154,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private int mMicState = STATE_MIC_UNKNOWN;
     private int mMicVol = -1;
+
+    private int mSpeakerState = STATE_SPEAKER_UNKNOWN;
+    private int mSpeakerVol = -1;
 
     private int mBatteryState = STATE_BATTERY_UNKNOWN;
     private int mPowerState = STATE_POWER_UNKNOWN;
@@ -398,8 +405,27 @@ public class VdtCamera implements VdtCameraCmdConsts {
             gain = 5;
         }
 
-
         mCommunicationBus.sendCommand(CMD_AUDIO_SET_MIC, micState, gain);
+    }
+
+    public boolean isSpeakerOn() {
+        return mSpeakerState == STATE_SPEAKER_ON;
+    }
+
+    public int getSpeakerVol() {
+        return mSpeakerVol;
+    }
+
+    public void setSpeakerStatus(boolean on, int volume) {
+        int speakerState = on ? STATE_SPEAKER_ON : STATE_SPEAKER_OFF;
+        if (volume < 0) {
+            volume = 0;
+        }
+        if (volume > 10) {
+            volume = 10;
+        }
+        Logger.t(TAG).d("speakerState:" + speakerState);
+        mCommunicationBus.sendCommand(CMD_SET_SPEAKER_STATUS, speakerState, volume);
     }
 
     public void setWifiMode(int wifiMode) {
@@ -649,6 +675,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_NETWORK_GET_HOST_NUM);
         mCommunicationBus.sendCommand(CMD_REC_GET_MARK_TIME);
         mCommunicationBus.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
+        mCommunicationBus.sendCommand(CMD_GET_SPEAKER_STATUS);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
@@ -1188,9 +1215,17 @@ public class VdtCamera implements VdtCameraCmdConsts {
             Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
     }
-
-
-
+    private void ack_CAM_getSpeakerStatus(String p1, String p2) {
+        Logger.t(TAG).d(String.format("ack_CAM_getSpeakerStatus: p1: %s, p2: %s", p1, p2));
+        try {
+            int speakerState = Integer.parseInt(p1);
+            int speakerVol = Integer.parseInt(p2);
+            mSpeakerState = speakerState;
+            mSpeakerVol = speakerVol;
+        } catch (Exception e) {
+            Logger.t(TAG).e(String.format("ack_CAM_getSpeakerStatus: p1: %s, p2: %s", p1, p2));
+        }
+    }
 
 
     private void handleCameraMessage(int cmd, String p1, String p2) {
@@ -1276,6 +1311,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
             case CMD_CAM_BT_DO_UNBIND:
                 ack_CAM_BT_doUnBind(p1, p2);
                 break;
+            case CMD_GET_SPEAKER_STATUS:
+                ack_CAM_getSpeakerStatus(p1, p2);
             case CMD_REC_LIST_RESOLUTIONS:
                 ack_Rec_List_Resolutions(p1, p2);
                 break;
