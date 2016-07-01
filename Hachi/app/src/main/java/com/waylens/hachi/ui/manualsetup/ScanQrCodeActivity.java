@@ -325,7 +325,7 @@ public class ScanQrCodeActivity extends BaseActivity implements SurfaceHolder.Ca
 //        ApConnectFragment fragment = ApConnectFragment.newInstance(mWifiName, mWifiPassword);
 //        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
 
-        ManualSetupActivity.launch(this, mWifiName, mWifiName);
+        ManualSetupActivity.launch(this, mWifiName, mWifiPassword);
 
     }
 
