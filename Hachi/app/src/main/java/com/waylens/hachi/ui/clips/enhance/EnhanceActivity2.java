@@ -334,8 +334,15 @@ public class EnhanceActivity2 extends ClipPlayActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
-                        ShareActivity.launch(EnhanceActivity2.this, mPlaylistEditor.getPlaylistId(), getAudioID());
-                        finish();
+                        if (getClipSet().getCount() == 0) {
+                            MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity2.this)
+                                .content(R.string.no_clip_selected)
+                                .positiveText(android.R.string.ok)
+                                .show();
+                        } else {
+                            ShareActivity.launch(EnhanceActivity2.this, mPlaylistEditor.getPlaylistId(), getAudioID());
+                            finish();
+                        }
                         break;
                     case R.id.menu_to_download:
                         new MaterialDialog.Builder(EnhanceActivity2.this)
