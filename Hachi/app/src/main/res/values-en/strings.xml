@@ -269,4 +269,5 @@
 	<string name="description3">"Effortlessly select the best moments of your footage and create a compelling story about your drive."</string>
 	<string name="description4">"Capture and tell a fuller story showing what's under the hood."</string>
 	<string name="no_clip_selected">No Clip Selected</string>
+	<string name="failed_to_connect_to_route">Camera failed to connect to your home wifi. Please check if your password is correct. </string>
 </resources>
