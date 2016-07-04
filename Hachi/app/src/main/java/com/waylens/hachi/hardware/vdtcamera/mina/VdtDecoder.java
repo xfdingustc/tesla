@@ -2,9 +2,6 @@ package com.waylens.hachi.hardware.vdtcamera.mina;
 
 import android.util.Xml;
 
-import com.orhanobut.logger.Logger;
-import com.waylens.hachi.hardware.vdtcamera.SocketUtils;
-
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
@@ -20,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Xiaofei on 2016/7/4.
  */
-public class VdtDecoder extends CumulativeProtocolDecoder {
+public class VdtDecoder extends CumulativeProtocolDecoder implements VdtProtocolConsts {
     private static final String TAG = VdtDecoder.class.getSimpleName();
 
 
@@ -30,12 +27,6 @@ public class VdtDecoder extends CumulativeProtocolDecoder {
 
 
 
-    private static final String XML_CCEV = "ccev";
-    private static final String XML_CMD = "cmd";
-    private static final String XML_ACT = "act";
-    private static final String XML_P1 = "p1";
-    private static final String XML_P2 = "p2";
-    private static final int HEAD_SIZE = 128;
 
 
 
@@ -48,12 +39,8 @@ public class VdtDecoder extends CumulativeProtocolDecoder {
         } else {
             length = previousLength;
         }
-//        ioBuffer.flip();
-//        Logger.t(TAG).d("length: " + length + " remainning: " + ioBuffer.remaining());
+
         if (ioBuffer.remaining() >= length - 4) {
-//            byte[] byteArray = new byte[length];
-//            ioBuffer.get(byteArray, 0, length);
-//            protocolDecoderOutput.write(byteArray);
             int append = ioBuffer.getInt();
 
             byte[] byteArray = new byte[length];
@@ -101,13 +88,11 @@ public class VdtDecoder extends CumulativeProtocolDecoder {
 
     @Override
     public void dispose(IoSession session) throws Exception {
-//        log.info("#########dispose#########");
-//        log.info(session.getCurrentWriteMessage());
+
     }
 
     @Override
     public void finishDecode(IoSession session, ProtocolDecoderOutput out) throws Exception {
-//        Logger.t(TAG).d("#########完成解码#########");
     }
 
 
@@ -140,20 +125,6 @@ public class VdtDecoder extends CumulativeProtocolDecoder {
 
                 VdtMessage message = new VdtMessage(domain, cmd, p1, p2);
                 return message;
-
-
-//                switch (domain) {
-//                    case CMD_DOMAIN_CAM:
-////                            Logger.t(TAG).d("Domain = " + domain + " cmd = " + cmd);
-//                        mCameraMessageHandler.handleMessage(cmd + CMD_DOMAIN_CAM_START, p1, p2);
-//                        break;
-//                    case CMD_DOMAIN_REC:
-////                            Logger.t(TAG).d("Domain = " + domain + " cmd =" + cmd);
-//                        mCameraMessageHandler.handleMessage(cmd + CMD_DOMAIN_REC_START, p1, p2);
-//                        break;
-//                    default:
-//                        break;
-//                }
             }
         }
         return null;
