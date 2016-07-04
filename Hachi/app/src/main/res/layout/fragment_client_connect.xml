@@ -29,8 +29,6 @@
         android:textColor="?attr/appTextColorSecondary"/>
 
 
-
-
     <ViewSwitcher
         android:id="@+id/vsConnect"
         android:layout_width="match_parent"
@@ -40,7 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
 
 
             <LinearLayout
@@ -73,16 +70,18 @@
 
             </android.support.v7.widget.RecyclerView>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/settings_line_separator"/>
 
 
         </LinearLayout>
 
 
-
-        <include layout="@layout/camera_connecting" />
+        <include layout="@layout/camera_connecting"/>
 
     </ViewSwitcher>
-
 
 
 </LinearLayout>

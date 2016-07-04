@@ -116,7 +116,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                 mSocket = new Socket();
 
                 mSocket.setReceiveBufferSize(8192);
-                mSocket.connect(mAddress);
+                mSocket.connect(mAddress, 3000);
 
                 Logger.t(TAG).d("socket is connected");
                 mSocket.setKeepAlive(true);
