@@ -1,5 +1,7 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
+import android.util.Log;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.vdtcamera.mina.VdtCommand;
 import com.waylens.hachi.hardware.vdtcamera.mina.VdtCodecFactory;
@@ -13,6 +15,9 @@ import org.apache.mina.core.service.IoServiceListener;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.keepalive.KeepAliveFilter;
+import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
+import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import java.io.IOException;
@@ -86,8 +91,48 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             @Override
             public void sessionDestroyed(IoSession ioSession) throws Exception {
                 Logger.t(TAG).d("sessionDestroyed");
+                connectError();
             }
         });
+
+
+        KeepAliveMessageFactory factory = new KeepAliveMessageFactory() {
+            @Override
+            public boolean isRequest(IoSession ioSession, Object o) {
+//                Logger.t(TAG).d("isRequest: " + o.toString());
+                return false;
+            }
+
+            @Override
+            public boolean isResponse(IoSession ioSession, Object o) {
+
+                VdtMessage message = (VdtMessage)o;
+//                Logger.t(TAG).d("isResponse: " + message.toString());
+                if (message.domain == CMD_DOMAIN_CAM && message.messageType == CMD_CAM_IS_API_SUPPORTED) {
+                    Logger.t(TAG).d("receive heart beart response");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            @Override
+            public Object getRequest(IoSession ioSession) {
+                return new VdtCommand(CMD_DOMAIN_CAM, CMD_CAM_IS_API_SUPPORTED, "", "");
+            }
+
+            @Override
+            public Object getResponse(IoSession ioSession, Object o) {
+                Logger.t(TAG).d("getResponse:");
+                return null;
+            }
+        };
+        KeepAliveFilter kaf = new KeepAliveFilter(factory, IdleStatus.READER_IDLE, KeepAliveRequestTimeoutHandler.CLOSE);
+        kaf.setForwardEvent(true);
+        kaf.setRequestInterval(1);
+        kaf.setRequestTimeout(5);
+
+        connector.getFilterChain().addLast("heart", kaf);
 
         connector.setHandler(new IoHandlerAdapter() {
             @Override
@@ -112,18 +157,16 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
 
         });
 
-
-        ConnectFuture future = connector.connect(mAddress);
-        Logger.t(TAG).d("start connection");
-        future.awaitUninterruptibly();
-        mSession = future.getSession();
-        Logger.t(TAG).d("connected");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mConnectionListener.onConnected();
-            }
-        }).start();
+        try {
+            ConnectFuture future = connector.connect(mAddress);
+            Logger.t(TAG).d("start connection");
+            future.awaitUninterruptibly();
+            mSession = future.getSession();
+            Logger.t(TAG).d("connected");
+            mConnectionListener.onConnected();
+        } catch (Exception e) {
+            connectError();
+        }
 
 
     }
