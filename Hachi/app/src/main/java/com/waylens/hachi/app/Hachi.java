@@ -90,7 +90,7 @@ public class Hachi extends Application {
 
         initSessionInfo();
 
-        initCameraManager();
+
 
         initFacebookSDK();
 
@@ -144,10 +144,7 @@ public class Hachi extends Application {
     }
 
 
-    private void initCameraManager() {
-        VdtCameraManager.initialize(this);
 
-    }
 
     public static Context getContext() {
         return mSharedContext;

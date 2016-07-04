@@ -5,7 +5,6 @@ import android.content.Context;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.InetAddress;
@@ -14,26 +13,19 @@ import java.util.List;
 
 public class VdtCameraManager {
     private static final String TAG = VdtCameraManager.class.getSimpleName();
-    private static final String PASSWORD_FILE = "wifipass";
 
     private static VdtCameraManager mSharedManager = new VdtCameraManager();
 
-    private static Context mContext;
+
 
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    private static final int TAG_SHOULD_REMOVE = 0;
-    private static final int TAG_SHOULD_KEEP = 1;
-    private static final int TAG_ADDED = 2;
 
     public static VdtCameraManager getManager() {
         return mSharedManager;
     }
 
-    public static void initialize(Context context) {
-        mContext = context;
-    }
 
     // note: CameraManager is a global data,
     // we have to track each callback even they are installed by the same activity.
@@ -46,8 +38,7 @@ public class VdtCameraManager {
     private VdtCamera mCurrentCamera;
 
 
-    // API
-    synchronized public void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
+    public synchronized void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
 //        Logger.t(TAG).d("connect Camera");
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectedVdtCameras)) {
 //            Logger.t(TAG).d("already existed in connected");
@@ -89,7 +80,6 @@ public class VdtCameraManager {
 
         mConnectingVdtCameras.add(vdtCamera);
 //        vdtCamera.startClient();
-
 
 
     }
@@ -155,8 +145,6 @@ public class VdtCameraManager {
 
 
     }
-
-
 
 
     private void onCameraDisconnected(VdtCamera vdtCamera) {
