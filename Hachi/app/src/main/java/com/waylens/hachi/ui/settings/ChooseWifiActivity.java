@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2016/5/23.
  */
 public class ChooseWifiActivity extends BaseActivity {
-    private NetworkItemAdapter mAddedNetworkItemAdapter;
+
     private NetworkItemAdapter mNetworkItemAdapter;
 
     private NetworkItemBean mSelectedNetworkItem = null;
@@ -73,11 +73,10 @@ public class ChooseWifiActivity extends BaseActivity {
 
         mVdtCamera.scanHost(new VdtCamera.OnScanHostListener() {
             @Override
-            public void OnScanHostResult(final List<NetworkItemBean> addedNetworkList, final List<NetworkItemBean> networkList) {
+            public void OnScanHostResult(final List<NetworkItemBean> networkList) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAddedNetworkItemAdapter.setNetworkList(addedNetworkList);
                         mNetworkItemAdapter.setNetworkList(networkList);
                     }
                 });
@@ -85,8 +84,7 @@ public class ChooseWifiActivity extends BaseActivity {
         });
 
         mAddedWifiList.setLayoutManager(new LinearLayoutManager(this));
-        mAddedNetworkItemAdapter = new NetworkItemAdapter();
-        mAddedWifiList.setAdapter(mAddedNetworkItemAdapter);
+
 
         mWifiList.setLayoutManager(new LinearLayoutManager(this));
         mNetworkItemAdapter = new NetworkItemAdapter();

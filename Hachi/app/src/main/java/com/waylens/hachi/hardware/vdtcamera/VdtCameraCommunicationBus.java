@@ -95,11 +95,13 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
                     mSocket.shutdownInput();
                     mSocket.shutdownOutput();
                     mSocket.close();
+                    mSocket = null;
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            Logger.t(TAG).d("socket is closed");
         }
     }
 
@@ -110,10 +112,13 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts{
         @Override
         public void run() {
             try {
+                Logger.t(TAG).d("create socket: " + mAddress.toString());
                 mSocket = new Socket();
 
                 mSocket.setReceiveBufferSize(8192);
                 mSocket.connect(mAddress);
+
+                Logger.t(TAG).d("socket is connected");
                 mSocket.setKeepAlive(true);
 //                mSocket.setSoTimeout(10000);
                 mSocket.setTcpNoDelay(true);

@@ -51,8 +51,7 @@ public class ClientConnectFragment extends BaseFragment {
     @BindView(R.id.rvWifiList)
     RecyclerView mRvWifiList;
 
-    @BindView(R.id.rvAddedWifiList)
-    RecyclerView mRvAddedWifiList;
+
 
     @BindView(R.id.loadingProgress)
     ProgressBar mLoadingProgress;
@@ -71,7 +70,7 @@ public class ClientConnectFragment extends BaseFragment {
 
 
     private NetworkItemAdapter mNetworkItemAdapter;
-    private NetworkItemAdapter mAddedNetworkItemAdapter;
+
 
     private VdtCamera.OnScanHostListener mOnScanHostListener;
 
@@ -139,9 +138,8 @@ public class ClientConnectFragment extends BaseFragment {
     }
 
     private void initViews() {
-        mRvAddedWifiList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAddedNetworkItemAdapter = new NetworkItemAdapter();
-        mRvAddedWifiList.setAdapter(mAddedNetworkItemAdapter);
+
+
 
         mRvWifiList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mNetworkItemAdapter = new NetworkItemAdapter();
@@ -149,7 +147,7 @@ public class ClientConnectFragment extends BaseFragment {
 
         mOnScanHostListener = new VdtCamera.OnScanHostListener() {
             @Override
-            public void OnScanHostResult(final List<NetworkItemBean> addedNetworkList, final List<NetworkItemBean> networkList) {
+            public void OnScanHostResult( final List<NetworkItemBean> networkList) {
 //                Logger.t(TAG).d("get network list: " + networkList.size());
                 mLoadingProgress.post(new Runnable() {
                     @Override
@@ -162,7 +160,6 @@ public class ClientConnectFragment extends BaseFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAddedNetworkItemAdapter.setNetworkList(addedNetworkList);
                         mNetworkItemAdapter.setNetworkList(networkList);
                     }
                 });

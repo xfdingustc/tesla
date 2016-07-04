@@ -703,7 +703,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-
     public void doBtUnbind(int type, String mac) {
         Logger.t(TAG).d("cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
         mCommunicationBus.sendCommand(CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
@@ -883,11 +882,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     public interface OnScanHostListener {
-        void OnScanHostResult(List<NetworkItemBean> addedNetworkList, List<NetworkItemBean> networkList);
+        void OnScanHostResult(List<NetworkItemBean> networkList);
     }
-
-
-
 
 
     private void ack_Cam_getApiVersion(String p1) {
@@ -1215,6 +1211,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
     }
+
     private void ack_CAM_getSpeakerStatus(String p1, String p2) {
         Logger.t(TAG).d(String.format("ack_CAM_getSpeakerStatus: p1: %s, p2: %s", p1, p2));
         try {
@@ -1382,7 +1379,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
         Logger.t(TAG).json(p1);
         List<NetworkItemBean> networkItemBeanList = new ArrayList<>();
-        List<NetworkItemBean> addedNetworkItemBeanList = new ArrayList<>();
+
         try {
             JSONObject object = new JSONObject(p1);
             JSONArray networks = object.getJSONArray("networks");
@@ -1395,11 +1392,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 networkItem.frequency = networkObject.optInt("frequency");
                 networkItem.singalLevel = networkObject.optInt("signal_level");
                 networkItem.added = networkObject.optBoolean("added");
-                if (networkItem.added) {
-                    addedNetworkItemBeanList.add(networkItem);
-                } else {
-                    networkItemBeanList.add(networkItem);
-                }
+                networkItemBeanList.add(networkItem);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1409,7 +1402,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (mOnScanHostListener != null) {
             OnScanHostListener listener = mOnScanHostListener.get();
             if (listener != null) {
-                listener.OnScanHostResult(addedNetworkItemBeanList, networkItemBeanList);
+                listener.OnScanHostResult(networkItemBeanList);
             }
         }
 
