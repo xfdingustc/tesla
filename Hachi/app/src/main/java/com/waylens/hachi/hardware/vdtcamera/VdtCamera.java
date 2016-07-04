@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
+import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.events.BluetoothEvent;
@@ -39,6 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 
 public class VdtCamera implements VdtCameraCmdConsts {
@@ -599,6 +602,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             new VdbResponse.Listener<ClipActionInfo>() {
                 @Override
                 public void onResponse(ClipActionInfo response) {
+                    mEventBus.post(new MarkLiveMsgEvent(VdtCamera.this, response));
                     Logger.t(TAG).d(response.toString());
                 }
             },
@@ -710,7 +714,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void doBind(int type, String mac) {
-        Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
+        Logger.t(TAG).d("cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
         mCommunicationBus.sendCommand(CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
     }
 
@@ -1029,6 +1033,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void ack_CAM_BT_isEnabled(String p1) {
         int enabled = Integer.parseInt(p1);
         mBtState = enabled;
+        Logger.t(TAG).d("ack CAM BT isEnabled: "+ enabled);
         if (enabled == BT_STATE_ENABLED) {
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
@@ -1055,7 +1060,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             name = "";
         }
 
-//            Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
+        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
         if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
             mObdDevice.setDevState(devState, mac, name);
         } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {
@@ -1113,11 +1118,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void ack_CAM_BT_doBind(String p1, String p2) {
         int type = Integer.parseInt(p1);
         int result = Integer.parseInt(p2);
-        if (result == 0) {
+        if (result == 1) {
             if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
                 mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
             }
         }
+        Logger.t(TAG).d("ack_CAM_BT_doBind" + "type:" + type + ", result:" + result);
         mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_BIND_FINISHED));
     }
 

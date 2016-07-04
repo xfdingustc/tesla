@@ -34,6 +34,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
+import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.BtDevice;
@@ -48,6 +49,7 @@ import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.SpaceInfo;
 import com.waylens.hachi.vdb.VdbReadyInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
@@ -335,6 +337,21 @@ public class CameraPreviewFragment extends BaseFragment {
                 mTvErrorMessage.setText(R.string.error_msg_no_card);
         }
         */
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMarkLiveMsg(MarkLiveMsgEvent event) {
+        if (event.getClipActionInfo().action == ClipActionInfo.CLIP_ACTION_CREATED) {
+            mBookmarkClickCount++;
+            showMessage();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateCameraStatusInfo();
+                    hideMessage();
+                }
+            }, 1000);
+        };
     }
 
 
@@ -666,15 +683,6 @@ public class CameraPreviewFragment extends BaseFragment {
             case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode()) {
                     mVdtCamera.markLiveVideo();
-                    mBookmarkClickCount++;
-                    showMessage();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateCameraStatusInfo();
-                            hideMessage();
-                        }
-                    }, 1000);
                 } else {
                     mVdtCamera.stopRecording();
                 }
@@ -878,7 +886,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     }
-
 
 
     private static class UpdateRecordTimeTask extends TimerTask {

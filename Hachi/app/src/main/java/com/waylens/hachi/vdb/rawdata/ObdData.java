@@ -148,18 +148,18 @@ public class ObdData implements Serializable {
             index += len;
         }
 
-        //Log.d("test", String.format("pid_0b[%d], pid_33[%d], pid_4f[%d]", pid_0b, pid_33, pid_4f));
+        Log.d("test", String.format("pid_0b[%d], pid_33[%d], pid_4f[%d]", pid_0b, pid_33, pid_4f));
         if (pid_4f > 0) {
             pid_0b = pid_0b * pid_4f * 10 / 255;
         }
-        if (pid_33 >= 0) {
+        if (pid_33 > 0) {
             psi = (pid_0b - pid_33) / 6.895;
         } else {
             psi = (pid_0b) / 6.895;
             isIMP = false;
         }
 
-        //Log.d("test", String.format("speed[%d], t[%d], rpm[%d], psi[%f]", speed, temperature, rpm, psi));
+        Log.d("test", String.format("speed[%d], t[%d], rpm[%d], psi[%f]", speed, temperature, rpm, psi));
         return new ObdData(speed, temperature, rpm, psi, isIMP);
     }
 

@@ -40,6 +40,8 @@ public class GaugeView extends FrameLayout {
 
     private boolean mIsGpsGaugeShow;
 
+    private int iioPressure;
+
     public GaugeView(Context context) {
         super(context);
         init(context);
@@ -171,6 +173,7 @@ public class GaugeView extends FrameLayout {
                     state.put("pitch", iioData.euler_pitch);
                     state.put("gforceBA", iioData.accX);
                     state.put("gforceLR", iioData.accZ);
+                    iioPressure = iioData.pressure;
                     break;
                 case RawDataItem.DATA_TYPE_GPS:
                     if (!mIsGpsGaugeShow) {
@@ -189,7 +192,11 @@ public class GaugeView extends FrameLayout {
                     ObdData obdData = (ObdData) item.data;
                     state.put("rpm", obdData.rpm);
                     state.put("mph", obdData.speed);
-                    state.put("psi", obdData.psi);
+                    if (obdData.isIMP) {
+                        state.put("psi", obdData.psi);
+                    } else {
+                        state.put("psi", obdData.psi - iioPressure / 3386000);
+                    }
                     Logger.t(TAG).d(Double.toString(obdData.psi));
                     break;
             }
