@@ -270,4 +270,7 @@
 	<string name="description4"></string>
 	<string name="no_clip_selected">没有视频选择</string>
 	<string name="failed_to_connect_to_route">相机连接网络失败，请检查输入密码是否正确。</string>
+	<string name="saved">已保存</string>
+	<string name="authenticating">验证中</string>
+	<string name="authentication_problem">验证错误</string>
 </resources>

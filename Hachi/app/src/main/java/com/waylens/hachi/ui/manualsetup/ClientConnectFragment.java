@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
@@ -50,7 +51,6 @@ public class ClientConnectFragment extends BaseFragment {
 
     @BindView(R.id.rvWifiList)
     RecyclerView mRvWifiList;
-
 
 
     @BindView(R.id.loadingProgress)
@@ -104,15 +104,23 @@ public class ClientConnectFragment extends BaseFragment {
                 mVdtCamera.connectNetworkHost(mSelectedNetworkItem.ssid);
                 break;
             case NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED:
-                switchConnectionStage(CONNECTION_STAGE_PHONE_2_ROUTE);
-                WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
-                    (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
-                        @Override
-                        public void onAutoConnectStarted() {
-                        }
-                    });
-                wifiAutoConnectManager.connect(mSelectedNetworkItem.ssid, mSavedPassword, WifiAutoConnectManager
-                    .WifiCipherType.WIFICIPHER_WPA);
+                Integer connectResult = (Integer) event.getExtra1();
+                Logger.t(TAG).d("connect result: " + connectResult);
+                if (connectResult == 0) {
+                    mSelectedNetworkItem.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION_PROBLEM;
+                    mNetworkItemAdapter.notifyDataSetChanged();
+                } else {
+                    showCameraConnect2Wifi();
+                    switchConnectionStage(CONNECTION_STAGE_PHONE_2_ROUTE);
+                    WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
+                        (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
+                            @Override
+                            public void onAutoConnectStarted() {
+                            }
+                        });
+                    wifiAutoConnectManager.connect(mSelectedNetworkItem.ssid, mSavedPassword, WifiAutoConnectManager
+                        .WifiCipherType.WIFICIPHER_WPA);
+                }
                 break;
         }
     }
@@ -139,15 +147,13 @@ public class ClientConnectFragment extends BaseFragment {
 
     private void initViews() {
 
-
-
         mRvWifiList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mNetworkItemAdapter = new NetworkItemAdapter();
         mRvWifiList.setAdapter(mNetworkItemAdapter);
 
         mOnScanHostListener = new VdtCamera.OnScanHostListener() {
             @Override
-            public void OnScanHostResult( final List<NetworkItemBean> networkList) {
+            public void OnScanHostResult(final List<NetworkItemBean> networkList) {
 //                Logger.t(TAG).d("get network list: " + networkList.size());
                 mLoadingProgress.post(new Runnable() {
                     @Override
@@ -168,9 +174,8 @@ public class ClientConnectFragment extends BaseFragment {
                 //mNetworkItemAdapter.setList(networkList);
             }
         };
-        mTimer = new Timer();
-        mScanWifiTimeTask = new ScanWifiTimeTask();
-        mTimer.schedule(mScanWifiTimeTask, 1000, 5000);
+
+        startScanWifi();
     }
 
     @Override
@@ -183,13 +188,23 @@ public class ClientConnectFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
+        stopScanWifi();
+    }
+
+    private void startScanWifi() {
+        mTimer = new Timer();
+        mScanWifiTimeTask = new ScanWifiTimeTask();
+        mTimer.schedule(mScanWifiTimeTask, 1000, 5000);
+    }
+
+    private void stopScanWifi() {
         if (mTimer != null) {
             mTimer.cancel();
         }
     }
 
     private void refreshWifiList() {
-//        Logger.t(TAG).d("start scan host: ");
+        Logger.t(TAG).d("start scan host: ");
         mLoadingProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -203,28 +218,27 @@ public class ClientConnectFragment extends BaseFragment {
     private void onNetworkItemClicked(final NetworkItemBean itemBean) {
         mSelectedNetworkItem = itemBean;
 
-        if (itemBean.added) {
-            connect2AddedWifi(itemBean.ssid);
-            showCameraConnect2Wifi();
-        } else {
 
-            mPasswordDialog = new MaterialDialog.Builder(getActivity())
-                .title(itemBean.ssid)
-                .customView(R.layout.dialog_network_password, true)
-                .positiveText(R.string.join)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
-                        setNetwork2Camera(itemBean.ssid, mEtPassword.getText().toString());
-                        showCameraConnect2Wifi();
-                    }
-                })
-                .build();
-            mPasswordDialog.show();
-            mEtPassword = (EditText) mPasswordDialog.getCustomView().findViewById(R.id.password);
+        mPasswordDialog = new MaterialDialog.Builder(getActivity())
+            .title(itemBean.ssid)
+            .customView(R.layout.dialog_network_password, true)
+            .positiveText(R.string.join)
+            .callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    super.onPositive(dialog);
+                    setNetwork2Camera(itemBean.ssid, mEtPassword.getText().toString());
+//                    showCameraConnect2Wifi();
+                    stopScanWifi();
+                    itemBean.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION;
+                    mNetworkItemAdapter.notifyDataSetChanged();
+                }
+            })
+            .build();
+        mPasswordDialog.show();
+        mEtPassword = (EditText) mPasswordDialog.getCustomView().findViewById(R.id.password);
 
-        }
+
     }
 
 
@@ -234,10 +248,8 @@ public class ClientConnectFragment extends BaseFragment {
         AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
         animationDrawable.start();
 
-        if (mTimer != null) {
-            mTimer.cancel();
-        }
-        switchConnectionStage(CONNECTION_STAGE_CAMERA_2_ROUTE);
+//        stopScanWifi();
+//        switchConnectionStage(CONNECTION_STAGE_CAMERA_2_ROUTE);
 
     }
 
@@ -302,6 +314,24 @@ public class ClientConnectFragment extends BaseFragment {
                 viewHolder.ivWifiCipher.setVisibility(View.INVISIBLE);
             }
 
+            switch (networkItem.status) {
+                case NetworkItemBean.CONNECT_STATUS_NONE:
+                    viewHolder.wifiStatus.setVisibility(View.GONE);
+                    break;
+                case NetworkItemBean.CONNECT_STATUS_SAVED:
+                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+                    viewHolder.wifiStatus.setText(R.string.saved);
+                    break;
+                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION:
+                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+                    viewHolder.wifiStatus.setText(R.string.authenticating);
+                    break;
+                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION_PROBLEM:
+                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+                    viewHolder.wifiStatus.setText(R.string.authentication_problem);
+                    break;
+            }
+
             if (networkItem.singalLevel >= -30) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
             } else if (networkItem.singalLevel >= -60) {
@@ -338,6 +368,9 @@ public class ClientConnectFragment extends BaseFragment {
 
             @BindView(R.id.ivWifiSignal)
             ImageView ivWifiSignal;
+
+            @BindView(R.id.wifi_status)
+            TextView wifiStatus;
 
             public NetworkItemViewHolder(View itemView) {
                 super(itemView);

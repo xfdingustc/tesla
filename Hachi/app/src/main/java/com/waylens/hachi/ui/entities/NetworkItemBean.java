@@ -11,7 +11,18 @@ public class NetworkItemBean {
     public String flags;
     public int frequency;
     public int singalLevel;
-    public boolean added;
+//    public boolean added;
+
+
+
+    public static final int CONNECT_STATUS_NONE = 0;
+    public static final int CONNECT_STATUS_SAVED = 1;
+    public static final int CONNECT_STATUS_AUTHENTICATION = 2;
+    public static final int CONNECT_STATUS_AUTHENTICATION_PROBLEM = 3;
+
+
+    public int status = CONNECT_STATUS_NONE;
+
 
     @Override
     public String toString() {

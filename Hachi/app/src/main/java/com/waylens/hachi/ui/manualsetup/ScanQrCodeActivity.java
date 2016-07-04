@@ -305,7 +305,7 @@ public class ScanQrCodeActivity extends BaseActivity implements SurfaceHolder.Ca
 
 
     public Rect getCropRect() {
-        Logger.t(TAG).d("crop rect: " + cropRect.toString());
+//        Logger.t(TAG).d("crop rect: " + cropRect.toString());
         return cropRect;
     }
 

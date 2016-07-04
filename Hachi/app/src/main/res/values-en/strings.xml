@@ -270,4 +270,7 @@
 	<string name="description4">"Capture and tell a fuller story showing what's under the hood."</string>
 	<string name="no_clip_selected">No Clip Selected</string>
 	<string name="failed_to_connect_to_route">Camera failed to connect to your home wifi. Please check if your password is correct. </string>
+	<string name="saved">Saved</string>
+	<string name="authenticating">Authenticating</string>
+	<string name="authentication_problem">Authentication Problem</string>
 </resources>

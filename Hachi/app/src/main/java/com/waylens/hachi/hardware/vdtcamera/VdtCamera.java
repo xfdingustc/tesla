@@ -1370,7 +1370,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void handleNetworkConnectHost(String p1, String p2) {
         Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
 
-        mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED));
+        mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED, Integer.parseInt(p1)));
     }
 
     private void handleOnNetworkAddHost(String p1, String p2) {
@@ -1397,7 +1397,10 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 networkItem.flags = networkObject.optString("flags");
                 networkItem.frequency = networkObject.optInt("frequency");
                 networkItem.singalLevel = networkObject.optInt("signal_level");
-                networkItem.added = networkObject.optBoolean("added");
+                boolean added = networkObject.optBoolean("added");
+                if (added) {
+                    networkItem.status = NetworkItemBean.CONNECT_STATUS_SAVED;
+                }
                 networkItemBeanList.add(networkItem);
             }
         } catch (JSONException e) {

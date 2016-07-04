@@ -190,7 +190,7 @@ public class ChooseWifiActivity extends BaseActivity {
     private void onNetworkItemClicked(final NetworkItemBean itemBean) {
         mSelectedNetworkItem = itemBean;
 
-        if (itemBean.added) {
+        if (itemBean.status == NetworkItemBean.CONNECT_STATUS_SAVED) {
             connect2AddedWifi(itemBean.ssid);
         } else {
 
