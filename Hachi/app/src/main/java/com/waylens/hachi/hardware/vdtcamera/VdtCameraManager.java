@@ -51,12 +51,7 @@ public class VdtCameraManager {
         }
 
 
-        VdtCamera vdtCamera = new VdtCamera(serviceInfo);
-
-        Logger.t(TAG).d("create new VdtCamera current connected camera size: " + mConnectedVdtCameras.size());
-
-        //vdtCamera.addCallback(mCameraCallback);
-        vdtCamera.setOnConnectionChangeListener(new VdtCamera.OnConnectionChangeListener() {
+        VdtCamera vdtCamera = new VdtCamera(serviceInfo, new VdtCamera.OnConnectionChangeListener() {
             @Override
             public void onConnected(VdtCamera vdtCamera) {
                 onCameraConnected(vdtCamera);
@@ -76,6 +71,8 @@ public class VdtCameraManager {
                 onCameraDisconnected(vdtCamera);
             }
         });
+
+        Logger.t(TAG).d("create new VdtCamera current connected camera size: " + mConnectedVdtCameras.size());
 
 
         mConnectingVdtCameras.add(vdtCamera);

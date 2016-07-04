@@ -130,9 +130,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onStart() {
         super.onStart();
         Logger.t(TAG).d("onStart is calling");
-        Logger.t(TAG).d(Integer.toString(mFeedTag));
-        Logger.t(TAG).d(Boolean.toString(isLoginRequired()));
-        Logger.t(TAG).d(Boolean.toString(SessionManager.getInstance().isLoggedIn()));
+//        Logger.t(TAG).d(Integer.toString(mFeedTag));
+//        Logger.t(TAG).d(Boolean.toString(isLoginRequired()));
+//        Logger.t(TAG).d(Boolean.toString(SessionManager.getInstance().isLoggedIn()));
         if (this.isLoginRequired() && !SessionManager.getInstance().isLoggedIn()) {
             mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
             Logger.t(TAG).d("show sign up entry");
@@ -255,7 +255,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
-        Logger.t(TAG).json(response.toString());
+//        Logger.t(TAG).json(response.toString());
         JSONArray jsonMoments = response.optJSONArray("moments");
         if (jsonMoments == null) {
             return;

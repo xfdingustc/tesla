@@ -260,9 +260,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private OnNewFwVersionListern mOnNewFwVersionListerner = null;
 
 
-    public void setOnConnectionChangeListener(OnConnectionChangeListener listener) {
-        mOnConnectionChangeListener = listener;
-    }
+
 
 
     private VdbConnection mVdbConnection;
@@ -272,9 +270,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    public VdtCamera(VdtCamera.ServiceInfo serviceInfo) {
+    public VdtCamera(VdtCamera.ServiceInfo serviceInfo, OnConnectionChangeListener listener) {
         mServiceInfo = serviceInfo;
-
+        mOnConnectionChangeListener = listener;
         mAddress = new InetSocketAddress(serviceInfo.inetAddr, serviceInfo.port);
         mCommunicationBus = new VdtCameraCommunicationBus(mAddress, new VdtCameraCommunicationBus.ConnectionChangeListener() {
             @Override
@@ -555,7 +553,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
             VdbSocket vdbSocket = new BasicVdbSocket(getVdbConnection());
             mVdbRequestQueue = new VdbRequestQueue(vdbSocket);
             mVdbRequestQueue.start();
-            mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
+            if (mOnConnectionChangeListener != null) {
+                mOnConnectionChangeListener.onVdbConnected(VdtCamera.this);
+            }
             registerMessageHandler();
 
         } catch (IOException e) {
@@ -1033,7 +1033,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void ack_CAM_BT_isEnabled(String p1) {
         int enabled = Integer.parseInt(p1);
         mBtState = enabled;
-        Logger.t(TAG).d("ack CAM BT isEnabled: "+ enabled);
+//        Logger.t(TAG).d("ack CAM BT isEnabled: "+ enabled);
         if (enabled == BT_STATE_ENABLED) {
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
@@ -1060,7 +1060,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             name = "";
         }
 
-        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
+//        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
         if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
             mObdDevice.setDevState(devState, mac, name);
         } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {

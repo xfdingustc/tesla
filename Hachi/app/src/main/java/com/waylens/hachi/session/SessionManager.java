@@ -229,7 +229,7 @@ public class SessionManager {
         mLoginType = PreferenceUtils.getInt(PreferenceUtils.LOGIN_TYPE, LOGIN_TYPE_USERNAME_PASSWORD);
         mIsVerified = PreferenceUtils.getBoolean(PreferenceUtils.IS_VERIFIED, false);
 
-        Logger.t(TAG).d("isLinked: " + mIsLinked);
+//        Logger.t(TAG).d("isLinked: " + mIsLinked);
         setLoginInternal();
     }
 

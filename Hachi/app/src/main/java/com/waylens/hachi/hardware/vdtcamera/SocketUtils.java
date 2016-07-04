@@ -2,6 +2,8 @@ package com.waylens.hachi.hardware.vdtcamera;
 
 import android.util.Xml;
 
+import com.waylens.hachi.hardware.vdtcamera.mina.VdtCameraCommand;
+
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
@@ -34,7 +36,7 @@ public class SocketUtils {
         }
     }
 
-    public static void writeCommand(Socket socket, VdtCameraCommunicationBus.VdtCameraCommand request) throws IOException, InterruptedException {
+    public static void writeCommand(Socket socket, VdtCameraCommand request) throws IOException, InterruptedException {
         SimpleOutputStream sos = new SimpleOutputStream(1024);
         XmlSerializer xml = Xml.newSerializer();
 
