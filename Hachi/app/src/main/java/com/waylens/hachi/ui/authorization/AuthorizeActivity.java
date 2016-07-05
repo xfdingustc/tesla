@@ -46,7 +46,7 @@ public class AuthorizeActivity extends BaseActivity {
     public static final int STEP_SIGN_UP = 1;
     public static final int STEP_FIND_PASSWORD = 2;
 
-    private int mCurrentStep = STEP_SIGN_IN;
+    private int mCurrentStep = STEP_SIGN_UP;
 
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
@@ -107,7 +107,7 @@ public class AuthorizeActivity extends BaseActivity {
             }
         });
 
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignUpFragment()).commit();
     }
 
 
@@ -125,24 +125,24 @@ public class AuthorizeActivity extends BaseActivity {
         });
         getToolbar().getMenu().clear();
         switch (mCurrentStep) {
-            case STEP_SIGN_IN:
-                setTitle(R.string.login);
-                getToolbar().inflateMenu(R.menu.menu_login);
+            case STEP_SIGN_UP:
+                setTitle(R.string.sign_up);
+                getToolbar().inflateMenu(R.menu.menu_sign_up);
                 getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.sign_up:
-                                getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignUpFragment()).commit();
-                                switchStep(STEP_SIGN_UP);
+                            case R.id.login:
+                                getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
+                                switchStep(STEP_SIGN_IN);
                                 break;
                         }
                         return true;
                     }
                 });
                 break;
-            case STEP_SIGN_UP:
-                setTitle(R.string.sign_up);
+            case STEP_SIGN_IN:
+                setTitle(R.string.login);
                 break;
             case STEP_FIND_PASSWORD:
                 setTitle(R.string.forget_password);
