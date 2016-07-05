@@ -25,7 +25,7 @@
                 android:id="@+id/player_fragment_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layout_height="275dp"></FrameLayout>
+                tools:layout_height="202dp"></FrameLayout>
 
 
             <LinearLayout

@@ -33,6 +33,8 @@ import com.waylens.hachi.vdb.ClipExtent;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 
 
@@ -48,12 +50,14 @@ public class ClipModifyActivity extends BaseActivity {
 
     private ClipPlayFragment mClipPlayFragment;
 
-    SharableClip mSharableClip;
+    private SharableClip mSharableClip;
 
     boolean hasUpdated;
 
     private int mOriginalTopMargin;
     private int mOriginalHeight;
+
+    private EventBus mEventBus = EventBus.getDefault();
 
     public static void launch(Activity activity, Clip clip) {
         Intent intent = new Intent(activity, ClipModifyActivity.class);
@@ -184,7 +188,7 @@ public class ClipModifyActivity extends BaseActivity {
     private void embedVideoPlayFragment() {
 
         UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
-                mSharableClip.bufferedCid, 0,
+                mSharableClip.bufferedCid, mSharableClip.selectedStartValue,
                 mSharableClip.getSelectedLength());
         ClipSet clipSet = new ClipSet(Clip.TYPE_TEMP);
         clipSet.addClip(mSharableClip.clip);
@@ -197,7 +201,7 @@ public class ClipModifyActivity extends BaseActivity {
         getFragmentManager().beginTransaction().replace(R.id.clipPlayFragment, mClipPlayFragment).commit();
     }
 
-    void getClipExtent() {
+    private void getClipExtent() {
         if (mSharableClip == null || mVdbRequestQueue == null) {
             return;
         }
@@ -212,7 +216,7 @@ public class ClipModifyActivity extends BaseActivity {
         }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-                Log.e("test", "", error);
+                Logger.e("test", "", error);
             }
         }).setTag(TAG_GET_EXTENT));
     }
@@ -247,7 +251,7 @@ public class ClipModifyActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(VideoTrimmer trimmer) {
                 UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
-                        mSharableClip.bufferedCid, 0,
+                        mSharableClip.bufferedCid, mSharableClip.selectedStartValue,
                         mSharableClip.getSelectedLength());
                 mClipPlayFragment.setUrlProvider(vdtUriProvider);
             }
