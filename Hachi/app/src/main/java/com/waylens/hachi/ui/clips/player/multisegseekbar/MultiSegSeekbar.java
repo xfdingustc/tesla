@@ -16,6 +16,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
+import com.waylens.hachi.utils.Utils;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
@@ -55,11 +56,8 @@ public class MultiSegSeekbar extends View {
     private int mCurrentClipIndex = 0;
 
     private static final int DEFAULT_BAR_COLOR = Color.LTGRAY;
-    private static final float DEFAULT_BAR_WEIGHT_PX = 2;
 
-    private static final float DEFAULT_BAR_PADDING_BOTTOM_DP = 24;
-
-    private float mBarWeight = DEFAULT_BAR_WEIGHT_PX;
+    private static final float DEFAULT_BAR_PADDING_BOTTOM_DP = 18;
 
     private int mBarColor = DEFAULT_BAR_COLOR;
 
@@ -84,8 +82,7 @@ public class MultiSegSeekbar extends View {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public MultiSegSeekbar(Context context, AttributeSet attrs, int defStyleAttr, int
-        defStyleRes) {
+    public MultiSegSeekbar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initAttributes(context, attrs, defStyleRes);
     }
@@ -107,7 +104,8 @@ public class MultiSegSeekbar extends View {
         }
 
         if (measureHeightMode == MeasureSpec.AT_MOST) {
-            height = Math.min(mDefaultHeight, measureHeight);
+//            height = Math.min(mDefaultHeight, measureHeight);
+            height = (int)(mCircleSize * 4);
         } else if (measureHeight == MeasureSpec.EXACTLY) {
             height = measureHeight;
         } else {
@@ -121,8 +119,6 @@ public class MultiSegSeekbar extends View {
         mIsMulti = isMulti;
         invalidate();
     }
-
-
 
 
     public ClipSetPos getCurrentClipSetPos() {
@@ -178,12 +174,12 @@ public class MultiSegSeekbar extends View {
             mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color.GRAY);
             mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth,
                 ViewUtils.dp2px(DEFAULT_DIVIDER_WIDTH_DP));
-            mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barMinHeight,
+            mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barHeight,
                 ViewUtils.dp2px(DEFAULT_BAR_HEIGHT));
             mBarPaddingBottom = a.getDimension(R.styleable.MultiSegSeekbar_barPaddingBottom,
                 TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_BAR_PADDING_BOTTOM_DP, getResources().getDisplayMetrics()));
 
-            mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 12);
+            mCircleSize = a.getDimension(R.styleable.MultiSegSeekbar_circleSize, 24);
             mCircleColor = a.getColor(R.styleable.MultiSegSeekbar_circleColor, 0xff3f51b5);
             a.recycle();
         }
@@ -201,12 +197,12 @@ public class MultiSegSeekbar extends View {
 
         Context context = getContext();
 
-        float yPos = h - mBarPaddingBottom;
+        float yPos = h - mCircleSize * 2;
 
-        float marginLeft = mCircleSize;
+        float marginLeft = mCircleSize * 2;
         float barLength = w - (2 * marginLeft);
 
-        mBar = new Bar(context, marginLeft, yPos, barLength, mBarWeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mIsMulti, getClipSet().getClipList());
+        mBar = new Bar(context, marginLeft, yPos, barLength, mBarHeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mIsMulti, getClipSet().getClipList());
 
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor);

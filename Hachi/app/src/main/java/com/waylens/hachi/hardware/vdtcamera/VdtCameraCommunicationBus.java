@@ -109,7 +109,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
                 VdtMessage message = (VdtMessage)o;
 //                Logger.t(TAG).d("isResponse: " + message.toString());
                 if (message.domain == CMD_DOMAIN_CAM && message.messageType == CMD_CAM_IS_API_SUPPORTED) {
-                    Logger.t(TAG).d("receive heart beart response");
+//                    Logger.t(TAG).d("receive heart beart response");
                     return true;
                 } else {
                     return false;

@@ -72,9 +72,9 @@
                 android:id="@+id/multiSegIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                app:barHeight="8dp"
+                android:layout_margin="8dp"
+                app:barHeight="4dp"
+                app:circleSize="4dp"
                 app:circleColor="?attr/appTextColorPrimary"
                 tools:visibility="gone"/>
 
@@ -89,7 +89,7 @@
                     style="@style/SelectableRippleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="8dp"
                     android:src="@drawable/playbar_play"/>
 
                 <FrameLayout
@@ -112,7 +112,7 @@
                     style="@style/SelectableRippleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="8dp"
                     android:src="@drawable/btn_gauge_overlay"/>
 
 
@@ -121,9 +121,9 @@
                     style="@style/SelectableRippleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
                     android:src="@drawable/screen_full"/>
 
             </LinearLayout>
