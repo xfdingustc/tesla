@@ -40,7 +40,7 @@ public class WaylensAgreementActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_waylens_agreement);
         mAgreeWeb.setWebViewClient(new WebViewClient());
-        mAgreeWeb.loadUrl("http://www.waylens.com/license");
+        mAgreeWeb.loadUrl("file:///android_asset/license/license.htm");
 
     }
 }

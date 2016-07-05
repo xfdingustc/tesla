@@ -554,8 +554,9 @@ public class CameraPreviewFragment extends BaseFragment {
         animationDrawable.start();
         handleOnCameraConnected();
         updateCameraState();
-
         updateSpaceInfo();
+        mTvStatusAdditional.setVisibility(View.GONE);
+
 
     }
 
@@ -741,12 +742,6 @@ public class CameraPreviewFragment extends BaseFragment {
                     String recStatusText = mTvCameraRecStatus.getText().toString();
                     if (recStatusText == null || recStatusText.isEmpty()) {
                         mTvCameraRecStatus.setText(R.string.continuous_recording);
-                    }
-                    if (mBookmarkCount != -1) {
-                        updateTvStatusAdditional(getResources().getQuantityString(R.plurals.number_of_bookmarks,
-                            mBookmarkCount + mBookmarkClickCount,
-                            mBookmarkCount + mBookmarkClickCount), View.VISIBLE);
-                        mTvStatusAdditional.setVisibility(View.VISIBLE);
                     }
                 } else {
                     mTvStatusAdditional.setVisibility(View.GONE);
