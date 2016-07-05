@@ -2,6 +2,8 @@ package com.transee.vdb;
 
 public class LocalRawData {
 
+
+
 	static {
 		LibLoader.load();
 	}
