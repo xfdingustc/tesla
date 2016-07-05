@@ -76,6 +76,7 @@
                 app:barHeight="4dp"
                 app:circleSize="4dp"
                 app:circleColor="?attr/appTextColorPrimary"
+                app:progressColor="@color/style_color_accent"
                 tools:visibility="gone"/>
 
 

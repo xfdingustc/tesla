@@ -33,6 +33,7 @@
         <attr name="circleSize" format="dimension"/>
         <attr name="circleColor" format="color"/>
         <attr name="barHeight" format="dimension"/>
+        <attr name="progressColor" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="CompoundEditView">

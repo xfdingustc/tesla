@@ -27,10 +27,11 @@ class Bar {
 
     private Paint mActivePaint;
     private Paint mInactivePaint;
+    private Paint mPregressPaint;
     private boolean mIsMulti = true;
 
     public Bar(Context context, float x, float y, float length, float barWeight, int barColor,
-               float dividerWidth, int activeColor, int inActiveColor, boolean isMulti, List<Clip> clipList) {
+               float dividerWidth, int activeColor, int inActiveColor, int progressColor, boolean isMulti, List<Clip> clipList) {
         mLeftX = x;
         mRightX = x + length;
         mLength = length;
@@ -58,9 +59,13 @@ class Bar {
         mInactivePaint.setStrokeWidth(barWeight);
         mInactivePaint.setAntiAlias(true);
 
+        mPregressPaint = new Paint();
+        mPregressPaint.setColor(progressColor);
+        mPregressPaint.setStrokeWidth(barWeight);
+        mPregressPaint.setAntiAlias(true);
     }
 
-    public void draw(Canvas canvas, List<Clip> clipList) {
+    public void draw(Canvas canvas, List<Clip> clipList, float thumbX) {
 
         if (clipList == null) {
             return;
@@ -70,9 +75,16 @@ class Bar {
         generateLineList();
 
 
-
         for (Line line : mLineList) {
-            canvas.drawLine(line.startX, mY, line.endX, mY, mInactivePaint);
+            if (line.endX <= thumbX) {
+                canvas.drawLine(line.startX, mY, line.endX, mY, mPregressPaint);
+            } else if (line.startX > thumbX) {
+                canvas.drawLine(line.startX, mY, line.endX, mY, mInactivePaint);
+            } else {
+                canvas.drawLine(line.startX, mY, thumbX, mY, mPregressPaint);
+                canvas.drawLine(thumbX, mY, line.endX, mY, mInactivePaint);
+            }
+
         }
     }
 
@@ -136,7 +148,7 @@ class Bar {
             if (line.startX <= x && x <= line.endX) {
                 Clip clip = mClipList.get(i);
                 float offset = x - line.startX;
-                long timeOffset = (long)(offset * clip.editInfo.getSelectedLength() / (line.endX - line.startX));
+                long timeOffset = (long) (offset * clip.editInfo.getSelectedLength() / (line.endX - line.startX));
                 return new ClipSetPos(i, clip.editInfo.selectedStartValue + timeOffset);
             }
         }

@@ -36,6 +36,8 @@ public class MultiSegSeekbar extends View {
     private int mActiveColor;
     private int mInactiveColor;
 
+    private int mProgressColor;
+
 
     private int mDividerWidth = 0;
     private int mBarHeight = 0;
@@ -172,6 +174,7 @@ public class MultiSegSeekbar extends View {
 
             mActiveColor = a.getColor(R.styleable.MultiSegSeekbar_segActiveColor, Color.WHITE);
             mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color.GRAY);
+            mProgressColor = a.getColor(R.styleable.MultiSegSeekbar_progressColor, getResources().getColor(R.color.style_color_accent));
             mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth,
                 ViewUtils.dp2px(DEFAULT_DIVIDER_WIDTH_DP));
             mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barHeight,
@@ -202,7 +205,7 @@ public class MultiSegSeekbar extends View {
         float marginLeft = mCircleSize * 2;
         float barLength = w - (2 * marginLeft);
 
-        mBar = new Bar(context, marginLeft, yPos, barLength, mBarHeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mIsMulti, getClipSet().getClipList());
+        mBar = new Bar(context, marginLeft, yPos, barLength, mBarHeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mProgressColor, mIsMulti, getClipSet().getClipList());
 
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor);
@@ -216,7 +219,7 @@ public class MultiSegSeekbar extends View {
             return;
         }
 
-        mBar.draw(canvas, getClipSet().getClipList());
+        mBar.draw(canvas, getClipSet().getClipList(), mThumb.getX());
         mThumb.draw(canvas);
     }
 
