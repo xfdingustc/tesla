@@ -6,7 +6,9 @@ import com.waylens.hachi.utils.PreferenceUtils;
  * Created by Xiaofei on 2015/8/5.
  */
 public class Constants {
+
     public static final String DEVICE_TYPE = "ANDROID";
+
 
     public static final String DEVELOPER_KEY = "AIzaSyBuPLSINMBz163ecxJQRySpcev4jfI_BJg";
 
