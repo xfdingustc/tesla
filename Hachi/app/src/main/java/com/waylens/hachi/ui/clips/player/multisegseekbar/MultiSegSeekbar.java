@@ -208,7 +208,7 @@ public class MultiSegSeekbar extends View {
         mBar = new Bar(context, marginLeft, yPos, barLength, mBarHeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mProgressColor, mIsMulti, getClipSet().getClipList());
 
         mThumb = new ThumbView(context);
-        mThumb.init(context, yPos, mCircleSize, mCircleColor);
+        mThumb.init(context, yPos, mCircleSize, mCircleColor, mBar.getLeftX(), mBar.getRightX());
 
         mThumb.setX(marginLeft);
     }

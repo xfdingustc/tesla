@@ -25,6 +25,8 @@ class ThumbView extends View {
     private float mTargetRadiusPx;
 
     private static final float MINIMUM_TARGET_RADIUS_DP = 24;
+    private float mLeftMin;
+    private float mRightMax;
 
 
     public ThumbView(Context context) {
@@ -32,10 +34,13 @@ class ThumbView extends View {
     }
 
 
-    public void init(Context context, float y, float circleRadius, int circleColor) {
+    public void init(Context context, float y, float circleRadius, int circleColor, float left, float right) {
         mRes = context.getResources();
 
         mCircleRadiusPx = circleRadius;
+
+        mLeftMin = left;
+        mRightMax = right;
 
         mCirclePaint = new Paint();
         mCirclePaint.setColor(circleColor);
@@ -54,6 +59,8 @@ class ThumbView extends View {
     @Override
     public void setX(float x) {
         mX = x;
+        mX = Math.max(mLeftMin, mX);
+        mX = Math.min(mRightMax, mX);
     }
 
     @Override

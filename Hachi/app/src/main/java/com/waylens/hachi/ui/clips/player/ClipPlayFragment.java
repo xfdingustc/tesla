@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.clips.player;
 
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,6 +26,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.ClipEditEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
@@ -258,6 +258,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     }
 
+    @Subscribe
+    public void onClipEditEvent(ClipEditEvent event) {
+        releasePlayer();
+    }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -310,7 +315,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 break;
             case HachiPlayer.STATE_READY:
                 if (playwhenReady) {
-                    Logger.t(TAG).d("start audio player" );
+                    Logger.t(TAG).d("start audio player");
                     mAudioPlayer.start();
                 } else {
                     mAudioPlayer.pause();
@@ -544,6 +549,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mAudioPlayer.release();
             mAudioPlayer = null;
         }
+        mBtnPlayPause.setImageResource(R.drawable.playbar_play);
         mMultiSegSeekbar.reset();
     }
 
@@ -630,9 +636,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-
-
-
     private void startPreparingClip(final ClipSetPos clipSetPos, final boolean loadRawData) {
         if (mBtnPlayPause.isEnabled() == false) {
             return;
@@ -657,7 +660,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 mVdbUrl = mUrlProvider.getUriSync(startTimeMs);
                 Logger.t(TAG).d("get playback url: " + mVdbUrl.url);
                 if (mUrlProvider instanceof ClipUrlProvider) {
-                    mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), mVdbUrl);
+                    mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0).editInfo.selectedStartValue, mVdbUrl);
                 } else {
                     mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
                 }
@@ -710,7 +713,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-
     public void setAudioUrl(String audioUrl) {
         Logger.t(TAG).d("audio url: " + audioUrl);
         mAudioUrl = audioUrl;
@@ -723,7 +725,17 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void setUrlProvider(UrlProvider urlProvider) {
         mUrlProvider = urlProvider;
         if (mUrlProvider instanceof ClipUrlProvider) {
-            mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), mVdbUrl);
+            mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0).getStartTimeMs(), mVdbUrl);
+        } else {
+            mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
+        }
+    }
+
+
+    public void setUrlProvider(UrlProvider urlProvider, long startTime) {
+        mUrlProvider = urlProvider;
+        if (mUrlProvider instanceof ClipUrlProvider) {
+            mPositionAdjuster = new ClipPositionAdjuster(startTime, mVdbUrl);
         } else {
             mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
         }
