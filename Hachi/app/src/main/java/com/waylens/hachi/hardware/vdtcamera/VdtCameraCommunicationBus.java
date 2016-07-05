@@ -32,7 +32,6 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
     private final InetSocketAddress mAddress;
     private final ConnectionChangeListener mConnectionListener;
     private final CameraMessageHandler mCameraMessageHandler;
-    private Socket mSocket;
 
 
     private boolean mConnectError;
@@ -215,17 +214,6 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             Logger.t(TAG).d("connectError");
             mConnectError = true;
             mConnectionListener.onDisconnected();
-            if (mSocket.isConnected()) {
-                try {
-                    mSocket.shutdownInput();
-                    mSocket.shutdownOutput();
-                    mSocket.close();
-                    mSocket = null;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
             Logger.t(TAG).d("socket is closed");
         }
     }
