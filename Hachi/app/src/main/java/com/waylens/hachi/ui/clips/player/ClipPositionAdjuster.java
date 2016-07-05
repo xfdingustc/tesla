@@ -9,11 +9,11 @@ import com.waylens.hachi.vdb.urls.VdbUrl;
 public class ClipPositionAdjuster extends PositionAdjuster {
     private static final String TAG = ClipPositionAdjuster.class.getSimpleName();
     private final VdbUrl mUrl;
-    private final Clip mClip;
+    private final long mStartTimeMs;
 
 
-    public ClipPositionAdjuster(Clip clip, VdbUrl url) {
-        this.mClip = clip;
+    public ClipPositionAdjuster(long  startTime, VdbUrl url) {
+        this.mStartTimeMs = startTime;
         this.mUrl = url;
     }
 
@@ -23,7 +23,7 @@ public class ClipPositionAdjuster extends PositionAdjuster {
         int adjustedPosition = super.getAdjustedPostion(position);
 
 //        Logger.t(TAG).d("startTime: " + mSharableClip.getStartTimeMs() + " realTime: " + mUrl.realTimeMs);
-        adjustedPosition += mUrl.realTimeMs - mClip.getStartTimeMs();
+        adjustedPosition += mUrl.realTimeMs - mStartTimeMs;
 
         return adjustedPosition;
 
