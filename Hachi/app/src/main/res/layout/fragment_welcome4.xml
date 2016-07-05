@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:orientation="vertical"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/walkthrough4"
+        android:scaleType="centerCrop"/>
+
+
+    <LinearLayout
+        android:id="@+id/policy_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:visibility="visible">
+
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:layout_margin="16dp">
+
+
+            <CheckBox
+                android:id="@+id/agree_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:buttonTint="@color/style_color_accent"
+                android:checked="true"/>
+
+            <TextView
+                android:id="@+id/waylens_agreement"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnEnter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="@string/wake_up_camera"
+            android:textSize="14sp"
+            android:background="@color/style_color_accent">
+        </Button>
+
+        <TextView
+            android:id="@+id/withoutCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/without_camera"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="56dp"
+            android:textColor="?attr/appTextColorPrimary"
+            />
+
+    </LinearLayout>
+
+
+</FrameLayout>

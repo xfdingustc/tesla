@@ -129,7 +129,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
         KeepAliveFilter kaf = new KeepAliveFilter(factory, IdleStatus.READER_IDLE, KeepAliveRequestTimeoutHandler.CLOSE);
         kaf.setForwardEvent(true);
         kaf.setRequestInterval(1);
-        kaf.setRequestTimeout(5);
+        kaf.setRequestTimeout(10);
 
         connector.getFilterChain().addLast("heart", kaf);
 

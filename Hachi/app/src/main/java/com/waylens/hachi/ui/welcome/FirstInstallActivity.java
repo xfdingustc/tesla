@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.welcome;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -29,6 +29,9 @@ import com.orhanobut.logger.Logger;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.activities.WaylensAgreementActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -58,6 +61,22 @@ public class FirstInstallActivity extends BaseActivity {
     @BindView(R.id.ll_point_indicator)
     LinearLayout mllPointIndicator;
 
+    @BindView(R.id.btn_next)
+    ImageView mBtnNext;
+
+    @BindView(R.id.skip)
+    View mSkip;
+
+    @OnClick(R.id.btn_next)
+    public void onBtnNextClicked() {
+        mViewPager.setCurrentItem(mCurrentItem + 1);
+    }
+
+    @OnClick(R.id.skip)
+    public void onBtnSkipClicked() {
+        mViewPager.setCurrentItem(mCount - 1);
+    }
+
     private SimpleImageViewPagerAdapter mAdapter;
 
     @Override
@@ -80,14 +99,12 @@ public class FirstInstallActivity extends BaseActivity {
 
     private void setupViewPager() {
 
-
-
         mAdapter = new SimpleImageViewPagerAdapter(getFragmentManager());
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content0, R.string.description1, false, mOnSkipClickListener));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content1, R.string.description4, false, mOnSkipClickListener));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content2, R.string.description3, false, mOnSkipClickListener));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content3, R.string.description2, false, mOnSkipClickListener));
-        mAdapter.addFragment(SimpleImageFragment.newInstance(R.drawable.content4, -1, true, mOnSkipClickListener));
+        mAdapter.addFragment(new Welcome1Fragment());
+        mAdapter.addFragment(new Welcome2Fragment());
+        mAdapter.addFragment(new Welcome3Fragment());
+        mAdapter.addFragment(new Welcome4Fragment());
+
 
         mViewPager.setAdapter(mAdapter);
 
@@ -114,6 +131,13 @@ public class FirstInstallActivity extends BaseActivity {
                 mImages[mCurrentItem].setEnabled(true);
                 mImages[position].setEnabled(false);
                 mCurrentItem = position;
+                if (mCurrentItem == mCount - 1) {
+                    mBtnNext.setVisibility(View.GONE);
+                    mSkip.setVisibility(View.GONE);
+                } else {
+                    mBtnNext.setVisibility(View.VISIBLE);
+                    mSkip.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -135,7 +159,7 @@ public class FirstInstallActivity extends BaseActivity {
 
         private List<Fragment> mFragmentList = new ArrayList<>();
 
-        public void addFragment(SimpleImageFragment fragment) {
+        public void addFragment(BaseFragment fragment) {
             mFragmentList.add(fragment);
         }
 

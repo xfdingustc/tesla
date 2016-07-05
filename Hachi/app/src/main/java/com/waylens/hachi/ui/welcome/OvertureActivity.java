@@ -1,20 +1,16 @@
-package com.waylens.hachi.ui.activities;
+package com.waylens.hachi.ui.welcome;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.VpnService;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 
-import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.welcome.FirstInstallActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 /**

@@ -722,6 +722,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     public void setUrlProvider(UrlProvider urlProvider) {
         mUrlProvider = urlProvider;
+        if (mUrlProvider instanceof ClipUrlProvider) {
+            mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0), mVdbUrl);
+        } else {
+            mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
+        }
     }
 
     public void setClipSetPos(ClipSetPos clipSetPos, boolean refreshThumbnail) {

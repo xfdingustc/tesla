@@ -35,7 +35,7 @@
             android:value="@string/facebook_app_id"/>
 
         <activity
-            android:name=".ui.activities.OvertureActivity"
+            android:name=".ui.welcome.OvertureActivity"
             android:screenOrientation="portrait">
 
             <intent-filter>
@@ -48,7 +48,7 @@
         </activity>
 
         <activity
-            android:name=".ui.activities.FirstInstallActivity"
+            android:name=".ui.welcome.FirstInstallActivity"
             android:screenOrientation="portrait">
 
         </activity>
