@@ -46,7 +46,7 @@ public class AuthorizeActivity extends BaseActivity {
     public static final int STEP_SIGN_UP = 1;
     public static final int STEP_FIND_PASSWORD = 2;
 
-    private int mCurrentStep = STEP_SIGN_UP;
+    private int mCurrentStep = STEP_SIGN_IN;
 
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
@@ -68,6 +68,10 @@ public class AuthorizeActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        Logger.t(TAG).d("AuthorizeActivity onCreate!");
+        int step = intent.getIntExtra("step", STEP_SIGN_IN);
+        mCurrentStep = step;
         init();
 
     }
@@ -106,8 +110,11 @@ public class AuthorizeActivity extends BaseActivity {
                 Logger.t(TAG).d("on error");
             }
         });
-
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignUpFragment()).commit();
+        if (mCurrentStep == STEP_SIGN_UP) {
+            getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignUpFragment()).commit();
+        } else {
+            getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
+        }
     }
 
 
@@ -125,24 +132,24 @@ public class AuthorizeActivity extends BaseActivity {
         });
         getToolbar().getMenu().clear();
         switch (mCurrentStep) {
-            case STEP_SIGN_UP:
-                setTitle(R.string.sign_up);
-                getToolbar().inflateMenu(R.menu.menu_sign_up);
+            case STEP_SIGN_IN:
+                setTitle(R.string.login);
+                getToolbar().inflateMenu(R.menu.menu_login);
                 getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.login:
-                                getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
-                                switchStep(STEP_SIGN_IN);
+                            case R.id.sign_up:
+                                getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignUpFragment()).commit();
+                                switchStep(STEP_SIGN_UP);
                                 break;
                         }
                         return true;
                     }
                 });
                 break;
-            case STEP_SIGN_IN:
-                setTitle(R.string.login);
+            case STEP_SIGN_UP:
+                setTitle(R.string.sign_up);
                 break;
             case STEP_FIND_PASSWORD:
                 setTitle(R.string.forget_password);

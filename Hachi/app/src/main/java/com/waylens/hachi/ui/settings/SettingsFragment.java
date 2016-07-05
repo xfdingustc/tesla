@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 
@@ -37,7 +39,11 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.settings_account)
     public void clickAccount() {
-        AccountActivity.launch(getActivity());
+        if (SessionManager.getInstance().isLoggedIn()) {
+            AccountActivity.launch(getActivity());
+        } else {
+            AuthorizeActivity.launch(getActivity());
+        }
     }
 
     @OnClick(R.id.settings_help)

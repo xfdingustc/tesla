@@ -175,8 +175,10 @@ public class SignInFragment extends BaseFragment {
                             .positiveText(android.R.string.ok)
                             .negativeText(android.R.string.cancel)
                             .show();
+                    mButtonAnimator.setDisplayedChild(0);
                 } else {
                     onSignInFailed(new Throwable("Sign in failed"));
+                    mButtonAnimator.setDisplayedChild(0);
                 }
             }
 
