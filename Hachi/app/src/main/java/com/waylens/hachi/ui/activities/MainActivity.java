@@ -104,13 +104,15 @@ public class MainActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         refressNavHeaderView();
+        if (VdtCameraManager.getManager().isConnected()) {
+            switchFragment(TAB_TAG_LIVE_VIEW);
+        } else {
+            switchFragment(TAB_TAG_MOMENTS);
+        }
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -148,11 +150,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         setupNavigationView();
 
-        if (VdtCameraManager.getManager().isConnected()) {
-            switchFragment(TAB_TAG_LIVE_VIEW);
-        } else {
-            switchFragment(TAB_TAG_MOMENTS);
-        }
+
 
 
 

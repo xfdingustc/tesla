@@ -29,10 +29,33 @@
         android:textColor="?attr/appTextColorSecondary"/>
 
 
-    <ViewSwitcher
+    <ViewAnimator
         android:id="@+id/vsConnect"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/waylens_logo_140x98"
+                android:layout_marginTop="32dp"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Camera Search Available Wi-Fi Networks"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,28 +63,7 @@
             android:orientation="vertical">
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="Scanning"
-                    android:textColor="?attr/appTextColorPrimary"
-                    android:textSize="18sp"/>
-
-                <ProgressBar
-                    android:id="@+id/loadingProgress"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:indeterminate="true"/>
-
-
-            </LinearLayout>
+            
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvWifiList"
@@ -81,7 +83,7 @@
 
         <include layout="@layout/camera_connecting"/>
 
-    </ViewSwitcher>
+    </ViewAnimator>
 
 
 </LinearLayout>

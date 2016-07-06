@@ -148,25 +148,25 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/manualSelectWifi"
+            android:id="@+id/how_to_find_camera_wifi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="80dp"
-            android:text="@string/manually_select_wifi_network"
+            android:text="@string/how_to_find_the_camera_wifi"
             android:textColor="?attr/appTextColorPrimary"
             android:textSize="14sp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/manualSelectWifi"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
-            android:text="@string/or"
-            android:textColor="?attr/appTextColorPrimary"
-            android:textSize="16sp"/>
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_above="@id/manualSelectWifi"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_marginBottom="16dp"-->
+            <!--android:text="@string/or"-->
+            <!--android:textColor="?attr/appTextColorPrimary"-->
+            <!--android:textSize="16sp"/>-->
 
 
     </RelativeLayout>

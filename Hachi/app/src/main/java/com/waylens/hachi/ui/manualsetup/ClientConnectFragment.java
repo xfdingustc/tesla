@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -53,11 +54,11 @@ public class ClientConnectFragment extends BaseFragment {
     RecyclerView mRvWifiList;
 
 
-    @BindView(R.id.loadingProgress)
-    ProgressBar mLoadingProgress;
+//    @BindView(R.id.loadingProgress)
+//    ProgressBar mLoadingProgress;
 
     @BindView(R.id.vsConnect)
-    ViewSwitcher mVsConnect;
+    ViewAnimator mVsConnect;
 
     @BindView(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
@@ -156,17 +157,18 @@ public class ClientConnectFragment extends BaseFragment {
             @Override
             public void OnScanHostResult(final List<NetworkItemBean> networkList) {
 //                Logger.t(TAG).d("get network list: " + networkList.size());
-                mLoadingProgress.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoadingProgress.setVisibility(View.GONE);
-                    }
-                });
+//                mLoadingProgress.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mLoadingProgress.setVisibility(View.GONE);
+//                    }
+//                });
 
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mVsConnect.setDisplayedChild(1);
                         mNetworkItemAdapter.setNetworkList(networkList);
                     }
                 });
@@ -206,12 +208,12 @@ public class ClientConnectFragment extends BaseFragment {
 
     private void refreshWifiList() {
         Logger.t(TAG).d("start scan host: ");
-        mLoadingProgress.post(new Runnable() {
-            @Override
-            public void run() {
-                mLoadingProgress.setVisibility(View.VISIBLE);
-            }
-        });
+//        mLoadingProgress.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mLoadingProgress.setVisibility(View.VISIBLE);
+//            }
+//        });
 
         mVdtCamera.scanHost(mOnScanHostListener);
     }
@@ -244,7 +246,7 @@ public class ClientConnectFragment extends BaseFragment {
 
 
     private void showCameraConnect2Wifi() {
-        mVsConnect.showNext();
+        mVsConnect.setDisplayedChild(2);
         mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
         AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
         animationDrawable.start();

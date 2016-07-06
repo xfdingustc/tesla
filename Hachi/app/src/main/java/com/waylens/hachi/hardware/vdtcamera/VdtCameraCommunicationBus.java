@@ -131,7 +131,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
         kaf.setRequestInterval(1);
         kaf.setRequestTimeout(10);
 
-//        connector.getFilterChain().addLast("heart", kaf);
+        connector.getFilterChain().addLast("heart", kaf);
 
         connector.setHandler(new IoHandlerAdapter() {
             @Override
@@ -164,6 +164,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             Logger.t(TAG).d("connected");
             mConnectionListener.onConnected();
         } catch (Exception e) {
+            Logger.t(TAG).d("connection error");
             connectError();
         }
 
@@ -212,6 +213,9 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
     private synchronized void connectError() {
         if (!mConnectError) {
             Logger.t(TAG).d("connectError");
+            if (mSession != null) {
+                mSession.closeOnFlush();
+            }
             mConnectError = true;
             mConnectionListener.onDisconnected();
             Logger.t(TAG).d("socket is closed");
