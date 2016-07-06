@@ -133,11 +133,11 @@ public class ChooseWifiActivity extends BaseActivity {
                 viewHolder.ivWifiCipher.setVisibility(View.INVISIBLE);
             }
 
-            if (networkItem.singalLevel >= -30) {
+            if (networkItem.signalLevel >= -30) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
-            } else if (networkItem.singalLevel >= -60) {
+            } else if (networkItem.signalLevel >= -60) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_2);
-            } else if (networkItem.singalLevel >= -90) {
+            } else if (networkItem.signalLevel >= -90) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_3);
             } else {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_4);

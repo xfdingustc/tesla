@@ -37,11 +37,11 @@ import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 
 public class VdtCamera implements VdtCameraCmdConsts {
@@ -1396,7 +1396,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 networkItem.bssid = networkObject.optString("bssid");
                 networkItem.flags = networkObject.optString("flags");
                 networkItem.frequency = networkObject.optInt("frequency");
-                networkItem.singalLevel = networkObject.optInt("signal_level");
+                networkItem.signalLevel = networkObject.optInt("signal_level");
                 boolean added = networkObject.optBoolean("added");
                 if (added) {
                     networkItem.status = NetworkItemBean.CONNECT_STATUS_SAVED;
@@ -1407,6 +1407,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
             e.printStackTrace();
         }
 
+        Collections.sort(networkItemBeanList, new Comparator<NetworkItemBean>() {
+            @Override
+            public int compare(NetworkItemBean itemBean, NetworkItemBean t1) {
+                return t1.signalLevel - itemBean.signalLevel;
+            }
+        });
 
         if (mOnScanHostListener != null) {
             OnScanHostListener listener = mOnScanHostListener.get();

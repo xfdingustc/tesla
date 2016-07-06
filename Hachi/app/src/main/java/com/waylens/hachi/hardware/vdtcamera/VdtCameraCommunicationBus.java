@@ -57,7 +57,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
 
     private void startMinaConnection() {
         IoConnector connector = new NioSocketConnector();
-        connector.setConnectTimeoutMillis(30000);
+        connector.setConnectTimeoutMillis(5000);
 
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new VdtCodecFactory()));
 
@@ -164,6 +164,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             Logger.t(TAG).d("connected");
             mConnectionListener.onConnected();
         } catch (Exception e) {
+            Logger.t(TAG).d("connection error");
             connectError();
         }
 
@@ -212,6 +213,9 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
     private synchronized void connectError() {
         if (!mConnectError) {
             Logger.t(TAG).d("connectError");
+            if (mSession != null) {
+                mSession.closeOnFlush();
+            }
             mConnectError = true;
             mConnectionListener.onDisconnected();
             Logger.t(TAG).d("socket is closed");

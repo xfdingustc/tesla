@@ -10,7 +10,7 @@ public class NetworkItemBean {
     public String bssid;
     public String flags;
     public int frequency;
-    public int singalLevel;
+    public int signalLevel;
 //    public boolean added;
 
 

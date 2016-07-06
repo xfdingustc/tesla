@@ -127,7 +127,7 @@ public class ApConnectFragment extends BaseFragment {
         AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
         animationDrawable.start();
         WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-        if (wifiInfo.getSSID() == mSSID) {
+        if (wifiInfo.getSSID().equals(mSSID)) {
             toggleCameraConnectView(mVdtCamera);
         } else {
             WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager

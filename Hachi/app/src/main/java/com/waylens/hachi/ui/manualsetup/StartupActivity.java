@@ -29,6 +29,8 @@ public class StartupActivity extends BaseActivity {
 
     private final int PERMISSION_REQUEST_CAMERA = 0;
 
+    private static final int WIFI_SETTING = 0;
+
     @Optional
     @OnClick(R.id.btnGetStarted)
     public void onBtnGetStartedClicked() {
@@ -51,6 +53,11 @@ public class StartupActivity extends BaseActivity {
             dialog.show();
         }
 
+    }
+
+    @OnClick(R.id.manualSelectWifi)
+    public void onManualSelectWifiClick() {
+        startActivityForResult(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS), WIFI_SETTING);
     }
 
 
@@ -122,7 +129,7 @@ public class StartupActivity extends BaseActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activity_startup);
+        setContentView(R.layout.activity_startup2);
     }
 
     private boolean checkIfCameraIsGranted() {

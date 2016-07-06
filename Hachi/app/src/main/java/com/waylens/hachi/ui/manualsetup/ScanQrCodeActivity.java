@@ -80,13 +80,19 @@ public class ScanQrCodeActivity extends BaseActivity implements SurfaceHolder.Ca
     @BindView(R.id.scanLine)
     ImageView mScanLine;
 
-    @BindView(R.id.manualSelectWifi)
-    TextView mManualSelectWifi;
+//    @BindView(R.id.manualSelectWifi)
+//    TextView mManualSelectWifi;
 
-    @OnClick(R.id.manualSelectWifi)
-    public void onManualSelectWifiClick() {
-        startActivityForResult(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS), WIFI_SETTING);
+    @OnClick(R.id.how_to_find_camera_wifi)
+    public void onHowToFindCameraWifiClicked() {
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+            .title("Camera Screen")
+            .customView(R.layout.dialog_enter_ap, true)
+            .positiveText("OK, Got it!")
+            .show();
     }
+
+
 
 
     public static void launch(Activity activity) {
