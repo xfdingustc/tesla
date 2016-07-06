@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -33,7 +32,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
+import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
@@ -53,7 +52,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -507,7 +505,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     private void toEnhance() {
         if (mIsAddMore) {
             Intent intent = new Intent();
-            intent.putParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
+            intent.putParcelableArrayListExtra(EnhanceActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
             Logger.t(TAG).d("add clip size: " + mAdapter.getSelectedClipList().size());
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
@@ -524,7 +522,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
                     mLoadingProgress.setVisibility(View.INVISIBLE);
-                    EnhanceActivity2.launch(getActivity(), playlistId);
+                    EnhanceActivity.launch(getActivity(), playlistId);
                 }
             });
         }

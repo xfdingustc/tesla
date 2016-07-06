@@ -33,12 +33,9 @@ import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
-import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.ui.clips.MusicDownloadActivity;
 import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
-import com.waylens.hachi.ui.clips.player.PlaylistEditor;
-import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
@@ -60,9 +57,9 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/6/16.
  */
-public class EnhanceActivity2 extends ClipPlayActivity {
-    private static final String TAG = EnhanceActivity2.class.getSimpleName();
-    private static final String EXTRA_LAUNCH_MODE = "launch_mode";
+public class EnhanceActivity extends ClipPlayActivity {
+    private static final String TAG = EnhanceActivity.class.getSimpleName();
+
     private static final String EXTRA_CLIP_LIST = "clip_list";
     private static final String EXTRA_PLAYLIST_ID = "playlist_id";
 
@@ -71,6 +68,12 @@ public class EnhanceActivity2 extends ClipPlayActivity {
 
     private static final int LAUNCH_MODE_PLAYLIST = 100;
     private static final int LAUNCH_MODE_CLIP_LIST = 200;
+
+    public static final String EXTRA_CLIPS_TO_ENHANCE = "extra.clips.to.enhance";
+    public static final String EXTRA_CLIPS_TO_APPEND = "extra.clips.to.append";
+    public static final String EXTRA_LAUNCH_MODE = "extra.launch.mode";
+
+    public static final int DEFAULT_AUDIO_ID = -1;
 
     private static final int ACTION_NONE = -1;
     private static final int ACTION_OVERLAY = 0;
@@ -96,7 +99,7 @@ public class EnhanceActivity2 extends ClipPlayActivity {
 
 
     public static void launch(Activity activity, int playlistId) {
-        Intent intent = new Intent(activity, EnhanceActivity2.class);
+        Intent intent = new Intent(activity, EnhanceActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
         intent.putExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_PLAYLIST);
         activity.startActivity(intent);
@@ -260,7 +263,7 @@ public class EnhanceActivity2 extends ClipPlayActivity {
         switch (requestCode) {
             case REQUEST_CODE_ENHANCE:
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Clip> clips = data.getParcelableArrayListExtra(EnhancementActivity.EXTRA_CLIPS_TO_APPEND);
+                    ArrayList<Clip> clips = data.getParcelableArrayListExtra(EXTRA_CLIPS_TO_APPEND);
                     Logger.t(TAG).d("append clips: " + clips.size());
                     mPlaylistEditor.add(clips);
 //                    if (!mClipsEditView.appendSharableClips(clips)) {
@@ -335,17 +338,17 @@ public class EnhanceActivity2 extends ClipPlayActivity {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
                         if (getClipSet().getCount() == 0) {
-                            MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity2.this)
+                            MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
                                 .content(R.string.no_clip_selected)
                                 .positiveText(android.R.string.ok)
                                 .show();
                         } else {
-                            ShareActivity.launch(EnhanceActivity2.this, mPlaylistEditor.getPlaylistId(), getAudioID());
+                            ShareActivity.launch(EnhanceActivity.this, mPlaylistEditor.getPlaylistId(), getAudioID());
                             finish();
                         }
                         break;
                     case R.id.menu_to_download:
-                        new MaterialDialog.Builder(EnhanceActivity2.this)
+                        new MaterialDialog.Builder(EnhanceActivity.this)
                             .title(R.string.download)
                             .items(R.array.download_resolution)
                             .itemsCallbackSingleChoice(2, new MaterialDialog.ListCallbackSingleChoice() {

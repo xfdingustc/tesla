@@ -131,11 +131,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.clips.EnhancementActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"/>
-
-        <activity
             android:name=".ui.clips.ClipChooserActivity"
             android:screenOrientation="portrait"/>
 
@@ -152,7 +147,7 @@
 
 
         <activity
-            android:name=".ui.clips.enhance.EnhanceActivity2"
+            android:name=".ui.clips.enhance.EnhanceActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 

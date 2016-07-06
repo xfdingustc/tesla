@@ -44,8 +44,6 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
-import com.waylens.hachi.ui.clips.EnhanceFragment;
-import com.waylens.hachi.ui.clips.EnhancementActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.helpers.MomentShareHelper;
 import com.waylens.hachi.utils.ViewUtils;
@@ -445,10 +443,6 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
         JSONObject gaugeSettings = null;
 
-        if (activity instanceof EnhancementActivity) {
-
-            gaugeSettings = ((EnhancementActivity) activity).getGaugeSettings();
-        }
 
         Logger.t(TAG).d("share title: " + title);
         mShareHelper.shareMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags,

@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
@@ -19,12 +18,11 @@ import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipModifyActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
-import com.waylens.hachi.ui.clips.enhance.EnhanceActivity2;
+import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipSetManager;
 
 import java.util.ArrayList;
 
@@ -84,7 +82,7 @@ public class PreviewActivity extends ClipPlayActivity {
 
                         break;
                     case R.id.menu_to_enhance:
-                        EnhanceActivity2.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
+                        EnhanceActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
                         finish();
                         break;
                     case R.id.menu_to_modify:
