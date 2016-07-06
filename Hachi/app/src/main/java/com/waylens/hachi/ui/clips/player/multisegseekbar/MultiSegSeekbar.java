@@ -152,17 +152,7 @@ public class MultiSegSeekbar extends View {
         }
     }
 
-    public void reset() {
-        if (getClipSet().getCount() == 0) {
-            return;
-        }
-        ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
-        mCurrentClipIndex = 0;
-        float newX = mBar.setClipSetPos(clipSetPos);
-        mThumb.setX(newX);
-        invalidate();
-//                setClipSetPos(clipSetPos, true);
-    }
+
 
     private void initAttributes(Context context, AttributeSet attrs, final int defStyle) {
         if (isInEditMode()) {

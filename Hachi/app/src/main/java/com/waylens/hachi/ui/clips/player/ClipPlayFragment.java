@@ -550,7 +550,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mAudioPlayer = null;
         }
         mBtnPlayPause.setImageResource(R.drawable.playbar_play);
-        mMultiSegSeekbar.reset();
+//        mMultiSegSeekbar.reset();
     }
 
 
@@ -770,7 +770,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     public int getCurrentPlayingTime() {
-        if (mMediaPlayer == null || !mPlayerControl.isPlaying()) {
+        if (mMediaPlayer == null || mPlayerControl == null) {
             return 0;
         }
 
@@ -787,22 +787,21 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mTvProgress.setText(timeText);
     }
 
-    public interface ClipPlayFragmentContainer {
-        ClipPlayFragment getClipPlayFragment();
-    }
-
     public class UpdatePlayTimeTask extends TimerTask {
 
         @Override
         public void run() {
-            if (mMediaPlayer != null && mPlayerControl != null && mPlayerControl.isPlaying()) {
-                refreshProgressBar();
+            int currentPos = 0;
+            if (mMediaPlayer != null && mPlayerControl != null) {
 
+                currentPos = getCurrentPlayingTime();
             }
+
+            refreshProgressBar(currentPos);
         }
 
-        private void refreshProgressBar() {
-            final int currentPos = getCurrentPlayingTime();
+        private void refreshProgressBar(final int currentPos) {
+//            final int currentPos = getCurrentPlayingTime();
 
 //            final int duration = getClipSet().getTotalSelectedLengthMs();
             if (mEventBus != null) {

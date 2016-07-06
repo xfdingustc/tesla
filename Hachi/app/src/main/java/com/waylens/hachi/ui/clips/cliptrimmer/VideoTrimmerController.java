@@ -37,7 +37,7 @@ class VideoTrimmerController extends View {
 
     private Paint mPaint;
     private Paint mPaintEx;
-    private Paint mPaintProgress;
+//    private Paint mPaintProgress;
     private Bitmap mBitmapLeftArrow;
     private Bitmap mBitmapRightArrow;
     private int mColor;
@@ -64,7 +64,7 @@ class VideoTrimmerController extends View {
     private double mRangeValueRight = MAX_VALUE;
 
 
-    private boolean showProgress = true;
+//    private boolean showProgress = true;
 
     long mStart;
     long mEnd;
@@ -116,8 +116,8 @@ class VideoTrimmerController extends View {
         mBitmapRightArrow = BitmapFactory.decodeResource(getResources(), R.drawable.video_handle_right);
         mPaintEx = new Paint();
         mPaintEx.setColor(Color.argb(0x80, 0xFF, 0xFF, 0xFF));
-        mPaintProgress = new Paint();
-        mPaintProgress.setColor(Color.WHITE);
+//        mPaintProgress = new Paint();
+//        mPaintProgress.setColor(Color.WHITE);
         mProgressLeft = mLeftStartPos + mThumbWidth;
     }
 
@@ -162,9 +162,9 @@ class VideoTrimmerController extends View {
         mRectBorder.set(mRectLeft.right, height - mBorderWidth, mRectRight.left, height);
         canvas.drawRect(mRectBorder, mPaint);
 
-        if (showProgress && !isDraggingThumb) {
-            canvas.drawRoundRect(mRectProgress, 8, 8, mPaintProgress);
-        }
+//        if (showProgress && !isDraggingThumb) {
+//            canvas.drawRoundRect(mRectProgress, 8, 8, mPaintProgress);
+//        }
     }
 
     @Override
