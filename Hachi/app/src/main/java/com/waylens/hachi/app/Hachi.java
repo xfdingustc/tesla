@@ -108,7 +108,7 @@ public class Hachi extends Application {
                     cameraService.getHost(),
                     cameraService.getPort(),
                     "", serviceName, bIsPcServer);
-                VdtCameraManager.getManager().connectCamera(serviceInfo);
+                VdtCameraManager.getManager().connectCamera(serviceInfo, "CameraDiscovery");
 
             }
 

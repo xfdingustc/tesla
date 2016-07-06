@@ -69,66 +69,54 @@ public class DeviceScanner extends Thread {
 
     @Override
     public void run() {
-        try {
-            Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
-            while (en.hasMoreElements()) {
-                NetworkInterface ni = en.nextElement();
-                Enumeration<InetAddress> enumIpAddr = ni.getInetAddresses();
-                while (enumIpAddr.hasMoreElements()) {
-                    InetAddress addr = enumIpAddr.nextElement();
-                    if (!addr.isLoopbackAddress()) {
-                        Logger.t(TAG).d("addr: " + addr);
-                        mAddress.add(addr);
-                    }
-                }
-            }
 
-        } catch (Exception e) {
-            Logger.t("DeviceScanner").e(e, "DeviceScanner");
-        }
-
-        if (mWifiManager != null) {
-            lockWifi(mWifiManager);
-        }
-
-        try {
-            for (InetAddress addr : mAddress) {
-                JmDNS dns = JmDNS.create(addr, SERVICE_VIDITCAM);
-                mDns.add(dns);
-                dns.addServiceListener(SERVICE_TYPE, mServiceListener);
-
-            }
-
-            threadLoop();
-
-            for (JmDNS dns : mDns) {
-                dns.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (mWifiManager != null) {
-                unlockWifi();
-            }
-        }
+        threadLoop();
     }
 
-    synchronized private void threadLoop() throws InterruptedException {
+    private synchronized void threadLoop() {
         while (mbRunning) {
-
-            wait(SCAN_INTERVAL);
-
             if (!mbRunning) {
                 break;
             }
 
-            if (mDns != null) {
-                for (JmDNS dns : mDns) {
-                    dns.removeServiceListener(SERVICE_TYPE, mServiceListener);
+
+            try {
+                Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+                while (en.hasMoreElements()) {
+                    NetworkInterface ni = en.nextElement();
+                    Enumeration<InetAddress> enumIpAddr = ni.getInetAddresses();
+                    while (enumIpAddr.hasMoreElements()) {
+                        InetAddress addr = enumIpAddr.nextElement();
+                        if (!addr.isLoopbackAddress()) {
+                            Logger.t(TAG).d("addr: " + addr);
+                            mAddress.add(addr);
+                        }
+                    }
+                }
+
+                if (mWifiManager != null) {
+                    lockWifi(mWifiManager);
+                }
+
+                for (InetAddress addr : mAddress) {
+                    JmDNS dns = JmDNS.create(addr, SERVICE_VIDITCAM);
+                    mDns.add(dns);
                     dns.addServiceListener(SERVICE_TYPE, mServiceListener);
+
+                }
+
+                wait(SCAN_INTERVAL);
+                for (JmDNS dns : mDns) {
+                    dns.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (mWifiManager != null) {
+                    unlockWifi();
                 }
             }
+
         }
     }
 
@@ -165,7 +153,7 @@ public class DeviceScanner extends Thread {
                 }
                 VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(addresses[0], info
                     .getPort(), serverName, name, bIsPcServer);
-                mVdtCameraManager.connectCamera(serviceInfo);
+                mVdtCameraManager.connectCamera(serviceInfo, "mdns");
 
             }
 
