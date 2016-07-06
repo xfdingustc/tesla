@@ -106,7 +106,7 @@ public class BaseFragment extends Fragment {
 
     public void setupToolbar() {
         if (mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.ic_menu_grey600_24dp);
+            mToolbar.setNavigationIcon(R.drawable.btn_menu);
 
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override

@@ -71,7 +71,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
         switch (musicItem.status) {
             case MusicItem.STATUS_LOCAL:
-                holder.musicIcon.setImageResource(R.drawable.music_local);
+                holder.musicIcon.setImageResource(R.drawable.music_list_icon_local);
                 holder.setDownloadStatus(ViewHolder.STATUS_NORMAL);
                 holder.itemContainer.setOnClickListener(new View.OnClickListener() {
                     @Override

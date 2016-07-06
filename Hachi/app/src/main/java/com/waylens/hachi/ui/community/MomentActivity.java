@@ -318,7 +318,7 @@ public class MomentActivity extends BaseActivity {
         Glide.with(this)
             .load(mSessionManager.getAvatarUrl())
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.default_avatar)
+            .placeholder(R.drawable.menu_profile_photo_default)
             .crossFade()
             .into(avatar);
 
@@ -440,7 +440,7 @@ public class MomentActivity extends BaseActivity {
                     Glide.with(MomentActivity.this)
                         .load(mSessionManager.getAvatarUrl())
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.drawable.default_avatar)
+                        .placeholder(R.drawable.menu_profile_photo_default)
                         .crossFade()
                         .into(mCurrentUserAvatar);
 
@@ -448,7 +448,7 @@ public class MomentActivity extends BaseActivity {
                     Glide.with(MomentActivity.this)
                         .load(mMomentInfo.owner.avatarUrl)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.drawable.default_avatar)
+                        .placeholder(R.drawable.menu_profile_photo_default)
                         .crossFade()
                         .into(mUserAvatar);
 

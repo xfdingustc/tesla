@@ -111,7 +111,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Glide.with(context)
                 .load(comment.author.avatarUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.default_avatar)
+                .placeholder(R.drawable.menu_profile_photo_default)
                 .crossFade()
                 .into(viewHolder.avatarView);
             viewHolder.tvUserName.setText(comment.author.userName);

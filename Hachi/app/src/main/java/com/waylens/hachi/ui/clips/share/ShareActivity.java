@@ -209,7 +209,7 @@ public class ShareActivity extends ClipPlayActivity {
         SessionManager sessionManager = SessionManager.getInstance();
         Glide.with(this)
             .load(sessionManager.getAvatarUrl())
-            .placeholder(R.drawable.default_avatar)
+            .placeholder(R.drawable.menu_profile_photo_default)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .crossFade()
             .into(mUserAvatar);

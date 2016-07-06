@@ -108,7 +108,7 @@ public class AccountActivity extends BaseActivity {
             .load(mSessionManager.getAvatarUrl())
             .asBitmap()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.default_avatar)
+            .placeholder(R.drawable.menu_profile_photo_default)
             .into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {

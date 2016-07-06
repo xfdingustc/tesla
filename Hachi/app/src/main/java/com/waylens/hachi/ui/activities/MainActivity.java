@@ -273,7 +273,7 @@ public class MainActivity extends BaseActivity {
             Glide.with(this)
                 .load(mSessionManager.getAvatarUrl())
                 .asBitmap()
-                .placeholder(R.drawable.default_avatar)
+                .placeholder(R.drawable.menu_profile_photo_default)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
@@ -284,7 +284,7 @@ public class MainActivity extends BaseActivity {
         } else {
             mUsername.setText(getText(R.string.click_2_login));
 
-            mUserAvatar.setImageResource(R.drawable.waylens_logo_76x86);
+            mUserAvatar.setImageResource(R.drawable.menu_profile_photo_default);
         }
     }
 

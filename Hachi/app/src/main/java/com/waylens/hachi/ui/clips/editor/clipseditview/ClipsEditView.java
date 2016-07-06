@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
@@ -25,6 +27,7 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.views.rangbar.RangeBar;
 import com.waylens.hachi.utils.ViewUtils;
@@ -74,7 +77,7 @@ public class ClipsEditView extends LinearLayout {
 
     private VdtCamera mVdtCamera;
     private VdbRequestQueue mVdbRequestQueue;
-    private VdbImageLoader mVdbImageLoader;
+
 
     private PlayListEditor2 mPlayListEditor;
 
@@ -176,7 +179,6 @@ public class ClipsEditView extends LinearLayout {
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
         if (mVdtCamera != null) {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
-            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
         }
     }
 
@@ -381,7 +383,14 @@ public class ClipsEditView extends LinearLayout {
             final Clip clip = getClipSet().getClip(position);
 
             ClipPos clipPos = new ClipPos(clip);
-            mVdbImageLoader.displayVdbImage(clipPos, holder.clipThumbnail);
+            Glide.with(getContext())
+                .using(new SnipeGlideLoader(mVdbRequestQueue))
+                .load(clipPos)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .placeholder(R.drawable.icon_video_default_2)
+                .into(holder.clipThumbnail);
+
             holder.itemView.setTag(holder);
             holder.itemView.setOnClickListener(new OnClickListener() {
                 @Override

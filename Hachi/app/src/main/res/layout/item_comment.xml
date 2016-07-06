@@ -12,7 +12,7 @@
         android:layout_height="32dp"
         android:layout_gravity="left|top"
         android:layout_marginRight="16dp"
-        android:src="@drawable/waylens_logo_76x86"
+        android:src="@drawable/menu_profile_photo_default"
         />
 
     <LinearLayout

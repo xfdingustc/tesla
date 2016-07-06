@@ -44,7 +44,6 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final static int ITEM_TYPE_CLIPVIEW = 1;
 
     private VdbRequestQueue mVdbRequestQueue;
-    private VdbImageLoader mVdbImageLoader;
     private boolean mMultiSelectedMode = false;
 
     private ArrayList<Clip> mSelectedClipList = new ArrayList<>();
@@ -72,7 +71,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.mClipClickListener = listener;
         this.mVdbRequestQueue = requestQueue;
         this.mLayoutRes = layoutRes;
-        this.mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+
     }
 
 
@@ -164,12 +163,16 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
         viewHolder.tvDuration.setText(clipDuration);
 
+        int placeHolder = R.drawable.icon_video_default_1;
+        if (mLayoutRes == R.layout.item_clip_set_card)  {
+            placeHolder = R.drawable.icon_video_default_2;
+        }
 
         Glide.with(mContext)
             .using(new SnipeGlideLoader(mVdbRequestQueue))
             .load(clipPos)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.icon_video_default)
+            .placeholder(placeHolder)
             .crossFade()
             .into(viewHolder.ivClipCover);
 

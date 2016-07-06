@@ -1,9 +1,5 @@
 package com.waylens.hachi.ui.liveview;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -11,7 +7,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -46,7 +41,6 @@ import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
-import com.waylens.hachi.ui.manualsetup.ManualSetupActivity;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.ClipActionInfo;
@@ -75,8 +69,6 @@ import butterknife.Optional;
 public class CameraPreviewFragment extends BaseFragment {
     private static final String TAG = CameraPreviewFragment.class.getSimpleName();
 
-    private int mBookmarkCount = -1;
-    private int mBookmarkClickCount;
 
     private Handler mHandler;
 
@@ -85,7 +77,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
 
     private boolean mIsGaugeVisible;
-
 
 
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
@@ -108,8 +99,8 @@ public class CameraPreviewFragment extends BaseFragment {
     @BindView(R.id.btnMicControl)
     ImageView mBtnMicControl;
 
-    @BindView(R.id.fabBookmark)
-    ImageButton mFabBookmark;
+    @BindView(R.id.fabStartStop)
+    ImageButton mFabStartStop;
 
     @BindView(R.id.gaugeView)
     GaugeView mGaugeView;
@@ -142,7 +133,7 @@ public class CameraPreviewFragment extends BaseFragment {
     ProgressBar mStorageView;
 
     @BindView(R.id.recordDot)
-    View mRecordDot;
+    ImageView mRecordDot;
 
     @Nullable
     @BindView(R.id.wifiMode)
@@ -184,8 +175,8 @@ public class CameraPreviewFragment extends BaseFragment {
     @BindView(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
-    @BindView(R.id.btnStop)
-    ImageButton mBtnStop;
+    @BindView(R.id.btnBookmark)
+    ImageButton mBtnBookmark;
 
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
@@ -206,9 +197,21 @@ public class CameraPreviewFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.fabBookmark)
+    @OnClick(R.id.fabStartStop)
+    public void onFabStartStopClicked() {
+        switch (mVdtCamera.getRecordState()) {
+            case VdtCamera.STATE_RECORD_RECORDING:
+                mVdtCamera.stopRecording();
+                break;
+            case VdtCamera.STATE_RECORD_STOPPED:
+                mVdtCamera.startRecording();
+                break;
+        }
+    }
+
+    @OnClick(R.id.btnBookmark)
     public void onFabClick() {
-        handleOnFabClicked();
+        mVdtCamera.markLiveVideo();
     }
 
     @OnClick(R.id.btnShowOverlay)
@@ -217,10 +220,6 @@ public class CameraPreviewFragment extends BaseFragment {
         mIsGaugeVisible = !mIsGaugeVisible;
     }
 
-    @OnClick(R.id.btnStop)
-    public void onBtnStopClick() {
-        mVdtCamera.stopRecording();
-    }
 
     @Optional
     @OnClick(R.id.add_new_camera)
@@ -342,7 +341,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMarkLiveMsg(MarkLiveMsgEvent event) {
         if (event.getClipActionInfo().action == ClipActionInfo.CLIP_ACTION_CREATED) {
-            mBookmarkClickCount++;
             showMessage();
             mHandler.postDelayed(new Runnable() {
                 @Override
@@ -351,7 +349,8 @@ public class CameraPreviewFragment extends BaseFragment {
                     hideMessage();
                 }
             }, 1000);
-        };
+        }
+        ;
     }
 
 
@@ -495,8 +494,6 @@ public class CameraPreviewFragment extends BaseFragment {
             Logger.t(TAG).d("Stop camera preview");
             mLiveView.stopStream();
         }
-
-
 
 
     }
@@ -777,28 +774,27 @@ public class CameraPreviewFragment extends BaseFragment {
             case VdtCamera.STATE_RECORD_UNKNOWN:
                 break;
             case VdtCamera.STATE_RECORD_STOPPED:
-                mFabBookmark.setEnabled(true);
-                mFabBookmark.setImageResource(R.drawable.camera_control_start);
-                mBtnStop.setVisibility(View.GONE);
+                mFabStartStop.setEnabled(true);
+                mFabStartStop.setImageResource(R.drawable.camera_control_start);
+                mBtnBookmark.setVisibility(View.GONE);
                 break;
             case VdtCamera.STATE_RECORD_STOPPING:
-                mFabBookmark.setEnabled(false);
+                mFabStartStop.setEnabled(false);
                 break;
             case VdtCamera.STATE_RECORD_STARTING:
-                mFabBookmark.setEnabled(false);
+                mFabStartStop.setEnabled(false);
                 break;
             case VdtCamera.STATE_RECORD_RECORDING:
-                mFabBookmark.setEnabled(true);
+                mFabStartStop.setEnabled(true);
                 if (isInCarMode()) {
-                    mFabBookmark.setImageResource(R.drawable.camera_control_bookmark);
-                    mBtnStop.setVisibility(View.VISIBLE);
-                } else {
-                    mFabBookmark.setImageResource(R.drawable.camera_control_stop);
+
+                    mBtnBookmark.setVisibility(View.VISIBLE);
                 }
+                mFabStartStop.setImageResource(R.drawable.camera_control_stop);
                 break;
             case VdtCamera.STATE_RECORD_SWITCHING:
-                mFabBookmark.setEnabled(false);
-                mBtnStop.setVisibility(View.GONE);
+                mFabStartStop.setEnabled(false);
+                mBtnBookmark.setVisibility(View.GONE);
                 break;
             default:
                 break;
