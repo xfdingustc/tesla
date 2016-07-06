@@ -17,6 +17,8 @@ import java.util.ArrayList;
  */
 public class LocalMoment implements Serializable {
 
+    public int playlistId;
+
     public String title;
 
     public String description;
@@ -29,7 +31,7 @@ public class LocalMoment implements Serializable {
 
     public JSONObject gaugeSettings;
 
-    public ArrayList<Segment> mSegments;
+    public ArrayList<Segment> mSegments = new ArrayList<>();
 
 
     public CloudInfo cloudInfo;
@@ -43,7 +45,8 @@ public class LocalMoment implements Serializable {
     public boolean isFbShare;
 
 
-    public LocalMoment(String title, String description, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
+    public LocalMoment(int playlistId, String title, String description, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
+        this.playlistId = playlistId;
         this.title = title;
         this.description = description;
         this.tags = tags;

@@ -26,6 +26,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.CallbackManager;
@@ -40,12 +41,14 @@ import com.rest.response.LinkedAccounts;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
-import com.waylens.hachi.ui.helpers.MomentShareHelper;
+import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -67,7 +70,7 @@ import retrofit2.Callback;
 /**
  * Created by Xiaofei on 2016/6/16.
  */
-public class ShareActivity extends ClipPlayActivity implements MomentShareHelper.OnShareMomentListener {
+public class ShareActivity extends ClipPlayActivity {
     private static final String TAG = ShareActivity.class.getSimpleName();
     private static final String EXTRA_PLAYLIST_ID = "playlist_id";
     private static final String EXTRA_AUDIO_ID = "audio_id";
@@ -76,7 +79,6 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     private int mAudioId;
 
     private MaterialDialog mUploadDialog;
-    private MomentShareHelper mShareHelper;
 
     private String mSocialPrivacy;
 
@@ -186,20 +188,7 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     }
 
 
-    @Override
-    public void onCancelShare() {
 
-    }
-
-    @Override
-    public void onShareError(int errorCode, int errorResId) {
-
-    }
-
-    @Override
-    public void onUploadStarted() {
-//        UploadActivity.launch(this);
-    }
 
 
     private void initViews() {
@@ -430,7 +419,6 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
     }
 
     private void doShareMoment() {
-        mShareHelper = new MomentShareHelper(this, mVdbRequestQueue, this);
         String title = mEtMomentTitle.getEditableText().toString();
         if (TextUtils.isEmpty(title)) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -439,14 +427,17 @@ public class ShareActivity extends ClipPlayActivity implements MomentShareHelper
 
         String descrption = mEtMomentDescription.getEditableText().toString();
         String[] tags = new String[]{"Shanghai", "car"};
-        Activity activity = this;
 
         JSONObject gaugeSettings = null;
 
 
         Logger.t(TAG).d("share title: " + title);
-        mShareHelper.shareMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags,
-            mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked);
+
+        LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked);
+        JobManager jobManager = BgJobManager.getManager();
+        UploadMomentJob job = new UploadMomentJob(localMoment);
+        jobManager.addJobInBackground(job);
+
         mUploadDialog = new MaterialDialog.Builder(this)
             .title(R.string.upload)
             .contentGravity(GravityEnum.CENTER)

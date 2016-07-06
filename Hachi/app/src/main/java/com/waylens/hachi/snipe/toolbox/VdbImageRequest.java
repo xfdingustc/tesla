@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.waylens.hachi.snipe.VdbAcknowledge;
@@ -25,6 +26,11 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     private final ScaleType mScaleType;
     private final ClipPos mClipPos;
     String mCacheKey; //
+
+
+    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, VdbResponse.ErrorListener errorListener) {
+        this(clipPos, listener, errorListener, 0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.RGB_565, null);
+    }
 
     public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, VdbResponse.ErrorListener errorListener,
                            int maxWidth, int maxHeight, ScaleType scaleType, Config decodeConfig, String cacheKey) {
