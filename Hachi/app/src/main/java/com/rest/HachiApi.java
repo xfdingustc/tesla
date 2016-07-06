@@ -7,6 +7,7 @@ import com.rest.body.LikePostBody;
 import com.rest.body.ReportBody;
 import com.rest.body.SignInPostBody;
 import com.rest.body.SignUpPostBody;
+import com.rest.response.CloudStorageInfo;
 import com.rest.response.CreateMomentResponse;
 import com.rest.response.FollowInfo;
 import com.rest.response.LikeResponse;
@@ -18,6 +19,7 @@ import com.rest.response.SignUpResponse;
 import com.rest.response.SimpleBoolResponse;
 import com.rest.response.UserInfo;
 import com.rest.response.SignInResponse;
+import com.waylens.hachi.bgjob.upload.CloudInfo;
 import com.waylens.hachi.ui.entities.UserProfile;
 
 import retrofit2.Call;
@@ -95,5 +97,8 @@ public interface HachiApi {
 
     @POST("/api/moments")
     Call<CreateMomentResponse> createMoment(@Body CreateMomentBody createMomentBody);
+
+    @GET("/api/cloud/usage")
+    Call<CloudStorageInfo> getCloudStorageInfo();
 
 }

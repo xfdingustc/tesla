@@ -291,4 +291,7 @@
 	<string name="welcome33">best moments</string>
 	<string name="welcome34">of your footage and share</string>
 	<string name="welcome35">with the community</string>
+	<string name="no_clould_space">Free uploading space of this week has been used up!</string>
+	<string name="ok">OK</string>
+	<string name="cancel">CANCEL</string>
 </resources>
