@@ -1025,7 +1025,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void ack_fw_getVersion(String p1, String p2) {
-        Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
+//        Logger.t(TAG).d("ack get firmware p1: " + p1 + " P2: " + p2);
         setFirmwareVersion(p1, p2);
     }
 
@@ -1374,7 +1374,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void handleOnNetworkAddHost(String p1, String p2) {
-        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
+//        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
 
         mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_ADDED));
     }

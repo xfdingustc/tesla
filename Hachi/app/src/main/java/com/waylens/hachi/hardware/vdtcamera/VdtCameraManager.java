@@ -38,8 +38,8 @@ public class VdtCameraManager {
     private VdtCamera mCurrentCamera;
 
 
-    public synchronized void connectCamera(VdtCamera.ServiceInfo serviceInfo) {
-//        Logger.t(TAG).d("connect Camera");
+    public synchronized void connectCamera(VdtCamera.ServiceInfo serviceInfo, String from) {
+
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectedVdtCameras)) {
 //            Logger.t(TAG).d("already existed in connected");
             return;
@@ -49,7 +49,7 @@ public class VdtCameraManager {
 //            Logger.t(TAG).d("already existed in connecting");
             return;
         }
-
+        Logger.t(TAG).d("connect Camera  " + serviceInfo.inetAddr + " port: " + serviceInfo.port + " from " + from);
 
         VdtCamera vdtCamera = new VdtCamera(serviceInfo, new VdtCamera.OnConnectionChangeListener() {
             @Override
@@ -72,7 +72,8 @@ public class VdtCameraManager {
             }
         });
 
-        Logger.t(TAG).d("create new VdtCamera current connected camera size: " + mConnectedVdtCameras.size());
+        Logger.t(TAG).d("create new VdtCamera current connected camera size: " + mConnectedVdtCameras.size() + " connecting: " + mConnectingVdtCameras.size());
+
 
 
         mConnectingVdtCameras.add(vdtCamera);
@@ -144,7 +145,7 @@ public class VdtCameraManager {
     }
 
 
-    private void onCameraDisconnected(VdtCamera vdtCamera) {
+    private synchronized void onCameraDisconnected(VdtCamera vdtCamera) {
         // disconnect msg may be sent from msg thread,
         // need to stop it fully
         //vdtCamera.removeCallback(mCameraCallback);
@@ -158,6 +159,14 @@ public class VdtCameraManager {
             }
         }
 
+        for (int i = 0; i < mConnectingVdtCameras.size(); i++) {
+            if (mConnectingVdtCameras.get(i) == vdtCamera) {
+                mConnectingVdtCameras.remove(i);
+                Logger.t(TAG).d("connecting camera disconnected " + vdtCamera.getInetSocketAddress());
+                break;
+            }
+        }
+
         if (vdtCamera == mCurrentCamera) {
             if (mConnectedVdtCameras.size() == 0) {
                 mCurrentCamera = null;
@@ -166,13 +175,7 @@ public class VdtCameraManager {
             }
         }
 
-        //Connecting cameras might also emit disconnect event
-        for (int i = 0; i < mConnectingVdtCameras.size(); i++) {
-            if (mConnectingVdtCameras.get(i) == vdtCamera) {
-                mConnectingVdtCameras.remove(i);
-                break;
-            }
-        }
+        Logger.t(TAG).d("camera disconnected camera size: " + mConnectedVdtCameras.size() + " connecting: " + mConnectingVdtCameras.size());
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_DISCONNECTED, vdtCamera));
 
 

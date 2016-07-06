@@ -38,6 +38,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
 
 
     private IoSession mSession = null;
+    private IoConnector mConnector = null;
 
 
     public VdtCameraCommunicationBus(InetSocketAddress address, ConnectionChangeListener connectionListener, CameraMessageHandler messageHandler) {
@@ -56,12 +57,12 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
     }
 
     private void startMinaConnection() {
-        IoConnector connector = new NioSocketConnector();
-        connector.setConnectTimeoutMillis(5000);
+        mConnector = new NioSocketConnector();
+        mConnector.setConnectTimeoutMillis(5000);
 
-        connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new VdtCodecFactory()));
+        mConnector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new VdtCodecFactory()));
 
-        connector.addListener(new IoServiceListener() {
+        mConnector.addListener(new IoServiceListener() {
             @Override
             public void serviceActivated(IoService ioService) throws Exception {
                 Logger.t(TAG).d("serviceActivated");
@@ -131,9 +132,9 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
         kaf.setRequestInterval(1);
         kaf.setRequestTimeout(10);
 
-        connector.getFilterChain().addLast("heart", kaf);
+        mConnector.getFilterChain().addLast("heart", kaf);
 
-        connector.setHandler(new IoHandlerAdapter() {
+        mConnector.setHandler(new IoHandlerAdapter() {
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
                 super.messageReceived(session, message);
@@ -157,12 +158,12 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
         });
 
         try {
-            ConnectFuture future = connector.connect(mAddress);
+            ConnectFuture future = mConnector.connect(mAddress);
             Logger.t(TAG).d("start connection");
             future.awaitUninterruptibly();
             mSession = future.getSession();
-            Logger.t(TAG).d("connected");
             mConnectionListener.onConnected();
+            Logger.t(TAG).d("connected");
         } catch (Exception e) {
             Logger.t(TAG).d("connection error");
             connectError();
@@ -213,8 +214,11 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
     private synchronized void connectError() {
         if (!mConnectError) {
             Logger.t(TAG).d("connectError");
+            if (mConnector != null) {
+                mConnector.dispose();
+            }
             if (mSession != null) {
-                mSession.closeOnFlush();
+                mSession.closeNow();
             }
             mConnectError = true;
             mConnectionListener.onDisconnected();
