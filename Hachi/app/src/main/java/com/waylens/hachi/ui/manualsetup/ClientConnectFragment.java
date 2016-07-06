@@ -109,6 +109,7 @@ public class ClientConnectFragment extends BaseFragment {
                 if (connectResult == 0) {
                     mSelectedNetworkItem.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION_PROBLEM;
                     mNetworkItemAdapter.notifyDataSetChanged();
+                    mEventBus.unregister(this);
                 } else {
                     showCameraConnect2Wifi();
                     switchConnectionStage(CONNECTION_STAGE_PHONE_2_ROUTE);
@@ -181,7 +182,7 @@ public class ClientConnectFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        mEventBus.register(this);
+//        mEventBus.register(this);
     }
 
     @Override
@@ -194,7 +195,7 @@ public class ClientConnectFragment extends BaseFragment {
     private void startScanWifi() {
         mTimer = new Timer();
         mScanWifiTimeTask = new ScanWifiTimeTask();
-        mTimer.schedule(mScanWifiTimeTask, 1000, 5000);
+        mTimer.schedule(mScanWifiTimeTask, 1000, 15000);
     }
 
     private void stopScanWifi() {
@@ -218,7 +219,6 @@ public class ClientConnectFragment extends BaseFragment {
     private void onNetworkItemClicked(final NetworkItemBean itemBean) {
         mSelectedNetworkItem = itemBean;
 
-
         mPasswordDialog = new MaterialDialog.Builder(getActivity())
             .title(itemBean.ssid)
             .customView(R.layout.dialog_network_password, true)
@@ -229,6 +229,7 @@ public class ClientConnectFragment extends BaseFragment {
                     super.onPositive(dialog);
                     setNetwork2Camera(itemBean.ssid, mEtPassword.getText().toString());
 //                    showCameraConnect2Wifi();
+                    mEventBus.register(ClientConnectFragment.this);
                     stopScanWifi();
                     itemBean.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION;
                     mNetworkItemAdapter.notifyDataSetChanged();
@@ -332,11 +333,11 @@ public class ClientConnectFragment extends BaseFragment {
                     break;
             }
 
-            if (networkItem.singalLevel >= -30) {
+            if (networkItem.signalLevel >= -30) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
-            } else if (networkItem.singalLevel >= -60) {
+            } else if (networkItem.signalLevel >= -60) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_2);
-            } else if (networkItem.singalLevel >= -90) {
+            } else if (networkItem.signalLevel >= -90) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_3);
             } else {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_4);

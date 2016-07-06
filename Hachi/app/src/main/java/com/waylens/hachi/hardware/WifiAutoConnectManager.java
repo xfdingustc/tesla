@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 
+import com.orhanobut.logger.Logger;
+
 import java.util.List;
 
 /**
@@ -108,7 +110,7 @@ public class WifiAutoConnectManager {
         @Override
         public void run() {
             boolean ret = openWifi();
-            Log.d(TAG, "open wifi: " + ret);
+            Logger.t(TAG).d("open wifi: " + ret);
 
             while (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING) {
                 try {
@@ -116,32 +118,34 @@ public class WifiAutoConnectManager {
                 } catch (InterruptedException ie) {
                 }
             }
-            Log.d(TAG, "wifi is openned");
+
+            wifiManager.startScan();
+            Logger.t(TAG).d("wifi is openned");
 
             WifiConfiguration wifiConfig = createWifiInfo(ssid, password, type);
 //
             if (wifiConfig == null) {
-                Log.d(TAG, "wifiConfig is null!");
+                Logger.t(TAG).d("wifiConfig is null!");
                 return;
             }
 
-            Log.d(TAG, "WifiInfo is created");
+            Logger.t(TAG).d("WifiInfo is created");
 
             WifiConfiguration tempConfig = isExsits(ssid);
 
+
             int netID;
             if (tempConfig == null) {
-
                 netID = wifiManager.addNetwork(wifiConfig);
             } else {
                 netID = tempConfig.networkId;
             }
 
-            Log.d(TAG, "current network info: " + wifiManager.getConnectionInfo().toString());
+            Logger.t(TAG).d("current network info: " + wifiManager.getConnectionInfo().toString());
             wifiManager.disableNetwork(wifiManager.getConnectionInfo().getNetworkId());
 
 
-            Log.d(TAG, "add network " + wifiConfig.toString());
+            Logger.t(TAG).d("add network " + wifiConfig.toString());
 
 //            wifiManager.getConfiguredNetworks()
 

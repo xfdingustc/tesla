@@ -57,7 +57,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
 
     private void startMinaConnection() {
         IoConnector connector = new NioSocketConnector();
-        connector.setConnectTimeoutMillis(30000);
+        connector.setConnectTimeoutMillis(5000);
 
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new VdtCodecFactory()));
 
@@ -131,7 +131,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
         kaf.setRequestInterval(1);
         kaf.setRequestTimeout(10);
 
-        connector.getFilterChain().addLast("heart", kaf);
+//        connector.getFilterChain().addLast("heart", kaf);
 
         connector.setHandler(new IoHandlerAdapter() {
             @Override
