@@ -7,18 +7,12 @@ import android.net.nsd.NsdServiceInfo;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.CameraDiscovery;
 import com.waylens.hachi.hardware.DeviceScanner;
-import com.waylens.hachi.hardware.VdtCameraFounder;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.utils.PreferenceUtils;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 //import com.bugtags.library.Bugtags;
 //import com.bugtags.library.BugtagsOptions;
@@ -94,7 +88,7 @@ public class Hachi extends Application {
 
         initFacebookSDK();
 
-        VdbImageLoader.init(this, 1024 * 64);
+
 //        FIR.init(this);
 
 

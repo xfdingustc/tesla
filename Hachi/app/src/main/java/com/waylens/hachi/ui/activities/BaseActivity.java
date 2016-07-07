@@ -14,7 +14,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.snipe.VdbImageLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -39,7 +38,7 @@ public class BaseActivity extends AppCompatActivity {
     protected RequestQueue mRequestQueue;
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
-    protected VdbImageLoader mVdbImageLoader;
+
 
     protected MaterialDialog mProgressDialog;
 
@@ -162,7 +161,7 @@ public class BaseActivity extends AppCompatActivity {
 //        Logger.t("EnhancementActivity").d("get current camera: " + mVdtCamera);
         if (mVdtCamera != null) {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
-            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+
         }
     }
 
