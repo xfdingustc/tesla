@@ -15,141 +15,140 @@
         android:layout_height="wrap_content"
         >
 
-    </ScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-
-        <FrameLayout
-            android:id="@+id/player_fragment_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout_height="202dp"></FrameLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/user_avatar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="16dp"
-                tools:src="@drawable/defaultpic"/>
+
+            <FrameLayout
+                android:id="@+id/player_fragment_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_height="202dp"></FrameLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingTop="16dp">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/user_name"
-                    style="@style/HachiTextViewTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="user name"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_avatar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    tools:src="@drawable/menu_profile_photo_default"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        style="@style/HachiTextViewTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="user name"/>
 
 
-                <TextView
-                    android:id="@+id/user_email"
-                    style="@style/HachiTextViewSubHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/app_text_color_secondary"
-                    android:textSize="12sp"
-                    tools:text="email"/>
+                    <TextView
+                        android:id="@+id/user_email"
+                        style="@style/HachiTextViewSubHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/app_text_color_secondary"
+                        android:textSize="12sp"
+                        tools:text="email"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
+            <View
+                style="@style/HachiSepatator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+
+            <android.support.design.widget.TextInputLayout
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/moment_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/share_hint"/>
+
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/moment_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/description"/>
+
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/spinner_social_privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+            </android.support.design.widget.TextInputLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/also_post_on"
+                android:textColor="@color/style_color_primary"
+                android:textSize="15sp"/>
+
+            <ImageView
+                android:id="@+id/btn_facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@null"
+                android:src="@drawable/btn_platform_facebook"/>
+
+
         </LinearLayout>
-
-        <View
-            style="@style/HachiSepatator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
-
-        <android.support.design.widget.TextInputLayout
-            style="@style/TextAppearance.AppCompat.Body2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/moment_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/share_hint"/>
-
-
-        </android.support.design.widget.TextInputLayout>
-
-
-        <android.support.design.widget.TextInputLayout
-            style="@style/TextAppearance.AppCompat.Body2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical">
-
-
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/moment_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/description"/>
-
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            style="@style/TextAppearance.AppCompat.Body2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical">
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/spinner_social_privacy"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"/>
-        </android.support.design.widget.TextInputLayout>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:text="@string/also_post_on"
-            android:textColor="@color/style_color_primary"
-            android:textSize="15sp"/>
-
-        <ImageView
-            android:id="@+id/btn_facebook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/btn_platform_facebook"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@null"/>
-
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </LinearLayout>

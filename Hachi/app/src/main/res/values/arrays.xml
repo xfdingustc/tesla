@@ -159,9 +159,9 @@
 
 
     <integer-array name="social_privacy_icon" translatable="false">
-        <item>@drawable/social_privacy_everyone</item>
-        <item>@drawable/social_privacy_followers</item>
-        <item>@drawable/social_privacy_me</item>
+        <item>@drawable/social_share_with_everyone</item>
+        <item>@drawable/social_share_with_followers</item>
+        <item>@drawable/social_share_with_me</item>
     </integer-array>
 
     <string-array name="gender_list" translatable="false">

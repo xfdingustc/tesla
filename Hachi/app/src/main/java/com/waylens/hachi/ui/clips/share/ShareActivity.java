@@ -82,7 +82,6 @@ public class ShareActivity extends ClipPlayActivity {
 
     private MaterialDialog mUploadDialog;
 
-    private String mSocialPrivacy;
 
     private String[] mSupportedPrivacy;
 
@@ -94,6 +93,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     private CallbackManager callbackManager = CallbackManager.Factory.create();
 
+    private String mSocialPrivacy;
     @BindView(R.id.user_avatar)
     CircleImageView mUserAvatar;
 

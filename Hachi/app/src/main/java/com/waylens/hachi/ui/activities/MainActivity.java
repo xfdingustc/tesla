@@ -104,11 +104,7 @@ public class MainActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         refressNavHeaderView();
-        if (VdtCameraManager.getManager().isConnected()) {
-            switchFragment(TAB_TAG_LIVE_VIEW);
-        } else {
-            switchFragment(TAB_TAG_MOMENTS);
-        }
+
     }
 
 
@@ -119,7 +115,6 @@ public class MainActivity extends BaseActivity {
         super.onConfigurationChanged(newConfig);
         if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             hideSystemUI(true);
-
         } else {
             hideSystemUI(false);
         }
@@ -142,6 +137,12 @@ public class MainActivity extends BaseActivity {
         if (mSessionManager.isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
+        }
+
+        if (VdtCameraManager.getManager().isConnected()) {
+            switchFragment(TAB_TAG_LIVE_VIEW);
+        } else {
+            switchFragment(TAB_TAG_MOMENTS);
         }
     }
 
