@@ -91,7 +91,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     private HachiApi mHachi = HachiService.createHachiApiService();
 
-    private CallbackManager callbackManager = CallbackManager.Factory.create();
+
 
     private String mSocialPrivacy;
     @BindView(R.id.user_avatar)
@@ -117,6 +117,9 @@ public class ShareActivity extends ClipPlayActivity {
 
     @BindView(R.id.spinner_social_privacy)
     Spinner mPrivacySpinner;
+
+    @BindView(R.id.other_social)
+    TextView mOtherSocial;
 
     @BindView(R.id.btn_facebook)
     ImageView mBtnFaceBook;
@@ -177,7 +180,7 @@ public class ShareActivity extends ClipPlayActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
     }
 
 
@@ -220,12 +223,47 @@ public class ShareActivity extends ClipPlayActivity {
 
 
         Logger.t(TAG).d("is linked with facebook: " + sessionManager.isLinked());
-        if (sessionManager.isLinked()) {
-            mBtnFaceBook.setVisibility(View.VISIBLE);
-        } else {
-            mBtnFaceBook.setVisibility(View.GONE);
-        }
+//        if (sessionManager.isLinked()) {
+//            mBtnFaceBook.setVisibility(View.VISIBLE);
+//        } else {
+//            mBtnFaceBook.setVisibility(View.GONE);
+//        }
 
+        checkLinkedAccount();
+
+    }
+
+    private void checkLinkedAccount() {
+        Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
+        callLinkedAccount.enqueue(new Callback<LinkedAccounts>() {
+            @Override
+            public void onResponse(Call<LinkedAccounts> call, retrofit2.Response<LinkedAccounts> response) {
+
+                mLinkedAccounts = response.body();
+                Logger.t(TAG).d("Get response: " + mLinkedAccounts.linkedAccounts.size());
+                for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
+                    Logger.t(TAG).d("account: " + account.toString());
+                }
+                updateSocailButtons();
+
+            }
+
+            @Override
+            public void onFailure(Call<LinkedAccounts> call, Throwable t) {
+                Logger.t(TAG).d(t.toString());
+            }
+        });
+    }
+
+    private void updateSocailButtons() {
+        if (isLinkedWithOtherSocial()) {
+            mOtherSocial.setVisibility(View.VISIBLE);
+            if (isFacebookLinked()) {
+                mBtnFaceBook.setVisibility(View.VISIBLE);
+            }
+        } else {
+            mOtherSocial.setVisibility(View.GONE);
+        }
     }
 
     private void setupSocialPolicy() {
@@ -333,7 +371,7 @@ public class ShareActivity extends ClipPlayActivity {
                 Logger.t(TAG).d("Get response");
                 mLinkedAccounts = response.body();
                 if (checkIfNeedGetFacebookPermission()) {
-                    requestPublishPermission();
+//                    requestPublishPermission();
                 } else {
                     doShareMoment();
                 }
@@ -359,59 +397,9 @@ public class ShareActivity extends ClipPlayActivity {
         return false;
     }
 
-    private void requestPublishPermission() {
-        Logger.t(TAG).d("request publish permission");
-        LoginManager loginManager = LoginManager.getInstance();
-
-
-        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Logger.t(TAG).d("on sucess!!!");
-                sendShareTokenToServer(loginResult.getAccessToken().getToken());
-
-            }
-
-            @Override
-            public void onCancel() {
-                Logger.t(TAG).d("on cancel");
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Logger.t(TAG).d("on error");
-            }
-        });
-        loginManager.logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
 
 
 
-    }
-
-    private void sendShareTokenToServer(String token) {
-        String url = Constants.API_SHARE_ACCOUNTS;
-        Map<String, String> param = new HashMap<>();
-        param.put("provider", "facebook");
-        param.put("accessToken", token);
-
-        final JSONObject requestBody = new JSONObject(param);
-
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                doShareMoment();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        mRequestQueue.add(request);
-    }
 
 
     private void setupParallex() {
@@ -476,5 +464,24 @@ public class ShareActivity extends ClipPlayActivity {
             .show();
         mUploadDialog.setCanceledOnTouchOutside(false);
 //
+    }
+
+    public boolean isLinkedWithOtherSocial() {
+        return mLinkedAccounts == null ? false : (mLinkedAccounts.linkedAccounts.size() > 0);
+    }
+
+    public boolean isFacebookLinked() {
+        if (mLinkedAccounts == null) {
+            return false;
+        }
+
+        for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
+            if (account.provider.equals("facebook") && !TextUtils.isEmpty(account.accountName)) {
+                Logger.t(TAG).d("Linked with facebook!!");
+                return true;
+            }
+        }
+
+        return false;
     }
 }

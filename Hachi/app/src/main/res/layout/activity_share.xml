@@ -128,13 +128,15 @@
 
 
             <TextView
+                android:id="@+id/other_social"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/also_post_on"
                 android:textColor="@color/style_color_primary"
-                android:textSize="15sp"/>
+                android:textSize="15sp"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/btn_facebook"
@@ -145,7 +147,8 @@
                 android:layout_marginTop="16dp"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="@null"
-                android:src="@drawable/btn_platform_facebook"/>
+                android:src="@drawable/btn_platform_facebook"
+                android:visibility="gone"/>
 
 
         </LinearLayout>

@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.authorization;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,7 +13,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -27,15 +25,15 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2015/8/5.
@@ -50,6 +48,8 @@ public class AuthorizeActivity extends BaseActivity {
     private int mCurrentStep = STEP_SIGN_IN;
 
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
+    private LoginResult mFaceBookLoginResult;
+    private LoginResult mFaceBookPublishLoginResult;
 
     public static void launch(Activity startActivity) {
         Intent intent = new Intent(startActivity, AuthorizeActivity.class);
@@ -98,7 +98,9 @@ public class AuthorizeActivity extends BaseActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Logger.t(TAG).d("on success");
-                signUpWithFacebook(loginResult.getAccessToken());
+                mFaceBookLoginResult = loginResult;
+                requestPublishPermission();
+
             }
 
             @Override
@@ -109,6 +111,7 @@ public class AuthorizeActivity extends BaseActivity {
             @Override
             public void onError(FacebookException error) {
                 Logger.t(TAG).d("on error");
+                Snackbar.make(mFBLoginButton, R.string.login_error_facebook, Snackbar.LENGTH_SHORT).show();
             }
         });
         if (mCurrentStep == STEP_SIGN_UP) {
@@ -195,15 +198,53 @@ public class AuthorizeActivity extends BaseActivity {
         mRequestQueue.add(request);
     }
 
-    private void signUpWithFacebook(final AccessToken accessToken) {
-        Logger.t(TAG).d("get accesstoken: " + accessToken.getToken());
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + accessToken.getToken(),
+
+
+
+    private void requestPublishPermission() {
+        Logger.t(TAG).d("request publish permission");
+        LoginManager loginManager = LoginManager.getInstance();
+
+
+        loginManager.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Logger.t(TAG).d("on sucess!!!");
+
+                mFaceBookPublishLoginResult = loginResult;
+
+                sendFbToken2Server();
+
+
+            }
+
+            @Override
+            public void onCancel() {
+                Logger.t(TAG).d("on cancel");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Logger.t(TAG).d("on error");
+            }
+        });
+        loginManager.logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+    }
+
+
+
+    private void sendFbToken2Server() {
+        Logger.t(TAG).d("Send Facebook token: " + mFaceBookLoginResult.getAccessToken().getToken());
+        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + mFaceBookLoginResult.getAccessToken().getToken(),
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.t(TAG).d("Response: " + response);
+//                    sendFbPublishToken2Server();
                     hideDialog();
                     onSignInSuccessful(response);
+
                 }
             }
 
@@ -221,4 +262,31 @@ public class AuthorizeActivity extends BaseActivity {
 
         showDialog(getString(R.string.sign_in));
     }
+
+//    private void sendFbPublishToken2Server() {
+//        Logger.t(TAG).d("Send facebook publish token: " + mFaceBookPublishLoginResult.getAccessToken().getToken());
+//        String url = Constants.API_SHARE_ACCOUNTS;
+//        Map<String, String> param = new HashMap<>();
+//        param.put("provider", "facebook");
+//        param.put("accessToken", mFaceBookPublishLoginResult.getAccessToken().getToken());
+//
+//        final JSONObject requestBody = new JSONObject(param);
+//
+//        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                Logger.t(TAG).json(response.toString());
+//
+//
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Logger.t(TAG).e(error.getMessage());
+//            }
+//        });
+//
+//        mRequestQueue.add(request);
+//    }
 }
