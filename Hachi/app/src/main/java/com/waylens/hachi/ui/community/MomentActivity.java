@@ -220,8 +220,8 @@ public class MomentActivity extends BaseActivity {
         if (mFollowInfo != null && mFollowInfo.isMyFollowing) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .content(getResources().getString(R.string.unfollow) + " " + mMomentInfo.owner.userName)
-                .positiveText(android.R.string.ok)
-                .negativeText(android.R.string.cancel)
+                .positiveText(R.string.ok)
+                .negativeText(R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -777,8 +777,8 @@ public class MomentActivity extends BaseActivity {
         } else {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                     .content("Please log in!")
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .show();
             return false;
         }
@@ -808,8 +808,8 @@ public class MomentActivity extends BaseActivity {
             });
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                     .content("Please comfirm your registration in your email box")
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .show();
             return false;
         }
