@@ -335,11 +335,11 @@ public class ClientConnectFragment extends BaseFragment {
                     break;
             }
 
-            if (networkItem.signalLevel >= -30) {
+            if (networkItem.signalLevel >= -55) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
-            } else if (networkItem.signalLevel >= -60) {
+            } else if (networkItem.signalLevel >= -70) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_2);
-            } else if (networkItem.signalLevel >= -90) {
+            } else if (networkItem.signalLevel >= -85) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_3);
             } else {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_4);

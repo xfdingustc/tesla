@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="16dp"
-            android:src="@drawable/rec_info_obd_on"/>
+            android:src="@drawable/wifi_lock"/>
 
 
     </LinearLayout>

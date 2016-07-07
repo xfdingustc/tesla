@@ -43,7 +43,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/waylens_logo_140x98"
+                android:src="@drawable/waylens_logo2"
                 android:layout_marginTop="32dp"
                 android:layout_gravity="center_horizontal"
                 />

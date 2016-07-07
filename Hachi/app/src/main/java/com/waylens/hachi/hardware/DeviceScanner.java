@@ -29,7 +29,7 @@ public class DeviceScanner extends Thread {
 
     private static final String SERVICE_TYPE = "_ccam._tcp.local.";
 
-    private static final int SCAN_INTERVAL = 3000;
+    private static final int SCAN_INTERVAL = 10000;
 
     public static final String SERVICE_VIDITCAM = "ViditCam";
     public static final String SERVICE_VIDIT_STUDIO = "Vidit Studio";
