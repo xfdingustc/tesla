@@ -385,13 +385,15 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public BtDevice getObdDevice() {
-        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
         return mObdDevice;
     }
 
     public BtDevice getRemoteCtrlDevice() {
-        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
         return mRemoteCtrlDevice;
+    }
+
+    public void getIsBtEnabled() {
+        mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
     }
 
 
@@ -696,6 +698,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public void setBtEnable(boolean enable) {
         mCommunicationBus.sendCommand(CMD_CAM_BT_ENABLE, enable ? 1 : 0);
+        Logger.t(TAG).d("sent CMD_CAM_BT_ENABLE");
     }
 
     public void scanBluetoothDevices() {
@@ -1060,12 +1063,13 @@ public class VdtCamera implements VdtCameraCmdConsts {
             name = "";
         }
 
-//        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
+        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
         if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
             mObdDevice.setDevState(devState, mac, name);
         } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {
             mRemoteCtrlDevice.setDevState(devState, mac, name);
         }
+        mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_STATUS_CHANGED, null));
 
     }
 
@@ -1118,7 +1122,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void ack_CAM_BT_doBind(String p1, String p2) {
         int type = Integer.parseInt(p1);
         int result = Integer.parseInt(p2);
-        if (result == 1) {
+        if (result == 0) {
             if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
                 mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
             }

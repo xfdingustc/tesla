@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -67,6 +68,10 @@ public class BluetoothSettingActivity extends BaseActivity {
     @BindView(R.id.bt_content)
     View mBtContent;
 
+    @BindView(R.id.scan_result)
+    LinearLayout mScanrResult;
+
+
 
     @OnClick(R.id.obd_name)
     public void onObdNameClicked() {
@@ -87,13 +92,30 @@ public class BluetoothSettingActivity extends BaseActivity {
 
     @OnClick(R.id.remote_ctrl_name)
     public void onRemoteCtrlNameClicked() {
+        if (mVdtCamera.getRemoteCtrlDevice().getState() == BtDevice.BT_DEVICE_STATE_ON) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .title(R.string.unbind_bt_device)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            doUnbindDevice(mVdtCamera.getRemoteCtrlDevice());
+                        }
+                    }).show();
+
+
+        }
 
     }
 
     @OnClick(R.id.bt_switch)
     public void onBtnSwitchClicked() {
-//        Logger.t(TAG).d("bt switch is : " + mBtSwitch.isChecked());
+//      Logger.t(TAG).d("bt switch is : " + mBtSwitch.isChecked());
+        mVdtCamera.getRemoteCtrlDevice().setState(BtDevice.BT_DEVICE_STATE_UNKNOWN);
+        mVdtCamera.getObdDevice().setState(BtDevice.BT_DEVICE_STATE_UNKNOWN);
         mVdtCamera.setBtEnable(mBtSwitch.isChecked());
+        mVdtCamera.getIsBtEnabled();
         updateBtContent();
 
     }
@@ -101,6 +123,7 @@ public class BluetoothSettingActivity extends BaseActivity {
     private void updateBtContent() {
         if (mBtSwitch.isChecked()) {
             mBtContent.setVisibility(View.VISIBLE);
+            refreshBtDevices();
         } else {
             mBtContent.setVisibility(View.GONE);
         }
@@ -112,7 +135,7 @@ public class BluetoothSettingActivity extends BaseActivity {
         if (mVdtCamera == null) {
             return;
         }
-
+        mScanrResult.setVisibility(View.GONE);
         mVdtCamera.scanBluetoothDevices();
         mScanMask.setVisibility(View.VISIBLE);
     }
@@ -134,12 +157,16 @@ public class BluetoothSettingActivity extends BaseActivity {
                     }
                 }
 
+                mScanrResult.setVisibility(View.VISIBLE);
                 mRemoteCtrlDeviceListAdapter.setDeviceList(mRemoteCtrlDeviceList);
                 mObdDeviceListAdapter.setDeviceList(mObdDeviceList);
                 break;
             case BluetoothEvent.BT_DEVICE_BIND_FINISHED:
             case BluetoothEvent.BT_DEVICE_UNBIND_FINISHED:
+            case BluetoothEvent.BT_DEVICE_STATUS_CHANGED:
                 refreshBtDevices();
+                break;
+            default:
                 break;
         }
 
@@ -161,6 +188,7 @@ public class BluetoothSettingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mScanrResult.setVisibility(View.GONE);
         mEventBus.register(this);
     }
 
@@ -187,6 +215,8 @@ public class BluetoothSettingActivity extends BaseActivity {
         mRvObdDeviceList.setLayoutManager(new LinearLayoutManager(this));
         mRvRemoteCtrlList.setLayoutManager(new LinearLayoutManager(this));
 
+        mScanrResult.setVisibility(View.GONE);
+
         mObdDeviceListAdapter = new BtDeviceListAdapter(mObdDeviceList);
         mRemoteCtrlDeviceListAdapter = new BtDeviceListAdapter(mRemoteCtrlDeviceList);
 
@@ -208,17 +238,26 @@ public class BluetoothSettingActivity extends BaseActivity {
     }
 
     private void refreshBtDevices() {
+
         BtDevice obdDevice = mVdtCamera.getObdDevice();
-        if (obdDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
-            Logger.t(TAG).d("obd state: " + obdDevice.getName());
-            mObdName.setText(obdDevice.getName());
+        if (obdDevice.getName() != "") {
+            if (obdDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
+
+                mObdName.setText(obdDevice.getName() + " - " + getString(R.string.connected));
+            } else {
+                mObdName.setText(obdDevice.getName() + " - " + getString(R.string.not_connected));
+            }
         } else {
             mObdName.setText(getString(R.string.na));
         }
 
         BtDevice remoteCtrlDevice = mVdtCamera.getRemoteCtrlDevice();
-        if (remoteCtrlDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
-            mRemoteCtrlName.setText(remoteCtrlDevice.getName());
+        if (remoteCtrlDevice.getName() != "") {
+            if (remoteCtrlDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
+                mRemoteCtrlName.setText(remoteCtrlDevice.getName() + " - " + getString(R.string.connected));
+            } else {
+                mRemoteCtrlName.setText(remoteCtrlDevice.getName() + " - " + getString(R.string.not_connected));
+            }
         } else {
             mRemoteCtrlName.setText(getString(R.string.na));
         }

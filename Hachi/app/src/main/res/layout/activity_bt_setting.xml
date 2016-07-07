@@ -109,6 +109,7 @@
                 android:text="@string/scan_bluetooth_devices"/>
 
             <LinearLayout
+                android:id="@+id/scan_result"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">

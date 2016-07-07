@@ -47,6 +47,10 @@ public class BtDevice {
         }
     }
 
+    public void setState(int state) {
+        mState = state;
+    }
+
     public int getType() {
         return mType;
     }

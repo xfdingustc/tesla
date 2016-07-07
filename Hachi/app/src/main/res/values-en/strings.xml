@@ -296,4 +296,6 @@
 	<string name="cancel">CANCEL</string>
 	<string name="how_to_find_the_camera_wifi"><u>"How to find the Camera's Wi-Fi"</u></string>
 	<string name="footage">Footage</string>
+	<string name="connected">Connected</string>
+	<string name="not_connected">Not Connected</string>
 </resources>
