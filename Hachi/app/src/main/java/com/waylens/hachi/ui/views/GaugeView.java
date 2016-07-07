@@ -197,7 +197,7 @@ public class GaugeView extends FrameLayout {
                     } else {
                         state.put("psi", obdData.psi - iioPressure / 3386000);
                     }
-                    Logger.t(TAG).d(Double.toString(obdData.psi));
+//                    Logger.t(TAG).d(Double.toString(obdData.psi));
                     break;
             }
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");

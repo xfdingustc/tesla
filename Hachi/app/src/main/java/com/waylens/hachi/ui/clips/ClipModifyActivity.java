@@ -248,7 +248,7 @@ public class ClipModifyActivity extends BaseActivity {
     private void initClipTrimmer() {
         int defaultHeight = ViewUtils.dp2px(64);
         final Clip clip = getClip();
-        mClipTrimmer.setBackgroundClip(mVdbImageLoader, clip, defaultHeight);
+        mClipTrimmer.setBackgroundClip(clip, defaultHeight);
         mClipTrimmer.setEditing(true);
         mClipTrimmer.setInitRangeValues(clip.editInfo.minExtensibleValue, clip.editInfo.maxExtensibleValue);
         mClipTrimmer.setLeftValue(clip.editInfo.selectedStartValue);

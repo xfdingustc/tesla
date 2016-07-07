@@ -19,9 +19,14 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
@@ -114,12 +119,12 @@ public class VideoTrimmer extends FrameLayout {
         showController();
     }
 
-    public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, int defaultHeight) {
-        setBackgroundClip(imageLoader, clip, clip.getStartTimeMs(),
+    public void setBackgroundClip(Clip clip, int defaultHeight) {
+        setBackgroundClip(clip, clip.getStartTimeMs(),
             clip.getStartTimeMs() + clip.getDurationMs(), defaultHeight);
     }
 
-    public void setBackgroundClip(VdbImageLoader imageLoader, Clip clip, long startMs, long endMs,
+    public void setBackgroundClip(Clip clip, long startMs, long endMs,
                                   int defaultHeight) {
         if (clip == null) {
             return;
@@ -161,7 +166,7 @@ public class VideoTrimmer extends FrameLayout {
             }
             items.add(new ClipPos(clip, posTime, ClipPos.TYPE_POSTER, false));
         }
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(imageLoader, items, imgWidth, height);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(items, imgWidth, height);
         mRecyclerView.setAdapter(adapter);
         ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(0, -imgWidth / 2);
     }
@@ -253,14 +258,15 @@ public class VideoTrimmer extends FrameLayout {
         }
     }
 
-    public static class RecyclerViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
+    public class RecyclerViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         List<ClipPos> mItems;
-        VdbImageLoader mImageLoader;
+
         int mItemWidth;
         int mItemHeight;
+        private VdbRequestQueue mVdbRequestQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
 
-        public RecyclerViewAdapter(VdbImageLoader imageLoader, List<ClipPos> items, int itemWidth, int itemHeight) {
-            mImageLoader = imageLoader;
+        public RecyclerViewAdapter(List<ClipPos> items, int itemWidth, int itemHeight) {
+
             mItems = items;
             mItemWidth = itemWidth;
             mItemHeight = itemHeight;
@@ -276,7 +282,14 @@ public class VideoTrimmer extends FrameLayout {
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            mImageLoader.displayVdbImage(mItems.get(position), holder.imageView, true, mItemWidth, mItemHeight);
+            Glide.with(getContext())
+                .using(new SnipeGlideLoader(mVdbRequestQueue))
+                .load(mItems.get(position))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.icon_video_default_2)
+                .crossFade()
+                .into(holder.imageView);
+
         }
 
         @Override

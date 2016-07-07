@@ -451,10 +451,10 @@ public class ShareActivity extends ClipPlayActivity {
 
     private void doShareMoment() {
         String title = mEtMomentTitle.getEditableText().toString();
-        if (TextUtils.isEmpty(title)) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            title = "Created " + format.format(System.currentTimeMillis());
-        }
+//        if (TextUtils.isEmpty(title)) {
+//            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//            title = "Created " + format.format(System.currentTimeMillis());
+//        }
 
         String descrption = mEtMomentDescription.getEditableText().toString();
         String[] tags = new String[]{"Shanghai", "car"};

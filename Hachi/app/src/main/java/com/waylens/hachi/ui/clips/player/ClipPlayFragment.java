@@ -792,8 +792,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         @Override
         public void run() {
             int currentPos = 0;
-            if (mMediaPlayer != null && mPlayerControl != null) {
-
+            if (mMediaPlayer != null && mPlayerControl != null && mPlayerControl.isPlaying()) {
                 currentPos = getCurrentPlayingTime();
             }
 
