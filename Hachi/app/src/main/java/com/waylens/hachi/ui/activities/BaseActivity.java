@@ -171,13 +171,14 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void showDialog() {
+    public void showDialog(String title) {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             return;
         }
         mProgressDialog = new MaterialDialog.Builder(this)
+            .title(title)
             .progress(true, 0)
-            .progressIndeterminateStyle(false)
+            .progressIndeterminateStyle(true)
             .build();
 
         mProgressDialog.show();
@@ -188,6 +189,7 @@ public class BaseActivity extends AppCompatActivity {
             mProgressDialog.dismiss();
         }
     }
+
 
     protected String getServerAddress(Bundle bundle) {
         return bundle.getString(HOST_STRING);

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -210,7 +211,7 @@ public class AuthorizeActivity extends BaseActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-//                showMessage(errorInfo.msgResID);
+                Snackbar.make(mFBLoginButton, errorInfo.msgResID, Snackbar.LENGTH_SHORT).show();
                 hideDialog();
             }
         }
@@ -218,6 +219,6 @@ public class AuthorizeActivity extends BaseActivity {
         ));
 
 
-        showDialog();
+        showDialog(getString(R.string.sign_in));
     }
 }
