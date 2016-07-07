@@ -17,14 +17,11 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Response;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
@@ -35,7 +32,6 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.Moment;
 
-import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
@@ -169,7 +165,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
                 }
             })
             .positiveText(R.string.report)
-            .negativeText(android.R.string.cancel)
+            .negativeText(R.string.cancel)
             .onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -190,8 +186,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
     private void onDeleteClick(final long momentId) {
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)
             .title(R.string.delete)
-            .positiveText(android.R.string.ok)
-            .negativeText(android.R.string.cancel)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
             .onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
