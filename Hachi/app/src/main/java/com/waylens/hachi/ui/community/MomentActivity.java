@@ -13,7 +13,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -22,8 +21,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.transition.Transition;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
@@ -72,7 +69,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -130,9 +126,6 @@ public class MomentActivity extends BaseActivity {
         intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
-
-
-
 
 
     @BindView(R.id.content_root)
@@ -229,7 +222,7 @@ public class MomentActivity extends BaseActivity {
                     }
                 }).show();
         } else {
-           toggleFollowState();
+            toggleFollowState();
         }
 
 
@@ -314,7 +307,7 @@ public class MomentActivity extends BaseActivity {
         View view = getLayoutInflater().inflate(R.layout.bottom_sheet_add_comment, null);
         mNewCommentView = (EditText) view.findViewById(R.id.comment_edit);
 
-        CircleImageView avatar = (CircleImageView)view.findViewById(R.id.current_user_avatar) ;
+        CircleImageView avatar = (CircleImageView) view.findViewById(R.id.current_user_avatar);
         Glide.with(this)
             .load(mSessionManager.getAvatarUrl())
             .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -357,7 +350,6 @@ public class MomentActivity extends BaseActivity {
                 }
             }
         });
-
 
 
         mBottomSheetDialog.show();
@@ -776,10 +768,10 @@ public class MomentActivity extends BaseActivity {
             return true;
         } else {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content("Please log in!")
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .show();
+                .content("Please log in!")
+                .positiveText(R.string.ok)
+                .negativeText(R.string.cancel)
+                .show();
             return false;
         }
     }
@@ -807,10 +799,10 @@ public class MomentActivity extends BaseActivity {
                 }
             });
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content("Please comfirm your registration in your email box")
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .show();
+                .content("Please comfirm your registration in your email box")
+                .positiveText(R.string.ok)
+                .negativeText(R.string.cancel)
+                .show();
             return false;
         }
     }
