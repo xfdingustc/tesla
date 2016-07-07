@@ -6,7 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.waylens.hachi.R;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbImageLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
 import com.waylens.hachi.vdb.ClipPos;
 
 import java.util.ArrayList;
@@ -17,16 +23,16 @@ import java.util.List;
  */
 public class BannerAdapter extends PagerAdapter {
     private final Context mContext;
-    private final VdbImageLoader mImageLoader;
+
 
 //    List<ClipPos> mClipPosList = new ArrayList<>();
 
     List<ImageView> mImageViewList = new ArrayList<>();
+    private VdbRequestQueue mVdbRequestQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
 
-
-    public BannerAdapter(Context context, VdbImageLoader imageLoader) {
+    public BannerAdapter(Context context) {
         this.mContext = context;
-        this.mImageLoader = imageLoader;
+
     }
 
     public void addClipPos(ClipPos clipPos) {
@@ -34,7 +40,13 @@ public class BannerAdapter extends PagerAdapter {
         ImageView imageView = new ImageView(mContext);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(params);
-        mImageLoader.displayVdbImage(clipPos, imageView);
+        Glide.with(mContext)
+            .using(new SnipeGlideLoader(mVdbRequestQueue))
+            .load(clipPos)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.icon_video_default_2)
+            .crossFade()
+            .into(imageView);
         mImageViewList.add(imageView);
     }
 

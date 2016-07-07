@@ -20,6 +20,8 @@ import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
@@ -29,6 +31,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -584,7 +587,13 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
             ClipPos clipPos = new ClipPos(clip);
 
-            mVdbImageLoader.displayVdbImage(clipPos, iv);
+            Glide.with(getContext())
+                .using(new SnipeGlideLoader(mVdbRequestQueue))
+                .load(clipPos)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.icon_video_default_1)
+                .crossFade()
+                .into(iv);
 
             return iv;
         }

@@ -487,7 +487,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     private void setupCoverBanner() {
-        mBannerAdapter = new BannerAdapter(getActivity(), mVdbImageLoader);
+        mBannerAdapter = new BannerAdapter(getActivity());
         final ClipSet clipSet = getClipSet();
         for (int i = 0; i < clipSet.getCount(); i++) {
             Clip clip = clipSet.getClip(i);
@@ -606,7 +606,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     public void showThumbnail(ClipPos clipPos) {
-        if (clipPos != null && mVdbImageLoader != null) {
+        if (clipPos != null) {
             if (mPreviousShownClipPos != null && mPreviousShownClipPos.getClipId().equals(clipPos.getClipId())) {
                 long timeDiff = Math.abs(mPreviousShownClipPos.getClipTimeMs() - clipPos.getClipTimeMs());
                 if (timeDiff < 1000) {

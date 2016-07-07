@@ -34,7 +34,7 @@ public class BaseFragment extends Fragment {
 
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
-    protected VdbImageLoader mVdbImageLoader;
+
 
     protected HachiApi mHachi = HachiService.createHachiApiService();
 
@@ -95,7 +95,7 @@ public class BaseFragment extends Fragment {
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
         if (mVdtCamera != null) {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();
-            mVdbImageLoader = VdbImageLoader.getImageLoader(mVdbRequestQueue);
+
         }
     }
 
