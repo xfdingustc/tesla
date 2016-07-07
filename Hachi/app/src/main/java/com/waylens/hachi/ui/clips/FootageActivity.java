@@ -230,6 +230,7 @@ public class FootageActivity extends ClipPlayActivity {
     @Override
     public void setupToolbar() {
         if (getToolbar() != null) {
+            getToolbar().setTitle(R.string.footage);
             getToolbar().setNavigationIcon(R.drawable.navbar_close);
             getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
                 @Override

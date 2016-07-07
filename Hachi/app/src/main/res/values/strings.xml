@@ -208,7 +208,6 @@
 	<string name="connect_your_home_wifi">Connect to your preferred WiFi network</string>
 	<string name="storage">Storage</string>
 	<string name="manually_select_wifi_network"><u>Option 2: A More Manual Way to Connect</u></string>
-	<string name="how_to_find_the_camera_wifi"><u>"How to find the Camera's Wi-Fi"</u></string>
 	<string name="connectivity">Connectivity</string>
 	<string name="power">Power</string>
 	<string name="firmware">Firmware</string>
@@ -292,4 +291,9 @@
 	<string name="welcome33">best moments</string>
 	<string name="welcome34">of your footage and share</string>
 	<string name="welcome35">with the community</string>
+	<string name="no_clould_space">Free uploading space of this week has been used up!</string>
+	<string name="ok">OK</string>
+	<string name="cancel">CANCEL</string>
+	<string name="how_to_find_the_camera_wifi"><u>"How to find the Camera's Wi-Fi"</u></string>
+	<string name="footage">Footage</string>
 </resources>
