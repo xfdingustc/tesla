@@ -340,7 +340,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                         if (getClipSet().getCount() == 0) {
                             MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
                                 .content(R.string.no_clip_selected)
-                                .positiveText(android.R.string.ok)
+                                .positiveText(R.string.ok)
                                 .show();
                         } else {
                             ShareActivity.launch(EnhanceActivity.this, mPlaylistEditor.getPlaylistId(), getAudioID());
