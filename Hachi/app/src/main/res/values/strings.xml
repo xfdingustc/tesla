@@ -108,7 +108,7 @@
 	<string name="msg_no_space">Not enough space on the Micro-SD Card</string>
 	<string name="msg_video_too_long">Video clip is too long to download</string>
 	<string name="musics">Music</string>
-	<string name="my_feed">My Feed</string>
+	<string name="my_feed">News Feed</string>
 	<string name="new_comments_notification">New comments on moment</string>
 	<string name="new_password">New Password</string>
 	<string name="next">Next</string>
@@ -176,7 +176,7 @@
 	<string name="slogan">DISCOVER THE THRILL OF DRIVING</string>
 	<string name="smart_remix">Smart Remix</string>
 	<string name="speed">Speed</string>
-	<string name="staff_picks">Staff picks</string>
+	<string name="staff_picks">Explore</string>
 	<string name="step1">1. Scan the QR code on your camera</string>
 	<string name="step2">"2. Connect your phone to the camera's Hotspot as a Wi-Fi client"</string>
 	<string name="step3">"3. Connect the camera to your preferred Wi-Fi network"</string>
