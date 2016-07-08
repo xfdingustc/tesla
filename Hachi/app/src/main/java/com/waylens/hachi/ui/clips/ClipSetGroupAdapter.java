@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
@@ -34,6 +35,7 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2016/2/26.
  */
 public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final String TAG = ClipSetGroupAdapter.class.getSimpleName();
     private final int mLayoutRes;
     private List<ClipSet> mClipSetGroup;
     private final Context mContext;
