@@ -298,7 +298,7 @@ public class MomentActivity extends BaseActivity {
 
 
         queryMomentInfo();
-
+//
     }
 
 
@@ -444,6 +444,10 @@ public class MomentActivity extends BaseActivity {
                         .crossFade()
                         .into(mUserAvatar);
 
+                    if (isDestroyed()) {
+                        Logger.t(TAG).d("activity is destroyed, so we must return here");
+                        return;
+                    }
                     MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
 
                     getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
