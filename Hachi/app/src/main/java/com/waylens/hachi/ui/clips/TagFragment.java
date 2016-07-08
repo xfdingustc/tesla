@@ -434,17 +434,11 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
     private void showRootViewChild(int child) {
-        int displayChild = mRootViewAnimator.getDisplayedChild();
         mRootViewAnimator.setDisplayedChild(child);
-//        if (showClipSet == true && displayChild == 0) {
-//            mRootViewSwitcher.showNext();
-//        } else if (showClipSet == false && displayChild == 1) {
-//            mRootViewSwitcher.showPrevious();
-//        }
     }
 
     private void doGetBufferedClips() {
-        if (mVdbRequestQueue == null) {
+        if (true || mVdbRequestQueue == null) {
             return;
         }
 
