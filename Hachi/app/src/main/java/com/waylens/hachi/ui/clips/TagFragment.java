@@ -25,6 +25,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.eventbus.events.MultiSelectEvent;
 import com.waylens.hachi.session.SessionManager;
@@ -44,6 +45,7 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.Utils;
 import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.vdb.ClipActionInfo;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.ClipSetManager;
@@ -194,6 +196,13 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 initVdtCamera();
                 initViews(true);
                 break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMarkLiveMsg(MarkLiveMsgEvent event) {
+        if (event.getClipActionInfo().action == ClipActionInfo.CLIP_ACTION_CREATED) {
+           initViews(false);
         }
     }
 

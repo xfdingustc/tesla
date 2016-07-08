@@ -112,6 +112,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     boolean mIsFullScreen;
 
+    private boolean mIsActivityStopped = false;
+
 
     int mPausePosition;
 
@@ -321,13 +323,14 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
-
+        mIsActivityStopped = false;
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mTimer.cancel();
+        mIsActivityStopped = true;
     }
 
 
@@ -386,6 +389,10 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private void openVideo(boolean playWhenReady) {
         if (mMoment.moment.videoUrl == null || mSurfaceView == null || mSurfaceHolder == null) {
             Logger.t(TAG).d("source: " + mMoment.moment.videoUrl + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
+            return;
+        }
+
+        if (mIsActivityStopped) {
             return;
         }
 

@@ -3,7 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/my_account"
-        android:icon="@drawable/tab_social_n"
+        android:icon="@drawable/navbar_me_n"
         android:title="avatar_confirm"
         app:showAsAction="always"/>
 </menu>
