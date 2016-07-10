@@ -110,6 +110,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private boolean playerNeedsPrepare;
 
+    private boolean mNeedSendPlayCompleteEvent = false;
+
     @BindView(R.id.surface_view)
     SurfaceView mSurfaceView;
 
@@ -214,6 +216,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
         final ClipSetPos clipSetPos = event.getClipSetPos();
+//        Logger.t(TAG).d("Receive ClipSetPosChangeEvent: " + event.getClipSetPos().getClipTimeMs());
         boolean refreshThumbnail = false;
 //        Logger.t(TAG).d("broadcast: " + event.getBroadcaster());
         if (!event.getBroadcaster().equals(TAG)) {
@@ -551,6 +554,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         }
         mBtnPlayPause.setImageResource(R.drawable.playbar_play);
 //        mMultiSegSeekbar.reset();
+        mNeedSendPlayCompleteEvent = true;
+
     }
 
 
@@ -791,12 +796,16 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         @Override
         public void run() {
-            int currentPos = 0;
             if (mMediaPlayer != null && mPlayerControl != null && mPlayerControl.isPlaying()) {
-                currentPos = getCurrentPlayingTime();
+                refreshProgressBar(getCurrentPlayingTime());
             }
 
-            refreshProgressBar(currentPos);
+            if (mNeedSendPlayCompleteEvent) {
+                refreshProgressBar(0);
+                mNeedSendPlayCompleteEvent = false;
+            }
+
+
         }
 
         private void refreshProgressBar(final int currentPos) {
