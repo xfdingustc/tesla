@@ -248,8 +248,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 initViews(false);
             }
         });
-        showRootViewChild(ROOT_CHILD_CLIPSET);
-        initViews(true);
+
         return view;
     }
 
@@ -264,6 +263,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     @Override
     public void onStart() {
         super.onStart();
+        showRootViewChild(ROOT_CHILD_CLIPSET);
+        initViews(true);
         mEventBus.register(this);
     }
 

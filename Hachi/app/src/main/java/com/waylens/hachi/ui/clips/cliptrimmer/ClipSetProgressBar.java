@@ -37,10 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * VideoPlayerProgressBar
- * Created by Richard on 9/21/15.
- */
+
 public class ClipSetProgressBar extends FrameLayout {
     private static final String TAG = ClipSetProgressBar.class.getSimpleName();
     private RecyclerView mRecyclerView;
@@ -50,7 +47,7 @@ public class ClipSetProgressBar extends FrameLayout {
     private LinearLayoutManager mLayoutManager;
 
     private RecyclerView.OnScrollListener mScrollListener;
-    private OnBookmarkClickListener mBookmarkClickListener;
+
 
 
     private int mScreenWidth;
@@ -117,14 +114,9 @@ public class ClipSetProgressBar extends FrameLayout {
 
     }
 
-    public interface OnBookmarkClickListener {
-        void onBookmarkClick(Clip clip);
-    }
 
+    public void init(VdbRequestQueue vdbRequestQueue) {
 
-    public void init(VdbRequestQueue vdbRequestQueue, OnBookmarkClickListener listener) {
-
-        mBookmarkClickListener = listener;
         mScreenWidth = getScreenWidth();
 
         mRecyclerView = new RecyclerView(getContext());

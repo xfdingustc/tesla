@@ -184,12 +184,7 @@ public class FootageActivity extends ClipPlayActivity {
             }
         });
         setupToolbar();
-        mClipSetProgressBar.init(mVdbRequestQueue, new ClipSetProgressBar.OnBookmarkClickListener() {
-            @Override
-            public void onBookmarkClick(Clip clip) {
-
-            }
-        });
+        mClipSetProgressBar.init(mVdbRequestQueue);
         refreshFootageClipSet();
 
     }
