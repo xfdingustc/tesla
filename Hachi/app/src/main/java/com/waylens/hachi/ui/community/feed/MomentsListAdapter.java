@@ -106,7 +106,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
             holder.title.setVisibility(View.GONE);
         }
 
-        holder.userName.setText(moment.owner.userName + " • " + mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+        if (!TextUtils.isEmpty(moment.owner.userName)) {
+            holder.userName.setText(moment.owner.userName + " • " + mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+        } else {
+            holder.userName.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+        }
+
+
         Glide.with(mContext)
             .load(moment.thumbnail)
             .diskCacheStrategy(DiskCacheStrategy.ALL)

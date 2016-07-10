@@ -349,6 +349,7 @@ public class UserProfileActivity extends BaseActivity {
         Glide.with(this)
             .load(mUserInfo.avatarUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.menu_profile_photo_default)
             .crossFade()
             .into(civUserAvatar);
 
