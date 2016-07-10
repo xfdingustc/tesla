@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:background="?attr/defaultBgColorDark"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools">
 
     <com.waylens.hachi.ui.views.RevealBackgroundView
         android:id="@+id/reveal_bg"
@@ -20,14 +20,14 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:background="?attr/defaultBgColor"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/collapsingToolbarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:contentScrim="?attr/colorPrimary"
+                app:contentScrim="?attr/defaultBgColor"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 
@@ -52,6 +52,7 @@
                         android:layout_height="128dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="24dp"
+                        tools:src="@drawable/menu_profile_photo_default"
                         app:civ_border_color="@color/app_text_color_primary"
                         app:civ_border_width="2dp"/>
 

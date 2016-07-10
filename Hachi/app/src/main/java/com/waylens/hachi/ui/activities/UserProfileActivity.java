@@ -185,7 +185,7 @@ public class UserProfileActivity extends BaseActivity {
                                 }
                             })
                             .positiveText(R.string.report)
-                            .negativeText(android.R.string.cancel)
+                            .negativeText(R.string.cancel)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -350,7 +350,7 @@ public class UserProfileActivity extends BaseActivity {
             .load(mUserInfo.avatarUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
+            .dontAnimate()
             .into(civUserAvatar);
 
         mToolbar.setTitle(mUserInfo.displayName);
