@@ -186,6 +186,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     @OnClick(R.id.video_surface)
     public void onSurfaceClicked() {
 //        onBtnPlayClicked();
+        if (mMomentPlayInfo == null || mMomentPlayInfo.videoUrl == null) {
+            return;
+        }
         showControllers();
     }
 

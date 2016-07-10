@@ -61,7 +61,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp">
+        android:paddingRight="8dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/text_video_time"
