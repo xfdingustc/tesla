@@ -152,6 +152,15 @@ class Bar {
                 return new ClipSetPos(i, clip.editInfo.selectedStartValue + timeOffset);
             }
         }
+
+        for (int i = 0 ; i < mLineList.size() - 1; i++) {
+            Line line = mLineList.get(i);
+            Line nextLine = mLineList.get(i + 1);
+            if (line.endX <= x && x <= nextLine.endX) {
+                Clip clip = mClipList.get(i + 1);
+                return new ClipSetPos(i + 1, clip.editInfo.selectedStartValue);
+            }
+        }
         return null;
     }
 
