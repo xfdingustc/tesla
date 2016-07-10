@@ -86,6 +86,7 @@ public class ClipPlayActivity extends BaseActivity {
             layoutParams.height = mOriginalHeight;
 
         }
+
     }
 
 

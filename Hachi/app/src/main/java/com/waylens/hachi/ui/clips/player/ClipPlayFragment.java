@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.clips.player;
 
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -89,8 +90,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private VdbUrl mVdbUrl;
 
     private RawDataLoader mRawDataLoader;
-
-    private boolean mIsFullScreen = false;
 
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
@@ -187,31 +186,31 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullscreenClicked() {
-        mIsFullScreen = !mIsFullScreen;
-        if (mIsFullScreen) {
-
+        if (!isFullScreen()) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (isFullScreen()) {
             mBtnFullscreen.setImageResource(R.drawable.screen_narrow);
-
             mFragmentView.removeView(mControlPanel);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.BOTTOM;
             mMediaWindow.addView(mControlPanel, params);
-
-
         } else {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
             mMediaWindow.removeView(mControlPanel);
+            mFragmentView.removeView(mControlPanel);
             mFragmentView.addView(mControlPanel);
-
             mBtnFullscreen.setImageResource(R.drawable.screen_full);
         }
-        ((BaseActivity) getActivity()).setImmersiveMode(mIsFullScreen);
-
+        ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
@@ -540,6 +539,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private void updateButtonVisibilities() {
     }
 
+
+
     private void releasePlayer() {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
@@ -727,14 +728,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-    public void setUrlProvider(UrlProvider urlProvider) {
-        mUrlProvider = urlProvider;
-        if (mUrlProvider instanceof ClipUrlProvider) {
-            mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0).getStartTimeMs(), mVdbUrl);
-        } else {
-            mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
-        }
-    }
+
 
 
     public void setUrlProvider(UrlProvider urlProvider, long startTime) {
@@ -790,6 +784,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private void updateProgressTextView(long currentPosition, long duration) {
         String timeText = DateUtils.formatElapsedTime(currentPosition / 1000) + "/" + DateUtils.formatElapsedTime(duration / 1000);
         mTvProgress.setText(timeText);
+    }
+
+    private boolean isFullScreen() {
+        int orientation = getActivity().getRequestedOrientation();
+        return orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
     }
 
     public class UpdatePlayTimeTask extends TimerTask {
