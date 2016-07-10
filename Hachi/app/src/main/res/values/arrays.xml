@@ -148,7 +148,7 @@
 
     <string-array name="social_privacy_value" translatable="false">
         <item>PUBLIC</item>
-        <item>FOLLOWERS</item>
+        <item>PROTECT</item>
         <item>PRIVATE</item>
     </string-array>
 

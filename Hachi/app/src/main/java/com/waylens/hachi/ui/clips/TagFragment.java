@@ -172,6 +172,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 break;
             case -1:
                 toggleMultiMode(false);
+                mRefreshLayout.setEnabled(true);
                 break;
             default:
                 break;
@@ -355,6 +356,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //                }
 
                 mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
+                mRefreshLayout.setEnabled(false);
             }
         });
 

@@ -445,12 +445,12 @@ public class ShareActivity extends ClipPlayActivity {
 //        }
 
         String descrption = mEtMomentDescription.getEditableText().toString();
-        String[] tags = new String[]{"Shanghai", "car"};
+        String[] tags = new String[]{};
 
         JSONObject gaugeSettings = null;
 
 
-        Logger.t(TAG).d("share title: " + title);
+        Logger.t(TAG).d("mSocialPrivacy: " + mSocialPrivacy);
 
         LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked);
         JobManager jobManager = BgJobManager.getManager();
