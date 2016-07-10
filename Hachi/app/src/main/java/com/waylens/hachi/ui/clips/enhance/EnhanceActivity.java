@@ -351,7 +351,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                         new MaterialDialog.Builder(EnhanceActivity.this)
                             .title(R.string.download)
                             .items(R.array.download_resolution)
-                            .itemsCallbackSingleChoice(2, new MaterialDialog.ListCallbackSingleChoice() {
+                            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                                 @Override
                                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 //                            showToast(which + ": " + text);
