@@ -158,8 +158,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             case R.id.menu_to_delete:
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .content(R.string.delete_bookmark_confirm)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
