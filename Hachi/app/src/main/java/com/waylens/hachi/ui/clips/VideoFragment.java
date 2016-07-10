@@ -51,6 +51,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
                     return true;
                 }
             });
+            getToolbar().setTitle(R.string.select);
             getToolbar().setNavigationIcon(R.drawable.navbar_close);
             getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -94,6 +95,7 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
+        getToolbar().setTitle(null);
         getToolbar().getMenu().clear();
 //        getToolbar().inflateMenu(R.menu.menu_smart_remix);
 //        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
