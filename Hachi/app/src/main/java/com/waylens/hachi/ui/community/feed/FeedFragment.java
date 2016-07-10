@@ -66,7 +66,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public static final int FEED_TAG_MY_FEED = 0;
     public static final int FEED_TAG_ME = 1;
     public static final int FEED_TAG_LATEST = 2;
-    public static final int FEED_TAG_LIKES = 3;
     public static final int FEED_TAG_STAFF_PICKS = 4;
     public static final int FEED_TAG_ALL = 5;
 
@@ -129,7 +128,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onStart() {
         super.onStart();
-        Logger.t(TAG).d("onStart is calling");
+//        Logger.t(TAG).d("onStart is calling");
 //        Logger.t(TAG).d(Integer.toString(mFeedTag));
 //        Logger.t(TAG).d(Boolean.toString(isLoginRequired()));
 //        Logger.t(TAG).d(Boolean.toString(SessionManager.getInstance().isLoggedIn()));
@@ -169,6 +168,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             mViewAnimator.setDisplayedChild(CHILD_LOADING_PROGRESS);
         }
 
+        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
+            android.R.color.holo_orange_light, android.R.color.holo_red_light);
         return view;
     }
 
@@ -212,8 +213,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 return TAG_REQUEST_MY_FEED;
             case FEED_TAG_ME:
                 return TAG_REQUEST_ME;
-            case FEED_TAG_LIKES:
-                return TAG_REQUEST_MY_LIKE;
             case FEED_TAG_STAFF_PICKS:
                 return TAG_REQUEST_STAFF_PICKS;
             default:
@@ -232,9 +231,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 break;
             case FEED_TAG_LATEST:
                 url = Constants.API_MOMENTS;
-                break;
-            case FEED_TAG_LIKES:
-                url = Constants.API_MOMENTS_MY_LIKE;
                 break;
             case FEED_TAG_STAFF_PICKS:
                 url = Constants.API_MOMENTS_FEATURED;
@@ -335,8 +331,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             case FEED_TAG_MY_FEED:
                 return true;
             case FEED_TAG_ME:
-                return true;
-            case FEED_TAG_LIKES:
                 return true;
             case FEED_TAG_STAFF_PICKS:
                 return false;

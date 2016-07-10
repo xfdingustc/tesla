@@ -203,10 +203,9 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMarkLiveMsg(MarkLiveMsgEvent event) {
         if (event.getClipActionInfo().action == ClipActionInfo.CLIP_ACTION_CREATED) {
-           initViews(false);
+            initViews(false);
         }
     }
-
 
 
     public static TagFragment newInstance(int clipSetType) {
@@ -236,6 +235,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         if (mIsAddMore) {
             setHasOptionsMenu(true);
         }
+
     }
 
     @Nullable
@@ -243,6 +243,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_tagged_clip, savedInstanceState);
         //setupClipSetGroup();
+        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
+            android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -295,8 +297,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
-
-
     private void doDeleteSelectedClips() {
         ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
         final int toDeleteClipCount = selectedList.size();
@@ -322,8 +322,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             mVdbRequestQueue.add(request);
         }
     }
-
-
 
 
     private void setupClipSetGroup() {
@@ -386,12 +384,12 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         final int finalFlag = flag;
         final int finalAttr = attr;
 
-        Observable.create(new Observable.OnSubscribe<ClipSet>(){
+        Observable.create(new Observable.OnSubscribe<ClipSet>() {
 
             @Override
             public void call(Subscriber<? super ClipSet> subscriber) {
                 VdbRequestFuture<ClipSet> requestFuture = VdbRequestFuture.newFuture();
-                ClipSetExRequest request = new ClipSetExRequest(mClipSetType, finalFlag, finalAttr,requestFuture, requestFuture);
+                ClipSetExRequest request = new ClipSetExRequest(mClipSetType, finalFlag, finalAttr, requestFuture, requestFuture);
                 mVdbRequestQueue.add(request);
                 ClipSet clipSet;
                 try {
@@ -406,7 +404,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<ClipSet>(){
+            .subscribe(new Observer<ClipSet>() {
 
                 @Override
                 public void onCompleted() {
@@ -440,7 +438,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                     }
                 }
             });
-
 
 
     }
@@ -556,8 +553,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             AuthorizeActivity.launch(getActivity());
         }
     }
-
-
 
 
     private class BufferClipAdapter extends BaseAdapter {
