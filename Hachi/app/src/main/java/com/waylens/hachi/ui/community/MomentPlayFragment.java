@@ -110,12 +110,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
 
 
-    boolean mIsFullScreen;
+    private boolean mIsFullScreen;
 
     private boolean mIsActivityStopped = false;
 
 
-    int mPausePosition;
+    private int mPausePosition;
 
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
@@ -334,6 +334,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         super.onStop();
         mTimer.cancel();
         mIsActivityStopped = true;
+        if (mMediaPlayer != null && mPlayerControl != null) {
+            mPlayerControl.pause();
+        }
     }
 
 
