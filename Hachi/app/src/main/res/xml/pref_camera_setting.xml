@@ -31,7 +31,7 @@
         <Preference
             android:key="bookmark"
             android:layout="@layout/preference_item"
-            android:title="@string/bookmark"/>
+            android:title="@string/highlights"/>
 
 
 
@@ -53,10 +53,10 @@
             android:title="@string/connectivity"/>
 
 
-        <Preference
-            android:key="power"
-            android:layout="@layout/preference_item"
-            android:title="@string/power"/>
+        <!--<Preference-->
+            <!--android:key="power"-->
+            <!--android:layout="@layout/preference_item"-->
+            <!--android:title="@string/power"/>-->
 
     </PreferenceCategory>
 
