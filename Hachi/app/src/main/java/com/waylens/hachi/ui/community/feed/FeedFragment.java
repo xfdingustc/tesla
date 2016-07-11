@@ -39,9 +39,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 
-/**
- * Created by Xiaofei on 2015/8/4.
- */
 public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
     Refreshable, FragmentNavigator {
     private static final String TAG = FeedFragment.class.getSimpleName();
@@ -64,6 +61,18 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public static final int FEED_TAG_STAFF_PICKS = 4;
     public static final int FEED_TAG_ALL = 5;
 
+
+    private MomentsListAdapter mAdapter;
+
+    private RequestQueue mRequestQueue;
+
+    private LinearLayoutManager mLinearLayoutManager;
+
+
+    int mCurrentCursor;
+
+    private int mFeedTag;
+
     @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
 
@@ -79,16 +88,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         AuthorizeActivity.launchForResult(getActivity(), MainActivity.REQUEST_CODE_SIGN_UP_FROM_MOMENTS);
     }
 
-    MomentsListAdapter mAdapter;
 
-    RequestQueue mRequestQueue;
-
-    LinearLayoutManager mLinearLayoutManager;
-
-
-    int mCurrentCursor;
-
-    private int mFeedTag;
 
 
     public static FeedFragment newInstance(int tag) {

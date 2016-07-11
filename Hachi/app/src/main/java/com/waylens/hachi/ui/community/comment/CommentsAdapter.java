@@ -212,7 +212,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (mComments == null) {
             mComments = new ArrayList<>();
         }
-        int index = commentList.size() - 1;
 
         mHasMore = hasMore;
 

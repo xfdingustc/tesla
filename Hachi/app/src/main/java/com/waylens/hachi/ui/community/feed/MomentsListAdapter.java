@@ -150,7 +150,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
                         onReportClick(moment.id);
                         break;
                     case R.id.delete:
-                        onDeleteClick(moment.id);
+                        onDeleteClick(moment.id, position);
                         break;
 
                 }
@@ -189,7 +189,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
     }
 
 
-    private void onDeleteClick(final long momentId) {
+    private void onDeleteClick(final long momentId, final int position) {
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)
             .title(R.string.delete)
             .positiveText(R.string.ok)
@@ -197,9 +197,12 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
             .onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    mMoments.remove(position);
+                    notifyItemRangeRemoved(position, 1);
                     doDeleteMoment(momentId);
                 }
             }).show();
+
     }
 
 
