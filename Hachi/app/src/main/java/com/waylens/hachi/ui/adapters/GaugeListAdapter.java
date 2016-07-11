@@ -62,6 +62,7 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableGauge(holder, isChecked);
+                gaugeItem.isEnabled = isChecked;
                 if (mListener != null) {
                     mListener.onGaugeItemChanged(gaugeItem);
                 }

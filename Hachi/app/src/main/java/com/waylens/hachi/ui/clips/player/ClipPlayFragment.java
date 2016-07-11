@@ -27,6 +27,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.ClipEditEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
@@ -436,6 +437,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
+        for (GaugeInfoItem gaugeInfoItem : GaugeSettingManager.getManager().getSetting()) {
+            mWvGauge.updateGaugeSetting(gaugeInfoItem);
+        }
+        mWvGauge.setEnhanceMode();
         mEventBus.register(this);
         mEventBus.register(mMultiSegSeekbar);
         mEventBus.register(mWvGauge);
@@ -792,7 +797,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         }
         return currentPos;
     }
-
 
     private void updateProgressTextView(long currentPosition, long duration) {
         String timeText = DateUtils.formatElapsedTime(currentPosition / 1000) + "/" + DateUtils.formatElapsedTime(duration / 1000);

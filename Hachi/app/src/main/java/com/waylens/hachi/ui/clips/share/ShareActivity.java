@@ -42,12 +42,14 @@ import com.rest.response.LinkedAccounts;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
+import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
@@ -55,6 +57,7 @@ import com.waylens.hachi.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -447,10 +450,10 @@ public class ShareActivity extends ClipPlayActivity {
         String descrption = mEtMomentDescription.getEditableText().toString();
         String[] tags = new String[]{};
 
-        JSONObject gaugeSettings = null;
+        Map<String, String> gaugeSettings = GaugeSettingManager.getManager().getGaugeSettingMap();
 
 
-        Logger.t(TAG).d("mSocialPrivacy: " + mSocialPrivacy);
+        Logger.t(TAG).d("share title: " + title);
 
         LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked);
         JobManager jobManager = BgJobManager.getManager();

@@ -75,6 +75,12 @@ public class GaugeView extends FrameLayout {
         mIsOdbGaugeShow = false;
     }
 
+    public void setEnhanceMode() {
+        mIsGpsGaugeShow = true;
+        mIsIioGaugeShow = true;
+        mIsOdbGaugeShow = true;
+    }
+
 
 
     @Subscribe
@@ -136,7 +142,7 @@ public class GaugeView extends FrameLayout {
         mWebView.loadUrl("javascript:setTheme('" + theme + "')");
     }
 
-    private void updateGaugeSetting(GaugeInfoItem item) {
+    public void updateGaugeSetting(GaugeInfoItem item) {
         String jsApi = "javascript:setGauge('" + item.title + "',";
 
         if (!item.isEnabled) {

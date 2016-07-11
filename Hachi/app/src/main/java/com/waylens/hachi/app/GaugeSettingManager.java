@@ -1,11 +1,20 @@
 package com.waylens.hachi.app;
 
+import android.support.annotation.NonNull;
+
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.utils.PreferenceUtils;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Xiaofei on 2016/5/4.
@@ -27,7 +36,6 @@ public class GaugeSettingManager  {
         "middle",
         "large",
     };
-
 
     public void saveSetting(GaugeInfoItem item) {
         PreferenceUtils.putString(item.title, item.getOption());
@@ -55,5 +63,23 @@ public class GaugeSettingManager  {
 
     public String getTheme() {
         return PreferenceUtils.getString("theme", "default");
+    }
+
+    public Map<String, String> getGaugeSettingMap() {
+        Map<String, String> gaugeSettingMap = new HashMap<String, String>();
+        gaugeSettingMap.put("theme", this.getTheme());
+        for (GaugeInfoItem gaugeInfoItem : this.getSetting()) {
+            String option = gaugeInfoItem.getOption();
+            String value;
+            if (!gaugeInfoItem.isEnabled) {
+                value = "";
+            } else {
+                value = gaugeInfoItem.getOption().toUpperCase().substring(0, 1);
+
+            }
+            gaugeSettingMap.put(gaugeInfoItem.getJSParam(), value);
+            Logger.d(gaugeInfoItem.getJSParam() + ":" + value);
+        }
+        return gaugeSettingMap;
     }
 }

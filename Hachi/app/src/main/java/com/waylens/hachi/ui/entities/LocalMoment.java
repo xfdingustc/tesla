@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Richard on 2/19/16.
@@ -29,7 +30,7 @@ public class LocalMoment implements Serializable {
 
     public int audioID;
 
-    public JSONObject gaugeSettings;
+    public Map<String, String> gaugeSettings;
 
     public ArrayList<Segment> mSegments = new ArrayList<>();
 
@@ -45,7 +46,7 @@ public class LocalMoment implements Serializable {
     public boolean isFbShare;
 
 
-    public LocalMoment(int playlistId, String title, String description, String[] tags, String accessLevel, int audioID, JSONObject gaugeSettings, boolean isFbShare) {
+    public LocalMoment(int playlistId, String title, String description, String[] tags, String accessLevel, int audioID, Map<String, String> gaugeSettings, boolean isFbShare) {
         this.playlistId = playlistId;
         this.title = title;
         this.description = description;
