@@ -112,7 +112,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 .load(comment.author.avatarUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.menu_profile_photo_default)
-                .crossFade()
+                .dontAnimate()
                 .into(viewHolder.avatarView);
             viewHolder.tvUserName.setText(comment.author.userName);
             viewHolder.commentContentViews.setText(comment.toSpannable());

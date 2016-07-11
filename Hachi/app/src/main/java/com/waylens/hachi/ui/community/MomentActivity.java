@@ -447,7 +447,7 @@ public class MomentActivity extends BaseActivity {
             .load(mSessionManager.getAvatarUrl())
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
+            .dontAnimate()
             .into(mCurrentUserAvatar);
 
 
@@ -455,7 +455,7 @@ public class MomentActivity extends BaseActivity {
             .load(mMomentInfo.owner.avatarUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
+            .dontAnimate()
             .into(mUserAvatar);
 
         if (isDestroyed()) {
