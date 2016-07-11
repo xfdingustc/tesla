@@ -494,7 +494,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    void showProgress() {
+    private void showProgress() {
         if (mMediaPlayer == null) {
             return;
         }
@@ -514,7 +514,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    void onLoadRawDataSuccessfully() {
+    private void onLoadRawDataSuccessfully() {
         mRawDataState = RAW_DATA_STATE_READY;
         Logger.t(TAG).d("Raw data load finished");
         mProgressLoading.setVisibility(View.GONE);
@@ -525,7 +525,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    void onLoadRawDataError(String msg) {
+    private void onLoadRawDataError(String msg) {
         Logger.t(TAG).d("msg: " + msg);
         mRawDataState = RAW_DATA_STATE_ERROR;
         mProgressLoading.setVisibility(View.GONE);

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="48dp">
+              android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/current_user_avatar"
@@ -13,7 +13,7 @@
     <EditText
         android:id="@+id/comment_edit"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:textColor="@color/material_grey_700"/>
@@ -21,7 +21,7 @@
     <com.waylens.hachi.ui.views.SendCommentButton
         android:id="@+id/btn_send"
         android:layout_width="72dp"
-        android:layout_height="match_parent"
+        android:layout_height="32dp"
         android:layout_margin="8dp"
         android:background="@drawable/btn_send_comment"
         android:elevation="4dp"

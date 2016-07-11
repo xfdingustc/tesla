@@ -312,7 +312,7 @@ public class MomentActivity extends BaseActivity {
             .load(mSessionManager.getAvatarUrl())
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
+            .dontAnimate()
             .into(avatar);
 
 
