@@ -166,7 +166,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         if (getClipSet().getCount() == 0) {
             MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .content(R.string.no_clip_selected)
-                .positiveText(android.R.string.ok)
+                .positiveText(R.string.ok)
                 .show();
             return;
         }
@@ -240,6 +240,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        Logger.t(TAG).d("on Clip Set chang event clip count: " + getClipSet().getCount());
         releasePlayer();
         mBtnPlayPause.setImageResource(R.drawable.playbar_play);
         updateProgressTextView(0, getClipSet().getTotalLengthMs());
@@ -247,6 +248,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mClipCover.setVisibility(View.INVISIBLE);
         } else {
             mClipCover.setVisibility(View.VISIBLE);
+            ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
+            setClipSetPos(clipSetPos, true);
         }
     }
 

@@ -89,7 +89,7 @@ public class ClipsEditView extends LinearLayout {
 
     @Subscribe
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
-//        Logger.t(TAG).d("clip set change");
+        Logger.t(TAG).d("clip set change: " + getClipSet().getCount());
         mClipCoverGridAdapter.notifyDataSetChanged();
         updateClipCount(getClipSet().getCount());
     }
@@ -326,7 +326,7 @@ public class ClipsEditView extends LinearLayout {
         }
     }
 
-    void exitClipEditing() {
+    private void exitClipEditing() {
         if (mSelectedPosition == -1) {
             return;
         }
@@ -337,12 +337,12 @@ public class ClipsEditView extends LinearLayout {
         internalOnExitEditing();
     }
 
-    void updateClipCount(int clipCount) {
+    private void updateClipCount(int clipCount) {
         mClipsCountView.setText(getResources().getQuantityString(
             R.plurals.numbers_of_clips, clipCount, clipCount));
     }
 
-    void layoutTransition(VH holder, boolean isSelected) {
+    private void layoutTransition(ClipViewHolder holder, boolean isSelected) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             TransitionManager.beginDelayedTransition(holder.cardView);
         }
@@ -364,7 +364,7 @@ public class ClipsEditView extends LinearLayout {
         holder.cardView.setLayoutParams(lp);
     }
 
-    class RecyclerViewAdapter extends RecyclerView.Adapter<VH> implements ItemTouchListener {
+    private class RecyclerViewAdapter extends RecyclerView.Adapter<ClipViewHolder> implements ItemTouchListener {
 
 
         RecyclerViewAdapter(LinearLayoutManager layoutManager) {
@@ -372,13 +372,13 @@ public class ClipsEditView extends LinearLayout {
         }
 
         @Override
-        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ClipViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.items_clips_edit, parent, false);
-            return new VH(view);
+            return new ClipViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final VH holder, final int position) {
+        public void onBindViewHolder(final ClipViewHolder holder, final int position) {
             final Clip clip = getClipSet().getClip(position);
 
             ClipPos clipPos = new ClipPos(clip);
@@ -405,8 +405,8 @@ public class ClipsEditView extends LinearLayout {
                         if (view != null) {
                             view.setAlpha(HALF_ALPHA);
                             Object tag = view.getTag();
-                            if (tag instanceof VH) {
-                                layoutTransition((VH) tag, false);
+                            if (tag instanceof ClipViewHolder) {
+                                layoutTransition((ClipViewHolder) tag, false);
                             }
                         }
 
@@ -429,7 +429,7 @@ public class ClipsEditView extends LinearLayout {
         }
 
         @Override
-        public void onViewAttachedToWindow(VH holder) {
+        public void onViewAttachedToWindow(ClipViewHolder holder) {
             super.onViewAttachedToWindow(holder);
             if (holder.getAdapterPosition() == mSelectedPosition) {
                 holder.itemView.setAlpha(FULL_ALPHA);
@@ -439,7 +439,7 @@ public class ClipsEditView extends LinearLayout {
         }
 
         @Override
-        public void onViewDetachedFromWindow(VH holder) {
+        public void onViewDetachedFromWindow(ClipViewHolder holder) {
             super.onViewDetachedFromWindow(holder);
             holder.itemView.setTag(null);
         }
@@ -473,12 +473,12 @@ public class ClipsEditView extends LinearLayout {
         }
     }
 
-    class VH extends RecyclerView.ViewHolder implements ItemViewHolderListener {
+    private class ClipViewHolder extends RecyclerView.ViewHolder implements ItemViewHolderListener {
         ImageView clipThumbnail;
         CardView cardView;
         float defaultElevation = 6.0f;
 
-        public VH(View itemView) {
+        public ClipViewHolder(View itemView) {
             super(itemView);
             clipThumbnail = (ImageView) itemView.findViewById(R.id.clip_thumbnail);
             cardView = (CardView) itemView.findViewById(R.id.card_view);
@@ -509,9 +509,6 @@ public class ClipsEditView extends LinearLayout {
 
         void onExitEditing();
 
-        void onStartTrimming();
-
-        void onTrimming(Clip clip);
 
         void onStopTrimming(Clip clip);
     }

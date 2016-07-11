@@ -247,6 +247,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Logger.t(TAG).d("register");
         mEventBus.register(mPlaylistEditor);
         mEventBus.register(mClipsEditView);
     }
@@ -254,6 +255,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Logger.t(TAG).d("unregister");
         mEventBus.unregister(mPlaylistEditor);
         mEventBus.unregister(mClipsEditView);
     }
@@ -266,6 +268,11 @@ public class EnhanceActivity extends ClipPlayActivity {
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra(EXTRA_CLIPS_TO_APPEND);
                     Logger.t(TAG).d("append clips: " + clips.size());
                     mPlaylistEditor.add(clips);
+                    if (getClipSet().getCount() > 0 && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
+                        btnGauge.setEnabled(true);
+                        btnMusic.setEnabled(true);
+                        configureActionUI(ACTION_NONE, false);
+                    }
 //                    if (!mClipsEditView.appendSharableClips(clips)) {
 //                        MaterialDialog dialog = new MaterialDialog.Builder(this)
 //                            .content(R.string.resolution_not_correct)
@@ -493,15 +500,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                 mEnhanceActionBar.setVisibility(View.VISIBLE);
             }
 
-            @Override
-            public void onStartTrimming() {
 
-            }
-
-            @Override
-            public void onTrimming(Clip clip) {
-
-            }
 
             @Override
             public void onStopTrimming(Clip clip) {
