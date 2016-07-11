@@ -132,9 +132,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     @BindView(R.id.video_thumbnail)
     ImageView mVsCover;
 
-    @BindView(R.id.video_root_container)
-    FixedAspectRatioFrameLayout mRootContainer;
-
 
     @BindView(R.id.video_controllers)
     FrameLayout mVideoController;
@@ -166,6 +163,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @BindView(R.id.gaugeView)
     GaugeView mGaugeView;
+
+    @BindView(R.id.bottom_progress_bar)
+    ProgressBar mBottomProgressBar;
 
     @OnClick(R.id.btn_play_pause)
     public void onBtnPlayClicked() {
@@ -465,6 +465,13 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 // use long to avoid overflow
                 mVideoSeekBar.setMax(duration);
                 mVideoSeekBar.setProgress(position);
+            }
+        }
+
+        if (mBottomProgressBar != null) {
+            if (duration > 0) {
+                mBottomProgressBar.setMax(duration);
+                mBottomProgressBar.setProgress(position);
             }
         }
         updateVideoTime(position, duration);

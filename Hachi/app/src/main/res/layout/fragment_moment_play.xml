@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <com.xfdingustc.far.FixedAspectRatioFrameLayout
     android:id="@+id/video_root_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -115,5 +117,16 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/bottom_progress_bar"
+        style="?android:progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:progressDrawable="@drawable/default_progress_bar_transparent"
+        tools:progress="50"/>
+
 </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+
 
