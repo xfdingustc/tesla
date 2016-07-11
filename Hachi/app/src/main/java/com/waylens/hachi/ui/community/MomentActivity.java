@@ -412,52 +412,63 @@ public class MomentActivity extends BaseActivity {
                 @Override
                 public void onNext(MomentInfo momentInfo) {
                     mMomentInfo = momentInfo;
-                    Logger.t(TAG).d("moment info: " + momentInfo.moment.toString());
+                    showMomentInfo();
 
-                    if (TextUtils.isEmpty(mMomentInfo.moment.title)) {
-                        mMomentTitle.setText("No Title");
-                    } else {
-                        mMomentTitle.setText(mMomentInfo.moment.title);
-                    }
-
-                    if (mMomentInfo.owner != null) {
-                        mUserName.setText(mMomentInfo.owner.userName);
-                    }
-
-
-                    updateLikeState();
-
-                    mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
-
-                    Glide.with(MomentActivity.this)
-                        .load(mSessionManager.getAvatarUrl())
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.drawable.menu_profile_photo_default)
-                        .crossFade()
-                        .into(mCurrentUserAvatar);
-
-
-                    Glide.with(MomentActivity.this)
-                        .load(mMomentInfo.owner.avatarUrl)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.drawable.menu_profile_photo_default)
-                        .crossFade()
-                        .into(mUserAvatar);
-
-                    if (isDestroyed()) {
-                        Logger.t(TAG).d("activity is destroyed, so we must return here");
-                        return;
-                    }
-                    MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
-
-                    getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
-
-
-                    mContentRoot.showNext();
-                    setupCommentList();
                 }
             });
 
+    }
+
+    private void showMomentInfo() {
+        Logger.t(TAG).d("moment info: " + mMomentInfo.moment.toString());
+
+        if (TextUtils.isEmpty(mMomentInfo.moment.title)) {
+            mMomentTitle.setText("No Title");
+        } else {
+            mMomentTitle.setText(mMomentInfo.moment.title);
+        }
+
+        if (mMomentInfo.owner != null) {
+            mUserName.setText(mMomentInfo.owner.userName);
+        }
+
+        // Check if it is current user since we cannot follow ourselves
+        SessionManager sessionManager = SessionManager.getInstance();
+        if (sessionManager.isLoggedIn() && sessionManager.getUserId().equals(mMomentInfo.owner.userID)) {
+            mAddFollow.setVisibility(View.GONE);
+        }
+
+
+        updateLikeState();
+
+        mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
+
+        Glide.with(MomentActivity.this)
+            .load(mSessionManager.getAvatarUrl())
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.menu_profile_photo_default)
+            .crossFade()
+            .into(mCurrentUserAvatar);
+
+
+        Glide.with(MomentActivity.this)
+            .load(mMomentInfo.owner.avatarUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.menu_profile_photo_default)
+            .crossFade()
+            .into(mUserAvatar);
+
+        if (isDestroyed()) {
+            Logger.t(TAG).d("activity is destroyed, so we must return here");
+            return;
+        }
+        MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
+
+        getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
+
+
+        mContentRoot.showNext();
+        setupCommentList();
     }
 
     private void updateFollowInfo(String userID) {
