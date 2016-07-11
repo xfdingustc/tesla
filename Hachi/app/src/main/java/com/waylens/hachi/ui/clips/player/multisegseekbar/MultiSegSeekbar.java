@@ -7,6 +7,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -55,6 +57,8 @@ public class MultiSegSeekbar extends View {
     private int mDefaultHeight = 150;
     private boolean mIsMulti = true;
     private int mCurrentClipIndex = 0;
+
+
 
     private static final int DEFAULT_BAR_COLOR = Color.LTGRAY;
 
@@ -116,6 +120,27 @@ public class MultiSegSeekbar extends View {
         setMeasuredDimension(width, height);
     }
 
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putSerializable("ClipSetPos", getCurrentClipSetPos());
+        return bundle;
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            ClipSetPos clipSetPos = (ClipSetPos)bundle.getSerializable("ClipSetPos");
+            setClipSetPos(clipSetPos);
+            super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
+        } else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
     public void setMultiStyle(boolean isMulti) {
         mIsMulti = isMulti;
         invalidate();
@@ -130,14 +155,8 @@ public class MultiSegSeekbar extends View {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
         ClipSetPos clipSetPos = event.getClipSetPos();
-        if (clipSetPos == null) {
-            return;
-        }
-        mCurrentClipIndex = clipSetPos.getClipIndex();
-        float newX = mBar.setClipSetPos(clipSetPos);
-        mThumb.setX(newX);
-        invalidate();
 
+        setClipSetPos(clipSetPos);
     }
 
     @Subscribe
@@ -178,6 +197,16 @@ public class MultiSegSeekbar extends View {
 
     }
 
+    private void setClipSetPos(ClipSetPos clipSetPos) {
+        if (clipSetPos == null) {
+            return;
+        }
+        mCurrentClipIndex = clipSetPos.getClipIndex();
+        float newX = mBar.setClipSetPos(clipSetPos);
+        mThumb.setX(newX);
+        invalidate();
+    }
+
     public void setOnMultiSegSeekbarChangListener(OnMultiSegSeekBarChangeListener listener) {
         this.mListener = listener;
     }
@@ -194,12 +223,26 @@ public class MultiSegSeekbar extends View {
         float marginLeft = mCircleSize * 2;
         float barLength = w - (2 * marginLeft);
 
-        mBar = new Bar(context, marginLeft, yPos, barLength, mBarHeight, mBarColor, mDividerWidth, mActiveColor, mInactiveColor, mProgressColor, mIsMulti, getClipSet().getClipList());
+        float oldThumbXOffset = 0;
+        if (mThumb != null) {
+            oldThumbXOffset = mThumb.getX() - marginLeft;
+        }
+
+
+        mBar = new Bar(context, marginLeft, yPos, barLength, mBarHeight, mBarColor, mDividerWidth,
+            mActiveColor, mInactiveColor, mProgressColor, mIsMulti, getClipSet().getClipList());
 
         mThumb = new ThumbView(context);
         mThumb.init(context, yPos, mCircleSize, mCircleColor, mBar.getLeftX(), mBar.getRightX());
 
-        mThumb.setX(marginLeft);
+        float newThumbXOffset = 0;
+        if (oldw != 0) {
+            newThumbXOffset = oldThumbXOffset * w / oldw;
+        }
+
+
+        mThumb.setX(marginLeft + newThumbXOffset);
+
     }
 
     @Override

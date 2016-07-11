@@ -1,9 +1,11 @@
 package com.waylens.hachi.vdb;
 
+import java.io.Serializable;
+
 /**
  * Created by Xiaofei on 2016/3/30.
  */
-public class ClipSetPos {
+public class ClipSetPos implements Serializable{
     private final int mClipIndex;
     private final long mClipTimeMs;
     public ClipSetPos(int index, long timeMs) {
