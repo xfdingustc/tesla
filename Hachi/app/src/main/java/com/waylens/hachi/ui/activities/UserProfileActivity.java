@@ -65,7 +65,6 @@ public class UserProfileActivity extends BaseActivity {
     private String mUserID;
     private MomentsListAdapter mMomentRvAdapter;
 
-    private User mUser;
     private UserInfo mUserInfo;
 
     private String mReportReason;
@@ -78,11 +77,8 @@ public class UserProfileActivity extends BaseActivity {
 
     private FollowInfo mFollowInfo;
 
-    @BindView(R.id.reveal_bg)
-    RevealBackgroundView mRevealBg;
 
-    @BindView(R.id.profile_content)
-    View mProfileContent;
+
 
     @BindView(R.id.rvUserMomentList)
     RecyclerView mRvUserMomentList;
@@ -159,8 +155,10 @@ public class UserProfileActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
-        setupRevealBackground();
-
+        mUserProfileRoot.setVisibility(View.VISIBLE);
+        mRvUserMomentList.setVisibility(View.VISIBLE);
+        setupUserProfile();
+        doGetFollowInfo();
     }
 
 
@@ -204,35 +202,7 @@ public class UserProfileActivity extends BaseActivity {
         });
     }
 
-    private void setupRevealBackground() {
-        mRevealBg.setFillPaintColor(getResources().getColor(R.color.windowBackground));
-        mRevealBg.setOnStateChangeListener(new RevealBackgroundView.OnStateChangeListener() {
-            @Override
-            public void onStateChange(int state) {
-                if (RevealBackgroundView.STATE_FINISHED == state) {
-                    mProfileContent.setVisibility(View.VISIBLE);
-                    mUserProfileRoot.setVisibility(View.VISIBLE);
-                    mRvUserMomentList.setVisibility(View.VISIBLE);
-                    setupUserProfile();
-                    doGetFollowInfo();
-                } else {
-//            tlUserProfileTabs.setVisibility(View.INVISIBLE);
-                    mProfileContent.setVisibility(View.INVISIBLE);
-                    mUserProfileRoot.setVisibility(View.INVISIBLE);
-                    mRvUserMomentList.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-        mRevealBg.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                mRevealBg.getViewTreeObserver().removeOnPreDrawListener(this);
-                mRevealBg.startFromLocation(mStartRevealLocation);
-                return true;
-            }
-        });
 
-    }
 
     private void doBlockUser() {
         String url = Constants.API_BLOCK;
