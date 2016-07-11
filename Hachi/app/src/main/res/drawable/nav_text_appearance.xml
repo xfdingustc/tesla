@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_checked="true"
-        android:drawable="@color/style_color_accent">
+        android:drawable="@color/style_color_primary">
 
     </item>
     <item

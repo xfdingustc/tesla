@@ -70,7 +70,7 @@
         android:layout_marginTop="8dp"
         android:alpha="0.87"
         android:text="@string/also_post_on"
-        android:textColor="@color/style_color_primary"
+        android:textColor="@color/style_color_primary2"
         style="@style/HachiTextViewCaption"
         android:textSize="15sp"/>
 
@@ -113,7 +113,7 @@
                 android:layout_gravity="center"
                 android:text="@string/share"
                 android:textColor="?attr/appTextColorPrimary"
-                android:background="@color/style_color_accent"
+                android:background="@color/style_color_primary"
                 android:textSize="18sp"/>
 
             <ProgressBar

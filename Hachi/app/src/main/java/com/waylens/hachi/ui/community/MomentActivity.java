@@ -612,7 +612,7 @@ public class MomentActivity extends BaseActivity {
         mAdapter.setOnLoadMoreListener(new CommentsAdapter.OnLoadMoreListener() {
             @Override
             public void loadMore() {
-
+                loadComments(mCurrentCursor, false);
             }
         });
         mCommentList.setAdapter(mAdapter);
@@ -699,13 +699,13 @@ public class MomentActivity extends BaseActivity {
         showMessage(errorInfo.msgResID);
     }
 
-    void onLoadCommentsSuccessful(JSONObject response, boolean isRefresh) {
+    private void onLoadCommentsSuccessful(JSONObject response, boolean isRefresh) {
         JSONArray jsonComments = response.optJSONArray("comments");
         if (jsonComments == null) {
             return;
         }
         ArrayList<Comment> commentList = new ArrayList<>();
-        for (int i = jsonComments.length() - 1; i >= 0; i--) {
+        for (int i = 0; i < jsonComments.length(); i++) {
             Comment comment = Comment.fromJson(jsonComments.optJSONObject(i));
             commentList.add(comment);
 //            Logger.t(TAG).d("Add comment: " + comment.toString());

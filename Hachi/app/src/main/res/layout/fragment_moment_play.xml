@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/style_color_accent"
+        android:indeterminateTint="@color/style_color_primary"
         android:visibility="gone"/>
 
 
@@ -81,8 +81,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:progressTint="@color/style_color_accent"
-            android:thumbTint="@color/style_color_accent"
+            android:progressTint="@color/style_color_primary"
+            android:thumbTint="@color/style_color_primary"
             tools:progress="50"/>
 
         <TextView

@@ -9,17 +9,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
-import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
@@ -97,7 +93,7 @@ public class CircularProgressView extends View {
         progressPaint = new Paint();
         progressPaint.setAntiAlias(true);
         progressPaint.setStyle(Paint.Style.STROKE);
-        progressPaint.setColor(getResources().getColor(R.color.style_color_accent));
+        progressPaint.setColor(getResources().getColor(R.color.style_color_primary));
         progressPaint.setStrokeWidth(PROGRESS_STROKE_SIZE);
     }
 

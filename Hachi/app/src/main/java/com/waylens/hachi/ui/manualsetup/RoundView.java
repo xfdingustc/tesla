@@ -94,7 +94,7 @@ public class RoundView extends View {
         if (value != null) {
             color = value.data;
         } else {
-            ContextCompat.getColor(getContext(), R.color.style_color_accent);
+            ContextCompat.getColor(getContext(), R.color.style_color_primary);
         }
         invalidate();
     }

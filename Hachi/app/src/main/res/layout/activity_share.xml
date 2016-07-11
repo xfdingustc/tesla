@@ -136,7 +136,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/also_post_on"
-                android:textColor="@color/style_color_primary"
+                android:textColor="@color/style_color_primary2"
                 android:textSize="15sp"
                 android:visibility="gone"/>
 

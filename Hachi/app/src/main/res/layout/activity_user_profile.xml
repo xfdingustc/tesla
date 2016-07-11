@@ -77,7 +77,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="16dp"
                             android:textSize="14sp"
-                            android:textColor="@color/style_color_accent"
+                            android:textColor="@color/style_color_primary"
                             tools:text="Follow"/>
 
                         <TextView

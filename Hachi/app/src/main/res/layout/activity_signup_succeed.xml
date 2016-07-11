@@ -47,7 +47,7 @@
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
             android:textSize="18sp"
-            android:background="@color/style_color_accent"
+            android:background="@color/style_color_primary"
             android:text="@string/complete_my_profile"/>
 
         <TextView

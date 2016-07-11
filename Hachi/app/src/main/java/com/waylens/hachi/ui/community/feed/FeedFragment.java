@@ -1,19 +1,14 @@
 package com.waylens.hachi.ui.community.feed;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 
-import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Request;
@@ -168,7 +163,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             mViewAnimator.setDisplayedChild(CHILD_LOADING_PROGRESS);
         }
 
-        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
+        mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         return view;
     }

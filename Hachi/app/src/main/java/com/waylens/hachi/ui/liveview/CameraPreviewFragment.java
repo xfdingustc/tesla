@@ -706,7 +706,7 @@ public class CameraPreviewFragment extends BaseFragment {
     private void showOverlay(boolean isGaugeVisible) {
         if (isGaugeVisible) {
             mIsGaugeVisible = true;
-            mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary));
+            mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary2));
         } else {
             mIsGaugeVisible = false;
             mBtnShowOverlay.clearColorFilter();

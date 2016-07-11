@@ -344,7 +344,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="32dp"
-        android:background="@color/style_color_accent"
+        android:background="@color/style_color_primary"
         android:text="@string/create_smart_remix" />
 
     <ProgressBar

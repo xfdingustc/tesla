@@ -26,16 +26,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_COMMENT = 0;
+    private static final int VIEW_TYPE_TAIL = 1;
 
-    ArrayList<Comment> mComments;
+    private ArrayList<Comment> mComments;
 
-    PrettyTime mPrettyTime;
+    private PrettyTime mPrettyTime;
 
-    OnCommentClickListener mOnCommentClickListener;
+    private OnCommentClickListener mOnCommentClickListener;
 
-    OnLoadMoreListener mOnLoadMoreListener;
+    private OnLoadMoreListener mOnLoadMoreListener;
 
-    boolean mIsLoadingMore;
+    private boolean mIsLoadingMore;
+
+    private boolean mHasMore = false;
 
     public CommentsAdapter(ArrayList<Comment> comments) {
         mComments = comments;
@@ -44,16 +48,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void setComments(ArrayList<Comment> comments, boolean hasMore) {
         mComments = comments;
-        if (hasMore) {
-            mComments.add(0, Comment.createLoadMoreIndicator());
-        }
+        mHasMore = hasMore;
         notifyDataSetChanged();
     }
 
     public int addComment(Comment comment) {
-        mComments.add(comment);
-        int pos = mComments.size() - 1;
-        notifyItemInserted(pos);
+        mComments.add(0, comment);
+        int pos = 0;
+        notifyItemInserted(0);
         return pos;
     }
 
@@ -80,22 +82,28 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (mComments == null || mComments.get(position) == null) {
+        if (mComments == null) {
             return 0;
         }
-        return mComments.get(position).type;
+
+        if (position < mComments.size()) {
+            return VIEW_TYPE_COMMENT;
+        } else {
+            return VIEW_TYPE_TAIL;
+        }
+
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView;
         switch (viewType) {
-            case Comment.TYPE_NORMAL:
+            case VIEW_TYPE_COMMENT:
                 itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
                 return new CommentViewHolder(itemView);
-            case Comment.TYPE_LOAD_MORE_INDICATOR:
-                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comments_loadmore, parent, false);
-                return new CommentLoadMoreVH(itemView);
+            case VIEW_TYPE_TAIL:
+                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comments_tail, parent, false);
+                return new CommentTailViewHolder(itemView);
             default:
                 return null;
         }
@@ -103,68 +111,91 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == Comment.TYPE_NORMAL) {
-            CommentViewHolder viewHolder = (CommentViewHolder) holder;
-            final Comment comment = mComments.get(position);
-
-            Context context = viewHolder.avatarView.getContext();
-            Glide.with(context)
-                .load(comment.author.avatarUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.menu_profile_photo_default)
-                .dontAnimate()
-                .into(viewHolder.avatarView);
-            viewHolder.tvUserName.setText(comment.author.userName);
-            viewHolder.commentContentViews.setText(comment.toSpannable());
-            viewHolder.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
-            if (comment.commentID == Comment.UNASSIGNED_ID) {
-                viewHolder.commentViewAnimator.setVisibility(View.VISIBLE);
-                viewHolder.commentViewAnimator.setDisplayedChild(0);
-            } else {
-                viewHolder.commentViewAnimator.setVisibility(View.GONE);
-            }
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mOnCommentClickListener != null) {
-                        mOnCommentClickListener.onCommentClicked(comment);
-                    }
-                }
-            });
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (mOnCommentClickListener != null) {
-                        mOnCommentClickListener.onCommentLongClicked(comment);
-                    }
-                    return true;
-                }
-            });
+        if (getItemViewType(position) == VIEW_TYPE_COMMENT) {
+            onBindCommentView(holder, position);
         } else {
-            final CommentLoadMoreVH vh = (CommentLoadMoreVH) holder;
-            updateLoadMoreStatus(vh);
-            vh.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mIsLoadingMore || mOnLoadMoreListener == null) {
-                        return;
-                    }
-                    mIsLoadingMore = true;
-                    mOnLoadMoreListener.loadMore();
-                    updateLoadMoreStatus(vh);
-                }
-            });
+            onBindTailView(holder, position);
         }
     }
 
-    void updateLoadMoreStatus(CommentLoadMoreVH vh) {
-        if (mIsLoadingMore) {
-            vh.loadMoreView.setVisibility(View.INVISIBLE);
-            vh.loadMoreProgressBar.setVisibility(View.VISIBLE);
+
+
+    private void onBindCommentView(RecyclerView.ViewHolder holder, int position) {
+        CommentViewHolder viewHolder = (CommentViewHolder) holder;
+        final Comment comment = mComments.get(position);
+
+        Context context = viewHolder.avatarView.getContext();
+        Glide.with(context)
+            .load(comment.author.avatarUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.menu_profile_photo_default)
+            .dontAnimate()
+            .into(viewHolder.avatarView);
+        viewHolder.tvUserName.setText(comment.author.userName);
+        viewHolder.commentContentViews.setText(comment.toSpannable());
+        viewHolder.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
+        if (comment.commentID == Comment.UNASSIGNED_ID) {
+            viewHolder.commentViewAnimator.setVisibility(View.VISIBLE);
+            viewHolder.commentViewAnimator.setDisplayedChild(0);
         } else {
-            vh.loadMoreView.setVisibility(View.VISIBLE);
-            vh.loadMoreProgressBar.setVisibility(View.INVISIBLE);
+            viewHolder.commentViewAnimator.setVisibility(View.GONE);
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mOnCommentClickListener != null) {
+                    mOnCommentClickListener.onCommentClicked(comment);
+                }
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mOnCommentClickListener != null) {
+                    mOnCommentClickListener.onCommentLongClicked(comment);
+                }
+                return true;
+            }
+        });
+    }
+
+
+    private void onBindTailView(RecyclerView.ViewHolder holder, int position) {
+        final CommentTailViewHolder viewHolder = (CommentTailViewHolder) holder;
+
+        if (mComments.size() == 0) {
+            viewHolder.tailInfo.setText(R.string.no_comments_found);
+        } else {
+            if (mHasMore) {
+                viewHolder.tailInfo.setText(R.string.more);
+            } else {
+                viewHolder.itemView.setVisibility(View.GONE);
+            }
+        }
+
+        updateTailView(viewHolder);
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mIsLoadingMore || mOnLoadMoreListener == null) {
+                    return;
+                }
+                mIsLoadingMore = true;
+                mOnLoadMoreListener.loadMore();
+                updateTailView(viewHolder);
+            }
+        });
+    }
+
+    private void updateTailView(CommentTailViewHolder viewHolder) {
+        if (mIsLoadingMore) {
+            viewHolder.tailInfo.setVisibility(View.INVISIBLE);
+            viewHolder.loadMoreProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.tailInfo.setVisibility(View.VISIBLE);
+            viewHolder.loadMoreProgressBar.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -173,7 +204,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (mComments == null) {
             return 0;
         } else {
-            return mComments.size();
+            return mComments.size() + 1;
         }
     }
 
@@ -181,20 +212,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (mComments == null) {
             mComments = new ArrayList<>();
         }
-        int index = 0;
-        if (hasMore) {
-            if (mComments.size() == 0 || mComments.get(0).type != Comment.TYPE_LOAD_MORE_INDICATOR) {
-                mComments.add(Comment.createLoadMoreIndicator());
-            }
-            index = 1;
-        } else {
-            if (mComments.size() > 0 && mComments.get(0).type == Comment.TYPE_LOAD_MORE_INDICATOR) {
-                mComments.remove(0);
-            }
-            index = 0;
-        }
-        mComments.addAll(index, commentList);
-        notifyItemRangeInserted(0, commentList.size() + index);
+        int index = commentList.size() - 1;
+
+        mHasMore = hasMore;
+
+        mComments.addAll(commentList);
+        notifyDataSetChanged();
     }
 
     public interface OnCommentClickListener {
@@ -206,15 +229,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void loadMore();
     }
 
-    public static class CommentLoadMoreVH extends RecyclerView.ViewHolder {
+    public static class CommentTailViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.load_more)
-        View loadMoreView;
+        @BindView(R.id.tail_info)
+        TextView tailInfo;
 
         @BindView(R.id.load_more_progressbar)
         ProgressBar loadMoreProgressBar;
 
-        public CommentLoadMoreVH(View itemView) {
+        public CommentTailViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

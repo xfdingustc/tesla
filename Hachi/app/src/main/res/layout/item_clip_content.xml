@@ -15,7 +15,7 @@
         android:id="@+id/selectedMask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/style_color_primary"
+        android:background="@color/style_color_primary2"
         android:alpha="0.3"
         android:visibility="invisible"/>
 

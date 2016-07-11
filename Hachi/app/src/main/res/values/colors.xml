@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="style_color_primary">#FE5000</color>
+    <color name="style_color_primary2">#FE5000</color>
     <color name="style_color_primary_dark">#1D1F23</color>
-    <color name="style_color_accent">#FE5000</color>
+    <color name="style_color_primary">#FE5000</color>
+    <color name="style_color_accent">#FF7AD502</color>
     <color name="windowBackground">#1D1F23</color>
     <color name="windowBackgroundDark">#141618</color>
     <color name="dialogBackground">#36383B</color>

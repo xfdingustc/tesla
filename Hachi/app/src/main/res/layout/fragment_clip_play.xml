@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:indeterminateTint="@color/style_color_accent"
+                android:indeterminateTint="@color/style_color_primary"
                 android:visibility="gone"/>
 
             <com.waylens.hachi.ui.views.GaugeView
@@ -76,7 +76,7 @@
                 app:barHeight="4dp"
                 app:circleSize="4dp"
                 app:circleColor="?attr/appTextColorPrimary"
-                app:progressColor="@color/style_color_accent"
+                app:progressColor="@color/style_color_primary"
                 tools:visibility="gone"/>
 
 

@@ -51,7 +51,7 @@
         android:layout_marginBottom="64dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
-        android:background="@color/style_color_accent"
+        android:background="@color/style_color_primary"
         android:text="@string/create_new_account"/>
 
 </RelativeLayout>

@@ -299,4 +299,6 @@
 	<string name="connected">Connected</string>
 	<string name="not_connected">Not Connected</string>
 	<string name="followed">Followed</string>
+	<string name="more">More</string>
+	<string name="no_comments_found">No Comments Found</string>
 </resources>

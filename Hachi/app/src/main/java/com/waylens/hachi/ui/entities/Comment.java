@@ -18,6 +18,7 @@ public class Comment {
     public static final int TYPE_NORMAL = 0;
 
     public static final int TYPE_LOAD_MORE_INDICATOR = 1;
+    public static final int TYPE_LOAD_NO_MORE_COMMENT = 2;
 
     public static final int UNASSIGNED_ID = -1;
 

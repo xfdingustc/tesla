@@ -423,7 +423,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         spaces.add(new Entry((response.total - response.used) / (1024 * 1024), 3));
 
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(getResources().getColor(R.color.style_color_accent));
+        colors.add(getResources().getColor(R.color.style_color_primary));
         colors.add(getResources().getColor(R.color.material_deep_orange_300));
         colors.add(Color.BLACK);
 
