@@ -91,7 +91,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             @Override
             public void sessionDestroyed(IoSession ioSession) throws Exception {
                 Logger.t(TAG).d("sessionDestroyed");
-                connectError();
+                connectError(false);
             }
         });
 
@@ -166,14 +166,9 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             Logger.t(TAG).d("connected");
         } catch (Exception e) {
             Logger.t(TAG).d("connection error");
-            connectError();
+            connectError(true);
         }
 
-
-    }
-
-
-    public void stop() {
 
     }
 
@@ -211,18 +206,23 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
     }
 
 
-    private synchronized void connectError() {
-        if (!mConnectError) {
-            Logger.t(TAG).d("connectError");
-            if (mConnector != null) {
-                mConnector.dispose();
+    // TODO, may deadlock here;
+    private synchronized void connectError(boolean reconnect) {
+        if (reconnect) {
+            startMinaConnection();
+        } else {
+            if (!mConnectError) {
+                Logger.t(TAG).d("connectError");
+                if (mConnector != null) {
+                    mConnector.dispose();
+                }
+                if (mSession != null) {
+                    mSession.closeNow();
+                }
+                mConnectError = true;
+                mConnectionListener.onDisconnected();
+                Logger.t(TAG).d("socket is closed");
             }
-            if (mSession != null) {
-                mSession.closeNow();
-            }
-            mConnectError = true;
-            mConnectionListener.onDisconnected();
-            Logger.t(TAG).d("socket is closed");
         }
     }
 

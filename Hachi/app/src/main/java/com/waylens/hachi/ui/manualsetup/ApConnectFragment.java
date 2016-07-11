@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +106,7 @@ public class ApConnectFragment extends BaseFragment {
     public void onEventCameraConnection(CameraConnectionEvent event) {
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
-                toggleCameraConnectView(event.getVdtCamera());
+                toggleCameraConnectView();
                 break;
         }
     }
@@ -127,8 +128,13 @@ public class ApConnectFragment extends BaseFragment {
         AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
         animationDrawable.start();
         WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+        Logger.t(TAG).d("wifiInfo ssid: " + wifiInfo.getSSID() + " qrssid: " + mSSID);
+        if (TextUtils.isEmpty(mSSID) || TextUtils.isEmpty(mPassword)) {
+            toggleCameraConnectView();
+            return;
+        }
         if (wifiInfo.getSSID().equals(mSSID)) {
-            toggleCameraConnectView(mVdtCamera);
+            toggleCameraConnectView();
         } else {
             WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
                 (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
@@ -145,7 +151,9 @@ public class ApConnectFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
-        getActivity().unregisterReceiver(mWifiStateReceiver);
+        if (mWifiStateReceiver != null) {
+            getActivity().unregisterReceiver(mWifiStateReceiver);
+        }
         mLiveView.stopStream();
     }
 
@@ -180,6 +188,12 @@ public class ApConnectFragment extends BaseFragment {
     }
 
     private void initViews() {
+        if (TextUtils.isEmpty(mSSID)) {
+            mTvSsid.setVisibility(View.GONE);
+        }
+        if (TextUtils.isEmpty(mPassword)) {
+            mTvPassword.setVisibility(View.GONE);
+        }
         mTvSsid.setText("SSID:" + mSSID);
         mTvPassword.setText("PASSWORD:" + mPassword);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -195,7 +209,7 @@ public class ApConnectFragment extends BaseFragment {
 
     }
 
-    private void toggleCameraConnectView(final VdtCamera camera) {
+    private void toggleCameraConnectView() {
         if (mVsRootView == null) {
             return;
         }

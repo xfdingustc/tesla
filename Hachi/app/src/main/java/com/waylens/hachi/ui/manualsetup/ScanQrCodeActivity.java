@@ -163,14 +163,7 @@ public class ScanQrCodeActivity extends BaseActivity implements SurfaceHolder.Ca
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == WIFI_SETTING) {
-            launchApConnectFragment();
-        }
-        Logger.t(TAG).d("requestCode: " + requestCode + " resultCode: " + resultCode + " data: " + data);
-    }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
