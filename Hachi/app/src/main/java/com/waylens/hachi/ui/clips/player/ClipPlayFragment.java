@@ -226,11 +226,13 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             }
         }
 
-        if (refreshThumbnail == true) {
-            setClipSetPos(clipSetPos, refreshThumbnail);
-        } else if (mMediaPlayer != null) {
-            setClipSetPos(clipSetPos, refreshThumbnail);
-        }
+        setClipSetPos(clipSetPos, refreshThumbnail);
+
+//        if (refreshThumbnail == true) {
+//
+//        } else if (mMediaPlayer != null) {
+//            setClipSetPos(clipSetPos, refreshThumbnail);
+//        }
 
 
     }
@@ -485,6 +487,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
 
+        updateProgressTextView(0, getClipSet().getTotalSelectedLengthMs());
 
     }
 
