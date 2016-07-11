@@ -246,8 +246,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         updateProgressTextView(0, getClipSet().getTotalLengthMs());
         if (getClipSet().getCount() == 0) {
             mClipCover.setVisibility(View.INVISIBLE);
+            mControlPanel.setVisibility(View.GONE);
+            updateProgressTextView(0, 0);
         } else {
             mClipCover.setVisibility(View.VISIBLE);
+            mControlPanel.setVisibility(View.VISIBLE);
             ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
             setClipSetPos(clipSetPos, true);
         }

@@ -132,6 +132,12 @@ public class PlayListEditor2 {
 
     private void doBuildPlaylist() {
         mClipAdded = 0;
+
+        if (mClipSet.getCount() == 0) {
+            mEventBus.post(new ClipSetChangeEvent(mPlayListId, false));
+            return;
+        }
+
         for (final Clip clip : mClipSet.getClipList()) {
             PlaylistEditRequest playRequest = new PlaylistEditRequest(clip, clip.editInfo.selectedStartValue,
                 clip.editInfo.selectedEndValue, mPlayListId, new VdbResponse.Listener<Integer>() {
