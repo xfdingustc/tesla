@@ -5,7 +5,6 @@
 	<string name="accel">Accel</string>
 	<string name="account">Account</string>
 	<string name="add_clip_hint2">to add a highlight or footage</string>
-	<string name="add_follow">Follow</string>
 	<string name="add_more_clips">Add More Clips</string>
 	<string name="add_music">Add Music</string>
 	<string name="add_new_camera">Set up New Camera</string>
@@ -238,8 +237,8 @@
 	<string name="download_progress">Download Progress</string>
 	<string name="wake_up_camera">Get Started</string>
 	<string name="without_camera">Go Without Camera</string>
-	<string name="unfollow">unfollow</string>
-	<string name="follow">follow</string>
+	<string name="unfollow">Unfollow</string>
+	<string name="follow">Follow</string>
 	<string name="latest">latest</string>
 	<string name="unfollow_confirm">Are you sure your unflollow this user?</string>
 	<string name="sign_in_with_this_email">Sign in with this email address?</string>
@@ -299,4 +298,5 @@
 	<string name="select">Select</string>
 	<string name="connected">Connected</string>
 	<string name="not_connected">Not Connected</string>
+	<string name="followed">Followed</string>
 </resources>

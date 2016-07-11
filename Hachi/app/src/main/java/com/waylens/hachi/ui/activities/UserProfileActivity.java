@@ -11,8 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -41,7 +40,6 @@ import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.settings.AccountActivity;
-import com.waylens.hachi.ui.views.RevealBackgroundView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,8 +67,6 @@ public class UserProfileActivity extends BaseActivity {
 
     private String mReportReason;
 
-    private int[] mStartRevealLocation;
-
     private HachiApi mHachiApi = HachiService.createHachiApiService();
 
     private ArrayList<Moment> mMomentList;
@@ -78,13 +74,9 @@ public class UserProfileActivity extends BaseActivity {
     private FollowInfo mFollowInfo;
 
 
-
-
     @BindView(R.id.rvUserMomentList)
     RecyclerView mRvUserMomentList;
 
-    @BindView(R.id.user_profile_root)
-    LinearLayout mUserProfileRoot;
 
     @BindView(R.id.userAvatar)
     CircleImageView civUserAvatar;
@@ -92,20 +84,25 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.btnFollowersCount)
     TextView mTvFollowersCount;
 
-    @BindView(R.id.btnFollowingCount)
-    TextView mTvFollowingCount;
 
     @BindView(R.id.btnFollow)
     TextView mBtnFollow;
+
+    @BindView(R.id.user_name)
+    TextView mUserName;
+
+    @BindView(R.id.btn_account_setting)
+    ImageButton mBtnAccountSetting;
 
     @OnClick(R.id.btnFollowersCount)
     public void onBtnFollowerCountClicked() {
         FollowListActivity.launch(this, mUserID, true);
     }
 
-    @OnClick(R.id.btnFollowingCount)
-    public void onBtnFollowingCountClicked() {
-        FollowListActivity.launch(this, mUserID, false);
+
+    @OnClick(R.id.btn_account_setting)
+    public void onBtnAccountSettingClicked() {
+        AccountActivity.launch(UserProfileActivity.this);
     }
 
     @OnClick(R.id.btnFollow)
@@ -147,7 +144,6 @@ public class UserProfileActivity extends BaseActivity {
         super.init();
         Intent intent = getIntent();
         mUserID = intent.getStringExtra(EXTRA_USER_ID);
-        mStartRevealLocation = intent.getIntArrayExtra(EXTRA_REVEAL_START_LOCATION);
         mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         initViews();
     }
@@ -155,7 +151,6 @@ public class UserProfileActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
-        mUserProfileRoot.setVisibility(View.VISIBLE);
         mRvUserMomentList.setVisibility(View.VISIBLE);
         setupUserProfile();
         doGetFollowInfo();
@@ -201,7 +196,6 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
     }
-
 
 
     private void doBlockUser() {
@@ -277,17 +271,12 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void updateFollowInfo() {
-        mTvFollowersCount.setText(getString(R.string.followers) + " " + mFollowInfo.followers);
-        mTvFollowingCount.setText(getString(R.string.following) + " " + mFollowInfo.followings);
-
+        mTvFollowersCount.setText("" + mFollowInfo.followers + " " + getString(R.string.followers));
         if (mFollowInfo.isMyFollowing) {
-            mBtnFollow.setText(R.string.unfollow);
-            mBtnFollow.setTextColor(getResources().getColor(R.color.windowBackgroundDark));
-            mBtnFollow.setBackgroundResource(R.color.app_text_color_primary);
+            mBtnFollow.setText(R.string.followed);
+            mBtnFollow.setTextColor(getResources().getColor(R.color.app_text_color_disabled));
         } else {
-            mBtnFollow.setText(R.string.add_follow);
-            mBtnFollow.setTextColor(getResources().getColor(R.color.app_text_color_primary));
-            mBtnFollow.setBackgroundResource(R.drawable.button_with_stroke);
+            mBtnFollow.setText(R.string.follow);
         }
 
     }
@@ -324,6 +313,7 @@ public class UserProfileActivity extends BaseActivity {
             .into(civUserAvatar);
 
         mToolbar.setTitle(mUserInfo.displayName);
+        mUserName.setText(mUserInfo.displayName);
         mToolbar.setNavigationIcon(R.drawable.navbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -334,27 +324,14 @@ public class UserProfileActivity extends BaseActivity {
 
 
         if (isCurrentUser(mUserInfo.userName)) {
+            mBtnAccountSetting.setVisibility(View.VISIBLE);
             mBtnFollow.setVisibility(View.GONE);
             mToolbar.getMenu().clear();
-            mToolbar.inflateMenu(R.menu.menu_profile_edit);
-            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.editProfile:
-                            AccountActivity.launch(UserProfileActivity.this);
-                            break;
-                    }
-                    return true;
-                }
-            });
         } else {
             mBtnFollow.setVisibility(View.VISIBLE);
             setupToolbar();
+            mBtnAccountSetting.setVisibility(View.GONE);
         }
-
-
-//        setFollowButton(userInfo.getIsFollowing());
     }
 
 
@@ -419,8 +396,6 @@ public class UserProfileActivity extends BaseActivity {
 
         return moments;
     }
-
-
 
 
 }

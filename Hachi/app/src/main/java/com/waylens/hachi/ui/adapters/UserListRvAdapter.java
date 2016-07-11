@@ -171,7 +171,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.windowBackground));
             viewHolder.mTvFollow.setBackgroundResource(R.color.app_text_color_primary);
         } else {
-            viewHolder.mTvFollow.setText(R.string.add_follow);
+            viewHolder.mTvFollow.setText(R.string.follow);
             viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.app_text_color_primary));
             viewHolder.mTvFollow.setBackgroundResource(R.drawable.button_with_stroke);
         }
