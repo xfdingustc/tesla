@@ -570,9 +570,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void registerMessageHandler() {
-        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<RawDataItem>() {
+        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<List<RawDataItem>>() {
             @Override
-            public void onResponse(RawDataItem response) {
+            public void onResponse(List<RawDataItem> response) {
 //                mGaugeView.updateRawDateItem(response);
                 mEventBus.post(new RawDataItemEvent(VdtCamera.this, response));
             }

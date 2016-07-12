@@ -45,7 +45,10 @@ import com.waylens.hachi.utils.ToStringUtils;
 import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;
+import com.waylens.hachi.vdb.rawdata.RawData;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.WeatherData;
+import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
 
 import org.json.JSONArray;
@@ -336,6 +339,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
         mIsActivityStopped = false;
+        if (!mMoment.moment.overlay.isEmpty()) {
+            Logger.t(TAG).d("setting gauge!!!");
+            mGaugeView.changeGaugeSetting(mMoment.moment.overlay);
+        } else {
+            Logger.t(TAG).d("overlay empty");
+        }
     }
 
     @Override
@@ -682,6 +691,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             if (gps != null) {
                 JSONArray captureTime = gps.getJSONArray("captureTime");
                 JSONArray coordinates = gps.getJSONObject("coordinate").getJSONArray("coordinates");
+                JSONArray speed = gps.getJSONArray("speed");
 
                 for (int i = 0; i < captureTime.length(); i++) {
                     JSONArray coordinateObj = coordinates.getJSONArray(i);
@@ -689,8 +699,29 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                         captureTime.getLong(i) + offset,
                         coordinateObj.getDouble(0),
                         coordinateObj.getDouble(1),
-                        coordinateObj.getDouble(2)
+                        coordinateObj.getDouble(2),
+                            speed.getDouble(i)
                     );
+                }
+            }
+            JSONObject weather = response.optJSONObject("weather");
+            if (weather != null) {
+                JSONArray captureTime = weather.getJSONArray("captureTime");
+                JSONObject hourlyData = weather.getJSONArray("hourly").getJSONObject(0);
+                Logger.t(TAG).d(hourlyData.toString());
+                if (hourlyData.length() != 0) {
+                    for (int i = 0; i < captureTime.length(); i++) {
+                        mRawDataAdapter.addWeatherData(
+                                captureTime.getLong(i) + offset,
+                                hourlyData.getInt("tempF"),
+                                hourlyData.getInt("windSpeedMiles"),
+                                hourlyData.getInt("pressure"),
+                                hourlyData.getInt("humidity"),
+                                hourlyData.getInt("weatherCode")
+                        );
+
+                    }
+
                 }
             }
 
@@ -706,6 +737,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         List<RawDataItem> mOBDData = new ArrayList<>();
         List<RawDataItem> mAccData = new ArrayList<>();
         List<RawDataItem> mGPSData = new ArrayList<>();
+        RawDataItem mWeatherData = null;
 
         private int mObdDataIndex = 0;
         private int mAccDataIndex = 0;
@@ -745,7 +777,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             mAccData.add(item);
         }
 
-        public void addGpsData(long captureTime, double longitude, double latitude, double altitude) {
+        public void addGpsData(long captureTime, double longitude, double latitude, double altitude, double speed) {
             RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_GPS, captureTime);
             GpsData data = new GpsData();
             data.coord.lat = latitude;
@@ -753,45 +785,60 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             data.coord.lng = longitude;
             data.coord.lng_orig = longitude;
             data.altitude = altitude;
+            data.speed = speed;
             item.data = data;
 
             mGPSData.add(item);
         }
 
+        public void addWeatherData(long captureTime, int tempF, int windSpeedMiles, int pressure, int humidity, int weatherCode) {
+            RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_WEATHER, captureTime);
+            WeatherData data = new WeatherData(tempF, windSpeedMiles, pressure, humidity, weatherCode);
+            item.data = data;
+            mWeatherData = item;
+
+        }
+
         public void updateCurrentTime(int currentTime) {
-            if (checkIfUpdated(mAccData, 0, currentTime)) {
+            List<RawDataItem> rawDataItemList = new ArrayList<RawDataItem>();
+            RawDataItem rawDataItem = null;
+            if ((rawDataItem = checkIfUpdated(mAccData, 0, currentTime)) != null) {
                 mAccDataIndex++;
+                rawDataItemList.add(rawDataItem);
             }
-            if (checkIfUpdated(mGPSData, 0, currentTime)) {
+            if ((rawDataItem = checkIfUpdated(mGPSData, 0, currentTime)) != null) {
                 mGpsDataIndex++;
+                rawDataItemList.add(rawDataItem);
             }
-            if (checkIfUpdated(mOBDData, 0, currentTime)) {
+            if ((rawDataItem = checkIfUpdated(mOBDData, 0, currentTime)) != null) {
                 mObdDataIndex++;
+                rawDataItemList.add(rawDataItem);
+            }
+            if ((rawDataItem = mWeatherData) != null) {
+                rawDataItemList.add(rawDataItem);
+            }
+            if (!rawDataItemList.isEmpty()) {
+                mGaugeView.updateRawDateItem(rawDataItemList);
             }
         }
 
-        private boolean checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
+        private RawDataItem checkIfUpdated(List<RawDataItem> list, int fromPosition, int currentTime) {
             int index = fromPosition;
             if (index >= list.size()) {
-                return false;
+                return null;
             }
 
             for (int i = 1; i < list.size(); i++) {
                 RawDataItem item = list.get(i);
                 if (currentTime < item.getPtsMs()) {
-//                    Logger.t(TAG).d("found rawdata: " + i + " currentTime: " + currentTime + " itempts: " + item.getPtsMs());
+//                  Logger.t(TAG).d("found rawdata: " + i + " currentTime: " + currentTime + " itempts: " + item.getPtsMs());
                     RawDataItem updateItem = new RawDataItem(list.get(i - 1));
                     long startTime = getRawDataIndex(currentTime);
                     updateItem.setPtsMs(startTime + updateItem.getPtsMs());
-                    mGaugeView.updateRawDateItem(updateItem);
-                    return true;
+                    return updateItem;
                 }
             }
-
-
-
-
-            return false;
+            return null;
         }
 
         private long getRawDataIndex(int currentTime) {

@@ -13,6 +13,7 @@ public class RawDataItem {
     public static final int DATA_TYPE_GPS = 1;
     public static final int DATA_TYPE_IIO = 2;
     public static final int DATA_TYPE_OBD = 3;
+    public static final int DATA_TYPE_WEATHER = 4;
 
 
     private final int mType;

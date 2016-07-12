@@ -4,6 +4,7 @@ import com.waylens.hachi.utils.ToStringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Xiaofei on 2016/6/12.
@@ -31,6 +32,8 @@ public class MomentInfo implements Serializable {
         public int likesCount;
 
         public int commentsCount;
+
+        public Map<String, String> overlay;
 
         public boolean isLiked;
     }

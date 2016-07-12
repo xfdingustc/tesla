@@ -17,6 +17,7 @@ public class ObdData implements Serializable {
     public int speed;
     public int temperature;
     public int rpm;
+    public int throttle;
     public double psi;
     public boolean isIMP;
 
@@ -63,10 +64,11 @@ public class ObdData implements Serializable {
     };
 
 
-    public ObdData(int speed, int temperature, int rpm, double psi, boolean isIMP) {
+    public ObdData(int speed, int temperature, int rpm, int throttle, double psi, boolean isIMP) {
         this.speed = speed;
         this.temperature = temperature;
         this.rpm = rpm;
+        this.throttle = throttle;
         this.psi = psi;
         this.isIMP = isIMP;
     }
@@ -101,6 +103,7 @@ public class ObdData implements Serializable {
         int speed = 0;
         int rpm = 0;
         int temperature = 0;
+        int throttle = 0;
         double psi = 0;
         int pid_0b = -1;
         int pid_0c = -1;
@@ -132,6 +135,9 @@ public class ObdData implements Serializable {
                 case PID_SPEED:
                     speed = data[index] & 0x000000FF;
                     break;
+                case PID_THROTTLE:
+                    throttle = data[index] & 0x000000FF;
+
                 case PID_TEMP:
                     temperature = data[index] - 40;
                     break;
@@ -160,7 +166,7 @@ public class ObdData implements Serializable {
         }
 
         Log.d("test", String.format("speed[%d], t[%d], rpm[%d], psi[%f]", speed, temperature, rpm, psi));
-        return new ObdData(speed, temperature, rpm, psi, isIMP);
+        return new ObdData(speed, temperature, rpm, throttle, psi, isIMP);
     }
 
     private static ObdData parseVersion1(byte[] data) {

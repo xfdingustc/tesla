@@ -18,6 +18,7 @@ import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.vdb.rawdata.WeatherData;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
@@ -25,6 +26,9 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.http.OPTIONS;
 
 /**
  * Created by Xiaofei on 2016/4/6.
@@ -62,7 +66,7 @@ public class GaugeView extends FrameLayout {
         addView(mWebView, params);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
-        mWebView.loadUrl("file:///android_asset/api.html");
+        mWebView.loadUrl("file:///android_asset/build/api.html");
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -105,10 +109,6 @@ public class GaugeView extends FrameLayout {
         for (GaugeInfoItem item : itemList) {
             updateGaugeSetting(item);
         }
-        showGpsGauge(mIsGpsGaugeShow);
-        showIioGauge(mIsIioGaugeShow);
-        showOdbGauge(mIsOdbGaugeShow);
-        showTimeDateGauge(true);
         changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
     }
 
@@ -123,9 +123,15 @@ public class GaugeView extends FrameLayout {
 
 
     public void showGauge(boolean show) {
+        //CameraPreview and ClipPlay need to initialize gauge style, using initGaugeView
         if (show) {
             mWebView.setVisibility(View.VISIBLE);
-            initGaugeView();
+            mWebView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    initGaugeView();
+                }
+            });
         } else {
             mWebView.setVisibility(View.INVISIBLE);
         }
@@ -159,69 +165,127 @@ public class GaugeView extends FrameLayout {
 
         }
 
-//        Logger.t(TAG).d("call api: " + jsApi);
+        Logger.t(TAG).d("call api: " + jsApi);
         mWebView.loadUrl(jsApi);
     }
 
+    public void changeGaugeSetting(final Map<String, String> overlaySetting) {
 
-    public void updateRawDateItem(RawDataItem item) {
+
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                String theme = overlaySetting.get("theme");
+                if (theme == null) {
+                    theme = GaugeSettingManager.getManager().getTheme();
+                }
+                changeGaugeTheme(theme);
+                Logger.t(TAG).d("theme:" + theme);
+
+                String[] gaugeParams = GaugeInfoItem.OPTION_JS_PARAMS;
+                String param = null;
+                for (int i = 0; i < gaugeParams.length; i++) {
+                    if ((param = overlaySetting.get(gaugeParams[i])) != null) {
+                        if (param.equals("L") || param.equals("M") || param.equals("S")) {
+                            String jsApi = "javascript:setState({'" + gaugeParams[i] + "':'" + param + "'})";
+                            Logger.t(TAG).d(jsApi);
+                            mWebView.loadUrl(jsApi);
+                        }
+                    }
+                }
+                mWebView.loadUrl("javascript:update()");
+
+            }
+        });
+    }
+
+
+
+    public void updateRawDateItem(List<RawDataItem> itemList) {
         JSONObject state = new JSONObject();
         String data = null;
+        RawDataItem item = null;
         try {
-            switch (item.getType()) {
-                case RawDataItem.DATA_TYPE_IIO:
-                    if (!mIsIioGaugeShow) {
+            for (int i = 0; i < itemList.size(); i++) {
+                item = itemList.get(i);
+                switch (item.getType()) {
+                    case RawDataItem.DATA_TYPE_IIO:
+/*                    if (!mIsIioGaugeShow) {
                         mIsIioGaugeShow = true;
                         showIioGauge(mIsIioGaugeShow);
-                    }
-                    IioData iioData = (IioData) item.data;
-                    state.put("roll", iioData.euler_roll);
-                    state.put("pitch", iioData.euler_pitch);
-                    state.put("gforceBA", iioData.accX);
-                    state.put("gforceLR", iioData.accZ);
-                    iioPressure = iioData.pressure;
-                    break;
-                case RawDataItem.DATA_TYPE_GPS:
-                    if (!mIsGpsGaugeShow) {
+                    }*/
+                        //Logger.t(TAG).d("IIO data");
+                        IioData iioData = (IioData) item.data;
+                        state.put("roll", iioData.euler_roll);
+                        state.put("pitch", iioData.euler_pitch);
+                        state.put("gforceBA", iioData.accX);
+                        state.put("gforceLR", iioData.accZ);
+                        iioPressure = iioData.pressure;
+                        break;
+                    case RawDataItem.DATA_TYPE_GPS:
+/*                    if (!mIsGpsGaugeShow) {
                         mIsGpsGaugeShow = true;
                         showIioGauge(mIsGpsGaugeShow);
-                    }
-                    GpsData gpsData = (GpsData) item.data;
-                    state.put("lng", gpsData.coord.lng);
-                    state.put("lat", gpsData.coord.lat);
-                    break;
-                case RawDataItem.DATA_TYPE_OBD:
-                    if (!mIsOdbGaugeShow) {
+                    }*/
+                        //Logger.t(TAG).d("GPS data");
+                        GpsData gpsData = (GpsData) item.data;
+                        state.put("lng", gpsData.coord.lng);
+                        state.put("lat", gpsData.coord.lat);
+                        state.put("gpsSpeed", gpsData.speed);
+                        break;
+                    case RawDataItem.DATA_TYPE_OBD:
+/*                  if (!mIsOdbGaugeShow) {
                         mIsOdbGaugeShow = true;
                         showOdbGauge(mIsOdbGaugeShow);
-                    }
-                    ObdData obdData = (ObdData) item.data;
-                    state.put("rpm", obdData.rpm);
-                    state.put("mph", obdData.speed);
-                    if (obdData.isIMP) {
-                        state.put("psi", obdData.psi);
-                    } else {
-                        state.put("psi", obdData.psi - iioPressure / 3386000);
-                    }
+                    }*/
+                        //Logger.t(TAG).d("OBD data");
+                        ObdData obdData = (ObdData) item.data;
+                        state.put("rpm", obdData.rpm);
+                        state.put("obdSpeed", obdData.speed);
+                        state.put("throttle", obdData.throttle);
+                        //state.put("mph", obdData.speed); deprecated in new version of svg
+                        if (obdData.isIMP) {
+                            state.put("psi", obdData.psi);
+                        } else {
+                            state.put("psi", obdData.psi - iioPressure / 3386000);
+                        }
 //                    Logger.t(TAG).d(Double.toString(obdData.psi));
-                    break;
+                        break;
+                    case RawDataItem.DATA_TYPE_WEATHER:
+                        //Logger.t(TAG).d("Weather data");
+                        WeatherData weatherData = (WeatherData) item.data;
+                        JSONObject ambient = new JSONObject();
+                        ambient.put("tmpF", weatherData.tempF);
+                        ambient.put("windSpeedMiles", weatherData.windSpeedMiles);
+                        ambient.put("pressure", weatherData.pressure);
+                        ambient.put("humidity", weatherData.humidity);
+                        ambient.put("weatherCode", weatherData.weatherCode);
+                        state.put("ambient", ambient);
+                        break;
+                    default:
+                        break;
+                }
             }
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
             long pts = item.getPtsMs() == 0 ? System.currentTimeMillis() : item.getPtsMs();
             String date = format.format(pts);
             data = "numericMonthDate('" + date + "')";
 //            Logger.t(TAG).d("pts: " + item.getPtsMs() + " date: " + data);
-            //state.put("time", data);
         } catch (JSONException e) {
             Logger.t(TAG).e("", e);
         }
 
-        String callJS1 = "javascript:setState(" + state.toString() + ")";
-        String callJS2 = "javascript:setState(" + "{time:" + data + "})";
+        StringBuffer sb = new StringBuffer(state.toString());
+        sb.insert(state.toString().length() - 1, ",time:" + data);
+
+
+        String callJS1 = "javascript:setRawData(" + sb.toString() + ")";
+        //Logger.t(TAG).d(callJS1);
+//        String callJS2 = "javascript:setRawData(" + "{time:" + data + "})";
 //        Logger.t(TAG).d("callJS: " + callJS1);
         mWebView.loadUrl(callJS1);
-        mWebView.loadUrl(callJS2);
-        mWebView.loadUrl("javascript:update()");
+//        mWebView.loadUrl(callJS2);
+        //mWebView.loadUrl("javascript:update()");
     }
 
 
@@ -251,6 +315,7 @@ public class GaugeView extends FrameLayout {
         mWebView.loadUrl(callJS);
         mWebView.loadUrl("javascript:update");
     }
+
 
     public void showGpsGauge(boolean show) {
         JSONObject state = new JSONObject();

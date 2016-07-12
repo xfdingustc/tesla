@@ -28,7 +28,7 @@ public class GpsData implements Serializable {
     }
 
     public int flags;
-    public float speed;
+    public double speed;
     public double altitude;
 
     public int utc_time;

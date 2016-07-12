@@ -216,8 +216,8 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
-        mGaugeView.setVisibility(!mIsGaugeVisible);
-        mIsGaugeVisible = !mIsGaugeVisible;
+        int visibility = mGaugeView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE;
+        mGaugeView.setVisibility(visibility);
     }
 
 
@@ -305,13 +305,15 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     @Subscribe
-    public void onEventRawDataItem(RawDataItemEvent event) {
+    public void onEventRawDataItemList(RawDataItemEvent event) {
         if (mVdtCamera != event.getCamera()) {
             return;
         }
 
-        RawDataItem item = event.getRawDataItem();
-        mGaugeView.updateRawDateItem(item);
+        List<RawDataItem> itemList = event.getRawDataItemList();
+        if (itemList != null) {
+            mGaugeView.updateRawDateItem(itemList);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -711,7 +713,8 @@ public class CameraPreviewFragment extends BaseFragment {
             mIsGaugeVisible = false;
             mBtnShowOverlay.clearColorFilter();
         }
-        mGaugeView.showGauge(mIsGaugeVisible);
+        //mGaugeView.showGauge(mIsGaugeVisible);
+        mGaugeView.setVisibility(mIsGaugeVisible?View.VISIBLE:View.INVISIBLE);
     }
 
 

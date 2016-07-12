@@ -157,8 +157,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
-        boolean isGaugeShown = !mWvGauge.isGaugeShown();
-        mWvGauge.showGauge(isGaugeShown);
+        int visibility = mWvGauge.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE;
+        mWvGauge.setVisibility(visibility);
     }
 
 
@@ -437,10 +437,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
-        for (GaugeInfoItem gaugeInfoItem : GaugeSettingManager.getManager().getSetting()) {
-            mWvGauge.updateGaugeSetting(gaugeInfoItem);
-        }
-        mWvGauge.setEnhanceMode();
+        mWvGauge.showGauge(true);
+        //mWvGauge.setEnhanceMode();
         mEventBus.register(this);
         mEventBus.register(mMultiSegSeekbar);
         mEventBus.register(mWvGauge);
@@ -466,6 +464,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         releasePlayer();
     }
 
+    private void initRawDataView() {
+        mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
+        mRawDataLoader.loadRawData();
+        ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
+        setClipSetPos(clipSetPos, true);
+    }
+
+
 
     private void init() {
         initVdtCamera();
@@ -478,9 +484,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             return;
         }
 
-        mWvGauge.showGauge(false);
+        mWvGauge.setVisibility(View.INVISIBLE);
 
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
+
 
 
         if (mCoverMode == CoverMode.NORMAL) {
@@ -771,8 +778,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         if (mRawDataLoader != null) {
             List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
-            for (RawDataItem item : rawDataItemList) {
-                mWvGauge.updateRawDateItem(item);
+            if (!rawDataItemList.isEmpty()) {
+                mWvGauge.updateRawDateItem(rawDataItemList);
             }
         }
 
