@@ -7,6 +7,7 @@ import com.bumptech.glide.load.model.GenericLoaderFactory;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.stream.StreamModelLoader;
+import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.vdb.ClipPos;
@@ -29,7 +30,12 @@ public class SnipeGlideLoader implements StreamModelLoader<ClipPos> {
                     if (internalQueue == null) {
                         VdtCameraManager manager = VdtCameraManager.getManager();
                         if (manager.isConnected()) {
-                            internalQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
+                            VdtCamera vdtCamera = VdtCameraManager.getManager().getCurrentCamera();
+                            if (vdtCamera == null) {
+                                internalQueue = null;
+                            } else {
+                                internalQueue = vdtCamera.getRequestQueue();
+                            }
                         }
                     }
                 }

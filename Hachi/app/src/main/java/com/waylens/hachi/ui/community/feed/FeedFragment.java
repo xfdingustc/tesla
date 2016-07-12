@@ -66,7 +66,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private LinearLayoutManager mLinearLayoutManager;
 
 
-    int mCurrentCursor;
+    private int mCurrentCursor;
 
     private int mFeedTag;
 
@@ -184,19 +184,23 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             return;
         }
         Logger.t(TAG).d("Load url: " + url);
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
-            new Response.Listener<JSONObject>() {
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(url)
+            .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     onLoadFeedSuccessful(response, isRefresh);
                 }
-            },
-            new Response.ErrorListener() {
+            })
+            .errorListener(new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     onLoadFeedFailed(error);
                 }
-            }).setTag(getRequestTag()));
+            }).build();
+        request.setTag(getRequestTag());
+        mRequestQueue.add(request);
+
     }
 
     private String getRequestTag() {

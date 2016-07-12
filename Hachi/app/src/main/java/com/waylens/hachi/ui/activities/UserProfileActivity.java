@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +39,7 @@ import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.settings.AccountActivity;
+import com.waylens.hachi.ui.views.RecyclerViewExt;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,9 +73,11 @@ public class UserProfileActivity extends BaseActivity {
 
     private FollowInfo mFollowInfo;
 
+    private int mCurrentCursor;
+
 
     @BindView(R.id.rvUserMomentList)
-    RecyclerView mRvUserMomentList;
+    RecyclerViewExt mRvUserMomentList;
 
 
     @BindView(R.id.userAvatar)
@@ -154,6 +156,12 @@ public class UserProfileActivity extends BaseActivity {
         mRvUserMomentList.setVisibility(View.VISIBLE);
         mMomentRvAdapter = new MomentsListAdapter(this);
         mRvUserMomentList.setAdapter(mMomentRvAdapter);
+        mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+            @Override
+            public void loadMore() {
+                loadUserMoment(mCurrentCursor, true);
+            }
+        });
         setupUserProfile();
         doGetFollowInfo();
     }
@@ -294,7 +302,7 @@ public class UserProfileActivity extends BaseActivity {
                 mUserInfo = response.body();
                 if (mUserInfo != null) {
                     updateUserInfo();
-                    setupUserMomentsFeed();
+                    loadUserMoment(mCurrentCursor, false);
                 }
             }
 
@@ -347,30 +355,42 @@ public class UserProfileActivity extends BaseActivity {
         return false;
     }
 
-    private void setupUserMomentsFeed() {
+    private void loadUserMoment(int cursor, final boolean isRefresh) {
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
 
 
-        String requestUrl = Constants.API_USERS + "/" + mUserID + "/moments";
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(requestUrl,
-            new Response.Listener<JSONObject>() {
-
+        String requestUrl = Constants.API_USERS + "/" + mUserID + "/moments?cursor=" + cursor;
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+            .url(requestUrl)
+            .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-//                    Logger.t(TAG).json(response.toString());
                     mMomentList = parseMomentArray(response);
 //                    mMomentRvAdapter.setMomentList(mMomentList);
+                    mCurrentCursor += mMomentList.size();
                     mMomentRvAdapter.setMoments(mMomentList);
+                    if (isRefresh) {
+                        mMomentRvAdapter.setMoments(mMomentList);
+                    } else {
+                        mMomentRvAdapter.addMoments(mMomentList);
+                    }
 
+                    mRvUserMomentList.setIsLoadingMore(false);
+                    if (!response.optBoolean("hasMore")) {
+                        mRvUserMomentList.setEnableLoadMore(false);
+                        mMomentRvAdapter.setHasMore(false);
+                    } else {
+                        mMomentRvAdapter.setHasMore(true);
+                    }
                 }
-            },
-            new Response.ErrorListener() {
-
+            })
+            .errorListener(new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
 
                 }
-            });
+            }).build();
+
 
         mRequestQueue.add(request);
     }
