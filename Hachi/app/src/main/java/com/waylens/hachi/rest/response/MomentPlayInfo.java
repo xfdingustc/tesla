@@ -1,8 +1,7 @@
-package com.rest.response;
+package com.waylens.hachi.rest.response;
 
 import com.waylens.hachi.utils.ToStringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

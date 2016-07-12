@@ -2,12 +2,10 @@ package com.waylens.hachi.ui.community;
 
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -29,8 +27,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
-import com.rest.response.MomentInfo;
-import com.rest.response.MomentPlayInfo;
+import com.waylens.hachi.rest.response.MomentInfo;
+import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.player.HachiPlayer;
@@ -46,14 +44,12 @@ import com.waylens.hachi.vdb.rawdata.GpsData;
 import com.waylens.hachi.vdb.rawdata.IioData;
 import com.waylens.hachi.vdb.rawdata.ObdData;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
-import com.xfdingustc.far.FixedAspectRatioFrameLayout;
 import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

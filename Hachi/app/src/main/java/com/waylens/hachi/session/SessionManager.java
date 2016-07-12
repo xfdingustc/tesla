@@ -1,16 +1,14 @@
 package com.waylens.hachi.session;
 
 import android.content.Context;
-import android.preference.PreferenceFragment;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.orhanobut.logger.Logger;
-import com.rest.HachiApi;
-import com.rest.HachiService;
-import com.rest.response.SignInResponse;
-import com.rest.response.UserInfo;
-import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.SignInResponse;
+import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.utils.PreferenceUtils;
 

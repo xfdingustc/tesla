@@ -1,11 +1,9 @@
 package com.waylens.hachi.ui.authorization;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,42 +11,21 @@ import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
-import com.rest.HachiApi;
-import com.rest.HachiService;
-import com.rest.body.SignInPostBody;
-import com.rest.body.SignUpPostBody;
-import com.rest.response.SignInResponse;
-import com.rest.response.SignUpResponse;
-import com.rest.response.SimpleBoolResponse;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.SignInPostBody;
+import com.waylens.hachi.rest.body.SignUpPostBody;
+import com.waylens.hachi.rest.response.SignInResponse;
+import com.waylens.hachi.rest.response.SignUpResponse;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.ServerMessage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import butterknife.BindView;
 import butterknife.OnClick;

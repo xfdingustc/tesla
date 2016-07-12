@@ -1,15 +1,11 @@
-package com.rest.body;
+package com.waylens.hachi.rest.body;
 
 import com.waylens.hachi.ui.entities.LocalMoment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.orhanobut.logger.Logger;
-
-import org.json.JSONException;
 
 /**
  * Created by Xiaofei on 2016/6/17.

@@ -1,10 +1,6 @@
-package com.rest.response;
+package com.waylens.hachi.rest.response;
 
-import com.google.gson.annotations.SerializedName;
 import com.waylens.hachi.utils.ToStringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/6/13.

@@ -193,7 +193,7 @@ public class MainActivity extends BaseActivity {
          * https://code.google.com/p/android/issues/detail?id=42601
          */
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        boolean mUseHideAndShow = true;
+
 
         if (mCurrentFragment == null) {
             transaction.add(R.id.fragment_content, fragment).commit();
@@ -218,13 +218,13 @@ public class MainActivity extends BaseActivity {
      * The following 2 methods do something trick, because we use fragment hide/show,
      * instead of replace/backStack.
      */
-    void stopLiveView() {
+    private void stopLiveView() {
         if (mCurrentFragment instanceof CameraPreviewFragment) {
             mCurrentFragment.onStop();
         }
     }
 
-    void startLiveView(Fragment fragment) {
+    private void startLiveView(Fragment fragment) {
         if (fragment instanceof CameraPreviewFragment) {
             fragment.onStart();
         }

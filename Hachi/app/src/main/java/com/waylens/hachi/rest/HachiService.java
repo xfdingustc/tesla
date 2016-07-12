@@ -1,4 +1,4 @@
-package com.rest;
+package com.waylens.hachi.rest;
 
 import android.text.TextUtils;
 

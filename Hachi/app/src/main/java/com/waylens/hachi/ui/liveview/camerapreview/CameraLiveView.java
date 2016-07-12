@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -53,13 +52,9 @@ public class CameraLiveView extends SurfaceView implements SurfaceHolder.Callbac
     }
 
     private void initView() {
-
-
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
         mMjpegStream = new MyMjpegStream();
-
-
     }
 
 

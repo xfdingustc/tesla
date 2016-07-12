@@ -6,12 +6,10 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
-import com.rest.HachiApi;
-import com.rest.HachiService;
-import com.rest.body.FollowPostBody;
-import com.rest.body.LikePostBody;
-import com.rest.response.LikeResponse;
-import com.rest.response.SimpleBoolResponse;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.FollowPostBody;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 
 import retrofit2.Call;
 

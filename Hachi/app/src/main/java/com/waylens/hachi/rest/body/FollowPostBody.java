@@ -1,4 +1,4 @@
-package com.rest.body;
+package com.waylens.hachi.rest.body;
 
 /**
  * Created by Xiaofei on 2016/6/12.
