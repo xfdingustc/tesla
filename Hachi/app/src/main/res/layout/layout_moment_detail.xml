@@ -148,7 +148,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:focusable="false"
-                android:hint="@string/add_one_comment"
+                android:hint="@string/add_public_comment"
                 android:inputType="text"
                 android:minHeight="36dp"
                 android:textCursorDrawable="@drawable/color_cursor"

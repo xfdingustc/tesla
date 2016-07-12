@@ -339,7 +339,7 @@ public class MomentActivity extends BaseActivity {
                     if (mReplyTo != null) {
                         comment.replyTo = mReplyTo;
                         mReplyTo = null;
-                        mNewCommentView.setHint(R.string.add_one_comment);
+                        mNewCommentView.setHint(R.string.add_public_comment);
                     }
                     int position = mAdapter.addComment(comment);
                     mCommentList.scrollToPosition(position);
@@ -685,7 +685,7 @@ public class MomentActivity extends BaseActivity {
 
     }
 
-    void showMessage(int resId) {
+    private void showMessage(int resId) {
         //Should not call this method if UI has been already destroyed.
         try {
             Snackbar.make(mCommentList, resId, Snackbar.LENGTH_SHORT).show();
@@ -694,7 +694,7 @@ public class MomentActivity extends BaseActivity {
         }
     }
 
-    void onLoadCommentsFailed(VolleyError error) {
+    private void onLoadCommentsFailed(VolleyError error) {
         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
         showMessage(errorInfo.msgResID);
     }

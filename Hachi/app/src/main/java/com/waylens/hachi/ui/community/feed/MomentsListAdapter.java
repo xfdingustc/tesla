@@ -124,7 +124,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private void onBindMomentViewHolder(final MomentViewHolder holder, final int position) {
         final Moment moment = mMoments.get(position);
-        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
+//        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
         Glide.with(mContext)
             .load(moment.owner.avatarUrl)
             .placeholder(R.drawable.menu_profile_photo_default)
