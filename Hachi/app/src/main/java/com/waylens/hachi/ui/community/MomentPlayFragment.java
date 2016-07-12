@@ -2,11 +2,13 @@ package com.waylens.hachi.ui.community;
 
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -106,12 +108,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
 
 
-    private boolean mIsFullScreen;
 
     private boolean mIsActivityStopped = false;
-
-
-    private int mPausePosition;
 
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
@@ -190,7 +188,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @OnClick(R.id.btn_fullscreen)
     public void onBtnFullScreenClicked() {
-        setFullScreen(!mIsFullScreen);
+        if (!isFullScreen()) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     @OnClick(R.id.btnShowOverlay)
@@ -258,6 +260,17 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 break;
         }
         updateControls(playWhenReady, playbackState);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (isFullScreen()) {
+            mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
+        } else {
+            mBtnFullScreen.setImageResource(R.drawable.screen_full);
+        }
+        ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
     }
 
 
@@ -345,29 +358,13 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    protected void setSource(String source) {
-
-        mPausePosition = 0;
-        openVideo(true);
-    }
 
 
-    public void setFullScreen(boolean fullScreen) {
+
+    private boolean isFullScreen() {
         int orientation = getActivity().getRequestedOrientation();
-
-        if (fullScreen || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            || orientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
-//            hideSystemUI();
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        mIsFullScreen = fullScreen;
-        ((BaseActivity) getActivity()).setImmersiveMode(mIsFullScreen);
+        return orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
     }
-
-
-
 
 
     private void start() {
