@@ -120,26 +120,26 @@ public class MultiSegSeekbar extends View {
         setMeasuredDimension(width, height);
     }
 
-    @Override
-    public Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("instanceState", super.onSaveInstanceState());
-        bundle.putSerializable("ClipSetPos", getCurrentClipSetPos());
-        return bundle;
-    }
-
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        if (state instanceof Bundle) {
-            Bundle bundle = (Bundle) state;
-            ClipSetPos clipSetPos = (ClipSetPos)bundle.getSerializable("ClipSetPos");
-            setClipSetPos(clipSetPos);
-            super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
-        } else {
-            super.onRestoreInstanceState(state);
-        }
-    }
+//    @Override
+//    public Parcelable onSaveInstanceState() {
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("instanceState", super.onSaveInstanceState());
+//        bundle.putSerializable("ClipSetPos", getCurrentClipSetPos());
+//        return bundle;
+//    }
+//
+//
+//    @Override
+//    protected void onRestoreInstanceState(Parcelable state) {
+//        if (state instanceof Bundle) {
+//            Bundle bundle = (Bundle) state;
+//            ClipSetPos clipSetPos = (ClipSetPos)bundle.getSerializable("ClipSetPos");
+//            setClipSetPos(clipSetPos);
+//            super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
+//        } else {
+//            super.onRestoreInstanceState(state);
+//        }
+//    }
 
     public void setMultiStyle(boolean isMulti) {
         mIsMulti = isMulti;
