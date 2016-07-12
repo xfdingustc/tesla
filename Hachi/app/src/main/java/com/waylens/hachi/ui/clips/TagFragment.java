@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.StackView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
@@ -79,8 +78,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
-    private static final int ROOT_CHILD_CAMERA_DISCONNECT = 0;
-    private static final int ROOT_CHILD_CLIPSET = 1;
+    private static final int ROOT_CHILD_CLIPSET = 0;
+    private static final int ROOT_CHILD_CAMERA_DISCONNECT = 1;
     private static final int ROOT_CHILD_TIMEOUT = 2;
 
     private static final int DEFAULT_TIMEOUT_SECOND = 10;
@@ -121,8 +120,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     @BindView(R.id.tvBufferTime)
     TextView mTvBufferTime;
 
-    @BindView(R.id.loading_progress)
-    ProgressBar mLoadingProgress;
 
     @OnClick(R.id.bottomLayout)
     public void onBottomLayoutClicked() {
@@ -187,7 +184,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 //                    getChildFragmentManager().popBackStackImmediate();
 //                }
                 initVdtCamera();
-                initViews(true);
+                getClipCollection();
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
                 showRootViewChild(ROOT_CHILD_CAMERA_DISCONNECT);
@@ -195,7 +192,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 initVdtCamera();
-                initViews(true);
+                getClipCollection();
                 break;
         }
     }
@@ -203,7 +200,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMarkLiveMsg(MarkLiveMsgEvent event) {
         if (event.getClipActionInfo().action == ClipActionInfo.CLIP_ACTION_CREATED) {
-            initViews(false);
+            getClipCollection();
         }
     }
 
@@ -243,16 +240,56 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_tagged_clip, savedInstanceState);
         //setupClipSetGroup();
+        initViews();
+
+        return view;
+    }
+
+    private void initViews() {
         mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                initViews(false);
+                getClipCollection();
+            }
+        });
+        showRootViewChild(ROOT_CHILD_CLIPSET);
+        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
+        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
+        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
+        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
+            @Override
+            public void onClipClicked(Clip clip) {
+                if (mIsMultipleMode && clip == null) {
+                    mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
+                    return;
+                }
+                if (mClipSetType == Clip.TYPE_MARKED) {
+                    popClipPreviewFragment(clip);
+                } else {
+                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
+                    clipSet.addClip(clip);
+                    launchFootageActivity(clipSet);
+                }
+            }
+
+            @Override
+            public void onClipLongClicked(Clip clip) {
+                mIsMultipleMode = true;
+                mAdapter.setMultiSelectedMode(true);
+//                if (mActionMode == null) {
+//                    mActionMode = getActivity().startActionMode(mCABCallback);
+//                }
+
+                mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
+                mRefreshLayout.setEnabled(false);
             }
         });
 
-        return view;
+        mAdapter.setMultiSelectedMode(mIsMultipleMode);
+
+        mRvClipGroupList.setAdapter(mAdapter);
     }
 
 
@@ -266,9 +303,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     @Override
     public void onStart() {
         super.onStart();
-        showRootViewChild(ROOT_CHILD_CLIPSET);
-        initViews(true);
         mEventBus.register(this);
+        getClipCollection();
     }
 
     @Override
@@ -278,16 +314,12 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
-    private void initViews(boolean showLoading) {
-
+    private void getClipCollection() {
         if (mClipSetType == Clip.TYPE_MARKED) {
             mVsNoBookmark.showNext();
         }
         if (mVdtCamera != null) {
             mRefreshLayout.setRefreshing(true);
-            if (showLoading) {
-                mLoadingProgress.setVisibility(View.VISIBLE);
-            }
             doGetClips();
             if (mClipSetType != Clip.TYPE_MARKED) {
                 //mBottomLayout.setVisibility(View.VISIBLE);
@@ -323,46 +355,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         }
     }
 
-
-    private void setupClipSetGroup() {
-        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
-        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
-        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
-
-        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
-            @Override
-            public void onClipClicked(Clip clip) {
-                if (mIsMultipleMode && clip == null) {
-                    mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
-                    return;
-                }
-                if (mClipSetType == Clip.TYPE_MARKED) {
-                    popClipPreviewFragment(clip);
-                } else {
-                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
-                    clipSet.addClip(clip);
-                    launchFootageActivity(clipSet);
-                }
-            }
-
-            @Override
-            public void onClipLongClicked(Clip clip) {
-                mIsMultipleMode = true;
-                mAdapter.setMultiSelectedMode(true);
-//                if (mActionMode == null) {
-//                    mActionMode = getActivity().startActionMode(mCABCallback);
-//                }
-
-                mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
-                mRefreshLayout.setEnabled(false);
-            }
-        });
-
-        mAdapter.setMultiSelectedMode(mIsMultipleMode);
-
-        mRvClipGroupList.setAdapter(mAdapter);
-
-    }
 
 
     private void doGetClips() {
@@ -423,7 +415,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 public void onNext(ClipSet clipSet) {
                     Logger.t(TAG).d("clip set got");
                     showRootViewChild(ROOT_CHILD_CLIPSET);
-                    mLoadingProgress.setVisibility(View.GONE);
                     mRefreshLayout.setRefreshing(false);
                     if (clipSet.getCount() == 0) {
                         mVsNoBookmark.setVisibility(View.VISIBLE);
@@ -432,7 +423,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                     } else {
                         mVsNoBookmark.setVisibility(View.GONE);
                         mRvClipGroupList.setVisibility(View.VISIBLE);
-                        setupClipSetGroup();
                         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
                         mAdapter.setClipSetGroup(helper.getClipSetGroup());
                     }
@@ -519,7 +509,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 //            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
 //            EnhanceActivity2.launch(getActivity(), selectedList);
-            mLoadingProgress.setVisibility(View.VISIBLE);
+
+            mRefreshLayout.setRefreshing(true);
             Logger.t(TAG).d("selected list size: " + selectedList.size());
 
             final int playlistId = 0x100;
@@ -527,7 +518,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
-                    mLoadingProgress.setVisibility(View.INVISIBLE);
+
+                    mRefreshLayout.setRefreshing(false);
                     EnhanceActivity.launch(getActivity(), playlistId);
                 }
             });
@@ -536,7 +528,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     private void toShare() {
         if (SessionManager.getInstance().isLoggedIn()) {
-            mLoadingProgress.setVisibility(View.VISIBLE);
+
+            mRefreshLayout.setRefreshing(true);
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 //            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
 //            ShareActivity.launch(getActivity());
@@ -545,7 +538,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
-                    mLoadingProgress.setVisibility(View.INVISIBLE);
+                    mRefreshLayout.setRefreshing(false);
                     ShareActivity.launch(getActivity(), playlistId, -1);
                 }
             });

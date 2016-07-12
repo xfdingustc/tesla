@@ -6,7 +6,7 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools">
 
-    <include layout="@layout/fragment_camera_disconnected"/>
+
 
 
 
@@ -95,14 +95,10 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
 
-        <ProgressBar
-            android:id="@+id/loading_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminateTint="@color/style_color_primary"/>
+
     </RelativeLayout>
 
+    <include layout="@layout/fragment_camera_disconnected"/>
     <include layout="@layout/timeout"/>
 
 </ViewAnimator>
