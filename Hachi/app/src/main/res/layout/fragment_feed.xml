@@ -7,31 +7,24 @@
     android:layout_height="match_parent"
     android:background="?attr/defaultBgColor">
 
-    <include layout="@layout/fragment_signup_entry"
-        android:id="@+id/signup_entry_layout"/>
+    <include
+        android:id="@+id/signup_entry_layout"
+        layout="@layout/fragment_signup_entry"/>
 
-    <ProgressBar
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/style_color_primary"
-        />
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_layout"
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.waylens.hachi.ui.views.RecyclerViewExt
+            android:id="@+id/video_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <com.waylens.hachi.ui.views.RecyclerViewExt
-                android:id="@+id/video_list_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
 </ViewAnimator>

@@ -52,14 +52,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private static final String FEED_TAG = "feed_tag";
 
     private static final int CHILD_SIGNUP_ENTRY = 0;
-    private static final int CHILD_LOADING_PROGRESS = 1;
-    private static final int CHILD_MOMENTS = 2;
+    private static final int CHILD_MOMENTS = 1;
 
     public static final int FEED_TAG_MY_FEED = 0;
-    public static final int FEED_TAG_ME = 1;
     public static final int FEED_TAG_LATEST = 2;
     public static final int FEED_TAG_STAFF_PICKS = 4;
-    public static final int FEED_TAG_ALL = 5;
 
 
     private MomentsListAdapter mAdapter;
@@ -108,7 +105,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_MY_FEED);
         }
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
-        mAdapter = new MomentsListAdapter(getActivity(), null);
+        mAdapter = new MomentsListAdapter(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
     }
@@ -133,7 +130,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }
         if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
             if (mViewAnimator.getDisplayedChild() == CHILD_SIGNUP_ENTRY) {
-                mViewAnimator.setDisplayedChild(CHILD_LOADING_PROGRESS);
+                mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
                 Logger.t(TAG).d("show loading progress");
                 onRefresh();
 
@@ -160,7 +157,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if (this.isLoginRequired()) {
             mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
         } else {
-            mViewAnimator.setDisplayedChild(CHILD_LOADING_PROGRESS);
+            mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
         }
 
         mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
@@ -206,8 +203,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         switch (mFeedTag) {
             case FEED_TAG_MY_FEED:
                 return TAG_REQUEST_MY_FEED;
-            case FEED_TAG_ME:
-                return TAG_REQUEST_ME;
             case FEED_TAG_STAFF_PICKS:
                 return TAG_REQUEST_STAFF_PICKS;
             default:
@@ -221,17 +216,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             case FEED_TAG_MY_FEED:
                 url = Constants.API_MOMENTS_MY_FEED;
                 break;
-            case FEED_TAG_ME:
-                url = Constants.API_MOMENTS_ME;
-                break;
             case FEED_TAG_LATEST:
                 url = Constants.API_MOMENTS;
                 break;
             case FEED_TAG_STAFF_PICKS:
                 url = Constants.API_MOMENTS_FEATURED;
-                break;
-            case FEED_TAG_ALL:
-                url = Constants.API_MOMENTS;
                 break;
         }
         if (url != null) {
@@ -267,19 +256,14 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mCurrentCursor += momentList.size();
         if (!response.optBoolean("hasMore")) {
             mRvVideoList.setEnableLoadMore(false);
+            mAdapter.setHasMore(false);
+        } else {
+            mAdapter.setHasMore(true);
         }
 
-        if (mViewAnimator.getDisplayedChild() == CHILD_LOADING_PROGRESS) {
-            mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
-        }
-
-        /*TODO disable it? Richard
-        for (int i = 0; i < momentList.size(); i++) {
-            loadComment(momentList.get(i).id, i);
-        }*/
     }
 
-    void onLoadFeedFailed(VolleyError error) {
+    private void onLoadFeedFailed(VolleyError error) {
         mRefreshLayout.setRefreshing(false);
         mRvVideoList.setIsLoadingMore(false);
         ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
@@ -324,8 +308,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         int tag = mFeedTag;
         switch (tag) {
             case FEED_TAG_MY_FEED:
-                return true;
-            case FEED_TAG_ME:
                 return true;
             case FEED_TAG_STAFF_PICKS:
                 return false;

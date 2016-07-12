@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -36,27 +37,31 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.MomentViewHolder> {
+public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = MomentsListAdapter.class.getSimpleName();
-    public ArrayList<Moment> mMoments;
+
+    private static final int ITEM_VIEW_TYPE_MOMENT = 0;
+    private static final int ITEM_VIEW_TYPE_TAIL = 1;
+    private List<Moment> mMoments = new ArrayList<>();
 
     private final Context mContext;
 
-    PrettyTime mPrettyTime;
+    private PrettyTime mPrettyTime;
 
 
     private String mReportReason;
+    private boolean mHasMore = true;
 
 
-    public MomentsListAdapter(Context context, ArrayList<Moment> moments) {
+    public MomentsListAdapter(Context context) {
         this.mContext = context;
-        mMoments = moments;
         mPrettyTime = new PrettyTime();
         mReportReason = context.getResources().getStringArray(R.array.report_reason)[0];
     }
@@ -67,9 +72,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         notifyDataSetChanged();
     }
 
-    public Moment getMomemnt(int position) {
-        return mMoments.get(position);
-    }
 
     public void addMoments(ArrayList<Moment> moments) {
         if (mMoments == null) {
@@ -81,15 +83,46 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         notifyItemRangeInserted(start, count);
     }
 
-
-    @Override
-    public MomentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_moment, parent, false);
-        return new MomentViewHolder(itemView);
+    public void setHasMore(boolean hasMore) {
+        mHasMore = hasMore;
+        notifyItemChanged(mMoments.size());
     }
 
     @Override
-    public void onBindViewHolder(final MomentViewHolder holder, final int position) {
+    public int getItemViewType(int position) {
+        if (position < mMoments.size()) {
+            return ITEM_VIEW_TYPE_MOMENT;
+        } else {
+            return ITEM_VIEW_TYPE_TAIL;
+        }
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == ITEM_VIEW_TYPE_MOMENT) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_moment, parent, false);
+            return new MomentViewHolder(itemView);
+        } else {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
+            return new LoadingViewHolder(itemView);
+        }
+
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int viewType = getItemViewType(position);
+        if (viewType == ITEM_VIEW_TYPE_MOMENT) {
+            onBindMomentViewHolder((MomentViewHolder)holder, position);
+        } else {
+            onBindLoadingViewHolder((LoadingViewHolder)holder, position);
+        }
+
+    }
+
+
+
+    private void onBindMomentViewHolder(final MomentViewHolder holder, final int position) {
         final Moment moment = mMoments.get(position);
         Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
         Glide.with(mContext)
@@ -159,6 +192,15 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
         });
     }
 
+
+    private void onBindLoadingViewHolder(LoadingViewHolder holder, int position) {
+        if (mHasMore) {
+            holder.viewAnimator.setDisplayedChild(0);
+        } else {
+            holder.viewAnimator.setDisplayedChild(1);
+        }
+    }
+
     private void onReportClick(final long momentId) {
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)
             .title(R.string.report)
@@ -208,12 +250,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
 
     @Override
     public int getItemCount() {
-        if (mMoments == null) {
-            return 0;
-        } else {
-            return mMoments.size();
-        }
-
+        return mMoments.size() + 1;
     }
 
     public void updateMoment(Spannable spannedComments, int position) {
@@ -266,6 +303,17 @@ public class MomentsListAdapter extends RecyclerView.Adapter<MomentsListAdapter.
             super(itemView);
             ButterKnife.bind(this, itemView);
 
+        }
+    }
+
+    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.view_animator)
+        ViewAnimator viewAnimator;
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 

@@ -152,6 +152,8 @@ public class UserProfileActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
         mRvUserMomentList.setVisibility(View.VISIBLE);
+        mMomentRvAdapter = new MomentsListAdapter(this);
+        mRvUserMomentList.setAdapter(mMomentRvAdapter);
         setupUserProfile();
         doGetFollowInfo();
     }
@@ -358,8 +360,8 @@ public class UserProfileActivity extends BaseActivity {
 //                    Logger.t(TAG).json(response.toString());
                     mMomentList = parseMomentArray(response);
 //                    mMomentRvAdapter.setMomentList(mMomentList);
-                    mMomentRvAdapter = new MomentsListAdapter(UserProfileActivity.this, mMomentList);
-                    mRvUserMomentList.setAdapter(mMomentRvAdapter);
+                    mMomentRvAdapter.setMoments(mMomentList);
+
                 }
             },
             new Response.ErrorListener() {
