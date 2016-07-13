@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@+id/root_container"
-             xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:background="?attr/defaultBgColor">
+<RelativeLayout android:id="@+id/root_container"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/defaultBgColor">
 
     <LinearLayout
         android:id="@+id/fragment_view"
@@ -62,81 +62,86 @@
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-        <LinearLayout
-            android:id="@+id/control_panel"
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_view"
+        android:orientation="vertical">
+
+
+        <com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar
+            android:id="@+id/multiSegIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="8dp"
+            app:barHeight="4dp"
+            app:circleColor="?attr/appTextColorPrimary"
+            app:circleSize="4dp"
+            app:progressColor="@color/style_color_primary"
+            tools:visibility="gone"/>
 
 
-            <com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar
-                android:id="@+id/multiSegIndicator"
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnPlayPause"
+                style="@style/SelectableRippleButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:barHeight="4dp"
-                app:circleSize="4dp"
-                app:circleColor="?attr/appTextColorPrimary"
-                app:progressColor="@color/style_color_primary"
-                tools:visibility="gone"/>
+                android:src="@drawable/playbar_play"/>
 
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/playProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="0:00/0:00"
+                    android:textColor="?attr/appTextColorPrimary"/>
+
+            </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/btnShowOverlay"
+                style="@style/SelectableRippleButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/btnPlayPause"
-                    style="@style/SelectableRippleButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/playbar_play"/>
-
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/playProgress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="0:00/0:00"
-                        android:textColor="?attr/appTextColorPrimary"/>
-
-                </FrameLayout>
-
-                <ImageButton
-                    android:id="@+id/btnShowOverlay"
-                    style="@style/SelectableRippleButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/btn_gauge_overlay"/>
+                android:layout_margin="8dp"
+                android:src="@drawable/btn_gauge_overlay"/>
 
 
-                <ImageButton
-                    android:id="@+id/btnFullscreen"
-                    style="@style/SelectableRippleButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/screen_full"/>
+            <ImageButton
+                android:id="@+id/btnFullscreen"
+                style="@style/SelectableRippleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/screen_full"/>
 
-            </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 
     <View
         style="@style/HachiSepatator"
+        android:layout_below="@+id/control_panel"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_gravity="bottom"/>
+        />
 
-</FrameLayout>
+</RelativeLayout>

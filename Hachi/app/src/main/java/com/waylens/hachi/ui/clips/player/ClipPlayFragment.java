@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -142,8 +143,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @BindView(R.id.btnFullscreen)
     ImageButton mBtnFullscreen;
 
-    @BindView(R.id.root_container)
-    FrameLayout mRootContainer;
+
 
     @BindView(R.id.fragment_view)
     LinearLayout mFragmentView;
@@ -200,14 +200,13 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         super.onConfigurationChanged(newConfig);
         if (isFullScreen()) {
             mBtnFullscreen.setImageResource(R.drawable.screen_narrow);
-            mFragmentView.removeView(mControlPanel);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.BOTTOM;
-            mMediaWindow.addView(mControlPanel, params);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            mControlPanel.setLayoutParams(params);
         } else {
-            mMediaWindow.removeView(mControlPanel);
-            mFragmentView.removeView(mControlPanel);
-            mFragmentView.addView(mControlPanel);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.BELOW, mFragmentView.getId());
+            mControlPanel.setLayoutParams(params);
             mBtnFullscreen.setImageResource(R.drawable.screen_full);
         }
         ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
@@ -228,14 +227,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         }
 
         setClipSetPos(clipSetPos, refreshThumbnail);
-
-//        if (refreshThumbnail == true) {
-//
-//        } else if (mMediaPlayer != null) {
-//            setClipSetPos(clipSetPos, refreshThumbnail);
-//        }
-
-
     }
 
 
