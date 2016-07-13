@@ -94,7 +94,6 @@ public class UploadActivity extends BaseActivity {
         mVideoItemAdapter = new VideoItemAdapter(this);
         mRvMyVideoList.setAdapter(mVideoItemAdapter);
         mRvMyVideoList.setLayoutManager(new LinearLayoutManager(this));
-
         loadUserMoment(0, false);
 
 

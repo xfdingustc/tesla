@@ -33,6 +33,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
+            <ProgressBar
+                android:id="@+id/upload_progress"
+                style="?android:progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:progressDrawable="@drawable/upload_progress_drawable"
+                tools:progress="50"
+                android:max="100"/>
+
             <TextView
                 android:id="@+id/video_duration"
                 style="@style/HachiTextViewCaption"
@@ -74,15 +83,16 @@
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="4 weeks ago * 4 Views"
-                android:layout_below="@id/upload_status"/>
+                android:layout_below="@id/upload_status"
+                tools:text="4 weeks ago * 4 Views"/>
 
             <ImageButton
+                style="@style/SelectableRippleButton"
                 android:layout_width="24dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_more_vert_grey600_24dp"
                 android:layout_alignParentEnd="true"
-                style="@style/SelectableRippleButton"/>
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_more_vert_grey600_24dp"/>
 
         </RelativeLayout>
 

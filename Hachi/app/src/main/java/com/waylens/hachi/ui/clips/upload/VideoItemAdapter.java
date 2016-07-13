@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -16,6 +17,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
+import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.Moment;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -68,13 +70,25 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void onBindUploadingViewHolder(RecyclerView.ViewHolder holder, int position) {
         VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder)holder;
         UploadMomentJob uploadMomentJob = mUploadManager.getUploadJob(position);
+        LocalMoment localMoment = uploadMomentJob.getLocalMoment();
+        videoItemViewHolder.momentTitle.setText(localMoment.title);
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
-        videoItemViewHolder.uploadStatus.setText("Progress: " + uploadMomentJob.getUploadProgress());
+        videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
+        videoItemViewHolder.uploadProgress.setProgress(uploadMomentJob.getUploadProgress());
+        videoItemViewHolder.uploadStatus.setText("" + uploadMomentJob.getUploadProgress() + "% " + mContext.getString(R.string.uploaded));
+        if (localMoment.thumbnailPath != null) {
+            Glide.with(mContext)
+                .load(localMoment.thumbnailPath)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(videoItemViewHolder.videoCover);
+        }
     }
 
     private void onBindUploadedViewHolder(RecyclerView.ViewHolder holder, int position) {
         VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder)holder;
         Moment uploadedMoment = mUploadedMomentList.get(position);
+        videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
         videoItemViewHolder.momentTitle.setText(uploadedMoment.title);
         videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
         videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(uploadedMoment.uploadTime)));
@@ -127,6 +141,9 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @BindView(R.id.video_duration)
         TextView videoDuration;
+
+        @BindView(R.id.upload_progress)
+        ProgressBar uploadProgress;
 
 
         public VideoItemViewHolder(View itemView) {

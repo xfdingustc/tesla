@@ -197,6 +197,10 @@ public class UploadMomentJob extends Job {
         return mUploadError;
     }
 
+    public LocalMoment getLocalMoment() {
+        return mLocalMoment;
+    }
+
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {

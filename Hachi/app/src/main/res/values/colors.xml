@@ -5,6 +5,7 @@
     <color name="style_color_primary_dark">#1D1F23</color>
     <color name="style_color_primary">#FE5000</color>
     <color name="style_color_accent">#FF7AD502</color>
+
     <color name="windowBackground">#1D1F23</color>
     <color name="windowBackgroundDark">#141618</color>
     <color name="dialogBackground">#36383B</color>
@@ -24,6 +25,8 @@
     <color name="text_enhance_highlight">#FFECECEC</color>
     
     <color name="text_color_title">#C4C5C5</color>
+
+    <color name="upload_mask">#80FE5000</color>
 
     
     <color name="bg_toolbar">#FF141618</color>
