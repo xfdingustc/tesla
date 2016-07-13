@@ -66,10 +66,10 @@ public class MainActivity extends BaseActivity {
     private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
     private Fragment[] mFragmentList = new Fragment[]{
-        new VideoFragment(),
-        new CameraPreviewFragment(),
-        new CommunityFragment(),
-        new SettingsFragment()
+            new VideoFragment(),
+            new CameraPreviewFragment(),
+            new CommunityFragment(),
+            new SettingsFragment()
     };
 
     private Fragment mCurrentFragment = null;
@@ -85,6 +85,7 @@ public class MainActivity extends BaseActivity {
     private CircleImageView mUserAvatar;
     private TextView mUsername;
     private TextView mEmail;
+    private boolean mIsRestored;
 
     private Snackbar mReturnSnackBar;
 
@@ -97,6 +98,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mIsRestored = true;
+        } else {
+            mIsRestored = false;
+        }
         init();
     }
 
@@ -106,8 +112,6 @@ public class MainActivity extends BaseActivity {
         refressNavHeaderView();
 
     }
-
-
 
 
     @Override
@@ -140,9 +144,9 @@ public class MainActivity extends BaseActivity {
         }
 
         if (VdtCameraManager.getManager().isConnected()) {
-            switchFragment(TAB_TAG_LIVE_VIEW);
+            initFragment(TAB_TAG_LIVE_VIEW);
         } else {
-            switchFragment(TAB_TAG_MOMENTS);
+            initFragment(TAB_TAG_MOMENTS);
         }
     }
 
@@ -150,9 +154,6 @@ public class MainActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_main);
         setupNavigationView();
-
-
-
 
 
     }
@@ -169,6 +170,32 @@ public class MainActivity extends BaseActivity {
             getWindow().setAttributes(attr);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
+    }
+
+
+    public void initFragment(int tag) {
+        int menuId = mTab2MenuId.get(tag);
+
+        // When init current menu id is 0. so here must check if MenuItem is null
+        MenuItem item = mNavView.getMenu().findItem(mCurrentNavMenuId);
+        if (item != null) {
+            item.setChecked(false);
+        }
+
+
+        mCurrentNavMenuId = menuId;
+        mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
+
+        Fragment fragment = mFragmentList[tag];
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        if (!mIsRestored) {
+            transaction.add(R.id.fragment_content, fragment).commit();
+
+        }
+
+        mCurrentFragment = fragment;
+
     }
 
     public void switchFragment(int tag) {
@@ -193,7 +220,7 @@ public class MainActivity extends BaseActivity {
          * https://code.google.com/p/android/issues/detail?id=42601
          */
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
+        boolean mUseHideAndShow = true;
 
         if (mCurrentFragment == null) {
             transaction.add(R.id.fragment_content, fragment).commit();
@@ -238,10 +265,11 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
-//                    case R.id.changeTheme:
-//                        onToggleAppThemeClicked();
+
+//                  case R.id.changeTheme:
+//                       onToggleAppThemeClicked();
 //
-//                        break;
+//                       break;
                     default:
                         mDrawerLayout.closeDrawers();
                         if (item.getItemId() == mCurrentNavMenuId) {
@@ -270,16 +298,16 @@ public class MainActivity extends BaseActivity {
             mUsername.setText(mSessionManager.getUserName());
 
             Glide.with(this)
-                .load(mSessionManager.getAvatarUrl())
-                .asBitmap()
-                .placeholder(R.drawable.menu_profile_photo_default)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        mUserAvatar.setImageBitmap(resource);
-                    }
-                });
+                    .load(mSessionManager.getAvatarUrl())
+                    .asBitmap()
+                    .placeholder(R.drawable.menu_profile_photo_default)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            mUserAvatar.setImageBitmap(resource);
+                        }
+                    });
         } else {
             mUsername.setText(getText(R.string.click_2_login));
 
@@ -298,18 +326,18 @@ public class MainActivity extends BaseActivity {
 
     private void onToggleAppThemeClicked() {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-            .content(getText(R.string.change_theme_hint))
-            .negativeText(android.R.string.cancel)
-            .positiveText(android.R.string.ok)
-            .callback(new MaterialDialog.ButtonCallback() {
-                @Override
-                public void onPositive(MaterialDialog dialog) {
-                    super.onPositive(dialog);
-                    toggleAppTheme();
-                    finish();
-                }
-            })
-            .show();
+                .content(getText(R.string.change_theme_hint))
+                .negativeText(android.R.string.cancel)
+                .positiveText(android.R.string.ok)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        toggleAppTheme();
+                        finish();
+                    }
+                })
+                .show();
 
     }
 
@@ -352,14 +380,14 @@ public class MainActivity extends BaseActivity {
         }
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment instanceof FragmentNavigator
-            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
 
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
-            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
 
             return;
         }
@@ -368,8 +396,7 @@ public class MainActivity extends BaseActivity {
         if (mReturnSnackBar != null && mReturnSnackBar.isShown()) {
             super.onBackPressed();
         } else {
-            mReturnSnackBar = Snackbar.make(mDrawerLayout, getText(R.string.backpressed_hint),
-                Snackbar.LENGTH_LONG);
+            mReturnSnackBar = Snackbar.make(mDrawerLayout, getText(R.string.backpressed_hint), Snackbar.LENGTH_LONG);
             mReturnSnackBar.show();
         }
 
