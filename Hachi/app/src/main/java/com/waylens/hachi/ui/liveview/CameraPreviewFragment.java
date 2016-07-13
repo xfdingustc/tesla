@@ -216,8 +216,12 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
-        int visibility = mGaugeView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE;
-        mGaugeView.setVisibility(visibility);
+        boolean visibility = mGaugeView.getVisibility() == View.VISIBLE ? false : true;
+//        mGaugeView.setVisibility(visibility);
+//        if (visibility == View.VISIBLE) {
+//
+//        }
+        showOverlay(visibility);
     }
 
 
@@ -712,10 +716,10 @@ public class CameraPreviewFragment extends BaseFragment {
     private void showOverlay(boolean isGaugeVisible) {
         if (isGaugeVisible) {
             mIsGaugeVisible = true;
-            mBtnShowOverlay.setColorFilter(getResources().getColor(R.color.style_color_primary2));
+            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
         } else {
             mIsGaugeVisible = false;
-            mBtnShowOverlay.clearColorFilter();
+            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
         }
         //mGaugeView.showGauge(mIsGaugeVisible);
         mGaugeView.setVisibility(mIsGaugeVisible?View.VISIBLE:View.INVISIBLE);

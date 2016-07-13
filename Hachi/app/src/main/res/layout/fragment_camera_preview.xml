@@ -92,7 +92,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@id/btnFullscreen"
-                    android:src="@drawable/btn_gauge_overlay"/>
+                    android:src="@drawable/btn_gauge_overlay_n"/>
             </RelativeLayout>
 
             <View

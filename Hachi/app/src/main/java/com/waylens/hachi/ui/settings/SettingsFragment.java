@@ -7,11 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -74,6 +79,12 @@ public class SettingsFragment extends BaseFragment {
         StartupActivity.launch(getActivity());
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCameraConnectChangeEvent(CameraConnectionEvent event) {
+        initViews();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,7 +95,14 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         initViews();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initViews() {
