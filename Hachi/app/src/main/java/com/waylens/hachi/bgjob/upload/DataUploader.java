@@ -323,7 +323,7 @@ public class DataUploader {
             }
             Logger.t(TAG).d("Upload thumbnail successful");
 //            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_FINISHED));
-            mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_FINISHED);
+//            mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_FINISHED);
 
         } catch (IOException e) {
             Logger.t(TAG).e(e, "IOException");
@@ -372,7 +372,7 @@ public class DataUploader {
             }
             Logger.t(TAG).d("Upload thumbnail successful");
 //            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_FINISHED));
-            mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_FINISHED);
+//            mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_FINISHED);
         } catch (IOException e) {
             e.printStackTrace();
             if (isCancelled) {

@@ -9,12 +9,12 @@ import android.support.v7.widget.RecyclerView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.app.UploadManager;
+import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -31,7 +31,7 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2016/6/17.
  */
-public class UploadActivity extends BaseActivity {
+public class UploadActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
     private static final String TAG = UploadActivity.class.getSimpleName();
 
     private VideoItemAdapter mVideoItemAdapter;
@@ -47,10 +47,7 @@ public class UploadActivity extends BaseActivity {
     @BindView(R.id.my_video_list)
     RecyclerView mRvMyVideoList;
 
-    @Subscribe
-    public void onEventUpload(UploadEvent event) {
-        Logger.t(TAG).d("event: what: " + event.getWhat());
-    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +73,23 @@ public class UploadActivity extends BaseActivity {
         initViews();
     }
 
+    @Override
+    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
+        if (job.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
+            loadUserMoment(0, false);
+        }
+    }
+
+    @Override
+    public void onUploadJobAdded() {
+
+    }
+
+    @Override
+    public void onUploadJobRemoved() {
+
+    }
+
     private void initViews() {
         setContentView(R.layout.activity_upload);
         setupToolbar();
@@ -94,6 +108,7 @@ public class UploadActivity extends BaseActivity {
         mVideoItemAdapter = new VideoItemAdapter(this);
         mRvMyVideoList.setAdapter(mVideoItemAdapter);
         mRvMyVideoList.setLayoutManager(new LinearLayoutManager(this));
+        UploadManager.getManager().addOnUploadJobStateChangedListener(this);
         loadUserMoment(0, false);
 
 

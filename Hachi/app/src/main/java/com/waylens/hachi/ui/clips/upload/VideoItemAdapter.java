@@ -16,7 +16,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.Moment;
 
@@ -43,7 +42,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public VideoItemAdapter(Context context) {
         this.mContext = context;
-        mUploadManager.setOnUploadJobStateChangedListener(this);
+        mUploadManager.addOnUploadJobStateChangedListener(this);
     }
 
     public void setUploadedMomentList(List<Moment> momentList) {

@@ -20,12 +20,12 @@ public class UploadManager {
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    private WeakReference<OnUploadJobStateChangeListener> mListener;
+    private List<WeakReference<OnUploadJobStateChangeListener>> mListenerList;
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadEvent(UploadEvent event) {
-        UploadMomentJob job =  event.getJob();
+        UploadMomentJob job = event.getJob();
         switch (event.getWhat()) {
             case UploadEvent.UPLOAD_JOB_STATE_CHANGED:
                 notifyUploadStateChanged(job);
@@ -35,6 +35,7 @@ public class UploadManager {
 
     private UploadManager() {
         this.mUploadJobList = new ArrayList<>();
+        mListenerList = new ArrayList<>();
         mEventBus.register(this);
     }
 
@@ -46,29 +47,41 @@ public class UploadManager {
         return mSharedUploadManager;
     }
 
-    public void setOnUploadJobStateChangedListener(OnUploadJobStateChangeListener listener) {
-        mListener = new WeakReference<OnUploadJobStateChangeListener>(listener);
+    public void addOnUploadJobStateChangedListener(OnUploadJobStateChangeListener listener) {
+        mListenerList.add(new WeakReference<OnUploadJobStateChangeListener>(listener));
     }
 
 
     public void addJob(UploadMomentJob job) {
         mUploadJobList.add(job);
-        if (mListener != null) {
-            OnUploadJobStateChangeListener listener = mListener.get();
-            if (listener != null) {
-                listener.onUploadJobAdded();
+        for (int i = 0; i < mListenerList.size(); i++) {
+            WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(i);
+            if (oneListenr != null) {
+                OnUploadJobStateChangeListener listener = oneListenr.get();
+
+                if (listener != null) {
+                    listener.onUploadJobAdded();
+                }
+
             }
+
+
         }
+
     }
 
     public void removeJob(UploadMomentJob job) {
         mUploadJobList.remove(job);
-        if (mListener != null) {
-            OnUploadJobStateChangeListener listener = mListener.get();
-            if (listener != null) {
-                listener.onUploadJobRemoved();
+        for (int i = 0; i < mListenerList.size(); i++) {
+            WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(i);
+            if (oneListenr != null) {
+                OnUploadJobStateChangeListener listener = oneListenr.get();
+                if (listener != null) {
+                    listener.onUploadJobRemoved();
+                }
             }
         }
+
     }
 
     public int getJobCount() {
@@ -88,10 +101,13 @@ public class UploadManager {
         for (int i = 0; i < mUploadJobList.size(); i++) {
             UploadMomentJob oneJob = mUploadJobList.get(i);
             if (oneJob.getId() == job.getId()) {
-                if (mListener != null) {
-                    OnUploadJobStateChangeListener listener = mListener.get();
-                    if (listener != null) {
-                        listener.onUploadJobStateChanged(job, i);
+                for (int j = 0; j < mListenerList.size(); j++) {
+                    WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(j);
+                    if (oneListenr != null) {
+                        OnUploadJobStateChangeListener listener = oneListenr.get();
+                        if (listener != null) {
+                            listener.onUploadJobStateChanged(job, i);
+                        }
                     }
                 }
             }
