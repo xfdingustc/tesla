@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,13 +70,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-    public void setMoments(ArrayList<Moment> moments) {
+    public void setMoments(List<Moment> moments) {
         mMoments = moments;
         notifyDataSetChanged();
     }
 
 
-    public void addMoments(ArrayList<Moment> moments) {
+    public void addMoments(List<Moment> moments) {
         if (mMoments == null) {
             mMoments = new ArrayList<>();
         }
@@ -173,7 +174,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore);
+                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_moment, popupMenu.getMenu());
                 if (moment.owner.userID.equals(SessionManager.getInstance().getUserId())) {
                     popupMenu.getMenu().removeItem(R.id.report);

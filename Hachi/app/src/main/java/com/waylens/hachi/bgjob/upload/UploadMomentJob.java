@@ -8,12 +8,14 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.app.UploadManager;
+import com.waylens.hachi.bgjob.upload.event.UploadEvent;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
-import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
@@ -25,6 +27,8 @@ import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipPos;
 import com.waylens.hachi.vdb.ClipSet;
 import com.waylens.hachi.vdb.urls.UploadUrl;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,30 +44,60 @@ public class UploadMomentJob extends Job {
 
     private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
     private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
+
+    public static final int UPLOAD_STATE_NONE = 0;
+    public static final int UPLOAD_STATE_GET_URL_INFO = 1;
+    public static final int UPLOAD_STATE_GET_VIDEO_COVER = 2;
+    public static final int UPLOAD_STATE_STORE_VIDEO_COVER = 3;
+    public static final int UPLOAD_STATE_CREATE_MOMENT = 4;
+    public static final int UPLOAD_STATE_LOGIN = 5;
+    public static final int UPLOAD_STATE_LOGIN_SUCCEED = 6;
+    public static final int UPLOAD_STATE_START = 7;
+    public static final int UPLOAD_STATE_PROGRESS = 8;
+    public static final int UPLOAD_STATE_FINISHED = 9;
+    public static final int UPLOAD_STATE_ERROR = 10;
+    public static final int UPLOAD_STATE_CANCELLED = 11;
+
+
+    public static final int UPLOAD_ERROR_UNKNOWN = 0x100;
+    public static final int UPLOAD_ERROR_LOGIN = 0x101;
+    public static final int UPLOAD_ERROR_CREATE_MOMENT_DESC = 0x102;
+    public static final int UPLOAD_ERROR_UPLOAD_VIDEO = 0x103;
+    public static final int UPLOAD_ERROR_UPLOAD_THUMBNAIL = 0x104;
+    public static final int UPLOAD_ERROR_IO = 0x105;
+
     private final LocalMoment mLocalMoment;
 
     private VdbRequestQueue mVdbRequestQueue;
 
+
+    private int mUploadState;
+    private int mUploadProgress;
+    private int mUploadError;
+
     public UploadMomentJob(LocalMoment moment) {
         super(new Params(0).requireNetwork().setPersistent(false));
         this.mLocalMoment = moment;
+        mVdbRequestQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
     }
+
 
     @Override
     public void onAdded() {
         Logger.t(TAG).d("on Added");
-        mVdbRequestQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
+        UploadManager.getManager().addJob(this);
     }
 
     @Override
     public void onRun() throws Throwable {
-        Logger.t(TAG).d("on Run");
+        Logger.t(TAG).d("on Run, playlistId: " + mLocalMoment.playlistId);
 
         // Step1:  get playlist info:
         VdbRequestFuture<ClipSet> clipSetRequestFuture = VdbRequestFuture.newFuture();
         ClipSetExRequest request = new ClipSetExRequest(mLocalMoment.playlistId, ClipSetExRequest.FLAG_CLIP_EXTRA, clipSetRequestFuture, clipSetRequestFuture);
         mVdbRequestQueue.add(request);
         ClipSet playlistClipSet = clipSetRequestFuture.get();
+
 
         Logger.t(TAG).d("Play list info got, clip set size:  " + playlistClipSet.getCount());
 
@@ -86,6 +120,7 @@ public class UploadMomentJob extends Job {
             mLocalMoment.mSegments.add(segment);
 
         }
+        setUploadState(UPLOAD_STATE_GET_URL_INFO);
 
         // Step3: get thumbnail:
         Logger.t(TAG).d("Try to get thumbnail");
@@ -96,6 +131,7 @@ public class UploadMomentJob extends Job {
         mVdbRequestQueue.add(imageRequest);
         Bitmap thumbnail = thumbnailRequestFuture.get();
         Logger.t(TAG).d("Got thumbnail");
+        setUploadState(UPLOAD_STATE_GET_VIDEO_COVER);
 
         // Step4: Store thumbnail:
         File cacheDir = Hachi.getContext().getExternalCacheDir();
@@ -104,6 +140,7 @@ public class UploadMomentJob extends Job {
         thumbnail.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, fos);
         mLocalMoment.thumbnailPath = file.getAbsolutePath();
         Logger.t(TAG).d("Saved thumbnail: " + mLocalMoment.thumbnailPath);
+        setUploadState(UPLOAD_STATE_STORE_VIDEO_COVER);
 
 
         // Step5: create moment in server:
@@ -114,12 +151,52 @@ public class UploadMomentJob extends Job {
 
         Logger.t(TAG).d("Get moment response: " + response.toString());
         mLocalMoment.updateUploadInfo(response);
+        setUploadState(UPLOAD_STATE_CREATE_MOMENT);
 
 
-        DataUploader uploader = new DataUploader();
+        DataUploader uploader = new DataUploader(this);
 //        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
         uploader.upload(mLocalMoment);
+
+        setUploadState(UPLOAD_STATE_FINISHED);
+        UploadManager.getManager().removeJob(this);
     }
+
+
+    public void setUploadState(int state) {
+        setUploadState(state, 0);
+    }
+
+    public void setUploadState(int state, int parameter) {
+        mUploadState = state;
+
+        switch (mUploadState) {
+            case UPLOAD_STATE_PROGRESS:
+                mUploadProgress = parameter;
+                break;
+            case UPLOAD_STATE_ERROR:
+                mUploadError = parameter;
+                break;
+            default:
+                break;
+        }
+
+//            UploadManager.getManager().notifyUploadStateChanged(this);
+        EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_STATE_CHANGED, this));
+    }
+
+    public int getState() {
+        return mUploadState;
+    }
+
+    public int getUploadProgress() {
+        return mUploadProgress;
+    }
+
+    public int getUploadError() {
+        return mUploadError;
+    }
+
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {

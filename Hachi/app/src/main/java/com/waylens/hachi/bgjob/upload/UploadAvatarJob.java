@@ -49,7 +49,7 @@ public class UploadAvatarJob extends Job {
 
         mCloudInfo = CloudInfo.parseFromJson(response);
         Logger.t(TAG).d("get CloudinfO: " + mCloudInfo.toString());
-        DataUploader uploader = new DataUploader();
+        DataUploader uploader = new DataUploader(null);
 //        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
         uploader.upload(mCloudInfo, file);
 

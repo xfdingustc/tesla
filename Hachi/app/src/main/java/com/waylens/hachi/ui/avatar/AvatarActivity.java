@@ -75,36 +75,36 @@ public class AvatarActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventUpload(UploadEvent event) {
         switch (event.getWhat()) {
-            case UploadEvent.UPLOAD_WHAT_START:
-                mUploadDialog = new MaterialDialog.Builder(this)
-                    .title(R.string.upload)
-                    .contentGravity(GravityEnum.CENTER)
-                    .progress(false, 100, true)
-                    .show();
-                mUploadDialog.setCanceledOnTouchOutside(false);
-                break;
-            case UploadEvent.UPLOAD_WHAT_PROGRESS:
-                if (mUploadDialog != null) {
-                    int progress = event.getExtra();
-                    mUploadDialog.setProgress(progress);
-                    //mUploadDialog.getProgressBar().setProgress(progress);
-                }
-                break;
-            case UploadEvent.UPLOAD_WHAT_FINISHED:
-                if (mUploadDialog != null) {
-                    mUploadDialog.dismiss();
-                }
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content("Uploading finished")
-                    .show();
-
-                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        finish();
-                    }
-                });
-                break;
+//            case UploadEvent.UPLOAD_WHAT_START:
+//                mUploadDialog = new MaterialDialog.Builder(this)
+//                    .title(R.string.upload)
+//                    .contentGravity(GravityEnum.CENTER)
+//                    .progress(false, 100, true)
+//                    .show();
+//                mUploadDialog.setCanceledOnTouchOutside(false);
+//                break;
+//            case UploadEvent.UPLOAD_WHAT_PROGRESS:
+//                if (mUploadDialog != null) {
+//                    int progress = event.getExtra();
+//                    mUploadDialog.setProgress(progress);
+//                    //mUploadDialog.getProgressBar().setProgress(progress);
+//                }
+//                break;
+//            case UploadEvent.UPLOAD_WHAT_FINISHED:
+//                if (mUploadDialog != null) {
+//                    mUploadDialog.dismiss();
+//                }
+//                MaterialDialog dialog = new MaterialDialog.Builder(this)
+//                    .content("Uploading finished")
+//                    .show();
+//
+//                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        finish();
+//                    }
+//                });
+//                break;
         }
     }
 

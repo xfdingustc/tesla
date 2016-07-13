@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <com.xfdingustc.far.FixedAspectRatioFrameLayout
+            android:layout_width="128dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            app:farfl_xratio="16dp"
+            app:farfl_yratio="9dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.12"
+                android:background="@drawable/stroke_rect"></FrameLayout>
+
+            <ImageView
+                android:id="@+id/video_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/video_duration"
+                style="@style/HachiTextViewCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="8dp"
+                android:background="@drawable/round_rectangle_background"
+                tools:text="01:08"/>
+
+        </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/moment_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="24dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="July 13, 2016"/>
+
+            <TextView
+                android:id="@+id/upload_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/moment_title"
+                android:visibility="gone"
+                tools:text="1% uploaded"
+                tools:visibility="visible"/>
+
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="4 weeks ago * 4 Views"
+                android:layout_below="@id/upload_status"/>
+
+            <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_more_vert_grey600_24dp"
+                android:layout_alignParentEnd="true"
+                style="@style/SelectableRippleButton"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/settings_line_separator"/>
+
+</LinearLayout>

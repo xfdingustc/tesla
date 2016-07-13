@@ -21,31 +21,26 @@ import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.UserInfo;
-import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.app.JsonKey;
-import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -69,7 +64,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private HachiApi mHachiApi = HachiService.createHachiApiService();
 
-    private ArrayList<Moment> mMomentList;
+//    private ArrayList<Moment> mMomentList;
 
     private FollowInfo mFollowInfo;
 
@@ -360,19 +355,24 @@ public class UserProfileActivity extends BaseActivity {
 
 
         String requestUrl = Constants.API_USERS + "/" + mUserID + "/moments?cursor=" + cursor;
+
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
             .url(requestUrl)
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    mMomentList = parseMomentArray(response);
+                    List<Moment> momentList = Moment.parseMomentArray(response);
+                    for (Moment moment : momentList) {
+                        moment.owner.userID = mUserID;
+                        moment.owner.avatarUrl = mUserInfo.avatarUrl;
+                    }
 //                    mMomentRvAdapter.setMomentList(mMomentList);
-                    mCurrentCursor += mMomentList.size();
-                    mMomentRvAdapter.setMoments(mMomentList);
+                    mCurrentCursor += momentList.size();
+                    mMomentRvAdapter.setMoments(momentList);
                     if (isRefresh) {
-                        mMomentRvAdapter.setMoments(mMomentList);
+                        mMomentRvAdapter.setMoments(momentList);
                     } else {
-                        mMomentRvAdapter.addMoments(mMomentList);
+                        mMomentRvAdapter.addMoments(momentList);
                     }
 
                     mRvUserMomentList.setIsLoadingMore(false);
@@ -393,30 +393,6 @@ public class UserProfileActivity extends BaseActivity {
 
 
         mRequestQueue.add(request);
-    }
-
-    private ArrayList<Moment> parseMomentArray(JSONObject response) {
-        ArrayList<Moment> moments = new ArrayList<>();
-        try {
-            JSONArray momentArray = response.getJSONArray(JsonKey.MOMENTS);
-            for (int i = 0; i < momentArray.length(); i++) {
-                JSONObject momentObject = momentArray.getJSONObject(i);
-                Gson gson = new GsonBuilder()
-                    .excludeFieldsWithoutExposeAnnotation()
-                    .create();
-                Moment moment = gson.fromJson(momentObject.toString(), Moment.class);
-                moment.owner = new User();
-                moment.owner.userID = mUserID;
-                moment.owner.avatarUrl = mUserInfo.avatarUrl;
-                moments.add(moment);
-
-//                Logger.t(TAG).d("Add one moment: " + moment.toString());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return moments;
     }
 
 

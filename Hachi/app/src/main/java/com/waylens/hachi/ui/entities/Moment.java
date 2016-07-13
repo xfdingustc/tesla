@@ -4,13 +4,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Spannable;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.utils.ToStringUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Moment implements Serializable {
@@ -158,6 +164,33 @@ public class Moment implements Serializable {
         region = placeInfo.optString("region");
         country = placeInfo.optString("country");
     }
+
+
+
+    public static List<Moment> parseMomentArray(JSONObject response) {
+        ArrayList<Moment> moments = new ArrayList<>();
+        try {
+            JSONArray momentArray = response.getJSONArray(JsonKey.MOMENTS);
+            for (int i = 0; i < momentArray.length(); i++) {
+                JSONObject momentObject = momentArray.getJSONObject(i);
+                Gson gson = new GsonBuilder()
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .create();
+                Moment moment = gson.fromJson(momentObject.toString(), Moment.class);
+                moment.owner = new User();
+//                moment.owner.userID = mUserID;
+//                moment.owner.avatarUrl = mUserInfo.avatarUrl;
+                moments.add(moment);
+
+//                Logger.t(TAG).d("Add one moment: " + moment.toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return moments;
+    }
+
 
     @Override
     public String toString() {

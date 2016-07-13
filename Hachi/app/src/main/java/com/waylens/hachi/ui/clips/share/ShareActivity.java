@@ -40,6 +40,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.upload.UploadActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.vdb.ClipSetManager;
@@ -125,29 +126,29 @@ public class ShareActivity extends ClipPlayActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventUpload(UploadEvent event) {
         switch (event.getWhat()) {
-            case UploadEvent.UPLOAD_WHAT_START:
-
-                break;
-            case UploadEvent.UPLOAD_WHAT_PROGRESS:
-                if (mUploadDialog != null) {
-                    int progress = event.getExtra();
-                    mUploadDialog.setProgress(progress);
-                }
-                break;
-            case UploadEvent.UPLOAD_WHAT_FINISHED:
-                if (mUploadDialog != null) {
-                    mUploadDialog.dismiss();
-                }
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content("Uploading finished")
-                    .show();
-                mBtnFaceBook.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }, 2000);
-                break;
+//            case UploadEvent.UPLOAD_WHAT_START:
+//
+//                break;
+//            case UploadEvent.UPLOAD_WHAT_PROGRESS:
+//                if (mUploadDialog != null) {
+//                    int progress = event.getExtra();
+//                    mUploadDialog.setProgress(progress);
+//                }
+//                break;
+//            case UploadEvent.UPLOAD_WHAT_FINISHED:
+//                if (mUploadDialog != null) {
+//                    mUploadDialog.dismiss();
+//                }
+//                MaterialDialog dialog = new MaterialDialog.Builder(this)
+//                    .content("Uploading finished")
+//                    .show();
+//                mBtnFaceBook.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        finish();
+//                    }
+//                }, 2000);
+//                break;
         }
     }
 
@@ -444,12 +445,8 @@ public class ShareActivity extends ClipPlayActivity {
         UploadMomentJob job = new UploadMomentJob(localMoment);
         jobManager.addJobInBackground(job);
 
-        mUploadDialog = new MaterialDialog.Builder(this)
-            .title(R.string.upload)
-            .contentGravity(GravityEnum.CENTER)
-            .progress(false, 100, true)
-            .show();
-        mUploadDialog.setCanceledOnTouchOutside(false);
+        UploadActivity.launch(this);
+        finish();
 //
     }
 
