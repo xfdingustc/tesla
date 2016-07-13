@@ -254,42 +254,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 getClipCollection();
             }
         });
-        showRootViewChild(ROOT_CHILD_CLIPSET);
-        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
-        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
-        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
-        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
-            @Override
-            public void onClipClicked(Clip clip) {
-                if (mIsMultipleMode && clip == null) {
-                    mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
-                    return;
-                }
-                if (mClipSetType == Clip.TYPE_MARKED) {
-                    popClipPreviewFragment(clip);
-                } else {
-                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
-                    clipSet.addClip(clip);
-                    launchFootageActivity(clipSet);
-                }
-            }
 
-            @Override
-            public void onClipLongClicked(Clip clip) {
-                mIsMultipleMode = true;
-                mAdapter.setMultiSelectedMode(true);
-//                if (mActionMode == null) {
-//                    mActionMode = getActivity().startActionMode(mCABCallback);
-//                }
 
-                mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
-                mRefreshLayout.setEnabled(false);
-            }
-        });
-
-        mAdapter.setMultiSelectedMode(mIsMultipleMode);
-
-        mRvClipGroupList.setAdapter(mAdapter);
     }
 
 
@@ -424,7 +390,42 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                         mVsNoBookmark.setVisibility(View.GONE);
                         mRvClipGroupList.setVisibility(View.VISIBLE);
                         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
-                        mAdapter.setClipSetGroup(helper.getClipSetGroup());
+                        showRootViewChild(ROOT_CHILD_CLIPSET);
+                        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
+                        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
+                        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
+                        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, helper.getClipSetGroup(), new ClipSetGroupAdapter.OnClipClickListener() {
+                            @Override
+                            public void onClipClicked(Clip clip) {
+                                if (mIsMultipleMode && clip == null) {
+                                    mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
+                                    return;
+                                }
+                                if (mClipSetType == Clip.TYPE_MARKED) {
+                                    popClipPreviewFragment(clip);
+                                } else {
+                                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
+                                    clipSet.addClip(clip);
+                                    launchFootageActivity(clipSet);
+                                }
+                            }
+
+                            @Override
+                            public void onClipLongClicked(Clip clip) {
+                                mIsMultipleMode = true;
+                                mAdapter.setMultiSelectedMode(true);
+//                if (mActionMode == null) {
+//                    mActionMode = getActivity().startActionMode(mCABCallback);
+//                }
+
+                                mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
+                                mRefreshLayout.setEnabled(false);
+                            }
+                        });
+
+                        mAdapter.setMultiSelectedMode(mIsMultipleMode);
+
+                        mRvClipGroupList.setAdapter(mAdapter);
                     }
                 }
             });
