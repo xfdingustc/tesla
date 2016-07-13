@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.community.feed;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
@@ -167,29 +169,36 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         });
 
 
-        holder.toolbar.getMenu().clear();
-        holder.toolbar.inflateMenu(R.menu.menu_moment);
-        if (moment.owner.userID.equals(SessionManager.getInstance().getUserId())) {
-            holder.toolbar.getMenu().removeItem(R.id.report);
-        } else {
-            holder.toolbar.getMenu().removeItem(R.id.delete);
-        }
 
-        holder.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.report:
-                        onReportClick(moment.id);
-                        break;
-                    case R.id.delete:
-                        onDeleteClick(moment.id, position);
-                        break;
-
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_moment, popupMenu.getMenu());
+                if (moment.owner.userID.equals(SessionManager.getInstance().getUserId())) {
+                    popupMenu.getMenu().removeItem(R.id.report);
+                } else {
+                    popupMenu.getMenu().removeItem(R.id.delete);
                 }
-                return true;
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.report:
+                                onReportClick(moment.id);
+                                break;
+                            case R.id.delete:
+                                onDeleteClick(moment.id, position);
+                                break;
+
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
             }
         });
+
     }
 
 
@@ -292,8 +301,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @BindView(R.id.video_cover)
         ImageView videoCover;
 
-        @BindView(R.id.toolbar)
-        Toolbar toolbar;
+        @BindView(R.id.btn_more)
+        ImageButton btnMore;
 
         @BindView(R.id.user_name)
         TextView userName;

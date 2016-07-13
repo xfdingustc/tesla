@@ -52,8 +52,7 @@
             android:id="@+id/user_avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginRight="16dp"
-            tools:src="@drawable/waylens_logo_76x86"/>
+            android:layout_marginRight="16dp"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -66,7 +65,9 @@
                 style="@style/HachiTextViewSubHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Moment Title"/>
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
 
             <TextView
                 android:id="@+id/user_name"
@@ -77,11 +78,14 @@
                 tools:text="user name"/>
         </LinearLayout>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="48dp"
+        <ImageButton
+            android:id="@+id/btn_more"
+            android:layout_width="24dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/ic_more_vert_grey600_24dp"
+            style="@style/SelectableRippleButton"/>
 
     </LinearLayout>
 
