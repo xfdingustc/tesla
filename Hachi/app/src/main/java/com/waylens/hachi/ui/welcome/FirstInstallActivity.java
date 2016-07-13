@@ -74,7 +74,7 @@ public class FirstInstallActivity extends BaseActivity {
 
     @OnClick(R.id.skip)
     public void onBtnSkipClicked() {
-        mViewPager.setCurrentItem(mCount - 1);
+        mViewPager.setCurrentItem(mCount - 1, false);
     }
 
     private SimpleImageViewPagerAdapter mAdapter;
