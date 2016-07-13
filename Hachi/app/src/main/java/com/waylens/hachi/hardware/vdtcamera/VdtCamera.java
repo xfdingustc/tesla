@@ -570,21 +570,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void registerMessageHandler() {
-        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<List<RawDataItem>>() {
-            @Override
-            public void onResponse(List<RawDataItem> response) {
-//                mGaugeView.updateRawDateItem(response);
-                mEventBus.post(new RawDataItemEvent(VdtCamera.this, response));
-            }
-
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Log.e(TAG, "RawDataMsgHandler ERROR", error);
-            }
-        });
-        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
-
         ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
             new VdbResponse.Listener<ClipActionInfo>() {
                 @Override
@@ -649,6 +634,29 @@ public class VdtCamera implements VdtCameraCmdConsts {
             });
         mVdbRequestQueue.registerMessageHandler(vdbUnmountedMsgHandler);
 
+    }
+
+    public void registerRawDataItemMsgHandler() {
+        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<List<RawDataItem>>() {
+            @Override
+            public void onResponse(List<RawDataItem> response) {
+//                mGaugeView.updateRawDateItem(response);
+                mEventBus.post(new RawDataItemEvent(VdtCamera.this, response));
+            }
+
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Log.e(TAG, "RawDataMsgHandler ERROR", error);
+            }
+        });
+        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
+    }
+
+    public void unregisterRawDataItemMagHandler() {
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
+        }
     }
 
     private void onCameraDisconnected() {

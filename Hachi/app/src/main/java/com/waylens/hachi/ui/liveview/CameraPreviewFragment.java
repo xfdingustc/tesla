@@ -459,6 +459,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 mCameraNoSignal.setVisibility(View.GONE);
                 mCameraConnecting.setVisibility(View.GONE);
             }
+            mVdtCamera.registerRawDataItemMsgHandler();
             initViews();
         } else {
             handleOnCameraDisconnected();
@@ -492,6 +493,9 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (mVdtCamera != null) {
+            mVdtCamera.unregisterRawDataItemMagHandler();
+        }
         if (mLiveView != null) {
             Logger.t(TAG).d("Stop camera preview");
             mLiveView.stopStream();
