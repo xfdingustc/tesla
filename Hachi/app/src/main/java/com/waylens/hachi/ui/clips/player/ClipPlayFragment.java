@@ -729,9 +729,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void setAudioUrl(String audioUrl) {
         Logger.t(TAG).d("audio url: " + audioUrl);
         mAudioUrl = audioUrl;
-        if (audioUrl == null && mAudioPlayer != null && mAudioPlayer.isPlaying()) {
-            mAudioPlayer.stop();
-        }
+        releasePlayer();
+
     }
 
 

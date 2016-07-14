@@ -141,13 +141,31 @@ public class EnhanceActivity extends ClipPlayActivity {
     public void onClickMusic(View view) {
         btnGauge.setSelected(false);
 //        btnRemix.setSelected(false);
-        view.setSelected(!view.isSelected());
+//        view.setSelected(!view.isSelected());
         if (mMusicItem == null) {
             MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
         } else {
-            configureActionUI(ACTION_ADD_MUSIC, view.isSelected());
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(mMusicItem.title)
+                .content(mMusicItem.description)
+                .positiveText(R.string.change)
+                .negativeText(R.string.remove)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        MusicDownloadActivity.launchForResult(EnhanceActivity.this, REQUEST_CODE_ADD_MUSIC);
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        mClipPlayFragment.setAudioUrl(null);
+                        mMusicItem = null;
+                        btnMusic.setSelected(false);
+                    }
+                }).show();
         }
-        updateMusicUI();
+//        updateMusicUI();
     }
 
     @OnClick(R.id.btn_add_music)
@@ -285,7 +303,8 @@ public class EnhanceActivity extends ClipPlayActivity {
                 Logger.t(TAG).d("Resultcode: " + resultCode + " data: " + data);
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     mMusicItem = MusicItem.fromBundle(data.getBundleExtra("music.item"));
-                    updateMusicUI();
+//                    updateMusicUI();
+                    btnMusic.setSelected(true);
                     mClipPlayFragment.setAudioUrl(mMusicItem.localPath);
                 }
                 break;
@@ -414,11 +433,12 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private void updateMusicUI() {
         if (mMusicItem == null) {
-            btnAddMusic.setText(R.string.add_music);
-            btnRemove.setVisibility(View.GONE);
+            //btnAddMusic.setText(R.string.add_music);
+//          //  btnRemove.setVisibility(View.GONE);
+//            mB
         } else {
-            btnAddMusic.setText(R.string.swap);
-            btnRemove.setVisibility(View.VISIBLE);
+            //btnAddMusic.setText(R.string.swap);
+            //btnRemove.setVisibility(View.VISIBLE);
         }
 
     }
