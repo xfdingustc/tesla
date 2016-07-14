@@ -25,6 +25,7 @@ import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
+import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.snipe.SnipeError;
@@ -39,7 +40,6 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
-import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.Clip;
 import com.waylens.hachi.vdb.ClipDownloadInfo;
 import com.waylens.hachi.vdb.ClipSet;
@@ -90,14 +90,6 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private MaterialDialog mDownloadDialog;
 
-//    public static void launch(Activity activity, ArrayList<Clip> clipList) {
-//        Intent intent = new Intent(activity, EnhanceActivity2.class);
-//        intent.putParcelableArrayListExtra(EXTRA_CLIP_LIST, clipList);
-//        intent.putExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_CLIP_LIST);
-//        activity.startActivity(intent);
-//    }
-
-
 
     public static void launch(Activity activity, int playlistId) {
         Intent intent = new Intent(activity, EnhanceActivity.class);
@@ -142,9 +134,6 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     @BindView(R.id.style_radio_group)
     RadioGroup mStyleRadioGroup;
-
-
-
 
 
     @OnClick(R.id.btn_music)
@@ -239,6 +228,12 @@ public class EnhanceActivity extends ClipPlayActivity {
         }
     }
 
+    @Subscribe
+    public void onEventClipSetChanged(ClipSetChangeEvent event) {
+        Logger.t(TAG).d("on Clip Set chang event clip count: " + getClipSet().getCount());
+        setupToolbar();
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -251,6 +246,7 @@ public class EnhanceActivity extends ClipPlayActivity {
         Logger.t(TAG).d("register");
         mEventBus.register(mPlaylistEditor);
         mEventBus.register(mClipsEditView);
+//        mEventBus.register(this);
     }
 
     @Override
@@ -259,6 +255,7 @@ public class EnhanceActivity extends ClipPlayActivity {
         Logger.t(TAG).d("unregister");
         mEventBus.unregister(mPlaylistEditor);
         mEventBus.unregister(mClipsEditView);
+//        mEventBus.unregister(this);
     }
 
     @Override
@@ -328,10 +325,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     private void initViews() {
         setContentView(R.layout.activity_enhance2);
         setupToolbar();
-
-
         mClipsEditView.setVisibility(View.VISIBLE);
-
     }
 
 
@@ -339,7 +333,12 @@ public class EnhanceActivity extends ClipPlayActivity {
     public void setupToolbar() {
         super.setupToolbar();
         getToolbar().setTitle(R.string.enhance);
+        getToolbar().getMenu().clear();
         getToolbar().inflateMenu(R.menu.menu_enhance);
+        if (getClipSet() != null && getClipSet().getCount() == 0) {
+            getToolbar().getMenu().removeItem(R.id.menu_to_share);
+            getToolbar().getMenu().removeItem(R.id.menu_to_download);
+        }
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -384,8 +383,6 @@ public class EnhanceActivity extends ClipPlayActivity {
         });
 
     }
-
-
 
 
     private void configureActionUI(int child, boolean isShow) {
@@ -502,7 +499,6 @@ public class EnhanceActivity extends ClipPlayActivity {
             }
 
 
-
             @Override
             public void onStopTrimming(Clip clip) {
                 int selectedPosition = mClipsEditView.getSelectedPosition();
@@ -536,7 +532,7 @@ public class EnhanceActivity extends ClipPlayActivity {
         return null;
     }
 
-    private  int getAudioID() {
+    private int getAudioID() {
         if (mMusicItem != null) {
             return mMusicItem.id;
         } else {
