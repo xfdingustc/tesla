@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -164,6 +165,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     @BindView(R.id.bottom_progress_bar)
     ProgressBar mBottomProgressBar;
 
+    @BindView(R.id.btnShowOverlay)
+    ImageButton mBtnShowOverlay;
+
     @OnClick(R.id.btn_play_pause)
     public void onBtnPlayClicked() {
         if (mPlayerControl == null) {
@@ -200,8 +204,14 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
-        int visibility = mGaugeView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE;
-        mGaugeView.setVisibility(visibility);
+        boolean isGaugeVisible = mGaugeView.getVisibility() == View.VISIBLE ? false : true;
+        if (isGaugeVisible) {
+            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
+        } else {
+            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
+        }
+        //mGaugeView.showGauge(mIsGaugeVisible);
+        mGaugeView.setVisibility(isGaugeVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
     public static MomentPlayFragment newInstance(MomentInfo moment) {

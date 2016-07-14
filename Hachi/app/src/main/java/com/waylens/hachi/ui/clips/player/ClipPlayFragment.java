@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -151,11 +150,20 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @BindView(R.id.media_window)
     FrameLayout mMediaWindow;
 
+    @BindView(R.id.btnShowOverlay)
+    ImageButton mBtnShowOverlay;
+
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
-        int visibility = mWvGauge.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE;
-        mWvGauge.setVisibility(visibility);
+        boolean isGaugeVisible = mWvGauge.getVisibility() == View.VISIBLE ? false : true;
+        if (isGaugeVisible) {
+            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
+        } else {
+            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
+        }
+        //mGaugeView.showGauge(mIsGaugeVisible);
+        mWvGauge.setVisibility(isGaugeVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
 
@@ -163,9 +171,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onBtnPlayPauseClicked() {
         if (getClipSet().getCount() == 0) {
             MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .content(R.string.no_clip_selected)
-                    .positiveText(R.string.ok)
-                    .show();
+                .content(R.string.no_clip_selected)
+                .positiveText(R.string.ok)
+                .show();
             return;
         }
         if (mPlayerControl == null) {
@@ -497,11 +505,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
         Glide.with(this)
-                .using(new SnipeGlideLoader(mVdbRequestQueue))
-                .load(clipPos)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
-                .into(mClipCover);
+            .using(new SnipeGlideLoader(mVdbRequestQueue))
+            .load(clipPos)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .dontAnimate()
+            .into(mClipCover);
 
 
         setupMultiSegSeekBar();
@@ -625,12 +633,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 //            Logger.t(TAG).d("show cilpPos " + mClipCover.getVisibility());
 //            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
             Glide.with(this)
-                    .using(new SnipeGlideLoader(mVdbRequestQueue))
-                    .load(clipPos)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .dontAnimate()
-                    .placeholder(mClipCover.getDrawable())
-                    .into(mClipCover);
+                .using(new SnipeGlideLoader(mVdbRequestQueue))
+                .load(clipPos)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate()
+                .placeholder(mClipCover.getDrawable())
+                .into(mClipCover);
 
             mPreviousShownClipPos = clipPos;
             mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
@@ -690,27 +698,27 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
             }
         })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<Integer>() {
+                @Override
+                public void onCompleted() {
 
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Integer integer) {
+                    //Logger.t(TAG).d("loading staget: " + integer);
+                    if (integer == LOADING_STAGE_PREPARE_VIDEO) {
+                        preparePlayer(true);
                     }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Integer integer) {
-                        //Logger.t(TAG).d("loading staget: " + integer);
-                        if (integer == LOADING_STAGE_PREPARE_VIDEO) {
-                            preparePlayer(true);
-                        }
-                    }
-                });
+                }
+            });
 
     }
 
