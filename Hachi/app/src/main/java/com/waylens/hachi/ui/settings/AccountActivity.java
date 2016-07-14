@@ -140,6 +140,7 @@ public class AccountActivity extends BaseActivity {
         Glide.with(this.getApplicationContext())
             .load(mSessionManager.getAvatarUrl())
             .dontAnimate()
+            .placeholder(R.drawable.menu_profile_photo_default)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(mAvatar);
     }
@@ -155,16 +156,6 @@ public class AccountActivity extends BaseActivity {
         setContentView(R.layout.activity_account);
         setupToolbar();
 
-        Glide.with(this)
-            .load(mSessionManager.getAvatarUrl())
-            .asBitmap()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    mAvatar.setImageBitmap(resource);
-                }
-            });
         fetchUserProfile();
     }
 
