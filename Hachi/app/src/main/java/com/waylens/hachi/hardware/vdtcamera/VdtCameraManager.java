@@ -54,12 +54,13 @@ public class VdtCameraManager {
         VdtCamera vdtCamera = new VdtCamera(serviceInfo, new VdtCamera.OnConnectionChangeListener() {
             @Override
             public void onConnected(VdtCamera vdtCamera) {
-                onCameraConnected(vdtCamera);
+
                 mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_CONNECTING, vdtCamera));
             }
 
             @Override
             public void onVdbConnected(VdtCamera vdtCamera) {
+                onCameraConnected(vdtCamera);
                 if (mCurrentCamera == null) {
                     mCurrentCamera = vdtCamera;
                 }
