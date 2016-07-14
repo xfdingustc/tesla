@@ -381,6 +381,22 @@ public class EnhanceActivity extends ClipPlayActivity {
             }
 
         });
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
+                    .content(R.string.discard_enhance_confirm)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            finish();
+                        }
+                    }).show();
+
+            }
+        });
 
     }
 
