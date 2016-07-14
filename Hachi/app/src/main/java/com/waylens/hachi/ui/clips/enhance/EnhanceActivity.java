@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -214,16 +215,15 @@ public class EnhanceActivity extends ClipPlayActivity {
             case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
                 if (mDownloadDialog != null) {
                     int progress = (Integer) event.getExtra();
-                    mDownloadDialog.getProgressBar().setProgress(progress);
+                    mDownloadDialog.setProgress(progress);
                 }
                 break;
             case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
                 if (mDownloadDialog != null) {
                     mDownloadDialog.dismiss();
                 }
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content("Stream has been download into " + (String) event.getExtra())
-                    .show();
+
+                Snackbar.make(btnAddMusic, ("Stream has been download into " + (String) event.getExtra()), Snackbar.LENGTH_LONG).show();
                 break;
         }
     }
