@@ -19,6 +19,7 @@ import android.view.ViewOutlineProvider;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
@@ -48,12 +49,16 @@ import butterknife.OnClick;
 public class ApConnectFragment extends BaseFragment {
     private static final String TAG = ApConnectFragment.class.getSimpleName();
 
+    private static final int CAMERA_CONNECTING = 0;
+    private static final int CAMERA_CONNECTED = 1;
+
     private String mSSID;
     private String mPassword;
     private WifiManager mWifiManager;
     private BroadcastReceiver mWifiStateReceiver;
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private EventBus mEventBus = EventBus.getDefault();
+
 
 
     @BindView(R.id.tvSsid)
@@ -63,7 +68,7 @@ public class ApConnectFragment extends BaseFragment {
     TextView mTvPassword;
 
     @BindView(R.id.vsRootView)
-    ViewSwitcher mVsRootView;
+    ViewAnimator mVsRootViewAnimator;
 
     @BindView(R.id.live_view)
     CameraLiveView mLiveView;
@@ -119,21 +124,17 @@ public class ApConnectFragment extends BaseFragment {
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mEventBus.register(this);
 
-        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
-        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
-        animationDrawable.start();
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
         Logger.t(TAG).d("wifiInfo ssid: " + wifiInfo.getSSID() + " qrssid: " + mSSID);
         if (TextUtils.isEmpty(mSSID) || TextUtils.isEmpty(mPassword)) {
             toggleCameraConnectView();
             return;
         }
-        if (wifiInfo.getSSID().equals(mSSID)) {
+        if (wifiInfo.getSSID().equals("\"" + mSSID + "\"")) {
             toggleCameraConnectView();
         } else {
             WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
@@ -148,11 +149,20 @@ public class ApConnectFragment extends BaseFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mEventBus.register(this);
+        toggleCameraConnectView();
+
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
         if (mWifiStateReceiver != null) {
             getActivity().unregisterReceiver(mWifiStateReceiver);
+            mWifiStateReceiver = null;
         }
         mLiveView.stopStream();
     }
@@ -207,14 +217,20 @@ public class ApConnectFragment extends BaseFragment {
         }
 
 
+        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+        animationDrawable.start();
+
+
+
     }
 
     private void toggleCameraConnectView() {
-        if (mVsRootView == null) {
+        if (mVsRootViewAnimator == null) {
             return;
         }
         if (mVdtCameraManager.isConnected()) {
-            mVsRootView.showNext();
+            mVsRootViewAnimator.setDisplayedChild(CAMERA_CONNECTED);
             initVdtCamera();
             mConnectHomeWifi.setVisibility(View.VISIBLE);
 //            mUiHandler.postDelayed(new Runnable() {
