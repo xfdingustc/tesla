@@ -194,11 +194,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onBtnFullscreenClicked() {
         if (!isFullScreen()) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            mControlPanel.setBackgroundColor(Color.argb(0x7f, 0, 0, 0));
+
             showControlPanel();
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mControlPanel.setBackgroundResource(0);
+
         }
 
     }
@@ -217,11 +217,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             mControlPanel.setLayoutParams(params);
+            mControlPanel.setBackgroundColor(Color.argb(0x7f, 0, 0, 0));
+
         } else {
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.BELOW, mFragmentView.getId());
             mControlPanel.setLayoutParams(params);
             mBtnFullscreen.setImageResource(R.drawable.screen_full);
+            mControlPanel.setBackgroundResource(0);
         }
         ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
     }

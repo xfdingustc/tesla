@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -184,6 +185,16 @@ public class ClipModifyActivity extends BaseActivity {
                 }
             }
         ).setTag(TAG_SET_EXTENT));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setImmersiveMode(false);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void embedVideoPlayFragment() {

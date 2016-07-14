@@ -87,7 +87,7 @@ public class PreviewActivity extends ClipPlayActivity {
                         break;
                     case R.id.menu_to_modify:
                         ClipModifyActivity.launch(PreviewActivity.this, mClip);
-                        finish();
+//                        finish();
                         break;
                     case R.id.menu_to_delete:
                         confirmDeleteClip();
