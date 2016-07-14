@@ -55,17 +55,7 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
         init();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mEventBus.register(this);
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mEventBus.unregister(this);
-    }
 
     @Override
     protected void init() {
