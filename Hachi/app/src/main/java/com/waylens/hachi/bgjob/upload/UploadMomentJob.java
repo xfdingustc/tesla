@@ -154,7 +154,7 @@ public class UploadMomentJob extends Job {
         setUploadState(UPLOAD_STATE_CREATE_MOMENT);
 
 
-        DataUploader uploader = new DataUploader(this);
+        MomentUploader uploader = new MomentUploader(this);
 //        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
         uploader.upload(mLocalMoment);
 

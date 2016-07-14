@@ -74,7 +74,7 @@ public class AccountActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Logger.t(TAG).d("in onStart" + "avatart: i am here" );
+//        Logger.t(TAG).d("in onStart" + "avatart: i am here" );
         fetchUserProfile();
 
     }
@@ -90,7 +90,7 @@ public class AccountActivity extends BaseActivity {
                     showUserProfile(response);
                     AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
                     if (!isDestroyed()) {
-                        getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commit();
+                        getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commitAllowingStateLoss();
                     }
                 }
             })
@@ -103,18 +103,13 @@ public class AccountActivity extends BaseActivity {
 
         Logger.t(TAG).d("avatart: " + mSessionManager.getAvatarUrl());
 
-        final Resources resources = this.getApplicationContext().getResources();
+
         Glide.with(this.getApplicationContext())
             .load(mSessionManager.getAvatarUrl())
-            .asBitmap()
+            .dontAnimate()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.menu_profile_photo_default)
-            .into(new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    mAvatar.setImageBitmap(resource);
-                }
-            });
+            .into(mAvatar);
     }
 
 

@@ -243,7 +243,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private void onDeleteClick(final long momentId, final int position) {
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)
-            .title(R.string.delete)
+            .content(R.string.delete_this_video)
             .positiveText(R.string.ok)
             .negativeText(R.string.cancel)
             .onPositive(new MaterialDialog.SingleButtonCallback() {
