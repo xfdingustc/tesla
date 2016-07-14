@@ -2,8 +2,11 @@ package com.waylens.hachi.ui.clips.player;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.text.format.DateUtils;
@@ -52,6 +55,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -75,6 +79,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private static final int LOADING_STAGE_GET_PLAYBACK_URL = 1;
     private static final int LOADING_STAGE_PREPARE_AUDIO = 2;
     private static final int LOADING_STAGE_PREPARE_VIDEO = 3;
+
+    private static final int FADE_OUT = 5;
 
     private int mClipSetIndex;
 
@@ -103,6 +109,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private SurfaceHolder mSurfaceHolder;
 
+    private Handler mHandler;
+
     private boolean playerNeedsPrepare;
 
     private boolean mNeedSendPlayCompleteEvent = false;
@@ -113,7 +121,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @BindView(R.id.clipCover)
     ImageView mClipCover;
-
 
 
     @BindView(R.id.progressLoading)
@@ -155,9 +162,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onBtnPlayPauseClicked() {
         if (getClipSet().getCount() == 0) {
             MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .content(R.string.no_clip_selected)
-                .positiveText(R.string.ok)
-                .show();
+                    .content(R.string.no_clip_selected)
+                    .positiveText(R.string.ok)
+                    .show();
             return;
         }
         if (mPlayerControl == null) {
@@ -178,11 +185,20 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onBtnFullscreenClicked() {
         if (!isFullScreen()) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            mControlPanel.setBackgroundColor(Color.argb(0x7f, 0, 0, 0));
+            showControlPanel();
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mControlPanel.setBackgroundResource(0);
         }
 
     }
+
+    @OnClick(R.id.surface_view)
+    public void onSurfaceClicked() {
+        showControlPanel();
+    }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -403,6 +419,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         View view = inflater.inflate(R.layout.fragment_clip_play, container, false);
         ButterKnife.bind(this, view);
+        mHandler = new ControlPanelHandler(this);
         initViews();
         return view;
     }
@@ -471,11 +488,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
         Glide.with(this)
-            .using(new SnipeGlideLoader(mVdbRequestQueue))
-            .load(clipPos)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .dontAnimate()
-            .into(mClipCover);
+                .using(new SnipeGlideLoader(mVdbRequestQueue))
+                .load(clipPos)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate()
+                .into(mClipCover);
 
 
         setupMultiSegSeekBar();
@@ -599,12 +616,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 //            Logger.t(TAG).d("show cilpPos " + mClipCover.getVisibility());
 //            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
             Glide.with(this)
-                .using(new SnipeGlideLoader(mVdbRequestQueue))
-                .load(clipPos)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
-                .placeholder(mClipCover.getDrawable())
-                .into(mClipCover);
+                    .using(new SnipeGlideLoader(mVdbRequestQueue))
+                    .load(clipPos)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .dontAnimate()
+                    .placeholder(mClipCover.getDrawable())
+                    .into(mClipCover);
 
             mPreviousShownClipPos = clipPos;
             mPreviousShowThumbnailRequestTime = System.currentTimeMillis();
@@ -664,27 +681,27 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
             }
         })
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<Integer>() {
-                @Override
-                public void onCompleted() {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onCompleted() {
 
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onNext(Integer integer) {
-//                    Logger.t(TAG).d("loading staget: " + integer);
-                    if (integer == LOADING_STAGE_PREPARE_VIDEO) {
-                        preparePlayer(true);
                     }
-                }
-            });
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        //Logger.t(TAG).d("loading staget: " + integer);
+                        if (integer == LOADING_STAGE_PREPARE_VIDEO) {
+                            preparePlayer(true);
+                        }
+                    }
+                });
 
     }
 
@@ -755,6 +772,51 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private boolean isFullScreen() {
         int orientation = getActivity().getRequestedOrientation();
         return orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+    }
+
+    private void showControlPanel() {
+        if (mControlPanel == null) {
+            return;
+        }
+        Logger.t(TAG).d("show ControlPanel");
+        mControlPanel.setVisibility(View.VISIBLE);
+        mHandler.removeMessages(FADE_OUT);
+        mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), 3000);
+    }
+
+    private void hideControlPanel() {
+        mControlPanel.setVisibility(View.GONE);
+    }
+
+    private static class ControlPanelHandler extends Handler {
+        private WeakReference<ClipPlayFragment> mFragmentRef;
+
+        ControlPanelHandler(ClipPlayFragment fragment) {
+            super();
+            mFragmentRef = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            ClipPlayFragment fragment = mFragmentRef.get();
+            if (fragment == null) {
+                return;
+            }
+            Logger.t(TAG).d("handle message");
+            switch (msg.what) {
+                case FADE_OUT:
+                    try {
+                        if (fragment.isFullScreen()) {
+                            fragment.hideControlPanel();
+                        }
+                    } catch (Exception e) {
+                        Logger.t(TAG).d("fragment is be GCed!");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public class UpdatePlayTimeTask extends TimerTask {
