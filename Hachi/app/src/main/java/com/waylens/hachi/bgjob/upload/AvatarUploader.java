@@ -1,10 +1,10 @@
 package com.waylens.hachi.bgjob.upload;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.urls.UploadUrl;
 
 import org.greenrobot.eventbus.EventBus;
@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 
+import crs_svr.HashUtils;
 import crs_svr.v2.CrsClientTranData;
 import crs_svr.v2.CrsCommand;
 import crs_svr.v2.CrsCommandResponse;
@@ -30,11 +31,10 @@ import crs_svr.v2.CrsUserStopUpload;
 import crs_svr.v2.EncodeCommandHeader;
 
 /**
- * DataUploaderV2
- * Created by Richard on 1/14/16.
+ * Created by Xiaofei on 2016/7/14.
  */
-public class DataUploader {
-    private static final String TAG = DataUploader.class.getSimpleName();
+public class AvatarUploader {
+    private static final String TAG = AvatarUploader.class.getSimpleName();
 
     private CloudInfo mCloudInfo;
     private Socket mSocket;
@@ -43,17 +43,13 @@ public class DataUploader {
     String mUserId;
     long mMomentID;
 
-//    private EventBus mEventBus = EventBus.getDefault();
-
-    private
+    private EventBus mEventBus = EventBus.getDefault();
 
     volatile boolean isCancelled;
     private int mClipTotalCount;
-    private final UploadMomentJob mUploadJob;
 
 
-    public DataUploader(UploadMomentJob job) {
-        this.mUploadJob = job;
+    public AvatarUploader() {
         mUserId = SessionManager.getInstance().getUserId();
         EncodeCommandHeader.CURRENT_ENCODE_TYPE = CrsCommand.ENCODE_TYPE_OPEN;
     }
@@ -64,13 +60,11 @@ public class DataUploader {
     }
 
     private int login(byte deviceType) throws IOException {
-//        mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN));
-        mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_LOGIN);
+        mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_LOGIN));
         CrsUserLogin loginCmd = new CrsUserLogin(mUserId, mMomentID, mCloudInfo.getPrivateKey(), deviceType);
         sendData(loginCmd.getEncodedCommand());
         CrsCommandResponse response = receiveData();
-//        mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN_SUCCEED));
-        mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_LOGIN_SUCCEED);
+        mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_LOGIN_SUCCEED));
         return response.responseCode;
     }
 
@@ -187,9 +181,7 @@ public class DataUploader {
 
 //            mUploadListener.onUploadProgress(percentage);
 //            Logger.t(TAG).d("upload progress: " + percentage + " data send: " + dataSend + " totalLength: " + totalLength);
-//            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_PROGRESS, percentage));
-            mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_PROGRESS, percentage);
-//            mUploadJob.setUploadProgress(percentage);
+            mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_PROGRESS, percentage));
 
         }
 
@@ -284,7 +276,7 @@ public class DataUploader {
     }
 
 
-    private void uploadClips(LocalMoment localMoment) {
+    void uploadClips(LocalMoment localMoment) {
         mMomentID = localMoment.momentID;
         Logger.t(TAG).d("MomentID: " + mMomentID);
         try {
@@ -292,16 +284,14 @@ public class DataUploader {
             int ret = login(CrsCommand.DEVICE_VIDIT);
             if (ret != 0) {
                 Logger.t(TAG).d("Login error");
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_LOGIN));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_LOGIN);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_LOGIN));
                 return;
             }
             Logger.t(TAG).d("Login successful");
             ret = createMomentDesc(localMoment);
             if (ret != 0) {
                 Logger.t(TAG).d("createMoment error");
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_CREATE_MOMENT_DESC));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_CREATE_MOMENT_DESC);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_CREATE_MOMENT_DESC));
                 return;
             }
             Logger.t(TAG).d("createMoment successful");
@@ -309,30 +299,26 @@ public class DataUploader {
             ret = uploadMomentData(localMoment);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 Logger.t(TAG).d("Upload fragment error: " + ret);
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_UPLOAD_VIDEO));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_UPLOAD_VIDEO);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_UPLOAD_VIDEO));
                 return;
             }
             Logger.t(TAG).d("Upload fragment successful");
             ret = uploadThumbnail(localMoment.thumbnailPath);
             if (ret != CrsCommand.RES_FILE_TRANS_COMPLETE) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_UPLOAD_THUMBNAIL);
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_UPLOAD_THUMBNAIL));
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_UPLOAD_THUMBNAIL));
                 return;
             }
             Logger.t(TAG).d("Upload thumbnail successful");
-//            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_FINISHED));
-//            mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_FINISHED);
+            mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_FINISHED));
 
         } catch (IOException e) {
             Logger.t(TAG).e(e, "IOException");
             if (isCancelled) {
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_CANCELLED));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_CANCELLED);
+
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_CANCELLED));
             } else {
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_IO));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_IO);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_IO));
 //                mUploadListener.onUploadError(MomentShareHelper.ERROR_IO, CrsCommand.RES_STATE_FAIL);
             }
         } finally {
@@ -353,8 +339,7 @@ public class DataUploader {
             if (ret != 0) {
                 Logger.t(TAG).d("Login error");
 //                mUploadListener.onUploadError(MomentShareHelper.ERROR_LOGIN, ret);
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_LOGIN));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_LOGIN);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_LOGIN));
                 return;
             }
             Logger.t(TAG).d("Login successful");
@@ -366,21 +351,17 @@ public class DataUploader {
             ret = uploadAvatar(file, fileSize, fileSha1);
             if (ret != CrsCommand.RES_STATE_OK) {
                 Logger.t(TAG).d("Upload thumbnail error: " + ret);
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_UPLOAD_THUMBNAIL));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_UPLOAD_THUMBNAIL);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_UPLOAD_THUMBNAIL));
                 return;
             }
             Logger.t(TAG).d("Upload thumbnail successful");
-//            mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_FINISHED));
-//            mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_FINISHED);
+            mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_FINISHED));
         } catch (IOException e) {
             e.printStackTrace();
             if (isCancelled) {
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_CANCELLED));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_CANCELLED);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_CANCELLED));
             } else {
-//                mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_ERROR, UploadEvent.UPLOAD_ERROR_IO));
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_ERROR, UploadMomentJob.UPLOAD_ERROR_IO);
+                mEventBus.post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_ERROR, UploadAvatarEvent.UPLOAD_ERROR_IO));
             }
         } finally {
             try {

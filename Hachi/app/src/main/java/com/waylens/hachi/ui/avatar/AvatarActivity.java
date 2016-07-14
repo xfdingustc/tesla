@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -24,7 +23,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
-import com.waylens.hachi.bgjob.upload.event.UploadEvent;
+import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
 import com.waylens.hachi.utils.ImageUtils;
@@ -73,38 +72,38 @@ public class AvatarActivity extends BaseActivity {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventUpload(UploadEvent event) {
+    public void onEventUpload(UploadAvatarEvent event) {
         switch (event.getWhat()) {
-//            case UploadEvent.UPLOAD_WHAT_START:
-//                mUploadDialog = new MaterialDialog.Builder(this)
-//                    .title(R.string.upload)
-//                    .contentGravity(GravityEnum.CENTER)
-//                    .progress(false, 100, true)
-//                    .show();
-//                mUploadDialog.setCanceledOnTouchOutside(false);
-//                break;
-//            case UploadEvent.UPLOAD_WHAT_PROGRESS:
-//                if (mUploadDialog != null) {
-//                    int progress = event.getExtra();
-//                    mUploadDialog.setProgress(progress);
-//                    //mUploadDialog.getProgressBar().setProgress(progress);
-//                }
-//                break;
-//            case UploadEvent.UPLOAD_WHAT_FINISHED:
-//                if (mUploadDialog != null) {
-//                    mUploadDialog.dismiss();
-//                }
-//                MaterialDialog dialog = new MaterialDialog.Builder(this)
-//                    .content("Uploading finished")
-//                    .show();
-//
-//                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//                        finish();
-//                    }
-//                });
-//                break;
+            case UploadAvatarEvent.UPLOAD_WHAT_START:
+                mUploadDialog = new MaterialDialog.Builder(this)
+                    .title(R.string.upload)
+                    .contentGravity(GravityEnum.CENTER)
+                    .progress(false, 100, true)
+                    .show();
+                mUploadDialog.setCanceledOnTouchOutside(false);
+                break;
+            case UploadAvatarEvent.UPLOAD_WHAT_PROGRESS:
+                if (mUploadDialog != null) {
+                    int progress = event.getExtra();
+                    mUploadDialog.setProgress(progress);
+                    //mUploadDialog.getProgressBar().setProgress(progress);
+                }
+                break;
+            case UploadAvatarEvent.UPLOAD_WHAT_FINISHED:
+                if (mUploadDialog != null) {
+                    mUploadDialog.dismiss();
+                }
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .content("Uploading finished")
+                    .show();
+
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        finish();
+                    }
+                });
+                break;
         }
     }
 
@@ -196,10 +195,10 @@ public class AvatarActivity extends BaseActivity {
             Logger.t(TAG).d("Get photo: " + mAvatarUri.getPath());
             mReturnImagePath = mAvatarUri.getPath();
         } else if (requestCode == FROM_LOCAL) {
-            Uri imageUri= data.getData();
+            Uri imageUri = data.getData();
             Logger.t(TAG).d("image selected path", imageUri.getPath());
 
-            String[] projection = { MediaStore.Images.Media.DATA };
+            String[] projection = {MediaStore.Images.Media.DATA};
             Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();

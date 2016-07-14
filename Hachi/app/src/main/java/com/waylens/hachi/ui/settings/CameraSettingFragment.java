@@ -52,7 +52,6 @@ import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
 import com.waylens.hachi.ui.services.download.InetDownloadService;
-import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.vdb.SpaceInfo;
 
 import org.json.JSONArray;
@@ -65,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import crs_svr.HashUtils;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
