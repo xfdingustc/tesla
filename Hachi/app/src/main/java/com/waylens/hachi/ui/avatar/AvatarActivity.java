@@ -66,46 +66,10 @@ public class AvatarActivity extends BaseActivity {
 //    MaterialCircularProgressBar mUploadProgressBar;
 
 
-    private MaterialDialog mUploadDialog;
-
-    private EventBus mEventBus = EventBus.getDefault();
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventUpload(UploadAvatarEvent event) {
-        switch (event.getWhat()) {
-            case UploadAvatarEvent.UPLOAD_WHAT_START:
-                mUploadDialog = new MaterialDialog.Builder(this)
-                    .title(R.string.upload)
-                    .contentGravity(GravityEnum.CENTER)
-                    .progress(false, 100, true)
-                    .show();
-                mUploadDialog.setCanceledOnTouchOutside(false);
-                break;
-            case UploadAvatarEvent.UPLOAD_WHAT_PROGRESS:
-                if (mUploadDialog != null) {
-                    int progress = event.getExtra();
-                    mUploadDialog.setProgress(progress);
-                    //mUploadDialog.getProgressBar().setProgress(progress);
-                }
-                break;
-            case UploadAvatarEvent.UPLOAD_WHAT_FINISHED:
-                if (mUploadDialog != null) {
-                    mUploadDialog.dismiss();
-                }
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content("Uploading finished")
-                    .show();
 
-                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        finish();
-                    }
-                });
-                break;
-        }
-    }
+
 
     public static void launch(Activity startActivity, boolean fromCamera) {
         Intent intent = new Intent(startActivity, AvatarActivity.class);
@@ -148,17 +112,6 @@ public class AvatarActivity extends BaseActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mEventBus.register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mEventBus.unregister(this);
-    }
 
     @Override
     protected void init() {
@@ -213,6 +166,7 @@ public class AvatarActivity extends BaseActivity {
                     case R.id.confirm:
                         saveCroppedImage();
                         uploadAvatar();
+                        finish();
                         break;
                 }
                 return false;
