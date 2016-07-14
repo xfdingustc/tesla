@@ -310,7 +310,10 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 public void onResponse(Integer response) {
                     mDeleteClipCount++;
                     Logger.t(TAG).d("" + mDeleteClipCount + " clips deleted");
+
                     if (mDeleteClipCount == toDeleteClipCount) {
+                        mEventBus.post(new MultiSelectEvent(false, null));
+                        mEventBus.post(new MenuItemSelectEvent(-1));
                         doGetClips();
                     }
                 }
@@ -418,9 +421,6 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                             public void onClipLongClicked(Clip clip) {
                                 mIsMultipleMode = true;
                                 mAdapter.setMultiSelectedMode(true);
-//                if (mActionMode == null) {
-//                    mActionMode = getActivity().startActionMode(mCABCallback);
-//                }
 
                                 mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
                                 mRefreshLayout.setEnabled(false);
