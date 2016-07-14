@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.liveview;
 
+import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -42,6 +43,7 @@ import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.views.GaugeView;
@@ -68,7 +70,7 @@ import butterknife.Optional;
 /**
  * Created by Xiaofei on 2016/3/7.
  */
-public class CameraPreviewFragment extends BaseFragment {
+public class CameraPreviewFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = CameraPreviewFragment.class.getSimpleName();
 
     private Handler mHandler;
@@ -171,6 +173,9 @@ public class CameraPreviewFragment extends BaseFragment {
     @BindView(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
+/*    @BindView(R.id.startMarkLayout)
+    RelativeLayout mStartMarkLayout;*/
+
     @BindView(R.id.btnBookmark)
     ImageButton mBtnBookmark;
 
@@ -178,8 +183,14 @@ public class CameraPreviewFragment extends BaseFragment {
 
     private int mFabStopSrc;
 
-    private int mBtnBookMarkSrc;
+    @BindView(R.id.btnFullscreen)
+    ImageButton mBtnFullScreen;
 
+    @BindView(R.id.statusErrorLayout)
+    FrameLayout mStatusErrorLayout;
+
+    @BindView(R.id.controlPanel)
+    RelativeLayout mControlPanel;
 
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
@@ -193,11 +204,17 @@ public class CameraPreviewFragment extends BaseFragment {
 
     @OnClick(R.id.btnFullscreen)
     public void onBtnFullScreenClicked() {
+        if (!isFullScreen()) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        /*
         if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             getActivity().finish();
         } else {
             LiveViewActivity.launch(getActivity(), mVdtCamera, mIsGaugeVisible);
-        }
+        }*/
     }
 
     @OnClick(R.id.fabStartStop)
@@ -380,11 +397,7 @@ public class CameraPreviewFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
-        if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            view = createFragmentView(inflater, container, R.layout.fragment_camera_preview_land, savedInstanceState);
-        } else {
-            view = createFragmentView(inflater, container, R.layout.fragment_camera_preview, savedInstanceState);
-        }
+        view = createFragmentView(inflater, container, R.layout.fragment_camera_preview, savedInstanceState);
         init();
         return view;
     }
@@ -441,8 +454,6 @@ public class CameraPreviewFragment extends BaseFragment {
                     return false;
                 }
             });
-
-
         }
         super.setupToolbar();
     }
@@ -501,22 +512,85 @@ public class CameraPreviewFragment extends BaseFragment {
             Logger.t(TAG).d("Stop camera preview");
             mLiveView.stopStream();
         }
-
     }
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+        if (isFullScreen()) {
             mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark_land);
             mFabStopSrc = R.drawable.camera_control_stop_land;
             mFabStartSrc = R.drawable.camera_control_start_land;
+
+            getToolbar().setVisibility(View.GONE);
+            mCameraSpinner.setVisibility(View.GONE);
+            mInfoView.setVisibility(View.GONE);
+            RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            mLiveViewLayout.setLayoutParams(params1);
+
+            RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            //Logger.t(TAG).d("mControlPanel height: " + mControlPanel.getLayoutParams().height);
+            mControlPanel.setLayoutParams(params2);
+            //Logger.t(TAG).d("mControlPanel height: " + mControlPanel.getLayoutParams().height);
+            RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params3.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            params3.removeRule(RelativeLayout.BELOW);
+            mStatusErrorLayout.setLayoutParams(params3);
+
+            mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
         } else {
             mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark);
             mFabStopSrc = R.drawable.camera_control_stop;
             mFabStartSrc = R.drawable.camera_control_start;
+
+            getToolbar().setVisibility(View.VISIBLE);
+            mCameraSpinner.setVisibility(View.VISIBLE);
+            mInfoView.setVisibility(View.VISIBLE);
+
+            RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.BELOW, mInfoView.getId());
+            params1.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
+            mStatusErrorLayout.setLayoutParams(params1);
+
+            RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params2.addRule(RelativeLayout.BELOW, mStatusErrorLayout.getId());
+            mLiveViewLayout.setLayoutParams(params2);
+
+            RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params3.addRule(RelativeLayout.BELOW, mLiveViewLayout.getId());
+            mControlPanel.setLayoutParams(params3);
+
+            mBtnFullScreen.setImageResource(R.drawable.screen_full);
+        }
+        updateFloatActionButton();
+        ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
+    }
+
+    @Override
+    public boolean onInterceptBackPressed() {
+        if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            ((BaseActivity) getActivity()).setImmersiveMode(false);
+            return true;
+        } else {
+            return false;
         }
     }
 
+
+    private boolean isFullScreen() {
+        int orientation = getActivity().getRequestedOrientation();
+        return orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+    }
 
     private void changeCurrentCamera(int position) {
         closeLiveRawData();
@@ -657,13 +731,13 @@ public class CameraPreviewFragment extends BaseFragment {
     private void openLiveViewData() {
         if (mVdbRequestQueue != null) {
             LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
-                RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
-                VdbResponse.Listener<Integer>() {
-                    @Override
-                    public void onResponse(Integer response) {
+                    RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
+                    VdbResponse.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
 //                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
-                    }
-                }, new VdbResponse.ErrorListener() {
+                        }
+                    }, new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
                     Log.e(TAG, "LiveRawDataResponse ERROR", error);
@@ -678,12 +752,12 @@ public class CameraPreviewFragment extends BaseFragment {
     private void closeLiveRawData() {
         if (mVdbRequestQueue != null) {
             LiveRawDataRequest request = new LiveRawDataRequest(0, new
-                VdbResponse.Listener<Integer>() {
-                    @Override
-                    public void onResponse(Integer response) {
+                    VdbResponse.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
 //                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
-                    }
-                }, new VdbResponse.ErrorListener() {
+                        }
+                    }, new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
                     Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
@@ -807,7 +881,6 @@ public class CameraPreviewFragment extends BaseFragment {
             case VdtCamera.STATE_RECORD_RECORDING:
                 mFabStartStop.setEnabled(true);
                 if (isInCarMode()) {
-
                     mBtnBookmark.setVisibility(View.VISIBLE);
                 }
                 mFabStartStop.setImageResource(mFabStopSrc);
@@ -830,7 +903,6 @@ public class CameraPreviewFragment extends BaseFragment {
         } else {
             mRecordDot.setVisibility(View.GONE);
         }
-
     }
 
     private void toggleInfoView() {

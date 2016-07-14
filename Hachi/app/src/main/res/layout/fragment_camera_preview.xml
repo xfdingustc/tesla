@@ -14,30 +14,21 @@
         android:layout_height="match_parent">
 
 
-        <LinearLayout
+<!--        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical">-->
 
             <include layout="@layout/fragment_camera_preview_info_panel"/>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-
-                <include layout="@layout/fragment_camera_preview_status_panel"/>
-
-
-                <include layout="@layout/fragment_camera_preview_error_panel"/>
-
-            </FrameLayout>
 
 
             <com.xfdingustc.far.FixedAspectRatioFrameLayout
                 android:id="@+id/liveViewLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_below="@+id/statusErrorLayout"
                 android:clipChildren="false">
 
                 <com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView
@@ -55,10 +46,26 @@
 
             </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/infoPanel"
+                android:id="@+id/statusErrorLayout">
+
+
+                <include layout="@layout/fragment_camera_preview_status_panel"/>
+
+
+                <include layout="@layout/fragment_camera_preview_error_panel"/>
+
+            </FrameLayout>
+
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:id="@+id/controlPanel"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/liveViewLayout"
                             android:alpha="0.8"
                             android:background="#222428">
 
@@ -69,6 +76,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:src="@drawable/btn_mic_on"/>
 
 
@@ -80,7 +89,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="8dp"
-
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:src="@drawable/screen_full"/>
 
 
@@ -89,6 +99,8 @@
                     style="@style/SelectableRippleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="20dp"
                     android:layout_toLeftOf="@id/btnFullscreen"
@@ -99,31 +111,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"/>
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
 
-        <ImageButton
-            android:id="@+id/fabStartStop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="32dp"
-            android:src="@drawable/camera_control_start"
-            android:background="@android:color/transparent"/>
+            <ImageButton
+                android:id="@+id/fabStartStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="32dp"
+                android:src="@drawable/camera_control_start"
+                android:background="@android:color/transparent"/>
 
-        <ImageButton
-            android:id="@+id/btnBookmark"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="32dp"
-            android:layout_toRightOf="@id/fabStartStop"
-            android:scaleType="fitCenter"
-            android:src="@drawable/camera_control_bookmark"
-            android:background="@android:color/transparent"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+            <ImageButton
+                android:id="@+id/btnBookmark"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="32dp"
+                android:layout_toRightOf="@id/fabStartStop"
+                android:scaleType="fitCenter"
+                android:src="@drawable/camera_control_bookmark"
+                android:background="@android:color/transparent"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
         <include layout="@layout/fragment_camera_connect"/>
     </RelativeLayout>
