@@ -24,7 +24,7 @@ class ThumbView extends View {
 
     private float mTargetRadiusPx;
 
-    private static final float MINIMUM_TARGET_RADIUS_DP = 24;
+    private static final float MINIMUM_TARGET_RADIUS_DP = 48;
     private float mLeftMin;
     private float mRightMax;
 

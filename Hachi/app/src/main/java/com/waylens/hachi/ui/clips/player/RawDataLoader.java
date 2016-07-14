@@ -86,6 +86,9 @@ public class RawDataLoader {
             return null;
         }
         int clipIndex = clipSetPos.getClipIndex();
+        if (mRawDataBlockList == null || clipIndex >= mRawDataBlockList.size()) {
+            return null;
+        }
         RawDataBlockAll rawDataBlockAll = mRawDataBlockList.get(clipIndex);
 
         Clip clip = getClipSet().getClip(clipIndex);
