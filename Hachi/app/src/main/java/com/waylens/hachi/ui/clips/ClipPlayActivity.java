@@ -2,10 +2,13 @@ package com.waylens.hachi.ui.clips;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
@@ -17,6 +20,7 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 
@@ -38,10 +42,24 @@ public class ClipPlayActivity extends BaseActivity {
     protected EventBus mEventBus = EventBus.getDefault();
 
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventCameraConnectChange(CameraConnectionEvent event) {
-
+        if (event.getWhat() == CameraConnectionEvent.VDT_CAMERA_DISCONNECTED) {
+            initCamera();
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .content(R.string.camera_disconnected)
+                .positiveText(R.string.quit)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        finish();
+                    }
+                })
+                .show();
+        }
     }
+
+
 
     @Override
     protected void onStart() {

@@ -284,6 +284,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         if (mClipSetType == Clip.TYPE_MARKED) {
             mVsNoBookmark.showNext();
         }
+
+        initVdtCamera();
         if (mVdtCamera != null) {
             mRefreshLayout.setRefreshing(true);
             doGetClips();
@@ -291,6 +293,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 //mBottomLayout.setVisibility(View.VISIBLE);
                 doGetBufferedClips();
             }
+        } else {
+            showRootViewChild(ROOT_CHILD_CAMERA_DISCONNECT);
         }
     }
 

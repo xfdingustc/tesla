@@ -165,10 +165,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean isServerActivity(Bundle bundle) {
-        return bundle.getBoolean(IS_PC_SERVER, false);
-    }
-
 
     public void showDialog(String title) {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {

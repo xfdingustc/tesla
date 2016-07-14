@@ -29,6 +29,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.ClipEditEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
@@ -252,6 +253,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mMediaWindow.setVisibility(View.VISIBLE);
             ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
             setClipSetPos(clipSetPos, true);
+        }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventVdtCameraConnectionEvent(CameraConnectionEvent event) {
+        if (event.getWhat() == CameraConnectionEvent.VDT_CAMERA_DISCONNECTED) {
+            releasePlayer();
         }
     }
 

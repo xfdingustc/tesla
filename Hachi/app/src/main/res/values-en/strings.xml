@@ -304,4 +304,5 @@
 	<string name="add_public_comment">"Add a public comment…"</string>
 	<string name="uploaded">uploaded</string>
 	<string name="delete_this_video">"Delete this video?"</string>
+	<string name="quit">quit</string>
 </resources>

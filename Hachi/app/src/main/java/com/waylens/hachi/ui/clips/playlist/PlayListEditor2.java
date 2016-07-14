@@ -126,7 +126,9 @@ public class PlayListEditor2 {
                     Logger.t(TAG).d("clear play list error");
                 }
             });
-        mVdbRequestQueue.add(request.setTag(TAG));
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.add(request.setTag(TAG));
+        }
     }
 
 
@@ -159,14 +161,16 @@ public class PlayListEditor2 {
                     }
                 });
 
-            mVdbRequestQueue.add(playRequest.setTag(TAG));
+            if (mVdbRequestQueue != null) {
+                mVdbRequestQueue.add(playRequest.setTag(TAG));
+            }
         }
     }
 
 
     private void doGetPlaylistInfo() {
         Logger.t(TAG).d("do get play list info");
-        mVdbRequestQueue.add(new ClipSetExRequest(mPlayListId, ClipSetExRequest.FLAG_CLIP_EXTRA,
+        ClipSetExRequest request = new ClipSetExRequest(mPlayListId, ClipSetExRequest.FLAG_CLIP_EXTRA,
             new VdbResponse.Listener<ClipSet>() {
                 @Override
                 public void onResponse(ClipSet clipSet) {
@@ -186,9 +190,12 @@ public class PlayListEditor2 {
                 Logger.t(TAG).e("" + error);
 
             }
+        });
+        request.setTag(TAG);
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.add(request);
         }
 
-        ).setTag(TAG));
     }
 
     private void adjustClipSet(ClipSet clipSet) {

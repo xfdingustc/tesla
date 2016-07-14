@@ -76,6 +76,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             @Override
             public void serviceDeactivated(IoService ioService) throws Exception {
                 Logger.t(TAG).d("serviceDeactivated");
+                connectError(false);
             }
 
             @Override
