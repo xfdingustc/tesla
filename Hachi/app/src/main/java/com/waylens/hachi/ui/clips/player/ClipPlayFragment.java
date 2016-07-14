@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.text.format.DateUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -28,7 +26,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.ClipEditEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
@@ -102,9 +99,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private PositionAdjuster mPositionAdjuster;
 
-    private BannerAdapter mBannerAdapter;
-
-
     private EventBus mEventBus = EventBus.getDefault();
 
     private SurfaceHolder mSurfaceHolder;
@@ -116,14 +110,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @BindView(R.id.surface_view)
     SurfaceView mSurfaceView;
 
-    @BindView(R.id.vsCover)
-    ViewSwitcher mVsCover;
 
     @BindView(R.id.clipCover)
     ImageView mClipCover;
 
-    @BindView(R.id.coverBanner)
-    ViewPager mCoverBanner;
+
 
     @BindView(R.id.progressLoading)
     ProgressBar mProgressLoading;
@@ -142,8 +133,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @BindView(R.id.btnFullscreen)
     ImageButton mBtnFullscreen;
-
-
 
     @BindView(R.id.fragment_view)
     LinearLayout mFragmentView;
@@ -240,9 +229,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mClipCover.setVisibility(View.INVISIBLE);
             mControlPanel.setVisibility(View.GONE);
             updateProgressTextView(0, 0);
+            mMediaWindow.setVisibility(View.INVISIBLE);
         } else {
             mClipCover.setVisibility(View.VISIBLE);
             mControlPanel.setVisibility(View.VISIBLE);
+            mMediaWindow.setVisibility(View.VISIBLE);
             ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
             setClipSetPos(clipSetPos, true);
         }
@@ -330,12 +321,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         switch (playbackState) {
             case HachiPlayer.STATE_IDLE:
             case HachiPlayer.STATE_ENDED:
-                mVsCover.setVisibility(View.VISIBLE);
+                mClipCover.setVisibility(View.VISIBLE);
                 mProgressLoading.setVisibility(View.INVISIBLE);
                 mBtnPlayPause.setImageResource(R.drawable.playbar_play);
                 break;
             case HachiPlayer.STATE_PREPARING:
-                mVsCover.setVisibility(View.VISIBLE);
+                mClipCover.setVisibility(View.VISIBLE);
                 mProgressLoading.setVisibility(View.VISIBLE);
                 break;
 
@@ -344,7 +335,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 break;
             case HachiPlayer.STATE_READY:
                 mProgressLoading.setVisibility(View.GONE);
-                mVsCover.setVisibility(View.INVISIBLE);
+                mClipCover.setVisibility(View.INVISIBLE);
                 if (playwhenReady) {
                     mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
                 } else {
@@ -463,7 +454,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-
     private void init() {
         initVdtCamera();
         setRetainInstance(true);
@@ -480,19 +470,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
 
 
-
-        if (mCoverMode == CoverMode.NORMAL) {
-
-            Glide.with(this)
-                .using(new SnipeGlideLoader(mVdbRequestQueue))
-                .load(clipPos)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
-                .into(mClipCover);
-        } else {
-            mVsCover.showNext();
-            setupCoverBanner();
-        }
+        Glide.with(this)
+            .using(new SnipeGlideLoader(mVdbRequestQueue))
+            .load(clipPos)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .dontAnimate()
+            .into(mClipCover);
 
 
         setupMultiSegSeekBar();
@@ -502,34 +485,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         updateProgressTextView(0, getClipSet().getTotalSelectedLengthMs());
 
-    }
-
-    private void setupCoverBanner() {
-        mBannerAdapter = new BannerAdapter(getActivity());
-        final ClipSet clipSet = getClipSet();
-        for (int i = 0; i < clipSet.getCount(); i++) {
-            Clip clip = clipSet.getClip(i);
-            mBannerAdapter.addClipPos(new ClipPos(clip));
-        }
-
-        mCoverBanner.setAdapter(mBannerAdapter);
-        mCoverBanner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                ClipSetPos clipSetPos = new ClipSetPos(position, getClipSet().getClip(position).getStartTimeMs());
-                mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
 
@@ -554,7 +509,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private void updateButtonVisibilities() {
     }
-
 
 
     private void releasePlayer() {
@@ -617,7 +571,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             releasePlayer();
         }
 
-        mVsCover.setVisibility(View.VISIBLE);
+        mClipCover.setVisibility(View.VISIBLE);
     }
 
 
@@ -744,9 +698,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-
-
-
     public void setUrlProvider(UrlProvider urlProvider, long startTime) {
         mUrlProvider = urlProvider;
         if (mUrlProvider instanceof ClipUrlProvider) {
@@ -769,7 +720,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         if (mRawDataLoader != null) {
             List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
-            if (!rawDataItemList.isEmpty()) {
+            if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
                 mWvGauge.updateRawDateItem(rawDataItemList);
             }
         }

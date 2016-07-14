@@ -27,22 +27,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-            <ViewSwitcher
-                android:id="@+id/vsCover"
+
+            <ImageView
+                android:id="@+id/clipCover"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/clipCover"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"/>
-
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/coverBanner"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"></android.support.v4.view.ViewPager>
-            </ViewSwitcher>
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
 
 
             <ProgressBar
@@ -61,7 +51,6 @@
 
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
 
 
     </LinearLayout>
@@ -139,9 +128,9 @@
 
     <View
         style="@style/HachiSepatator"
-        android:layout_below="@+id/control_panel"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@+id/control_panel"
         />
 
 </RelativeLayout>
