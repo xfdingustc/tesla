@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -37,6 +38,8 @@ public class BaseFragment extends Fragment {
 
     protected HachiApi mHachi = HachiService.createHachiApiService();
 
+    private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
+
 
     @Nullable
     @BindView(R.id.toolbar)
@@ -48,6 +51,18 @@ public class BaseFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        if (savedInstanceState != null) {
+            boolean isSupportHidden = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            if (isSupportHidden) {
+                ft.hide(this);
+            } else {
+                ft.show(this);
+            }
+            ft.commit();
+        }
         super.onCreate(savedInstanceState);
         initVdtCamera();
     }
@@ -87,6 +102,11 @@ public class BaseFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(STATE_SAVE_IS_HIDDEN, isHidden());
     }
 
 
