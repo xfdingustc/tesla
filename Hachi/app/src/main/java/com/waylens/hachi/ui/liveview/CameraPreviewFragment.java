@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.liveview;
 
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
@@ -39,6 +40,7 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
@@ -172,6 +174,13 @@ public class CameraPreviewFragment extends BaseFragment {
     @BindView(R.id.btnBookmark)
     ImageButton mBtnBookmark;
 
+    private int mFabStartSrc;
+
+    private int mFabStopSrc;
+
+    private int mBtnBookMarkSrc;
+
+
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
         if (mVdtCamera != null) {
@@ -270,6 +279,10 @@ public class CameraPreviewFragment extends BaseFragment {
                 int recordTime = (Integer) event.getExtra();
                 if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
                     mTvCameraRecStatus.setText(DateUtils.formatElapsedTime(recordTime));
+                    mRecordDot.setVisibility(View.VISIBLE);
+                    AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
+                    animationDrawable.start();
+                    Logger.t(TAG).d("record state: " + mVdtCamera.getRecordState());
                 }
                 break;
             case CameraStateChangeEvent.CAMERA_STATE_REC_ERROR:
@@ -450,6 +463,15 @@ public class CameraPreviewFragment extends BaseFragment {
         } else {
             handleOnCameraDisconnected();
         }
+        if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark_land);
+            mFabStopSrc = R.drawable.camera_control_stop_land;
+            mFabStartSrc = R.drawable.camera_control_start_land;
+        } else {
+            mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark);
+            mFabStopSrc = R.drawable.camera_control_stop;
+            mFabStartSrc = R.drawable.camera_control_start;
+        }
 
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
@@ -481,6 +503,19 @@ public class CameraPreviewFragment extends BaseFragment {
             mLiveView.stopStream();
         }
 
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark_land);
+            mFabStopSrc = R.drawable.camera_control_stop_land;
+            mFabStartSrc = R.drawable.camera_control_start_land;
+        } else {
+            mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark);
+            mFabStopSrc = R.drawable.camera_control_stop;
+            mFabStartSrc = R.drawable.camera_control_start;
+        }
     }
 
 
@@ -762,7 +797,7 @@ public class CameraPreviewFragment extends BaseFragment {
                 break;
             case VdtCamera.STATE_RECORD_STOPPED:
                 mFabStartStop.setEnabled(true);
-                mFabStartStop.setImageResource(R.drawable.camera_control_start);
+                mFabStartStop.setImageResource(mFabStartSrc);
                 mBtnBookmark.setVisibility(View.GONE);
                 break;
             case VdtCamera.STATE_RECORD_STOPPING:
@@ -777,7 +812,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
                     mBtnBookmark.setVisibility(View.VISIBLE);
                 }
-                mFabStartStop.setImageResource(R.drawable.camera_control_stop);
+                mFabStartStop.setImageResource(mFabStopSrc);
                 break;
             case VdtCamera.STATE_RECORD_SWITCHING:
                 mFabStartStop.setEnabled(false);
@@ -792,6 +827,8 @@ public class CameraPreviewFragment extends BaseFragment {
     private void toggleRecordDot() {
         if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
             mRecordDot.setVisibility(View.VISIBLE);
+            AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
+            animationDrawable.start();
         } else {
             mRecordDot.setVisibility(View.GONE);
         }
@@ -878,6 +915,4 @@ public class CameraPreviewFragment extends BaseFragment {
             }
         }
     }
-
-
 }

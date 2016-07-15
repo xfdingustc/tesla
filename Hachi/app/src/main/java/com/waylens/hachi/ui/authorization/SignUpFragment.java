@@ -126,8 +126,6 @@ public class SignUpFragment extends BaseFragment {
     void initViews() {
         mRootView.requestFocus();
         String email = null;
-        if(mEmail == null)
-            email = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, null);
         if (email != null) {
             mTvSignUpEmail.setText(email);
         }
