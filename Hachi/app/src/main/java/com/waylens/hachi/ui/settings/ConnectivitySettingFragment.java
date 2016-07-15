@@ -28,14 +28,14 @@ public class ConnectivitySettingFragment extends PreferenceFragment {
     }
 
     private void initBtPreference() {
-        mWifi = findPreference("wifi");
-        mWifi.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                WifiSettingActivity.launch(getActivity());
-                return true;
-            }
-        });
+//        mWifi = findPreference("wifi");
+//        mWifi.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                WifiSettingActivity.launch(getActivity());
+//                return true;
+//            }
+//        });
 
 
         mBt = findPreference("bluetooth");

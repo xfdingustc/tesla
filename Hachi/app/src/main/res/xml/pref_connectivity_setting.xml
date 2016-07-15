@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:layout="@layout/preference_category_widget">
+    <!--<PreferenceCategory-->
+        <!--android:layout="@layout/preference_category_widget">-->
 
 
-        <Preference
-            android:key="wifi"
-            android:layout="@layout/preference_item"
-            android:title="@string/wifi"/>
+        <!--<Preference-->
+            <!--android:key="wifi"-->
+            <!--android:layout="@layout/preference_item"-->
+            <!--android:title="@string/wifi"/>-->
 
 
 
-    </PreferenceCategory>
+    <!--</PreferenceCategory>-->
 
     <PreferenceCategory
         android:layout="@layout/preference_category_widget">

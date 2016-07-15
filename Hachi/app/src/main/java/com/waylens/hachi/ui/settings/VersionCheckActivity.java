@@ -33,7 +33,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import im.fir.sdk.FIR;
@@ -55,7 +54,7 @@ public class VersionCheckActivity extends BaseActivity {
     DownloadManager downloadManager;
 
     private Snackbar mChangeWebServerSnack;
-    private int mClickCount = 5;
+    private int mClickCount = 10;
 
     @BindView(R.id.current_version_view)
     TextView mCurrentVersionView;
@@ -71,42 +70,29 @@ public class VersionCheckActivity extends BaseActivity {
 
     @OnClick(R.id.waylens_logo)
     public void onWaylensLogoClicked() {
-        if (mChangeWebServerSnack == null || !mChangeWebServerSnack.isShown()) {
-            mClickCount = 5;
-            String snakeBar = "" + mClickCount + " clicks to change web server";
-            mChangeWebServerSnack = Snackbar.make(mFirVersionView, snakeBar, Snackbar.LENGTH_SHORT);
-            mChangeWebServerSnack.show();
-        } else {
-            mClickCount--;
-            if (mClickCount == 0) {
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
-                    .items(R.array.server_list)
-                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                            return false;
-                        }
-                    })
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            Logger.t(TAG).d("select index: " + getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
-                            PreferenceUtils.putString("server", getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
-                        }
-                    })
-                    .show();
-            } else {
-                String snakeBar = "" + mClickCount + " clicks to change web server";
-                mChangeWebServerSnack = Snackbar.make(mFirVersionView, snakeBar, Snackbar.LENGTH_SHORT);
-                mChangeWebServerSnack.show();
-            }
+
+        mClickCount--;
+        if (mClickCount == 0) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .items(R.array.server_list)
+                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                        return false;
+                    }
+                })
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Logger.t(TAG).d("select index: " + getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
+                        PreferenceUtils.putString("server", getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
+                    }
+                })
+                .show();
         }
-
     }
-
-
 
 
     @OnClick(R.id.btn_update_now)
@@ -126,7 +112,6 @@ public class VersionCheckActivity extends BaseActivity {
             installAPK(file);
         }
     }
-
 
 
     public static void launch(Activity activity) {
@@ -223,13 +208,13 @@ public class VersionCheckActivity extends BaseActivity {
 
     void downloadUpdateAPK() {
         int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             continueDownloadAPK();
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
 
