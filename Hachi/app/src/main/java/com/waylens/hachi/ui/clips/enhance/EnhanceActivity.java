@@ -279,6 +279,20 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
     @Override
+    public void finish() {
+        MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
+            .content(R.string.discard_enhance_confirm)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    EnhanceActivity.super.finish();
+                }
+            }).show();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_ENHANCE:
@@ -392,22 +406,6 @@ public class EnhanceActivity extends ClipPlayActivity {
                 return true;
             }
 
-        });
-        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
-                    .content(R.string.discard_enhance_confirm)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            finish();
-                        }
-                    }).show();
-
-            }
         });
 
     }

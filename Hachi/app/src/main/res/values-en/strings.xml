@@ -24,7 +24,7 @@
 	<string name="bump">Bump</string>
 	<string name="camera">Camera</string>
 	<string name="camera_name">Camera Name</string>
-	<string name="camera_power_is_on">"1. Your camera has been powered on.:"</string>
+	<string name="camera_power_is_on">"1. Your camera has been powered on."</string>
 	<string name="cannot_find_camera">Failed to detect a camera, please make sure:</string>
 	<string name="change_camera_setting">Change Camera Setting</string>
 	<string name="change_camera_setting_hint">"This action will terminate video recording if it's on. Continue?"</string>
