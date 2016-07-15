@@ -475,17 +475,13 @@ public class CameraPreviewFragment extends BaseFragment {
 
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
+        mEventBus.register(this);
         mTimer = new Timer();
         mRecordTimeTask = new UpdateRecordTimeTask();
         mTimer.schedule(mRecordTimeTask, 1000, 1000);
-        mEventBus.register(this);
+
     }
+
 
     @Override
     public void onPause() {
@@ -517,7 +513,6 @@ public class CameraPreviewFragment extends BaseFragment {
             mFabStartSrc = R.drawable.camera_control_start;
         }
     }
-
 
 
     private void changeCurrentCamera(int position) {

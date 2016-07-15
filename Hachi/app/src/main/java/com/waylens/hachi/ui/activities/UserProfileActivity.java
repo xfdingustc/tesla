@@ -159,6 +159,12 @@ public class UserProfileActivity extends BaseActivity {
         });
         setupUserProfile();
         doGetFollowInfo();
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
 
