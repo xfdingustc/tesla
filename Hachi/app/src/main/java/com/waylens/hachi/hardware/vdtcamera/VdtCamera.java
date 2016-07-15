@@ -637,23 +637,25 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void registerRawDataItemMsgHandler() {
+        Logger.t(TAG).d("registerRawDataItemMsgHandler");
         RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<List<RawDataItem>>() {
             @Override
             public void onResponse(List<RawDataItem> response) {
-//                mGaugeView.updateRawDateItem(response);
+//                Logger.t(TAG).d("receive raw data item");
                 mEventBus.post(new RawDataItemEvent(VdtCamera.this, response));
             }
 
         }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-                Log.e(TAG, "RawDataMsgHandler ERROR", error);
+                Logger.t(TAG).e("RawDataMsgHandler ERROR", error);
             }
         });
         mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
     }
 
     public void unregisterRawDataItemMagHandler() {
+        Logger.t(TAG).d("unregisterRawDataItemMagHandler");
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
         }
@@ -1071,7 +1073,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             name = "";
         }
 
-        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
+//        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
         if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
             mObdDevice.setDevState(devState, mac, name);
         } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {

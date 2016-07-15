@@ -247,7 +247,7 @@ public class MainActivity extends BaseActivity {
      */
     private void stopLiveView() {
         if (mCurrentFragment instanceof CameraPreviewFragment) {
-            mCurrentFragment.onStop();
+            mCurrentFragment.onPause();
         }
     }
 

@@ -69,18 +69,12 @@ import butterknife.Optional;
 public class CameraPreviewFragment extends BaseFragment {
     private static final String TAG = CameraPreviewFragment.class.getSimpleName();
 
-
     private Handler mHandler;
-
     private Timer mTimer;
+
     private UpdateRecordTimeTask mRecordTimeTask;
-
-
     private boolean mIsGaugeVisible;
-
-
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
-
     private EventBus mEventBus = EventBus.getDefault();
 
     @BindView(R.id.camera_preview)
@@ -217,10 +211,6 @@ public class CameraPreviewFragment extends BaseFragment {
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
         boolean visibility = mGaugeView.getVisibility() == View.VISIBLE ? false : true;
-//        mGaugeView.setVisibility(visibility);
-//        if (visibility == View.VISIBLE) {
-//
-//        }
         showOverlay(visibility);
     }
 
@@ -329,19 +319,6 @@ public class CameraPreviewFragment extends BaseFragment {
     public void onEventVdbReadyChanged(VdbReadyInfo event) {
         Logger.t(TAG).d("change progressbar in camera preview page");
         updateSpaceInfo();
-        /*
-        if(event.getIsReady()) {
-            if (mErrorPanel != null) {
-                mErrorPanel.setVisibility(View.INVISIBLE);
-                updateCameraStatusInfo();
-            }
-
-        } else if (mErrorPanel != null) {
-                mErrorPanel.setVisibility(View.VISIBLE);
-                mTvErrorIndicator.setText(R.string.recording_error);
-                mTvErrorMessage.setText(R.string.error_msg_no_card);
-        }
-        */
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -496,12 +473,6 @@ public class CameraPreviewFragment extends BaseFragment {
             mTimer.cancel();
         }
         mEventBus.unregister(this);
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
         if (mVdtCamera != null) {
             mVdtCamera.unregisterRawDataItemMagHandler();
         }
@@ -510,8 +481,8 @@ public class CameraPreviewFragment extends BaseFragment {
             mLiveView.stopStream();
         }
 
-
     }
+
 
 
     private void changeCurrentCamera(int position) {
@@ -727,7 +698,7 @@ public class CameraPreviewFragment extends BaseFragment {
             mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
         }
         //mGaugeView.showGauge(mIsGaugeVisible);
-        mGaugeView.setVisibility(mIsGaugeVisible?View.VISIBLE:View.INVISIBLE);
+        mGaugeView.setVisibility(mIsGaugeVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
 
