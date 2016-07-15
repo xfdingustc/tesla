@@ -29,10 +29,12 @@ import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.MusicDownloadActivity;
@@ -363,15 +365,7 @@ public class EnhanceActivity extends ClipPlayActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
-                        if (getClipSet().getCount() == 0) {
-                            MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
-                                .content(R.string.no_clip_selected)
-                                .positiveText(R.string.ok)
-                                .show();
-                        } else {
-                            ShareActivity.launch(EnhanceActivity.this, mPlaylistEditor.getPlaylistId(), getAudioID());
-                            finish();
-                        }
+                        toShare();
                         break;
                     case R.id.menu_to_download:
                         new MaterialDialog.Builder(EnhanceActivity.this)
@@ -389,7 +383,6 @@ public class EnhanceActivity extends ClipPlayActivity {
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
                                     doDownloadClips(dialog.getSelectedIndex());
                                 }
                             })
@@ -417,6 +410,25 @@ public class EnhanceActivity extends ClipPlayActivity {
             }
         });
 
+    }
+
+    private void toShare() {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+        } else if (SessionManager.getInstance().isVerified()) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .content(R.string.verify_email_address)
+                .positiveText(R.string.ok)
+                .show();
+        } else if (getClipSet().getCount() == 0) {
+            MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
+                .content(R.string.no_clip_selected)
+                .positiveText(R.string.ok)
+                .show();
+        } else {
+            ShareActivity.launch(EnhanceActivity.this, mPlaylistEditor.getPlaylistId(), getAudioID());
+            finish();
+        }
     }
 
 

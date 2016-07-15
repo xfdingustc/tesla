@@ -816,7 +816,7 @@ public class MomentActivity extends BaseActivity {
                 }
             });
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .content("Please comfirm your registration in your email box")
+                .content(R.string.verify_email_address)
                 .positiveText(R.string.ok)
                 .negativeText(R.string.cancel)
                 .show();
