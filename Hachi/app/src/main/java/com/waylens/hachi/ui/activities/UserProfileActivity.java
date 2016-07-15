@@ -154,7 +154,7 @@ public class UserProfileActivity extends BaseActivity {
         mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
             @Override
             public void loadMore() {
-                loadUserMoment(mCurrentCursor, true);
+                loadUserMoment(mCurrentCursor, false);
             }
         });
         setupUserProfile();
@@ -303,7 +303,7 @@ public class UserProfileActivity extends BaseActivity {
                 mUserInfo = response.body();
                 if (mUserInfo != null) {
                     updateUserInfo();
-                    loadUserMoment(mCurrentCursor, false);
+                    loadUserMoment(mCurrentCursor, true);
                 }
             }
 
