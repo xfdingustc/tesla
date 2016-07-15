@@ -160,7 +160,7 @@ public class UploadMomentJob extends Job {
         uploader.upload(mLocalMoment);
 
         setUploadState(UPLOAD_STATE_FINISHED);
-        UploadManager.getManager().removeJob(this);
+//        UploadManager.getManager().removeJob(this);
     }
 
 

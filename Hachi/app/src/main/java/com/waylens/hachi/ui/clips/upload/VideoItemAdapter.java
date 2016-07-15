@@ -67,7 +67,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void onBindUploadingViewHolder(RecyclerView.ViewHolder holder, int position) {
-        VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder)holder;
+        VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
         UploadMomentJob uploadMomentJob = mUploadManager.getUploadJob(position);
         LocalMoment localMoment = uploadMomentJob.getLocalMoment();
         videoItemViewHolder.momentTitle.setText(localMoment.title);
@@ -86,12 +86,50 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
         }
-        videoItemViewHolder.description.setVisibility(View.INVISIBLE);
+        updateUploadStatus(uploadMomentJob.getState(), videoItemViewHolder.description);
+//        videoItemViewHolder.description.setVisibility(View.INVISIBLE);
+        if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
+            videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
+        }
         videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
     }
 
+    private void updateUploadStatus(int state, TextView description) {
+        switch (state) {
+            case UploadMomentJob.UPLOAD_STATE_GET_URL_INFO:
+                description.setText(R.string.upload_get_url_info);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_GET_VIDEO_COVER:
+                description.setText(R.string.upload_get_video_cover);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_STORE_VIDEO_COVER:
+                description.setText(R.string.upload_store_video_cover);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_CREATE_MOMENT:
+                description.setText(R.string.upload_create_moment);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_LOGIN:
+                description.setText(R.string.upload_login);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_LOGIN_SUCCEED:
+                description.setText(R.string.upload_login_succeed);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_START:
+            case UploadMomentJob.UPLOAD_STATE_PROGRESS:
+                description.setText(R.string.upload_start);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_FINISHED:
+                description.setText(R.string.upload_finished);
+                break;
+            case UploadMomentJob.UPLOAD_STATE_ERROR:
+                description.setText(R.string.upload_error);
+                break;
+
+        }
+    }
+
     private void onBindUploadedViewHolder(RecyclerView.ViewHolder holder, int position) {
-        VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder)holder;
+        VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
         Moment uploadedMoment = mUploadedMomentList.get(position);
         videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
         videoItemViewHolder.momentTitle.setText(uploadedMoment.title);
@@ -114,9 +152,9 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onUploadJobStateChanged(UploadMomentJob job, int index) {
-        if (job.getState() != UploadMomentJob.UPLOAD_STATE_FINISHED) {
-            notifyItemChanged(index);
-        }
+
+        notifyItemChanged(index);
+
 
     }
 

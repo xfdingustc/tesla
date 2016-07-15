@@ -309,4 +309,13 @@
 	<string name="exit_video_upload_confirm">"Still uploading. Leave this page may cause upload failed!"</string>
 	<string name="stay">stay</string>
 	<string name="leave_anyway">Leave anyway</string>
+	<string name="upload_get_url_info">Fetching upload url</string>
+	<string name="upload_get_video_cover">Fetching clip cover</string>
+	<string name="upload_store_video_cover">Storing clip cover</string>
+	<string name="upload_create_moment">Createing moment on server</string>
+	<string name="upload_login">Login</string>
+	<string name="upload_login_succeed">Login succeed</string>
+	<string name="upload_start">Uploading</string>
+	<string name="upload_error">Uploading error</string>
+	<string name="upload_finished">Uploading completely</string>
 </resources>

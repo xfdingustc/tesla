@@ -88,6 +88,16 @@ public class UploadManager {
         return mUploadJobList.size();
     }
 
+    public int getUploadingJobCount() {
+        int i = 0;
+        for (UploadMomentJob job : mUploadJobList) {
+            if (job.getState() != UploadMomentJob.UPLOAD_STATE_FINISHED) {
+                i++;
+            }
+        }
+        return i;
+    }
+
     public UploadMomentJob getUploadJob(int index) {
         if (index >= mUploadJobList.size()) {
             return null;

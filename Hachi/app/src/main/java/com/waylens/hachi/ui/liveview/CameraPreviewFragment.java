@@ -475,7 +475,10 @@ public class CameraPreviewFragment extends BaseFragment {
 
         initCameraPreview();
         showOverlay(mIsGaugeVisible);
-        mEventBus.register(this);
+
+        if (!mEventBus.isRegistered(this)) {
+            mEventBus.register(this);
+        }
         mTimer = new Timer();
         mRecordTimeTask = new UpdateRecordTimeTask();
         mTimer.schedule(mRecordTimeTask, 1000, 1000);

@@ -56,6 +56,24 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
         init();
     }
 
+    @Override
+    public void finish() {
+        if (UploadManager.getManager().getUploadingJobCount() > 0) {
+            MaterialDialog dialog = new MaterialDialog.Builder(UploadActivity.this)
+                .content(R.string.exit_video_upload_confirm)
+                .negativeText(R.string.stay)
+                .positiveText(R.string.leave_anyway)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        UploadActivity.super.finish();
+                    }
+                })
+                .show();
+        } else {
+            UploadActivity.super.finish();
+        }
+    }
 
     @Override
     protected void init() {
@@ -95,21 +113,7 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UploadManager.getManager().getJobCount() > 0) {
-                    MaterialDialog dialog = new MaterialDialog.Builder(UploadActivity.this)
-                        .content(R.string.exit_video_upload_confirm)
-                        .negativeText(R.string.stay)
-                        .positiveText(R.string.leave_anyway)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                finish();
-                            }
-                        })
-                        .show();
-                } else {
-                    finish();
-                }
+                finish();
             }
         });
 
