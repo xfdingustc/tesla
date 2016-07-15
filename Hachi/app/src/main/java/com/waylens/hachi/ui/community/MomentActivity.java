@@ -563,7 +563,9 @@ public class MomentActivity extends BaseActivity {
                 mReplyTo = comment.author;
 //                mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
                 addComment();
-                mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+                if (mNewCommentView != null) {
+                    mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+                }
             }
 
             @Override

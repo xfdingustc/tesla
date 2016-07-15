@@ -79,13 +79,15 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Glide.with(mContext)
                 .load(localMoment.thumbnailPath)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
+                .dontAnimate()
+                .placeholder(videoItemViewHolder.videoCover.getDrawable())
                 .into(videoItemViewHolder.videoCover);
         }
         if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
         }
         videoItemViewHolder.description.setVisibility(View.INVISIBLE);
+        videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
     }
 
     private void onBindUploadedViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -112,7 +114,6 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onUploadJobStateChanged(UploadMomentJob job, int index) {
-        Logger.t(TAG).d("job update: " + job.getState());
         if (job.getState() != UploadMomentJob.UPLOAD_STATE_FINISHED) {
             notifyItemChanged(index);
         }
