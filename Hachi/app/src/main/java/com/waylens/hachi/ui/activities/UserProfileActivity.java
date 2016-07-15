@@ -199,9 +199,9 @@ public class UserProfileActivity extends BaseActivity {
                             .show();
 
                         break;
-                    case R.id.block:
-                        doBlockUser();
-                        break;
+//                    case R.id.block:
+//                        doBlockUser();
+//                        break;
                 }
                 return true;
             }
