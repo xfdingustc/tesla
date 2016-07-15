@@ -51,6 +51,11 @@ public class ForgotPasswordFragment extends BaseFragment {
     private RequestQueue mVolleyRequestQueue;
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());

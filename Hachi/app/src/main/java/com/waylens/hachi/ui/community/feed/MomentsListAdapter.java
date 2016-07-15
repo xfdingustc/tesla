@@ -250,7 +250,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                     mMoments.remove(position);
-                    notifyItemRangeRemoved(position, 1);
+//                    notifyItemRangeRemoved(position, 1);
+                    notifyDataSetChanged();
                     doDeleteMoment(momentId);
                 }
             }).show();

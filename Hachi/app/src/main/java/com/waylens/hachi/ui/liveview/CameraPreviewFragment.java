@@ -371,6 +371,11 @@ public class CameraPreviewFragment extends BaseFragment {
     }
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();

@@ -306,4 +306,7 @@
 	<string name="delete_this_video">"Delete this video?"</string>
 	<string name="quit">quit</string>
 	<string name="change">change</string>
+	<string name="exit_video_upload_confirm">"Still uploading. Leave this page may cause upload failed!"</string>
+	<string name="stay">stay</string>
+	<string name="leave_anyway">Leave anyway</string>
 </resources>

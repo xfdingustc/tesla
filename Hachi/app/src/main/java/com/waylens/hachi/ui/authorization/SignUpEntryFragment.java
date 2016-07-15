@@ -18,6 +18,8 @@ import butterknife.OnClick;
  */
 public class SignUpEntryFragment extends BaseFragment {
 
+    private static final String TAG = SignUpEntryFragment.class.getSimpleName();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,6 +29,11 @@ public class SignUpEntryFragment extends BaseFragment {
     @OnClick(R.id.btn_sign_up)
     void clickSignUp() {
         AuthorizeActivity.launchForResult(getActivity(), MainActivity.REQUEST_CODE_SIGN_UP_FROM_MOMENTS);
+    }
+
+    @Override
+    protected String getRequestTag() {
+        return TAG;
     }
 }
 

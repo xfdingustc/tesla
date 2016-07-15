@@ -334,7 +334,7 @@ public class MomentUploader {
             }
         } finally {
             try {
-                logOut();
+//                logOut();
             } catch (Exception e) {
                 Logger.t(TAG).e(e, "Exception");
             }

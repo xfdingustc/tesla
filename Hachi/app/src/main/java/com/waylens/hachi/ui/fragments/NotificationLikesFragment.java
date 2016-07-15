@@ -40,7 +40,7 @@ import butterknife.OnClick;
  */
 public class NotificationLikesFragment extends BaseFragment implements RecyclerViewExt.OnLoadMoreListener,
         FragmentNavigator {
-
+    private static final String TAG = NotificationLikesFragment.class.getSimpleName();
     private static final int DEFAULT_COUNT = 10;
 
     @BindView(R.id.view_animator)
@@ -61,6 +61,11 @@ public class NotificationLikesFragment extends BaseFragment implements RecyclerV
     LinearLayoutManager mLayoutManager;
 
     ArrayList<Long> mUnreadEventIDs;
+
+    @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

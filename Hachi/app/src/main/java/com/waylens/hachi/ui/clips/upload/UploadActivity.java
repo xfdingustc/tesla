@@ -3,10 +3,14 @@ package com.waylens.hachi.ui.clips.upload;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
@@ -15,13 +19,11 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -48,13 +50,11 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
     RecyclerView mRvMyVideoList;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
     }
-
 
 
     @Override
@@ -91,6 +91,28 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
     public void setupToolbar() {
         super.setupToolbar();
         getToolbar().setTitle(R.string.video);
+
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (UploadManager.getManager().getJobCount() > 0) {
+                    MaterialDialog dialog = new MaterialDialog.Builder(UploadActivity.this)
+                        .content(R.string.exit_video_upload_confirm)
+                        .negativeText(R.string.stay)
+                        .positiveText(R.string.leave_anyway)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                finish();
+                            }
+                        })
+                        .show();
+                } else {
+                    finish();
+                }
+            }
+        });
+
     }
 
     private void setupMyVideoList() {
@@ -103,7 +125,6 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
 
 
     }
-
 
 
     private void loadUserMoment(int cursor, final boolean isRefresh) {

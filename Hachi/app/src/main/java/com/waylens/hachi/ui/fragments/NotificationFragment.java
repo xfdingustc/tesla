@@ -26,8 +26,7 @@ import butterknife.OnClick;
  * Created by Xiaofei on 2015/8/4.
  */
 public class NotificationFragment extends BaseFragment {
-
-    public static final String TAG_NOTIFICATIONS = "TAG.notification";
+    public static final String TAG = NotificationFragment.class.getSimpleName();
 
     @BindView(R.id.comments_unread)
     View commentsUnreadView;
@@ -36,6 +35,11 @@ public class NotificationFragment extends BaseFragment {
     View likesUnreadView;
 
     RequestQueue mRequestQueue;
+
+    @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,7 @@ public class NotificationFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        mRequestQueue.cancelAll(TAG_NOTIFICATIONS);
+        mRequestQueue.cancelAll(TAG);
         mRequestQueue = null;
         super.onDestroyView();
 
@@ -89,7 +93,7 @@ public class NotificationFragment extends BaseFragment {
                     public void onErrorResponse(VolleyError error) {
                         onLoadNotificationFailed(error);
                     }
-                }).setTag(TAG_NOTIFICATIONS));
+                }).setTag(TAG));
 
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET,
                 Constants.API_NOTIFICATIONS_LIKES + qs,
@@ -104,7 +108,7 @@ public class NotificationFragment extends BaseFragment {
                     public void onErrorResponse(VolleyError error) {
                         onLoadNotificationFailed(error);
                     }
-                }).setTag(TAG_NOTIFICATIONS));
+                }).setTag(TAG));
     }
 
     void onLoadLikesSuccessful(JSONObject response) {

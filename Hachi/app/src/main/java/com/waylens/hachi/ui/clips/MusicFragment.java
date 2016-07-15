@@ -66,6 +66,11 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
     MusicListAdapter.ViewHolder mViewHolder;
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());

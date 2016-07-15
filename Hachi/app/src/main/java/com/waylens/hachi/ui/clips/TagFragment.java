@@ -220,6 +220,11 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();

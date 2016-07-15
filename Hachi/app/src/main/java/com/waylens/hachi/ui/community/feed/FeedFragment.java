@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -86,8 +84,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
 
-
-
     public static FeedFragment newInstance(int tag) {
 
         Bundle args = new Bundle();
@@ -96,6 +92,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,12 +107,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     }
 
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mRequestQueue.cancelAll(getRequestTag());
-    }
 
     @Override
     public void onStart() {
@@ -138,7 +129,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         }
     }
-
 
 
     @Nullable
@@ -203,7 +193,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     }
 
-    private String getRequestTag() {
+    @Override
+    protected String getRequestTag() {
         switch (mFeedTag) {
             case FEED_TAG_MY_FEED:
                 return TAG_REQUEST_MY_FEED;

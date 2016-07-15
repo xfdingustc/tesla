@@ -27,12 +27,18 @@ import butterknife.BindView;
  * Created by Xiaofei on 2016/1/22.
  */
 public class CommunityFragment extends BaseFragment implements FragmentNavigator{
+    private static final String TAG = CommunityFragment.class.getSimpleName();
 
-    RequestQueue mRequestQueue;
+    private RequestQueue mRequestQueue;
 
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
     private SimpleFragmentPagerAdapter mFeedPageAdapter;
+
+    @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

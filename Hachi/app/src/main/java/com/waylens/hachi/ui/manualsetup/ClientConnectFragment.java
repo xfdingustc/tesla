@@ -128,6 +128,11 @@ public class ClientConnectFragment extends BaseFragment {
     }
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();

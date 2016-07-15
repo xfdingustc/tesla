@@ -33,6 +33,7 @@ import butterknife.OnClick;
  * Created by Xiaofei on 2016/7/5.
  */
 public class Welcome4Fragment extends BaseFragment {
+    private static final String TAG = Welcome4Fragment.class.getSimpleName();
 
     @BindView(R.id.agree_check_box)
     CheckBox mAgreeCheckBox;
@@ -87,6 +88,11 @@ public class Welcome4Fragment extends BaseFragment {
         mWaylensAgreement.setMovementMethod(LinkMovementMethod.getInstance());
 
         return view;
+    }
+
+    @Override
+    protected String getRequestTag() {
+        return TAG;
     }
 
     private void enter() {

@@ -64,6 +64,11 @@ public class ChangePasswordFragment extends BaseFragment {
 
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
@@ -79,7 +84,7 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTvChangePasswordHint.setText(getString(R.string.forgot_password_hint4, mEmail));
+        mTvChangePasswordHint.setText(getString(R.string.forgot_password_hint4) + mEmail);
         SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forgot_password_hint5));
         int start = ssb.length();
         ssb.append(getString(R.string.resend))

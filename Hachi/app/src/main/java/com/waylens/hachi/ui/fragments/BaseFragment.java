@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
     protected View mRootView;
     protected MaterialDialog mProgressDialog;
 
@@ -39,6 +39,8 @@ public class BaseFragment extends Fragment {
     protected HachiApi mHachi = HachiService.createHachiApiService();
 
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
+
+    protected abstract String getRequestTag();
 
 
     @Nullable
@@ -89,14 +91,15 @@ public class BaseFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (mVdbRequestQueue != null) {
-            mVdbRequestQueue.cancelAll();
-        }
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.cancelAll(getRequestTag());
+        }
     }
 
     @Override

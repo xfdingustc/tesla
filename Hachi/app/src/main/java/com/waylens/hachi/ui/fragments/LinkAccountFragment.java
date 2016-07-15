@@ -35,7 +35,7 @@ import butterknife.OnClick;
  * Created by Richard on 8/17/15.
  */
 public class LinkAccountFragment extends BaseFragment {
-    private static final String TAG = "Waylens";
+    private static final String TAG = LinkAccountFragment.class.getSimpleName();
 
     public static final String ARG_SUGGESTED_USER_NAME = "arg.suggested.user.name";
 
@@ -52,6 +52,11 @@ public class LinkAccountFragment extends BaseFragment {
     ViewAnimator mViewAnimator;
 
     private RequestQueue mRequestQueue;
+
+    @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

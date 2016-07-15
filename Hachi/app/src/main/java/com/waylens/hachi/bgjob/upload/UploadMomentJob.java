@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import crs_svr.v2.CrsCommand;
 import retrofit2.Call;
@@ -78,7 +79,7 @@ public class UploadMomentJob extends Job {
     public UploadMomentJob(LocalMoment moment) {
         super(new Params(0).requireNetwork().setPersistent(false));
         this.mLocalMoment = moment;
-        mVdbRequestQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
+
     }
 
 
@@ -91,7 +92,7 @@ public class UploadMomentJob extends Job {
     @Override
     public void onRun() throws Throwable {
         Logger.t(TAG).d("on Run, playlistId: " + mLocalMoment.playlistId);
-
+        mVdbRequestQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
         // Step1:  get playlist info:
         VdbRequestFuture<ClipSet> clipSetRequestFuture = VdbRequestFuture.newFuture();
         ClipSetExRequest request = new ClipSetExRequest(mLocalMoment.playlistId, ClipSetExRequest.FLAG_CLIP_EXTRA, clipSetRequestFuture, clipSetRequestFuture);

@@ -100,6 +100,11 @@ public class SettingsFragment extends BaseFragment {
     }
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);

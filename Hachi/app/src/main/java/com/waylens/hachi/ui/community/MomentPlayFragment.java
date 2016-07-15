@@ -223,6 +223,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();

@@ -68,6 +68,11 @@ public class SignInFragment extends BaseFragment {
     String mPassword;
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());

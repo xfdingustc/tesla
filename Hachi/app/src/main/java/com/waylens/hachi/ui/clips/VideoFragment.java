@@ -86,6 +86,11 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
 
 
     @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
