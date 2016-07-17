@@ -956,6 +956,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+            if (mMediaPlayer == null || mPlayerControl == null) {
+                return;
+            }
             Logger.t(TAG).d("duration: " + mPlayerControl.getDuration() + " progress: " + seekBar.getProgress() + " max: " + seekBar.getMax());
             mMediaPlayer.seekTo(((long)mPlayerControl.getDuration() * seekBar.getProgress()) / seekBar.getMax());
         }

@@ -413,7 +413,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     private void toShare() {
         if (!SessionManager.getInstance().isLoggedIn()) {
             AuthorizeActivity.launch(this);
-        } else if (SessionManager.getInstance().isVerified()) {
+        } else if (!SessionManager.getInstance().isVerified()) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .content(R.string.verify_email_address)
                 .positiveText(R.string.ok)
@@ -425,7 +425,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                 .show();
         } else {
             ShareActivity.launch(EnhanceActivity.this, mPlaylistEditor.getPlaylistId(), getAudioID());
-            finish();
+//            finish();
         }
     }
 
