@@ -570,6 +570,21 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void registerMessageHandler() {
+        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<List<RawDataItem>>() {
+            @Override
+            public void onResponse(List<RawDataItem> response) {
+//                Logger.t(TAG).d("receive raw data item");
+                mEventBus.post(new RawDataItemEvent(VdtCamera.this, response));
+            }
+
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+                Logger.t(TAG).e("RawDataMsgHandler ERROR", error);
+            }
+        });
+        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
+
         ClipInfoMsgHandler clipInfoMsgHandler = new ClipInfoMsgHandler(
             new VdbResponse.Listener<ClipActionInfo>() {
                 @Override
@@ -638,20 +653,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public void registerRawDataItemMsgHandler() {
         Logger.t(TAG).d("registerRawDataItemMsgHandler");
-        RawDataMsgHandler rawDataMsgHandler = new RawDataMsgHandler(new VdbResponse.Listener<List<RawDataItem>>() {
-            @Override
-            public void onResponse(List<RawDataItem> response) {
-//                Logger.t(TAG).d("receive raw data item");
-                mEventBus.post(new RawDataItemEvent(VdtCamera.this, response));
-            }
 
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Logger.t(TAG).e("RawDataMsgHandler ERROR", error);
-            }
-        });
-        mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
     }
 
     public void unregisterRawDataItemMagHandler() {

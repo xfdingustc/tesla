@@ -76,9 +76,13 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     private Timer mTimer;
 
     private UpdateRecordTimeTask mRecordTimeTask;
-    private boolean mIsGaugeVisible;
+
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private EventBus mEventBus = EventBus.getDefault();
+
+    private int mFabStartSrc;
+
+    private int mFabStopSrc;
 
     @BindView(R.id.camera_preview)
     MjpegView mLiveView;
@@ -107,7 +111,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     @BindView(R.id.btnShowOverlay)
     ImageButton mBtnShowOverlay;
-
 
     @BindView(R.id.bookmark_message_view)
     View mBookmarkMsgView;
@@ -172,15 +175,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
-/*    @BindView(R.id.startMarkLayout)
-    RelativeLayout mStartMarkLayout;*/
 
     @BindView(R.id.btnBookmark)
     ImageButton mBtnBookmark;
 
-    private int mFabStartSrc;
-
-    private int mFabStopSrc;
 
     @BindView(R.id.btnFullscreen)
     ImageButton mBtnFullScreen;
@@ -197,7 +195,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             boolean isMicOn = mVdtCamera.isMicOn();
             mVdtCamera.setMicOn(!isMicOn);
         }
-        //updateMicControlButton();
     }
 
 
@@ -208,12 +205,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        /*
-        if (getActivity().getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            getActivity().finish();
-        } else {
-            LiveViewActivity.launch(getActivity(), mVdtCamera, mIsGaugeVisible);
-        }*/
     }
 
     @OnClick(R.id.fabStartStop)
@@ -366,94 +357,77 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
 
-    public static CameraPreviewFragment newInstance(VdtCamera vdtCamera, boolean isGaugeVisible) {
-        CameraPreviewFragment fragment = new CameraPreviewFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("ssid", vdtCamera.getSSID());
-        bundle.putString("hostString", vdtCamera.getHostString());
-        bundle.putBoolean("isGaugeVisible", isGaugeVisible);
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
     @Override
     protected String getRequestTag() {
         return TAG;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-        if (bundle == null) {
-            mIsGaugeVisible = false;
-        } else {
-            mIsGaugeVisible = bundle.getBoolean("isGaugeVisible", false);
-        }
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view;
-        view = createFragmentView(inflater, container, R.layout.fragment_camera_preview, savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_camera_preview, savedInstanceState);
         init();
+        startPreview();
         return view;
     }
 
     @Override
     public void setupToolbar() {
-        if (getToolbar() != null) {
-            if (mVdtCameraManager.getConnectedCameras().size() > 1) {
-                List<String> cameraNames = new ArrayList<>();
-                List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
-                for (int i = 0; i < connectedCameras.size(); i++) {
-                    VdtCamera camera = connectedCameras.get(i);
-                    Logger.t(TAG).d("add one camera: " + camera.getName());
-                    cameraNames.add(camera.getName());
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.item_spinner, cameraNames);
-                mCameraSpinner.setAdapter(adapter);
+        if (getToolbar() == null) {
+            return;
+        }
 
-                mCameraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                        Logger.t(TAG).d("Item Position clicked: " + position);
-                        changeCurrentCamera(position);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-                getToolbar().setTitle("");
-                mCameraSpinner.setVisibility(View.VISIBLE);
-
-            } else {
-                getToolbar().setTitle(R.string.live_view);
-                mCameraSpinner.setVisibility(View.GONE);
+        if (mVdtCameraManager.getConnectedCameras().size() > 1) {
+            List<String> cameraNames = new ArrayList<>();
+            List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
+            for (int i = 0; i < connectedCameras.size(); i++) {
+                VdtCamera camera = connectedCameras.get(i);
+                Logger.t(TAG).d("add one camera: " + camera.getName());
+                cameraNames.add(camera.getName());
             }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.item_spinner, cameraNames);
+            mCameraSpinner.setAdapter(adapter);
 
-            getToolbar().getMenu().clear();
-            if (VdtCameraManager.getManager().isConnected()) {
-                getToolbar().inflateMenu(R.menu.menu_live_view);
-            }
-            getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            mCameraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.cameraInfo:
-                            toggleInfoView();
-                            break;
-                        case R.id.cameraSetting:
-                            LiveViewSettingActivity.launch(getActivity());
-                            break;
-                    }
-                    return false;
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        Logger.t(TAG).d("Item Position clicked: " + position);
+                    changeCurrentCamera(position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
                 }
             });
+            getToolbar().setTitle("");
+            mCameraSpinner.setVisibility(View.VISIBLE);
+
+        } else {
+            getToolbar().setTitle(R.string.live_view);
+            mCameraSpinner.setVisibility(View.GONE);
         }
+
+        getToolbar().getMenu().clear();
+        if (VdtCameraManager.getManager().isConnected()) {
+            getToolbar().inflateMenu(R.menu.menu_live_view);
+        }
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.cameraInfo:
+                        toggleInfoView();
+                        break;
+                    case R.id.cameraSetting:
+                        LiveViewSettingActivity.launch(getActivity());
+                        break;
+                }
+                return false;
+            }
+        });
+
         super.setupToolbar();
     }
 
@@ -461,14 +435,12 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @Override
     public void onStart() {
         super.onStart();
-        if (VdtCameraManager.getManager().isConnected()) {
-            mVdtCamera = getCamera();
-            mVdbRequestQueue = mVdtCamera.getRequestQueue();
+        initVdtCamera();
+        if (mVdtCamera != null) {
             if (mCameraNoSignal != null) {
                 mCameraNoSignal.setVisibility(View.GONE);
                 mCameraConnecting.setVisibility(View.GONE);
             }
-            mVdtCamera.registerRawDataItemMsgHandler();
             initViews();
         } else {
             handleOnCameraDisconnected();
@@ -483,34 +455,25 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mFabStartSrc = R.drawable.camera_control_start;
         }
 
-        initCameraPreview();
-        showOverlay(mIsGaugeVisible);
-
         if (!mEventBus.isRegistered(this)) {
             mEventBus.register(this);
         }
-        mTimer = new Timer();
-        mRecordTimeTask = new UpdateRecordTimeTask();
-        mTimer.schedule(mRecordTimeTask, 1000, 1000);
+
+
+        setupToolbar();
+        if (isVisible()) {
+            startPreview();
+        }
 
     }
 
 
+
     @Override
-    public void onPause() {
-        super.onPause();
-        closeLiveRawData();
-        if (mTimer != null) {
-            mTimer.cancel();
-        }
+    public void onStop() {
+        super.onStop();
+        stopPreview();
         mEventBus.unregister(this);
-        if (mVdtCamera != null) {
-            mVdtCamera.unregisterRawDataItemMagHandler();
-        }
-        if (mLiveView != null) {
-            Logger.t(TAG).d("Stop camera preview");
-            mLiveView.stopStream();
-        }
     }
 
 
@@ -523,7 +486,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mFabStartSrc = R.drawable.camera_control_start_land;
 
             getToolbar().setVisibility(View.GONE);
-            mCameraSpinner.setVisibility(View.GONE);
+
             mInfoView.setVisibility(View.GONE);
             RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -549,7 +512,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mFabStartSrc = R.drawable.camera_control_start;
 
             getToolbar().setVisibility(View.VISIBLE);
-            mCameraSpinner.setVisibility(View.VISIBLE);
+
             mInfoView.setVisibility(View.VISIBLE);
 
             RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -591,8 +554,24 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         return orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
     }
 
+    public void startPreview() {
+        initCameraPreview();
+
+
+        mTimer = new Timer();
+        mRecordTimeTask = new UpdateRecordTimeTask();
+        mTimer.schedule(mRecordTimeTask, 1000, 1000);
+    }
+
+    public void stopPreview() {
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+
+        stopCameraPreview();
+    }
+
     private void changeCurrentCamera(int position) {
-        closeLiveRawData();
         stopCameraPreview();
 
         mVdtCameraManager.setCurrentCamera(position);
@@ -601,7 +580,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED, null));
 //        Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
         initCameraPreview();
-        openLiveViewData();
     }
 
     private void handleOnCameraConnected() {
@@ -635,8 +613,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
     private void initViews() {
-
-
         updateMicControlButton();
         // Start record red dot indicator animation
         AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
@@ -645,8 +621,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         updateCameraState();
         updateSpaceInfo();
         mTvStatusAdditional.setVisibility(View.GONE);
-
-
     }
 
     private void initCameraPreview() {
@@ -680,6 +654,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     private void stopCameraPreview() {
         mLiveView.stopStream();
+        closeLiveRawData();
     }
 
 
@@ -797,14 +772,12 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     private void showOverlay(boolean isGaugeVisible) {
         if (isGaugeVisible) {
-            mIsGaugeVisible = true;
             mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
         } else {
-            mIsGaugeVisible = false;
             mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
         }
         //mGaugeView.showGauge(mIsGaugeVisible);
-        mGaugeView.setVisibility(mIsGaugeVisible ? View.VISIBLE : View.INVISIBLE);
+        mGaugeView.setVisibility(isGaugeVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
 

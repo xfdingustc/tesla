@@ -88,11 +88,7 @@ public abstract class BaseFragment extends Fragment {
         return mRootView;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
 
-    }
 
     @Override
     public void onStop() {

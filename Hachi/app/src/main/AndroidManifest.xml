@@ -103,10 +103,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.liveview.LiveViewActivity"
-            android:screenOrientation="landscape"></activity>
-
-        <activity
             android:name=".ui.avatar.AvatarActivity"
             android:screenOrientation="portrait"></activity>
 

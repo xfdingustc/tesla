@@ -492,11 +492,13 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                         mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, helper.getClipSetGroup(), new ClipSetGroupAdapter.OnClipClickListener() {
                             @Override
                             public void onClipClicked(Clip clip) {
-                                if (mAdapter.getSelectedClipList().size() == 0) {
-                                    mActionMode.finish();
-                                    return;
-                                } else {
-                                    updateActionMode();
+                                if (mActionMode != null) {
+                                    if (mAdapter.getSelectedClipList().size() == 0) {
+                                        mActionMode.finish();
+                                        return;
+                                    } else {
+                                        updateActionMode();
+                                    }
                                 }
 
 

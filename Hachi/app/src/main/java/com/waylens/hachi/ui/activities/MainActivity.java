@@ -110,8 +110,9 @@ public class MainActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         refressNavHeaderView();
-
     }
+
+
 
 
     @Override
@@ -247,13 +248,13 @@ public class MainActivity extends BaseActivity {
      */
     private void stopLiveView() {
         if (mCurrentFragment instanceof CameraPreviewFragment) {
-            mCurrentFragment.onPause();
+            ((CameraPreviewFragment)mCurrentFragment).stopPreview();
         }
     }
 
     private void startLiveView(Fragment fragment) {
         if (fragment instanceof CameraPreviewFragment) {
-            fragment.onStart();
+            ((CameraPreviewFragment)fragment).startPreview();
         }
     }
 
