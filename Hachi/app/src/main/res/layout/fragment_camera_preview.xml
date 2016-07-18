@@ -31,7 +31,7 @@
                 android:layout_below="@+id/statusErrorLayout"
                 android:clipChildren="false">
 
-                <com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView
+                <com.xfdingustc.mjpegview.library.MjpegView
                     android:id="@+id/camera_preview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>

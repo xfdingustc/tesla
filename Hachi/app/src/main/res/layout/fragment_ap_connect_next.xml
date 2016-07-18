@@ -38,7 +38,7 @@
             app:farfl_yratio="1dp"
             tools:background="@android:color/holo_blue_bright">
 
-            <com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView
+            <com.xfdingustc.mjpegview.library.MjpegView
                 android:id="@+id/live_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

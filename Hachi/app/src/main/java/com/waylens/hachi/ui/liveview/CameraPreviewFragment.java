@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.liveview;
 
-import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -44,7 +43,6 @@ import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.vdb.ClipActionInfo;
@@ -52,6 +50,7 @@ import com.waylens.hachi.vdb.SpaceInfo;
 import com.waylens.hachi.vdb.VdbReadyInfo;
 import com.waylens.hachi.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.vdb.rawdata.RawDataItem;
+import com.xfdingustc.mjpegview.library.MjpegView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -82,7 +81,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     private EventBus mEventBus = EventBus.getDefault();
 
     @BindView(R.id.camera_preview)
-    CameraLiveView mLiveView;
+    MjpegView mLiveView;
 
     @Nullable
     @BindView(R.id.spinner)
@@ -527,18 +526,18 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mCameraSpinner.setVisibility(View.GONE);
             mInfoView.setVisibility(View.GONE);
             RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT);
             params1.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
             mLiveViewLayout.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT);
             params2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             //Logger.t(TAG).d("mControlPanel height: " + mControlPanel.getLayoutParams().height);
             mControlPanel.setLayoutParams(params2);
             //Logger.t(TAG).d("mControlPanel height: " + mControlPanel.getLayoutParams().height);
             RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT);
             params3.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
             params3.removeRule(RelativeLayout.BELOW);
             mStatusErrorLayout.setLayoutParams(params3);
@@ -554,18 +553,18 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mInfoView.setVisibility(View.VISIBLE);
 
             RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT);
             params1.addRule(RelativeLayout.BELOW, mInfoView.getId());
             params1.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
             mStatusErrorLayout.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT);
             params2.addRule(RelativeLayout.BELOW, mStatusErrorLayout.getId());
             mLiveViewLayout.setLayoutParams(params2);
 
             RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT);
             params3.addRule(RelativeLayout.BELOW, mLiveViewLayout.getId());
             mControlPanel.setLayoutParams(params3);
 
@@ -731,13 +730,13 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     private void openLiveViewData() {
         if (mVdbRequestQueue != null) {
             LiveRawDataRequest request = new LiveRawDataRequest(RawDataBlock.F_RAW_DATA_GPS +
-                    RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
-                    VdbResponse.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer response) {
+                RawDataBlock.F_RAW_DATA_ACC + RawDataBlock.F_RAW_DATA_ODB, new
+                VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
 //                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
-                        }
-                    }, new VdbResponse.ErrorListener() {
+                    }
+                }, new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
                     Log.e(TAG, "LiveRawDataResponse ERROR", error);
@@ -752,12 +751,12 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     private void closeLiveRawData() {
         if (mVdbRequestQueue != null) {
             LiveRawDataRequest request = new LiveRawDataRequest(0, new
-                    VdbResponse.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer response) {
+                VdbResponse.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
 //                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
-                        }
-                    }, new VdbResponse.ErrorListener() {
+                    }
+                }, new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
                     Logger.t(TAG).e("LiveRawDataResponse ERROR", error);

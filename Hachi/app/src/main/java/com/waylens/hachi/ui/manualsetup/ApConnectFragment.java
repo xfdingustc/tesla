@@ -20,18 +20,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
-import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.liveview.camerapreview.CameraLiveView;
-
+import com.xfdingustc.mjpegview.library.MjpegView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,7 +57,6 @@ public class ApConnectFragment extends BaseFragment {
     private EventBus mEventBus = EventBus.getDefault();
 
 
-
     @BindView(R.id.tvSsid)
     TextView mTvSsid;
 
@@ -71,7 +67,7 @@ public class ApConnectFragment extends BaseFragment {
     ViewAnimator mVsRootViewAnimator;
 
     @BindView(R.id.live_view)
-    CameraLiveView mLiveView;
+    MjpegView mLiveView;
 
     @BindView(R.id.skip)
     TextView mSkip;
@@ -225,7 +221,6 @@ public class ApConnectFragment extends BaseFragment {
         mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
         AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
         animationDrawable.start();
-
 
 
     }
