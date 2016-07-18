@@ -33,7 +33,7 @@
     </style>
 
     <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="background">@color/material_blue_500</item>
+        <item name="background">@color/windowBackground</item>
     </style>
 
     <style name="MyRadioButton"

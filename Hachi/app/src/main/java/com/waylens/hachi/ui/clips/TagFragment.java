@@ -7,7 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -97,6 +101,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
     private EventBus mEventBus = EventBus.getDefault();
 
+    private ActionMode mActionMode;
+
 
     @BindView(R.id.rootViewAnimator)
     ViewAnimator mRootViewAnimator;
@@ -169,7 +175,7 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                 break;
             case -1:
                 toggleMultiMode(false);
-                mRefreshLayout.setEnabled(true);
+
                 break;
             default:
                 break;
@@ -248,6 +254,12 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
         initViews();
 
         return view;
+    }
+
+    public void onDeselected() {
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
     }
 
     private void initViews() {
@@ -334,6 +346,77 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
     }
 
 
+    private ActionMode.Callback mCABCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_clip_list, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            if (mIsAddMore) {
+                MenuItem menuItem = menu.findItem(R.id.menu_to_upload);
+                if (menuItem != null) {
+                    menuItem.setVisible(false);
+                }
+                menuItem = menu.findItem(R.id.menu_to_delete);
+                if (menuItem != null) {
+                    menuItem.setVisible(false);
+                }
+            }
+
+            mEventBus.post(new MultiSelectEvent(true, null));
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_to_enhance:
+                    toEnhance();
+                    break;
+                case R.id.menu_to_upload:
+                    toShare();
+                    break;
+                case R.id.menu_to_delete:
+                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .content(R.string.delete_bookmark_confirm)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                doDeleteSelectedClips();
+                            }
+                        })
+                        .build();
+                    dialog.show();
+                    break;
+                default:
+                    break;
+            }
+
+            mode.finish();
+            return true;
+
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            if (mIsAddMore) {
+                getActivity().finish();
+            } else if (mIsMultipleMode) {
+                mIsMultipleMode = false;
+                mAdapter.setMultiSelectedMode(false);
+            }
+            mRefreshLayout.setEnabled(true);
+            mEventBus.post(new MultiSelectEvent(false, null));
+        }
+    };
+
 
     private void doGetClips() {
         if (mVdbRequestQueue == null) {
@@ -409,6 +492,14 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                         mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, helper.getClipSetGroup(), new ClipSetGroupAdapter.OnClipClickListener() {
                             @Override
                             public void onClipClicked(Clip clip) {
+                                if (mAdapter.getSelectedClipList().size() == 0) {
+                                    mActionMode.finish();
+                                    return;
+                                } else {
+                                    updateActionMode();
+                                }
+
+
                                 if (mIsMultipleMode && clip == null) {
                                     mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
                                     return;
@@ -420,6 +511,8 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
                                     clipSet.addClip(clip);
                                     launchFootageActivity(clipSet);
                                 }
+
+
                             }
 
                             @Override
@@ -429,6 +522,12 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
 
                                 mEventBus.post(new MultiSelectEvent(true, mAdapter.getSelectedClipList()));
                                 mRefreshLayout.setEnabled(false);
+                                if (mActionMode == null) {
+                                    mActionMode = getActivity().startActionMode(mCABCallback);
+                                    updateActionMode();
+                                }
+
+
                             }
                         });
 
@@ -440,6 +539,22 @@ public class TagFragment extends BaseFragment implements FragmentNavigator {
             });
 
 
+    }
+
+    private void updateActionMode() {
+
+        if (mActionMode != null) {
+            Logger.t(TAG).d("getSelectedClipList().size() : " + mAdapter.getSelectedClipList().size());
+            mActionMode.setTitle("" + mAdapter.getSelectedClipList().size());
+            MenuItem uploadMenuItem = mActionMode.getMenu().findItem(R.id.menu_to_upload);
+            if (mAdapter.getSelectedClipList().size() == 1) {
+                uploadMenuItem.setVisible(true);
+            } else {
+                uploadMenuItem.setVisible(false);
+            }
+
+
+        }
     }
 
     private void showRootViewChild(int child) {
