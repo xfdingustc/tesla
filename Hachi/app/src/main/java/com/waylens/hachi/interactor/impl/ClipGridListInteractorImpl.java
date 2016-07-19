@@ -7,12 +7,12 @@ import com.waylens.hachi.interactor.ClipGridListInteractor;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipSet;
 import com.waylens.hachi.listeners.BaseSingleLoadedListener;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequestFuture;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
-import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.library.snipe.SnipeError;
+import com.waylens.hachi.library.snipe.VdbRequestFuture;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.VdbResponse;
+import com.waylens.hachi.library.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
 
 
 import java.util.List;

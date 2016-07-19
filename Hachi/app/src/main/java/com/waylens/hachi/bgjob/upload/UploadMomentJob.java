@@ -20,12 +20,12 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
-import com.waylens.hachi.snipe.VdbCommand;
-import com.waylens.hachi.snipe.VdbRequestFuture;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
-import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
+import com.waylens.hachi.library.snipe.VdbCommand;
+import com.waylens.hachi.library.snipe.VdbRequestFuture;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.library.snipe.toolbox.ClipUploadUrlRequest;
+import com.waylens.hachi.library.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
 

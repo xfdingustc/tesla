@@ -19,8 +19,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 
 
 import java.text.SimpleDateFormat;

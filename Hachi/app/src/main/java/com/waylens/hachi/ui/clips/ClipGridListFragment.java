@@ -27,7 +27,7 @@ import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;

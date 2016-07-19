@@ -2,9 +2,9 @@ package com.waylens.hachi.ui.clips.player;
 
 import com.waylens.hachi.library.vdb.urls.PlaylistPlaybackUrl;
 import com.waylens.hachi.library.vdb.urls.VdbUrl;
-import com.waylens.hachi.snipe.VdbRequestFuture;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
+import com.waylens.hachi.library.snipe.VdbRequestFuture;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.toolbox.PlaylistPlaybackUrlRequest;
 
 
 /**

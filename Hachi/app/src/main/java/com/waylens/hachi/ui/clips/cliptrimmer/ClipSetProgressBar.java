@@ -25,8 +25,8 @@ import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.library.vdb.ClipSegment;
 import com.waylens.hachi.library.vdb.ClipSet;
 import com.waylens.hachi.library.vdb.ClipSetPos;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.utils.ViewUtils;
 
 import org.greenrobot.eventbus.EventBus;

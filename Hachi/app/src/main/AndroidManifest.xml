@@ -256,7 +256,7 @@
             android:value="111f96d8caee6c27d509925c4fb204ae"/>
 
         <meta-data
-            android:name="com.waylens.hachi.snipe.glide.SnipeGlideModule"
+            android:name="com.waylens.hachi.glide_snipe_integration.SnipeGlideModule"
             android:value="GlideModule" />
 
         <service

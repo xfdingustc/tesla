@@ -9,10 +9,10 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.library.snipe.SnipeError;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.VdbResponse;
+import com.waylens.hachi.library.snipe.toolbox.RawDataBlockRequest;
 
 
 import java.util.ArrayList;

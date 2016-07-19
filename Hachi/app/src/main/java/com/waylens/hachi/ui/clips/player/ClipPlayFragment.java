@@ -44,7 +44,7 @@ import com.waylens.hachi.library.vdb.urls.VdbUrl;
 import com.waylens.hachi.player.HachiPlayer;
 import com.waylens.hachi.player.HlsRendererBuilder;
 import com.waylens.hachi.player.Utils;
-import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
+import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;

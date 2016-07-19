@@ -6,10 +6,10 @@ import android.util.Log;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipExtent;
 import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
+import com.waylens.hachi.library.snipe.SnipeError;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.VdbResponse;
+import com.waylens.hachi.library.snipe.toolbox.ClipExtentGetRequest;
 
 
 import java.util.ArrayList;

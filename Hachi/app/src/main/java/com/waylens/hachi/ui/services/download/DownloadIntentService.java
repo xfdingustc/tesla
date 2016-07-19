@@ -9,10 +9,10 @@ import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipDownloadInfo;
 import com.waylens.hachi.library.vdb.ClipSegment;
 import com.waylens.hachi.library.vdb.rawdata.RawDataBlock;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
+import com.waylens.hachi.library.snipe.SnipeError;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.VdbResponse;
+import com.waylens.hachi.library.snipe.toolbox.DownloadUrlRequest;
 
 
 

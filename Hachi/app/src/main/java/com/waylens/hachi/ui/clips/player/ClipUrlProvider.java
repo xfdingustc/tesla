@@ -7,9 +7,9 @@ import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.Vdb;
 import com.waylens.hachi.library.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.library.vdb.urls.VdbUrl;
-import com.waylens.hachi.snipe.VdbRequestFuture;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
+import com.waylens.hachi.library.snipe.VdbRequestFuture;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.toolbox.ClipPlaybackUrlExRequest;
 
 import java.util.concurrent.ExecutionException;
 

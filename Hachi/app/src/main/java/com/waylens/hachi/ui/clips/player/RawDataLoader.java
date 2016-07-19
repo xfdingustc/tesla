@@ -10,9 +10,9 @@ import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.library.vdb.ClipSetPos;
 import com.waylens.hachi.library.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.snipe.VdbRequestFuture;
-import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.library.snipe.VdbRequestFuture;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.toolbox.RawDataBlockRequest;
 
 
 import java.util.ArrayList;
