@@ -32,8 +32,6 @@ public class Hachi extends Application {
     private DeviceScanner mScanner;
 
 
-
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -85,12 +83,10 @@ public class Hachi extends Application {
         initSessionInfo();
 
 
-
         initFacebookSDK();
 
 
 //        FIR.init(this);
-
 
 
         CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
@@ -138,8 +134,6 @@ public class Hachi extends Application {
     }
 
 
-
-
     public static Context getContext() {
         return mSharedContext;
     }
@@ -151,8 +145,9 @@ public class Hachi extends Application {
     private void initLogger() {
         Logger
             .init(TAG)
-            .setMethodCount(1)
-            .hideThreadInfo();
+            .hideThreadInfo()
+            .methodCount(1);
+
     }
 
 
