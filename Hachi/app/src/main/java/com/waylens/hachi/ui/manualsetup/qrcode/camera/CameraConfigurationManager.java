@@ -62,7 +62,7 @@ public final class CameraConfigurationManager {
             screenResolutionForCamera.y = screenResolution.x;
         }
 
-        cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolution);
+        cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolutionForCamera);
         Log.i(TAG, "Camera resolution x: " + cameraResolution.x);
         Log.i(TAG, "Camera resolution y: " + cameraResolution.y);
     }
