@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewAnimator android:id="@+id/rootViewAnimator"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
               xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools">
-
-
-
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
 
     <RelativeLayout
@@ -18,71 +14,11 @@
 
         <include layout="@layout/layout_no_bookmark"/>
 
-        <LinearLayout
-            android:id="@+id/bottomLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@color/settings_line_separator"></View>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <StackView
-                    android:id="@+id/svBuffer"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_margin="16dp"></StackView>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingTop="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lable_buffered_video"
-                        android:textColor="?attr/appTextColorPrimary"
-                        android:textSize="18sp"/>
-
-                    <TextView
-                        android:id="@+id/tvBufferTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:textColor="?attr/appTextColorDisabled"/>
-
-                </LinearLayout>
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="16dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/settings_list_next_indicator"/>
-            </LinearLayout>
-
-        </LinearLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/bottomLayout"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.v7.widget.RecyclerView
@@ -95,10 +31,10 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
 
-
     </RelativeLayout>
 
     <include layout="@layout/fragment_camera_disconnected"/>
+
     <include layout="@layout/timeout"/>
 
 </ViewAnimator>

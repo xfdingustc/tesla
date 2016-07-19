@@ -11,9 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.StackView;
-import android.widget.TextView;
 import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
@@ -26,8 +23,6 @@ import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
@@ -91,39 +86,11 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
-
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
 
     @BindView(R.id.llNoBookmark)
     ViewSwitcher mVsNoBookmark;
-
-    @BindView(R.id.bottomLayout)
-    LinearLayout mBottomLayout;
-
-    @BindView(R.id.svBuffer)
-    StackView mSvBufferClips;
-
-    @BindView(R.id.tvBufferTime)
-    TextView mTvBufferTime;
-
-
-    @OnClick(R.id.bottomLayout)
-    public void onBottomLayoutClicked() {
-        ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_BUFFERED, ClipSetExRequest.FLAG_CLIP_EXTRA,
-            new VdbResponse.Listener<ClipSet>() {
-                @Override
-                public void onResponse(ClipSet response) {
-                    launchFootageActivity(response);
-                }
-            }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-
-            }
-        });
-        mVdbRequestQueue.add(request);
-    }
 
     @OnClick(R.id.btn_retry)
     public void onBtnRetryClicked() {
@@ -524,8 +491,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
             mRefreshLayout.setRefreshing(true);
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-//            EnhancementActivity.launch(getActivity(), selectedList, EnhancementActivity.LAUNCH_MODE_SHARE);
-//            ShareActivity.launch(getActivity());
+
             final int playlistId = 0x100;
             PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
             playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
