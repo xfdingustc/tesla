@@ -65,7 +65,7 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
                     oldPosition = 0;
                 }
 
-                TagFragment fragment = (TagFragment) mVideoAdapter.getItem(oldPosition);
+                ClipGridListFragment fragment = (ClipGridListFragment) mVideoAdapter.getItem(oldPosition);
                 fragment.onDeselected();
             }
 

@@ -35,7 +35,7 @@ public class Clip implements Parcelable, Serializable {
     // --------------------------------------------------------------
     // clip id
     // --------------------------------------------------------------
-    public static final class ID implements Serializable{
+    public static final class ID implements Serializable {
 
         public final int type; // depends on cat
         public final int subType; // depends on type
@@ -101,12 +101,12 @@ public class Clip implements Parcelable, Serializable {
 
     }
 
-    // stream info: see StdMedia.java
-    public static final class StreamInfo implements Serializable{
 
-        public int version; // 0: invalid; current is 2
+    public static final class StreamInfo implements Serializable {
 
-        public byte video_coding; // StdMedia
+        public int version;
+
+        public byte video_coding;
         public byte video_framerate;
         public short video_width;
         public short video_height;
@@ -125,7 +125,7 @@ public class Clip implements Parcelable, Serializable {
 
     }
 
-    public class EditInfo implements Serializable{
+    public class EditInfo implements Serializable {
         public Clip.ID bufferedCid;
         public Clip.ID realCid;
         public long minExtensibleValue;
@@ -159,9 +159,9 @@ public class Clip implements Parcelable, Serializable {
 
     public StreamInfo[] streams;
 
-    public int index; // index in ClipSet
+    public int index;
 
-    // date when the clip is created
+
     private int mClipDate;
 
     public int gmtOffset;
@@ -170,10 +170,10 @@ public class Clip implements Parcelable, Serializable {
 
     private int mDurationMs;
 
-    // clip size in bytes
+
     public long clipSize = -1;
 
-    // is marked as to be deleted
+
     public boolean bDeleting;
 
     public EditInfo editInfo;
@@ -227,7 +227,7 @@ public class Clip implements Parcelable, Serializable {
     }
 
     public long getClipDate() {
-        return ((long)mClipDate) * 1000 - TimeZone.getDefault().getRawOffset();
+        return ((long) mClipDate) * 1000 - TimeZone.getDefault().getRawOffset();
     }
 
     public void setStartTime(long startTimeMs) {
@@ -252,14 +252,6 @@ public class Clip implements Parcelable, Serializable {
         return timeMs >= mStartTimeMs && timeMs < mStartTimeMs + mDurationMs;
     }
 
-    public boolean isDownloading() {
-        return false;
-    }
-
-    public int getDownloadProgress() {
-        return -1;
-    }
-
 
     // inherit
     public String getVdbId() {
@@ -268,7 +260,7 @@ public class Clip implements Parcelable, Serializable {
 
     public String toString() {
         return "Clip id: " + cid.toString() + " start time: " + mStartTimeMs + " end time: " + getEndTimeMs()
-         + "real Clip id: " + realCid.toString();
+            + "real Clip id: " + realCid.toString();
     }
 
     public long getStandardClipDate() {
