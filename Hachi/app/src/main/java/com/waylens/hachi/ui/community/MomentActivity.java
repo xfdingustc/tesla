@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +37,8 @@ import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.simplelist.MaterialSimpleListAdapter;
+import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -559,13 +562,66 @@ public class MomentActivity extends BaseActivity {
         mAdapter = new CommentsAdapter(null);
         mAdapter.setOnCommentClickListener(new CommentsAdapter.OnCommentClickListener() {
             @Override
-            public void onCommentClicked(Comment comment) {
-                mReplyTo = comment.author;
-//                mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
-                addComment();
-                if (mNewCommentView != null) {
-                    mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
-                }
+            public void onCommentClicked(final Comment comment) {
+                final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
+                adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
+                        .content(R.string.reply)
+                        .icon(R.drawable.social_reply)
+                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
+                        .build());
+
+                adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
+                        .content(R.string.report)
+                        .icon(R.drawable.social_report)
+                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
+                        .build());
+
+                new MaterialDialog.Builder(MomentActivity.this)
+                        .title(R.string.comment)
+                        .adapter(adapter, new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                switch (which) {
+                                    case 0:
+                                        mReplyTo = comment.author;
+                                        addComment();
+                                        if (mNewCommentView != null) {
+                                            mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+                                        }
+                                        break;
+                                    case 1:
+                                        reportComment(comment);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+
+            public void reportComment(final Comment comment) {
+                new MaterialDialog.Builder(MomentActivity.this)
+                        .title(R.string.report)
+                        .items(R.array.report_reason)
+                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                mReportReason = getResources().getStringArray(R.array.report_reason)[which];
+                                return true;
+                            }
+                        })
+                        .positiveText(R.string.report)
+                        .negativeText(android.R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                doReportComment(comment);
+                            }
+                        })
+                        .show();
+
             }
 
             @Override
