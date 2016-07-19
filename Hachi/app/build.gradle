@@ -123,7 +123,7 @@ dependencies {
     //    compile 'com.bugtags.library:bugtags-lib:latest.integration'
     //    compile 'com.tencent.bugly:crashreport:latest.release'
     //    compile 'com.google.guava:guava:19.0'
-    compile 'com.google.android.exoplayer:exoplayer:r1.5.9'
+
     compile 'org.greenrobot:eventbus:3.0.0'
     //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     //    debugCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'

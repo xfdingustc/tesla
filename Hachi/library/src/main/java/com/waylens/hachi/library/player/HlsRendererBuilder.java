@@ -1,4 +1,4 @@
-package com.waylens.hachi.player;
+package com.waylens.hachi.library.player;
 
 import android.content.Context;
 import android.media.AudioManager;
