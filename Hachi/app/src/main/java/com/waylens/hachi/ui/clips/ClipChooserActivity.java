@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
@@ -34,7 +33,7 @@ public class ClipChooserActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_single_fragment);
         setupToolbar();
-        Fragment fragment = TagFragment.newInstance(Clip.TYPE_MARKED, true, true);
+        Fragment fragment = ClipGridListFragment.newInstance(Clip.TYPE_MARKED, true, true);
 
         getFragmentManager().beginTransaction().add(R.id.fragment_content, fragment).commit();
     }

@@ -91,7 +91,7 @@
     </LinearLayout>
 
     <View
-        style="@style/HachiSepatator"
+        android:background="@color/settings_line_separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 

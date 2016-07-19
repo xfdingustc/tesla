@@ -29,6 +29,8 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2015/8/4.
  */
 public abstract class BaseFragment extends Fragment {
+    protected static String TAG = null;
+
     protected View mRootView;
     protected MaterialDialog mProgressDialog;
 
@@ -53,7 +55,7 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        TAG = this.getClass().getSimpleName();
         if (savedInstanceState != null) {
             boolean isSupportHidden = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
 

@@ -144,7 +144,7 @@ public class ClipModifyActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (hasUpdated) {
-                    LocalBroadcastManager.getInstance(ClipModifyActivity.this).sendBroadcast(new Intent(TagFragment.ACTION_RETRIEVE_CLIPS));
+                    LocalBroadcastManager.getInstance(ClipModifyActivity.this).sendBroadcast(new Intent(ClipGridListFragment.ACTION_RETRIEVE_CLIPS));
                 }
                 finish();
             }
