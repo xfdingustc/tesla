@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.utils.Utils;
-import com.waylens.hachi.vdb.Clip;
+
 
 /**
  * Created by Xiaofei on 2016/4/11.

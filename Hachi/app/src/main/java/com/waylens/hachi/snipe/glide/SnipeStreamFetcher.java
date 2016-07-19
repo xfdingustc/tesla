@@ -2,12 +2,12 @@ package com.waylens.hachi.snipe.glide;
 
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.orhanobut.logger.Logger;
+import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.utils.DigitUtils;
-import com.waylens.hachi.vdb.ClipPos;
+
 
 import java.io.InputStream;
 

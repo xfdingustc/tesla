@@ -12,6 +12,10 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipPos;
+import com.waylens.hachi.library.vdb.ClipSet;
+import com.waylens.hachi.library.vdb.urls.UploadUrl;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
@@ -23,18 +27,14 @@ import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.urls.UploadUrl;
+
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.concurrent.TimeUnit;
 
-import crs_svr.v2.CrsCommand;
+import com.waylens.hachi.library.crs_svr.v2.CrsCommand;
 import retrofit2.Call;
 
 /**

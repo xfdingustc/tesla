@@ -1,10 +1,11 @@
 package com.waylens.hachi.snipe.toolbox;
 
 
+import com.waylens.hachi.library.vdb.ClipActionInfo;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.ClipActionInfo;
+
 
 /**
  * Created by Richard on 12/28/15.

@@ -3,12 +3,13 @@ package com.waylens.hachi.snipe.toolbox;
 import android.os.Bundle;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.urls.UploadUrl;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.urls.UploadUrl;
+
 
 /**
  * Created by Richard on 11/19/15.

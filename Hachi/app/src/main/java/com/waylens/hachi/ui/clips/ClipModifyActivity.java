@@ -18,6 +18,10 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipEditEvent;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipExtent;
+import com.waylens.hachi.library.vdb.ClipSet;
+import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
@@ -28,10 +32,7 @@ import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.utils.ViewUtils;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipExtent;
-import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipSetManager;
+
 
 import org.greenrobot.eventbus.EventBus;
 

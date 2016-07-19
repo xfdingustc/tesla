@@ -29,6 +29,11 @@ import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipDownloadInfo;
+import com.waylens.hachi.library.vdb.ClipSet;
+import com.waylens.hachi.library.vdb.ClipSetManager;
+import com.waylens.hachi.library.vdb.ClipSetPos;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -43,11 +48,7 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipDownloadInfo;
-import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipSetManager;
-import com.waylens.hachi.vdb.ClipSetPos;
+
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

@@ -1,12 +1,13 @@
 package com.waylens.hachi.snipe.toolbox;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.library.vdb.Vdb;
+import com.waylens.hachi.library.vdb.urls.PlaylistPlaybackUrl;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.Vdb;
-import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
+
 
 /**
  * Created by Xiaofei on 2016/1/27.

@@ -4,8 +4,10 @@ import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbMessageHandler;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipActionInfo;
+
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipActionInfo;
+
 
 /**
  * Created by Richard on 12/28/15.

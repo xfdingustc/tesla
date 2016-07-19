@@ -33,7 +33,7 @@ import com.android.volley.toolbox.Volley;
 //import com.github.mikephil.charting.data.PieData;
 //import com.github.mikephil.charting.data.PieDataSet;
 //import com.github.mikephil.charting.formatter.ValueFormatter;
-//import com.github.mikephil.charting.utils.ViewPortHandler;
+//import com.github.mikephil.charting.com.waylens.hachi.library.utils.ViewPortHandler;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -45,6 +45,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.library.vdb.SpaceInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -52,7 +53,7 @@ import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
 import com.waylens.hachi.ui.services.download.InetDownloadService;
-import com.waylens.hachi.vdb.SpaceInfo;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import crs_svr.HashUtils;
+import com.waylens.hachi.library.crs_svr.HashUtils;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;

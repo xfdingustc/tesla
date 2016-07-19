@@ -34,6 +34,13 @@ import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipPos;
+import com.waylens.hachi.library.vdb.ClipSet;
+import com.waylens.hachi.library.vdb.ClipSetManager;
+import com.waylens.hachi.library.vdb.ClipSetPos;
+import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.library.vdb.urls.VdbUrl;
 import com.waylens.hachi.player.HachiPlayer;
 import com.waylens.hachi.player.HlsRendererBuilder;
 import com.waylens.hachi.player.Utils;
@@ -42,13 +49,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
-import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipSetManager;
-import com.waylens.hachi.vdb.ClipSetPos;
-import com.waylens.hachi.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.vdb.urls.VdbUrl;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

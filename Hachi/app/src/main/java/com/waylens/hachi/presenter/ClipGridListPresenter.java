@@ -1,6 +1,8 @@
 package com.waylens.hachi.presenter;
 
-import com.waylens.hachi.vdb.Clip;
+
+
+import com.waylens.hachi.library.vdb.Clip;
 
 import java.util.List;
 

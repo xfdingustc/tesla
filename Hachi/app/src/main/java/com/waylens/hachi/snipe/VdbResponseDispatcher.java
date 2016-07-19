@@ -81,7 +81,7 @@ public class VdbResponseDispatcher extends Thread {
                 }
             }
 
-            vdbRequest.addMarker("vdb-complete");
+            vdbRequest.addMarker("com.waylens.hachi.library.vdb-complete");
 
             if (vdbAcknowledge.notModified && vdbRequest.hasHadResponseDelivered()) {
                 vdbRequest.finish("not-modified", true);
@@ -89,7 +89,7 @@ public class VdbResponseDispatcher extends Thread {
             }
 
             VdbResponse<?> vdbResponse = vdbRequest.parseVdbResponse(vdbAcknowledge);
-            vdbRequest.addMarker("vdb-fromBinary-complete");
+            vdbRequest.addMarker("com.waylens.hachi.library.vdb-fromBinary-complete");
 
             vdbRequest.markDelivered();
             mDelivery.postResponse(vdbRequest, vdbResponse);

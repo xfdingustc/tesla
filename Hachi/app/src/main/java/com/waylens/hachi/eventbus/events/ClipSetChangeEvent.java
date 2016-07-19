@@ -1,6 +1,6 @@
 package com.waylens.hachi.eventbus.events;
 
-import com.waylens.hachi.vdb.ClipSetPos;
+
 
 /**
  * Created by Xiaofei on 2016/4/6.

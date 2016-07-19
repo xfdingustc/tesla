@@ -1,8 +1,8 @@
 package com.waylens.hachi.eventbus.events;
 
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.library.vdb.ClipActionInfo;
+
 
 /**
  * Created by laina on 16/7/4.

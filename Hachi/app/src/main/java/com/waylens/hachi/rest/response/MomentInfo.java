@@ -1,6 +1,6 @@
 package com.waylens.hachi.rest.response;
 
-import com.waylens.hachi.utils.ToStringUtils;
+import com.waylens.hachi.library.utils.ToStringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;

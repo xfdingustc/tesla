@@ -1,14 +1,12 @@
 package com.waylens.hachi.ui.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.Spannable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.waylens.hachi.app.JsonKey;
-import com.waylens.hachi.utils.ToStringUtils;
+import com.waylens.hachi.library.utils.ToStringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

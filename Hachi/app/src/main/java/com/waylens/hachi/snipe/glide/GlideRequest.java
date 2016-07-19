@@ -1,18 +1,13 @@
 package com.waylens.hachi.snipe.glide;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-import android.widget.ImageView;
-
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

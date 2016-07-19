@@ -1,8 +1,9 @@
 package com.waylens.hachi.snipe.glide;
 
+import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbRequestFuture;
-import com.waylens.hachi.vdb.ClipPos;
+
 
 import java.io.InputStream;
 

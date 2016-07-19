@@ -10,9 +10,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.glide.SnipeGlideLoader;
-import com.waylens.hachi.vdb.ClipPos;
+
 
 import java.util.ArrayList;
 import java.util.List;

@@ -20,6 +20,10 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipActionInfo;
+import com.waylens.hachi.library.vdb.ClipSet;
+import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
@@ -32,10 +36,7 @@ import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.ClipSet;
-import com.waylens.hachi.vdb.ClipSetManager;
+
 import com.waylens.hachi.view.ClipGridListView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -175,7 +176,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         int flag;
         int attr;
 
-        if (true || mClipSetType == Clip.TYPE_MARKED) {
+        if (
+            true || mClipSetType == Clip.TYPE_MARKED) {
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA;
             attr = 0;
         } else {

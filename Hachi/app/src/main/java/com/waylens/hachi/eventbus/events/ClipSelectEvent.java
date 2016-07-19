@@ -1,6 +1,7 @@
 package com.waylens.hachi.eventbus.events;
 
-import com.waylens.hachi.vdb.Clip;
+
+import com.waylens.hachi.library.vdb.Clip;
 
 import java.util.List;
 

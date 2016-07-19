@@ -51,10 +51,10 @@ public class VdbDispatcher extends Thread {
             }
 
             try {
-                vdbRequest.addMarker("vdb-queue-take");
+                vdbRequest.addMarker("com.waylens.hachi.library.vdb-queue-take");
 
                 if (vdbRequest.isCanceled()) {
-                    vdbRequest.finish("vdb-discard-cancelled", true);
+                    vdbRequest.finish("com.waylens.hachi.library.vdb-discard-cancelled", true);
                     continue;
                 }
                 // Perform the network request

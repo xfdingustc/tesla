@@ -5,7 +5,8 @@ import android.content.Context;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.module.GlideModule;
-import com.waylens.hachi.vdb.ClipPos;
+import com.waylens.hachi.library.vdb.ClipPos;
+
 
 import java.io.InputStream;
 

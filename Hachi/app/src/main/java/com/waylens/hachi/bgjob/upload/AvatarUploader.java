@@ -2,10 +2,10 @@ package com.waylens.hachi.bgjob.upload;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
-import com.waylens.hachi.bgjob.upload.event.UploadEvent;
+import com.waylens.hachi.library.vdb.urls.UploadUrl;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.vdb.urls.UploadUrl;
+
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -18,17 +18,17 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 
-import crs_svr.HashUtils;
-import crs_svr.v2.CrsClientTranData;
-import crs_svr.v2.CrsCommand;
-import crs_svr.v2.CrsCommandResponse;
-import crs_svr.v2.CrsFragment;
-import crs_svr.v2.CrsMomentDescription;
-import crs_svr.v2.CrsUserLogin;
-import crs_svr.v2.CrsUserLogout;
-import crs_svr.v2.CrsUserStartUpload;
-import crs_svr.v2.CrsUserStopUpload;
-import crs_svr.v2.EncodeCommandHeader;
+import com.waylens.hachi.library.crs_svr.HashUtils;
+import com.waylens.hachi.library.crs_svr.v2.CrsClientTranData;
+import com.waylens.hachi.library.crs_svr.v2.CrsCommand;
+import com.waylens.hachi.library.crs_svr.v2.CrsCommandResponse;
+import com.waylens.hachi.library.crs_svr.v2.CrsFragment;
+import com.waylens.hachi.library.crs_svr.v2.CrsMomentDescription;
+import com.waylens.hachi.library.crs_svr.v2.CrsUserLogin;
+import com.waylens.hachi.library.crs_svr.v2.CrsUserLogout;
+import com.waylens.hachi.library.crs_svr.v2.CrsUserStartUpload;
+import com.waylens.hachi.library.crs_svr.v2.CrsUserStopUpload;
+import com.waylens.hachi.library.crs_svr.v2.EncodeCommandHeader;
 
 /**
  * Created by Xiaofei on 2016/7/14.

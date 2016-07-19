@@ -1,6 +1,6 @@
 package com.waylens.hachi.hardware.vdtcamera.mina;
 
-import com.waylens.hachi.utils.ToStringUtils;
+import com.waylens.hachi.library.utils.ToStringUtils;
 
 /**
  * Created by Xiaofei on 2016/7/4.

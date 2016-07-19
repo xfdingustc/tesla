@@ -1,16 +1,11 @@
 package com.waylens.hachi.ui.clips.player;
 
-import com.orhanobut.logger.Logger;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbRequest;
+import com.waylens.hachi.library.vdb.urls.PlaylistPlaybackUrl;
+import com.waylens.hachi.library.vdb.urls.VdbUrl;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
-import com.waylens.hachi.vdb.urls.PlaylistPlaybackUrl;
-import com.waylens.hachi.vdb.urls.VdbUrl;
 
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Xiaofei on 2016/2/29.

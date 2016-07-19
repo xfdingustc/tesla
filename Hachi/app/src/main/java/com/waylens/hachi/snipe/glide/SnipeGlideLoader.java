@@ -9,8 +9,9 @@ import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.vdb.ClipPos;
+
 
 import java.io.InputStream;
 

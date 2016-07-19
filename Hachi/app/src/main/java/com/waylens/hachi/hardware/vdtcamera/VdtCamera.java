@@ -1,7 +1,5 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
-import android.util.Log;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraStateChangeEvent;
 import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
@@ -22,10 +20,11 @@ import com.waylens.hachi.snipe.toolbox.RawDataMsgHandler;
 import com.waylens.hachi.snipe.toolbox.VdbReadyMsgHandler;
 import com.waylens.hachi.snipe.toolbox.VdbUnmountedMsgHandler;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
-import com.waylens.hachi.utils.ToStringUtils;
-import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.VdbReadyInfo;
-import com.waylens.hachi.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.library.utils.ToStringUtils;
+import com.waylens.hachi.library.vdb.ClipActionInfo;
+import com.waylens.hachi.library.vdb.VdbReadyInfo;
+import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;

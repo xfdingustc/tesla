@@ -1,6 +1,6 @@
 package com.waylens.hachi.bgjob.upload;
 
-import com.waylens.hachi.utils.ToStringUtils;
+import com.waylens.hachi.library.utils.ToStringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

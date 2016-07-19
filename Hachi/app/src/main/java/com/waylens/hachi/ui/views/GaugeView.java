@@ -13,12 +13,13 @@ import android.widget.FrameLayout;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.library.vdb.rawdata.GpsData;
+import com.waylens.hachi.library.vdb.rawdata.IioData;
+import com.waylens.hachi.library.vdb.rawdata.ObdData;
+import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.library.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
-import com.waylens.hachi.vdb.rawdata.GpsData;
-import com.waylens.hachi.vdb.rawdata.IioData;
-import com.waylens.hachi.vdb.rawdata.ObdData;
-import com.waylens.hachi.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.vdb.rawdata.WeatherData;
+
 
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
@@ -27,8 +28,6 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
-
-import retrofit2.http.OPTIONS;
 
 /**
  * Created by Xiaofei on 2016/4/6.

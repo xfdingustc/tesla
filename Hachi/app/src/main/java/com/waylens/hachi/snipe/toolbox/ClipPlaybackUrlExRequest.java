@@ -2,10 +2,11 @@ package com.waylens.hachi.snipe.toolbox;
 
 import android.os.Bundle;
 
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.urls.PlaybackUrl;
+
 
 /**
  * Created by Richard on 9/22/15.

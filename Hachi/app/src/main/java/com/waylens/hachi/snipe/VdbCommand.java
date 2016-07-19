@@ -1,9 +1,10 @@
 package com.waylens.hachi.snipe;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipPos;
+
 
 /**
  * Created by Xiaofei on 2015/8/19.

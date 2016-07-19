@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.entities;
 
-import com.google.gson.annotations.Expose;
-import com.waylens.hachi.utils.ToStringUtils;
+import com.waylens.hachi.library.utils.ToStringUtils;
 
 /**
  * Created by Xiaofei on 2016/6/8.

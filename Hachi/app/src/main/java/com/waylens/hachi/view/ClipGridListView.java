@@ -1,6 +1,7 @@
 package com.waylens.hachi.view;
 
-import com.waylens.hachi.vdb.ClipSet;
+
+import com.waylens.hachi.library.vdb.ClipSet;
 import com.waylens.hachi.view.base.BaseView;
 
 /**

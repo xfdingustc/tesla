@@ -3,7 +3,7 @@ package com.waylens.hachi.ui.services.download;
 import android.os.Environment;
 import android.os.StatFs;
 
-import com.waylens.hachi.utils.DateTime;
+import com.waylens.hachi.library.utils.DateTime;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
 

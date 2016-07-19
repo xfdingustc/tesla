@@ -36,6 +36,11 @@ import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.BtDevice;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.library.vdb.ClipActionInfo;
+import com.waylens.hachi.library.vdb.SpaceInfo;
+import com.waylens.hachi.library.vdb.VdbReadyInfo;
+import com.waylens.hachi.library.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
@@ -45,11 +50,7 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.views.GaugeView;
-import com.waylens.hachi.vdb.ClipActionInfo;
-import com.waylens.hachi.vdb.SpaceInfo;
-import com.waylens.hachi.vdb.VdbReadyInfo;
-import com.waylens.hachi.vdb.rawdata.RawDataBlock;
-import com.waylens.hachi.vdb.rawdata.RawDataItem;
+
 import com.xfdingustc.mjpegview.library.MjpegView;
 
 import org.greenrobot.eventbus.EventBus;

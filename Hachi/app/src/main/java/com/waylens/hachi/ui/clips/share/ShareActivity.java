@@ -21,12 +21,12 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
@@ -43,7 +43,7 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
 import com.waylens.hachi.ui.clips.upload.UploadActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
-import com.waylens.hachi.vdb.ClipSetManager;
+
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

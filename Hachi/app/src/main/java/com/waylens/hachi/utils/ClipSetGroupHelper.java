@@ -1,7 +1,8 @@
 package com.waylens.hachi.utils;
 
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipSet;
+
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipSet;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class ClipSetGroupHelper {
         Collections.sort(clipSetGroup, new Comparator<ClipSet>() {
             @Override
             public int compare(ClipSet lhs, ClipSet rhs) {
-                return (int)(rhs.getClip(0).getClipDate() / 1000 - lhs.getClip(0).getClipDate() / 1000);
+                return (int) (rhs.getClip(0).getClipDate() / 1000 - lhs.getClip(0).getClipDate() / 1000);
             }
         });
 

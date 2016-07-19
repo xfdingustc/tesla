@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.clips.player;
 
-import com.waylens.hachi.vdb.urls.VdbUrl;
+
+import com.waylens.hachi.library.vdb.urls.VdbUrl;
 
 /**
  * Created by Xiaofei on 2016/2/29.

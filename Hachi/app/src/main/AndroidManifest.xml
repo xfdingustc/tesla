@@ -29,7 +29,7 @@
         android:label="@string/app_name"
         android:theme="@style/DarkTheme">
 
-        <!--<uses-library android:name="com.transee.vdb" android:required="true"/>-->
+        <!--<uses-library android:name="com.transee.com.waylens.hachi.library.vdb" android:required="true"/>-->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>

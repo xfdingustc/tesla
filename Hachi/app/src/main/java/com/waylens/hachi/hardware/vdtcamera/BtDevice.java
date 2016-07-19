@@ -1,7 +1,7 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.utils.ToStringUtils;
+import com.waylens.hachi.library.utils.ToStringUtils;
 
 /**
  * Created by Xiaofei on 2016/5/11.

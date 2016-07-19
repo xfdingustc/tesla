@@ -1,11 +1,12 @@
 package com.waylens.hachi.snipe.toolbox;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.library.vdb.SpaceInfo;
 import com.waylens.hachi.snipe.VdbAcknowledge;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequest;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.vdb.SpaceInfo;
+
 
 /**
  * Created by Xiaofei on 2016/5/5.

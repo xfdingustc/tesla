@@ -8,10 +8,10 @@ import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipDownloadInfo;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
-import com.waylens.hachi.vdb.Clip;
-import com.waylens.hachi.vdb.ClipDownloadInfo;
 
 import org.greenrobot.eventbus.EventBus;
 
