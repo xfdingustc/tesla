@@ -20,6 +20,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipActionInfo;
 import com.waylens.hachi.library.vdb.ClipSet;
@@ -60,8 +61,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
     private static final int ROOT_CHILD_CLIPSET = 0;
-    private static final int ROOT_CHILD_CAMERA_DISCONNECT = 1;
-    private static final int ROOT_CHILD_TIMEOUT = 2;
+    private static final int ROOT_CHILD_TIMEOUT = 1;
 
     private static final int DEFAULT_TIMEOUT_SECOND = 10;
 
@@ -101,15 +101,17 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventCameraConnection(CameraConnectionEvent event) {
+        Logger.t(TAG).d("camera connection event: " + event.getWhat());
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
                 doGetClipSet();
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
-                showRootViewChild(ROOT_CHILD_CAMERA_DISCONNECT);
+                showCameraDisconnect();
                 break;
 
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
+                hideCameraDisconnect();
                 doGetClipSet();
                 break;
         }
@@ -171,6 +173,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
+
+
     @Override
     protected void init() {
         int flag;
@@ -201,7 +205,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Override
     public void refreshClipiSet(ClipSet clipSet) {
-        Logger.t(TAG).d("get clip set: " + clipSet.getCount());
         showRootViewChild(ROOT_CHILD_CLIPSET);
         mRefreshLayout.setRefreshing(false);
         if (clipSet.getCount() == 0) {
@@ -266,20 +269,16 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         }
     }
 
-    @Override
-    public void showLoading(String msg) {
 
-    }
 
-    @Override
-    public void hideLoading() {
 
-    }
 
     @Override
     public void showError(String msg) {
 
     }
+
+
 
     @Override
     protected void onFirstUserVisible() {
@@ -290,6 +289,11 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @Override
     protected boolean isBindEventBusHere() {
         return false;
+    }
+
+    @Override
+    protected View getLoadingTargetView() {
+        return mRefreshLayout;
     }
 
     private void initViews() {
@@ -306,6 +310,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         });
 
 
+
+
     }
 
 
@@ -313,6 +319,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRefreshLayout.setRefreshing(true);
+
     }
 
 

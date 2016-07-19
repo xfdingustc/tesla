@@ -1,29 +1,30 @@
-package com.waylens.hachi.library.crs_svr.v2;
+package com.waylens.hachi.library.crs_svr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
+ * CrsUserLogout
  * Created by Richard on 1/13/16.
  */
-public class CrsUserExitRequest extends CrsCommand {
-    String jidExt;
+public class CrsUserLogout extends CrsCommand {
+    String jid;
 
-    public CrsUserExitRequest(String userID, String guid, String privateKey) {
+    public CrsUserLogout(String userid, String privateKey) {
         super(privateKey);
-        jidExt = userID + "/" + WAYLENS_RESOURCE_TYPE_ANDROID + "/" + guid;
+        jid = userid + "/" + WAYLENS_RESOURCE_TYPE_ANDROID;
     }
 
     @Override
     public void encode() throws IOException {
-        write(jidExt, true);
+        write(jid, true);
     }
 
     @Override
-    public CrsUserExitRequest decode(byte[] bytes) {
+    public CrsUserLogout decode(byte[] bytes) {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         try {
-            jidExt = readString(inputStream, 0);
+            jid = readString(inputStream, 0);
             return this;
         } catch (IOException e) {
             return null;
@@ -32,16 +33,16 @@ public class CrsUserExitRequest extends CrsCommand {
 
     @Override
     public CommandHead getCommandHeader() {
-        return null;
+        return new CommandHead(CRS_C2S_LOGOUT);
     }
 
     @Override
     public EncodeCommandHeader getEncodeHeader() {
-        return null;
+        return new EncodeCommandHeader();
     }
 
     @Override
     public String toString() {
-        return String.format("jidExt[%s]", jidExt);
+        return String.format("jid[%s]", jid);
     }
 }

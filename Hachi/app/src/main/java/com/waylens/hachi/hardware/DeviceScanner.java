@@ -81,6 +81,7 @@ public class DeviceScanner extends Thread {
 
 
             try {
+                wait(SCAN_INTERVAL);
                 Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
                 while (en.hasMoreElements()) {
                     NetworkInterface ni = en.nextElement();
@@ -98,6 +99,8 @@ public class DeviceScanner extends Thread {
                     lockWifi(mWifiManager);
                 }
 
+
+
                 for (InetAddress addr : mAddress) {
                     JmDNS dns = JmDNS.create(addr, SERVICE_VIDITCAM);
                     mDns.add(dns);
@@ -105,13 +108,14 @@ public class DeviceScanner extends Thread {
 
                 }
 
-                wait(SCAN_INTERVAL);
+
                 for (JmDNS dns : mDns) {
                     dns.close();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
+
                 if (mWifiManager != null) {
                     unlockWifi();
                 }

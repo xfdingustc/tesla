@@ -39,10 +39,7 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
     public ClipGridListInteractorImpl(String requestTag, int clipSetType, int flag, int attr,
                                       BaseSingleLoadedListener<ClipSet> loadedListener) {
-        this.mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
-        if (mVdtCamera != null) {
-            mVdbRequestQueue = mVdtCamera.getRequestQueue();
-        }
+
 
         this.mRequestTag = requestTag;
         this.mClipSetType = clipSetType;
@@ -53,10 +50,6 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
     @Override
     public void getClipSet() {
-        if (mVdbRequestQueue == null) {
-            mLoadListener.onError("camera is disconnected");
-        }
-
         Logger.t(TAG).d("getClipSet");
 
 
@@ -72,7 +65,15 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
             }
         });
         request.setTag(mRequestTag);
-        mVdbRequestQueue.add(request);
+
+        mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
+
+
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.add(request);
+        } else {
+            mLoadListener.onError("no camera connected");
+        }
     }
 
     @Override

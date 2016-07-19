@@ -1,4 +1,4 @@
-package com.waylens.hachi.library.crs_svr.v2;
+package com.waylens.hachi.library.crs_svr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -6,10 +6,10 @@ import java.io.IOException;
 /**
  * Created by Richard on 1/13/16.
  */
-public class CrsUserStopUpload extends CrsCommand {
+public class CrsUserExitRequest extends CrsCommand {
     String jidExt;
 
-    public CrsUserStopUpload(String userID, String guid, String privateKey) {
+    public CrsUserExitRequest(String userID, String guid, String privateKey) {
         super(privateKey);
         jidExt = userID + "/" + WAYLENS_RESOURCE_TYPE_ANDROID + "/" + guid;
     }
@@ -20,7 +20,7 @@ public class CrsUserStopUpload extends CrsCommand {
     }
 
     @Override
-    public CrsUserStopUpload decode(byte[] bytes) {
+    public CrsUserExitRequest decode(byte[] bytes) {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         try {
             jidExt = readString(inputStream, 0);
@@ -32,12 +32,12 @@ public class CrsUserStopUpload extends CrsCommand {
 
     @Override
     public CommandHead getCommandHeader() {
-        return new CommandHead(CRS_C2S_STOP_UPLOAD);
+        return null;
     }
 
     @Override
     public EncodeCommandHeader getEncodeHeader() {
-        return new EncodeCommandHeader();
+        return null;
     }
 
     @Override

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/windowBackground"
+                android:orientation="vertical">
 
 
     <TextView
@@ -70,6 +71,6 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:background="@color/style_color_primary"
-
-        android:text="@string/try_again"/>
+        android:text="@string/try_again"
+        android:visibility="gone"/>
 </RelativeLayout>

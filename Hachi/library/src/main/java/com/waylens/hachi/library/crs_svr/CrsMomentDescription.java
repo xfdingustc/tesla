@@ -1,4 +1,4 @@
-package com.waylens.hachi.library.crs_svr.v2;
+package com.waylens.hachi.library.crs_svr;
 
 import android.util.Log;
 

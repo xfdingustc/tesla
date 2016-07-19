@@ -50,12 +50,13 @@ public class ClipGridListPresenterImpl implements ClipGridListPresenter, BaseSin
 
     @Override
     public void onSuccess(ClipSet data) {
+        mGridListView.hideLoading();
         mGridListView.refreshClipiSet(data);
     }
 
     @Override
     public void onError(String msg) {
-
+        mGridListView.showCameraDisconnect();
     }
 
     @Override

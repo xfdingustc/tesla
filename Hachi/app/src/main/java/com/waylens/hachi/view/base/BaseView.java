@@ -9,4 +9,8 @@ public interface BaseView {
     void hideLoading();
 
     void showError(String msg);
+
+    void showCameraDisconnect();
+
+    void hideCameraDisconnect();
 }

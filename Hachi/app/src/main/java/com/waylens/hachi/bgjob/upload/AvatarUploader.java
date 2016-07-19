@@ -19,16 +19,16 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.waylens.hachi.library.crs_svr.HashUtils;
-import com.waylens.hachi.library.crs_svr.v2.CrsClientTranData;
-import com.waylens.hachi.library.crs_svr.v2.CrsCommand;
-import com.waylens.hachi.library.crs_svr.v2.CrsCommandResponse;
-import com.waylens.hachi.library.crs_svr.v2.CrsFragment;
-import com.waylens.hachi.library.crs_svr.v2.CrsMomentDescription;
-import com.waylens.hachi.library.crs_svr.v2.CrsUserLogin;
-import com.waylens.hachi.library.crs_svr.v2.CrsUserLogout;
-import com.waylens.hachi.library.crs_svr.v2.CrsUserStartUpload;
-import com.waylens.hachi.library.crs_svr.v2.CrsUserStopUpload;
-import com.waylens.hachi.library.crs_svr.v2.EncodeCommandHeader;
+import com.waylens.hachi.library.crs_svr.CrsClientTranData;
+import com.waylens.hachi.library.crs_svr.CrsCommand;
+import com.waylens.hachi.library.crs_svr.CrsCommandResponse;
+import com.waylens.hachi.library.crs_svr.CrsFragment;
+import com.waylens.hachi.library.crs_svr.CrsMomentDescription;
+import com.waylens.hachi.library.crs_svr.CrsUserLogin;
+import com.waylens.hachi.library.crs_svr.CrsUserLogout;
+import com.waylens.hachi.library.crs_svr.CrsUserStartUpload;
+import com.waylens.hachi.library.crs_svr.CrsUserStopUpload;
+import com.waylens.hachi.library.crs_svr.EncodeCommandHeader;
 
 /**
  * Created by Xiaofei on 2016/7/14.

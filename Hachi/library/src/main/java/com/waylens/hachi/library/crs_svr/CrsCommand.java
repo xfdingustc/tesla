@@ -1,4 +1,4 @@
-package com.waylens.hachi.library.crs_svr.v2;
+package com.waylens.hachi.library.crs_svr;
 
 import android.util.Log;
 
@@ -6,8 +6,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import com.waylens.hachi.library.crs_svr.PTUntil;
 
 /**
  * CrsCommand

@@ -34,7 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import com.waylens.hachi.library.crs_svr.v2.CrsCommand;
+import com.waylens.hachi.library.crs_svr.CrsCommand;
 import retrofit2.Call;
 
 /**

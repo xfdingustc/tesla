@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -127,6 +128,14 @@ public class VdtCameraManager {
 
     public VdtCamera getCurrentCamera() {
         return mCurrentCamera;
+    }
+
+    public VdbRequestQueue getCurrentVdbRequestQueue() {
+        if (mCurrentCamera != null) {
+            return mCurrentCamera.getRequestQueue();
+        } else {
+            return null;
+        }
     }
 
     private void onCameraConnected(VdtCamera vdtCamera) {

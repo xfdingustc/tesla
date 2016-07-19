@@ -33,7 +33,7 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/fragment_camera_disconnected"/>
+
 
     <include layout="@layout/timeout"/>
 
