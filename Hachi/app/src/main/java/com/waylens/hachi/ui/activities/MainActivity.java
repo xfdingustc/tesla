@@ -33,7 +33,7 @@ import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.settings.SettingsFragment;
-import com.waylens.hachi.ui.clips.VideoFragment;
+import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
@@ -66,7 +66,7 @@ public class MainActivity extends BaseActivity {
     private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
     private Fragment[] mFragmentList = new Fragment[]{
-            new VideoFragment(),
+            new ClipVideoFragment(),
             new CameraPreviewFragment(),
             new CommunityFragment(),
             new SettingsFragment()

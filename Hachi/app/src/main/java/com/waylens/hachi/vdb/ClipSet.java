@@ -1,7 +1,5 @@
 package com.waylens.hachi.vdb;
 
-import com.orhanobut.logger.Logger;
-
 import java.util.ArrayList;
 
 public class ClipSet {
@@ -276,7 +274,6 @@ public class ClipSet {
 
         return total;
     }
-
 
 
 }

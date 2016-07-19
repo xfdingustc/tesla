@@ -1,41 +1,52 @@
 package com.waylens.hachi.ui.clips;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.presenter.Presenter;
+import com.waylens.hachi.presenter.impl.ClipVideoPresenterImpl;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.fragments.BaseMVPFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.vdb.Clip;
+import com.waylens.hachi.view.ClipVideoView;
+
+import java.util.List;
 
 import butterknife.BindView;
 
 
-public class VideoFragment extends BaseFragment implements FragmentNavigator {
-    private static final String TAG = VideoFragment.class.getSimpleName();
+public class ClipVideoFragment extends BaseMVPFragment implements FragmentNavigator, ClipVideoView {
+    private static final String TAG = ClipVideoFragment.class.getSimpleName();
 
     private SimpleFragmentPagerAdapter mVideoAdapter;
+
+    private Presenter mVideoPresenter = null;
+
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_video, savedInstanceState);
-        setupVideoPager();
-        return view;
+    protected void init() {
+        mVideoPresenter = new ClipVideoPresenterImpl(getActivity(), this);
+        mVideoPresenter.initialized();
     }
 
-    private void setupVideoPager() {
+    @Override
+    protected int getContentViewLayoutId() {
+        return R.layout.fragment_video;
+    }
+
+
+    @Override
+    public void initViews(List<BaseFragment> fragments, List<Integer> pageTitleList) {
         mVideoAdapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
-        mVideoAdapter.addFragment(TagFragment.newInstance(Clip.TYPE_MARKED), getString(R.string.highlights));
-        mVideoAdapter.addFragment(TagFragment.newInstance(Clip.TYPE_BUFFERED), getString(R.string.lable_buffered_video));
+        for (int i = 0; i < fragments.size(); i++) {
+            mVideoAdapter.addFragment(fragments.get(i), getString(pageTitleList.get(i)));
+        }
+
 
         viewPager.setAdapter(mVideoAdapter);
 
@@ -81,7 +92,6 @@ public class VideoFragment extends BaseFragment implements FragmentNavigator {
 
     @Override
     public boolean onInterceptBackPressed() {
-        //BookmarkFragment fragment = (BookmarkFragment) mAdapter.getItem(mViewPager.getCurrentItem());
         return false;
     }
 }
