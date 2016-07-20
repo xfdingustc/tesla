@@ -294,7 +294,7 @@ public class ShareActivity extends ClipPlayActivity {
             }
         });
 
-        getToolbar().inflateMenu(R.menu.menu_share2);
+        getToolbar().inflateMenu(R.menu.menu_share);
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

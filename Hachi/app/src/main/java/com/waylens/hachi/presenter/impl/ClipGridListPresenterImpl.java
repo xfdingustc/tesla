@@ -57,7 +57,6 @@ public class ClipGridListPresenterImpl implements ClipGridListPresenter, BaseSin
         if (data.getCount() != 0) {
             mGridListView.refreshClipiSet(data);
         } else {
-
             mGridListView.showEmpty();
         }
     }

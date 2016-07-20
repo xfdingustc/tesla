@@ -16,12 +16,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
+import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
-
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -106,15 +105,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder = null;
-        int type = getViewHolderType(viewType);
-        if (type == ITEM_TYPE_HEAD) {
-            viewHolder = onCreateHeaderViewHolder(parent);
-        } else if (type == ITEM_TYPE_CLIPVIEW) {
-            viewHolder = onCreateClipGridViewHolder(parent);
+        if (viewType == ITEM_TYPE_HEAD) {
+            return onCreateHeaderViewHolder(parent);
+        } else {
+            return onCreateClipGridViewHolder(parent);
         }
-
-        return viewHolder;
 
 
     }
@@ -139,7 +134,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        int viewType = getViewHolderType(position);
+        int viewType = getItemViewType(position);
         if (ITEM_TYPE_HEAD == viewType) {
             onBindClipSetHeaderViewHolder(holder, position);
         } else if (ITEM_TYPE_CLIPVIEW == viewType) {
@@ -165,7 +160,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         viewHolder.tvDuration.setText(clipDuration);
 
         int placeHolder = R.drawable.icon_video_default_1;
-        if (mLayoutRes == R.layout.item_clip_set_card)  {
+        if (mLayoutRes == R.layout.item_clip_set_card) {
             placeHolder = R.drawable.icon_video_default_2;
         }
 
@@ -218,12 +213,9 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        return position;
-    }
-
-    private int getViewHolderType(int position) {
         return mClipGridItemList.get(position).itemType;
     }
+
 
     public ArrayList<Clip> getSelectedClipList() {
         return mSelectedClipList;
