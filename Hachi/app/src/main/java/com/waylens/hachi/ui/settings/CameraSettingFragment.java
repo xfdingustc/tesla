@@ -28,12 +28,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-//import com.github.mikephil.charting.charts.PieChart;
-//import com.github.mikephil.charting.data.Entry;
-//import com.github.mikephil.charting.data.PieData;
-//import com.github.mikephil.charting.data.PieDataSet;
-//import com.github.mikephil.charting.formatter.ValueFormatter;
-//import com.github.mikephil.charting.com.waylens.hachi.library.utils.ViewPortHandler;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -45,15 +39,15 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.library.vdb.SpaceInfo;
-import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.library.crs_svr.HashUtils;
 import com.waylens.hachi.library.snipe.SnipeError;
 import com.waylens.hachi.library.snipe.VdbResponse;
 import com.waylens.hachi.library.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.library.vdb.SpaceInfo;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
 import com.waylens.hachi.ui.services.download.InetDownloadService;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.waylens.hachi.library.crs_svr.HashUtils;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -246,7 +239,6 @@ public class CameraSettingFragment extends PreferenceFragment {
         showDownloadProgressDialog();
 
 
-
     }
 
     private void startFirmwareMd5Check(final File file) {
@@ -281,21 +273,20 @@ public class CameraSettingFragment extends PreferenceFragment {
                 public void onNext(Integer integer) {
                     switch (integer) {
                         case 0:
-                            mDownloadProgressDialog.setContent("Checking firmware file");
+                            mDownloadProgressDialog.setContent(R.string.firmware_check);
                             break;
                         case 1:
-                            mDownloadProgressDialog.setContent("MD5 is ok");
+                            mDownloadProgressDialog.setContent(R.string.firmware_correct);
                             mDownloadProgressDialog.dismiss();
                             doSendFirmware2Camera(file);
                             break;
                         case -1:
-                            mDownloadProgressDialog.setContent("MD5 is failed");
+                            mDownloadProgressDialog.setContent(R.string.firmware_corrupt);
                             break;
                     }
 
                 }
             });
-
 
 
     }
@@ -310,7 +301,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                         @Override
                         public void run() {
                             mUploadProgressDialog = new MaterialDialog.Builder(getActivity())
-                                .title(R.string.upload)
+                                .content(R.string.upload_firmware)
                                 .progress(false, (int) file.length(), false)
                                 .contentGravity(GravityEnum.CENTER)
                                 .cancelable(false)
@@ -364,7 +355,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private void showDownloadProgressDialog() {
         mDownloadProgressDialog = new MaterialDialog.Builder(getActivity())
-            .title(R.string.downloading)
+            .content(R.string.download_firmware)
             .progress(false, 100, false)
             .contentGravity(GravityEnum.CENTER)
             .cancelable(false)

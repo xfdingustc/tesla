@@ -28,7 +28,7 @@
         android:layout_gravity="end"
         android:textSize="18sp"
         android:textAllCaps="true"
-        android:background="@drawable/round_rectangle_background"
+        android:background="@android:color/transparent"
         android:layout_margin="16dp"/>
 
     <LinearLayout

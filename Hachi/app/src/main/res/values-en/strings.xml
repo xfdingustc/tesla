@@ -321,4 +321,9 @@
 	<string name="select_all">Select All</string>
 	<string name="deselect_all">Deselect All</string>
 	<string name="reply">Reply</string>
+	<string name="download_firmware">Downloading firmware to smart phone</string>
+	<string name="upload_firmware">Uploading firmware to Waylens camera</string>
+	<string name="firmware_correct">Firmware corret.</string>
+	<string name="firmware_corrupt">Firmware corrupt. Please download again!</string>
+	<string name="firmware_check">"Checking firmware correctness…"</string>
 </resources>
