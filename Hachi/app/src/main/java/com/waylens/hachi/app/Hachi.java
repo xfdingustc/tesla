@@ -3,6 +3,7 @@ package com.waylens.hachi.app;
 import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
+import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
@@ -22,7 +23,7 @@ import com.waylens.hachi.utils.PreferenceUtils;
 /**
  * Created by Xiaofei on 2015/8/4.
  */
-public class Hachi extends Application {
+public class Hachi extends MultiDexApplication {
     private static final String TAG = Hachi.class.getSimpleName();
 
 
