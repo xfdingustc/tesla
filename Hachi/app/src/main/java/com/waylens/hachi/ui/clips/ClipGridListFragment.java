@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -56,10 +57,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private static final String ARG_IS_ADD_MORE = "is.add.more";
 
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
-
-
-
-    private static final int DEFAULT_TIMEOUT_SECOND = 10;
 
     private ClipSetGroupAdapter mAdapter;
 
@@ -252,17 +249,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
             public void onClipClicked(Clip clip) {
-                if (mActionMode != null) {
-                    if (mAdapter.getSelectedClipList().size() == 0) {
-                        mActionMode.finish();
-                        return;
-                    } else {
-                        updateActionMode();
-                    }
-                }
 
-
-                if (mIsMultipleMode && clip == null) {
+                if (mIsMultipleMode || clip == null) {
                     return;
                 }
                 if (mClipSetType == Clip.TYPE_MARKED) {
@@ -289,6 +277,18 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 }
 
 
+            }
+
+            @Override
+            public void onSelectedClipListChanged(List<Clip> clipList) {
+                if (mActionMode != null) {
+                    if (mAdapter.getSelectedClipList().size() == 0) {
+                        mActionMode.finish();
+                        return;
+                    } else {
+                        updateActionMode();
+                    }
+                }
             }
         });
 
