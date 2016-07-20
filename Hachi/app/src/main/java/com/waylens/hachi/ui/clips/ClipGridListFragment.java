@@ -384,6 +384,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                         .build();
                     dialog.show();
                     break;
+                case R.id.menu_selete_all:
+                    mAdapter.toggleSelectAll(true);
+                    break;
+                case R.id.menu_deselete_all:
+                    mAdapter.toggleSelectAll(false);
+                    break;
                 default:
                     break;
             }

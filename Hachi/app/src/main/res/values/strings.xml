@@ -318,4 +318,6 @@
 	<string name="upload_start">Uploading</string>
 	<string name="upload_error">Uploading error</string>
 	<string name="upload_finished">Uploading completely</string>
+	<string name="select_all">Select All</string>
+	<string name="deselect_all">Deselect All</string>
 </resources>
