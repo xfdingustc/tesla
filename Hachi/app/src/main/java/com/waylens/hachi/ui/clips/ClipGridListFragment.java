@@ -77,9 +77,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private ClipGridListPresenter mPresenter = null;
 
 
-    @BindView(R.id.rootViewAnimator)
-    ViewAnimator mRootViewAnimator;
-
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
@@ -87,18 +84,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     SwipeRefreshLayout mRefreshLayout;
 
 
-    @OnClick(R.id.btn_retry)
-    public void onBtnRetryClicked() {
-        doGetClipSet();
-    }
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventCameraConnection(CameraConnectionEvent event) {
         Logger.t(TAG).d("camera connection event: " + event.getWhat());
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
-                doGetClipSet();
+                mPresenter.loadClipSet(false);
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
                 showCameraDisconnect();
@@ -106,7 +97,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 hideCameraDisconnect();
-                doGetClipSet();
+                mPresenter.loadClipSet(false);
                 break;
         }
     }
@@ -114,7 +105,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMarkLiveMsg(MarkLiveMsgEvent event) {
         if (event.getClipActionInfo().action == ClipActionInfo.CLIP_ACTION_CREATED) {
-            doGetClipSet();
+            mPresenter.loadClipSet(false);
         }
     }
 
@@ -206,7 +197,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Override
     public void refreshClipiSet(ClipSet clipSet) {
-        mRefreshLayout.setRefreshing(false);
+        if (mRefreshLayout != null) {
+            mRefreshLayout.setRefreshing(false);
+        }
         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
         int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
         int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
@@ -270,8 +263,15 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Override
     protected void onFirstUserVisible() {
+        if (mRefreshLayout != null) {
+            mRefreshLayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mPresenter.loadClipSet(false);
+                }
+            }, 200);
+        }
 
-        doGetClipSet();
     }
 
     @Override
@@ -291,7 +291,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                doGetClipSet();
+                mPresenter.loadClipSet(true);
             }
         });
 
@@ -320,9 +320,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
-    private void doGetClipSet() {
-        mPresenter.loadClipSet(false);
-    }
+
 
 
     private void doDeleteSelectedClips() {
