@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ViewAnimator;
-import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -20,7 +19,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipActionInfo;
 import com.waylens.hachi.library.vdb.ClipSet;
@@ -28,7 +27,6 @@ import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
@@ -37,7 +35,6 @@ import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
-
 import com.waylens.hachi.view.ClipGridListView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -60,8 +57,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
-    private static final int ROOT_CHILD_CLIPSET = 0;
-    private static final int ROOT_CHILD_TIMEOUT = 1;
+
 
     private static final int DEFAULT_TIMEOUT_SECOND = 10;
 
@@ -90,8 +86,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
 
-    @BindView(R.id.llNoBookmark)
-    ViewSwitcher mVsNoBookmark;
 
     @OnClick(R.id.btn_retry)
     public void onBtnRetryClicked() {
@@ -173,8 +167,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
-
-
     @Override
     protected void init() {
         int flag;
@@ -197,6 +189,15 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         return R.layout.fragment_tagged_clip;
     }
 
+    @Override
+    protected int getEmptyViewResId() {
+        if (mClipSetType == Clip.TYPE_MARKED) {
+            return R.layout.layout_no_bookmark;
+        } else {
+            return R.layout.layout_no_footage;
+        }
+    }
+
     public void onDeselected() {
         if (mActionMode != null) {
             mActionMode.finish();
@@ -205,79 +206,66 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Override
     public void refreshClipiSet(ClipSet clipSet) {
-        showRootViewChild(ROOT_CHILD_CLIPSET);
         mRefreshLayout.setRefreshing(false);
-        if (clipSet.getCount() == 0) {
-            mVsNoBookmark.setVisibility(View.VISIBLE);
-            mRvClipGroupList.setVisibility(View.GONE);
-
-        } else {
-            mVsNoBookmark.setVisibility(View.GONE);
-            mRvClipGroupList.setVisibility(View.VISIBLE);
-            ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
-            showRootViewChild(ROOT_CHILD_CLIPSET);
-            int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
-            int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
-            mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
-            mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, helper.getClipSetGroup(), new ClipSetGroupAdapter.OnClipClickListener() {
-                @Override
-                public void onClipClicked(Clip clip) {
-                    if (mActionMode != null) {
-                        if (mAdapter.getSelectedClipList().size() == 0) {
-                            mActionMode.finish();
-                            return;
-                        } else {
-                            updateActionMode();
-                        }
-                    }
-
-
-                    if (mIsMultipleMode && clip == null) {
-
+        ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
+        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
+        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
+        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
+        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, helper.getClipSetGroup(), new ClipSetGroupAdapter.OnClipClickListener() {
+            @Override
+            public void onClipClicked(Clip clip) {
+                if (mActionMode != null) {
+                    if (mAdapter.getSelectedClipList().size() == 0) {
+                        mActionMode.finish();
                         return;
-                    }
-                    if (mClipSetType == Clip.TYPE_MARKED) {
-                        popClipPreviewFragment(clip);
                     } else {
-                        ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
-                        clipSet.addClip(clip);
-                        launchFootageActivity(clipSet);
-                    }
-
-
-                }
-
-                @Override
-                public void onClipLongClicked(Clip clip) {
-                    mIsMultipleMode = true;
-                    mAdapter.setMultiSelectedMode(true);
-
-
-                    mRefreshLayout.setEnabled(false);
-                    if (mActionMode == null) {
-                        mActionMode = getActivity().startActionMode(mCABCallback);
                         updateActionMode();
                     }
-
-
                 }
-            });
 
-            mAdapter.setMultiSelectedMode(mIsMultipleMode);
 
-            mRvClipGroupList.setAdapter(mAdapter);
-        }
+                if (mIsMultipleMode && clip == null) {
+
+                    return;
+                }
+                if (mClipSetType == Clip.TYPE_MARKED) {
+                    popClipPreviewFragment(clip);
+                } else {
+                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
+                    clipSet.addClip(clip);
+                    launchFootageActivity(clipSet);
+                }
+
+
+            }
+
+            @Override
+            public void onClipLongClicked(Clip clip) {
+                mIsMultipleMode = true;
+                mAdapter.setMultiSelectedMode(true);
+
+
+                mRefreshLayout.setEnabled(false);
+                if (mActionMode == null) {
+                    mActionMode = getActivity().startActionMode(mCABCallback);
+                    updateActionMode();
+                }
+
+
+            }
+        });
+
+        mAdapter.setMultiSelectedMode(mIsMultipleMode);
+
+        mRvClipGroupList.setAdapter(mAdapter);
+
     }
-
-
-
 
 
     @Override
     public void showError(String msg) {
 
     }
-
 
 
     @Override
@@ -297,9 +285,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     private void initViews() {
-        if (mClipSetType == Clip.TYPE_MARKED) {
-            mVsNoBookmark.showNext();
-        }
+
         mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -308,8 +294,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 doGetClipSet();
             }
         });
-
-
 
 
     }
@@ -439,9 +423,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         }
     }
 
-    private void showRootViewChild(int child) {
-        mRootViewAnimator.setDisplayedChild(child);
-    }
+
 
 
     private void popClipPreviewFragment(Clip clip) {

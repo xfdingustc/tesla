@@ -41,6 +41,8 @@ public abstract class BaseLazyFragment extends BaseMVPFragment implements BaseVi
 
     protected abstract View getLoadingTargetView();
 
+    protected abstract int getEmptyViewResId();
+
 
     @Override
     public void showLoading(String msg) {
@@ -52,6 +54,11 @@ public abstract class BaseLazyFragment extends BaseMVPFragment implements BaseVi
         toggleShowLoading(false, null);
     }
 
+
+    @Override
+    public void showEmpty() {
+        toggleShowEmpty(true);
+    }
 
     @Override
     public void showCameraDisconnect() {
@@ -83,7 +90,24 @@ public abstract class BaseLazyFragment extends BaseMVPFragment implements BaseVi
         }
 
         if (toggle) {
+
             mVaryViewHelpercontroller.showCameraDisconnected();
+        } else {
+            mVaryViewHelpercontroller.restore();
+        }
+    }
+
+    protected void toggleShowEmpty(boolean toggle) {
+        if (null == mVaryViewHelpercontroller) {
+            throw new IllegalArgumentException("You must return a right target view for loading");
+        }
+
+        if (getEmptyViewResId() == 0) {
+            throw new IllegalArgumentException("No empty res");
+        }
+
+        if (toggle) {
+            mVaryViewHelpercontroller.showEmpty(getEmptyViewResId(), "", null);
         } else {
             mVaryViewHelpercontroller.restore();
         }

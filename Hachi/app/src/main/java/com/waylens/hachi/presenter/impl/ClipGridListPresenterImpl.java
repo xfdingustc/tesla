@@ -2,6 +2,7 @@ package com.waylens.hachi.presenter.impl;
 
 import android.content.Context;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.interactor.ClipGridListInteractor;
 import com.waylens.hachi.interactor.impl.ClipGridListInteractorImpl;
 import com.waylens.hachi.library.vdb.Clip;
@@ -16,6 +17,8 @@ import java.util.List;
  * Created by Xiaofei on 2016/7/19.
  */
 public class ClipGridListPresenterImpl implements ClipGridListPresenter, BaseSingleLoadedListener<ClipSet> {
+    private static final String TAG = ClipGridListInteractorImpl.class.getSimpleName();
+
     private final Context mContext;
     private final ClipGridListView mGridListView;
     private final ClipGridListInteractor mClipGridListInteractor;
@@ -51,7 +54,12 @@ public class ClipGridListPresenterImpl implements ClipGridListPresenter, BaseSin
     @Override
     public void onSuccess(ClipSet data) {
         mGridListView.hideLoading();
-        mGridListView.refreshClipiSet(data);
+        if (data.getCount() != 0) {
+            mGridListView.refreshClipiSet(data);
+        } else {
+
+            mGridListView.showEmpty();
+        }
     }
 
     @Override

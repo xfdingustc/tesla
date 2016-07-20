@@ -12,7 +12,7 @@
         android:background="?attr/defaultBgColor">
 
 
-        <include layout="@layout/layout_no_bookmark"/>
+
 
 
         <android.support.v4.widget.SwipeRefreshLayout

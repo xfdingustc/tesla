@@ -1,7 +1,9 @@
 package com.waylens.hachi.loading;
 
+import android.support.annotation.LayoutRes;
 import android.view.View;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 
 
@@ -25,8 +27,10 @@ public class VaryViewHelperController {
     }
 
 
-    public void showEmpty(String emptyMsg, View.OnClickListener onClickListener) {
-
+    public void showEmpty(@LayoutRes int layoutResid,  String emptyMsg, View.OnClickListener onClickListener) {
+        Logger.t("test").d("show empty");
+        View layout = mHelper.inflate(layoutResid);
+        mHelper.showLayout(layout);
     }
 
 
