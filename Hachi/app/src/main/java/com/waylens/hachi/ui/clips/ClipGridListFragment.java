@@ -200,58 +200,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
+
         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
-        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
-        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
-        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
-        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, helper.getClipSetGroup(), new ClipSetGroupAdapter.OnClipClickListener() {
-            @Override
-            public void onClipClicked(Clip clip) {
-                if (mActionMode != null) {
-                    if (mAdapter.getSelectedClipList().size() == 0) {
-                        mActionMode.finish();
-                        return;
-                    } else {
-                        updateActionMode();
-                    }
-                }
-
-
-                if (mIsMultipleMode && clip == null) {
-
-                    return;
-                }
-                if (mClipSetType == Clip.TYPE_MARKED) {
-                    popClipPreviewFragment(clip);
-                } else {
-                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
-                    clipSet.addClip(clip);
-                    launchFootageActivity(clipSet);
-                }
-
-
-            }
-
-            @Override
-            public void onClipLongClicked(Clip clip) {
-                mIsMultipleMode = true;
-                mAdapter.setMultiSelectedMode(true);
-
-
-                mRefreshLayout.setEnabled(false);
-                if (mActionMode == null) {
-                    mActionMode = getActivity().startActionMode(mCABCallback);
-                    updateActionMode();
-                }
-
-
-            }
-        });
-
-        mAdapter.setMultiSelectedMode(mIsMultipleMode);
-
-        mRvClipGroupList.setAdapter(mAdapter);
-
+        mAdapter.setClipSetGroup(helper.getClipSetGroup());
     }
 
 
@@ -294,6 +245,56 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 mPresenter.loadClipSet(true);
             }
         });
+
+        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
+        int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
+        mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
+        mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
+            @Override
+            public void onClipClicked(Clip clip) {
+                if (mActionMode != null) {
+                    if (mAdapter.getSelectedClipList().size() == 0) {
+                        mActionMode.finish();
+                        return;
+                    } else {
+                        updateActionMode();
+                    }
+                }
+
+
+                if (mIsMultipleMode && clip == null) {
+                    return;
+                }
+                if (mClipSetType == Clip.TYPE_MARKED) {
+                    popClipPreviewFragment(clip);
+                } else {
+                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
+                    clipSet.addClip(clip);
+                    launchFootageActivity(clipSet);
+                }
+
+
+            }
+
+            @Override
+            public void onClipLongClicked(Clip clip) {
+                mIsMultipleMode = true;
+                mAdapter.setMultiSelectedMode(true);
+
+
+                mRefreshLayout.setEnabled(false);
+                if (mActionMode == null) {
+                    mActionMode = getActivity().startActionMode(mCABCallback);
+                    updateActionMode();
+                }
+
+
+            }
+        });
+
+        mAdapter.setMultiSelectedMode(mIsMultipleMode);
+
+        mRvClipGroupList.setAdapter(mAdapter);
 
 
     }
