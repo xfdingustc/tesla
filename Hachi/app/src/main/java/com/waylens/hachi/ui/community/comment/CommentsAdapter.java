@@ -59,6 +59,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return pos;
     }
 
+    public void removeComment(int position) {
+        mComments.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public void updateCommentID(int position, long commentID) {
         Comment comment = mComments.get(position);
         if (comment == null) {
@@ -120,7 +125,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-    private void onBindCommentView(RecyclerView.ViewHolder holder, int position) {
+    private void onBindCommentView(RecyclerView.ViewHolder holder, final int position) {
         CommentViewHolder viewHolder = (CommentViewHolder) holder;
         final Comment comment = mComments.get(position);
 
@@ -145,7 +150,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public void onClick(View view) {
                 if (mOnCommentClickListener != null) {
-                    mOnCommentClickListener.onCommentClicked(comment);
+                    mOnCommentClickListener.onCommentClicked(comment, position);
                 }
             }
         });
@@ -153,7 +158,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public boolean onLongClick(View v) {
                 if (mOnCommentClickListener != null) {
-                    mOnCommentClickListener.onCommentLongClicked(comment);
+                    mOnCommentClickListener.onCommentLongClicked(comment, position);
                 }
                 return true;
             }
@@ -220,8 +225,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public interface OnCommentClickListener {
-        void onCommentClicked(Comment comment);
-        void onCommentLongClicked(Comment comment);
+        void onCommentClicked(Comment comment, int position);
+        void onCommentLongClicked(Comment comment, int position);
     }
 
     public interface OnLoadMoreListener {

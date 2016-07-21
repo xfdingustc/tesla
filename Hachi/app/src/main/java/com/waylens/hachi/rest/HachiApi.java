@@ -4,11 +4,14 @@ import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
-import com.waylens.hachi.rest.body.ReportBody;
+import com.waylens.hachi.rest.body.ReportCommentBody;
+import com.waylens.hachi.rest.body.ReportMomentBody;
+import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
+import com.waylens.hachi.rest.response.DeleteCommentResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.LikeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
@@ -72,7 +75,13 @@ public interface HachiApi {
     Call<LinkedAccounts> getLinkedAccounts();
 
     @POST("/api/reports")
-    Call<SimpleBoolResponse> report(@Body ReportBody reportBody);
+    Call<SimpleBoolResponse> report(@Body ReportMomentBody reportBody);
+
+    @POST("/api/reports")
+    Call<SimpleBoolResponse> report(@Body ReportCommentBody reportBody);
+
+    @POST("/api/reports")
+    Call<SimpleBoolResponse> report(@Body ReportUserBody reportBody);
 
     @POST("/api/users/signin")
     Call<SignInResponse> signin(@Body SignInPostBody signInPostBody);
@@ -95,5 +104,8 @@ public interface HachiApi {
 
     @GET("/api/cloud/usage")
     Call<CloudStorageInfo> getCloudStorageInfo();
+
+    @DELETE("/api/comments/{commentID}")
+    Call<DeleteCommentResponse> deleteComment(@Path("commentID") long commentID);
 
 }

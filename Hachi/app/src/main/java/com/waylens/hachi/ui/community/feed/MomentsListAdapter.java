@@ -30,6 +30,7 @@ import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
@@ -218,7 +219,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
                 public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                    mReportReason = mContext.getResources().getStringArray(R.array.report_reason)[which];
                     return true;
                 }
             })
@@ -227,7 +227,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             .onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
+                    int index = dialog.getSelectedIndex();
+                    mReportReason = mContext.getResources().getStringArray(R.array.report_reason)[index];
                     doReportMoment(momentId);
                 }
             })
@@ -236,7 +237,12 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private void doReportMoment(long momentId) {
         JobManager jobManager = BgJobManager.getManager();
-        ReportJob job = new ReportJob(momentId, mReportReason);
+        ReportMomentBody reportMomentBody = new ReportMomentBody();
+        reportMomentBody.momentID = momentId;
+        reportMomentBody.reason = mReportReason;
+        reportMomentBody.detail = "";
+
+        ReportJob job = new ReportJob(reportMomentBody, ReportJob.REPORT_TYPE_MOMENT);
         jobManager.addJobInBackground(job);
     }
 

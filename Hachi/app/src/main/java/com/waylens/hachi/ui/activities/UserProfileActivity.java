@@ -27,8 +27,11 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
+import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.ReportMomentBody;
+import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
@@ -184,7 +187,6 @@ public class UserProfileActivity extends BaseActivity {
                             .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                                 @Override
                                 public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                    mReportReason = getResources().getStringArray(R.array.report_reason)[which];
                                     return true;
                                 }
                             })
@@ -193,7 +195,10 @@ public class UserProfileActivity extends BaseActivity {
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    doReportComment();
+                                    int index = dialog.getSelectedIndex();
+                                    mReportReason = getResources().getStringArray(R.array.report_reason)[index];
+                                    Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
+                                    doReportUser();
                                 }
                             })
                             .show();
@@ -207,7 +212,6 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
     }
-
 
     private void doBlockUser() {
         String url = Constants.API_BLOCK;
@@ -234,8 +238,19 @@ public class UserProfileActivity extends BaseActivity {
         }
     }
 
-    private void doReportComment() {
-        String url = Constants.API_REPORT;
+    private void doReportUser() {
+        JobManager jobManager = BgJobManager.getManager();
+        ReportUserBody reportUserBody = new ReportUserBody();
+        reportUserBody.userID = mUserID;
+        reportUserBody.reason = mReportReason;
+        reportUserBody.detail = "";
+        Logger.t(TAG).d(mReportReason);
+
+        ReportJob job = new ReportJob(reportUserBody, ReportJob.REPORT_TYPE_USER);
+        jobManager.addJobInBackground(job);
+
+
+/*        String url = Constants.API_REPORT;
         final JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("userId", mUserID);
@@ -258,7 +273,7 @@ public class UserProfileActivity extends BaseActivity {
             mRequestQueue.add(request);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void doGetFollowInfo() {

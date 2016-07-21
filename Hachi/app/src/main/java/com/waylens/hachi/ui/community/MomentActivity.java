@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -46,8 +47,13 @@ import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.bgjob.social.DeleteCommentJob;
+import com.waylens.hachi.bgjob.social.DeleteMomentJob;
+import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.ReportCommentBody;
+import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.UserInfo;
@@ -562,19 +568,30 @@ public class MomentActivity extends BaseActivity {
         mAdapter = new CommentsAdapter(null);
         mAdapter.setOnCommentClickListener(new CommentsAdapter.OnCommentClickListener() {
             @Override
-            public void onCommentClicked(final Comment comment) {
+            public void onCommentClicked(final Comment comment, final int position) {
                 final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
                 adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
                         .content(R.string.reply)
                         .icon(R.drawable.social_reply)
                         .backgroundColor(getResources().getColor(R.color.material_grey_800))
                         .build());
+                MaterialSimpleListItem item = null;
 
-                adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
-                        .content(R.string.report)
-                        .icon(R.drawable.social_report)
-                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
-                        .build());
+                if (comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
+                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
+                            .content(R.string.delete)
+                            .icon(R.drawable.social_delete)
+                            .backgroundColor(getResources().getColor(R.color.material_grey_800))
+                            .build();
+                } else {
+                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
+                            .content(R.string.report)
+                            .icon(R.drawable.social_report)
+                            .backgroundColor(getResources().getColor(R.color.material_grey_800))
+                            .build();
+
+                }
+                adapter.add(item);
 
                 new MaterialDialog.Builder(MomentActivity.this)
                         .title(R.string.comment)
@@ -590,7 +607,12 @@ public class MomentActivity extends BaseActivity {
                                         }
                                         break;
                                     case 1:
-                                        reportComment(comment);
+                                        if (!comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
+                                            reportComment(comment);
+                                        } else {
+                                            doDeleteComment(comment);
+                                            mAdapter.removeComment(position);
+                                        }
                                         break;
                                     default:
                                         break;
@@ -608,7 +630,6 @@ public class MomentActivity extends BaseActivity {
                         .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                mReportReason = getResources().getStringArray(R.array.report_reason)[which];
                                 return true;
                             }
                         })
@@ -617,6 +638,9 @@ public class MomentActivity extends BaseActivity {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                int index = dialog.getSelectedIndex();
+                                mReportReason = getResources().getStringArray(R.array.report_reason)[index];
+                                Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
                                 doReportComment(comment);
                             }
                         })
@@ -625,7 +649,7 @@ public class MomentActivity extends BaseActivity {
             }
 
             @Override
-            public void onCommentLongClicked(final Comment comment) {
+            public void onCommentLongClicked(final Comment comment, final int position) {
 //                BottomSheet builder = new BottomSheet.Builder(MomentActivity.this)
 //                    .sheet(R.menu.menu_report_comment)
 //                    .darkTheme()
@@ -674,6 +698,7 @@ public class MomentActivity extends BaseActivity {
             }
         });
         mCommentList.setAdapter(mAdapter);
+        mCommentList.setItemAnimator(new DefaultItemAnimator());
         refreshComments();
     }
 
@@ -716,7 +741,17 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void doReportComment(Comment comment) {
-        String url = Constants.API_REPORT;
+
+        JobManager jobManager = BgJobManager.getManager();
+        ReportCommentBody reportCommentBody = new ReportCommentBody();
+        reportCommentBody.commentID = comment.commentID;
+        reportCommentBody.reason = mReportReason;
+        reportCommentBody.detail = "";
+        Logger.t(TAG).d(mReportReason);
+        ReportJob job = new ReportJob(reportCommentBody, ReportJob.REPORT_TYPE_COMMENT);
+        jobManager.addJobInBackground(job);
+
+/*        String url = Constants.API_REPORT;
         final JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("commentID", comment.commentID);
@@ -739,9 +774,15 @@ public class MomentActivity extends BaseActivity {
             mRequestQueue.add(request);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-
+        }*/
     }
+
+    private void doDeleteComment(Comment comment) {
+        JobManager jobManager = BgJobManager.getManager();
+        DeleteCommentJob job = new DeleteCommentJob(comment.commentID);
+        jobManager.addJobInBackground(job);
+    }
+
 
     private void showMessage(int resId) {
         //Should not call this method if UI has been already destroyed.
