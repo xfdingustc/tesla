@@ -16,6 +16,7 @@ import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.LikeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.MomentInfo;
+import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.rest.response.RawDataResponse;
 import com.waylens.hachi.rest.response.SignUpResponse;
@@ -57,6 +58,10 @@ public interface HachiApi {
 
 //    @GET("/api/moments/{momentId}")
 //    Call<MomentInfo> getMomentInfo(@Path("momentId") long momentId);
+
+    @GET("/api/users/{userId}/moments")
+    Call<MomentListResponse> getUserMoments(@Path("userId") String userId, @Query("cursor") int cursor);
+
 
     @GET("/api/moments/{momentId}")
     Observable<MomentInfo> getMomentInfoRx(@Path("momentId") long momentId);

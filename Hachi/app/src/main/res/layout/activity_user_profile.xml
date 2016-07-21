@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,117 +10,13 @@
     <include layout="@layout/toolbar_default"/>
 
 
-    <com.waylens.hachi.view.InertiaScrollView
-        android:id="@+id/content"
+    <com.waylens.hachi.ui.views.RecyclerViewExt
+        android:id="@+id/rvUserMomentList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <FrameLayout
-                    android:id="@+id/user_cover"
-                    android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:background="@color/windowBackground"></FrameLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_below="@id/user_cover"
-                    android:background="@color/windowBackgroundDark">
-
-
-                    <TextView
-                        android:id="@+id/user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="48dp"
-                        android:layout_marginTop="40dp"
-                        android:textSize="24sp"
-                        tools:text="xfding"/>
-
-
-                    <ImageButton
-                        android:id="@+id/btn_account_setting"
-                        style="@style/SelectableRippleButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="32dp"
-                        android:layout_marginTop="40dp"
-                        android:src="@drawable/navbar_account_setting"
-                        android:visibility="gone"
-                        tools:visibility="visible"/>
-
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignLeft="@id/user_name"
-                        android:layout_below="@id/user_name"
-                        android:layout_marginTop="16dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/btnFollow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="16dp"
-                            android:textColor="@color/style_color_primary"
-                            android:textSize="14sp"
-                            tools:text="Follow"/>
-
-                        <TextView
-                            android:id="@+id/btnFollowersCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/user_name"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="8dp"
-                            android:layout_toRightOf="@id/btnFollow"
-                            android:textColor="@color/app_text_color_secondary"
-                            android:textSize="14sp"
-                            tools:text="888 followers"/>
-
-                    </LinearLayout>
-
-
-                </RelativeLayout>
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/userAvatar"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_below="@id/user_cover"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="-32dp"
-                    tools:src="@drawable/menu_profile_photo_default"/>
-
-            </RelativeLayout>
-
-
-            <com.waylens.hachi.ui.views.RecyclerViewExt
-                android:id="@+id/rvUserMomentList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </com.waylens.hachi.ui.views.RecyclerViewExt>
-
-        </LinearLayout>
-    </com.waylens.hachi.view.InertiaScrollView>
+    </com.waylens.hachi.ui.views.RecyclerViewExt>
 
 
 </LinearLayout>
