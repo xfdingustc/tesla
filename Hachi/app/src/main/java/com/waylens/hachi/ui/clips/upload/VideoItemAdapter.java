@@ -1,11 +1,15 @@
 package com.waylens.hachi.ui.clips.upload;
 
-import android.content.Context;
+import android.app.Activity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,6 +20,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
+import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.entities.Moment;
 
@@ -34,14 +39,14 @@ import butterknife.ButterKnife;
 public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UploadManager.OnUploadJobStateChangeListener {
     private static final String TAG = VideoItemAdapter.class.getSimpleName();
 
-    private final Context mContext;
+    private final Activity mActivity;
     private List<Moment> mUploadedMomentList = new ArrayList<>();
     private PrettyTime mPrettyTime = new PrettyTime();
     private UploadManager mUploadManager = UploadManager.getManager();
 
 
-    public VideoItemAdapter(Context context) {
-        this.mContext = context;
+    public VideoItemAdapter(Activity activity) {
+        this.mActivity = activity;
         mUploadManager.addOnUploadJobStateChangedListener(this);
     }
 
@@ -67,16 +72,16 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void onBindUploadingViewHolder(RecyclerView.ViewHolder holder, int position) {
-        VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
-        UploadMomentJob uploadMomentJob = mUploadManager.getUploadJob(position);
+        final VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
+        final UploadMomentJob uploadMomentJob = mUploadManager.getUploadJob(position);
         LocalMoment localMoment = uploadMomentJob.getLocalMoment();
         videoItemViewHolder.momentTitle.setText(localMoment.title);
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(uploadMomentJob.getUploadProgress());
-        videoItemViewHolder.uploadStatus.setText("" + uploadMomentJob.getUploadProgress() + "% " + mContext.getString(R.string.uploaded));
+        videoItemViewHolder.uploadStatus.setText("" + uploadMomentJob.getUploadProgress() + "% " + mActivity.getString(R.string.uploaded));
         if (localMoment.thumbnailPath != null) {
-            Glide.with(mContext)
+            Glide.with(mActivity)
                 .load(localMoment.thumbnailPath)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate()
@@ -85,13 +90,40 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
         if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
+            videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
+        } else {
+            videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
+            videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         }
+
         updateUploadStatus(uploadMomentJob.getState(), videoItemViewHolder.description);
-//        videoItemViewHolder.description.setVisibility(View.INVISIBLE);
-        if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
-            videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
-        }
+
         videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
+
+        videoItemViewHolder.btnMore.setVisibility(View.VISIBLE);
+
+        videoItemViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_upload, popupMenu.getMenu());
+                if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
+                    popupMenu.getMenu().removeItem(R.id.cancel);
+                }
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.cancel:
+                                uploadMomentJob.cancel();
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
     }
 
     private void updateUploadStatus(int state, TextView description) {
@@ -118,6 +150,9 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case UploadMomentJob.UPLOAD_STATE_PROGRESS:
                 description.setText(R.string.upload_start);
                 break;
+            case UploadMomentJob.UPLOAD_STATE_CANCELLED:
+                description.setText(R.string.upload_cancelled);
+                break;
             case UploadMomentJob.UPLOAD_STATE_FINISHED:
                 description.setText(R.string.upload_finished);
                 break;
@@ -129,20 +164,28 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void onBindUploadedViewHolder(RecyclerView.ViewHolder holder, int position) {
-        VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
-        Moment uploadedMoment = mUploadedMomentList.get(position);
+        final VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
+        final Moment uploadedMoment = mUploadedMomentList.get(position);
         videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
         videoItemViewHolder.momentTitle.setText(uploadedMoment.title);
         videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
         videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(uploadedMoment.uploadTime)));
         videoItemViewHolder.description.setVisibility(View.VISIBLE);
-        Glide.with(mContext)
+        Glide.with(mActivity)
             .load(uploadedMoment.thumbnail)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .crossFade()
             .into(videoItemViewHolder.videoCover);
 
         videoItemViewHolder.videoDuration.setText(DateUtils.formatElapsedTime(uploadedMoment.duration / 1000l));
+        videoItemViewHolder.btnMore.setVisibility(View.GONE);
+        videoItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MomentActivity.launch(mActivity, uploadedMoment.id, uploadedMoment.thumbnail, videoItemViewHolder.videoCover);
+            }
+        });
+
     }
 
     @Override
@@ -152,10 +195,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onUploadJobStateChanged(UploadMomentJob job, int index) {
-
         notifyItemChanged(index);
-
-
     }
 
     @Override
@@ -189,6 +229,11 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @BindView(R.id.upload_progress)
         ProgressBar uploadProgress;
+
+        @BindView(R.id.btn_more)
+        ImageButton btnMore;
+
+
 
 
         public VideoItemViewHolder(View itemView) {

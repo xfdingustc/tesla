@@ -30,6 +30,9 @@ public class UploadManager {
             case UploadEvent.UPLOAD_JOB_STATE_CHANGED:
                 notifyUploadStateChanged(job);
                 break;
+            case UploadEvent.UPLOAD_JOB_REMOVED:
+                removeJob(job);
+                break;
         }
     }
 
@@ -70,7 +73,7 @@ public class UploadManager {
 
     }
 
-    public void removeJob(UploadMomentJob job) {
+    private void removeJob(UploadMomentJob job) {
         mUploadJobList.remove(job);
         for (int i = 0; i < mListenerList.size(); i++) {
             WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(i);

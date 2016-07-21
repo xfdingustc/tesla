@@ -133,34 +133,14 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
 
     private void loadUserMoment(int cursor, final boolean isRefresh) {
         SessionManager sessionManager = SessionManager.getInstance();
-
-
         final String requestUrl = Constants.API_USERS + "/" + sessionManager.getUserId() + "/moments?cursor=" + cursor;
-//        Logger.t(TAG).d("requestUrl: " + requestUrl);
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
             .url(requestUrl)
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-//                    Logger.t(TAG).json(response.toString());
                     List<Moment> momentList = Moment.parseMomentArray(response);
-//                    mMomentRvAdapter.setMomentList(mMomentList);
-//                    mCurrentCursor += mMomentList.size();
-                    Logger.t(TAG).d("momentList: " + momentList.size());
                     mVideoItemAdapter.setUploadedMomentList(momentList);
-//                    if (isRefresh) {
-//                        mMomentRvAdapter.setMoments(mMomentList);
-//                    } else {
-//                        mMomentRvAdapter.addMoments(mMomentList);
-//                    }
-//
-//                    mRvUserMomentList.setIsLoadingMore(false);
-//                    if (!response.optBoolean("hasMore")) {
-//                        mRvUserMomentList.setEnableLoadMore(false);
-//                        mMomentRvAdapter.setHasMore(false);
-//                    } else {
-//                        mMomentRvAdapter.setHasMore(true);
-//                    }
                 }
             })
             .errorListener(new Response.ErrorListener() {

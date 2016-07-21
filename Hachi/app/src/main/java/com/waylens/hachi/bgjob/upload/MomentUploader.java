@@ -170,7 +170,7 @@ public class MomentUploader {
 
             byte[] blockSha1 = HashUtils.SHA1(data, length);
 
-            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
+//            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
 
             CrsClientTranData tranData = new CrsClientTranData(mUserId, guid, mMomentID, fileSha1,
                 blockSha1, dataType, seqNum, 0, (short) length, data, mCloudInfo.getPrivateKey());

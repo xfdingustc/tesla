@@ -12,6 +12,13 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.library.crs_svr.CrsCommand;
+import com.waylens.hachi.library.snipe.VdbCommand;
+import com.waylens.hachi.library.snipe.VdbRequestFuture;
+import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.library.snipe.toolbox.ClipUploadUrlRequest;
+import com.waylens.hachi.library.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.library.vdb.ClipPos;
 import com.waylens.hachi.library.vdb.ClipSet;
@@ -20,21 +27,14 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
-import com.waylens.hachi.library.snipe.VdbCommand;
-import com.waylens.hachi.library.snipe.VdbRequestFuture;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.library.snipe.toolbox.ClipUploadUrlRequest;
-import com.waylens.hachi.library.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.ui.entities.LocalMoment;
-
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.CancellationException;
 
-import com.waylens.hachi.library.crs_svr.CrsCommand;
 import retrofit2.Call;
 
 /**
@@ -71,10 +71,13 @@ public class UploadMomentJob extends Job {
 
     private VdbRequestQueue mVdbRequestQueue;
 
+    private MomentUploader mUploader = null;
+
 
     private int mUploadState;
     private int mUploadProgress;
     private int mUploadError;
+    private boolean mIsCancel;
 
     public UploadMomentJob(LocalMoment moment) {
         super(new Params(0).requireNetwork().setPersistent(false));
@@ -89,6 +92,14 @@ public class UploadMomentJob extends Job {
         UploadManager.getManager().addJob(this);
     }
 
+    public void cancel() {
+        this.mIsCancel = true;
+        if (mUploader != null) {
+            mUploader.cancel();
+        }
+
+    }
+
     @Override
     public void onRun() throws Throwable {
         Logger.t(TAG).d("on Run, playlistId: " + mLocalMoment.playlistId);
@@ -101,6 +112,8 @@ public class UploadMomentJob extends Job {
 
 
         Logger.t(TAG).d("Play list info got, clip set size:  " + playlistClipSet.getCount());
+
+        checkIfCancelled();
 
         // Step2: get upload url info:
         for (int i = 0; i < playlistClipSet.getCount(); i++) {
@@ -119,6 +132,7 @@ public class UploadMomentJob extends Job {
             Logger.t(TAG).d("Got clip upload url: " + uploadUrl.url);
             LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, DEFAULT_DATA_TYPE_CLOUD);
             mLocalMoment.mSegments.add(segment);
+            checkIfCancelled();
 
         }
         setUploadState(UPLOAD_STATE_GET_URL_INFO);
@@ -133,6 +147,7 @@ public class UploadMomentJob extends Job {
         Bitmap thumbnail = thumbnailRequestFuture.get();
         Logger.t(TAG).d("Got thumbnail");
         setUploadState(UPLOAD_STATE_GET_VIDEO_COVER);
+        checkIfCancelled();
 
         // Step4: Store thumbnail:
         File cacheDir = Hachi.getContext().getExternalCacheDir();
@@ -142,6 +157,7 @@ public class UploadMomentJob extends Job {
         mLocalMoment.thumbnailPath = file.getAbsolutePath();
         Logger.t(TAG).d("Saved thumbnail: " + mLocalMoment.thumbnailPath);
         setUploadState(UPLOAD_STATE_STORE_VIDEO_COVER);
+        checkIfCancelled();
 
 
         // Step5: create moment in server:
@@ -153,14 +169,27 @@ public class UploadMomentJob extends Job {
         Logger.t(TAG).d("Get moment response: " + response.toString());
         mLocalMoment.updateUploadInfo(response);
         setUploadState(UPLOAD_STATE_CREATE_MOMENT);
+        checkIfCancelled();
 
 
-        MomentUploader uploader = new MomentUploader(this);
+        mUploader = new MomentUploader(this);
 //        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
-        uploader.upload(mLocalMoment);
+        mUploader.upload(mLocalMoment);
 
-        setUploadState(UPLOAD_STATE_FINISHED);
-//        UploadManager.getManager().removeJob(this);
+        Logger.t(TAG).d("updatestate: " + mUploadState);
+
+        if (mUploadState != UPLOAD_STATE_CANCELLED || mUploadState != UPLOAD_STATE_ERROR) {
+            Logger.t(TAG).d("finished");
+            setUploadState(UPLOAD_STATE_FINISHED);
+        }
+        removeFromUploadManager();
+    }
+
+    private void checkIfCancelled() {
+        if (mIsCancel == true) {
+            setUploadState(UPLOAD_STATE_CANCELLED);
+            throw new CancellationException("Job cancelled");
+        }
     }
 
 
@@ -203,10 +232,16 @@ public class UploadMomentJob extends Job {
     }
 
 
+    private void removeFromUploadManager() {
+        EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
+    }
+
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-
+        Logger.t(TAG).d("one cancel: " + throwable.toString());
     }
+
+
 
 
     @Override

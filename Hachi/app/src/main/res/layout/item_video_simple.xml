@@ -39,9 +39,9 @@
                 style="?android:progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:max="100"
                 android:progressDrawable="@drawable/upload_progress_drawable"
-                tools:progress="50"
-                android:max="100"/>
+                tools:progress="50"/>
 
             <TextView
                 android:id="@+id/video_duration"
@@ -58,14 +58,13 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/moment_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="24dp"
+                android:layout_marginRight="40dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 tools:text="July 13, 2016"/>
@@ -75,9 +74,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/moment_title"
+                android:textColor="@color/app_text_color_secondary"
                 android:visibility="gone"
                 tools:text="1% uploaded"
-                android:textColor="@color/app_text_color_secondary"
                 tools:visibility="visible"/>
 
 
@@ -90,13 +89,15 @@
                 tools:text="4 weeks ago * 4 Views"/>
 
             <ImageButton
+                android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
                 android:layout_width="24dp"
-                android:layout_height="32dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:scaleType="centerCrop"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
                 android:src="@drawable/social_more"
-                android:visibility="gone"/>
+                />
 
         </RelativeLayout>
 
