@@ -85,7 +85,7 @@
             android:layout_height="32dp"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_more_vert_grey600_24dp"
+            android:src="@drawable/social_more"
             style="@style/SelectableRippleButton"/>
 
     </LinearLayout>

@@ -572,7 +572,7 @@ public class MomentActivity extends BaseActivity {
                 final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
                 adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
                         .content(R.string.reply)
-                        .icon(R.drawable.social_reply)
+                        .icon(R.drawable.comment_reply)
                         .backgroundColor(getResources().getColor(R.color.material_grey_800))
                         .build());
                 MaterialSimpleListItem item = null;
@@ -580,13 +580,13 @@ public class MomentActivity extends BaseActivity {
                 if (comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
                     item = new MaterialSimpleListItem.Builder(MomentActivity.this)
                             .content(R.string.delete)
-                            .icon(R.drawable.social_delete)
+                            .icon(R.drawable.btn_edit_action_delete)
                             .backgroundColor(getResources().getColor(R.color.material_grey_800))
                             .build();
                 } else {
                     item = new MaterialSimpleListItem.Builder(MomentActivity.this)
                             .content(R.string.report)
-                            .icon(R.drawable.social_report)
+                            .icon(R.drawable.comment_report)
                             .backgroundColor(getResources().getColor(R.color.material_grey_800))
                             .build();
 

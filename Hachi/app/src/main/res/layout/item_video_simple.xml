@@ -95,7 +95,7 @@
                 android:layout_height="32dp"
                 android:layout_alignParentEnd="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_more_vert_grey600_24dp"
+                android:src="@drawable/social_more"
                 android:visibility="gone"/>
 
         </RelativeLayout>
