@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -29,7 +28,7 @@ import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
-import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseLazyFragment;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -470,8 +468,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             Logger.t(TAG).d("selected list size: " + selectedList.size());
 
             final int playlistId = 0x100;
-            PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
-            playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
+            PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
+            playListEditor.build(selectedList, new PlayListEditor.OnBuildCompleteListener() {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
 
@@ -489,8 +487,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 
             final int playlistId = 0x100;
-            PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
-            playListEditor2.build(selectedList, new PlayListEditor2.OnBuildCompleteListener() {
+            PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
+            playListEditor.build(selectedList, new PlayListEditor.OnBuildCompleteListener() {
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {
                     mRefreshLayout.setRefreshing(false);

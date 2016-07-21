@@ -21,7 +21,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipModifyActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
-import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 
 
@@ -124,8 +124,8 @@ public class PreviewActivity extends ClipPlayActivity {
     }
 
     private void buildPlaylist() {
-        mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, PLAYLIST_INDEX);
-        mPlaylistEditor.build(mClip, new PlayListEditor2.OnBuildCompleteListener() {
+        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, PLAYLIST_INDEX);
+        mPlaylistEditor.build(mClip, new PlayListEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 embedVideoPlayFragment();

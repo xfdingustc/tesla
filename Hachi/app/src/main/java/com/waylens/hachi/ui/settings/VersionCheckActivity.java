@@ -35,8 +35,7 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import im.fir.sdk.FIR;
-import im.fir.sdk.VersionCheckCallback;
+
 
 
 /**
@@ -128,7 +127,7 @@ public class VersionCheckActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        FIR.init(getApplicationContext());
+
         initViews();
     }
 
@@ -151,59 +150,7 @@ public class VersionCheckActivity extends BaseActivity {
         unregisterReceiver(receiver);
     }
 
-    @OnClick(R.id.btn_check_update)
-    void checkUpdate() {
-        mViewAnimator.setDisplayedChild(0);
 
-        FIR.checkForUpdateInFIR("de9cc37998f3f6ad143a8b608cc7968f", new VersionCheckCallback() {
-            @Override
-            public void onSuccess(String response) {
-                super.onSuccess(response);
-                Logger.t(TAG).d("Msg: " + response);
-                if (response == null) {
-                    return;
-                }
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    mVersionCode = Integer.parseInt(jsonObject.getString("build"));
-                    mVersionName = jsonObject.getString("versionShort");
-                    mInstallURL = jsonObject.getString("install_url");
-
-                    if (mVersionCode <= BuildConfig.VERSION_CODE) {
-                        mFirVersionView.setText(R.string.version_up_to_date);
-                        mViewAnimator.setDisplayedChild(1);
-                    } else {
-                        mFirVersionView.setText(getString(R.string.fir_version) + mVersionName);
-                        mViewAnimator.setDisplayedChild(3);
-                    }
-                } catch (Exception e) {
-                    Logger.t(TAG).d("" + e);
-                    mFirVersionView.setText(R.string.error_check_fir);
-                    mViewAnimator.setDisplayedChild(2);
-                }
-            }
-
-            @Override
-            public void onFail(Exception e) {
-                super.onFail(e);
-                Logger.t(TAG).d("" + e);
-                mFirVersionView.setText(R.string.error_check_fir);
-                mViewAnimator.setDisplayedChild(2);
-            }
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                Logger.t(TAG).d("onStart");
-            }
-
-            @Override
-            public void onFinish() {
-                super.onFinish();
-                mFirVersionView.setVisibility(View.VISIBLE);
-            }
-        });
-    }
 
 
     void downloadUpdateAPK() {

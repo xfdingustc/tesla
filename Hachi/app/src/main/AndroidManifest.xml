@@ -107,10 +107,6 @@
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name=".ui.activities.FullScreenPlayActivity"
-            android:screenOrientation="landscape"/>
-
-        <activity
             android:name=".ui.settings.CameraSettingActivity"
             android:screenOrientation="portrait"/>
 

@@ -23,8 +23,8 @@ import java.util.List;
 /**
  * Created by Xiaofei on 2016/6/16.
  */
-public class PlayListEditor2 {
-    private static final String TAG = PlayListEditor2.class.getSimpleName();
+public class PlayListEditor {
+    private static final String TAG = PlayListEditor.class.getSimpleName();
 
     private final VdbRequestQueue mVdbRequestQueue;
     private final int mPlayListId;
@@ -45,7 +45,7 @@ public class PlayListEditor2 {
         }
     }
 
-    public PlayListEditor2(@NonNull VdbRequestQueue requestQueue, int playListId) {
+    public PlayListEditor(@NonNull VdbRequestQueue requestQueue, int playListId) {
         this.mVdbRequestQueue = requestQueue;
         this.mPlayListId = playListId;
         this.mClipSet = new ClipSet(playListId);

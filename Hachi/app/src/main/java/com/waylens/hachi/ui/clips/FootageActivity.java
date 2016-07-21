@@ -15,11 +15,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipPos;
-import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.library.vdb.ClipSetManager;
-import com.waylens.hachi.library.vdb.ClipSetPos;
 import com.waylens.hachi.library.snipe.SnipeError;
 import com.waylens.hachi.library.snipe.VdbRequest;
 import com.waylens.hachi.library.snipe.VdbRequestQueue;
@@ -28,22 +23,24 @@ import com.waylens.hachi.library.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.library.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.library.snipe.toolbox.VdbImageRequest;
+import com.waylens.hachi.library.utils.DateTime;
+import com.waylens.hachi.library.vdb.Clip;
+import com.waylens.hachi.library.vdb.ClipPos;
+import com.waylens.hachi.library.vdb.ClipSet;
+import com.waylens.hachi.library.vdb.ClipSetManager;
+import com.waylens.hachi.library.vdb.ClipSetPos;
+import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
-import com.waylens.hachi.ui.clips.player.PlaylistEditor;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
-import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
-import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
-import com.waylens.hachi.library.utils.DateTime;
-
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -72,7 +69,7 @@ public class FootageActivity extends ClipPlayActivity {
     private ClipSet mFootageClipSet;
     private ClipSet mBookmarkClipSet;
 
-    private PlaylistEditor mPlaylistEditor;
+    private PlayListEditor mPlaylistEditor;
 
 
     @BindView(R.id.vsRoot)
@@ -154,7 +151,6 @@ public class FootageActivity extends ClipPlayActivity {
         }
 
     }
-
 
 
     public static void launch(Activity activity, int clipSetIndex) {
@@ -247,18 +243,19 @@ public class FootageActivity extends ClipPlayActivity {
 
         getFragmentManager().beginTransaction().add(R.id.player_fragment_content, mClipPlayFragment).commit();
         Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
-        doMakePlaylist();
+        doMakePlaylist(clipSet);
 
     }
 
-    private void doMakePlaylist() {
-        mPlaylistEditor = new PlaylistEditor(mVdbRequestQueue, 0x101);
-        mPlaylistEditor.build(mClipSetIndex, new PlaylistEditor.OnBuildCompleteListener() {
+    private void doMakePlaylist(ClipSet clipSet) {
+        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, 0x101);
+        mPlaylistEditor.build(clipSet.getClipList(), new PlayListEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
             }
         });
+
     }
 
 
@@ -341,8 +338,8 @@ public class FootageActivity extends ClipPlayActivity {
     private void toEnhance(List<Clip> clipList) {
 //        EnhancementActivity.launch(this, (ArrayList<Clip>)clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
         final int playlistId = 0x100;
-        PlayListEditor2 playListEditor2 = new PlayListEditor2(mVdbRequestQueue, playlistId);
-        playListEditor2.build(clipList, new PlayListEditor2.OnBuildCompleteListener() {
+        PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
+        playListEditor.build(clipList, new PlayListEditor.OnBuildCompleteListener() {
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 EnhanceActivity.launch(FootageActivity.this, playlistId);

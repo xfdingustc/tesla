@@ -39,7 +39,7 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
-import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.upload.UploadActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
@@ -187,7 +187,7 @@ public class ShareActivity extends ClipPlayActivity {
     private void initViews() {
         setContentView(R.layout.activity_share);
         setupToolbar();
-        mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, mPlayListId);
+        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
         embedVideoPlayFragment();
 

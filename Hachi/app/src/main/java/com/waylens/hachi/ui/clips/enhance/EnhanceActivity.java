@@ -45,7 +45,7 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.MusicDownloadActivity;
 import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
-import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
 
@@ -339,14 +339,14 @@ public class EnhanceActivity extends ClipPlayActivity {
         int launchMode = intent.getIntExtra(EXTRA_LAUNCH_MODE, 0);
         if (launchMode == LAUNCH_MODE_PLAYLIST) {
             mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
-            mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, mPlaylistId);
+            mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
             mPlaylistEditor.reconstruct();
             embedVideoPlayFragment();
             configEnhanceView();
         } else {
-            mPlaylistEditor = new PlayListEditor2(mVdbRequestQueue, PLAYLIST_INDEX);
+            mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, PLAYLIST_INDEX);
             ArrayList<Clip> clipArrayList = intent.getParcelableArrayListExtra(EXTRA_CLIP_LIST);
-            mPlaylistEditor.build(clipArrayList, new PlayListEditor2.OnBuildCompleteListener() {
+            mPlaylistEditor.build(clipArrayList, new PlayListEditor.OnBuildCompleteListener() {
 
                 @Override
                 public void onBuildComplete(ClipSet clipSet) {

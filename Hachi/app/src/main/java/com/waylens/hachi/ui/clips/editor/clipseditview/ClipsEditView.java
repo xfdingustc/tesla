@@ -31,7 +31,7 @@ import com.waylens.hachi.library.vdb.ClipSet;
 import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.library.snipe.VdbRequestQueue;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
-import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.views.rangbar.RangeBar;
 import com.waylens.hachi.utils.ViewUtils;
 
@@ -79,7 +79,7 @@ public class ClipsEditView extends LinearLayout {
     private VdbRequestQueue mVdbRequestQueue;
 
 
-    private PlayListEditor2 mPlayListEditor;
+    private PlayListEditor mPlayListEditor;
 
     private int mSelectedPosition = POSITION_UNKNOWN;
 
@@ -108,7 +108,7 @@ public class ClipsEditView extends LinearLayout {
         init(context);
     }
 
-    public void setPlayListEditor(PlayListEditor2 playlistEditor) {
+    public void setPlayListEditor(PlayListEditor playlistEditor) {
         mPlayListEditor = playlistEditor;
         setClipIndex(mPlayListEditor.getPlaylistId());
         List<Clip> clipList = getClipSet().getClipList();

@@ -16,7 +16,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
-import com.waylens.hachi.ui.clips.playlist.PlayListEditor2;
+import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,7 +38,7 @@ public class ClipPlayActivity extends BaseActivity {
 
     protected ClipPlayFragment mClipPlayFragment;
 
-    protected PlayListEditor2 mPlaylistEditor;
+    protected PlayListEditor mPlaylistEditor;
     protected EventBus mEventBus = EventBus.getDefault();
 
 

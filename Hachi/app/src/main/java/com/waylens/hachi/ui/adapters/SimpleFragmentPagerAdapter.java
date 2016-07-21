@@ -20,6 +20,10 @@ public class SimpleFragmentPagerAdapter extends FragmentStatePagerAdapter {
         super(fm);
     }
 
+    public void addFragment(BaseFragment fragment) {
+        addFragment(fragment, "");
+    }
+
     public void addFragment(BaseFragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitles.add(title);

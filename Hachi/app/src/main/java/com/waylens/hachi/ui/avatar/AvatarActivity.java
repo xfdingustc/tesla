@@ -61,14 +61,6 @@ public class AvatarActivity extends BaseActivity {
 
     @BindView(R.id.civ_cropper_preview)
     ClipImageView mCivCropperPreview;
-//
-//    @Bind(R.id.mcpb_upload_progress)
-//    MaterialCircularProgressBar mUploadProgressBar;
-
-
-
-
-
 
 
     public static void launch(Activity startActivity, boolean fromCamera) {

@@ -34,11 +34,11 @@ import rx.Observable;
  * Created by Xiaofei on 2016/6/8.
  */
 public interface HachiApi {
-    @GET("/api/users/{userId}")
-    Call<UserProfile> getUserProfile(@Path("userId") String userId);
+//    @GET("/api/users/{userId}")
+//    Call<UserProfile> getUserProfile(@Path("userId") String userId);
 
-    @GET("/api/moments/play/{momentId}")
-    Call<MomentPlayInfo> getRawDataUrl(@Path("momentId") long momentId);
+//    @GET("/api/moments/play/{momentId}")
+//    Call<MomentPlayInfo> getRawDataUrl(@Path("momentId") long momentId);
 
     @GET("/api/moments/play/{momentId}")
     Observable<MomentPlayInfo> getMomentPlayInfo(@Path("momentId") long momentId);
@@ -52,8 +52,8 @@ public interface HachiApi {
     @POST("/api/friends/unfollow")
     Call<SimpleBoolResponse> unfollow(@Body FollowPostBody followPostBody);
 
-    @GET("/api/moments/{momentId}")
-    Call<MomentInfo> getMomentInfo(@Path("momentId") long momentId);
+//    @GET("/api/moments/{momentId}")
+//    Call<MomentInfo> getMomentInfo(@Path("momentId") long momentId);
 
     @GET("/api/moments/{momentId}")
     Observable<MomentInfo> getMomentInfoRx(@Path("momentId") long momentId);
@@ -83,12 +83,8 @@ public interface HachiApi {
     @GET("/api/users/check_account")
     Call<SimpleBoolResponse> checkEmail(@Query("e") String email);
 
-    @POST("/api/devices/login")
-    Call<SignInResponse> deviceLogin(@Body DeviceLoginBody deviceLoginBody);
-
-
-    @GET("{url}")
-    Call<RawDataResponse> getRawData(@Path("url") String url);
+//    @POST("/api/devices/login")
+//    Call<SignInResponse> deviceLogin(@Body DeviceLoginBody deviceLoginBody);
 
 
     @DELETE("/api/moments/{momentId}")

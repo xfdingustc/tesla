@@ -32,10 +32,12 @@ import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.activities.WaylensAgreementActivity;
+import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +79,7 @@ public class FirstInstallActivity extends BaseActivity {
         mViewPager.setCurrentItem(mCount - 1, false);
     }
 
-    private SimpleImageViewPagerAdapter mAdapter;
+    private SimpleFragmentPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +101,7 @@ public class FirstInstallActivity extends BaseActivity {
 
     private void setupViewPager() {
 
-        mAdapter = new SimpleImageViewPagerAdapter(getFragmentManager());
+        mAdapter = new SimpleFragmentPagerAdapter(getFragmentManager());
         mAdapter.addFragment(new Welcome1Fragment());
         mAdapter.addFragment(new Welcome2Fragment());
         mAdapter.addFragment(new Welcome3Fragment());
@@ -150,28 +152,7 @@ public class FirstInstallActivity extends BaseActivity {
 
 
 
-    private class SimpleImageViewPagerAdapter extends FragmentPagerAdapter {
 
-        private List<Fragment> mFragmentList = new ArrayList<>();
-
-        public void addFragment(BaseFragment fragment) {
-            mFragmentList.add(fragment);
-        }
-
-        public SimpleImageViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-    }
 
 
 
