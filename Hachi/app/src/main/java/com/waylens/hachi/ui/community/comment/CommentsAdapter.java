@@ -184,6 +184,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!mHasMore) {
+                    return;
+                }
                 if (mIsLoadingMore || mOnLoadMoreListener == null) {
                     return;
                 }

@@ -461,7 +461,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
 
     protected void setProgress(int position, int duration) {
-        Logger.t(TAG).d("position: " + position + " duration: " + duration);
+//        Logger.t(TAG).d("position: " + position + " duration: " + duration);
         if (mVideoSeekBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
