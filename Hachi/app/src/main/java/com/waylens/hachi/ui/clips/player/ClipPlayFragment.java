@@ -660,6 +660,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             return;
         }
 
+        mProgressLoading.setVisibility(View.VISIBLE);
+
 
         Observable.create(new Observable.OnSubscribe<Integer>() {
 
