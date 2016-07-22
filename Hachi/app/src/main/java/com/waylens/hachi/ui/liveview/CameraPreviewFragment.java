@@ -288,8 +288,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
                     mTvCameraRecStatus.setText(DateUtils.formatElapsedTime(recordTime));
                     mRecordDot.setVisibility(View.VISIBLE);
-                    AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
-                    animationDrawable.start();
+
                     Logger.t(TAG).d("record state: " + mVdtCamera.getRecordState());
                 }
                 break;

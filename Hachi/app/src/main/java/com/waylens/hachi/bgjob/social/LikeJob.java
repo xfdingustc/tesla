@@ -1,6 +1,7 @@
 package com.waylens.hachi.bgjob.social;
 
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
