@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.user;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,8 @@ import android.widget.TextView;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.rest.response.FollowInfo;
@@ -64,7 +65,7 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
 
         holder.mUserName.setText(mUserInfo.displayName);
 
-        if (isCurrentUser(mUserInfo.userName)) {
+        if (SessionManager.getInstance().isCurrentUser(mUserInfo.userName)) {
             holder.mBtnAccountSetting.setVisibility(View.VISIBLE);
             holder.mBtnFollow.setVisibility(View.GONE);
         } else {
@@ -76,23 +77,17 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
         updateFollowInfo(holder);
     }
 
-    public boolean isCurrentUser(String userName) {
-        SessionManager sessionManager = SessionManager.getInstance();
-        String currentUserName = sessionManager.getUserName();
-        if (userName.equals(currentUserName)) {
-            return true;
-        }
 
-        return false;
-    }
 
     private void updateFollowInfo(UserProfileHeaderViewHolder viewHolder) {
-        viewHolder.mTvFollowersCount.setText("" + mFollowInfo.followers + " " + mActivity.getString(R.string.followers));
+        Resources resources = Hachi.getContext().getResources();
+        viewHolder.mTvFollowersCount.setText("" + mFollowInfo.followers + " " + resources.getString(R.string.followers));
         if (mFollowInfo.isMyFollowing) {
             viewHolder.mBtnFollow.setText(R.string.followed);
-            viewHolder. mBtnFollow.setTextColor(mActivity.getResources().getColor(R.color.app_text_color_disabled));
+            viewHolder.mBtnFollow.setTextColor(resources.getColor(R.color.app_text_color_disabled));
         } else {
             viewHolder.mBtnFollow.setText(R.string.follow);
+            viewHolder.mBtnFollow.setTextColor(resources.getColor(R.color.style_color_accent));
         }
 
     }

@@ -51,6 +51,22 @@ public class DialogHelper {
             .show();
     }
 
+    public static void showUnfollowConfirmDialog(final Context context, final String userName,
+                                                 final String userId, final boolean isFollow,
+                                                 final onPositiveClickListener listener) {
+        new MaterialDialog.Builder(context)
+            .content(context.getResources().getString(R.string.unfollow) + " " + userName)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    BgJobHelper.followUser(userId, isFollow);
+                    listener.onPositiveClick();
+                }
+            }).show();
+    }
+
     public interface onPositiveClickListener {
         void onPositiveClick();
     }

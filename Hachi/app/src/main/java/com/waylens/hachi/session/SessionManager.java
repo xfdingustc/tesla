@@ -249,6 +249,15 @@ public class SessionManager {
         return mIsVerified;
     }
 
+    public boolean isCurrentUser(String userName) {
+        String currentUserName = getUserName();
+        if (userName.equals(currentUserName)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void setIsVerified(boolean isVerified) {
         mIsVerified = isVerified;
         PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, isVerified);

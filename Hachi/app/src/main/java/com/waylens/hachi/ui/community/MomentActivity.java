@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,34 +39,32 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.simplelist.MaterialSimpleListAdapter;
 import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.bgjob.social.DeleteCommentJob;
-import com.waylens.hachi.bgjob.social.DeleteMomentJob;
-import com.waylens.hachi.bgjob.social.ReportJob;
-import com.waylens.hachi.rest.HachiApi;
-import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.body.ReportCommentBody;
-import com.waylens.hachi.rest.body.ReportMomentBody;
-import com.waylens.hachi.rest.response.FollowInfo;
-import com.waylens.hachi.rest.response.MomentInfo;
-import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
+import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.ReportCommentBody;
+import com.waylens.hachi.rest.response.FollowInfo;
+import com.waylens.hachi.rest.response.MomentInfo;
+import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
@@ -220,16 +217,14 @@ public class MomentActivity extends BaseActivity {
             return;
         }
         if (mFollowInfo != null && mFollowInfo.isMyFollowing) {
-            MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .content(getResources().getString(R.string.unfollow) + " " + mMomentInfo.owner.userName)
-                .positiveText(R.string.ok)
-                .negativeText(R.string.cancel)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+            DialogHelper.showUnfollowConfirmDialog(this, mMomentInfo.owner.userName, mMomentInfo.owner.userID,
+                !mFollowInfo.isMyFollower, new DialogHelper.onPositiveClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onPositiveClick() {
                         toggleFollowState();
                     }
-                }).show();
+                });
+
         } else {
             toggleFollowState();
         }
@@ -381,10 +376,7 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void toggleFollowState() {
-        final JobManager jobManager = BgJobManager.getManager();
         mFollowInfo.isMyFollowing = !mFollowInfo.isMyFollowing;
-        FollowJob job = new FollowJob(mMomentInfo.owner.userID, mFollowInfo.isMyFollowing);
-        jobManager.addJobInBackground(job);
         updateFollowTextView();
     }
 
@@ -571,80 +563,80 @@ public class MomentActivity extends BaseActivity {
             public void onCommentClicked(final Comment comment, final int position) {
                 final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
                 adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
-                        .content(R.string.reply)
-                        .icon(R.drawable.comment_reply)
-                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
-                        .build());
+                    .content(R.string.reply)
+                    .icon(R.drawable.comment_reply)
+                    .backgroundColor(getResources().getColor(R.color.material_grey_800))
+                    .build());
                 MaterialSimpleListItem item = null;
 
                 if (comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
                     item = new MaterialSimpleListItem.Builder(MomentActivity.this)
-                            .content(R.string.delete)
-                            .icon(R.drawable.btn_edit_action_delete)
-                            .backgroundColor(getResources().getColor(R.color.material_grey_800))
-                            .build();
+                        .content(R.string.delete)
+                        .icon(R.drawable.btn_edit_action_delete)
+                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
+                        .build();
                 } else {
                     item = new MaterialSimpleListItem.Builder(MomentActivity.this)
-                            .content(R.string.report)
-                            .icon(R.drawable.comment_report)
-                            .backgroundColor(getResources().getColor(R.color.material_grey_800))
-                            .build();
+                        .content(R.string.report)
+                        .icon(R.drawable.comment_report)
+                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
+                        .build();
 
                 }
                 adapter.add(item);
 
                 new MaterialDialog.Builder(MomentActivity.this)
-                        .title(R.string.comment)
-                        .adapter(adapter, new MaterialDialog.ListCallback() {
-                            @Override
-                            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                switch (which) {
-                                    case 0:
-                                        mReplyTo = comment.author;
-                                        addComment();
-                                        if (mNewCommentView != null) {
-                                            mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
-                                        }
-                                        break;
-                                    case 1:
-                                        if (!comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
-                                            reportComment(comment);
-                                        } else {
-                                            doDeleteComment(comment);
-                                            mAdapter.removeComment(position);
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                dialog.dismiss();
+                    .title(R.string.comment)
+                    .adapter(adapter, new MaterialDialog.ListCallback() {
+                        @Override
+                        public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                            switch (which) {
+                                case 0:
+                                    mReplyTo = comment.author;
+                                    addComment();
+                                    if (mNewCommentView != null) {
+                                        mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+                                    }
+                                    break;
+                                case 1:
+                                    if (!comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
+                                        reportComment(comment);
+                                    } else {
+                                        doDeleteComment(comment);
+                                        mAdapter.removeComment(position);
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-                        })
-                        .show();
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
             }
 
             public void reportComment(final Comment comment) {
                 new MaterialDialog.Builder(MomentActivity.this)
-                        .title(R.string.report)
-                        .items(R.array.report_reason)
-                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                return true;
-                            }
-                        })
-                        .positiveText(R.string.report)
-                        .negativeText(android.R.string.cancel)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                int index = dialog.getSelectedIndex();
-                                mReportReason = getResources().getStringArray(R.array.report_reason)[index];
-                                Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
-                                doReportComment(comment);
-                            }
-                        })
-                        .show();
+                    .title(R.string.report)
+                    .items(R.array.report_reason)
+                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                            return true;
+                        }
+                    })
+                    .positiveText(R.string.report)
+                    .negativeText(android.R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            int index = dialog.getSelectedIndex();
+                            mReportReason = getResources().getStringArray(R.array.report_reason)[index];
+                            Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
+                            doReportComment(comment);
+                        }
+                    })
+                    .show();
 
             }
 

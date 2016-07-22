@@ -90,7 +90,6 @@ public class UserProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         init();
     }
 
@@ -107,6 +106,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
+        setupToolbar();
         mRvUserMomentList.setVisibility(View.VISIBLE);
         mMomentRvAdapter = new MomentsListAdapter(this);
 
@@ -120,12 +120,7 @@ public class UserProfileActivity extends BaseActivity {
 
         fetchUserProfile();
 
-        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
     }
 
