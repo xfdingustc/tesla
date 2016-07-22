@@ -10,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -19,14 +17,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
@@ -34,12 +29,10 @@ import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.UserInfo;
-import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.community.feed.IMomentListAdapterHeaderView;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
-import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.user.UserProfileHeaderView;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 
@@ -49,8 +42,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import butterknife.BindView;
-import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import rx.Observable;
@@ -65,7 +56,7 @@ import rx.schedulers.Schedulers;
 public class UserProfileActivity extends BaseActivity {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private static final String EXTRA_USER_ID = "user_id";
-    private static final String EXTRA_REVEAL_START_LOCATION = "reveal_start_location";
+
     private String mUserID;
     private MomentsListAdapter mMomentRvAdapter;
 
@@ -87,15 +78,12 @@ public class UserProfileActivity extends BaseActivity {
     RecyclerViewExt mRvUserMomentList;
 
 
-    public static void launch(Activity activity, String userID, View startView) {
+    public static void launch(Activity activity, String userID) {
         Intent intent = new Intent(activity, UserProfileActivity.class);
-        int[] startLocation = new int[2];
-        startView.getLocationOnScreen(startLocation);
-        startLocation[0] += startView.getWidth() / 2;
         intent.putExtra(EXTRA_USER_ID, userID);
-        intent.putExtra(EXTRA_REVEAL_START_LOCATION, startLocation);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activity.startActivity(intent);
-        activity.overridePendingTransition(0, 0);
+
     }
 
 
@@ -197,9 +185,6 @@ public class UserProfileActivity extends BaseActivity {
     }
 
 
-
-
-
     @Override
     public void setupToolbar() {
         super.setupToolbar();
@@ -279,13 +264,7 @@ public class UserProfileActivity extends BaseActivity {
         jobManager.addJobInBackground(job);
 
 
-
     }
-
-
-
-
-
 
 
     private void loadUserMoment(int cursor, final boolean isRefresh) {

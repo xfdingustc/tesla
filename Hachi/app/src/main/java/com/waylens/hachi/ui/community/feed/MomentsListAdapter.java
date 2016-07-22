@@ -182,7 +182,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserProfileActivity.launch((Activity) mContext, moment.owner.userID, holder.userAvatar);
+                UserProfileActivity.launch((Activity) mContext, moment.owner.userID);
             }
         });
 

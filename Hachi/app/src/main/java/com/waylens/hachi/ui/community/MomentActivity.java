@@ -200,7 +200,7 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.user_avatar)
     public void onUserAvatarClick() {
-        UserProfileActivity.launch(this, mMomentInfo.owner.userID, mUserAvatar);
+        UserProfileActivity.launch(this, mMomentInfo.owner.userID);
     }
 
 

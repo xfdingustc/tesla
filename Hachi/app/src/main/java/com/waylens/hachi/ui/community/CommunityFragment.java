@@ -73,7 +73,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                UserProfileActivity.launch(getActivity(), SessionManager.getInstance().getUserId(), getToolbar());
+                UserProfileActivity.launch(getActivity(), SessionManager.getInstance().getUserId());
                 return false;
             }
         });
