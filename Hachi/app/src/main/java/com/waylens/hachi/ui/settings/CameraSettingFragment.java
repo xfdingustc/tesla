@@ -53,6 +53,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -428,10 +429,16 @@ public class CameraSettingFragment extends PreferenceFragment {
         data.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return String.valueOf(value) + " M";
+                if (value > 1024) {
+                    BigDecimal tmp = new BigDecimal(value / 1024);
+                    return String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " G";
+                } else {
+                    BigDecimal tmp = new BigDecimal(value);
+                    return String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " M";
+                }
             }
         });
-        data.setValueTextSize(11f);
+        data.setValueTextSize(8f);
         data.setValueTextColor(Color.WHITE);
 
         mStorageChart.setData(data);
