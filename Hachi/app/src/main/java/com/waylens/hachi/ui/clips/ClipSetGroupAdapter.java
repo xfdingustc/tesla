@@ -79,7 +79,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void toggleSelectAll(boolean selectAll) {
-        clearSelectedClips(true);
+        clearSelectedClips(false);
         for (ClipGridItem item : mClipGridItemList) {
             item.isItemSelected = selectAll;
             if (selectAll == true && item.itemType == ITEM_TYPE_CLIPVIEW) {
