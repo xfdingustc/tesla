@@ -209,14 +209,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Override
     protected void onFirstUserVisible() {
-        if (mRefreshLayout != null) {
-            mRefreshLayout.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mPresenter.loadClipSet(false);
-                }
-            }, 200);
-        }
+
 
     }
 
@@ -310,6 +303,14 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public void onStart() {
         super.onStart();
         mEventBus.register(this);
+        if (mRefreshLayout != null) {
+            mRefreshLayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mPresenter.loadClipSet(false);
+                }
+            }, 200);
+        }
     }
 
     @Override
