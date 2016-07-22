@@ -32,14 +32,14 @@ import java.util.ArrayList;
  */
 public class PreviewActivity extends ClipPlayActivity {
 
-    private Clip mClip;
+    private int mPlaylistId = 0;
 
-    public static final int PLAYLIST_INDEX = 0x100;
+    private static final String EXTRA_PLAYLIST_ID = "playListId";
 
 
-    public static void launch(Activity activity, ArrayList<Clip> clip) {
+    public static void launch(Activity activity, int playlistId) {
         Intent intent = new Intent(activity, PreviewActivity.class);
-        intent.putParcelableArrayListExtra("clip", clip);
+        intent.putExtra("playListId", playlistId);
         activity.startActivity(intent);
     }
 
@@ -53,16 +53,17 @@ public class PreviewActivity extends ClipPlayActivity {
     @Override
     protected void init() {
         super.init();
-        ArrayList<Clip> clip = getIntent().getParcelableArrayListExtra("clip");
 
-        mClip = clip.get(0);
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_preview);
         setupToolbar();
-        buildPlaylist();
+        mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
+        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
+        mPlaylistEditor.reconstruct();
+        embedVideoPlayFragment();
     }
 
 
@@ -87,7 +88,7 @@ public class PreviewActivity extends ClipPlayActivity {
                         finish();
                         break;
                     case R.id.menu_to_modify:
-                        ClipModifyActivity.launch(PreviewActivity.this, mClip);
+                        ClipModifyActivity.launch(PreviewActivity.this, getClipSet().getClip(0));
 //                        finish();
                         break;
                     case R.id.menu_to_delete:
@@ -111,10 +112,10 @@ public class PreviewActivity extends ClipPlayActivity {
     }
 
     private void confirmDeleteClip() {
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
+        new MaterialDialog.Builder(this)
             .content(R.string.delete_bookmark_confirm)
-            .negativeText(android.R.string.cancel)
-            .positiveText(android.R.string.ok)
+            .negativeText(R.string.cancel)
+            .positiveText(R.string.ok)
             .onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -123,19 +124,14 @@ public class PreviewActivity extends ClipPlayActivity {
             }).show();
     }
 
-    private void buildPlaylist() {
-        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, PLAYLIST_INDEX);
-        mPlaylistEditor.build(mClip, new PlayListEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                embedVideoPlayFragment();
-            }
-        });
-    }
+
 
     private void doDeleteClip() {
+        if (getClipSet() == null || getClipSet().getClip(0) == null) {
+            return;
+        }
 
-        ClipDeleteRequest request = new ClipDeleteRequest(mClip.cid, new VdbResponse.Listener<Integer>() {
+        ClipDeleteRequest request = new ClipDeleteRequest(getClipSet().getClip(0).cid, new VdbResponse.Listener<Integer>() {
             @Override
             public void onResponse(Integer response) {
                 finish();

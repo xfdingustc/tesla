@@ -12,6 +12,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+import com.waylens.hachi.library.vdb.ClipSet;
+import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
@@ -126,5 +128,9 @@ public class ClipPlayActivity extends BaseActivity {
             vdtUriProvider, ClipPlayFragment.ClipMode.MULTI);
 
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
+    }
+
+    protected ClipSet getClipSet() {
+        return ClipSetManager.getManager().getClipSet(mPlaylistEditor.getPlaylistId());
     }
 }

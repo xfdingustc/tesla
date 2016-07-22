@@ -331,7 +331,8 @@ public class FootageActivity extends ClipPlayActivity {
         mVdbRequestQueue.add(request);
     }
 
-    private ClipSet getClipSet() {
+    @Override
+    protected ClipSet getClipSet() {
         return mClipSetManager.getClipSet(mClipSetIndex);
     }
 

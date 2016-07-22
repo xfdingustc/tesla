@@ -433,9 +433,17 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private void popClipPreviewFragment(Clip clip) {
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
-        Logger.t(TAG).d("clip id: " + clip.cid.toString());
-//        EnhancementActivity.launch(getActivity(), clipList, EnhancementActivity.LAUNCH_MODE_QUICK_VIEW);
-        PreviewActivity.launch(getActivity(), clipList);
+        mRefreshLayout.setRefreshing(true);
+        final int playlistId = 0x100;
+        PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
+        playListEditor.build(clipList, new PlayListEditor.OnBuildCompleteListener() {
+            @Override
+            public void onBuildComplete(ClipSet clipSet) {
+                mRefreshLayout.setRefreshing(false);
+                PreviewActivity.launch(getActivity(), playlistId);
+
+            }
+        });
     }
 
     private void launchFootageActivity(ClipSet clipSet) {
