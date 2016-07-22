@@ -110,8 +110,8 @@
 	<string name="new_comments_notification">New comments on moment</string>
 	<string name="new_password">New Password</string>
 	<string name="next">Next</string>
-	<string name="no_bookmark">No highlights found</string>
-	<string name="no_bookmark_help">"Highlights won't be automatically erased from your Micro-SD card; you can add a highlight by:\n\n 1. pressing the remote control button during recording; \n2. using the software to add one when browsing buffered footage."</string>
+	<string name="no_bookmark">No Highlights Found</string>
+	<string name="no_bookmark_help">"You can add a highlight by:\n\n1. Pressing the remote control button during recording.\n2. Using the software to add one when browsing buffered footage."</string>
 	<string name="no_footage">No footage found</string>
 	<string name="no_footage_help">"Buffered footage are video clips that can be automatically erased with the oldest footage overwritten by the freshest. Start filling buffered video by turning on the car engine!"</string>
 	<string name="no_signal">No Signal</string>
