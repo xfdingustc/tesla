@@ -58,11 +58,13 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Comment;
@@ -197,7 +199,13 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.user_avatar)
     public void onUserAvatarClick() {
+        if (!mSessionManager.isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            return;
+
+        }
         UserProfileActivity.launch(this, mMomentInfo.owner.userID);
+
     }
 
 
@@ -561,6 +569,13 @@ public class MomentActivity extends BaseActivity {
         mAdapter.setOnCommentClickListener(new CommentsAdapter.OnCommentClickListener() {
             @Override
             public void onCommentClicked(final Comment comment, final int position) {
+                if (!mSessionManager.isLoggedIn()) {
+                    AuthorizeActivity.launch(MomentActivity.this);
+                    return;
+                }
+                if (!checkUserVerified()) {
+                    return;
+                }
                 final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
                 adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
                     .content(R.string.reply)
@@ -742,6 +757,7 @@ public class MomentActivity extends BaseActivity {
         Logger.t(TAG).d(mReportReason);
         ReportJob job = new ReportJob(reportCommentBody, ReportJob.REPORT_TYPE_COMMENT);
         jobManager.addJobInBackground(job);
+        Snackbar.make(mCommentList, "Report comment successfully", Snackbar.LENGTH_LONG).show();
 
 /*        String url = Constants.API_REPORT;
         final JSONObject requestBody = new JSONObject();
@@ -883,6 +899,7 @@ public class MomentActivity extends BaseActivity {
     }
 
     private boolean checkUserVerified() {
+
         if (mSessionManager.isVerified()) {
             return true;
         } else {
@@ -906,8 +923,14 @@ public class MomentActivity extends BaseActivity {
             });
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .content(R.string.verify_email_address)
-                .positiveText(R.string.ok)
+                .positiveText(R.string.verify)
                 .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        VerifyEmailActivity.launch(MomentActivity.this);
+                    }
+                })
                 .show();
             return false;
         }

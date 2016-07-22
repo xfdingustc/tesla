@@ -20,6 +20,7 @@ import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.FollowListActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.IMomentListAdapterHeaderView;
 import com.waylens.hachi.ui.settings.AccountActivity;
 
@@ -123,6 +124,13 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
 
         @OnClick(R.id.btnFollow)
         public void onBtnFollowClicked() {
+            if (!SessionManager.getInstance().isLoggedIn()) {
+                AuthorizeActivity.launch( mActivity);
+                return;
+            }
+            if (!SessionManager.checkUserVerified(mActivity)) {
+                return;
+            }
             JobManager jobManager = BgJobManager.getManager();
             FollowJob job = new FollowJob(mUserId, !mFollowInfo.isMyFollowing);
             jobManager.addJobInBackground(job);

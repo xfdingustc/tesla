@@ -413,12 +413,10 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private void toShare() {
         if (!SessionManager.getInstance().isLoggedIn()) {
-            AuthorizeActivity.launch(this);
-        } else if (!SessionManager.getInstance().isVerified()) {
-            MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .content(R.string.verify_email_address)
-                .positiveText(R.string.ok)
-                .show();
+            AuthorizeActivity.launch(EnhanceActivity.this);
+            return;
+        }else if (!SessionManager.checkUserVerified(EnhanceActivity.this)) {
+            return;
         } else if (getClipSet().getCount() == 0) {
             MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
                 .content(R.string.no_clip_selected)

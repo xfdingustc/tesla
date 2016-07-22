@@ -339,4 +339,6 @@
 	<string name="click_2_bind_facebook">Click to bind facebook account</string>
 	<string name="binding">Binding</string>
 	<string name="unbinding">Unbinding</string>
+	<string name="verify">Verify</string>
+
 </resources>

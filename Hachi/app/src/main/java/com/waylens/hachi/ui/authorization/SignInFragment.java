@@ -189,6 +189,7 @@ public class SignInFragment extends BaseFragment {
 
     private void onSignInSuccessful(SignInResponse response) {
         SessionManager.getInstance().saveLoginInfo(response);
+        SessionManager.getInstance().setEmail(mEmail);
         doDeviceLogin();
 
     }

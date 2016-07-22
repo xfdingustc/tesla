@@ -1,16 +1,23 @@
 package com.waylens.hachi.session;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SignInResponse;
 import com.waylens.hachi.rest.response.UserInfo;
+import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.json.JSONException;
@@ -287,6 +294,49 @@ public class SessionManager {
     }
 
 
+    static public boolean checkUserVerified(final Context context) {
+        SessionManager sessionManager = SessionManager.getInstance();
+        if (sessionManager.isVerified()) {
+            return true;
+        } else {
+            HachiApi mHachi = HachiService.createHachiApiService();
+            Call<UserInfo> userInfoCall = mHachi.getUserInfo(sessionManager.getUserId());
+            userInfoCall.enqueue(new Callback<UserInfo>() {
+                @Override
+                public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {
+                    if (response.body() != null) {
+                        SessionManager sessionManager = SessionManager.getInstance();
+                        sessionManager.setIsVerified(response.body().isVerified);
+                        Logger.t(TAG).d("isVerified = " + response.body().isVerified, this);
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserInfo> call, Throwable t) {
+
+                }
+            });
+            MaterialDialog dialog = new MaterialDialog.Builder(context)
+                    .content(R.string.verify_email_address)
+                    .positiveText(R.string.verify)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            VerifyEmailActivity.launch(context);
+                        }
+                    })
+                    .show();
+            return false;
+        }
+    }
+
+
+    public boolean needLinkAccount() {
+        return (mLoginType == LOGIN_TYPE_SNS) && ! getIsLinked();
+    }
+
     public void updateLinkStatus(String userName, boolean isLinked) {
         setUserName(userName);
         setIsLinked(isLinked);
@@ -311,10 +361,12 @@ public class SessionManager {
 
     public void saveUserProfile(UserInfo userInfo) {
         setUserName(userInfo.userName);
+        setEmail(userInfo.email);
         setAvatar(userInfo.avatarUrl);
+        setGender(userInfo.gender);
+        setBirthday(userInfo.birthday);
+        setIsVerified(userInfo.isVerified);
         setAvatarThumbnail(userInfo.avatarThumbnailUrl);
-
-
     }
 
     public void saveLinkedAccounts(LinkedAccounts linkedAccounts) {

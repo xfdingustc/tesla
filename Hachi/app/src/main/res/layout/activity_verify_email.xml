@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:weightSum="1">
@@ -15,20 +14,15 @@
         android:src="@drawable/waylens_logo_140x98"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sign_up_success"
-        android:textColor="#FFF5F5F5"
-        android:textSize="18sp"/>
+
 
     <TextView
+        android:id="@+id/tvEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="@string/sign_up_welcome"
         android:textColor="#FF7F7F7F"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginTop="16dp" />
 
 
@@ -40,7 +34,7 @@
         android:gravity="bottom|center_horizontal">
 
         <Button
-            android:id="@+id/btn_complete_profile"
+            android:id="@+id/btn_verify_email_address"
             style="@style/ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,13 +42,13 @@
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
             android:textSize="18sp"
-            android:text="@string/complete_my_profile"/>
+            android:text="@string/verify_email"/>
 
         <TextView
-            android:id="@+id/sign_up_get_started"
+            android:id="@+id/resend_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up_get_started"
+            android:text="@string/resend_email"
             android:textColor="#FFF5F5F5"
             android:textSize="18sp"
             android:layout_marginBottom="64dp" />

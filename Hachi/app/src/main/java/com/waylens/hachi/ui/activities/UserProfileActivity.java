@@ -34,6 +34,13 @@ import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.user.UserProfileHeaderView;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
+import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
+import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.UserProfile;
+import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 
 import org.json.JSONException;
@@ -178,11 +185,21 @@ public class UserProfileActivity extends BaseActivity {
         super.setupToolbar();
         getToolbar().getMenu().clear();
         getToolbar().inflateMenu(R.menu.menu_user_profile);
+        if (mUserID.equals(SessionManager.getInstance().getUserId())) {
+            getToolbar().getMenu().removeItem(R.id.report);
+        }
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.report:
+                        if (!SessionManager.getInstance().isLoggedIn()) {
+                            AuthorizeActivity.launch(UserProfileActivity.this);
+                            return true;
+                        }
+                        if (!SessionManager.checkUserVerified(UserProfileActivity.this)) {
+                            return true;
+                        }
                         MaterialDialog dialog = new MaterialDialog.Builder(UserProfileActivity.this)
                             .title(R.string.report)
                             .items(R.array.report_reason)
@@ -248,6 +265,30 @@ public class UserProfileActivity extends BaseActivity {
         ReportJob job = new ReportJob(reportUserBody, ReportJob.REPORT_TYPE_USER);
         jobManager.addJobInBackground(job);
 
+        /*String url = Constants.API_REPORT;
+        final JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("userId", mUserID);
+            requestBody.put("reason", mReportReason);
+
+            Logger.t(TAG).json(requestBody.toString());
+            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    Snackbar.make(mRvUserMomentList, "Report comment successfully", Snackbar.LENGTH_LONG).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                }
+            });
+
+            mRequestQueue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
 
     }
 

@@ -153,7 +153,7 @@ public class SignUpFragment extends BaseFragment {
     }
 
     void onSignUpFailed(Throwable error) {
-        Logger.d(error.getMessage(), this);
+        Logger.t(TAG).d(error.getMessage());
         //showMessage(ServerMessage.parseServerError(error).msgResID);
     }
 
@@ -179,7 +179,7 @@ public class SignUpFragment extends BaseFragment {
     }
 
     void onInvalidEmail(Throwable error) {
-        Logger.d(error.getMessage(), this);
+        Logger.t(TAG).d(error.getMessage());
         //ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
         //showMessage(errorInfo.msgResID);
         mButtonAnimator.setDisplayedChild(0);

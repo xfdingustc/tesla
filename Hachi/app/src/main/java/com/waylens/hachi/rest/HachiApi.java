@@ -117,8 +117,10 @@ public interface HachiApi {
     @DELETE("/api/share/accounts/{provider}")
     Call<SimpleBoolResponse> unbindSocialProvider(@Path("provider") String provider);
 
-
     @POST("/api/share/accounts")
     Call<SimpleBoolResponse> bindSocialProvider(@Body SocialProvider provider);
+
+    @GET("/api/users/resend_verify_mail")
+    Call<SimpleBoolResponse> resendVerifyEmail();
 
 }

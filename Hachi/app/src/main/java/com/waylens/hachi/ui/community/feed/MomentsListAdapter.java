@@ -26,10 +26,16 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.ReportMomentBody;
+import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
@@ -43,6 +49,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -182,7 +190,12 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!SessionManager.getInstance().isLoggedIn()) {
+                    AuthorizeActivity.launch((Activity) mContext);
+                    return;
+                }
                 UserProfileActivity.launch((Activity) mContext, moment.owner.userID);
+
             }
         });
 
@@ -235,6 +248,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private void onReportClick(final long momentId) {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch((Activity) mContext);
+            return;
+        }
+        if (!SessionManager.checkUserVerified(mContext)) {
+            return;
+        }
         DialogHelper.showReportMomentDialog(mContext, momentId);
     }
 
@@ -301,5 +321,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ButterKnife.bind(this, itemView);
         }
     }
+
 
 }

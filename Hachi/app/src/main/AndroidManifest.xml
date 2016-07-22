@@ -203,6 +203,10 @@
 
         <activity android:name=".ui.authorization.FacebookAuthorizeActivity"/>
 
+        <activity
+            android:name=".ui.authorization.VerifyEmailActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
