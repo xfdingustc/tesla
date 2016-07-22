@@ -76,7 +76,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
 
     private static final int FADE_OUT = 1;
-    private static final int SHOW_PROGRESS = 2;
+
 
 
 
@@ -421,25 +421,14 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             String userAgent = Utils.getUserAgent(getActivity(), getString(R.string.app_name));
             mMediaPlayer = new HachiPlayer(new HlsRendererBuilder(getActivity(), userAgent, mMomentPlayInfo.videoUrl));
             mMediaPlayer.addListener(this);
-//            mMediaPlayer.setCaptionListener(this);
-//            mMediaPlayer.setMetadataListener(this);
             mMediaPlayer.seekTo(0);
             playerNeedsPrepare = true;
             mPlayerControl = mMediaPlayer.getPlayerControl();
-//            mediaController.setMediaPlayer(player.getPlayerControl());
-//            mediaController.setEnabled(true);
-//            eventLogger = new EventLogger();
-//            eventLogger.startSession();
-//            mMediaPlayer.addListener(eventLogger);
-//            mMediaPlayer.setInfoListener(eventLogger);
-//            mMediaPlayer.setInternalErrorListener(eventLogger);
-//            debugViewHelper = new DebugTextViewHelper(player, debugTextView);
-//            debugViewHelper.start();
+
         }
         if (playerNeedsPrepare) {
             mMediaPlayer.prepare();
             playerNeedsPrepare = false;
-            updateButtonVisibilities();
         }
         mMediaPlayer.setSurface(mSurfaceView.getHolder().getSurface());
         mMediaPlayer.setPlayWhenReady(playWhenReady);
@@ -471,10 +460,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    private void updateButtonVisibilities() {
-    }
-
     protected void setProgress(int position, int duration) {
+        Logger.t(TAG).d("position: " + position + " duration: " + duration);
         if (mVideoSeekBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
@@ -490,7 +477,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
         }
         updateVideoTime(position, duration);
-//        displayOverlay(position);
 
     }
 
@@ -524,9 +510,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         int duration = mPlayerControl.getDuration();
         setProgress(position, duration);
         mRawDataAdapter.updateCurrentTime(position);
-        if (mMediaPlayer != null && mPlayerControl.isPlaying()) {
-            mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 20);
-        }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -930,9 +914,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 case FADE_OUT:
                     fragment.hideControllers();
                     break;
-                case SHOW_PROGRESS:
-                    fragment.showProgress();
-                    break;
+
             }
         }
     }
