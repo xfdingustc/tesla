@@ -387,6 +387,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     break;
                 case R.id.menu_deselete_all:
                     mAdapter.toggleSelectAll(false);
+                    mode.finish();
                     break;
                 default:
                     break;
