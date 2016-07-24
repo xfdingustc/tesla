@@ -239,13 +239,13 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
         mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {
             @Override
-            public void onClipClicked(Clip clip) {
+            public void onClipClicked(Clip clip, View transitionView) {
 
                 if (mIsMultipleMode || clip == null) {
                     return;
                 }
                 if (mClipSetType == Clip.TYPE_MARKED) {
-                    popClipPreviewFragment(clip);
+                    popClipPreviewFragment(clip, transitionView);
                 } else {
                     ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
                     clipSet.addClip(clip);
@@ -431,7 +431,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
 
 
-    private void popClipPreviewFragment(Clip clip) {
+    private void popClipPreviewFragment(Clip clip, final View transitionView) {
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
         mRefreshLayout.setRefreshing(true);
@@ -441,7 +441,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             @Override
             public void onBuildComplete(ClipSet clipSet) {
                 mRefreshLayout.setRefreshing(false);
-                PreviewActivity.launch(getActivity(), playlistId);
+                PreviewActivity.launch(getActivity(), playlistId, transitionView);
 
             }
         });

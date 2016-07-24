@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -31,16 +35,18 @@ import java.util.ArrayList;
  * Created by Xiaofei on 2016/6/16.
  */
 public class PreviewActivity extends ClipPlayActivity {
-
+    public static final String EXTRA_IMAGE = "PreviewActivity:image";
     private int mPlaylistId = 0;
 
     private static final String EXTRA_PLAYLIST_ID = "playListId";
 
 
-    public static void launch(Activity activity, int playlistId) {
+    public static void launch(Activity activity, int playlistId, View transitionView) {
+        ActivityOptionsCompat options = ActivityOptionsCompat
+            .makeSceneTransitionAnimation(activity, transitionView, EXTRA_IMAGE);
         Intent intent = new Intent(activity, PreviewActivity.class);
         intent.putExtra("playListId", playlistId);
-        activity.startActivity(intent);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
     @Override
@@ -53,13 +59,14 @@ public class PreviewActivity extends ClipPlayActivity {
     @Override
     protected void init() {
         super.init();
-
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_preview);
         setupToolbar();
+
+        ViewCompat.setTransitionName(mPlayerContainer, EXTRA_IMAGE);
         mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
         mPlaylistEditor.reconstruct();
@@ -97,6 +104,12 @@ public class PreviewActivity extends ClipPlayActivity {
                 }
 
                 return true;
+            }
+        });
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
             }
         });
     }

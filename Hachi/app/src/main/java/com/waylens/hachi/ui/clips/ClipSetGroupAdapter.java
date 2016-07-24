@@ -52,7 +52,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     public interface OnClipClickListener {
-        void onClipClicked(Clip clip);
+        void onClipClicked(Clip clip, View transitionView);
 
         void onClipLongClicked(Clip clip);
 
@@ -382,7 +382,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ClipGridItem clipGridItem = mClipGridItemList.get(holder.getPosition());
 
             if (!mMultiSelectedMode) {
-                mClipClickListener.onClipClicked((Clip) clipGridItem.itemObject);
+                mClipClickListener.onClipClicked((Clip) clipGridItem.itemObject, ivClipCover);
             } else {
                 clipGridItem.isItemSelected = !clipGridItem.isItemSelected;
                 toggleItemSelectedView(ClipGridViewHolder.this, clipGridItem.isItemSelected);
@@ -390,7 +390,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 toggleClipSelected(clipGridItem, clipGridItem.isItemSelected);
 
-                mClipClickListener.onClipClicked(null);
+                mClipClickListener.onClipClicked(null, null);
             }
 
         }
