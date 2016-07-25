@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.settings;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -21,22 +23,45 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.LinkedAccounts;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/5/3.
  */
 public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private static final String TAG = AccountSettingPreferenceFragment.class.getSimpleName();
+
+    private static final int REQUEST_FACEBOOK = 0x100;
+    private static final int REQUEST_YOUTUBE = 0x101;
+
     private Preference mEmail;
     private Preference mChangePassword;
     private Preference mUserName;
@@ -54,6 +79,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private SessionManager mSessionManager = SessionManager.getInstance();
     private RequestQueue mRequestQueue;
 
+    private HachiApi mHachi = HachiService.createHachiApiService();
+
+
+
+
+
+    private MaterialDialog mProgressDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +94,21 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mRequestQueue.start();
         initPreferences();
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.t(TAG).d("requestCode: " + requestCode + " resultCode: " + resultCode);
+        switch (requestCode) {
+            case REQUEST_FACEBOOK:
+            case REQUEST_YOUTUBE:
+                if (resultCode == Activity.RESULT_OK) {
+                    updateSocialMedia();
+                }
+        }
 
     }
 
@@ -270,13 +318,78 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 
     private void setupFacebook() {
         mFacebook = findPreference("facebook");
+
+        updateSocialMedia();
+
+        mFacebook.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (mSessionManager.getFacebookName() == null) {
+                    FacebookAuthorizeActivity.launch(AccountSettingPreferenceFragment.this, REQUEST_FACEBOOK);
+                } else {
+                    unbindSocialMedia("facebook");
+                }
+                return true;
+            }
+        });
+
+    }
+
+
+
+    private void unbindSocialMedia(final String facebook) {
+        Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                subscriber.onStart();
+                Call<SimpleBoolResponse> unbindSocialMediaCall = mHachi.unbindSocialProvider(facebook);
+                Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
+                try {
+                    SimpleBoolResponse response = unbindSocialMediaCall.execute().body();
+                    mSessionManager.saveLinkedAccounts(callLinkedAccount.execute().body());
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Void>() {
+                @Override
+                public void onStart() {
+                    super.onStart();
+                    showDialog();
+                }
+
+                @Override
+                public void onCompleted() {
+                    hideDialog();
+                    updateSocialMedia();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                    hideDialog();
+                }
+
+                @Override
+                public void onNext(Void aVoid) {
+
+                }
+            });
+
+
+    }
+
+    private void updateSocialMedia() {
         String facebookName = mSessionManager.getFacebookName();
         if (facebookName != null) {
             mFacebook.setSummary(facebookName);
         } else {
             mFacebook.setSummary(getResources().getString(R.string.click_2_bind_facebook));
         }
-//        if (mSessionManager.isLinked())
     }
 
     private void setupYoutube() {
@@ -360,6 +473,25 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 
 
         mRequestQueue.add(request.setTag(TAG));
+    }
+
+    public void showDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            return;
+        }
+        mProgressDialog = new MaterialDialog.Builder(getActivity())
+            .title(R.string.loading)
+            .progress(true, 0)
+            .progressIndeterminateStyle(false)
+            .build();
+
+        mProgressDialog.show();
+    }
+
+    public void hideDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
     }
 
 }

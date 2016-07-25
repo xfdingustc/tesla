@@ -8,6 +8,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SignInResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -81,6 +82,8 @@ public class SessionManager {
     public String getUserName() {
         return PreferenceUtils.getString(PreferenceUtils.USER_NAME, null);
     }
+
+
 
     private void setUserId(String userId) {
         PreferenceUtils.putString(PreferenceUtils.USER_ID, userId);
@@ -310,8 +313,24 @@ public class SessionManager {
         setUserName(userInfo.userName);
         setAvatar(userInfo.avatarUrl);
         setAvatarThumbnail(userInfo.avatarThumbnailUrl);
-        setFacebookName(userInfo.facebookName);
 
+
+    }
+
+    public void saveLinkedAccounts(LinkedAccounts linkedAccounts) {
+        boolean facebookFound = false;
+        for (LinkedAccounts.LinkedAccount linkedAccount : linkedAccounts.linkedAccounts) {
+            if (linkedAccount.provider.equals("facebook")) {
+                setFacebookName(linkedAccount.accountName);
+                facebookFound = true;
+            } else if (linkedAccount.provider.equals("youtube")) {
+
+            }
+        }
+
+        if (!facebookFound) {
+            setFacebookName(null);
+        }
     }
 
 

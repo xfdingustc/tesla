@@ -1,51 +1,40 @@
 package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.afollestad.materialdialogs.GravityEnum;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Response;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
-import com.waylens.hachi.utils.ImageUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONObject;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
-import retrofit2.Callback;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/4/26.
@@ -105,6 +94,8 @@ public class AccountActivity extends BaseActivity {
         init();
     }
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -118,23 +109,43 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void fetchUserProfile() {
-        Call<UserInfo>  userInfoCall = mHachi.getMyUserInfo();
-        userInfoCall.enqueue(new Callback<UserInfo>() {
+        Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
-            public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {
-                mSessionManager.saveUserProfile(response.body());
-                refreshUserAvatar();
-                AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
-                if (!isDestroyed()) {
-                    getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commitAllowingStateLoss();
+            public void call(Subscriber<? super Void> subscriber) {
+                Call<UserInfo> userInfoCall = mHachi.getMyUserInfo();
+                Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
+                try {
+                    mSessionManager.saveUserProfile(userInfoCall.execute().body());
+                    mSessionManager.saveLinkedAccounts(callLinkedAccount.execute().body());
+                    subscriber.onCompleted();
+
+                } catch (IOException e) {
+                    subscriber.onError(e);
                 }
             }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Void>() {
+                @Override
+                public void onCompleted() {
+                    refreshUserAvatar();
+                    AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
+                    if (!isDestroyed()) {
+                        getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commitAllowingStateLoss();
+                    }
+                }
 
-            @Override
-            public void onFailure(Call<UserInfo> call, Throwable t) {
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                }
 
-            }
-        });
+                @Override
+                public void onNext(Void integer) {
+
+                }
+            });
 
     }
 
@@ -146,8 +157,6 @@ public class AccountActivity extends BaseActivity {
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(mAvatar);
     }
-
-
 
 
     @Override

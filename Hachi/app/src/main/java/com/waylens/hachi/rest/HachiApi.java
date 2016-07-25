@@ -9,6 +9,7 @@ import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
+import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
@@ -112,5 +113,12 @@ public interface HachiApi {
 
     @DELETE("/api/comments/{commentID}")
     Call<DeleteCommentResponse> deleteComment(@Path("commentID") long commentID);
+
+    @DELETE("/api/share/accounts/{provider}")
+    Call<SimpleBoolResponse> unbindSocialProvider(@Path("provider") String provider);
+
+
+    @POST("/api/share/accounts")
+    Call<SimpleBoolResponse> bindSocialProvider(@Body SocialProvider provider);
 
 }

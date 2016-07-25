@@ -213,7 +213,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                             .title(R.string.found_new_firmware)
                             .content(firmwareInfo.getDescription())
                             .positiveText(R.string.upgrade)
-                            .negativeText(android.R.string.cancel)
+                            .negativeText(R.string.cancel)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -455,8 +455,8 @@ public class CameraSettingFragment extends PreferenceFragment {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.audio_setting)
                     .customView(R.layout.dialog_audio_setting, true)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -548,8 +548,8 @@ public class CameraSettingFragment extends PreferenceFragment {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.bookmark)
                     .customView(R.layout.dialog_bookmark_change, true)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
