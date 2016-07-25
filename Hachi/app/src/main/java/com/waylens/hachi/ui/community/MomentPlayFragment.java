@@ -815,7 +815,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 mObdDataIndex++;
                 rawDataItemList.add(rawDataItem);
             }
-            if ((rawDataItem = mWeatherData) != null) {
+            if (!rawDataItemList.isEmpty() && (rawDataItem = mWeatherData) != null) {
                 rawDataItemList.add(rawDataItem);
             }
             if (!rawDataItemList.isEmpty()) {
