@@ -6,7 +6,6 @@
     android:gravity="center_vertical"
     android:padding="16dp"
     android:minHeight="?android:listPreferredItemHeight"
-    android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
 

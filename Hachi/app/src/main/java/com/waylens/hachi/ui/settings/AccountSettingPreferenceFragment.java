@@ -17,7 +17,6 @@ import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -32,8 +31,6 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Xiaofei on 2016/5/3.
@@ -45,7 +42,9 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private Preference mUserName;
     private Preference mBirthday;
     private Preference mGender;
-//    private Preference mRegion;
+    //    private Preference mRegion;
+    private Preference mFacebook;
+    private Preference mYoutube;
     private Preference mLogout;
 
     private View positiveAction;
@@ -78,7 +77,10 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mBirthday = findPreference("birthday");
         mGender = findPreference("gender");
 //        mRegion = findPreference("region");
+
+
         mLogout = findPreference("logout");
+        setupSocialMedia();
 
         mEmail.setSummary(mSessionManager.getEmail());
         mUserName.setSummary(mSessionManager.getUserName());
@@ -86,7 +88,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 //        mRegion.setSummary(mSessionManager.getRegion());
 
 
-        final int gender = mSessionManager.getGender();
+        final int gender = mSessionManager.getGenderInt();
         switch (gender) {
             case 0:
                 mGender.setSummary(R.string.male);
@@ -105,8 +107,8 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.change_password)
                     .customView(R.layout.dialog_change_password, true)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -160,8 +162,8 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                             return true;
                         }
                     })
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -196,8 +198,8 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 
                         }
                     })
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -215,12 +217,12 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .customView(R.layout.fragment_data_picker, false)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            DatePicker datePicker = (DatePicker)dialog.getCustomView().findViewById(R.id.dataPicker);
+                            DatePicker datePicker = (DatePicker) dialog.getCustomView().findViewById(R.id.dataPicker);
                             Logger.t(TAG).d("year: " + datePicker.getYear());
                             Date date = new Date(datePicker.getYear() - 1900, datePicker.getMonth(), datePicker.getDayOfMonth());
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -246,8 +248,8 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.logout)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -260,6 +262,28 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             }
         });
     }
+
+    private void setupSocialMedia() {
+        setupFacebook();
+        setupYoutube();
+    }
+
+    private void setupFacebook() {
+        mFacebook = findPreference("facebook");
+        String facebookName = mSessionManager.getFacebookName();
+        if (facebookName != null) {
+            mFacebook.setSummary(facebookName);
+        } else {
+            mFacebook.setSummary(getResources().getString(R.string.click_2_bind_facebook));
+        }
+//        if (mSessionManager.isLinked())
+    }
+
+    private void setupYoutube() {
+        mYoutube = findPreference("youtube");
+    }
+
+
 
     private void uploadPassword(String oldPwd, String newPwd) {
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
@@ -315,7 +339,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 @Override
                 public void onResponse(JSONObject response) {
                     mUserName.setSummary(newUserName);
-                    mSessionManager.saveUserName(newUserName);
+                    mSessionManager.setUserName(newUserName);
                 }
             })
             .build();

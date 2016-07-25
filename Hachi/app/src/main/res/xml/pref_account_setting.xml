@@ -40,13 +40,27 @@
             android:title="@string/gender"/>
 
         <!--<Preference-->
-            <!--android:key="region"-->
-            <!--android:layout="@layout/preference_item"-->
-            <!--android:title="@string/region"/>-->
+        <!--android:key="region"-->
+        <!--android:layout="@layout/preference_item"-->
+        <!--android:title="@string/region"/>-->
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:layout="@layout/preference_category_widget"
+        android:title="@string/social_media">
 
+        <Preference
+            android:key="facebook"
+            android:layout="@layout/preference_item"
+            android:title="@string/facebook"/>
+
+        <Preference
+            android:key="youtube"
+            android:layout="@layout/preference_item"
+            android:title="@string/youtube"/>
+
+    </PreferenceCategory>
     <Preference
         android:key="logout"
         android:layout="@layout/preference_item"

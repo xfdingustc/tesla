@@ -28,6 +28,9 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
@@ -41,6 +44,8 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Xiaofei on 2016/4/26.
@@ -50,7 +55,7 @@ public class AccountActivity extends BaseActivity {
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
-    private MaterialDialog mUploadDialog;
+    private HachiApi mHachi = HachiService.createHachiApiService();
 
     @BindView(R.id.avatar)
     CircleImageView mAvatar;
@@ -113,30 +118,27 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void fetchUserProfile() {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_ME)
-            .listner(new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    mSessionManager.saveUserProfile(response);
-                    showUserProfile(response);
-                    AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
-                    if (!isDestroyed()) {
-                        getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commitAllowingStateLoss();
-                    }
+        Call<UserInfo>  userInfoCall = mHachi.getMyUserInfo();
+        userInfoCall.enqueue(new Callback<UserInfo>() {
+            @Override
+            public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {
+                mSessionManager.saveUserProfile(response.body());
+                refreshUserAvatar();
+                AccountSettingPreferenceFragment fragment = new AccountSettingPreferenceFragment();
+                if (!isDestroyed()) {
+                    getFragmentManager().beginTransaction().replace(R.id.accountPref, fragment).commitAllowingStateLoss();
                 }
-            })
-            .build();
+            }
 
-        mRequestQueue.add(request);
+            @Override
+            public void onFailure(Call<UserInfo> call, Throwable t) {
+
+            }
+        });
+
     }
 
-    private void showUserProfile(JSONObject response) {
-
-        Logger.t(TAG).d("avatart: " + mSessionManager.getAvatarUrl());
-
-
+    private void refreshUserAvatar() {
         Glide.with(this.getApplicationContext())
             .load(mSessionManager.getAvatarUrl())
             .dontAnimate()
@@ -144,6 +146,8 @@ public class AccountActivity extends BaseActivity {
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(mAvatar);
     }
+
+
 
 
     @Override

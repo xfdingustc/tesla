@@ -254,7 +254,7 @@
 	<string name="retry">retry</string>
 	<string name="failed_to_sign_in">Failed to sign in. Please try again</string>
 	<string name="incorrect_email_or_password">Incorrect Email address or password</string>
-	<string name="verify_email_address">Please verify your email address to access all of Waylens features.</string>
+	<string name="verify_email_address">Please verify your Email address to access all of Waylens features.</string>
 	<string name="agree_line1">Agree with </string>
 	<string name="agree_line2">Waylens Agreement</string>
 	<string name="agree_line3"> before you could use this app</string>
@@ -327,4 +327,14 @@
 	<string name="firmware_corrupt">Firmware corrupt. Please download again!</string>
 	<string name="firmware_check">"Checking firmware correctness…"</string>
 	<string name="upload_cancelled">Upload cancelled</string>
+	<string name="verify_email">verify Email address</string>
+	<string name="resend_email">Resend an Email</string>
+	<string name="resend_email_succeed">Resend verify Email successfully!</string>
+	<string name="email_not_exist">Email does not exist.</string>
+	<string name="exceed_retry_count">Retry count exceeds the limit.</string>
+	<string name="in_min_interval">Not reach the min retry interval.</string>
+	<string name="facebook">Facebook</string>
+	<string name="social_media">Social Media</string>
+	<string name="youtube">Youtube</string>
+	<string name="click_2_bind_facebook">Click to bind facebook account</string>
 </resources>

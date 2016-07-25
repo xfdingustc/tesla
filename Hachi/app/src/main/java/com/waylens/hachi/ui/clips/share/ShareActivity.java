@@ -210,7 +210,7 @@ public class ShareActivity extends ClipPlayActivity {
         mUserEmail.setText(sessionManager.getEmail());
 
 
-        Logger.t(TAG).d("is linked with facebook: " + sessionManager.isLinked());
+        Logger.t(TAG).d("is linked with facebook: " + sessionManager.getIsLinked());
 //        if (sessionManager.isLinked()) {
 //            mBtnFaceBook.setVisibility(View.VISIBLE);
 //        } else {

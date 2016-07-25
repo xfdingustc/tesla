@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -102,12 +103,12 @@ public class RegistrationIntentService extends IntentService {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("test", "response: " + response);
+                        Logger.t(TAG).d("response: " + response);
                         String waylensToken = response.optString("token");
                         if (!TextUtils.isEmpty(waylensToken)) {
                             PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, token);
-                            SessionManager.getInstance().refreshToken(waylensToken);
-                            Log.e(TAG, "GCM registration is successful.");
+                            SessionManager.getInstance().setToken(waylensToken);
+                            Logger.t(TAG).d("GCM registration is successful.");
                         } else {
                             notifyRegistrationFailure();
                         }
@@ -123,7 +124,7 @@ public class RegistrationIntentService extends IntentService {
 
     void notifyRegistrationFailure() {
         PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, null);
-        Log.e(TAG, "GCM registration failed.");
+        Logger.t(TAG).e("GCM registration failed.");
     }
 
     /**

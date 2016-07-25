@@ -22,8 +22,9 @@ public class UserInfo {
 
     public String avatarUrl;
 
-    public int socialProviders;
+    public String avatarThumbnailUrl;
 
+    public int socialProviders;
 
     public String facebookName;
 
