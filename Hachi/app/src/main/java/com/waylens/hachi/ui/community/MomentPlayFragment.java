@@ -646,59 +646,64 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         try {
             JSONObject obd = response.optJSONObject("obd");
             if (obd != null) {
-                JSONArray captureTime = obd.getJSONArray("captureTime");
-                JSONArray speed = obd.getJSONArray("speed");
-                JSONArray rpm = obd.getJSONArray("rpm");
-                JSONArray temperature = obd.getJSONArray("temperature");
-                JSONArray tp = obd.getJSONArray("tp");
-                JSONArray imp = obd.getJSONArray("imp");
-                JSONArray bp = obd.getJSONArray("bp");
-                JSONArray bhp = obd.getJSONArray("bhp");
+                JSONArray captureTime = obd.optJSONArray("captureTime");
+                JSONArray speed = obd.optJSONArray("speed");
+                JSONArray rpm = obd.optJSONArray("rpm");
+                JSONArray temperature = obd.optJSONArray("temperature");
+                JSONArray tp = obd.optJSONArray("tp");
+                JSONArray imp = obd.optJSONArray("imp");
+                JSONArray bp = obd.optJSONArray("bp");
+                JSONArray bhp = obd.optJSONArray("bhp");
                 for (int i = 0; i < captureTime.length(); i++) {
                     mRawDataAdapter.addObdData(
                         captureTime.getLong(i) + offset,
-                        speed.getInt(i),
-                        rpm.getInt(i),
-                        temperature.getInt(i),
-                        tp.getInt(i),
-                        imp.getInt(i),
-                        bp.getInt(i),
-                        bhp.getInt(i));
-
+                        speed != null ? speed.getInt(i) : 0,
+                        rpm != null ? rpm.getInt(i) : 0,
+                        temperature != null ? temperature.getInt(i) : 0,
+                        tp != null ? tp.getInt(i) : 0,
+                        imp != null ? imp.getInt(i) : 0,
+                        bp != null ? bp.getInt(i) : 0,
+                        bhp != null ? bhp.getInt(i) : 0);
                 }
             }
             JSONObject acc = response.optJSONObject("acc");
             if (acc != null) {
-                JSONArray captureTime = acc.getJSONArray("captureTime");
-                JSONArray acceleration = acc.getJSONArray("acceleration");
-                for (int i = 0; i < captureTime.length(); i++) {
-                    JSONObject accObj = acceleration.getJSONObject(i);
-                    mRawDataAdapter.addAccData(
-                        captureTime.getLong(i) + offset,
-                        accObj.getInt("accelX"), accObj.getInt("accelY"), accObj.getInt("accelZ"),
-                        accObj.getInt("gyroX"), accObj.getInt("gyroY"), accObj.getInt("gyroZ"),
-                        accObj.getInt("magnX"), accObj.getInt("magnY"), accObj.getInt("magnZ"),
-                        accObj.getInt("eulerHeading"), accObj.getInt("eulerRoll"), accObj.getInt("eulerPitch"),
-                        accObj.getInt("quaternionW"), accObj.getInt("quaternionX"), accObj.getInt("quaternionY"), accObj.getInt("quaternionZ"),
-                        accObj.getInt("pressure")
-                    );
+                JSONArray captureTime = acc.optJSONArray("captureTime");
+                JSONArray acceleration = acc.optJSONArray("acceleration");
+                if (acceleration != null) {
+                    for (int i = 0; i < captureTime.length(); i++) {
+                        JSONObject accObj = acceleration.optJSONObject(i);
+                        if (accObj != null) {
+                            mRawDataAdapter.addAccData(
+                                    captureTime.getLong(i) + offset,
+                                    accObj.optInt("accelX"), accObj.optInt("accelY"), accObj.optInt("accelZ"),
+                                    accObj.optInt("gyroX"), accObj.optInt("gyroY"), accObj.optInt("gyroZ"),
+                                    accObj.optInt("magnX"), accObj.optInt("magnY"), accObj.optInt("magnZ"),
+                                    accObj.optInt("eulerHeading"), accObj.optInt("eulerRoll"), accObj.optInt("eulerPitch"),
+                                    accObj.optInt("quaternionW"), accObj.optInt("quaternionX"), accObj.optInt("quaternionY"), accObj.optInt("quaternionZ"),
+                                    accObj.optInt("pressure")
+                            );
+                        }
+                    }
                 }
             }
             JSONObject gps = response.optJSONObject("gps");
             if (gps != null) {
-                JSONArray captureTime = gps.getJSONArray("captureTime");
-                JSONArray coordinates = gps.getJSONObject("coordinate").getJSONArray("coordinates");
-                JSONArray speed = gps.getJSONArray("speed");
+                JSONArray captureTime = gps.optJSONArray("captureTime");
+                JSONArray coordinates = gps.optJSONObject("coordinate").optJSONArray("coordinates");
+                JSONArray speed = gps.optJSONArray("speed");
 
                 for (int i = 0; i < captureTime.length(); i++) {
-                    JSONArray coordinateObj = coordinates.getJSONArray(i);
-                    mRawDataAdapter.addGpsData(
-                        captureTime.getLong(i) + offset,
-                        coordinateObj.getDouble(0),
-                        coordinateObj.getDouble(1),
-                        coordinateObj.getDouble(2),
-                            speed.getDouble(i)
-                    );
+                    JSONArray coordinateObj = coordinates.optJSONArray(i);
+                    if (coordinateObj != null) {
+                        mRawDataAdapter.addGpsData(
+                                captureTime.getLong(i) + offset,
+                                coordinateObj.optDouble(0),
+                                coordinateObj.optDouble(1),
+                                coordinateObj.optDouble(2),
+                                speed.getDouble(i)
+                        );
+                    }
                 }
             }
             JSONObject weather = response.optJSONObject("weather");
@@ -706,7 +711,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 JSONArray captureTime = weather.getJSONArray("captureTime");
                 JSONObject hourlyData = weather.getJSONArray("hourly").getJSONObject(0);
                 Logger.t(TAG).d(hourlyData.toString());
-                if (hourlyData.length() != 0) {
+                if (hourlyData != null && hourlyData.length() != 0) {
                     for (int i = 0; i < captureTime.length(); i++) {
                         mRawDataAdapter.addWeatherData(
                                 captureTime.getLong(i) + offset,
@@ -725,8 +730,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             return true;
         } catch (JSONException e) {
             Logger.t(TAG).d(e.toString());
-            return false;
         }
+        return true;
     }
 
 
@@ -747,10 +752,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         }
 
 
-        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int imp, int bp, int bhp) {
+        public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int psi, int bp, int bhp) {
             RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
-
-            ObdData data = new ObdData(speed, temperature, rpm);
+            ObdData data = new ObdData(speed, temperature, rpm, tp, psi, false);
             item.data = data;
             mOBDData.add(item);
         }

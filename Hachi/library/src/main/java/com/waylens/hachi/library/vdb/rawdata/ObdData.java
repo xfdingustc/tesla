@@ -115,7 +115,7 @@ public class ObdData implements Serializable {
         int pid_62 = -1;
         int pid_63 = -1;
 
-        boolean isIMP = true;
+        boolean isIMP = false;
 
         int index = 1;
         while (index < data.length) {
@@ -165,7 +165,7 @@ public class ObdData implements Serializable {
             psi = (pid_0b - pid_33) / 6.895;
         } else {
             psi = (pid_0b) / 6.895;
-            isIMP = false;
+            isIMP = true;
         }
 
         Log.d("test", String.format("speed[%d], t[%d], rpm[%d], psi[%f]", speed, temperature, rpm, psi));

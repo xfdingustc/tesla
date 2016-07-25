@@ -243,7 +243,7 @@ public class GaugeView extends FrameLayout {
                         state.put("obdSpeed", obdData.speed);
                         state.put("throttle", obdData.throttle);
                         //state.put("mph", obdData.speed); deprecated in new version of svg
-                        if (obdData.isIMP) {
+                        if (!obdData.isIMP) {
                             state.put("psi", obdData.psi);
                         } else {
                             state.put("psi", obdData.psi - iioPressure / 3386000);
