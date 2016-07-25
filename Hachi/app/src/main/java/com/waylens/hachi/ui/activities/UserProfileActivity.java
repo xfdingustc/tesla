@@ -67,8 +67,6 @@ public class UserProfileActivity extends BaseActivity {
     private HachiApi mHachiApi = HachiService.createHachiApiService();
 
 
-//    private ArrayList<Moment> mMomentList;
-
     private FollowInfo mFollowInfo;
 
     private int mCurrentCursor;
@@ -111,12 +109,7 @@ public class UserProfileActivity extends BaseActivity {
         mMomentRvAdapter = new MomentsListAdapter(this);
 
         mRvUserMomentList.setAdapter(mMomentRvAdapter);
-        mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
-            @Override
-            public void loadMore() {
-                loadUserMoment(mCurrentCursor, false);
-            }
-        });
+
 
         fetchUserProfile();
 
@@ -213,9 +206,6 @@ public class UserProfileActivity extends BaseActivity {
                             .show();
 
                         break;
-//                    case R.id.block:
-//                        doBlockUser();
-//                        break;
                 }
                 return true;
             }
@@ -263,7 +253,7 @@ public class UserProfileActivity extends BaseActivity {
 
 
     private void loadUserMoment(int cursor, final boolean isRefresh) {
-
+        Logger.t(TAG).d("load user moment, cursor: " + cursor);
         Call<MomentListResponse> momentListResponseCall = mHachiApi.getUserMoments(mUserID, cursor);
         momentListResponseCall.enqueue(new Callback<MomentListResponse>() {
             @Override
@@ -289,6 +279,12 @@ public class UserProfileActivity extends BaseActivity {
                     mMomentRvAdapter.setHasMore(false);
                 } else {
                     mMomentRvAdapter.setHasMore(true);
+                    mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+                        @Override
+                        public void loadMore() {
+                            loadUserMoment(mCurrentCursor, false);
+                        }
+                    });
                 }
             }
 

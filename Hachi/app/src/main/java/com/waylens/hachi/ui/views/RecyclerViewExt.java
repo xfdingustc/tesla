@@ -4,12 +4,14 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
+
+import com.orhanobut.logger.Logger;
 
 /**
  * Created by Richard on 9/2/15.
  */
 public class RecyclerViewExt extends RecyclerView {
+    private static final String TAG = RecyclerViewExt.class.getSimpleName();
 
     private OnScrollListener mOnScrollListener = new InternalOnScrollListener();
 
@@ -72,10 +74,8 @@ public class RecyclerViewExt extends RecyclerView {
             int visibleItemCount = layoutManager.getChildCount();
             int totalItemCount = layoutManager.getItemCount();
             boolean isEnd = totalItemCount - visibleItemCount <= firstVisibleItemPosition;
-            if (isEnd
-                    && mOnLoadMoreListener != null
-                    && !isLoadingMore) {
-                Log.e("test", "Loading more");
+            if (isEnd && mOnLoadMoreListener != null && !isLoadingMore) {
+                Logger.t(TAG).d("Loading more");
                 isLoadingMore = true;
                 mOnLoadMoreListener.loadMore();
             }
