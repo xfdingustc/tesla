@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -139,6 +140,7 @@ public class AccountActivity extends BaseActivity {
                 @Override
                 public void onError(Throwable e) {
                     e.printStackTrace();
+                    showErrorSnakeBar();
                 }
 
                 @Override
@@ -146,6 +148,18 @@ public class AccountActivity extends BaseActivity {
 
                 }
             });
+
+    }
+
+    private void showErrorSnakeBar() {
+        Snackbar snackbar = Snackbar.make(mAvatar, R.string.fetch_account_profile_failed, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.retry, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fetchUserProfile();
+            }
+        });
+        snackbar.show();
 
     }
 

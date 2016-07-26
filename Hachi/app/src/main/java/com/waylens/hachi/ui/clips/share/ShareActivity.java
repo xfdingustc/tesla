@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -26,27 +25,23 @@ import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
+import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.LinkedAccounts;
-import com.waylens.hachi.R;
-import com.waylens.hachi.app.GaugeSettingManager;
-import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
+import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.upload.UploadActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
-
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Map;
 
@@ -65,6 +60,8 @@ public class ShareActivity extends ClipPlayActivity {
     private static final String EXTRA_PLAYLIST_ID = "playlist_id";
     private static final String EXTRA_AUDIO_ID = "audio_id";
 
+    private static final int REQUEST_CODE_FACEBOOK = 0x100;
+
     private int mPlayListId;
     private int mAudioId;
 
@@ -79,6 +76,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     private HachiApi mHachi = HachiService.createHachiApiService();
 
+    private SessionManager mSessionManager = SessionManager.getInstance();
 
 
     private String mSocialPrivacy;
@@ -114,43 +112,18 @@ public class ShareActivity extends ClipPlayActivity {
 
     @OnClick(R.id.btn_facebook)
     public void onBtnFackBookChecked() {
-        mIsFacebookShareChecked = !mIsFacebookShareChecked;
-        if (mIsFacebookShareChecked) {
-            mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_s);
+        if (mSessionManager.getFacebookName() == null) {
+            FacebookAuthorizeActivity.launch(this, REQUEST_CODE_FACEBOOK);
         } else {
-            mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_n);
+            mIsFacebookShareChecked = !mIsFacebookShareChecked;
+            if (mIsFacebookShareChecked) {
+                mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_s);
+            } else {
+                mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_n);
+            }
         }
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventUpload(UploadEvent event) {
-        switch (event.getWhat()) {
-//            case UploadEvent.UPLOAD_WHAT_START:
-//
-//                break;
-//            case UploadEvent.UPLOAD_WHAT_PROGRESS:
-//                if (mUploadDialog != null) {
-//                    int progress = event.getExtra();
-//                    mUploadDialog.setProgress(progress);
-//                }
-//                break;
-//            case UploadEvent.UPLOAD_WHAT_FINISHED:
-//                if (mUploadDialog != null) {
-//                    mUploadDialog.dismiss();
-//                }
-//                MaterialDialog dialog = new MaterialDialog.Builder(this)
-//                    .content("Uploading finished")
-//                    .show();
-//                mBtnFaceBook.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        finish();
-//                    }
-//                }, 2000);
-//                break;
-        }
-    }
 
     public static void launch(Activity activity, int playListId, int audioId) {
         Intent intent = new Intent(activity, ShareActivity.class);
@@ -179,9 +152,6 @@ public class ShareActivity extends ClipPlayActivity {
         mAudioId = getIntent().getIntExtra(EXTRA_AUDIO_ID, -1);
         initViews();
     }
-
-
-
 
 
     private void initViews() {
@@ -217,42 +187,32 @@ public class ShareActivity extends ClipPlayActivity {
 //            mBtnFaceBook.setVisibility(View.GONE);
 //        }
 
-        checkLinkedAccount();
+//        checkLinkedAccount();
 
     }
 
-    private void checkLinkedAccount() {
-        Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
-        callLinkedAccount.enqueue(new Callback<LinkedAccounts>() {
-            @Override
-            public void onResponse(Call<LinkedAccounts> call, retrofit2.Response<LinkedAccounts> response) {
+//    private void checkLinkedAccount() {
+//        Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
+//        callLinkedAccount.enqueue(new Callback<LinkedAccounts>() {
+//            @Override
+//            public void onResponse(Call<LinkedAccounts> call, retrofit2.Response<LinkedAccounts> response) {
+//
+//                mLinkedAccounts = response.body();
+//                Logger.t(TAG).d("Get response: " + mLinkedAccounts.linkedAccounts.size());
+//                for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
+//                    Logger.t(TAG).d("account: " + account.toString());
+//                }
+//                updateSocailButtons();
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<LinkedAccounts> call, Throwable t) {
+//                Logger.t(TAG).d(t.toString());
+//            }
+//        });
+//    }
 
-                mLinkedAccounts = response.body();
-                Logger.t(TAG).d("Get response: " + mLinkedAccounts.linkedAccounts.size());
-                for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
-                    Logger.t(TAG).d("account: " + account.toString());
-                }
-                updateSocailButtons();
-
-            }
-
-            @Override
-            public void onFailure(Call<LinkedAccounts> call, Throwable t) {
-                Logger.t(TAG).d(t.toString());
-            }
-        });
-    }
-
-    private void updateSocailButtons() {
-        if (isLinkedWithOtherSocial()) {
-            mOtherSocial.setVisibility(View.VISIBLE);
-            if (isFacebookLinked()) {
-                mBtnFaceBook.setVisibility(View.VISIBLE);
-            }
-        } else {
-            mOtherSocial.setVisibility(View.GONE);
-        }
-    }
 
     private void setupSocialPolicy() {
         TypedArray typedArray = getResources().obtainTypedArray(R.array.social_privacy_icon);
@@ -312,31 +272,26 @@ public class ShareActivity extends ClipPlayActivity {
     }
 
     private void shareMoment() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
-        Call<CloudStorageInfo> createMomentResponseCall = hachiApi.getCloudStorageInfo();
+        Call<CloudStorageInfo> createMomentResponseCall = mHachi.getCloudStorageInfo();
         createMomentResponseCall.enqueue(new Callback<CloudStorageInfo>() {
             @Override
             public void onResponse(Call<CloudStorageInfo> call, retrofit2.Response<CloudStorageInfo> response) {
                 if (response.body() != null) {
                     CloudStorageInfo cloudStorageInfo = response.body();
                     int currentClipLength = ClipSetManager.getManager().getClipSet(mPlayListId).getTotalLengthMs();
-                    Logger.t(TAG).d("used: "+ cloudStorageInfo.current.durationUsed + "total: " + cloudStorageInfo.current.plan.durationQuota);
-                    if (cloudStorageInfo.current.durationUsed +  currentClipLength > cloudStorageInfo.current.plan.durationQuota) {
+                    Logger.t(TAG).d("used: " + cloudStorageInfo.current.durationUsed + "total: " + cloudStorageInfo.current.plan.durationQuota);
+                    if (cloudStorageInfo.current.durationUsed + currentClipLength > cloudStorageInfo.current.plan.durationQuota) {
                         MaterialDialog dialog = new MaterialDialog.Builder(getParent())
-                                .content(R.string.no_clould_space)
-                                .positiveText(R.string.ok)
-                                .negativeText(R.string.cancel)
-                                .show();
+                            .content(R.string.no_clould_space)
+                            .positiveText(R.string.ok)
+                            .negativeText(R.string.cancel)
+                            .show();
                     } else {
-                        if (mIsFacebookShareChecked) {
-                            checkFackbookPermission();
-                        } else {
-                            doShareMoment();
-                        }
+                        doShareMoment();
                     }
 
                 }
-                Logger.t(TAG).d("error code: "+ response.code() + response.body().current.durationUsed);
+                Logger.t(TAG).d("error code: " + response.code() + response.body().current.durationUsed);
             }
 
             @Override
@@ -347,47 +302,6 @@ public class ShareActivity extends ClipPlayActivity {
 
 
     }
-
-    private void checkFackbookPermission() {
-        Logger.t(TAG).d("send check permission");
-
-
-        Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
-        callLinkedAccount.enqueue(new Callback<LinkedAccounts>() {
-            @Override
-            public void onResponse(Call<LinkedAccounts> call, retrofit2.Response<LinkedAccounts> response) {
-                Logger.t(TAG).d("Get response");
-                mLinkedAccounts = response.body();
-                if (checkIfNeedGetFacebookPermission()) {
-//                    requestPublishPermission();
-                } else {
-                    doShareMoment();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<LinkedAccounts> call, Throwable t) {
-                Logger.t(TAG).d(t.toString());
-            }
-        });
-
-    }
-
-    private boolean checkIfNeedGetFacebookPermission() {
-
-        for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
-            if (account.provider.equals("facebook") && TextUtils.isEmpty(account.accountName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-
-
 
 
     private void setupParallex() {
@@ -450,22 +364,5 @@ public class ShareActivity extends ClipPlayActivity {
 //
     }
 
-    public boolean isLinkedWithOtherSocial() {
-        return mLinkedAccounts == null ? false : (mLinkedAccounts.linkedAccounts.size() > 0);
-    }
 
-    public boolean isFacebookLinked() {
-        if (mLinkedAccounts == null) {
-            return false;
-        }
-
-        for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
-            if (account.provider.equals("facebook") && !TextUtils.isEmpty(account.accountName)) {
-                Logger.t(TAG).d("Linked with facebook!!");
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

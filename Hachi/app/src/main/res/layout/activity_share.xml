@@ -12,8 +12,7 @@
     <ScrollView
         android:id="@+id/root_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
 
         <LinearLayout
@@ -138,7 +137,7 @@
                 android:text="@string/also_post_on"
                 android:textColor="@color/style_color_primary2"
                 android:textSize="15sp"
-                android:visibility="gone"/>
+                />
 
             <ImageView
                 android:id="@+id/btn_facebook"
@@ -150,7 +149,7 @@
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="@null"
                 android:src="@drawable/btn_platform_facebook"
-                android:visibility="gone"/>
+                />
 
 
         </LinearLayout>
