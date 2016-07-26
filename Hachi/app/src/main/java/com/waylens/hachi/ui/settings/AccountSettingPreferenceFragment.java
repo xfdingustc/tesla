@@ -480,9 +480,9 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             return;
         }
         mProgressDialog = new MaterialDialog.Builder(getActivity())
-            .title(R.string.loading)
+            .title(R.string.unbinding)
             .progress(true, 0)
-            .progressIndeterminateStyle(false)
+            .progressIndeterminateStyle(true)
             .build();
 
         mProgressDialog.show();

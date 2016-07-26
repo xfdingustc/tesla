@@ -3,10 +3,12 @@ package com.waylens.hachi.ui.authorization;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.hardware.camera2.params.Face;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,6 +36,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 
+import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import rx.Observable;
@@ -63,6 +66,9 @@ public class FacebookAuthorizeActivity extends BaseActivity {
         fragment.startActivityForResult(intent, requestCode);
     }
 
+    @BindView(R.id.connectIndicator)
+    ImageView mIvConnectIdicator;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +89,9 @@ public class FacebookAuthorizeActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_facebook_auth);
+        mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+        AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+        animationDrawable.start();
         requestFacebookPublishPermission();
     }
 
@@ -142,7 +151,7 @@ public class FacebookAuthorizeActivity extends BaseActivity {
                 @Override
                 public void onStart() {
                     super.onStart();
-                    showDialog(getString(R.string.sign_in));
+                    showDialog(getString(R.string.binding));
                 }
 
                 @Override
