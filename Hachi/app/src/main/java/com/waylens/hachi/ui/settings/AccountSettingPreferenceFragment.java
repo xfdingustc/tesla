@@ -38,6 +38,7 @@ import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
+import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 
 import org.json.JSONObject;
 
@@ -335,6 +336,20 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 
     }
 
+    private void setupYoutube() {
+        mYoutube = findPreference("youtube");
+        updateSocialMedia();
+        mYoutube.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                GoogleAuthorizeActivity.launch(getActivity());
+                return true;
+            }
+
+        });
+    }
+
+
 
 
     private void unbindSocialMedia(final String facebook) {
@@ -392,9 +407,6 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         }
     }
 
-    private void setupYoutube() {
-        mYoutube = findPreference("youtube");
-    }
 
 
 

@@ -201,7 +201,11 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authorization.FacebookAuthorizeActivity"/>
+        <activity android:name=".ui.authorization.FacebookAuthorizeActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.authorization.GoogleAuthorizeActivity"
+                  android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.authorization.VerifyEmailActivity"

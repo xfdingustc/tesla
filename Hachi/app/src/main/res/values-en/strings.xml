@@ -341,4 +341,6 @@
 	<string name="unbinding">Unbinding</string>
 	<string name="verify">Verify</string>
 	<string name="fetch_account_profile_failed">Failed to retrieve account profile</string>
+	<string name="pick_account">You must pick an account</string>
+	<string name="auth_code">You must authorize Waylens app</string>
 </resources>
