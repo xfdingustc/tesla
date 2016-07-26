@@ -204,6 +204,7 @@ public class GaugeView extends FrameLayout {
         JSONObject state = new JSONObject();
         String data = null;
         RawDataItem item = null;
+        long pts = 0;
         try {
             for (int i = 0; i < itemList.size(); i++) {
                 item = itemList.get(i);
@@ -220,6 +221,7 @@ public class GaugeView extends FrameLayout {
                         state.put("gforceBA", iioData.accX);
                         state.put("gforceLR", iioData.accZ);
                         iioPressure = iioData.pressure;
+                        pts = item.getPtsMs();
                         break;
                     case RawDataItem.DATA_TYPE_GPS:
 /*                    if (!mIsGpsGaugeShow) {
@@ -266,7 +268,9 @@ public class GaugeView extends FrameLayout {
                 }
             }
             SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
-            long pts = item.getPtsMs() == 0 ? System.currentTimeMillis() : item.getPtsMs();
+            if (pts == 0) {
+                pts = System.currentTimeMillis();
+            }
             String date = format.format(pts);
             data = "numericMonthDate('" + date + "')";
 //            Logger.t(TAG).d("pts: " + item.getPtsMs() + " date: " + data);
