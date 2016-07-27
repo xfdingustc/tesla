@@ -69,7 +69,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private Preference mUserName;
     private Preference mBirthday;
     private Preference mGender;
-    //    private Preference mRegion;
+    private Preference mRegion;
     private Preference mFacebook;
     private Preference mYoutube;
     private Preference mLogout;
@@ -126,7 +126,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mUserName = findPreference("user_name");
         mBirthday = findPreference("birthday");
         mGender = findPreference("gender");
-//        mRegion = findPreference("region");
+        mRegion = findPreference("region");
 
 
         mLogout = findPreference("logout");
@@ -135,7 +135,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mEmail.setSummary(mSessionManager.getEmail());
         mUserName.setSummary(mSessionManager.getUserName());
         mBirthday.setSummary(mSessionManager.getBirthday());
-//        mRegion.setSummary(mSessionManager.getRegion());
+        mRegion.setSummary(mSessionManager.getRegion());
 
 
         final int gender = mSessionManager.getGenderInt();
@@ -285,13 +285,13 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             }
         });
 
-//        mRegion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-//                CountryActivity.launch(getActivity());
-//                return true;
-//            }
-//        });
+        mRegion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                CountryActivity.launch(getActivity());
+                return true;
+            }
+        });
 
         mLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

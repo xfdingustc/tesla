@@ -37,7 +37,7 @@ public class RawDataMsgHandler extends VdbMessageHandler<List<RawDataItem>> {
 
     private List<RawDataItem> rawDataItemList;
     int[] unchangedCount = new int[] {-1, -1, -1};
-    int periodReched = 0;
+    int periodReached = 0;
 
 
 
@@ -60,7 +60,7 @@ public class RawDataMsgHandler extends VdbMessageHandler<List<RawDataItem>> {
                 unchangedCount[OBD_DATA] = 0;
                 rawDataItem.data = ObdData.fromBinary(data);
                 if (rawDataItemList.get(OBD_DATA) != null) {
-                    periodReched = 1;
+                    periodReached = 1;
                 }
                 rawDataItemList.set(OBD_DATA, rawDataItem);
                 break;
@@ -68,7 +68,7 @@ public class RawDataMsgHandler extends VdbMessageHandler<List<RawDataItem>> {
                 unchangedCount[IIO_DATA] = 0;
                 rawDataItem.data = IioData.fromBinary(data);
                 if (rawDataItemList.get(IIO_DATA) != null) {
-                    periodReched = 1;
+                    periodReached = 1;
                 }
                 rawDataItemList.set(IIO_DATA, rawDataItem);
                 break;
@@ -76,7 +76,7 @@ public class RawDataMsgHandler extends VdbMessageHandler<List<RawDataItem>> {
                 unchangedCount[GPS_DATA] = 0;
                 rawDataItem.data = GpsData.fromBinary(data);
                 if (rawDataItemList.get(GPS_DATA) != null) {
-                    periodReched = 1;
+                    periodReached = 1;
                 }
                 rawDataItemList.set(GPS_DATA, rawDataItem);
                 break;
@@ -92,12 +92,12 @@ public class RawDataMsgHandler extends VdbMessageHandler<List<RawDataItem>> {
 
 
 
-        if (periodReched != 0) {
+        if (periodReached != 0) {
             for (int i = 0; i < rawDataItemList.size(); i++) {
                 if (rawDataItemList.get(i) != null)
                     rawDataItemListTmp.add(rawDataItemList.get(i));
             }
-            periodReched = 0;
+            periodReached = 0;
             //Logger.t(TAG).d("should show off");
         } else {
             Logger.t(TAG).d(unchangedCount[0] + "   "+ unchangedCount[1] + "    " + unchangedCount[2]);

@@ -189,12 +189,6 @@ public class SessionManager {
         return PreferenceUtils.getBoolean(PreferenceUtils.IS_LINKED, false);
     }
 
-
-    public String getRegion() {
-        return PreferenceUtils.getString(PreferenceUtils.REGION, null);
-    }
-
-
     public void setIsVerified(boolean isVerified) {
         PreferenceUtils.putBoolean(PreferenceUtils.IS_VERIFIED, isVerified);
     }
@@ -234,6 +228,14 @@ public class SessionManager {
 
     public boolean isYoutubeLinked() {
         return PreferenceUtils.getBoolean(PreferenceUtils.SOCIAL_YOUTUBE_LINKED, false);
+    }
+
+    public void setRegion(String region) {
+        PreferenceUtils.putString(PreferenceUtils.REGION, region);
+    }
+
+    public String getRegion() {
+        return PreferenceUtils.getString(PreferenceUtils.REGION, null);
     }
 
 
@@ -391,6 +393,7 @@ public class SessionManager {
         setGender(userInfo.gender);
         setBirthday(userInfo.birthday);
         setIsVerified(userInfo.isVerified);
+        setRegion(userInfo.region);
         setAvatarThumbnail(userInfo.avatarThumbnailUrl);
     }
 

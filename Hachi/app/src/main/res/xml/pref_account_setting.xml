@@ -39,10 +39,10 @@
             android:layout="@layout/preference_item"
             android:title="@string/gender"/>
 
-        <!--<Preference-->
-        <!--android:key="region"-->
-        <!--android:layout="@layout/preference_item"-->
-        <!--android:title="@string/region"/>-->
+        <Preference
+        android:key="region"
+        android:layout="@layout/preference_item"
+        android:title="@string/region"/>
 
     </PreferenceCategory>
 

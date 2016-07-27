@@ -73,7 +73,6 @@ public class RawDataBlock {
                 return item;
             }
         }
-
         return null;
     }
 }

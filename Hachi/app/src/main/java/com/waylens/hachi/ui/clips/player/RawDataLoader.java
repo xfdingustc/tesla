@@ -23,16 +23,27 @@ import java.util.List;
  */
 public class RawDataLoader {
     private static final String TAG = RawDataLoader.class.getSimpleName();
+    public static int OBD_DATA = 0;
+    public static int IIO_DATA = 1;
+    public static int GPS_DATA = 2;
 
     private final int mClipSetIndex;
     private final VdbRequestQueue mVdbRequestQueue;
 
     private List<RawDataBlockAll> mRawDataBlockList = new ArrayList<>();
 
+    private List<RawDataItem> mRawDataItemList = new ArrayList<>(3);
+    int[] unchangedCount = new int[] {-1, -1, -1};
+    int periodReached;
+
 
     public RawDataLoader(int clipSetIndex, VdbRequestQueue requestQueue) {
         this.mClipSetIndex = clipSetIndex;
         this.mVdbRequestQueue = requestQueue;
+        for (int i = 0; i < 3; i++) {
+            mRawDataItemList.add(null);
+        }
+        periodReached = 0;
     }
 
 
@@ -92,20 +103,32 @@ public class RawDataLoader {
 
         List<RawDataItem> itemList = new ArrayList<>();
 
+        for (int i = 0; i < unchangedCount.length; i++) {
+            if (unchangedCount[i] >= 0)
+                unchangedCount[i]++;
+        }
+
         if (rawDataBlockAll.gpsDataBlock != null) {
             RawDataItem gpsItem = rawDataBlockAll.gpsDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
-
+            Logger.t(TAG).d("gpsDataBlock != null");
             if (gpsItem != null) {
                 gpsItem.setPtsMs(clip.getClipDate()  + gpsItem.getPtsMs());
-                itemList.add(gpsItem);
+                unchangedCount[GPS_DATA] = 0;
+                mRawDataItemList.set(GPS_DATA, gpsItem);
+                periodReached = 1;
+                Logger.t(TAG).d("gpsItem" + gpsItem.toString());
             }
         }
 
         if (rawDataBlockAll.iioDataBlock != null) {
             RawDataItem iioItem = rawDataBlockAll.iioDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
+            Logger.t(TAG).d("iioDataBlock != null");
             if (iioItem != null) {
                 iioItem.setPtsMs(clip.getClipDate()  + iioItem.getPtsMs());
-                itemList.add(iioItem);
+                unchangedCount[IIO_DATA] = 0;
+                mRawDataItemList.set(IIO_DATA, iioItem);
+                periodReached = 1;
+                Logger.t(TAG).d("iioItem" + iioItem.toString());
             }
         }
 
@@ -114,8 +137,25 @@ public class RawDataLoader {
 
             if (obdItem != null) {
                 obdItem.setPtsMs(clip.getClipDate()  + obdItem.getPtsMs());
-                itemList.add(obdItem);
+                unchangedCount[OBD_DATA] = 0;
+                periodReached = 1;
+                mRawDataItemList.set(OBD_DATA, obdItem);
             }
+        }
+
+        for (int i = 0; i < unchangedCount.length; i++) {
+            if (unchangedCount[i] > 300) {
+                mRawDataItemList.set(i, null);
+                unchangedCount[i] = -1;
+            }
+        }
+
+        if (periodReached != 0) {
+            for (int i = 0; i < mRawDataItemList.size(); i++) {
+                if (mRawDataItemList.get(i) != null)
+                    itemList.add(mRawDataItemList.get(i));
+            }
+            periodReached = 0;
         }
 
         return itemList;

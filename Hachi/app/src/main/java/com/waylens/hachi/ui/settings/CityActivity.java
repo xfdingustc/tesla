@@ -6,16 +6,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.adapters.SimpleStringAdapter;
+import com.waylens.hachi.ui.adapters.SimpleCityAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +36,8 @@ public class CityActivity extends BaseActivity {
     private static final String TAG = CityActivity.class.getSimpleName();
     List<String> cityNameList = new ArrayList<>();
     List<City> cityList = new ArrayList<>();
+    public static int cityLimit = 3000;
+    private SimpleCityAdapter mAdapter;
     private String mCode;
     private String mName;
 
@@ -47,10 +51,29 @@ public class CityActivity extends BaseActivity {
     @BindView(R.id.rv_city_list)
     RecyclerView mRvCityList;
 
+    @BindView(R.id.search_city)
+    EditText mSearchCity;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+        mSearchCity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mAdapter.getFilter().filter(mSearchCity.getText());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     @Override
@@ -89,7 +112,7 @@ public class CityActivity extends BaseActivity {
 
     private void getCityList() {
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_CITY + "?cc=" + mCode)
+            .url(Constants.API_CITY + "?cc=" + mCode + "&limit=" + cityLimit)
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -116,14 +139,16 @@ public class CityActivity extends BaseActivity {
             e.printStackTrace();
         }
 
-        SimpleStringAdapter adapter = new SimpleStringAdapter(cityNameList, new SimpleStringAdapter.OnListItemClickListener() {
+        mAdapter = new SimpleCityAdapter(cityList, new SimpleCityAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
-                changeUserCity(cityList.get(position));
+                City city = mAdapter.getCity(position);
+                if (city != null)
+                    changeUserCity(city);
             }
         });
 
-        mRvCityList.setAdapter(adapter);
+        mRvCityList.setAdapter(mAdapter);
     }
 
     private void changeUserCity(City city) {
@@ -142,8 +167,8 @@ public class CityActivity extends BaseActivity {
         mRequestQueue.add(request);
     }
 
-    private static class City {
-        long id;
-        String name;
+    public static class City {
+        public long id;
+        public String name;
     }
 }
