@@ -4,6 +4,7 @@ import com.birbit.android.jobqueue.JobManager;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.bgjob.social.RepostJob;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 
 /**
@@ -33,6 +34,13 @@ public class BgJobHelper {
     public static void followUser(String userId, boolean follow) {
         JobManager jobManager = BgJobManager.getManager();
         FollowJob job = new FollowJob(userId, follow);
+        jobManager.addJobInBackground(job);
+    }
+
+
+    public static void repost(long momentId, String provider) {
+        JobManager jobManager = BgJobManager.getManager();
+        RepostJob job = new RepostJob(momentId, provider);
         jobManager.addJobInBackground(job);
     }
 

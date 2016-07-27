@@ -48,14 +48,17 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.bgjob.social.event.SocialEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.ReportCommentBody;
+import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
@@ -73,6 +76,9 @@ import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.ServerMessage;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -249,16 +255,48 @@ public class MomentActivity extends BaseActivity {
 
     }
 
-    private void addComment() {
-        if (!mSessionManager.isLoggedIn()) {
-            AuthorizeActivity.launch(this);
-            return;
-        }
-        if (!checkUserVerified()) {
-            return;
-        }
-        showBottomSheetDialog();
+    @OnClick(R.id.btn_repost)
+    public void onBtnRepostClicked() {
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+            .title(R.string.repost)
+            .items(R.array.social_provider)
+            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                @Override
+                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                    return false;
+                }
+            })
+            .negativeText(R.string.cancel)
+            .positiveText(R.string.ok)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    int selectIndex = dialog.getSelectedIndex();
+                    String provider;
+                    if (selectIndex == 0) {
+                        provider = SocialProvider.FACEBOOK;
+                    } else {
+                        provider = SocialProvider.YOUTUBE;
+                    }
+                    BgJobHelper.repost(mMomentId, provider);
+                }
+            }).show();
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventSocial(SocialEvent event) {
+        switch (event.getWhat()) {
+            case SocialEvent.EVENT_WHAT_REPOST:
+                String provider = (String)event.getExtra();
+                if (event.getResult()) {
+                    Snackbar.make(mBtnRepost, getString(R.string.repost_success) + " " + provider, Snackbar.LENGTH_LONG).show();
+                } else {
+                    Snackbar.make(mBtnRepost, R.string.repost_failed, Snackbar.LENGTH_SHORT).show();
+                }
+        }
+    }
+
+
 
 
     @Override
@@ -268,11 +306,6 @@ public class MomentActivity extends BaseActivity {
     }
 
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
 
     @Override
     protected void onStart() {
@@ -280,6 +313,14 @@ public class MomentActivity extends BaseActivity {
         if (mMomentInfo != null && mMomentInfo.owner != null && mFollowInfo == null) {
             updateFollowInfo(mMomentInfo.owner.userID);
         }
+        EventBus.getDefault().register(this);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -314,6 +355,17 @@ public class MomentActivity extends BaseActivity {
 
         queryMomentInfo();
 //
+    }
+
+    private void addComment() {
+        if (!mSessionManager.isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            return;
+        }
+        if (!checkUserVerified()) {
+            return;
+        }
+        showBottomSheetDialog();
     }
 
 
@@ -448,7 +500,7 @@ public class MomentActivity extends BaseActivity {
         SessionManager sessionManager = SessionManager.getInstance();
         if (sessionManager.isLoggedIn() && sessionManager.getUserId().equals(mMomentInfo.owner.userID)) {
             mAddFollow.setVisibility(View.GONE);
-
+            mBtnRepost.setVisibility(View.VISIBLE);
         }
 
 

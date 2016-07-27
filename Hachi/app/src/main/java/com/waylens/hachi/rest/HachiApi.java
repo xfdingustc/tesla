@@ -7,6 +7,7 @@ import com.waylens.hachi.rest.body.LikePostBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
+import com.waylens.hachi.rest.body.RepostBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
@@ -20,6 +21,7 @@ import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.rest.response.RawDataResponse;
+import com.waylens.hachi.rest.response.RepostResponse;
 import com.waylens.hachi.rest.response.SignUpResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UserInfo;
@@ -122,5 +124,8 @@ public interface HachiApi {
 
     @GET("/api/users/resend_verify_mail")
     Call<SimpleBoolResponse> resendVerifyEmail();
+
+    @POST("/api/share/moments")
+    Call<RepostResponse> repost(@Body RepostBody repostBody);
 
 }

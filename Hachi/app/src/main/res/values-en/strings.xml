@@ -346,4 +346,7 @@
 	<string name="click_2_bind_youtube">Click to bind google account</string>
 	<string name="send_facebook_token">Sending Facebook token to Waylens server</string>
 	<string name="send_google_code">Sending Google authorize code to Waylens server</string>
+	<string name="repost">Repost</string>
+	<string name="repost_success">Moment has been successfully repost to </string>
+	<string name="repost_failed">Repost failed</string>
 </resources>

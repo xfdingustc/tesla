@@ -40,7 +40,7 @@
         android:id="@+id/gaugeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"></com.waylens.hachi.ui.views.GaugeView>
+        ></com.waylens.hachi.ui.views.GaugeView>
 
 
     <ProgressBar
@@ -110,8 +110,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-
-            android:src="@drawable/btn_gauge_overlay"/>
+            android:src="@drawable/btn_gauge_overlay_s"/>
 
         <ImageButton
             android:id="@+id/btn_fullscreen"
