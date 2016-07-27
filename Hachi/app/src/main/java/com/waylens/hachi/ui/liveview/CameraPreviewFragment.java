@@ -49,6 +49,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
+import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.GaugeView;
 
 import com.xfdingustc.mjpegview.library.MjpegView;
@@ -235,7 +236,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @Optional
     @OnClick(R.id.add_new_camera)
     public void onAddNewCameraClicked() {
-        ScanQrCodeActivity.launch(getActivity());
+        StartupActivity.launch(getActivity());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

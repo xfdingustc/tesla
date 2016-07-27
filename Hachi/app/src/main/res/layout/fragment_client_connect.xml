@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical">
 
     <ImageView
@@ -12,21 +13,26 @@
         android:src="@drawable/setup_setp3"/>
 
     <TextView
+        android:id="@+id/text_line1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
-        android:text="@string/choose_your_home_wifi"
+        android:text="@string/camera_searching"
         android:textColor="?attr/appTextColorPrimary"/>
 
     <TextView
+        android:id="@+id/text_line2"
+        style="@style/HachiTextViewBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="32dp"
         android:layout_marginTop="32dp"
         android:text="@string/connected_before"
-        android:textColor="?attr/appTextColorSecondary"/>
+        android:textColor="?attr/appTextColorSecondary"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
 
 
     <ViewAnimator
@@ -40,20 +46,16 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/waylens_logo2"
-                android:layout_marginTop="32dp"
-                android:layout_gravity="center_horizontal"
-                />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Camera Search Available Wi-Fi Networks"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"/>
+
+
+
+            <com.waylens.hachi.ui.views.radarview.RadarView
+                android:id="@+id/wifi_scan_radar"
+                android:layout_width="256dp"
+                android:layout_height="256dp"
+                android:layout_marginTop="32dp"
+                android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
 

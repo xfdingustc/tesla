@@ -26,6 +26,7 @@ import com.waylens.hachi.hardware.vdtcamera.events.NetworkEvent;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.views.radarview.RadarView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -53,8 +54,11 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     RecyclerView mRvWifiList;
 
 
-//    @BindView(R.id.loadingProgress)
-//    ProgressBar mLoadingProgress;
+    @BindView(R.id.text_line1)
+    TextView mTextLine1;
+
+    @BindView(R.id.text_line2)
+    TextView mTextLine2;
 
     @BindView(R.id.vsConnect)
     ViewAnimator mVsConnect;
@@ -68,8 +72,13 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     @BindView(R.id.connection_right)
     ImageView mIvConnectionRight;
 
+    @BindView(R.id.wifi_scan_radar)
+    RadarView mWifiScanRadar;
+
 
     private NetworkItemAdapter mNetworkItemAdapter;
+
+    private boolean mNetworkItemShouldUpdated = true;
 
 
     private VdtCamera.OnScanHostListener mOnScanHostListener;
@@ -162,7 +171,7 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     }
 
     private void initViews() {
-
+        mWifiScanRadar.startScan();
         mRvWifiList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mNetworkItemAdapter = new NetworkItemAdapter();
         mRvWifiList.setAdapter(mNetworkItemAdapter);
@@ -170,13 +179,17 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
         mOnScanHostListener = new VdtCamera.OnScanHostListener() {
             @Override
             public void OnScanHostResult(final List<NetworkItemBean> networkList) {
-
-
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mVsConnect.setDisplayedChild(1);
+                        if (!mNetworkItemShouldUpdated) {
+                            return;
+                        }
+
                         mNetworkItemAdapter.setNetworkList(networkList);
+                        mTextLine1.setText(R.string.choose_your_home_wifi);
+                        mTextLine2.setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -242,6 +255,7 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
                     stopScanWifi();
                     itemBean.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION;
                     mNetworkItemAdapter.notifyDataSetChanged();
+                    mNetworkItemShouldUpdated = false;
                 }
             })
             .build();
