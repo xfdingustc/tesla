@@ -167,7 +167,7 @@ public class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             Logger.t(TAG).d("connected");
         } catch (Exception e) {
             Logger.t(TAG).d("connection error");
-            connectError(true);
+            connectError(false);
         }
 
 

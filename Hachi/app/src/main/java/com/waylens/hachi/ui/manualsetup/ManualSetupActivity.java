@@ -56,8 +56,6 @@ public class ManualSetupActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_manual_setup);
-//        setupToolbar();
-//        checkIfCameraIsGranted();
 
         PackageManager pm = getPackageManager();
         boolean permission = pm.checkPermission("android.permission.CAMERA", "com.waylens.hachi") == PackageManager.PERMISSION_GRANTED;

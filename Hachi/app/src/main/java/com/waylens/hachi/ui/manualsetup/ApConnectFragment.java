@@ -10,6 +10,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -43,7 +44,7 @@ import butterknife.OnClick;
 /**
  * Created by Xiaofei on 2016/3/21.
  */
-public class ApConnectFragment extends BaseFragment {
+public class ApConnectFragment extends BaseFragment implements WifiAutoConnectManager.WifiAutoConnectListener {
     private static final String TAG = ApConnectFragment.class.getSimpleName();
 
     private static final int CAMERA_CONNECTING = 0;
@@ -52,9 +53,13 @@ public class ApConnectFragment extends BaseFragment {
     private String mSSID;
     private String mPassword;
     private WifiManager mWifiManager;
-    private BroadcastReceiver mWifiStateReceiver;
+
+    private Handler mHandler;
+
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private EventBus mEventBus = EventBus.getDefault();
+
+    private BroadcastReceiver mWifiStateReceiver;
 
 
     @BindView(R.id.tvSsid)
@@ -77,6 +82,9 @@ public class ApConnectFragment extends BaseFragment {
 
     @BindView(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
+
+    @BindView(R.id.tv_network_status)
+    TextView mTvNetworkStatus;
 
     @OnClick(R.id.skip)
     public void onSkipClicked() {
@@ -132,18 +140,15 @@ public class ApConnectFragment extends BaseFragment {
         WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
         Logger.t(TAG).d("wifiInfo ssid: " + wifiInfo.getSSID() + " qrssid: " + mSSID);
         if (TextUtils.isEmpty(mSSID) || TextUtils.isEmpty(mPassword)) {
+            Logger.t(TAG).d("From manualy selected");
             toggleCameraConnectView();
             return;
         }
         if (wifiInfo.getSSID().equals("\"" + mSSID + "\"")) {
+            Logger.t(TAG).d("already connected");
             toggleCameraConnectView();
         } else {
-            WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
-                (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
-                    @Override
-                    public void onAutoConnectStarted() {
-                    }
-                });
+            WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager(mWifiManager, this);
             wifiAutoConnectManager.connect(mSSID, mPassword, WifiAutoConnectManager.WifiCipherType.WIFICIPHER_WPA);
             registerReceiver();
         }
@@ -168,29 +173,33 @@ public class ApConnectFragment extends BaseFragment {
         mLiveView.stopStream();
     }
 
+    @Override
+    public void onAutoConnectStarted() {
+
+    }
+
+    @Override
+    public void onAutoConnectError(String errorMsg) {
+
+    }
+
+    @Override
+    public void onAutoConnectStatus(String status) {
+        mTvNetworkStatus.setText(status);
+    }
+
 
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        mWifiStateReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-//                    Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID());
-
-                } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-                    Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION");
-                }
-            }
-        };
+        mWifiStateReceiver = new WifiStateReceiver();
         getActivity().registerReceiver(mWifiStateReceiver, filter);
     }
 
     private void init() {
         Bundle bundle = getArguments();
+        mHandler = new Handler();
         mSSID = bundle.getString("ssid");
         mPassword = bundle.getString("password");
         mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
@@ -212,7 +221,9 @@ public class ApConnectFragment extends BaseFragment {
             mLiveView.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                    }
                 }
             });
         }
@@ -225,6 +236,7 @@ public class ApConnectFragment extends BaseFragment {
 
     }
 
+
     private void toggleCameraConnectView() {
         if (mVsRootViewAnimator == null) {
             return;
@@ -233,12 +245,6 @@ public class ApConnectFragment extends BaseFragment {
             mVsRootViewAnimator.setDisplayedChild(CAMERA_CONNECTED);
             initVdtCamera();
             mConnectHomeWifi.setVisibility(View.VISIBLE);
-//            mUiHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    launchCltConnectFragment();
-//                }
-//            }, 1000);
 
             startCameraPreview();
 
@@ -266,6 +272,32 @@ public class ApConnectFragment extends BaseFragment {
     private void launchCltConnectFragment() {
         ClientConnectFragment fragment = new ClientConnectFragment();
         getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
+    }
+
+
+    private class WifiStateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID());
+                String currentSsid = wifiInfo.getSSID();
+                if (currentSsid != null && currentSsid.equals("\"" + mSSID + "\"")) {
+                    mTvNetworkStatus.setText(R.string.wifi_status_connected);
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTvNetworkStatus.setText(R.string.close_cellar_data_access_hint);
+                        }
+                    }, 5000);
+                } else {
+                    mTvNetworkStatus.setText(R.string.wifi_status_ssid_incorrect);
+                }
+
+            } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+                Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION");
+            }
+        }
     }
 
 

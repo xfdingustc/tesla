@@ -14,6 +14,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
+        android:textAllCaps="true"
         android:text="@string/skip"
         android:textColor="@color/text_camera_info"/>
 

@@ -349,4 +349,18 @@
 	<string name="repost">Repost</string>
 	<string name="repost_success">Moment has been successfully repost to </string>
 	<string name="repost_failed">Repost failed</string>
+	<string name="start_up_text_line1">"Establishing a connection between your phone and Waylens camera is very straightforward - simply have you phone join the camera's built-in Wi-Fi hotspot through System Settings"</string>
+	<string name="start_up_text_option1">"Option 1(Recommanded): Start by Scanning the QR Code"</string>
+	<string name="start_up_text_line2">"We recommend using the QR code, especially for the first-time setup, because it saves you from manual inputs."</string>
+	<string name="scan_qr_code">Scan the QR code</string>
+	<string name="start_up_text_line3">"You will manually select the camera's hotspot and type in the password through system settings"</string>
+	<string name="connect">connect</string>
+	<string name="wifi_status_open_wifi">Open wifi</string>
+	<string name="wifi_status_scan_wifi">Scanning</string>
+	<string name="wifi_status_wifi_openned">Wifi is openned</string>
+	<string name="wifi_status_disable_network">Disconnect from previous wifi</string>
+	<string name="wifi_status_reconnect_to_network">Reconnect to new wifi</string>
+	<string name="wifi_status_connected">Already connected to camera wifi</string>
+	<string name="wifi_status_ssid_incorrect">"You have connected to the wrong wifi. Please make sure you are connecting to Waylens' camera!"</string>
+	<string name="close_cellar_data_access_hint">"Connecting to camera will take a short while. Please be patient. If you cannot connect to camera for a long time, you can try to close your cellar data access for the camera setup"</string>
 </resources>

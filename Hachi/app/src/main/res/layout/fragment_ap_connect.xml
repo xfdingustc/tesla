@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/vsRootView"
+<ViewAnimator android:id="@+id/vsRootView"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:animateFirstView="true">
@@ -35,16 +35,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#C4C5C5"
-                android:textSize="16sp"/>
+                android:layout_marginBottom="8dp"
+                android:textSize="16sp"
+                tools:text="SSID"/>
 
             <TextView
                 android:id="@+id/tvPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#C4C5C5"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"
+                tools:text="password"/>
+
+            <TextView
+                android:id="@+id/tv_network_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                style="@style/HachiTextViewBody"
+                android:layout_marginBottom="8dp"
+                tools:text="network status"/>
+
 
         </LinearLayout>
 
