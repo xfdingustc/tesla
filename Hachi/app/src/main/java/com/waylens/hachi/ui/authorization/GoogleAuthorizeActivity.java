@@ -1,15 +1,18 @@
 package com.waylens.hachi.ui.authorization;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiApi;
@@ -20,8 +23,7 @@ import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
-import java.io.IOException;
-
+import butterknife.BindString;
 import retrofit2.Call;
 import rx.Observable;
 import rx.Subscriber;
@@ -31,20 +33,29 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Xiaofei on 2016/7/26.
  */
-public class GoogleAuthorizeActivity extends BaseActivity {
+public class GoogleAuthorizeActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = GoogleAuthorizeActivity.class.getSimpleName();
 
-    private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
-    private static final int AUTH_CODE_REQUEST_CODE = 1001;
+
+    private static final int RC_SIGN_IN = 1002;
+
     private String mEmail;
-    private static final String SCOPE = "oauth2:https://www.googleapis.com/auth/youtube.upload";
+    private static final String SCOPE = "https://www.googleapis.com/auth/youtube.upload";
 
     private HachiApi mHachi = HachiService.createHachiApiService();
+
+    private GoogleApiClient mGoogleApiClient;
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, GoogleAuthorizeActivity.class);
         activity.startActivity(intent);
     }
+
+    @BindString(R.string.google_client_id)
+    String mGoogleClientId;
+
+    @BindString(R.string.server_client_id)
+    String mServerClientId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,40 +65,37 @@ public class GoogleAuthorizeActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_PICK_ACCOUNT) {
-            // Receiving a result from the AccountPicker
-            if (resultCode == RESULT_OK) {
-                mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                // With the account name acquired, go get the auth token
-                fetchYoutubeToken();
-            } else if (resultCode == RESULT_CANCELED) {
-                // The account picker dialog closed without selecting an account.
-                // Notify users that they must pick an account to proceed.
-                Toast.makeText(this, R.string.pick_account, Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == AUTH_CODE_REQUEST_CODE) {
-            Logger.t(TAG).d("requestcode");
-            if (resultCode == RESULT_OK) {
-                fetchYoutubeToken();
+        Logger.t(TAG).d("on activity result, requestcode: " + requestCode);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                GoogleSignInAccount acct = result.getSignInAccount();
+                // Get account information
+//                mFullName = acct.getDisplayName();
+                mEmail = acct.getEmail();
+                Logger.t(TAG).d("email: " + mEmail);
+
+                String code = acct.getServerAuthCode();
+                Logger.t(TAG).d("ID Token: " + code);
+                sendAuthCode2WaylensServer(code);
             } else {
-                Toast.makeText(this, R.string.auth_code, Toast.LENGTH_SHORT).show();
+                Logger.t(TAG).d("not success " + result.getStatus());
             }
         }
 
     }
 
-    private void fetchYoutubeToken() {
+    private void sendAuthCode2WaylensServer(final String code) {
         Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
                 try {
-                    String token = GoogleAuthUtil.getToken(GoogleAuthorizeActivity.this, mEmail, SCOPE);
-                    Logger.t(TAG).d("token: " + token);
 
-                    Call<SimpleBoolResponse> bindSocialMediaCall = mHachi.bindSocialProvider(SocialProvider.newYoutubeProvider(token));
+                    Call<SimpleBoolResponse> bindSocialMediaCall = mHachi.bindSocialProvider(SocialProvider.newYoutubeProvider(code));
                     Call<LinkedAccounts> linkedAccountCall = mHachi.getLinkedAccounts();
 
-                    bindSocialMediaCall.execute();
+                    bindSocialMediaCall.execute().body();
+
                     SessionManager.getInstance().saveLinkedAccounts(linkedAccountCall.execute().body());
 
                     subscriber.onCompleted();
@@ -108,12 +116,10 @@ public class GoogleAuthorizeActivity extends BaseActivity {
                 @Override
                 public void onError(Throwable e) {
                     e.printStackTrace();
-                    if (e instanceof UserRecoverableAuthException) {
-                        startActivityForResult(((UserRecoverableAuthException) e).getIntent(), AUTH_CODE_REQUEST_CODE);
-                    } else {
-                        setResult(RESULT_CANCELED);
-                        finish();
-                    }
+
+                    setResult(RESULT_CANCELED);
+                    finish();
+
                 }
 
                 @Override
@@ -121,8 +127,18 @@ public class GoogleAuthorizeActivity extends BaseActivity {
 
                 }
             });
-
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Logger.t(TAG).d("connect failed");
+    }
+
+
+//    private void fetchYoutubeToken() {
+
+//
+//    }
 
 
     @Override
@@ -134,15 +150,26 @@ public class GoogleAuthorizeActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_google_authorize);
-        pickUserAccount();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestScopes(new Scope(SCOPE))
+            .requestServerAuthCode(mServerClientId, false)
+            .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+            .enableAutoManage(this, this)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+            .build();
+
+        signIn();
+
     }
 
-    private void pickUserAccount() {
-        String[] accountTypes = new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE};
-        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-            accountTypes, true, null, null, null, null);
-        startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    
+
 }

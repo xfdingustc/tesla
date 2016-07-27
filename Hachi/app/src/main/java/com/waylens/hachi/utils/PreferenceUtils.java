@@ -10,6 +10,7 @@ public class PreferenceUtils {
     public static final String PREFERENCE = "preference";
     public static final String USER_NAME = "user_name";
     public static final String FACEBOOK_USER_NAME = "facebook_user_name";
+    public static final String YOUTUBE_USER_NAME = "youtube_user_name";
     public static final String AVATAR_URL = "avatar_url";
     public static final String AVATAR_URL_THUMBNAIL = "avatar_url_thumbnail";
     public static final String USER_ID = "user_id";

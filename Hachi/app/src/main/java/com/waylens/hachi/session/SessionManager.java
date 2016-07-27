@@ -13,6 +13,7 @@ import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SignInResponse;
 import com.waylens.hachi.rest.response.UserInfo;
@@ -211,6 +212,14 @@ public class SessionManager {
         return PreferenceUtils.getString(PreferenceUtils.FACEBOOK_USER_NAME, null);
     }
 
+    private void setYoutubeName(String youtubeName) {
+        PreferenceUtils.putString(PreferenceUtils.YOUTUBE_USER_NAME, youtubeName);
+    }
+
+    public String getYoutubeName() {
+        return PreferenceUtils.getString(PreferenceUtils.YOUTUBE_USER_NAME, null);
+    }
+
 
     public void saveLoginInfo(JSONObject response) {
         saveLoginInfo(response, false);
@@ -371,17 +380,24 @@ public class SessionManager {
 
     public void saveLinkedAccounts(LinkedAccounts linkedAccounts) {
         boolean facebookFound = false;
+        boolean youtubeFound = false;
         for (LinkedAccounts.LinkedAccount linkedAccount : linkedAccounts.linkedAccounts) {
-            if (linkedAccount.provider.equals("facebook")) {
+            Logger.t(TAG).d("account name: " + linkedAccount.accountName);
+            if (linkedAccount.provider.equals(SocialProvider.FACEBOOK)) {
                 setFacebookName(linkedAccount.accountName);
                 facebookFound = true;
-            } else if (linkedAccount.provider.equals("youtube")) {
+            } else if (linkedAccount.provider.equals(SocialProvider.YOUTUBE)) {
 
+                setYoutubeName(linkedAccount.accountName);
+                youtubeFound = true;
             }
         }
 
         if (!facebookFound) {
             setFacebookName(null);
+        }
+        if (!youtubeFound) {
+            setYoutubeName(null);
         }
     }
 

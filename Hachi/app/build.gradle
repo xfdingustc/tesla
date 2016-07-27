@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
+
 apply plugin: 'com.bugtags.library.plugin'
 apply plugin: 'com.neenbedankt.android-apt'
 
@@ -135,3 +135,5 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 
 }
+
+apply plugin: 'com.google.gms.google-services'

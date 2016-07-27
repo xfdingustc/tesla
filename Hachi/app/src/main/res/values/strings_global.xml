@@ -4,6 +4,10 @@
     <string name="verification_code_pattern" translatable="false">[\\d]{6}</string>
     <string name="password_pattern" translatable="false">^[A&#045;Za&#045;z0&#045;9&#033;&#035;&#036;&#037;&#038;&#042;\\&#043;\\&#045;&#064;&#094;&#095;&#046;&#126;]{6,64}</string>
 
+    <string name="google_client_id" translatable="false">1036919624593-tt7asj3lvkr5pk8kjp0elab52pquc630.apps.googleusercontent.com</string>
+    <string name="server_client_id" translatable="false">1036919624593-ogqtr335h5nv99qe85r8koe0clq64vhv.apps.googleusercontent.com</string>
+
+
 
     <plurals name="number_of_likes">
         <item quantity="one">%d like</item>

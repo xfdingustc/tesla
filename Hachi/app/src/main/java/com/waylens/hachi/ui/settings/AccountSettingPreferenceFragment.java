@@ -313,12 +313,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void setupSocialMedia() {
+        mFacebook = findPreference("facebook");
+        mYoutube = findPreference("youtube");
         setupFacebook();
         setupYoutube();
     }
 
     private void setupFacebook() {
-        mFacebook = findPreference("facebook");
+
 
         updateSocialMedia();
 
@@ -337,7 +339,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void setupYoutube() {
-        mYoutube = findPreference("youtube");
+
         updateSocialMedia();
         mYoutube.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -404,6 +406,13 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             mFacebook.setSummary(facebookName);
         } else {
             mFacebook.setSummary(getResources().getString(R.string.click_2_bind_facebook));
+        }
+
+        String youtubeName = mSessionManager.getYoutubeName();
+        if (youtubeName != null) {
+            mYoutube.setSummary(youtubeName);
+        } else {
+            mYoutube.setSummary(getResources().getString(R.string.click_2_bind_facebook));
         }
     }
 
