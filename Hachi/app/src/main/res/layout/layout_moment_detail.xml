@@ -39,7 +39,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="8dp"
                 android:inAnimation="@anim/slide_in_likes_counter"
                 android:outAnimation="@anim/slide_out_likes_counter">
 
@@ -59,9 +58,14 @@
             </TextSwitcher>
 
 
-            <TextSwitcher
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></TextSwitcher>
+            <ImageButton
+                android:id="@+id/btn_repost"
+                style="@style/SelectableRippleButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/social_repost"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
         </LinearLayout>
 

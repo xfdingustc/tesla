@@ -37,6 +37,9 @@ public class PreferenceUtils {
     public static final String KEY_SIGN_UP_EMAIL = "sign.up.email";
     public static final String KEY_RESET_EMAIL_SENT = "is.reset.email.sent";
 
+    public static final String SOCIAL_FACEBOOK_LINKED = "social_facebook_linked";
+    public static final String SOCIAL_YOUTUBE_LINKED = "social_youtube_linked";
+
     private static Context mSharedAppContext = null;
     private static SharedPreferences mShare = null;
     private static SharedPreferences.Editor mEditor = null;

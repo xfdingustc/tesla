@@ -37,6 +37,7 @@ import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
+import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.upload.UploadActivity;
@@ -61,6 +62,7 @@ public class ShareActivity extends ClipPlayActivity {
     private static final String EXTRA_AUDIO_ID = "audio_id";
 
     private static final int REQUEST_CODE_FACEBOOK = 0x100;
+    private static final int REQUEST_CODE_YOUTUBE = 0x101;
 
     private int mPlayListId;
     private int mAudioId;
@@ -71,6 +73,7 @@ public class ShareActivity extends ClipPlayActivity {
     private String[] mSupportedPrivacy;
 
     private boolean mIsFacebookShareChecked = false;
+    private boolean mIsYoutubeShareChecked = false;
 
     private LinkedAccounts mLinkedAccounts;
 
@@ -110,6 +113,9 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.btn_facebook)
     ImageView mBtnFaceBook;
 
+    @BindView(R.id.btn_youtube)
+    ImageView mBtnYoutube;
+
     @OnClick(R.id.btn_facebook)
     public void onBtnFackBookChecked() {
         if (mSessionManager.getFacebookName() == null) {
@@ -117,9 +123,23 @@ public class ShareActivity extends ClipPlayActivity {
         } else {
             mIsFacebookShareChecked = !mIsFacebookShareChecked;
             if (mIsFacebookShareChecked) {
-                mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_s);
+                mBtnFaceBook.setImageResource(R.drawable.btn_platform_facebook_s);
             } else {
-                mBtnFaceBook.setBackgroundResource(R.drawable.btn_platform_facebook_n);
+                mBtnFaceBook.setImageResource(R.drawable.btn_platform_facebook_n);
+            }
+        }
+    }
+
+    @OnClick(R.id.btn_youtube)
+    public void onBtnYoutubeChecked() {
+        if (!mSessionManager.isYoutubeLinked()) {
+            GoogleAuthorizeActivity.launch(this, REQUEST_CODE_YOUTUBE);
+        } else {
+            mIsYoutubeShareChecked = !mIsYoutubeShareChecked;
+            if (mIsYoutubeShareChecked) {
+                mBtnYoutube.setImageResource(R.drawable.btn_platform_youtube_s);
+            } else {
+                mBtnYoutube.setImageResource(R.drawable.btn_platform_youtube_n);
             }
         }
     }
@@ -354,7 +374,9 @@ public class ShareActivity extends ClipPlayActivity {
 
         Logger.t(TAG).d("share title: " + title);
 
-        LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption, tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked);
+        LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption,
+            tags, mSocialPrivacy, mAudioId, gaugeSettings,
+            mIsFacebookShareChecked, mIsYoutubeShareChecked);
         JobManager jobManager = BgJobManager.getManager();
         UploadMomentJob job = new UploadMomentJob(localMoment);
         jobManager.addJobInBackground(job);

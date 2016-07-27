@@ -50,6 +50,11 @@ public class GoogleAuthorizeActivity extends BaseActivity implements GoogleApiCl
     private GoogleApiClient mGoogleApiClient;
 
 
+    public static void launch(Activity activity, int requestCode) {
+        Intent intent = new Intent(activity, GoogleAuthorizeActivity.class);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
 
     public static void launch(Fragment fragment, int requestCode) {
         Intent intent = new Intent(fragment.getActivity(), GoogleAuthorizeActivity.class);

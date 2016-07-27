@@ -43,7 +43,11 @@ public class CreateMomentBody {
         }
 
         if (localMoment.isFbShare) {
-            shareProviders.add("facebook");
+            shareProviders.add(SocialProvider.FACEBOOK);
+        }
+
+        if (localMoment.isYoutubeShare) {
+            shareProviders.add(SocialProvider.YOUTUBE);
         }
 
     }

@@ -220,6 +220,22 @@ public class SessionManager {
         return PreferenceUtils.getString(PreferenceUtils.YOUTUBE_USER_NAME, null);
     }
 
+    private void setIsFacebookLinked(boolean linked) {
+        PreferenceUtils.putBoolean(PreferenceUtils.SOCIAL_FACEBOOK_LINKED, linked);
+    }
+
+    public boolean isFacebookLinked() {
+        return PreferenceUtils.getBoolean(PreferenceUtils.SOCIAL_FACEBOOK_LINKED, false);
+    }
+
+    private void setIsYoutubeLinked(boolean linked) {
+        PreferenceUtils.putBoolean(PreferenceUtils.SOCIAL_YOUTUBE_LINKED, linked);
+    }
+
+    public boolean isYoutubeLinked() {
+        return PreferenceUtils.getBoolean(PreferenceUtils.SOCIAL_YOUTUBE_LINKED, false);
+    }
+
 
     public void saveLoginInfo(JSONObject response) {
         saveLoginInfo(response, false);
@@ -385,19 +401,22 @@ public class SessionManager {
             Logger.t(TAG).d("account name: " + linkedAccount.accountName);
             if (linkedAccount.provider.equals(SocialProvider.FACEBOOK)) {
                 setFacebookName(linkedAccount.accountName);
+                setIsFacebookLinked(true);
                 facebookFound = true;
             } else if (linkedAccount.provider.equals(SocialProvider.YOUTUBE)) {
-
                 setYoutubeName(linkedAccount.accountName);
+                setIsYoutubeLinked(true);
                 youtubeFound = true;
             }
         }
 
         if (!facebookFound) {
             setFacebookName(null);
+            setIsFacebookLinked(false);
         }
         if (!youtubeFound) {
             setYoutubeName(null);
+            setIsYoutubeLinked(false);
         }
     }
 
