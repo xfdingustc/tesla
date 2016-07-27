@@ -64,11 +64,6 @@ public class Hachi extends MultiDexApplication {
         mScanner.stopWork();
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        //MultiDex.install(this);
-    }
 
     private void init() {
         mSharedContext = getApplicationContext();

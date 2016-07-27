@@ -95,10 +95,12 @@
                   android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.manualsetup.StartupActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:noHistory="true"/>
 
         <activity android:name=".ui.manualsetup.ScanQrCodeActivity"
-                  android:screenOrientation="portrait"/>
+                  android:screenOrientation="portrait"
+            android:noHistory="true"/>
 
         <activity
             android:name=".ui.activities.WelcomeActivity"
@@ -122,7 +124,8 @@
 
         <activity
             android:name=".ui.manualsetup.ManualSetupActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:noHistory="true"/>
 
         <activity
             android:name=".ui.clips.ClipChooserActivity"

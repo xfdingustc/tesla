@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +15,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
-
 
 import butterknife.OnClick;
 import butterknife.Optional;
@@ -79,7 +77,7 @@ public class StartupActivity extends BaseActivity {
     @Optional
     @OnClick(R.id.skip)
     public void onSkipClicked() {
-        MaterialDialog dialog =  new MaterialDialog.Builder(this)
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
             .content(R.string.skip_confirm)
             .positiveText(R.string.leave)
             .negativeText(android.R.string.cancel)
@@ -122,14 +120,6 @@ public class StartupActivity extends BaseActivity {
         Logger.t(TAG).d("requestCode: " + requestCode + " resultCode: " + resultCode + " data: " + data);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            Logger.t(TAG).d("Camera permission is granted");
-
-        }
-    }
 
     @Override
     protected void init() {
@@ -142,20 +132,12 @@ public class StartupActivity extends BaseActivity {
     }
 
     private boolean checkIfCameraIsGranted() {
-        Camera camera = null;
-        boolean ret = true;
-        try {
-            camera = Camera.open(0);
-            ret = true;
-        } catch (Exception e) {
-            ret = false;
-        } finally {
-            if (camera != null) {
-                camera.release();
-            }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            Logger.t(TAG).d("Camera permission is granted");
+            return true;
+        } else {
+            return false;
         }
-
-        return ret;
 
     }
 }

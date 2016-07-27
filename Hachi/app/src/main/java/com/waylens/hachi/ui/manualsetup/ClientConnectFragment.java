@@ -13,10 +13,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
-import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -39,11 +37,12 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/3/21.
  */
-public class ClientConnectFragment extends BaseFragment {
+public class ClientConnectFragment extends BaseFragment implements WifiAutoConnectManager.WifiAutoConnectListener {
     private static final String TAG = ClientConnectFragment.class.getSimpleName();
 
     public static final int CONNECTION_STAGE_CAMERA_2_ROUTE = 0;
@@ -114,12 +113,7 @@ public class ClientConnectFragment extends BaseFragment {
                 } else {
                     showCameraConnect2Wifi();
                     switchConnectionStage(CONNECTION_STAGE_PHONE_2_ROUTE);
-                    WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager
-                        (mWifiManager, new WifiAutoConnectManager.WifiAutoConnectListener() {
-                            @Override
-                            public void onAutoConnectStarted() {
-                            }
-                        });
+                    WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager(mWifiManager, this);
                     wifiAutoConnectManager.connect(mSelectedNetworkItem.ssid, mSavedPassword, WifiAutoConnectManager
                         .WifiCipherType.WIFICIPHER_WPA);
                 }
@@ -147,6 +141,21 @@ public class ClientConnectFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onAutoConnectStarted() {
+
+    }
+
+    @Override
+    public void onAutoConnectError(String errorMsg) {
+
+    }
+
+    @Override
+    public void onAutoConnectStatus(String status) {
+
+    }
+
 
     private void init() {
         mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
@@ -161,13 +170,6 @@ public class ClientConnectFragment extends BaseFragment {
         mOnScanHostListener = new VdtCamera.OnScanHostListener() {
             @Override
             public void OnScanHostResult(final List<NetworkItemBean> networkList) {
-//                Logger.t(TAG).d("get network list: " + networkList.size());
-//                mLoadingProgress.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mLoadingProgress.setVisibility(View.GONE);
-//                    }
-//                });
 
 
                 getActivity().runOnUiThread(new Runnable() {
@@ -229,7 +231,7 @@ public class ClientConnectFragment extends BaseFragment {
         mPasswordDialog = new MaterialDialog.Builder(getActivity())
             .title(itemBean.ssid)
             .customView(R.layout.dialog_network_password, true)
-            .positiveText(R.string.join)
+            .positiveText(R.string.connect)
             .callback(new MaterialDialog.ButtonCallback() {
                 @Override
                 public void onPositive(MaterialDialog dialog) {
@@ -380,19 +382,18 @@ public class ClientConnectFragment extends BaseFragment {
             @BindView(R.id.wifi_status)
             TextView wifiStatus;
 
+            @OnClick(R.id.wifiContainer)
+            public void onWifiContainerClicked(View v) {
+                NetworkItemViewHolder viewHolder = (NetworkItemViewHolder) v.getTag();
+                NetworkItemBean itemBean = mNetworkList.get(viewHolder.getPosition());
+                onNetworkItemClicked(itemBean);
+            }
+
             public NetworkItemViewHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
-
                 mContainer.setTag(NetworkItemViewHolder.this);
-                mContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        NetworkItemViewHolder viewHolder = (NetworkItemViewHolder) v.getTag();
-                        NetworkItemBean itemBean = mNetworkList.get(viewHolder.getPosition());
-                        onNetworkItemClicked(itemBean);
-                    }
-                });
+
             }
         }
     }

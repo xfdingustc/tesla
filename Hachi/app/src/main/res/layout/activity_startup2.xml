@@ -4,9 +4,11 @@
             android:layout_height="match_parent">
 
     <LinearLayout
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
 
         <TextView
@@ -15,39 +17,34 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
-            android:layout_margin="16dp"
+            android:layout_marginBottom="32dp"
+            android:layout_marginTop="16dp"
             android:text="@string/skip"
             android:textAllCaps="true"
             android:textColor="@color/app_text_color_primary"/>
 
 
         <TextView
+            style="@style/HachiTextViewBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layout_marginBottom="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:text="Establishing a connection between your phone and Waylens camera is very straightforward - simply have you phone join the camera's built-in Wi-Fi hotspot through System Settings"/>
+            android:text="@string/start_up_text_line1"/>
 
 
         <TextView
             android:id="@+id/text2"
             style="@style/HachiTextViewSubHeader"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:text="Option 1(Recommanded): Start by Scanning the QR Code"/>
+            android:text="@string/start_up_text_option1"/>
 
 
         <ImageView
             android:id="@+id/step1_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp"
@@ -55,13 +52,12 @@
 
         <TextView
             android:id="@+id/text3"
+            style="@style/HachiTextViewBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/btnGetStarted"
             android:layout_marginBottom="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:text="We recommend using the QR code, especially for the first-time setup, because it saves you from manual inputs."/>
+            android:text="@string/start_up_text_line2"/>
 
         <Button
             android:id="@+id/btnGetStarted"
@@ -69,15 +65,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:text="Scan the QR code ->"/>
+            android:text="@string/scan_qr_code"/>
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp"
             android:text="@string/or"
@@ -90,20 +83,16 @@
             style="@style/HachiTextViewSubHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
             android:layout_marginTop="32dp"
             android:text="@string/manually_select_wifi_network"
             android:textColor="?attr/appTextColorPrimary"/>
 
         <TextView
+            style="@style/HachiTextViewBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:text="You will manually select the camera's hotspot and type in the password through system settings"/>
+            android:text="@string/start_up_text_line3"/>
 
 
     </LinearLayout>
