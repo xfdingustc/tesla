@@ -151,7 +151,7 @@ public class FacebookAuthorizeActivity extends BaseActivity {
                 @Override
                 public void onStart() {
                     super.onStart();
-                    showDialog(getString(R.string.binding));
+                    showDialog(getString(R.string.send_facebook_token));
                 }
 
                 @Override

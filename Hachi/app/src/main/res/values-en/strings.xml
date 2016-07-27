@@ -343,4 +343,7 @@
 	<string name="fetch_account_profile_failed">Failed to retrieve account profile</string>
 	<string name="pick_account">You must pick an account</string>
 	<string name="auth_code">You must authorize Waylens app</string>
+	<string name="click_2_bind_youtube">Click to bind google account</string>
+	<string name="send_facebook_token">Sending Facebook token to Waylens server</string>
+	<string name="send_google_code">Sending Google authorize code to Waylens server</string>
 </resources>

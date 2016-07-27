@@ -34,6 +34,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -330,7 +331,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 if (mSessionManager.getFacebookName() == null) {
                     FacebookAuthorizeActivity.launch(AccountSettingPreferenceFragment.this, REQUEST_FACEBOOK);
                 } else {
-                    unbindSocialMedia("facebook");
+                    unbindSocialMedia(SocialProvider.FACEBOOK);
                 }
                 return true;
             }
@@ -339,12 +340,16 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void setupYoutube() {
-
         updateSocialMedia();
         mYoutube.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                GoogleAuthorizeActivity.launch(getActivity());
+                if (mSessionManager.getYoutubeName() == null) {
+                    GoogleAuthorizeActivity.launch(AccountSettingPreferenceFragment.this, REQUEST_YOUTUBE);
+                } else {
+                    unbindSocialMedia(SocialProvider.YOUTUBE);
+                }
+
                 return true;
             }
 
@@ -412,7 +417,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         if (youtubeName != null) {
             mYoutube.setSummary(youtubeName);
         } else {
-            mYoutube.setSummary(getResources().getString(R.string.click_2_bind_facebook));
+            mYoutube.setSummary(getResources().getString(R.string.click_2_bind_youtube));
         }
     }
 
