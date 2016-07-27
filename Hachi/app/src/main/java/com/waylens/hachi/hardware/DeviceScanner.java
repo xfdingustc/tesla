@@ -29,7 +29,7 @@ public class DeviceScanner extends Thread {
 
     private static final String SERVICE_TYPE = "_ccam._tcp.local.";
 
-    private static final int SCAN_INTERVAL = 10000;
+    private static final int SCAN_INTERVAL = 1000;
 
     public static final String SERVICE_VIDITCAM = "ViditCam";
     public static final String SERVICE_VIDIT_STUDIO = "Vidit Studio";
@@ -81,24 +81,22 @@ public class DeviceScanner extends Thread {
 
 
             try {
-                wait(SCAN_INTERVAL);
+
                 Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
                 while (en.hasMoreElements()) {
                     NetworkInterface ni = en.nextElement();
                     Enumeration<InetAddress> enumIpAddr = ni.getInetAddresses();
                     while (enumIpAddr.hasMoreElements()) {
                         InetAddress addr = enumIpAddr.nextElement();
-                        if (!addr.isLoopbackAddress()) {
+                        if (addr.isSiteLocalAddress()) {
                             Logger.t(TAG).d("addr: " + addr);
                             mAddress.add(addr);
                         }
                     }
                 }
 
-                if (mWifiManager != null) {
-                    lockWifi(mWifiManager);
-                }
 
+                wait(SCAN_INTERVAL * 5);
 
 
                 for (InetAddress addr : mAddress) {
@@ -116,9 +114,15 @@ public class DeviceScanner extends Thread {
                 e.printStackTrace();
             } finally {
 
-                if (mWifiManager != null) {
-                    unlockWifi();
-                }
+                mAddress.clear();
+                mDns.clear();
+            }
+
+
+            try {
+                Thread.sleep(SCAN_INTERVAL);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
         }
@@ -164,21 +168,5 @@ public class DeviceScanner extends Thread {
         }
     };
 
-    private void lockWifi(WifiManager wifiManager) {
-        if (mLock == null) {
-            Logger.t(TAG).d("--- Lock wifi ---");
-            mLock = wifiManager.createMulticastLock(getClass().getName());
-            mLock.setReferenceCounted(true);
-            mLock.acquire();
-        }
-    }
 
-    private void unlockWifi() {
-        if (mLock != null) {
-            mLock.release();
-            mLock = null;
-
-            Logger.t(TAG).d("=== Unlock wifi ===");
-        }
-    }
 }
