@@ -121,6 +121,7 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventCameraConnection(CameraConnectionEvent event) {
+        Logger.t(TAG).d("On Receive camera connect event: " + event.getWhat());
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 toggleCameraConnectView();
@@ -161,8 +162,6 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
     public void onStart() {
         super.onStart();
         mEventBus.register(this);
-        toggleCameraConnectView();
-
     }
 
     @Override
