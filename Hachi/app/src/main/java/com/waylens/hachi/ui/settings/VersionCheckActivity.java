@@ -133,6 +133,7 @@ public class VersionCheckActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_vesion);
+        setupToolbar();
         mCurrentVersionView.setText(getString(R.string.current_version) + BuildConfig.VERSION_NAME);
         mViewAnimator.setDisplayedChild(2);
     }
@@ -249,6 +250,21 @@ public class VersionCheckActivity extends BaseActivity {
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
+
+        getToolbar().setNavigationIcon(R.drawable.navbar_back);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        getToolbar().setTitle("Version");
+
     }
 
 

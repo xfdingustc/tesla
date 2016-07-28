@@ -6,6 +6,8 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
+    <include layout="@layout/toolbar_default"/>
+
     <ImageView
         android:id="@+id/waylens_logo"
         android:layout_width="wrap_content"

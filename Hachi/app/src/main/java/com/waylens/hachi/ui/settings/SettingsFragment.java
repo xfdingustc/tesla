@@ -51,9 +51,9 @@ public class SettingsFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.settings_help)
-    public void clickHelp() {
-        VersionCheckActivity.launch(getActivity());
+    @OnClick(R.id.settings_about)
+    public void clickAbout() {
+        AboutActivity.launch(getActivity());
     }
 
     @OnClick(R.id.addNewCamera)
