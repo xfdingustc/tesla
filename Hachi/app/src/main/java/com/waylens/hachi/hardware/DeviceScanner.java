@@ -78,10 +78,7 @@ public class DeviceScanner extends Thread {
             if (!mbRunning) {
                 break;
             }
-
-
             try {
-
                 Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
                 while (en.hasMoreElements()) {
                     NetworkInterface ni = en.nextElement();
@@ -95,10 +92,6 @@ public class DeviceScanner extends Thread {
                     }
                 }
 
-
-                wait(SCAN_INTERVAL * 5);
-
-
                 for (InetAddress addr : mAddress) {
                     JmDNS dns = JmDNS.create(addr, SERVICE_VIDITCAM);
                     mDns.add(dns);
@@ -106,6 +99,7 @@ public class DeviceScanner extends Thread {
 
                 }
 
+                wait(SCAN_INTERVAL * 5);
 
                 for (JmDNS dns : mDns) {
                     dns.close();
@@ -113,7 +107,6 @@ public class DeviceScanner extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-
                 mAddress.clear();
                 mDns.clear();
             }
