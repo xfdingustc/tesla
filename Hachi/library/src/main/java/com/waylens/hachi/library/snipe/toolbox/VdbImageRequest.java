@@ -45,6 +45,11 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     }
 
     @Override
+    public Priority getPriority() {
+        return Priority.LOW;
+    }
+
+    @Override
     protected VdbCommand createVdbCommand() {
         mVdbCommand = VdbCommand.Factory.createCmdGetIndexPicture(mClipPos);
         return mVdbCommand;
