@@ -194,7 +194,6 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         mWifiStateReceiver = new WifiStateReceiver();
         getActivity().registerReceiver(mWifiStateReceiver, filter);
     }
@@ -286,8 +285,8 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
                 NetworkInfo.State state = networkInfo.getState();
 
                 String currentSsid = wifiInfo.getSSID();
-                if (currentSsid != null && currentSsid.equals("\"" + mSSID + "\"")) {
-                    if (state == NetworkInfo.State.CONNECTED && !mConnected2CameraWifi) {
+                if (state == NetworkInfo.State.CONNECTED && !mConnected2CameraWifi) {
+                    if (currentSsid != null && currentSsid.equals("\"" + mSSID + "\"")) {
                         Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID() + " state: " + state);
                         mConnected2CameraWifi = true;
                         mTvNetworkStatus.setText(R.string.wifi_status_connected);
@@ -297,14 +296,12 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
                                 mTvNetworkStatus.setText(R.string.close_cellar_data_access_hint);
                             }
                         }, 5000);
+
+                    } else {
+                        mTvNetworkStatus.setText(R.string.wifi_status_ssid_incorrect);
                     }
-                } else {
-                    mTvNetworkStatus.setText(R.string.wifi_status_ssid_incorrect);
                 }
 
-            } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-                Logger.t(TAG).d("WIFI_STATE_CHANGED_ACTION " + wifiInfo.getSSID());
             }
         }
     }

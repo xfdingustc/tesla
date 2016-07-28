@@ -50,6 +50,11 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     }
 
     @Override
+    public boolean isIgnorable() {
+        return true;
+    }
+
+    @Override
     protected VdbCommand createVdbCommand() {
         mVdbCommand = VdbCommand.Factory.createCmdGetIndexPicture(mClipPos);
         return mVdbCommand;

@@ -1,7 +1,12 @@
 package com.waylens.hachi.ui.manualsetup;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -96,6 +101,8 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     private NetworkItemBean mSelectedNetworkItem = null;
     private String mSavedPassword;
 
+    private BroadcastReceiver mWifiStateReceiver;
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventCameraConnection(CameraConnectionEvent event) {
@@ -162,7 +169,8 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
 
     @Override
     public void onAutoConnectStatus(String status) {
-
+        mTextLine1.setText(status);
+        mTextLine2.setVisibility(View.INVISIBLE);
     }
 
 
@@ -201,16 +209,15 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
         startScanWifi();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-//        mEventBus.register(this);
-    }
 
     @Override
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
+        if (mWifiStateReceiver != null) {
+            getActivity().unregisterReceiver(mWifiStateReceiver);
+            mWifiStateReceiver = null;
+        }
         stopScanWifi();
     }
 
@@ -228,13 +235,6 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
 
     private void refreshWifiList() {
         Logger.t(TAG).d("start scan host: ");
-//        mLoadingProgress.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mLoadingProgress.setVisibility(View.VISIBLE);
-//            }
-//        });
-
         mVdtCamera.scanHost(mOnScanHostListener);
     }
 
@@ -271,10 +271,6 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
         mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
         AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
         animationDrawable.start();
-
-//        stopScanWifi();
-//        switchConnectionStage(CONNECTION_STAGE_CAMERA_2_ROUTE);
-
     }
 
     private void switchConnectionStage(int stage) {
@@ -302,9 +298,16 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     private void setNetwork2Camera(final String ssid, final String password) {
         mVdtCamera.addNetworkHost(ssid, password);
         mSavedPassword = password;
+        registerReceiver();
+    }
 
 
-        //registerReceiver();
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        mWifiStateReceiver = new WifiStateReceiver();
+        getActivity().registerReceiver(mWifiStateReceiver, filter);
     }
 
 
@@ -419,6 +422,29 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
         public void run() {
             refreshWifiList();
 
+        }
+    }
+
+    private class WifiStateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                NetworkInfo.State state = networkInfo.getState();
+
+                String currentSsid = wifiInfo.getSSID();
+                if (state == NetworkInfo.State.CONNECTED) {
+                    if (currentSsid != null && currentSsid.equals("\"" + mSelectedNetworkItem.ssid + "\"")) {
+                        Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID() + " state: " + state);
+                        mTextLine1.setText(R.string.wifi_status_connected);
+                        switchConnectionStage(CONNECTION_STAGE_PHONE_2_CAMERA);
+                    } else {
+//                        mTextLine1.setText(R.string.wifi_status_ssid_incorrect);
+                    }
+                }
+
+            }
         }
     }
 
