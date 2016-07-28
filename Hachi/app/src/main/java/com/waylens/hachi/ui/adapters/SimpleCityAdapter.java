@@ -36,7 +36,7 @@ public class SimpleCityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public CityActivity.City getCity(int index) {
-        if (index < mCityList.size()) {
+        if (index < mCityListFiltered.size()) {
             return mCityListFiltered.get(index);
         } else {
             return null;

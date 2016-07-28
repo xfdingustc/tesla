@@ -5,17 +5,18 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true">
+
     <include layout="@layout/toolbar_default"/>
 
     <EditText
-        android:id="@+id/search_city"
+        android:id="@+id/search_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
         />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_city_list"
+        android:id="@+id/rv_content_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 

@@ -166,6 +166,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.settings.VehiclePickActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.settings.ConnectivitySettingActivity"
             android:screenOrientation="portrait"/>
 

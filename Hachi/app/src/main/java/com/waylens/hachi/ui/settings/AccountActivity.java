@@ -21,11 +21,9 @@ import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.IOException;
 
 import butterknife.BindView;

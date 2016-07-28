@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.settings.CountryActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,24 +20,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by lshw on 2016/7/27.
+ * Created by lshw on 16/7/27.
  */
-public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>implements Filterable{
+public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder>implements Filterable {
 
-    private final List<CountryActivity.Country> mCountryList;
-    private List<CountryActivity.Country> mCountryListFiltered;
+    private final List<T> mList;
+    private List<T> mListFiltered;
     private final OnListItemClickListener mOnListItemClickListener;
     private InnerFilter mFilter;
 
-    public SimpleCountryAdapter(List<CountryActivity.Country> list, OnListItemClickListener listener ) {
-        mCountryList = list;
-        mCountryListFiltered = list;
+    public SimpleCommonAdapter(List<T> list, OnListItemClickListener listener) {
+        mList = list;
+        mListFiltered = list;
         mOnListItemClickListener = listener;
     }
 
-    public CountryActivity.Country getCountry(int index) {
-        if (index < mCountryListFiltered.size()) {
-            return mCountryListFiltered.get(index);
+    public T getItem(int index) {
+        if (index < mListFiltered.size()) {
+            return mListFiltered.get(index);
         } else {
             return null;
         }
@@ -52,8 +53,8 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        SimpleStringViewHolder viewHolder = (SimpleStringViewHolder)holder;
-        viewHolder.title.setText(mCountryListFiltered.get(position).name);
+        SimpleStringViewHolder viewHolder = (SimpleStringViewHolder) holder;
+        viewHolder.title.setText(getName(mListFiltered.get(position)));
         viewHolder.rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +67,7 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return mCountryListFiltered == null ? 0 : mCountryListFiltered.size();
+        return mListFiltered == null ? 0 : mListFiltered.size();
     }
 
 
@@ -101,13 +102,13 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
         protected FilterResults performFiltering(CharSequence prefix) {
             FilterResults results = new FilterResults();
             if (prefix == null || prefix.length() == 0) {
-                results.values = mCountryList;
-                results.count = mCountryList.size();
+                results.values = mList;
+                results.count = mList.size();
             } else {
                 String prefixString = prefix.toString().toLowerCase();
-                List<CountryActivity.Country> newValues = new ArrayList<>();
-                for (CountryActivity.Country item : mCountryList) {
-                    if (item.name.toLowerCase().startsWith(prefixString)) {
+                List<T> newValues = new ArrayList<>();
+                for (T item : mList) {
+                    if (getName(item).toLowerCase().startsWith(prefixString)) {
                         newValues.add(item);
                     }
                 }
@@ -119,12 +120,15 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mCountryListFiltered = (List<CountryActivity.Country>) results.values;
+            mListFiltered = (List<T>) results.values;
 
             if (results.count > 0) {
                 notifyDataSetChanged();
             }
         }
 
+
     }
+
+    public abstract String getName(T t) ;
 }

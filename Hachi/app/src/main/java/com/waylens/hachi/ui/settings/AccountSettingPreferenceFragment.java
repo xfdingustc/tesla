@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -40,13 +41,18 @@ import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
+import com.waylens.hachi.utils.PreferenceUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +69,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 
     private static final int REQUEST_FACEBOOK = 0x100;
     private static final int REQUEST_YOUTUBE = 0x101;
+    private static final int REQUEST_PICKCAR = 0x102;
 
     private Preference mEmail;
     private Preference mChangePassword;
@@ -74,6 +81,10 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private Preference mYoutube;
     private Preference mLogout;
 
+    private PreferenceCategory mVehicle;
+    private Preference mAddCar;
+    private List<Preference> mVehicleList = new ArrayList<>();
+
     private View positiveAction;
     private EditText oldPasswordInput;
     private EditText newPasswordInput;
@@ -82,10 +93,6 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private RequestQueue mRequestQueue;
 
     private HachiApi mHachi = HachiService.createHachiApiService();
-
-
-
-
 
     private MaterialDialog mProgressDialog;
 
@@ -110,6 +117,12 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 if (resultCode == Activity.RESULT_OK) {
                     updateSocialMedia();
                 }
+                break;
+            case REQUEST_PICKCAR:
+                if (resultCode == Activity.RESULT_OK) {
+                    updateVehicle();
+                }
+                break;
         }
 
     }
@@ -120,6 +133,13 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mRequestQueue.cancelAll(TAG);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateVehicle();
+
+    }
+
     private void initPreferences() {
         mEmail = findPreference("email");
         mChangePassword = findPreference("change_password");
@@ -127,7 +147,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mBirthday = findPreference("birthday");
         mGender = findPreference("gender");
         mRegion = findPreference("region");
+        mVehicle = (PreferenceCategory) findPreference("vehicle");
+        mAddCar = findPreference("add_car");
 
+/*        Preference newCar = new Preference(this.getActivity());
+        newCar.setKey("bmw");
+        newCar.setLayoutResource(R.layout.preference_item);
+
+        mVehicle.addPreference(newCar);*/
 
         mLogout = findPreference("logout");
         setupSocialMedia();
@@ -293,6 +320,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             }
         });
 
+        mAddCar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                VehiclePickActivity.launch(getActivity(), REQUEST_PICKCAR);
+                return true;
+            }
+        });
+
         mLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -421,8 +456,79 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         }
     }
 
+    private void updateVehicle() {
+        Logger.t(TAG).d("update Vehicle!");
+        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+                .url(Constants.API_USER_VEHICLE)
+                .listner(new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        renderVehicle(response);
+                    }
+                })
+                .build();
+        mRequestQueue.add(request);
+    }
 
+    public void renderVehicle(JSONObject response) {
+        Logger.t(TAG).d("render vehicle");
+        try {
+            JSONArray country = response.getJSONArray("vehicles");
+            mVehicleList.clear();
+            for (int i = 0; i < country.length(); i++) {
+                JSONObject object = country.getJSONObject(i);
+                Vehicle oneVehicle = new Vehicle();
+                oneVehicle.modelYearID = object.getLong("modelYearID");
+                oneVehicle.maker = object.getString("maker");
+                oneVehicle.year = object.getInt("year");
+                oneVehicle.model = object.getString("model");
+                Preference oneCar = new Preference(this.getActivity());
+                oneCar.setKey(String.valueOf(oneVehicle.modelYearID));
+                oneCar.setLayoutResource(R.layout.preference_item);
+                oneCar.setSummary(oneVehicle.maker + "  " + oneVehicle.model + "  " + oneVehicle.year);
+                oneCar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(final Preference preference) {
+                        final long modelYearID = Long.valueOf(preference.getKey());
+                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                                .content(R.string.delete_car_confirm)
+                                .positiveText(R.string.ok)
+                                .negativeText(R.string.cancel)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+                                                .delete()
+                                                .url(Constants.API_USER_VEHICLE + "/" + modelYearID)
+                                                .listner(new Response.Listener<JSONObject>() {
+                                                    @Override
+                                                    public void onResponse(JSONObject response) {
+                                                        mVehicle.removePreference(preference);
+                                                    }
+                                                })
+                                                .build();
 
+                                        mRequestQueue.add(request.setTag(TAG));
+                                    }
+                                })
+                                .build();
+                        dialog.show();
+                        return false;
+                    }
+                });
+                mVehicleList.add(oneCar);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mVehicle.removeAll();
+        mVehicle.addPreference(mAddCar);
+        for (Preference item : mVehicleList) {
+            mVehicle.addPreference(item);
+        }
+
+    }
 
     private void uploadPassword(String oldPwd, String newPwd) {
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
@@ -518,6 +624,13 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
+    }
+
+    public class Vehicle {
+        public long modelYearID;
+        public String maker;
+        public String model;
+        public int year;
     }
 
 }

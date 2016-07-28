@@ -90,9 +90,6 @@ public class CountryActivity extends BaseActivity {
         getCountryList();
     }
 
-
-
-
     @Override
     public void setupToolbar() {
         super.setupToolbar();

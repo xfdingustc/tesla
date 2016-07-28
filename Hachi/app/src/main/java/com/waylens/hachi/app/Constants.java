@@ -52,6 +52,14 @@ public class Constants {
 
     public static final String API_CITY = HOST_URL + "api/region/cities";
 
+    public static final String API_MAKER = HOST_URL + "api/vehicle/makers";
+
+    public static final String API_MODEL = HOST_URL + "api/vehicle/models";
+
+    public static final String API_MODEL_YEAR = HOST_URL + "api/vehicle/years";
+
+    public static final String API_USER_VEHICLE = HOST_URL + "api/users/vehicle";
+
     /**
      * Link Social account with Waylens account
      */
