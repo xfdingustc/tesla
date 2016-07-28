@@ -654,7 +654,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
     private void stopCameraPreview() {
-        mLiveView.stopStream();
+        if (mLiveView != null) {
+            mLiveView.stopStream();
+        }
         closeLiveRawData();
     }
 

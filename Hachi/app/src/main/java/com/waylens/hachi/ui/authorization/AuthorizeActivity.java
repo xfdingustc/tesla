@@ -263,30 +263,5 @@ public class AuthorizeActivity extends BaseActivity {
         showDialog(getString(R.string.sign_in));
     }
 
-//    private void sendFbPublishToken2Server() {
-//        Logger.t(TAG).d("Send facebook publish token: " + mFaceBookPublishLoginResult.getAccessToken().getToken());
-//        String url = Constants.API_SHARE_ACCOUNTS;
-//        Map<String, String> param = new HashMap<>();
-//        param.put("provider", "facebook");
-//        param.put("accessToken", mFaceBookPublishLoginResult.getAccessToken().getToken());
-//
-//        final JSONObject requestBody = new JSONObject(param);
-//
-//        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                Logger.t(TAG).json(response.toString());
-//
-//
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Logger.t(TAG).e(error.getMessage());
-//            }
-//        });
-//
-//        mRequestQueue.add(request);
-//    }
+
 }
