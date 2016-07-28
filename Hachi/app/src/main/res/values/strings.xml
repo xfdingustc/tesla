@@ -359,7 +359,7 @@
 	<string name="wifi_status_scan_wifi">Scanning</string>
 	<string name="wifi_status_wifi_openned">Wifi is openned</string>
 	<string name="wifi_status_disable_network">Disconnect from previous wifi</string>
-	<string name="wifi_status_reconnect_to_network">Reconnect to new wifi</string>
+	<string name="wifi_status_reconnect_to_network">Reconnecting to new wifi</string>
 	<string name="wifi_status_connected">Already connected to camera wifi</string>
 	<string name="wifi_status_ssid_incorrect">"You have connected to the wrong wifi. Please make sure you are connecting to Waylens' camera!"</string>
 	<string name="close_cellar_data_access_hint">"Connecting to camera will take a short while. Please be patient. If you cannot connect to camera for a long time, you can try to close your cellar data access first"</string>
