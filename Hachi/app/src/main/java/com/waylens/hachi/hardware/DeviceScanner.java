@@ -86,7 +86,7 @@ public class DeviceScanner extends Thread {
                     while (enumIpAddr.hasMoreElements()) {
                         InetAddress addr = enumIpAddr.nextElement();
                         if (addr.isSiteLocalAddress()) {
-                            Logger.t(TAG).d("addr: " + addr);
+//                            Logger.t(TAG).d("addr: " + addr);
                             mAddress.add(addr);
                         }
                     }

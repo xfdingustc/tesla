@@ -364,4 +364,5 @@
 	<string name="wifi_status_ssid_incorrect">"You have connected to the wrong wifi. Please make sure you are connecting to Waylens' camera!"</string>
 	<string name="close_cellar_data_access_hint">"Connecting to camera will take a short while. Please be patient. If you cannot connect to camera for a long time, you can try to close your cellar data access first"</string>
 	<string name="camera_searching">Camera is scanning for available Wi-Fi networks</string>
+	<string name="open">Open</string>
 </resources>

@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.clips.enhance;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,6 +54,7 @@ import com.waylens.hachi.ui.entities.MusicItem;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +74,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
 
     private static final int LAUNCH_MODE_PLAYLIST = 100;
-    private static final int LAUNCH_MODE_CLIP_LIST = 200;
+
 
     public static final String EXTRA_CLIPS_TO_ENHANCE = "extra.clips.to.enhance";
     public static final String EXTRA_CLIPS_TO_APPEND = "extra.clips.to.append";
@@ -180,7 +182,6 @@ public class EnhanceActivity extends ClipPlayActivity {
     public void removeMusic() {
         mMusicItem = null;
         mClipPlayFragment.setAudioUrl(null);
-        updateMusicUI();
     }
 
     @OnClick(R.id.btn_gauge)
@@ -244,7 +245,17 @@ public class EnhanceActivity extends ClipPlayActivity {
                     mDownloadDialog.dismiss();
                 }
 
-                Snackbar.make(btnAddMusic, ("Stream has been download into " + (String) event.getExtra()), Snackbar.LENGTH_LONG).show();
+                final String videoUrl = (String)event.getExtra();
+                Snackbar snackbar = Snackbar.make(btnAddMusic, ("Stream has been download into " + videoUrl), Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.open, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(new File(videoUrl)), "video/mp4");
+                        startActivity(intent);
+                    }
+                });
+                snackbar.show();
                 break;
         }
     }
@@ -306,14 +317,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                         btnMusic.setEnabled(true);
                         configureActionUI(ACTION_NONE, false);
                     }
-//                    if (!mClipsEditView.appendSharableClips(clips)) {
-//                        MaterialDialog dialog = new MaterialDialog.Builder(this)
-//                            .content(R.string.resolution_not_correct)
-//                            .positiveText(android.R.string.ok)
-//                            .build();
-//                        dialog.show();
-//                    }
-//                    mClipPlayFragment.setPosition(0);
+
                 }
                 break;
             case REQUEST_CODE_ADD_MUSIC:
@@ -440,21 +444,9 @@ public class EnhanceActivity extends ClipPlayActivity {
         }
     }
 
-    private void updateMusicUI() {
-        if (mMusicItem == null) {
-            //btnAddMusic.setText(R.string.add_music);
-//          //  btnRemove.setVisibility(View.GONE);
-//            mB
-        } else {
-            //btnAddMusic.setText(R.string.swap);
-            //btnRemove.setVisibility(View.VISIBLE);
-        }
 
-    }
 
     private void doDownloadClips(final int selectIndex) {
-//        DownloadUrlRequest request =
-//        ClipSegment clipSegment = new ClipSegment(getClipSet().getClip(0));
         Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
         DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
             .Listener<ClipDownloadInfo>() {
