@@ -362,7 +362,7 @@
 	<string name="wifi_status_reconnect_to_network">Reconnecting to new wifi</string>
 	<string name="wifi_status_connected">Already connected to camera wifi</string>
 	<string name="wifi_status_ssid_incorrect">"You have connected to the wrong wifi. Please make sure you are connecting to Waylens' camera!"</string>
-	<string name="close_cellar_data_access_hint">"Connecting to camera will take a short while. Please be patient. If you cannot connect to camera for a long time, you can try to close your cellar data access first"</string>
+	<string name="close_cellar_data_access_hint">"Connecting to camera will take a short while. Please be patient. If you cannot connect to camera for a long time, you can try to close your cellular data access first"</string>
 	<string name="camera_searching">Camera is scanning for available Wi-Fi networks</string>
 	<string name="open">Open</string>
 	<string name="delete_car_confirm">Do you want to delete this car?</string>
