@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
@@ -8,124 +7,154 @@
     <include layout="@layout/toolbar_default"/>
 
     <TextView
-        android:id="@+id/hd_info"
-        style="@style/HachiTextViewTitle"
+        android:id="@+id/video_info"
+        style="@style/HachiTextViewSubHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Full HD"/>
+        android:text="@string/videos_shared"/>
 
-    <TextView
-        android:id="@+id/hd_duration"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="duration"/>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/hd_size"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="size"/>
+        <TextView
+            style="@style/HachiTextViewBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/video_count"/>
+        <TextView
+            android:id="@+id/video_count"
+            style="@style/HachiTextViewBody"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            />
+    </RelativeLayout>>
 
-    <TextView
-        android:id="@+id/hd_count"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="count"/>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/HachiTextViewBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/video_duration"/>
+        <TextView
+            android:id="@+id/video_duration"
+            style="@style/HachiTextViewBody"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/HachiTextViewBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/video_size"/>
+        <TextView
+            android:id="@+id/video_size"
+            style="@style/HachiTextViewBody"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            />
+
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:background="@color/settings_line_separator"></View>
 
     <TextView
-        android:id="@+id/sd_info"
-        style="@style/HachiTextViewTitle"
+        android:id="@+id/weekly_info"
+        style="@style/HachiTextViewSubHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="SD"/>
+        android:text="@string/weekly_uploading_quota"/>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            style="@style/HachiTextViewBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/upload_quota"/>
+        <TextView
+            android:id="@+id/weekly_quota"
+            style="@style/HachiTextViewBody"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/not_available"/>
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/HachiTextViewBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/available"/>
+
+        <TextView
+            android:id="@+id/weekly_available"
+            style="@style/HachiTextViewBody"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/not_available"/>
 
 
-    <TextView
-        android:id="@+id/sd_duration"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="duration"/>
-
-    <TextView
-        android:id="@+id/sd_size"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="size"/>
-
-    <TextView
-        android:id="@+id/sd_count"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="count"/>
+    </RelativeLayout>>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:background="@color/settings_line_separator"></View>
 
 
     <TextView
-        android:id="@+id/all_info"
-        style="@style/HachiTextViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="All"/>
-
-    <!--<FrameLayout-->
-    <!--android:id="@+id/fragment_container"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"></FrameLayout>-->
-
-    <TextView
-        android:id="@+id/all_duration"
+        android:id="@+id/cycle_info"
         style="@style/HachiTextViewBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="duration"/>
+        android:layout_margin="16dp" />
 
-    <TextView
-        android:id="@+id/all_size"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="size"/>
-
-    <TextView
-        android:id="@+id/all_count"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        tools:text="count"/>
 </LinearLayout>

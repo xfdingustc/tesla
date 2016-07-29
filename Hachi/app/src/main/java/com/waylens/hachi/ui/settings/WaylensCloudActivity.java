@@ -7,18 +7,28 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.library.vdb.ClipSetManager;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import butterknife.BindView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Xiaofei on 2016/5/13.
@@ -31,32 +41,23 @@ public class WaylensCloudActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
-    @BindView(R.id.hd_duration)
-    TextView mHdDuration;
+    @BindView(R.id.video_duration)
+    TextView mVideoDuration;
 
-    @BindView(R.id.hd_size)
-    TextView mHdSize;
+    @BindView(R.id.video_size)
+    TextView mVideoSize;
 
-    @BindView(R.id.hd_count)
-    TextView mHdCount;
+    @BindView(R.id.video_count)
+    TextView mVideoCount;
 
-    @BindView(R.id.sd_duration)
-    TextView mSdDuration;
+    @BindView(R.id.weekly_quota)
+    TextView mWeeklyQuota;
 
-    @BindView(R.id.sd_size)
-    TextView mSdSize;
+    @BindView(R.id.weekly_available)
+    TextView mWeeklyAvailable;
 
-    @BindView(R.id.sd_count)
-    TextView mSdCount;
-
-    @BindView(R.id.all_duration)
-    TextView mAllDuration;
-
-    @BindView(R.id.all_size)
-    TextView mAllSize;
-
-    @BindView(R.id.all_count)
-    TextView mAllCount;
+    @BindView(R.id.cycle_info)
+    TextView mCycleInfo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,30 +106,43 @@ public class WaylensCloudActivity extends BaseActivity {
                 Logger.t(TAG).json(response.toString());
 
                 try {
-                    JSONObject hd = response.getJSONObject("hd");
-                    mHdDuration.setText(String.valueOf(hd.getLong("duration") / 1000) + "ms");
-                    mHdSize.setText(String.valueOf(hd.getLong("size") / (1024 * 1024)) + "M");
-                    mHdCount.setText(String.valueOf(hd.getInt("count")));
-
-                    JSONObject sd = response.getJSONObject("sd");
-                    mSdDuration.setText(String.valueOf(sd.getLong("duration") / 1000) + "ms");
-                    mSdSize.setText(String.valueOf(sd.getLong("size") / (1024 * 1024)) + "M");
-                    mSdCount.setText(String.valueOf(sd.getInt("count")));
-
                     JSONObject all = response.getJSONObject("all");
-                    mAllDuration.setText(String.valueOf(all.getLong("duration") / 1000) + "ms");
-                    mAllSize.setText(String.valueOf(all.getLong("size") / (1024 * 1024)) + "M");
-                    mAllCount.setText(String.valueOf(all.getInt("count")));
+                    mVideoDuration.setText(String.valueOf(all.getLong("duration") / 1000) + "s");
+                    mVideoSize.setText(String.valueOf(all.getLong("size") / (1024 * 1024)) + "MB");
+                    mVideoCount.setText(String.valueOf(all.getInt("count")));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        }, new Response.ErrorListener() {
+            }}, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
             }
         });
         mRequestQueue.add(request);
+
+        HachiApi mHachi = HachiService.createHachiApiService();
+        Call<CloudStorageInfo> createMomentResponseCall = mHachi.getCloudStorageInfo();
+        createMomentResponseCall.enqueue(new Callback<CloudStorageInfo>() {
+            @Override
+            public void onResponse(Call<CloudStorageInfo> call, retrofit2.Response<CloudStorageInfo> response) {
+                if (response.body() != null) {
+                    CloudStorageInfo cloudStorageInfo = response.body();
+                    int durationQuota = cloudStorageInfo.current.plan.durationQuota;
+                    int durationUsed = cloudStorageInfo.current.durationUsed;
+                    long cycleBegin = cloudStorageInfo.current.plan.cycleBegin;
+                    long cycleEnd = cloudStorageInfo.current.plan.cycleEnd;
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy－MM－dd hh:mm");
+                    mWeeklyQuota.setText(durationQuota / 60000 + "m" );
+                    mWeeklyAvailable.setText((durationQuota - durationUsed) / 60000 + "m");
+                    mCycleInfo.setText("For the week " + format.format(new Date(cycleBegin)) + "~" + format.format(new Date(cycleEnd)) + ".");
+                    Logger.t(TAG).d("used: " + cloudStorageInfo.current.durationUsed + "total: " + cloudStorageInfo.current.plan.durationQuota);
+                }
+            }
+            @Override
+            public void onFailure(Call<CloudStorageInfo> call, Throwable t) {
+
+            }
+        });
     }
 }
