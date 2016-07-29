@@ -500,7 +500,7 @@ public class MomentActivity extends BaseActivity {
         SessionManager sessionManager = SessionManager.getInstance();
         if (sessionManager.isLoggedIn() && sessionManager.getUserId().equals(mMomentInfo.owner.userID)) {
             mAddFollow.setVisibility(View.GONE);
-            mBtnRepost.setVisibility(View.VISIBLE);
+//            mBtnRepost.setVisibility(View.VISIBLE);
         }
 
 
