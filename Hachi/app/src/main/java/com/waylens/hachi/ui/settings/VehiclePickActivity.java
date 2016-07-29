@@ -6,13 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ViewAnimator;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -32,7 +31,7 @@ import butterknife.BindView;
 /**
  * Created by lshw on 16/7/27.
  */
-public class VehiclePickActivity extends BaseActivity{
+public class VehiclePickActivity extends BaseActivity {
 
     public static final String TAG = VehiclePickActivity.class.getSimpleName();
     public static final int STEP_MAKER = 0;
@@ -55,40 +54,41 @@ public class VehiclePickActivity extends BaseActivity{
         activity.startActivityForResult(intent, requestCode);
     }
 
+    @BindView(R.id.va)
+    ViewAnimator mViewAnimator;
+
     @BindView(R.id.rv_content_list)
     RecyclerView mRvContentList;
 
-    @BindView(R.id.search_box)
-    EditText mSearchBox;
+    @BindView(R.id.search_view)
+    MaterialSearchView mSearchView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        mSearchBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+
+        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public boolean onQueryTextChange(String newText) {
                 switch (mCurrentStep) {
                     case STEP_MAKER:
-                        mMakerAdapter.getFilter().filter(charSequence);
+                        mMakerAdapter.getFilter().filter(newText);
                         break;
                     case STEP_MODEL:
-                        mModelAdapter.getFilter().filter(charSequence);
+                        mModelAdapter.getFilter().filter(newText);
                         break;
                     case STEP_YEAR:
-                        mYearAdapter.getFilter().filter(charSequence);
+                        mYearAdapter.getFilter().filter(newText);
                         break;
                 }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
+                return true;
             }
         });
     }
@@ -100,15 +100,12 @@ public class VehiclePickActivity extends BaseActivity{
     }
 
 
-
     private void initViews() {
         setContentView(R.layout.activity_vehicle_picker);
         mRvContentList.setLayoutManager(new LinearLayoutManager(this));
         setupToolbar();
         getMakerList();
     }
-
-
 
 
     @Override
@@ -121,20 +118,23 @@ public class VehiclePickActivity extends BaseActivity{
                 finish();
             }
         });
+        getToolbar().inflateMenu(R.menu.menu_search);
+        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
 
 
-
     private void getMakerList() {
+        mViewAnimator.setDisplayedChild(0);
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                .url(Constants.API_MAKER)
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        renderMakerList(response);
-                    }
-                })
-                .build();
+            .url(Constants.API_MAKER)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    mViewAnimator.setDisplayedChild(1);
+                    renderMakerList(response);
+                }
+            })
+            .build();
         mRequestQueue.add(request);
     }
 
@@ -158,7 +158,7 @@ public class VehiclePickActivity extends BaseActivity{
             public void onItemClicked(int position) {
                 Logger.t(TAG).d("on item clicked: " + position);
                 Maker maker = mMakerAdapter.getItem(position);
-                if(maker != null) {
+                if (maker != null) {
                     getModelList(maker.makerID);
                 }
             }
@@ -167,19 +167,21 @@ public class VehiclePickActivity extends BaseActivity{
     }
 
     private void getModelList(long makerID) {
+        mViewAnimator.setDisplayedChild(0);
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                .url(Constants.API_MODEL + "?maker=" + makerID)
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        renderModelList(response);
-                        mCurrentStep = STEP_MODEL;
-                        if (mSearchBox != null) {
-                            mSearchBox.setText("");
-                        }
+            .url(Constants.API_MODEL + "?maker=" + makerID)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    mViewAnimator.setDisplayedChild(1);
+                    renderModelList(response);
+                    mCurrentStep = STEP_MODEL;
+                    if (mSearchView != null) {
+                        mSearchView.closeSearch();
                     }
-                })
-                .build();
+                }
+            })
+            .build();
         mRequestQueue.add(request);
     }
 
@@ -203,7 +205,7 @@ public class VehiclePickActivity extends BaseActivity{
             public void onItemClicked(int position) {
                 Logger.t(TAG).d("on item clicked: " + position);
                 Model model = mModelAdapter.getItem(position);
-                if(model != null) {
+                if (model != null) {
                     getYearList(model.modelID);
                 }
             }
@@ -212,19 +214,21 @@ public class VehiclePickActivity extends BaseActivity{
     }
 
     private void getYearList(long model) {
+        mViewAnimator.setDisplayedChild(0);
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                .url(Constants.API_MODEL_YEAR + "?model=" + model)
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        renderYearList(response);
-                        mCurrentStep = STEP_YEAR;
-                        if (mSearchBox != null) {
-                            mSearchBox.setText("");
-                        }
+            .url(Constants.API_MODEL_YEAR + "?model=" + model)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    mViewAnimator.setDisplayedChild(1);
+                    renderYearList(response);
+                    mCurrentStep = STEP_YEAR;
+                    if (mSearchView != null) {
+                        mSearchView.closeSearch();
                     }
-                })
-                .build();
+                }
+            })
+            .build();
         mRequestQueue.add(request);
     }
 
@@ -248,7 +252,7 @@ public class VehiclePickActivity extends BaseActivity{
             public void onItemClicked(int position) {
                 Logger.t(TAG).d("on item clicked: " + position);
                 ModelYear modelYear = mYearAdapter.getItem(position);
-                if(modelYear != null) {
+                if (modelYear != null) {
                     addVehicle(modelYear.modelYearID);
                 }
             }
@@ -258,25 +262,25 @@ public class VehiclePickActivity extends BaseActivity{
 
     public void addVehicle(long modelYearID) {
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                .url(Constants.API_USER_VEHICLE)
-                .postBody("modelYearID", modelYearID)
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Logger.t(TAG).json(response.toString());
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-                })
-                .errorListener(new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.t(TAG).d(error.toString());
-                        setResult(RESULT_CANCELED);
-                        finish();
-                    }
-                })
-                .build();
+            .url(Constants.API_USER_VEHICLE)
+            .postBody("modelYearID", modelYearID)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.t(TAG).json(response.toString());
+                    setResult(RESULT_OK);
+                    finish();
+                }
+            })
+            .errorListener(new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
+            })
+            .build();
         mRequestQueue.add(request);
 
     }
@@ -291,7 +295,7 @@ public class VehiclePickActivity extends BaseActivity{
         }
     }
 
-    public class Model{
+    public class Model {
         public long modelID;
         public String modelName;
 
@@ -300,41 +304,45 @@ public class VehiclePickActivity extends BaseActivity{
         }
     }
 
-    public class ModelYear{
+    public class ModelYear {
         public long modelYearID;
         public int year;
+
         public String getName() {
             return String.valueOf(year);
         }
     }
 
-    public class MakerAdapter extends SimpleCommonAdapter<Maker>{
+    public class MakerAdapter extends SimpleCommonAdapter<Maker> {
 
         public MakerAdapter(List<Maker> itemList, OnListItemClickListener listener) {
             super(itemList, listener);
         }
+
         @Override
         public String getName(Maker maker) {
             return maker.getName();
         }
     }
 
-    public class ModelAdapter extends SimpleCommonAdapter<Model>{
+    public class ModelAdapter extends SimpleCommonAdapter<Model> {
 
         public ModelAdapter(List<Model> itemList, OnListItemClickListener listener) {
             super(itemList, listener);
         }
+
         @Override
         public String getName(Model model) {
             return model.getName();
         }
     }
 
-    public class ModelYearAdapter extends SimpleCommonAdapter<ModelYear>{
+    public class ModelYearAdapter extends SimpleCommonAdapter<ModelYear> {
 
         public ModelYearAdapter(List<ModelYear> itemList, OnListItemClickListener listener) {
             super(itemList, listener);
         }
+
         @Override
         public String getName(ModelYear modelYear) {
             return modelYear.getName();
