@@ -55,7 +55,7 @@ public class SimpleCityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         SimpleStringViewHolder viewHolder = (SimpleStringViewHolder)holder;
         viewHolder.title.setText(mCityListFiltered.get(position).name);
-        viewHolder.rootLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnListItemClickListener != null) {
@@ -72,8 +72,6 @@ public class SimpleCityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     public class SimpleStringViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.root_layout)
-        LinearLayout rootLayout;
 
         @BindView(R.id.title)
         TextView title;

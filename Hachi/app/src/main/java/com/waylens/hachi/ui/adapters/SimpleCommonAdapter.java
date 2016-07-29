@@ -55,7 +55,7 @@ public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<Recycl
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         SimpleStringViewHolder viewHolder = (SimpleStringViewHolder) holder;
         viewHolder.title.setText(getName(mListFiltered.get(position)));
-        viewHolder.rootLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnListItemClickListener != null) {
@@ -72,8 +72,7 @@ public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<Recycl
 
 
     public class SimpleStringViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.root_layout)
-        LinearLayout rootLayout;
+
 
         @BindView(R.id.title)
         TextView title;

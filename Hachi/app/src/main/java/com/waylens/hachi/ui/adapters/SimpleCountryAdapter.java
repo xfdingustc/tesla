@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.settings.CountryActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +21,14 @@ import butterknife.ButterKnife;
 /**
  * Created by lshw on 2016/7/27.
  */
-public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>implements Filterable{
+public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private final List<CountryActivity.Country> mCountryList;
     private List<CountryActivity.Country> mCountryListFiltered;
     private final OnListItemClickListener mOnListItemClickListener;
     private InnerFilter mFilter;
 
-    public SimpleCountryAdapter(List<CountryActivity.Country> list, OnListItemClickListener listener ) {
+    public SimpleCountryAdapter(List<CountryActivity.Country> list, OnListItemClickListener listener) {
         mCountryList = list;
         mCountryListFiltered = list;
         mOnListItemClickListener = listener;
@@ -52,9 +52,9 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        SimpleStringViewHolder viewHolder = (SimpleStringViewHolder)holder;
+        SimpleStringViewHolder viewHolder = (SimpleStringViewHolder) holder;
         viewHolder.title.setText(mCountryListFiltered.get(position).name);
-        viewHolder.rootLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnListItemClickListener != null) {
@@ -71,8 +71,6 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
 
 
     public class SimpleStringViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.root_layout)
-        LinearLayout rootLayout;
 
         @BindView(R.id.title)
         TextView title;

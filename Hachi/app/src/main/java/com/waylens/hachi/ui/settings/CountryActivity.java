@@ -6,18 +6,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ViewSwitcher;
 
 import com.android.volley.Response;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.adapters.SimpleCityAdapter;
 import com.waylens.hachi.ui.adapters.SimpleCountryAdapter;
 
 import org.json.JSONArray;
@@ -45,11 +43,14 @@ public class CountryActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
+    @BindView(R.id.vs)
+    ViewSwitcher mVs;
+
     @BindView(R.id.rv_country_list)
     RecyclerView mRvCountryList;
 
-    @BindView(R.id.search_country)
-    EditText mSearchCity;
+    @BindView(R.id.search_view)
+    MaterialSearchView mSearchView;
 
 
 
@@ -57,20 +58,17 @@ public class CountryActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        mSearchCity.addTextChangedListener(new TextWatcher() {
+        
+        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                mAdapter.getFilter().filter(charSequence);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return true;
             }
         });
     }
@@ -90,6 +88,7 @@ public class CountryActivity extends BaseActivity {
         getCountryList();
     }
 
+
     @Override
     public void setupToolbar() {
         super.setupToolbar();
@@ -100,6 +99,8 @@ public class CountryActivity extends BaseActivity {
                 finish();
             }
         });
+        getToolbar().inflateMenu(R.menu.menu_search);
+        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
 
 
@@ -110,6 +111,7 @@ public class CountryActivity extends BaseActivity {
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    mVs.showNext();
                     renderCountryList(response);
                 }
             })
