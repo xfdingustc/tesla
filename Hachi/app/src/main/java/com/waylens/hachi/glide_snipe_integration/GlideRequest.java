@@ -34,6 +34,12 @@ public class GlideRequest extends VdbRequest<InputStream> {
     }
 
     @Override
+    public Priority getPriority() {
+        return Priority.LOW;
+    }
+
+
+    @Override
     protected VdbResponse<InputStream> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
             Logger.t(TAG).e("ackGetIndexPicture: failed");
