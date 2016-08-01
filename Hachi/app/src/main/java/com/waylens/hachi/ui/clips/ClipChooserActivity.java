@@ -8,8 +8,9 @@ import android.view.MenuItem;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
-import com.waylens.hachi.library.vdb.Clip;
+
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.xfdingustc.snipe.vdb.Clip;
 
 
 import org.greenrobot.eventbus.EventBus;

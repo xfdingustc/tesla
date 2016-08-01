@@ -6,7 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.waylens.hachi.app.JsonKey;
-import com.waylens.hachi.library.utils.ToStringUtils;
+import com.xfdingustc.snipe.utils.ToStringUtils;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -40,14 +40,14 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.library.crs_svr.HashUtils;
-import com.waylens.hachi.library.snipe.SnipeError;
-import com.waylens.hachi.library.snipe.VdbResponse;
-import com.waylens.hachi.library.snipe.toolbox.GetSpaceInfoRequest;
-import com.waylens.hachi.library.vdb.SpaceInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
 import com.waylens.hachi.ui.services.download.InetDownloadService;
+import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbResponse;
+import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
+import com.xfdingustc.snipe.vdb.SpaceInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;

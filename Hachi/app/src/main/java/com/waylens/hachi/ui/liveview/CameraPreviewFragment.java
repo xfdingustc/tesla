@@ -36,23 +36,21 @@ import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.BtDevice;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.library.vdb.ClipActionInfo;
-import com.waylens.hachi.library.vdb.SpaceInfo;
-import com.waylens.hachi.library.vdb.VdbReadyInfo;
-import com.waylens.hachi.library.vdb.rawdata.RawDataBlock;
-import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.library.snipe.SnipeError;
-import com.waylens.hachi.library.snipe.VdbResponse;
-import com.waylens.hachi.library.snipe.toolbox.GetSpaceInfoRequest;
-import com.waylens.hachi.library.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.GaugeView;
-
 import com.xfdingustc.mjpegview.library.MjpegView;
+import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbResponse;
+import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
+import com.xfdingustc.snipe.toolbox.LiveRawDataRequest;
+import com.xfdingustc.snipe.vdb.ClipActionInfo;
+import com.xfdingustc.snipe.vdb.SpaceInfo;
+import com.xfdingustc.snipe.vdb.VdbReadyInfo;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -467,7 +465,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         }
 
     }
-
 
 
     @Override

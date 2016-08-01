@@ -29,26 +29,25 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.library.vdb.rawdata.GpsData;
-import com.waylens.hachi.library.vdb.rawdata.IioData;
-import com.waylens.hachi.library.vdb.rawdata.ObdData;
-import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.library.vdb.rawdata.WeatherData;
-import com.waylens.hachi.rest.response.MomentInfo;
-import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.library.player.HachiPlayer;
 import com.waylens.hachi.library.player.HlsRendererBuilder;
 import com.waylens.hachi.library.player.Utils;
+import com.waylens.hachi.rest.response.MomentInfo;
+import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.library.utils.ToStringUtils;
-
 import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
+import com.xfdingustc.snipe.utils.ToStringUtils;
+import com.xfdingustc.snipe.vdb.rawdata.GpsData;
+import com.xfdingustc.snipe.vdb.rawdata.IioData;
+import com.xfdingustc.snipe.vdb.rawdata.ObdData;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
+import com.xfdingustc.snipe.vdb.rawdata.WeatherData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,8 +77,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private static final int FADE_OUT = 1;
 
 
-
-
     private static final int DEFAULT_TIMEOUT = 3000;
     private static final long MAX_PROGRESS = 1000L;
 
@@ -98,8 +95,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private SurfaceHolder mSurfaceHolder;
 
 
-
-
     private VideoHandler mHandler;
 
     private MomentInfo mMoment;
@@ -107,8 +102,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private MomentPlayInfo mMomentPlayInfo;
 
     private List<RawDataTimeInfo> mRawDataTimeInfoList = new ArrayList<>();
-
-
 
 
     private boolean mIsActivityStopped = false;
@@ -319,7 +312,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 break;
 
 
-
         }
     }
 
@@ -371,16 +363,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         mRawDataState = RAW_DATA_STATE_UNKNOWN;
         releasePlayer();
     }
-
-
-
 
 
     private boolean isFullScreen() {
@@ -571,7 +559,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             });
 
 
-
         mProgressLoading.setVisibility(View.VISIBLE);
     }
 
@@ -675,13 +662,13 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                         JSONObject accObj = acceleration.optJSONObject(i);
                         if (accObj != null) {
                             mRawDataAdapter.addAccData(
-                                    captureTime.getLong(i) + offset,
-                                    accObj.optInt("accelX"), accObj.optInt("accelY"), accObj.optInt("accelZ"),
-                                    accObj.optInt("gyroX"), accObj.optInt("gyroY"), accObj.optInt("gyroZ"),
-                                    accObj.optInt("magnX"), accObj.optInt("magnY"), accObj.optInt("magnZ"),
-                                    accObj.optInt("eulerHeading"), accObj.optInt("eulerRoll"), accObj.optInt("eulerPitch"),
-                                    accObj.optInt("quaternionW"), accObj.optInt("quaternionX"), accObj.optInt("quaternionY"), accObj.optInt("quaternionZ"),
-                                    accObj.optInt("pressure")
+                                captureTime.getLong(i) + offset,
+                                accObj.optInt("accelX"), accObj.optInt("accelY"), accObj.optInt("accelZ"),
+                                accObj.optInt("gyroX"), accObj.optInt("gyroY"), accObj.optInt("gyroZ"),
+                                accObj.optInt("magnX"), accObj.optInt("magnY"), accObj.optInt("magnZ"),
+                                accObj.optInt("eulerHeading"), accObj.optInt("eulerRoll"), accObj.optInt("eulerPitch"),
+                                accObj.optInt("quaternionW"), accObj.optInt("quaternionX"), accObj.optInt("quaternionY"), accObj.optInt("quaternionZ"),
+                                accObj.optInt("pressure")
                             );
                         }
                     }
@@ -697,11 +684,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     JSONArray coordinateObj = coordinates.optJSONArray(i);
                     if (coordinateObj != null) {
                         mRawDataAdapter.addGpsData(
-                                captureTime.getLong(i) + offset,
-                                coordinateObj.optDouble(0),
-                                coordinateObj.optDouble(1),
-                                coordinateObj.optDouble(2),
-                                speed.getDouble(i)
+                            captureTime.getLong(i) + offset,
+                            coordinateObj.optDouble(0),
+                            coordinateObj.optDouble(1),
+                            coordinateObj.optDouble(2),
+                            speed.getDouble(i)
                         );
                     }
                 }
@@ -714,12 +701,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 if (hourlyData != null && hourlyData.length() != 0) {
                     for (int i = 0; i < captureTime.length(); i++) {
                         mRawDataAdapter.addWeatherData(
-                                captureTime.getLong(i) + offset,
-                                hourlyData.getInt("tempF"),
-                                hourlyData.getInt("windSpeedMiles"),
-                                hourlyData.getInt("pressure"),
-                                hourlyData.getInt("humidity"),
-                                hourlyData.getInt("weatherCode")
+                            captureTime.getLong(i) + offset,
+                            hourlyData.getInt("tempF"),
+                            hourlyData.getInt("windSpeedMiles"),
+                            hourlyData.getInt("pressure"),
+                            hourlyData.getInt("humidity"),
+                            hourlyData.getInt("weatherCode")
                         );
 
                     }
@@ -855,11 +842,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-
-
-
-
-
     public class RawDataTimeInfo {
         private long captureTime;
 
@@ -944,11 +926,10 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 return;
             }
             Logger.t(TAG).d("duration: " + mPlayerControl.getDuration() + " progress: " + seekBar.getProgress() + " max: " + seekBar.getMax());
-            mMediaPlayer.seekTo(((long)mPlayerControl.getDuration() * seekBar.getProgress()) / seekBar.getMax());
+            mMediaPlayer.seekTo(((long) mPlayerControl.getDuration() * seekBar.getProgress()) / seekBar.getMax());
         }
 
     }
-
 
 
 }

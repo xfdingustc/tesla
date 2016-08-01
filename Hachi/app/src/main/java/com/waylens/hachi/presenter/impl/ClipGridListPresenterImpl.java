@@ -2,14 +2,13 @@ package com.waylens.hachi.presenter.impl;
 
 import android.content.Context;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.interactor.ClipGridListInteractor;
 import com.waylens.hachi.interactor.impl.ClipGridListInteractorImpl;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipSet;
 import com.waylens.hachi.listeners.BaseSingleLoadedListener;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.view.ClipGridListView;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipSet;
 
 import java.util.List;
 

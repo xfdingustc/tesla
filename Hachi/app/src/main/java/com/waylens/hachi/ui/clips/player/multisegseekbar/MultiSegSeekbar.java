@@ -16,10 +16,10 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
-import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.library.vdb.ClipSetManager;
-import com.waylens.hachi.library.vdb.ClipSetPos;
 import com.waylens.hachi.utils.ViewUtils;
+import com.xfdingustc.snipe.vdb.ClipSet;
+import com.xfdingustc.snipe.vdb.ClipSetManager;
+import com.xfdingustc.snipe.vdb.ClipSetPos;
 
 
 import org.greenrobot.eventbus.Subscribe;

@@ -2,10 +2,9 @@ package com.waylens.hachi.interactor.impl;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.interactor.ClipVideoInteractor;
-import com.waylens.hachi.library.vdb.Clip;
 import com.waylens.hachi.ui.clips.ClipGridListFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-
+import com.xfdingustc.snipe.vdb.Clip;
 
 import java.util.ArrayList;
 import java.util.List;

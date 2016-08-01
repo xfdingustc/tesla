@@ -1,10 +1,8 @@
 package com.waylens.hachi.hardware.vdtcamera;
 
-import android.content.Context;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.VdbRequestQueue;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -16,8 +14,6 @@ public class VdtCameraManager {
     private static final String TAG = VdtCameraManager.class.getSimpleName();
 
     private static VdtCameraManager mSharedManager = new VdtCameraManager();
-
-
 
 
     private EventBus mEventBus = EventBus.getDefault();
@@ -75,7 +71,6 @@ public class VdtCameraManager {
         });
 
         Logger.t(TAG).d("create new VdtCamera current connected camera size: " + mConnectedVdtCameras.size() + " connecting: " + mConnectingVdtCameras.size());
-
 
 
         mConnectingVdtCameras.add(vdtCamera);

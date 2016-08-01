@@ -2,7 +2,9 @@ package com.waylens.hachi.interactor;
 
 
 
-import com.waylens.hachi.library.vdb.Clip;
+
+
+import com.xfdingustc.snipe.vdb.Clip;
 
 import java.util.List;
 

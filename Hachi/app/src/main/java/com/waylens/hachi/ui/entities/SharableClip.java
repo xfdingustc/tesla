@@ -3,14 +3,14 @@ package com.waylens.hachi.ui.entities;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipExtent;
-import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.library.snipe.SnipeError;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.library.snipe.VdbResponse;
-import com.waylens.hachi.library.snipe.toolbox.ClipExtentGetRequest;
 
+import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.VdbResponse;
+import com.xfdingustc.snipe.toolbox.ClipExtentGetRequest;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipExtent;
+import com.xfdingustc.snipe.vdb.ClipSet;
 
 import java.util.ArrayList;
 import java.util.List;

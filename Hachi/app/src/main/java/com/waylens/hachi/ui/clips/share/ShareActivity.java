@@ -29,7 +29,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
@@ -43,6 +42,7 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.upload.UploadActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
+import com.xfdingustc.snipe.vdb.ClipSetManager;
 
 import java.util.Map;
 

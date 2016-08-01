@@ -5,15 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipDownloadInfo;
-import com.waylens.hachi.library.vdb.ClipSegment;
-import com.waylens.hachi.library.vdb.rawdata.RawDataBlock;
-import com.waylens.hachi.library.snipe.SnipeError;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.library.snipe.VdbResponse;
-import com.waylens.hachi.library.snipe.toolbox.DownloadUrlRequest;
-
+import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.VdbResponse;
+import com.xfdingustc.snipe.toolbox.DownloadUrlRequest;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipDownloadInfo;
+import com.xfdingustc.snipe.vdb.ClipSegment;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
 
 
 public class DownloadIntentService extends IntentService {

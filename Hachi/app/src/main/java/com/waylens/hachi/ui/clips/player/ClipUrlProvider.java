@@ -3,13 +3,14 @@ package com.waylens.hachi.ui.clips.player;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.Vdb;
-import com.waylens.hachi.library.vdb.urls.PlaybackUrl;
-import com.waylens.hachi.library.vdb.urls.VdbUrl;
-import com.waylens.hachi.library.snipe.VdbRequestFuture;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.library.snipe.toolbox.ClipPlaybackUrlExRequest;
+
+import com.xfdingustc.snipe.VdbRequestFuture;
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.toolbox.ClipPlaybackUrlExRequest;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.Vdb;
+import com.xfdingustc.snipe.vdb.urls.PlaybackUrl;
+import com.xfdingustc.snipe.vdb.urls.VdbUrl;
 
 import java.util.concurrent.ExecutionException;
 

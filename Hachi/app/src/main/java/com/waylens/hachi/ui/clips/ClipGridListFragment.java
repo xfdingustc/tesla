@@ -18,11 +18,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
-import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipActionInfo;
-import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.library.vdb.ClipSetManager;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
@@ -35,6 +30,11 @@ import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.view.ClipGridListView;
+import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipActionInfo;
+import com.xfdingustc.snipe.vdb.ClipSet;
+import com.xfdingustc.snipe.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -320,9 +320,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
-
-
-
     private void doDeleteSelectedClips() {
         ArrayList<Clip> selectedList = new ArrayList<>();
         selectedList.addAll(mAdapter.getSelectedClipList());
@@ -427,8 +424,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
         }
     }
-
-
 
 
     private void popClipPreviewFragment(Clip clip, final View transitionView) {

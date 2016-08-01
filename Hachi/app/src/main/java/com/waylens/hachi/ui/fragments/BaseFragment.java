@@ -19,8 +19,8 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.R;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.xfdingustc.snipe.VdbRequestQueue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

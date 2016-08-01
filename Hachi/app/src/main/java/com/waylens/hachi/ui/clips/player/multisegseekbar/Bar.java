@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipSetPos;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipSetPos;
 
 import java.util.ArrayList;
 import java.util.List;

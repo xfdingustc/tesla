@@ -13,21 +13,21 @@ import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.library.crs_svr.CrsCommand;
-import com.waylens.hachi.library.snipe.VdbCommand;
-import com.waylens.hachi.library.snipe.VdbRequestFuture;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.library.snipe.toolbox.ClipSetExRequest;
-import com.waylens.hachi.library.snipe.toolbox.ClipUploadUrlRequest;
-import com.waylens.hachi.library.snipe.toolbox.VdbImageRequest;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipPos;
-import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.library.vdb.urls.UploadUrl;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.ui.entities.LocalMoment;
+import com.xfdingustc.snipe.VdbCommand;
+import com.xfdingustc.snipe.VdbRequestFuture;
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
+import com.xfdingustc.snipe.toolbox.ClipUploadUrlRequest;
+import com.xfdingustc.snipe.toolbox.VdbImageRequest;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipPos;
+import com.xfdingustc.snipe.vdb.ClipSet;
+import com.xfdingustc.snipe.vdb.urls.UploadUrl;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -240,8 +240,6 @@ public class UploadMomentJob extends Job {
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
         Logger.t(TAG).d("one cancel: " + throwable.toString());
     }
-
-
 
 
     @Override

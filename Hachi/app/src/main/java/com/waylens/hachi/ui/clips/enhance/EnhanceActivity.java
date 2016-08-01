@@ -30,15 +30,7 @@ import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipDownloadInfo;
-import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.library.vdb.ClipSetManager;
-import com.waylens.hachi.library.vdb.ClipSetPos;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.library.snipe.SnipeError;
-import com.waylens.hachi.library.snipe.VdbResponse;
-import com.waylens.hachi.library.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
@@ -49,7 +41,14 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
-
+import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbResponse;
+import com.xfdingustc.snipe.toolbox.DownloadUrlRequest;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipDownloadInfo;
+import com.xfdingustc.snipe.vdb.ClipSet;
+import com.xfdingustc.snipe.vdb.ClipSetManager;
+import com.xfdingustc.snipe.vdb.ClipSetPos;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -245,7 +244,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     mDownloadDialog.dismiss();
                 }
 
-                final String videoUrl = (String)event.getExtra();
+                final String videoUrl = (String) event.getExtra();
                 Snackbar snackbar = Snackbar.make(btnAddMusic, ("Stream has been download into " + videoUrl), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.open, new View.OnClickListener() {
                     @Override
@@ -419,7 +418,7 @@ public class EnhanceActivity extends ClipPlayActivity {
         if (!SessionManager.getInstance().isLoggedIn()) {
             AuthorizeActivity.launch(EnhanceActivity.this);
             return;
-        }else if (!SessionManager.checkUserVerified(EnhanceActivity.this)) {
+        } else if (!SessionManager.checkUserVerified(EnhanceActivity.this)) {
             return;
         } else if (getClipSet().getCount() == 0) {
             MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
@@ -443,7 +442,6 @@ public class EnhanceActivity extends ClipPlayActivity {
             mClipsEditView.setVisibility(View.VISIBLE);
         }
     }
-
 
 
     private void doDownloadClips(final int selectIndex) {

@@ -7,24 +7,23 @@ import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
 import com.waylens.hachi.eventbus.events.RawDataItemEvent;
 import com.waylens.hachi.hardware.vdtcamera.events.BluetoothEvent;
 import com.waylens.hachi.hardware.vdtcamera.events.NetworkEvent;
-import com.waylens.hachi.library.snipe.BasicVdbSocket;
-import com.waylens.hachi.library.snipe.SnipeError;
-import com.waylens.hachi.library.snipe.VdbCommand;
-import com.waylens.hachi.library.snipe.VdbConnection;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.library.snipe.VdbResponse;
-import com.waylens.hachi.library.snipe.VdbSocket;
-import com.waylens.hachi.library.snipe.toolbox.ClipInfoMsgHandler;
-import com.waylens.hachi.library.snipe.toolbox.MarkLiveMsgHandler;
-import com.waylens.hachi.library.snipe.toolbox.RawDataMsgHandler;
-import com.waylens.hachi.library.snipe.toolbox.VdbReadyMsgHandler;
-import com.waylens.hachi.library.snipe.toolbox.VdbUnmountedMsgHandler;
 import com.waylens.hachi.ui.entities.NetworkItemBean;
-import com.waylens.hachi.library.utils.ToStringUtils;
-import com.waylens.hachi.library.vdb.ClipActionInfo;
-import com.waylens.hachi.library.vdb.VdbReadyInfo;
-import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
-
+import com.xfdingustc.snipe.BasicVdbSocket;
+import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbCommand;
+import com.xfdingustc.snipe.VdbConnection;
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.VdbResponse;
+import com.xfdingustc.snipe.VdbSocket;
+import com.xfdingustc.snipe.toolbox.ClipInfoMsgHandler;
+import com.xfdingustc.snipe.toolbox.MarkLiveMsgHandler;
+import com.xfdingustc.snipe.toolbox.RawDataMsgHandler;
+import com.xfdingustc.snipe.toolbox.VdbReadyMsgHandler;
+import com.xfdingustc.snipe.toolbox.VdbUnmountedMsgHandler;
+import com.xfdingustc.snipe.utils.ToStringUtils;
+import com.xfdingustc.snipe.vdb.ClipActionInfo;
+import com.xfdingustc.snipe.vdb.VdbReadyInfo;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -257,9 +256,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private OnConnectionChangeListener mOnConnectionChangeListener = null;
 
     private OnNewFwVersionListern mOnNewFwVersionListerner = null;
-
-
-
 
 
     private VdbConnection mVdbConnection;

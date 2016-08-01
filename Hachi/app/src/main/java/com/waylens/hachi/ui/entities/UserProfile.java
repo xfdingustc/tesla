@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.entities;
 
-import com.waylens.hachi.library.utils.ToStringUtils;
+
+import com.xfdingustc.snipe.utils.ToStringUtils;
 
 /**
  * Created by Xiaofei on 2016/6/8.

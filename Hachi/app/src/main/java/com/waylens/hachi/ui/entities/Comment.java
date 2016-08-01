@@ -7,7 +7,8 @@ import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
 
-import com.waylens.hachi.library.utils.ToStringUtils;
+
+import com.xfdingustc.snipe.utils.ToStringUtils;
 
 import org.json.JSONObject;
 

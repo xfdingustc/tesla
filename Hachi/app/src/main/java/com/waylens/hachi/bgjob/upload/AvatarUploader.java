@@ -2,7 +2,7 @@ package com.waylens.hachi.bgjob.upload;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
-import com.waylens.hachi.library.vdb.urls.UploadUrl;
+
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
@@ -29,6 +29,7 @@ import com.waylens.hachi.library.crs_svr.CrsUserLogout;
 import com.waylens.hachi.library.crs_svr.CrsUserStartUpload;
 import com.waylens.hachi.library.crs_svr.CrsUserStopUpload;
 import com.waylens.hachi.library.crs_svr.EncodeCommandHeader;
+import com.xfdingustc.snipe.vdb.urls.UploadUrl;
 
 /**
  * Created by Xiaofei on 2016/7/14.

@@ -2,11 +2,12 @@ package com.waylens.hachi.glide_snipe_integration;
 
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.waylens.hachi.library.vdb.ClipPos;
-import com.waylens.hachi.library.snipe.VdbRequest;
-import com.waylens.hachi.library.snipe.VdbRequestFuture;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
+
 import com.waylens.hachi.utils.DigitUtils;
+import com.xfdingustc.snipe.VdbRequest;
+import com.xfdingustc.snipe.VdbRequestFuture;
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.vdb.ClipPos;
 
 
 import java.io.InputStream;

@@ -13,12 +13,12 @@ import android.widget.FrameLayout;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
-import com.waylens.hachi.library.vdb.rawdata.GpsData;
-import com.waylens.hachi.library.vdb.rawdata.IioData;
-import com.waylens.hachi.library.vdb.rawdata.ObdData;
-import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.library.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
+import com.xfdingustc.snipe.vdb.rawdata.GpsData;
+import com.xfdingustc.snipe.vdb.rawdata.IioData;
+import com.xfdingustc.snipe.vdb.rawdata.ObdData;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
+import com.xfdingustc.snipe.vdb.rawdata.WeatherData;
 
 
 import org.greenrobot.eventbus.Subscribe;

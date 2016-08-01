@@ -1,12 +1,11 @@
 package com.waylens.hachi.ui.entities;
 
 
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.urls.UploadUrl;
-import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.bgjob.upload.CloudInfo;
-import com.waylens.hachi.library.utils.DateTime;
-
+import com.waylens.hachi.rest.response.CreateMomentResponse;
+import com.xfdingustc.snipe.utils.DateTime;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.urls.UploadUrl;
 
 import java.io.Serializable;
 import java.util.ArrayList;

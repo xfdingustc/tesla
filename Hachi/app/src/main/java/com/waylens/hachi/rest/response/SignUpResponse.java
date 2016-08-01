@@ -1,6 +1,7 @@
 package com.waylens.hachi.rest.response;
 
-import com.waylens.hachi.library.utils.ToStringUtils;
+
+import com.xfdingustc.snipe.utils.ToStringUtils;
 
 /**
  * Created by liushuwei on 2016/6/13.

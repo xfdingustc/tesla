@@ -1,7 +1,7 @@
 package com.waylens.hachi.eventbus.events;
 
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.library.vdb.rawdata.RawDataItem;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
 
 
 import java.util.List;

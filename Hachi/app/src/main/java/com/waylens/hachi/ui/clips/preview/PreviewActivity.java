@@ -14,30 +14,17 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipSet;
-import com.waylens.hachi.rest.HachiApi;
-import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.library.snipe.SnipeError;
-import com.waylens.hachi.library.snipe.VdbResponse;
-import com.waylens.hachi.library.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.clips.ClipModifyActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
-
-
-import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
+import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbResponse;
+import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -150,7 +137,6 @@ public class PreviewActivity extends ClipPlayActivity {
                 }
             }).show();
     }
-
 
 
     private void doDeleteClip() {

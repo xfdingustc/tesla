@@ -17,10 +17,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-import com.waylens.hachi.library.vdb.Clip;
-import com.waylens.hachi.library.vdb.ClipPos;
-import com.waylens.hachi.library.vdb.ClipSet;
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipPos;
+import com.xfdingustc.snipe.vdb.ClipSet;
+
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

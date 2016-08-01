@@ -2,7 +2,6 @@ package com.waylens.hachi.glide_snipe_integration;
 
 import android.content.Context;
 
-
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.model.GenericLoaderFactory;
 import com.bumptech.glide.load.model.ModelLoader;
@@ -10,9 +9,8 @@ import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
-import com.waylens.hachi.library.vdb.ClipPos;
-import com.waylens.hachi.library.snipe.VdbRequestQueue;
-
+import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.vdb.ClipPos;
 
 import java.io.InputStream;
 

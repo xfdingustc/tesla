@@ -1,8 +1,8 @@
 package com.waylens.hachi.glide_snipe_integration;
 
-import com.waylens.hachi.library.vdb.ClipPos;
-import com.waylens.hachi.library.snipe.VdbRequest;
-import com.waylens.hachi.library.snipe.VdbRequestFuture;
+import com.xfdingustc.snipe.VdbRequest;
+import com.xfdingustc.snipe.VdbRequestFuture;
+import com.xfdingustc.snipe.vdb.ClipPos;
 
 
 import java.io.InputStream;
