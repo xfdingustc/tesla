@@ -122,13 +122,13 @@ public class RawDataLoader {
 
         if (rawDataBlockAll.iioDataBlock != null) {
             RawDataItem iioItem = rawDataBlockAll.iioDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
-            Logger.t(TAG).d("iioDataBlock != null");
+//            Logger.t(TAG).d("iioDataBlock != null");
             if (iioItem != null) {
                 iioItem.setPtsMs(clip.getClipDate()  + iioItem.getPtsMs());
                 unchangedCount[IIO_DATA] = 0;
                 mRawDataItemList.set(IIO_DATA, iioItem);
                 periodReached = 1;
-                Logger.t(TAG).d("iioItem" + iioItem.toString());
+//                Logger.t(TAG).d("iioItem" + iioItem.toString());
             }
         }
 
