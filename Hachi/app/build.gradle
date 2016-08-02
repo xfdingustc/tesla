@@ -128,7 +128,7 @@ dependencies {
 
     //    compile 'cn.aigestudio.downloader:Downloader:1.4.3'
     compile 'com.xfdingustc:mjpegview:0.1.3'
-    compile 'com.xfdingustc:snipe:1.1.1'
+    compile 'com.xfdingustc:snipe:1.1.2'
     compile 'io.reactivex:rxjava:1.1.7'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'

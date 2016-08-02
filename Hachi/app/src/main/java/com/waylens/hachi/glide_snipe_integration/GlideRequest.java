@@ -40,6 +40,11 @@ public class GlideRequest extends VdbRequest<InputStream> {
 
 
     @Override
+    public boolean isIgnorable() {
+        return mClipPos.getIgnorable();
+    }
+
+    @Override
     protected VdbResponse<InputStream> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
             Logger.t(TAG).e("ackGetIndexPicture: failed");

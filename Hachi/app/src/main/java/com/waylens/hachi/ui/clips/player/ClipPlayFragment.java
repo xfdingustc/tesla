@@ -33,11 +33,11 @@ import com.waylens.hachi.eventbus.events.ClipEditEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.library.player.HachiPlayer;
 import com.waylens.hachi.library.player.HlsRendererBuilder;
 import com.waylens.hachi.library.player.Utils;
-import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -49,7 +49,6 @@ import com.xfdingustc.snipe.vdb.ClipSetManager;
 import com.xfdingustc.snipe.vdb.ClipSetPos;
 import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
 import com.xfdingustc.snipe.vdb.urls.VdbUrl;
-
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -641,6 +640,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 //            Logger.t(TAG).d("show cilpPos " + mClipCover.getVisibility());
 //            mVdbImageLoader.displayVdbImage(clipPos, mClipCover, true, false);
+            clipPos.setIgnorable(true);
             Glide.with(this)
                 .using(new SnipeGlideLoader(mVdbRequestQueue))
                 .load(clipPos)
