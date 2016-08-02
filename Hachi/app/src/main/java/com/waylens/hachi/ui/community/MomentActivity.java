@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,7 +50,6 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
-import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.event.SocialEvent;
@@ -61,12 +59,13 @@ import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
-import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
+import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
@@ -102,10 +101,13 @@ public class MomentActivity extends BaseActivity {
     public static final String EXTRA_IMAGE = "MomentActivity:image";
 
     private static final int DEFAULT_COUNT = 10;
-    private long mMomentId;
+
     public static final String EXTRA_THUMBNAIL = "thumbnail";
     public static final String EXTRA_MOMENT_ID = "momentId";
+    public static final int REQUEST_GOOGLE_AUTHORIZE = 0x1000;
+    public static final int REQUEST_FACEBOOK_AUTHORIZE = 0x1001;
 
+    private long mMomentId;
     private MomentInfo mMomentInfo;
     private FollowInfo mFollowInfo;
 
@@ -278,7 +280,9 @@ public class MomentActivity extends BaseActivity {
                     } else {
                         provider = SocialProvider.YOUTUBE;
                     }
-                    BgJobHelper.repost(mMomentId, provider);
+
+                    repost2SocialMedia(provider);
+
                 }
             }).show();
     }
@@ -330,6 +334,22 @@ public class MomentActivity extends BaseActivity {
             setImmersiveMode(false);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_GOOGLE_AUTHORIZE:
+                if (resultCode == RESULT_OK) {
+                    BgJobHelper.repost(mMomentId, SocialProvider.YOUTUBE);
+                }
+                break;
+            case REQUEST_FACEBOOK_AUTHORIZE:
+                if (resultCode == RESULT_OK) {
+                    BgJobHelper.repost(mMomentId, SocialProvider.FACEBOOK);
+                }
+                break;
         }
     }
 
@@ -436,6 +456,23 @@ public class MomentActivity extends BaseActivity {
         });
 
 
+    }
+
+    private void repost2SocialMedia(String provider) {
+        if (provider.equals(SocialProvider.YOUTUBE)) {
+            if (!mSessionManager.isYoutubeLinked()) {
+                GoogleAuthorizeActivity.launch(this, REQUEST_GOOGLE_AUTHORIZE);
+                return;
+            }
+        } else if (provider.equals(SocialProvider.FACEBOOK)) {
+            if (!mSessionManager.isFacebookLinked()) {
+                FacebookAuthorizeActivity.launch(this, REQUEST_FACEBOOK_AUTHORIZE);
+                return;
+            }
+        }
+
+
+        BgJobHelper.repost(mMomentId, provider);
     }
 
     private void toggleFollowState() {
