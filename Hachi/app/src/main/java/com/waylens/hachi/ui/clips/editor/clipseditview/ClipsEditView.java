@@ -39,12 +39,14 @@ import com.xfdingustc.snipe.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscriber;
 
 
 public class ClipsEditView extends LinearLayout {
@@ -89,7 +91,7 @@ public class ClipsEditView extends LinearLayout {
     private EventBus mEventBus = EventBus.getDefault();
 
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         Logger.t(TAG).d("clip set change: " + getClipSet().getCount());
         mClipCoverGridAdapter.notifyDataSetChanged();
@@ -469,7 +471,23 @@ public class ClipsEditView extends LinearLayout {
 
         @Override
         public void onItemDismiss(int position) {
-            mPlayListEditor.remove(position);
+            mPlayListEditor.removeRx(position)
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+
+                    }
+                });
             internalOnClipRemoved(position);
             notifyItemRemoved(position);
         }

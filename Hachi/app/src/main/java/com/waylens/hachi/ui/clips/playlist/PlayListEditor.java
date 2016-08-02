@@ -4,7 +4,10 @@ import android.support.annotation.NonNull;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbRequest;
+import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.VdbRequestQueue;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
@@ -13,12 +16,17 @@ import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
 
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -26,9 +34,9 @@ import java.util.List;
 public class PlayListEditor {
     private static final String TAG = PlayListEditor.class.getSimpleName();
 
-    private final VdbRequestQueue mVdbRequestQueue;
+    private VdbRequestQueue mVdbRequestQueue;
     private final int mPlayListId;
-    private OnBuildCompleteListener mOnBuildCompleteListener;
+
 
     private ClipSet mClipSet;
 
@@ -41,7 +49,23 @@ public class PlayListEditor {
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         Logger.t(TAG).d("receive event " + event.getNeedRebuildList());
         if (event.getNeedRebuildList()) {
-            doRebuildPlaylist();
+            rebuildPlayListRx()
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+
+                    }
+                });
         }
     }
 
@@ -60,24 +84,45 @@ public class PlayListEditor {
         mClipSet = ClipSetManager.getManager().getClipSet(mPlayListId);
     }
 
-    public void build(Clip clip, @NonNull OnBuildCompleteListener listener) {
-        mOnBuildCompleteListener = listener;
-        mClipSet.clear();
-        mClipSet.addClip(clip);
-        ClipSetManager.getManager().updateClipSet(mPlayListId, mClipSet);
 
-        doRebuildPlaylist();
-    }
-
-    public void build(List<Clip> clipList, @NonNull OnBuildCompleteListener listener) {
-        mOnBuildCompleteListener = listener;
+    public Observable<Void> buildRx(List<Clip> clipList) {
         mClipSet.clear();
         for (Clip clip : clipList) {
             mClipSet.addClip(clip);
         }
         ClipSetManager.getManager().updateClipSet(mPlayListId, mClipSet);
 
-        doRebuildPlaylist();
+        return rebuildPlayListRx();
+    }
+
+    public Observable<Void> addRx(List<Clip> clipList) {
+        for (Clip clip : clipList) {
+            mClipSet.addClip(clip);
+        }
+        return rebuildPlayListRx();
+    }
+
+    public Observable<Void> removeRx(int position) {
+        mClipSet.remove(position);
+        return rebuildPlayListRx();
+    }
+
+    private Observable<Void> rebuildPlayListRx() {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    doClearPlayListSync();
+                    doRebuildPlayListSync();
+                    doGetPlaylistInfoSync();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+                subscriber.onCompleted();
+            }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread());
     }
 
     public void cancel() {
@@ -86,115 +131,37 @@ public class PlayListEditor {
         }
     }
 
-    public void add(ArrayList<Clip> clips) {
-        for (Clip clip : clips) {
-            mClipSet.addClip(clip);
-        }
-
-        doRebuildPlaylist();
-    }
-
-
-    public void remove(int position) {
-        Logger.t(TAG).d("remove");
-        mClipSet.remove(position);
-        doRebuildPlaylist();
-    }
 
 
 
-
-    private void doRebuildPlaylist() {
-        doClearPlayList();
-    }
-
-
-    private void doClearPlayList() {
+    private void doClearPlayListSync() throws ExecutionException, InterruptedException {
+        VdbRequestFuture<Integer> vdbRequestFuture = VdbRequestFuture.newFuture();
         PlaylistEditRequest request = PlaylistEditRequest.getClearPlayListRequest(mPlayListId,
-            new VdbResponse.Listener<Integer>() {
-                @Override
-                public void onResponse(Integer response) {
-                    Logger.t(TAG).d("clear playlist finished");
-                    doBuildPlaylist();
-                }
-
-            },
-            new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).d("clear play list error");
-                }
-            });
-        if (mVdbRequestQueue != null) {
-            mVdbRequestQueue.add(request.setTag(TAG));
-        }
+            vdbRequestFuture, vdbRequestFuture);
+        add2RequestQueue(request);
+        Integer result = vdbRequestFuture.get();
     }
 
-
-    private void doBuildPlaylist() {
-        mClipAdded = 0;
-
-        if (mClipSet.getCount() == 0) {
-            mEventBus.post(new ClipSetChangeEvent(mPlayListId, false));
-            return;
-        }
-
+    private void doRebuildPlayListSync() throws ExecutionException, InterruptedException {
         for (final Clip clip : mClipSet.getClipList()) {
+            VdbRequestFuture<Integer> vdbRequestFuture = VdbRequestFuture.newFuture();
             PlaylistEditRequest playRequest = new PlaylistEditRequest(clip, clip.editInfo.selectedStartValue,
-                clip.editInfo.selectedEndValue, mPlayListId, new VdbResponse.Listener<Integer>() {
-                @Override
-                public void onResponse(Integer response) {
-                    Logger.t(TAG).d("Add one clip to playlist: " + clip.toString()
-                        + " editinfo: " + clip.editInfo.toString());
-                    mClipAdded++;
-                    if (mClipAdded == mClipSet.getClipList().size()) {
-                        doGetPlaylistInfo();
-                    }
-                }
-            },
-                new VdbResponse.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(SnipeError error) {
-                        mClipAdded++;
-                        Logger.t(TAG).d("ClipDeleteRequest", error);
-                    }
-                });
-
-            if (mVdbRequestQueue != null) {
-                mVdbRequestQueue.add(playRequest.setTag(TAG));
-            }
+                clip.editInfo.selectedEndValue, mPlayListId, vdbRequestFuture, vdbRequestFuture);
+            add2RequestQueue(playRequest);
+            Integer result = vdbRequestFuture.get();
         }
     }
 
 
-    private void doGetPlaylistInfo() {
-        Logger.t(TAG).d("do get play list info");
+    private void doGetPlaylistInfoSync() throws ExecutionException, InterruptedException {
+        VdbRequestFuture<ClipSet> vdbRequestFuture = VdbRequestFuture.newFuture();
         ClipSetExRequest request = new ClipSetExRequest(mPlayListId, ClipSetExRequest.FLAG_CLIP_EXTRA,
-            new VdbResponse.Listener<ClipSet>() {
-                @Override
-                public void onResponse(ClipSet clipSet) {
-//                    mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
-                    adjustClipSet(clipSet);
+            vdbRequestFuture, vdbRequestFuture);
 
-                    if (mOnBuildCompleteListener != null) {
-                        mOnBuildCompleteListener.onBuildComplete(clipSet);
-                    }
+        add2RequestQueue(request);
 
-
-                }
-
-            }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-                Logger.t(TAG).e("" + error);
-
-            }
-        });
-        request.setTag(TAG);
-        if (mVdbRequestQueue != null) {
-            mVdbRequestQueue.add(request);
-        }
-
+        ClipSet clipSet = vdbRequestFuture.get();
+        adjustClipSet(clipSet);
     }
 
     private void adjustClipSet(ClipSet clipSet) {
@@ -216,12 +183,17 @@ public class PlayListEditor {
         }
 
 
-
-
         mEventBus.post(new ClipSetChangeEvent(mPlayListId, false));
     }
 
-    public interface OnBuildCompleteListener {
-        void onBuildComplete(ClipSet clipSet);
+    private void add2RequestQueue(VdbRequest request) throws IllegalStateException {
+        mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
+        if (mVdbRequestQueue != null) {
+            mVdbRequestQueue.add(request.setTag(TAG));
+        } else {
+            throw new IllegalStateException("Camera disconnect");
+        }
     }
+
+
 }

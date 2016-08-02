@@ -110,13 +110,13 @@ public class RawDataLoader {
 
         if (rawDataBlockAll.gpsDataBlock != null) {
             RawDataItem gpsItem = rawDataBlockAll.gpsDataBlock.getRawDataItemByTime(clipSetPos.getClipTimeMs());
-            Logger.t(TAG).d("gpsDataBlock != null");
+//            Logger.t(TAG).d("gpsDataBlock != null");
             if (gpsItem != null) {
                 gpsItem.setPtsMs(clip.getClipDate()  + gpsItem.getPtsMs());
                 unchangedCount[GPS_DATA] = 0;
                 mRawDataItemList.set(GPS_DATA, gpsItem);
                 periodReached = 1;
-                Logger.t(TAG).d("gpsItem" + gpsItem.toString());
+//                Logger.t(TAG).d("gpsItem" + gpsItem.toString());
             }
         }
 

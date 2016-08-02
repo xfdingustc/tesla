@@ -248,7 +248,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         Logger.t(TAG).d("on Clip Set chang event clip count: " + getClipSet().getCount());
         releasePlayer();

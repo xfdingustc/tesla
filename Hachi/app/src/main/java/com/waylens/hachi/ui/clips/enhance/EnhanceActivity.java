@@ -59,6 +59,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscriber;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -72,12 +73,9 @@ public class EnhanceActivity extends ClipPlayActivity {
     private static final int REQUEST_CODE_ENHANCE = 1000;
     private static final int REQUEST_CODE_ADD_MUSIC = 1001;
 
-    private static final int LAUNCH_MODE_PLAYLIST = 100;
-
-
     public static final String EXTRA_CLIPS_TO_ENHANCE = "extra.clips.to.enhance";
     public static final String EXTRA_CLIPS_TO_APPEND = "extra.clips.to.append";
-    public static final String EXTRA_LAUNCH_MODE = "extra.launch.mode";
+
 
     public static final int DEFAULT_AUDIO_ID = -1;
 
@@ -99,7 +97,6 @@ public class EnhanceActivity extends ClipPlayActivity {
     public static void launch(Activity activity, int playlistId) {
         Intent intent = new Intent(activity, EnhanceActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
-        intent.putExtra(EXTRA_LAUNCH_MODE, LAUNCH_MODE_PLAYLIST);
         activity.startActivity(intent);
     }
 
@@ -259,7 +256,7 @@ public class EnhanceActivity extends ClipPlayActivity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         Logger.t(TAG).d("on Clip Set chang event clip count: " + getClipSet().getCount());
         setupToolbar();
@@ -310,7 +307,23 @@ public class EnhanceActivity extends ClipPlayActivity {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra(EXTRA_CLIPS_TO_APPEND);
                     Logger.t(TAG).d("append clips: " + clips.size());
-                    mPlaylistEditor.add(clips);
+                    mPlaylistEditor.addRx(clips)
+                        .subscribe(new Subscriber<Void>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(Void aVoid) {
+
+                            }
+                        });
                     if (getClipSet().getCount() > 0 && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
                         btnGauge.setEnabled(true);
                         btnMusic.setEnabled(true);
@@ -339,25 +352,13 @@ public class EnhanceActivity extends ClipPlayActivity {
         super.init();
         initViews();
         Intent intent = getIntent();
-        int launchMode = intent.getIntExtra(EXTRA_LAUNCH_MODE, 0);
-        if (launchMode == LAUNCH_MODE_PLAYLIST) {
-            mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
-            mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
-            mPlaylistEditor.reconstruct();
-            embedVideoPlayFragment();
-            configEnhanceView();
-        } else {
-            mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, PLAYLIST_INDEX);
-            ArrayList<Clip> clipArrayList = intent.getParcelableArrayListExtra(EXTRA_CLIP_LIST);
-            mPlaylistEditor.build(clipArrayList, new PlayListEditor.OnBuildCompleteListener() {
 
-                @Override
-                public void onBuildComplete(ClipSet clipSet) {
-                    embedVideoPlayFragment();
-                    configEnhanceView();
-                }
-            });
-        }
+        mPlaylistId = intent.getIntExtra(EXTRA_PLAYLIST_ID, -1);
+        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
+        mPlaylistEditor.reconstruct();
+        embedVideoPlayFragment();
+        configEnhanceView();
+
 
     }
 

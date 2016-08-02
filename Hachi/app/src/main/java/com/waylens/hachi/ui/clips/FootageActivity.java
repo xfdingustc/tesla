@@ -44,6 +44,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscriber;
 
 
 /**
@@ -247,14 +248,26 @@ public class FootageActivity extends ClipPlayActivity {
 
     }
 
-    private void doMakePlaylist(ClipSet clipSet) {
+    private void doMakePlaylist(final ClipSet clipSet) {
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, 0x101);
-        mPlaylistEditor.build(clipSet.getClipList(), new PlayListEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
-            }
-        });
+
+        mPlaylistEditor.buildRx(clipSet.getClipList())
+            .subscribe(new Subscriber<Void>() {
+                @Override
+                public void onCompleted() {
+                    Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Void aVoid) {
+
+                }
+            });
 
     }
 
@@ -340,12 +353,24 @@ public class FootageActivity extends ClipPlayActivity {
 //        EnhancementActivity.launch(this, (ArrayList<Clip>)clipList, EnhancementActivity.LAUNCH_MODE_ENHANCE);
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
-        playListEditor.build(clipList, new PlayListEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                EnhanceActivity.launch(FootageActivity.this, playlistId);
-            }
-        });
+
+        playListEditor.buildRx(clipList)
+            .subscribe(new Subscriber<Void>() {
+                @Override
+                public void onCompleted() {
+                    EnhanceActivity.launch(FootageActivity.this, playlistId);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Void aVoid) {
+
+                }
+            });
 
     }
 

@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.clips;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Subscriber;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -425,20 +427,41 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
-    private void popClipPreviewFragment(Clip clip, final View transitionView) {
+    private void popClipPreviewFragment(final Clip clip, final View transitionView) {
         ArrayList<Clip> clipList = new ArrayList<>();
         clipList.add(clip);
         mRefreshLayout.setRefreshing(true);
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
-        playListEditor.build(clipList, new PlayListEditor.OnBuildCompleteListener() {
-            @Override
-            public void onBuildComplete(ClipSet clipSet) {
-                mRefreshLayout.setRefreshing(false);
-                PreviewActivity.launch(getActivity(), playlistId, transitionView);
 
-            }
-        });
+
+        playListEditor.buildRx(clipList)
+            .subscribe(new Subscriber<Void>() {
+                @Override
+                public void onCompleted() {
+                    mRefreshLayout.setRefreshing(false);
+                    PreviewActivity.launch(getActivity(), playlistId, transitionView);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                    mRefreshLayout.setRefreshing(false);
+                    Snackbar snackbar = Snackbar.make(mRefreshLayout, R.string.camera_no_response, Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.retry, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            popClipPreviewFragment(clip, transitionView);
+                        }
+                    });
+                    snackbar.show();
+                }
+
+                @Override
+                public void onNext(Void aVoid) {
+
+                }
+            });
     }
 
     private void launchFootageActivity(ClipSet clipSet) {
@@ -473,14 +496,26 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
             final int playlistId = 0x100;
             PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
-            playListEditor.build(selectedList, new PlayListEditor.OnBuildCompleteListener() {
-                @Override
-                public void onBuildComplete(ClipSet clipSet) {
 
-                    mRefreshLayout.setRefreshing(false);
-                    EnhanceActivity.launch(getActivity(), playlistId);
-                }
-            });
+            playListEditor.buildRx(selectedList)
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+                        mRefreshLayout.setRefreshing(false);
+                        EnhanceActivity.launch(getActivity(), playlistId);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+
+                    }
+                });
+
         }
     }
 
@@ -492,13 +527,24 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
             final int playlistId = 0x100;
             PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
-            playListEditor.build(selectedList, new PlayListEditor.OnBuildCompleteListener() {
-                @Override
-                public void onBuildComplete(ClipSet clipSet) {
-                    mRefreshLayout.setRefreshing(false);
-                    ShareActivity.launch(getActivity(), playlistId, -1);
-                }
-            });
+            playListEditor.buildRx(selectedList)
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+                        mRefreshLayout.setRefreshing(false);
+                        ShareActivity.launch(getActivity(), playlistId, -1);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+
+                    }
+                });
         } else {
             AuthorizeActivity.launch(getActivity());
         }

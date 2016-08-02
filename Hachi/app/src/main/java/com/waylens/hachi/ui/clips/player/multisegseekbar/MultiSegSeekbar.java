@@ -158,7 +158,7 @@ public class MultiSegSeekbar extends View {
         setClipSetPos(clipSetPos);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         if (mClipListIndex == event.getIndex()) {
             ClipSetPos clipSetPos = new ClipSetPos(mCurrentClipIndex, getClipSet().getClip(mCurrentClipIndex).editInfo.selectedStartValue);
