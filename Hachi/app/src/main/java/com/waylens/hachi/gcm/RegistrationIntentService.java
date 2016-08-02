@@ -62,17 +62,18 @@ public class RegistrationIntentService extends IntentService {
             // Initially this call goes out to the network to retrieve the token, subsequent calls
             // are local.
             // [START get_token]
-//            InstanceID instanceID = InstanceID.getInstance(this);
-//            String id = instanceID.getId();
-//            Log.e(TAG, "ID: " + id);
-//            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-//                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-//            // [END get_token]
-//
-//            sendRegistrationToServer(token);
-//            subscribeTopics(token);
+            Logger.t(TAG).d("in Registration Intent Service!");
+            InstanceID instanceID = InstanceID.getInstance(this);
+            String id = instanceID.getId();
+            Log.e(TAG, "ID: " + id);
+            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
+                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            // [END get_token]
+
+            sendRegistrationToServer(token);
+            subscribeTopics(token);
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
+            Logger.t(TAG).d("Failed to complete token refresh", e);
             PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, null);
         }
     }
@@ -86,6 +87,8 @@ public class RegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(final String token) {
+        Logger.t(TAG).d("send registration to server!");
+        Logger.t(TAG).d(token);
         String savedToken = PreferenceUtils.getString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, null);
         if (token == null || token.equals(savedToken)) {
             return;
@@ -99,6 +102,7 @@ public class RegistrationIntentService extends IntentService {
         } catch (JSONException e) {
             Log.e(TAG, "", e);
         }
+        Logger.t(TAG).d("send registration to server!");
         requestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_DEVICE_ACTIVATION, params,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -111,12 +115,14 @@ public class RegistrationIntentService extends IntentService {
                             Logger.t(TAG).d("GCM registration is successful.");
                         } else {
                             notifyRegistrationFailure();
+                            Logger.t(TAG).d("GCM registration fails.");
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Logger.t(TAG).d("GCM registration fails.");
                         notifyRegistrationFailure();
                     }
                 }));

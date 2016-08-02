@@ -446,6 +446,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         ButterKnife.bind(this, view);
         mHandler = new ControlPanelHandler(this);
         initViews();
+        mWvGauge.setGaugeMode(GaugeView.MODE_CAMERA);
         return view;
     }
 

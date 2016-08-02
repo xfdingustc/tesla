@@ -27,6 +27,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.MainActivity;
 
@@ -46,8 +47,9 @@ public class WaylensGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        Logger.t(TAG).d(data.toString());
+        Logger.t(TAG).d("From: " + from);
+        Logger.t(TAG).d("Message: " + message);
         // int key = R.string.loc_msg;
         if (from.startsWith("/topics/")) {
             // message received from some topic.

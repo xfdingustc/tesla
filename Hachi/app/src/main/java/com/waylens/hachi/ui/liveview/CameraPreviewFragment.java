@@ -367,6 +367,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_camera_preview, savedInstanceState);
         init();
+        mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
         startPreview();
         return view;
     }

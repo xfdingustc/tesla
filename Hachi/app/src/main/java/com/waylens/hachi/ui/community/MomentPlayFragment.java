@@ -252,6 +252,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         View view = inflater.inflate(R.layout.fragment_moment_play, container, false);
         ButterKnife.bind(this, view);
         mHandler = new VideoHandler(this);
+        mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
         initViews();
         return view;
     }

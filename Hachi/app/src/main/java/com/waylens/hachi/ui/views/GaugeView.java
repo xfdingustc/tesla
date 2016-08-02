@@ -24,10 +24,12 @@ import com.xfdingustc.snipe.vdb.rawdata.WeatherData;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by Xiaofei on 2016/4/6.
@@ -35,13 +37,17 @@ import java.util.Map;
 public class GaugeView extends FrameLayout {
     private static final String TAG = GaugeView.class.getSimpleName();
 
+    public static final int MODE_CAMERA = 0;
+
+    public static final int MODE_MOMENT = 1;
+
     private WebView mWebView;
 
-    private boolean mIsOdbGaugeShow;
+    private int mGaugeMode = MODE_CAMERA;
 
-    private boolean mIsIioGaugeShow;
+    private DateFormat mDateFormat;
 
-    private boolean mIsGpsGaugeShow;
+
 
     private int iioPressure;
 
@@ -54,6 +60,22 @@ public class GaugeView extends FrameLayout {
     public GaugeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
+    }
+
+    public void setGaugeMode(int gaugeMode) {
+        switch (gaugeMode) {
+            case MODE_CAMERA:
+                mGaugeMode = gaugeMode;
+                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss", Locale.getDefault());
+                break;
+            case MODE_MOMENT:
+                mGaugeMode = gaugeMode;
+                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
+                mDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                break;
+            default:
+                break;
+        }
     }
 
     private void init(Context context) {
@@ -73,16 +95,9 @@ public class GaugeView extends FrameLayout {
                 super.onPageFinished(view, url);
             }
         });
-        mIsGpsGaugeShow = false;
-        mIsIioGaugeShow = false;
-        mIsOdbGaugeShow = false;
+
     }
 
-    public void setEnhanceMode() {
-        mIsGpsGaugeShow = true;
-        mIsIioGaugeShow = true;
-        mIsOdbGaugeShow = true;
-    }
 
 
 
@@ -267,13 +282,12 @@ public class GaugeView extends FrameLayout {
                         break;
                 }
             }
-            SimpleDateFormat format = new SimpleDateFormat("MM dd, yyyy hh:mm:ss");
             if (pts == 0) {
                 pts = System.currentTimeMillis();
             }
-            String date = format.format(pts);
+            String date = mDateFormat.format(pts);
             data = "numericMonthDate('" + date + "')";
-//            Logger.t(TAG).d("pts: " + item.getPtsMs() + " date: " + data);
+            //Logger.t(TAG).d("pts: " + item.getPtsMs() + " date: " + data);
         } catch (JSONException e) {
             Logger.t(TAG).e("", e);
         }

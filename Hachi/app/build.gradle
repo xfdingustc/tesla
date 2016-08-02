@@ -106,6 +106,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.1.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
+
     compile 'com.orhanobut:logger:1.15'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.afollestad.material-dialogs:core:0.8.6.1'
@@ -114,7 +115,8 @@ dependencies {
     compile 'com.xfdingustc.fixaspectratiolayout:layout:0.2@aar'
     //    compile 'com.soundcloud.android:android-crop:1.0.0@aar'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
-    compile 'com.google.android.gms:play-services:9.2.1'
+    compile 'com.google.android.gms:play-services-gcm:9.2.1'
+    compile 'com.google.android.gms:play-services-auth:9.2.1'
     compile 'javax.jmdns:jmdns:3.4.1'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.birbit:android-priority-jobqueue:2.0.0-beta1'
