@@ -307,23 +307,25 @@ public class EnhanceActivity extends ClipPlayActivity {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Clip> clips = data.getParcelableArrayListExtra(EXTRA_CLIPS_TO_APPEND);
                     Logger.t(TAG).d("append clips: " + clips.size());
-                    mPlaylistEditor.addRx(clips)
-                        .subscribe(new Subscriber<Void>() {
-                            @Override
-                            public void onCompleted() {
+                    if (clips.size() > 0) {
+                        mPlaylistEditor.addRx(clips)
+                            .subscribe(new Subscriber<Void>() {
+                                @Override
+                                public void onCompleted() {
 
-                            }
+                                }
 
-                            @Override
-                            public void onError(Throwable e) {
+                                @Override
+                                public void onError(Throwable e) {
 
-                            }
+                                }
 
-                            @Override
-                            public void onNext(Void aVoid) {
+                                @Override
+                                public void onNext(Void aVoid) {
 
-                            }
-                        });
+                                }
+                            });
+                    }
                     if (getClipSet().getCount() > 0 && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
                         btnGauge.setEnabled(true);
                         btnMusic.setEnabled(true);

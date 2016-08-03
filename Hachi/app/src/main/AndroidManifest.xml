@@ -21,8 +21,11 @@
     <uses-permission android:name="android.permission.READ_LOGS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <permission android:name="com.waylens.hachi.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-    <uses-permission android:name="com.waylens.hachi.permission.C2D_MESSAGE" />
+
+    <permission
+        android:name="com.waylens.hachi.permission.C2D_MESSAGE"
+        android:protectionLevel="signature"/>
+    <uses-permission android:name="com.waylens.hachi.permission.C2D_MESSAGE"/>
 
 
     <application
@@ -52,8 +55,8 @@
 
         <activity
             android:name=".ui.welcome.FirstInstallActivity"
-            android:screenOrientation="portrait"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:screenOrientation="portrait">
 
         </activity>
 
@@ -93,15 +96,17 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activities.WaylensAgreementActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activities.WaylensAgreementActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.manualsetup.StartupActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.manualsetup.ScanQrCodeActivity"
-                  android:screenOrientation="portrait"
-            android:noHistory="true"/>
+        <activity
+            android:name=".ui.manualsetup.ScanQrCodeActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.activities.WelcomeActivity"
@@ -125,8 +130,8 @@
 
         <activity
             android:name=".ui.manualsetup.ManualSetupActivity"
-            android:screenOrientation="portrait"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.clips.ClipChooserActivity"
@@ -216,11 +221,13 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authorization.FacebookAuthorizeActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.authorization.FacebookAuthorizeActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authorization.GoogleAuthorizeActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.authorization.GoogleAuthorizeActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.authorization.VerifyEmailActivity"
@@ -235,11 +242,12 @@
         <!-- [START gcm_receiver] -->
         <receiver
             android:name=".gcm.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <!--      android:exported="true"-->
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+
                 <category android:name="com.waylens.hachi"/>
             </intent-filter>
         </receiver>
@@ -247,13 +255,13 @@
         <service
             android:name=".gcm.GcmIntentService"/>
 
-<!--        <service
-            android:name=".gcm.WaylensGcmListenerService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-            </intent-filter>
-        </service>-->
+        <!--        <service
+                    android:name=".gcm.WaylensGcmListenerService"
+                    android:exported="false">
+                    <intent-filter>
+                        <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                    </intent-filter>
+                </service>-->
         <service
             android:name=".gcm.WaylensInstanceIDListenerService"
             android:exported="false">
@@ -281,7 +289,11 @@
 
         <meta-data
             android:name="com.waylens.hachi.glide_snipe_integration.SnipeGlideModule"
-            android:value="GlideModule" />
+            android:value="GlideModule"/>
+
+        <meta-data
+            android:name="com.waylens.hachi.app.GlideConfiguration"
+            android:value="GlideModule"/>
 
         <service
             android:name=".ui.services.download.DownloadIntentService"
