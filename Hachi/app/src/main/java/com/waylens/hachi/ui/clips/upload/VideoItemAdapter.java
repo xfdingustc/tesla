@@ -50,6 +50,8 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         mUploadManager.addOnUploadJobStateChangedListener(this);
     }
 
+
+
     public void setUploadedMomentList(List<Moment> momentList) {
         this.mUploadedMomentList = momentList;
         notifyDataSetChanged();
@@ -124,6 +126,12 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 popupMenu.show();
             }
         });
+
+        if (position == mUploadManager.getJobCount() - 1) {
+            videoItemViewHolder.separator.setVisibility(View.VISIBLE);
+        } else {
+            videoItemViewHolder.separator.setVisibility(View.GONE);
+        }
     }
 
     private void updateUploadStatus(int state, TextView description) {
@@ -186,6 +194,12 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         });
 
+        if (position == getItemCount() - 1) {
+            videoItemViewHolder.separator.setVisibility(View.VISIBLE);
+        } else {
+            videoItemViewHolder.separator.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -234,7 +248,8 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ImageButton btnMore;
 
 
-
+        @BindView(R.id.separator)
+        View separator;
 
         public VideoItemViewHolder(View itemView) {
             super(itemView);

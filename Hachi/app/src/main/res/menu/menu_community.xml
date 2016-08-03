@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/my_account"
-        android:icon="@drawable/navbar_me_n"
-        android:title="avatar_confirm"
+        android:id="@+id/search"
+        android:icon="@drawable/navbar_search_n"
+        android:title="search"
         app:showAsAction="always"/>
+
+
 </menu>

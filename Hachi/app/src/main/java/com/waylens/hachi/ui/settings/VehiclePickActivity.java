@@ -111,7 +111,7 @@ public class VehiclePickActivity extends BaseActivity {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        getToolbar().setTitle("Vehicle");
+        getToolbar().setTitle(R.string.vehicle);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

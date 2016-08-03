@@ -67,14 +67,17 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         super.onResume();
         getToolbar().getMenu().clear();
         getToolbar().inflateMenu(R.menu.menu_community);
-        if (!SessionManager.getInstance().isLoggedIn()) {
-            getToolbar().getMenu().removeItem(R.id.my_account);
-        }
+
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                UserProfileActivity.launch(getActivity(), SessionManager.getInstance().getUserId());
-                return false;
+                switch (item.getItemId()) {
+                    case R.id.search:
+                        MomentSearchActivity.launch(getActivity());
+                        break;
+                }
+
+                return true;
             }
         });
     }
