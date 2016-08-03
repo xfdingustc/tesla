@@ -23,6 +23,7 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
@@ -150,6 +151,7 @@ public class PreviewActivity extends ClipPlayActivity {
         ClipDeleteRequest request = new ClipDeleteRequest(getClipSet().getClip(0).cid, new VdbResponse.Listener<Integer>() {
             @Override
             public void onResponse(Integer response) {
+                PreferenceUtils.putBoolean(PreferenceUtils.BOOKMARK_NEED_REFRESH, true);
                 finish();
             }
         }, new VdbResponse.ErrorListener() {

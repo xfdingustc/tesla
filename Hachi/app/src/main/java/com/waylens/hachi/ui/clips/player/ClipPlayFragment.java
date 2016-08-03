@@ -331,6 +331,13 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         updateControls(playWhenReady, playbackState);
     }
 
+    public void onBackPressed() {
+        mSurfaceView.setVisibility(View.GONE);
+        mWvGauge.setVisibility(View.GONE);
+        mClipCover.setVisibility(View.VISIBLE);
+
+    }
+
     private void updateAudioPlayerState(boolean playwhenReady, int playbackState) {
         Logger.t(TAG).d("playWhenReady: " + playwhenReady + " playbackState: " + playbackState);
         switch (playbackState) {

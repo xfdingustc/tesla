@@ -40,6 +40,8 @@ public class PreferenceUtils {
     public static final String SOCIAL_FACEBOOK_LINKED = "social_facebook_linked";
     public static final String SOCIAL_YOUTUBE_LINKED = "social_youtube_linked";
 
+    public static final String BOOKMARK_NEED_REFRESH = "bookmark_need_refresh";
+
     private static Context mSharedAppContext = null;
     private static SharedPreferences mShare = null;
     private static SharedPreferences.Editor mEditor = null;

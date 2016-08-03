@@ -30,6 +30,7 @@ import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
+import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.view.ClipGridListView;
 import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.vdb.Clip;
@@ -199,6 +200,10 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
         mAdapter.setClipSetGroup(helper.getClipSetGroup());
+
+        if (mClipSetType == Clip.TYPE_MARKED) {
+            PreferenceUtils.putBoolean(PreferenceUtils.BOOKMARK_NEED_REFRESH, false);
+        }
     }
 
 
@@ -296,14 +301,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRefreshLayout.setRefreshing(true);
-
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mEventBus.register(this);
         if (mRefreshLayout != null) {
             mRefreshLayout.postDelayed(new Runnable() {
                 @Override
@@ -311,6 +308,23 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     mPresenter.loadClipSet(false);
                 }
             }, 200);
+        }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mEventBus.register(this);
+        if (mClipSetType == Clip.TYPE_MARKED && PreferenceUtils.getBoolean(PreferenceUtils.BOOKMARK_NEED_REFRESH, false)) {
+            if (mRefreshLayout != null) {
+                mRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPresenter.loadClipSet(false);
+                    }
+                }, 200);
+            }
         }
     }
 

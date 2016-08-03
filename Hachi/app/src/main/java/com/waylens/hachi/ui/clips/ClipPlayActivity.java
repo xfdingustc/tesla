@@ -118,6 +118,7 @@ public class ClipPlayActivity extends BaseActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             setImmersiveMode(false);
         } else {
+            mClipPlayFragment.onBackPressed();
             super.onBackPressed();
         }
     }
