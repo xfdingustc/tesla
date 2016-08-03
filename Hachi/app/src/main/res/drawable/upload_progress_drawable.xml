@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape>
-            <solid android:color="@android:color/transparent"></solid>
+            <corners android:radius="0.0dip" />
+            <solid android:color="@android:color/transparent" />
         </shape>
     </item>
-
-
     <item android:id="@android:id/progress">
         <clip>
-            <shape>
-                <solid
-                    android:color="@color/upload_mask"></solid>
-
-            </shape>
+            <bitmap android:src="@drawable/upload_progress_texture" android:tileMode="repeat" android:tint="@color/style_color_accent" />
         </clip>
     </item>
-
 </layer-list>
