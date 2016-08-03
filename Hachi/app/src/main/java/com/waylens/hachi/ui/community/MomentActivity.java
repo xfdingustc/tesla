@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,11 +17,13 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.transition.ChangeBounds;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
@@ -74,6 +77,7 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.TransitionHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,7 +102,6 @@ import rx.schedulers.Schedulers;
  */
 public class MomentActivity extends BaseActivity {
     private static final String TAG = MomentActivity.class.getSimpleName();
-    public static final String EXTRA_IMAGE = "MomentActivity:image";
 
     private static final int DEFAULT_COUNT = 10;
 
@@ -130,16 +133,21 @@ public class MomentActivity extends BaseActivity {
     private HachiApi mHachi = HachiService.createHachiApiService();
     private BottomSheetDialog mBottomSheetDialog;
 
+    private MomentPlayFragment mMomentPlayFragment;
+
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
 
     public static void launch(Activity activity, long momentId, String thumbnail, View transitionView) {
-        ActivityOptionsCompat options = ActivityOptionsCompat
-            .makeSceneTransitionAnimation(activity, transitionView, EXTRA_IMAGE);
+
         Intent intent = new Intent(activity, MomentActivity.class);
         intent.putExtra(EXTRA_MOMENT_ID, momentId);
         intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+            false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
+        ActivityOptionsCompat options = ActivityOptionsCompat
+            .makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
@@ -174,8 +182,7 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.add_follow)
     TextView mAddFollow;
 
-    @BindView(R.id.video_thumbnail)
-    ImageView mVideoThumbnail;
+
 
     @BindView(R.id.btn_repost)
     ImageButton mBtnRepost;
@@ -291,7 +298,7 @@ public class MomentActivity extends BaseActivity {
     public void onEventSocial(SocialEvent event) {
         switch (event.getWhat()) {
             case SocialEvent.EVENT_WHAT_REPOST:
-                String provider = (String)event.getExtra();
+                String provider = (String) event.getExtra();
                 if (event.getResult()) {
                     Snackbar.make(mBtnRepost, getString(R.string.repost_success) + " " + provider, Snackbar.LENGTH_LONG).show();
                 } else {
@@ -301,14 +308,11 @@ public class MomentActivity extends BaseActivity {
     }
 
 
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
     }
-
 
 
     @Override
@@ -333,7 +337,9 @@ public class MomentActivity extends BaseActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             setImmersiveMode(false);
         } else {
+            mMomentPlayFragment.onBackPressed();
             super.onBackPressed();
+
         }
     }
 
@@ -366,14 +372,16 @@ public class MomentActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_moment);
 
-        Glide.with(this)
-            .load(mThumbnail)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(mVideoThumbnail);
-        ViewCompat.setTransitionName(mVideoThumbnail, EXTRA_IMAGE);
-
-
         queryMomentInfo();
+
+        mMomentPlayFragment = MomentPlayFragment.newInstance(mMomentId, mThumbnail);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMomentPlayFragment.setSharedElementEnterTransition(new ChangeBounds());
+        }
+
+        getFragmentManager().beginTransaction().replace(R.id.moment_play_container, mMomentPlayFragment).commit();
+
+
 //
     }
 
@@ -488,6 +496,8 @@ public class MomentActivity extends BaseActivity {
         return true;
     }
 
+
+
     private void queryMomentInfo() {
 
         mHachi.getMomentInfoRx(mMomentId)
@@ -564,9 +574,6 @@ public class MomentActivity extends BaseActivity {
             Logger.t(TAG).d("activity is destroyed, so we must return here");
             return;
         }
-        MomentPlayFragment fragment = MomentPlayFragment.newInstance(mMomentInfo);
-
-        getFragmentManager().beginTransaction().replace(R.id.moment_play_container, fragment).commit();
 
 
         mContentRoot.showNext();

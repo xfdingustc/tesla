@@ -19,7 +19,8 @@
     <ImageView
         android:id="@+id/video_thumbnail"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:transitionName="@string/moment_cover"/>
 
     <FrameLayout
         android:id="@+id/video_controllers"

@@ -73,6 +73,8 @@ import rx.schedulers.Schedulers;
 public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Callback, HachiPlayer.Listener {
     private static final String TAG = MomentPlayFragment.class.getSimpleName();
 
+    private static final String EXTRA_MOMENT_ID = "extra_moment_id";
+    private static final String EXTRA_MOMENT_COVER = "extra_moment_cover";
 
     private static final int FADE_OUT = 1;
 
@@ -97,7 +99,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     private VideoHandler mHandler;
 
-    private MomentInfo mMoment;
+//    private MomentInfo mMoment;
+
+    private long mMomentId;
+
+    private String mMomentCover;
 
     private MomentPlayInfo mMomentPlayInfo;
 
@@ -205,10 +211,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mGaugeView.setVisibility(isGaugeVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
-    public static MomentPlayFragment newInstance(MomentInfo moment) {
+    public static MomentPlayFragment newInstance(long momentId, String thumbnail) {
         MomentPlayFragment fragment = new MomentPlayFragment();
         Bundle args = new Bundle();
-        args.putSerializable("moment", moment);
+        args.putLong(EXTRA_MOMENT_ID, momentId);
+        args.putString(EXTRA_MOMENT_COVER, thumbnail);
         fragment.setArguments(args);
         return fragment;
     }
@@ -222,7 +229,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        mMoment = (MomentInfo) args.getSerializable("moment");
+//        mMoment = (MomentInfo) args.getSerializable("moment");
+        mMomentId = args.getLong(EXTRA_MOMENT_ID);
+        mMomentCover = args.getString(EXTRA_MOMENT_COVER);
 
         mRequestQueue = Volley.newRequestQueue(getActivity());
         mRequestQueue.start();
@@ -328,7 +337,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     private void initViews() {
         Glide.with(this)
-            .load(mMoment.moment.thumbnail)
+            .load(mMomentCover)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .crossFade()
             .into(mVsCover);
@@ -345,13 +354,17 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
         mIsActivityStopped = false;
-        if (!mMoment.moment.overlay.isEmpty()) {
-            Logger.t(TAG).d("setting gauge!!!");
-            mGaugeView.changeGaugeSetting(mMoment.moment.overlay);
-        } else {
-            Logger.t(TAG).d("overlay empty");
-        }
+//        if (!mMoment.moment.overlay.isEmpty()) {
+//            Logger.t(TAG).d("setting gauge!!!");
+//            mGaugeView.changeGaugeSetting(mMoment.moment.overlay);
+//        } else {
+//            Logger.t(TAG).d("overlay empty");
+//        }
     }
+
+
+
+
 
     @Override
     public void onStop() {
@@ -397,8 +410,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
     private void openVideo(boolean playWhenReady) {
-        if (mMoment.moment.videoUrl == null || mSurfaceView == null || mSurfaceHolder == null) {
-            Logger.t(TAG).d("source: " + mMoment.moment.videoUrl + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
+        if (mMomentPlayInfo.videoUrl == null || mSurfaceView == null || mSurfaceHolder == null) {
+            Logger.t(TAG).d("source: " + mMomentPlayInfo.videoUrl + " surface view: " + mSurfaceView + " surface holder: " + mSurfaceHolder);
             return;
         }
 
@@ -470,6 +483,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
+    public void onBackPressed() {
+        mGaugeView.setVisibility(View.GONE);
+        mSurfaceView.setVisibility(View.GONE);
+        mVsCover.setVisibility(View.VISIBLE);
+    }
+
     private void showControllers() {
         if (mVideoController == null) {
             return;
@@ -528,12 +547,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
     private void getMomentPlayInfo() {
-        if (mMoment.moment.id == Moment.INVALID_MOMENT_ID) {
+        if (mMomentId == Moment.INVALID_MOMENT_ID) {
             return;
         }
 
 
-        mHachi.getMomentPlayInfo(mMoment.moment.id)
+        mHachi.getMomentPlayInfo(mMomentId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<MomentPlayInfo>() {
