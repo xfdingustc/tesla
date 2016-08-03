@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
+import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
@@ -31,17 +33,19 @@ import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
  */
 public class PreviewActivity extends ClipPlayActivity {
     public String TAG = PreviewActivity.class.getSimpleName();
-    public static final String EXTRA_IMAGE = "PreviewActivity:image";
+
     private int mPlaylistId = 0;
 
     private static final String EXTRA_PLAYLIST_ID = "playListId";
 
 
     public static void launch(Activity activity, int playlistId, View transitionView) {
-        ActivityOptionsCompat options = ActivityOptionsCompat
-            .makeSceneTransitionAnimation(activity, transitionView, EXTRA_IMAGE);
         Intent intent = new Intent(activity, PreviewActivity.class);
         intent.putExtra("playListId", playlistId);
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+            false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
+        ActivityOptionsCompat options = ActivityOptionsCompat
+            .makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
@@ -62,11 +66,10 @@ public class PreviewActivity extends ClipPlayActivity {
         setContentView(R.layout.activity_preview);
         setupToolbar();
 
-        ViewCompat.setTransitionName(mPlayerContainer, EXTRA_IMAGE);
         mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
         mPlaylistEditor.reconstruct();
-        embedVideoPlayFragment();
+        embedVideoPlayFragment(true);
     }
 
 

@@ -2,7 +2,9 @@ package com.waylens.hachi.ui.clips;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.transition.ChangeBounds;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -122,10 +124,21 @@ public class ClipPlayActivity extends BaseActivity {
 
     protected void embedVideoPlayFragment() {
 
+        embedVideoPlayFragment(false);
+    }
+
+    protected void embedVideoPlayFragment(boolean transition) {
+
         UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlaylistId());
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mPlaylistEditor.getPlaylistId(),
             vdtUriProvider, ClipPlayFragment.ClipMode.MULTI);
+
+        if (transition) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mClipPlayFragment.setSharedElementEnterTransition(new ChangeBounds());
+            }
+        }
 
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }

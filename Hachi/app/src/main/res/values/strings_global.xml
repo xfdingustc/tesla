@@ -30,6 +30,7 @@
     <string name="reply_to" translatable="false">\@%s</string>
 
     <string name="moment_cover" translatable="false">moment_cover</string>
+    <string name="clip_cover" translatable="false">clip_cover</string>
 
 
 
