@@ -80,6 +80,10 @@ public class PreferenceUtils {
         mEditor.remove(key).apply();
     }
 
+    public static void clear() {
+        mEditor.clear().apply();
+    }
+
     public static void putLong(String key, long id) {
         mEditor.putLong(key, id).apply();
     }

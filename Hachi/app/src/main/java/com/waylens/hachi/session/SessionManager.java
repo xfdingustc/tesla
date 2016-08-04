@@ -360,9 +360,7 @@ public class SessionManager {
     }
 
 
-    public boolean needLinkAccount() {
-        return (mLoginType == LOGIN_TYPE_SNS) && ! getIsLinked();
-    }
+    
 
     public void updateLinkStatus(String userName, boolean isLinked) {
         setUserName(userName);
@@ -425,15 +423,8 @@ public class SessionManager {
 
 
     public void logout() {
-
         mLoginType = LOGIN_TYPE_USERNAME_PASSWORD;
-
-        PreferenceUtils.remove(PreferenceUtils.USER_ID);
-        PreferenceUtils.remove(PreferenceUtils.TOKEN);
-        PreferenceUtils.remove(PreferenceUtils.AVATAR_URL);
-        PreferenceUtils.remove(PreferenceUtils.LOGIN_TYPE);
-        PreferenceUtils.remove(PreferenceUtils.IS_LINKED);
-        PreferenceUtils.remove(PreferenceUtils.IS_VERIFIED);
+        PreferenceUtils.clear();
 
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
