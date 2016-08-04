@@ -8,49 +8,156 @@
 
     <include layout="@layout/toolbar_default"/>
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
-        <FrameLayout
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/avatar"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/menu_profile_photo_default"
-                app:civ_border_color="?attr/appTextColorPrimary"
-                app:civ_border_width="2dp"/>
+                android:layout_height="128dp">
+
+                <ImageView
+                    android:id="@+id/blur_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+
+                <FrameLayout
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp">
 
 
-            <ProgressBar
-                android:id="@+id/avatar_upload_progress"
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/menu_profile_photo_default"
+                        app:civ_border_color="?attr/appTextColorPrimary"
+                        app:civ_border_width="1dp"/>
+
+
+                    <ProgressBar
+                        android:id="@+id/avatar_upload_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:indeterminateTint="@color/style_color_accent"
+                        android:visibility="gone"/>
+
+                </FrameLayout>
+
+
+                <ImageButton
+                    android:id="@+id/btnAddPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    android:layout_margin="16dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/settings_add_photo"/>
+
+
+            </FrameLayout>
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:indeterminateTint="@color/style_color_accent"
-                android:visibility="gone"/>
-
-        </FrameLayout>
-
-
-
-        <ImageButton
-            android:id="@+id/btnAddPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/settings_add_photo"/>
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/account"
+                android:textColor="@color/style_color_primary"
+                android:textSize="18sp"/>
 
 
-    </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:singleLine="true"
+                    android:text="@string/email"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="16sp"
+                    />
+
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+
+                    android:textColor="?attr/appTextColorSecondary"
+                    android:textSize="14sp"
+                    tools:text="email"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/change_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:singleLine="true"
+                    android:text="@string/change_password"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="16sp"
+                    />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/settings_line_separator"/>
+
+
+
+            <include layout="@layout/account_setting_profile"/>
+
+            <include layout="@layout/account_setting_vehicle"/>
+
+            <include layout="@layout/account_setting_social_media"/>
+
+
+            <Button
+                style="@style/ActionButton"
+                android:id="@+id/btn_logout"
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/logout"/>
+        </LinearLayout>
+    </ScrollView>
 
     <FrameLayout
         android:id="@+id/accountPref"
@@ -59,10 +166,6 @@
 
 
     </FrameLayout>
-
-
-
-
 
 
 </LinearLayout>

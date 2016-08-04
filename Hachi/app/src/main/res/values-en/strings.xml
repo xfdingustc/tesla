@@ -384,4 +384,8 @@
 	<string name="camera_no_response">Camera no response</string>
 	<string name="done">done</string>
 	<string name="no_moment_found">No moments found</string>
+	<string name="unbind_confirm">Unbind account?</string>
+	<string name="username_update">Username has been updated.</string>
+	<string name="birthday_update">Birthday has been updated.</string>
+	<string name="gender_update">Gender has been updated.</string>
 </resources>

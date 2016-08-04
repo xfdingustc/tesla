@@ -158,8 +158,8 @@ public class SignInFragment extends BaseFragment {
                 } else if(response.code() == 401) {
                     MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                             .content(R.string.incorrect_email_or_password)
-                            .positiveText(android.R.string.ok)
-                            .negativeText(android.R.string.cancel)
+                            .positiveText(R.string.ok)
+                            .negativeText(R.string.cancel)
                             .show();
                     mButtonAnimator.setDisplayedChild(0);
                 } else {

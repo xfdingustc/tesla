@@ -143,6 +143,14 @@ public class SessionManager {
         return PreferenceUtils.getString(PreferenceUtils.BIRTHDAY, null);
     }
 
+    public void setVehicle(String vehicle) {
+        PreferenceUtils.putString(PreferenceUtils.VEHICLE, vehicle);
+    }
+
+    public String getVehicle() {
+        return PreferenceUtils.getString(PreferenceUtils.VEHICLE, null);
+    }
+
     public boolean isLoggedIn() {
         if (getUserName() == null || getUserId() == null || getToken() == null) {
             return false;
@@ -161,7 +169,7 @@ public class SessionManager {
         setGender(genderInt);
     }
 
-    private void setGender(int gender) {
+    public void setGender(int gender) {
         PreferenceUtils.putInt(PreferenceUtils.GENDER, gender);
     }
 
@@ -424,7 +432,18 @@ public class SessionManager {
 
     public void logout() {
         mLoginType = LOGIN_TYPE_USERNAME_PASSWORD;
-        PreferenceUtils.clear();
+        PreferenceUtils.remove(PreferenceUtils.USER_ID);
+        PreferenceUtils.remove(PreferenceUtils.TOKEN);
+        PreferenceUtils.remove(PreferenceUtils.AVATAR_URL);
+        PreferenceUtils.remove(PreferenceUtils.LOGIN_TYPE);
+        PreferenceUtils.remove(PreferenceUtils.IS_LINKED);
+        PreferenceUtils.remove(PreferenceUtils.IS_VERIFIED);
+        PreferenceUtils.remove(PreferenceUtils.BIRTHDAY);
+        PreferenceUtils.remove(PreferenceUtils.VEHICLE);
+        PreferenceUtils.remove(PreferenceUtils.YOUTUBE_USER_NAME);
+        PreferenceUtils.remove(PreferenceUtils.SOCIAL_YOUTUBE_LINKED);
+        PreferenceUtils.remove(PreferenceUtils.FACEBOOK_USER_NAME);
+        PreferenceUtils.remove(PreferenceUtils.SOCIAL_FACEBOOK_LINKED);
 
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();

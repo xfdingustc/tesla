@@ -29,18 +29,17 @@ import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.settings.SettingsFragment;
-import com.waylens.hachi.ui.clips.ClipVideoFragment;
-import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -66,10 +65,10 @@ public class MainActivity extends BaseActivity {
     private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
     private Fragment[] mFragmentList = new Fragment[]{
-            new ClipVideoFragment(),
-            new CameraPreviewFragment(),
-            new CommunityFragment(),
-            new SettingsFragment()
+        new ClipVideoFragment(),
+        new CameraPreviewFragment(),
+        new CommunityFragment(),
+        new SettingsFragment()
     };
 
     private Fragment mCurrentFragment = null;
@@ -111,8 +110,6 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         refressNavHeaderView();
     }
-
-
 
 
     @Override
@@ -248,13 +245,13 @@ public class MainActivity extends BaseActivity {
      */
     private void stopLiveView() {
         if (mCurrentFragment instanceof CameraPreviewFragment) {
-            ((CameraPreviewFragment)mCurrentFragment).stopPreview();
+            ((CameraPreviewFragment) mCurrentFragment).stopPreview();
         }
     }
 
     private void startLiveView(Fragment fragment) {
         if (fragment instanceof CameraPreviewFragment) {
-            ((CameraPreviewFragment)fragment).startPreview();
+            ((CameraPreviewFragment) fragment).startPreview();
         }
     }
 
@@ -299,16 +296,12 @@ public class MainActivity extends BaseActivity {
             mUsername.setText(mSessionManager.getUserName());
 
             Glide.with(this)
-                    .load(mSessionManager.getAvatarUrl())
-                    .asBitmap()
-                    .placeholder(R.drawable.menu_profile_photo_default)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                            mUserAvatar.setImageBitmap(resource);
-                        }
-                    });
+                .load(mSessionManager.getAvatarUrl())
+                .asBitmap()
+                .placeholder(R.drawable.menu_profile_photo_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
+                .into(mUserAvatar);
         } else {
             mUsername.setText(getText(R.string.click_2_login));
 
@@ -327,18 +320,18 @@ public class MainActivity extends BaseActivity {
 
     private void onToggleAppThemeClicked() {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .content(getText(R.string.change_theme_hint))
-                .negativeText(android.R.string.cancel)
-                .positiveText(android.R.string.ok)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
-                        toggleAppTheme();
-                        finish();
-                    }
-                })
-                .show();
+            .content(getText(R.string.change_theme_hint))
+            .negativeText(android.R.string.cancel)
+            .positiveText(android.R.string.ok)
+            .callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    super.onPositive(dialog);
+                    toggleAppTheme();
+                    finish();
+                }
+            })
+            .show();
 
     }
 
@@ -381,14 +374,14 @@ public class MainActivity extends BaseActivity {
         }
         Fragment fragment = getFragmentManager().findFragmentById(R.id.root_container);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
             return;
         }
 
 
         fragment = getFragmentManager().findFragmentById(R.id.fragment_content);
         if (fragment instanceof FragmentNavigator
-                && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
+            && ((FragmentNavigator) fragment).onInterceptBackPressed()) {
 
             return;
         }
