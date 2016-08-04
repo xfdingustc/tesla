@@ -2,13 +2,11 @@ package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.Toolbar;
-import android.transition.ChangeBounds;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -17,14 +15,10 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
-import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
-import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
-import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
@@ -71,8 +65,6 @@ public class FootageActivity extends ClipPlayActivity {
     private ClipSet mBookmarkClipSet;
 
 
-
-
     @BindView(R.id.vsRoot)
     View mRootView;
 
@@ -90,7 +82,6 @@ public class FootageActivity extends ClipPlayActivity {
         doAddBookmark();
 
     }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -185,9 +176,6 @@ public class FootageActivity extends ClipPlayActivity {
         mPlaylistEditor.reconstruct();
         mFootageClipSet = getClipSet();
         embedVideoPlayFragment(true);
-
-//        refreshFootageClipSet();
-
     }
 
 
@@ -240,15 +228,9 @@ public class FootageActivity extends ClipPlayActivity {
     }
 
 
-
-
-
-
     private void setupClipProgressBar() {
         mClipSetProgressBar.setClipSet(mFootageClipSet, mBookmarkClipSet);
     }
-
-
 
 
     private void refreshBookmarkClipSet() {

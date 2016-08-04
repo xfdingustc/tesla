@@ -3,6 +3,8 @@ package com.waylens.hachi.ui.clips;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +29,7 @@ import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
+import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -42,6 +45,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +71,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private boolean mIsAddMore;
 
+    private LoadingHandler mLoadingHandler;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -169,6 +174,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             attr = Clip.CLIP_ATTR_MANUALLY;
         }
         mPresenter = new ClipGridListPresenterImpl(getActivity(), TAG, mClipSetType, flag, attr, this);
+        mLoadingHandler = new LoadingHandler(this);
         initViews();
     }
 
@@ -190,6 +196,10 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         if (mActionMode != null) {
             mActionMode.finish();
         }
+    }
+
+    private void showLoadingProgress() {
+        mRefreshLayout.setRefreshing(true);
     }
 
     @Override
@@ -451,7 +461,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private void toPreview(final Clip clip, final View transitionView) {
 
-        mRefreshLayout.setRefreshing(true);
+        mLoadingHandler.sendMessageDelayed(mLoadingHandler.obtainMessage(LoadingHandler.SHOW_LOADING), 1000);
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
 
@@ -460,6 +470,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             .subscribe(new Subscriber<Void>() {
                 @Override
                 public void onCompleted() {
+                    mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
                     mRefreshLayout.setRefreshing(false);
                     PreviewActivity.launch(getActivity(), playlistId, transitionView);
                 }
@@ -467,6 +478,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 @Override
                 public void onError(Throwable e) {
                     e.printStackTrace();
+                    mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
                     mRefreshLayout.setRefreshing(false);
                     Snackbar snackbar = Snackbar.make(mRefreshLayout, R.string.camera_no_response, Snackbar.LENGTH_LONG);
                     snackbar.setAction(R.string.retry, new View.OnClickListener() {
@@ -486,13 +498,14 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     private void launchFootageActivity(final Clip clip, final View transitionView) {
-        mRefreshLayout.setRefreshing(true);
+        mLoadingHandler.sendMessageDelayed(mLoadingHandler.obtainMessage(LoadingHandler.SHOW_LOADING), 1000);
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
         playListEditor.buildRx(clip)
             .subscribe(new Subscriber<Void>() {
                 @Override
                 public void onCompleted() {
+                    mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
                     mRefreshLayout.setRefreshing(false);
                     FootageActivity.launch(getActivity(), playlistId, transitionView);
                 }
@@ -590,6 +603,32 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 });
         } else {
             AuthorizeActivity.launch(getActivity());
+        }
+    }
+
+
+    private static class LoadingHandler extends Handler {
+        private WeakReference<ClipGridListFragment> mFragmentRef;
+
+        private static final int SHOW_LOADING = 1;
+
+        LoadingHandler(ClipGridListFragment fragment) {
+            super();
+            mFragmentRef = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            ClipGridListFragment fragment = mFragmentRef.get();
+            if (fragment == null) {
+                return;
+            }
+            switch (msg.what) {
+                case SHOW_LOADING:
+                    fragment.showLoadingProgress();
+                    break;
+
+            }
         }
     }
 
