@@ -300,7 +300,7 @@ public class MomentActivity extends BaseActivity {
             case SocialEvent.EVENT_WHAT_REPOST:
                 String provider = (String) event.getExtra();
                 if (event.getResponse().result) {
-                    Logger.t(TAG).d("status: " + event.getResponse().shareStatus);
+                    Logger.t(TAG).d("status: " + event.getResponse().status);
                     Snackbar.make(mBtnRepost, getString(R.string.repost_success) + " " + provider, Snackbar.LENGTH_LONG).show();
                 } else {
                     Snackbar.make(mBtnRepost, R.string.repost_failed, Snackbar.LENGTH_SHORT).show();

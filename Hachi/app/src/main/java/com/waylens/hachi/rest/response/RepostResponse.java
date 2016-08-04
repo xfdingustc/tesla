@@ -8,7 +8,7 @@ import com.xfdingustc.snipe.utils.ToStringUtils;
  */
 public class RepostResponse {
     public boolean result;
-    public String shareStatus;
+    public String status;
 
     @Override
     public String toString() {

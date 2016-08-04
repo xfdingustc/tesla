@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.welcome;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -80,6 +81,11 @@ public class FirstInstallActivity extends BaseActivity {
     }
 
     private SimpleFragmentPagerAdapter mAdapter;
+
+    public static void launch(Activity activity) {
+        Intent intent = new Intent(activity, FirstInstallActivity.class);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

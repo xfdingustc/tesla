@@ -27,10 +27,10 @@
             android:layout_weight="1"></FrameLayout>
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+
             android:layout_margin="16dp">
 
 
@@ -45,9 +45,11 @@
             <TextView
                 android:id="@+id/waylens_agreement"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/agree_check_box"
+                tools:text="Agree with Waylens Agreement before you could use this app"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <Button
             android:id="@+id/btnEnter"
@@ -57,7 +59,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:text="@string/wake_up_camera"
             android:textSize="14sp"
-            android:background="@color/style_color_primary">
+            style="@style/ActionButton">
         </Button>
 
         <TextView
@@ -66,6 +68,8 @@
             android:layout_height="wrap_content"
             android:text="@string/without_camera"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
             android:layout_marginBottom="56dp"
             android:textColor="?attr/appTextColorPrimary"
             />

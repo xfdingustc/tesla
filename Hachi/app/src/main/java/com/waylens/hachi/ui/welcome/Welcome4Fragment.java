@@ -74,7 +74,7 @@ public class Welcome4Fragment extends BaseFragment {
             }
         });
 
-        SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.agree_line1));
+        SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.agree_line1) + " ");
         int start = ssb.length();
         ssb.append(getString(R.string.agree_line2))
             .setSpan(new ClickableSpan() {
@@ -83,7 +83,7 @@ public class Welcome4Fragment extends BaseFragment {
                     WaylensAgreementActivity.launch(getActivity());
                 }
             }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ssb.append(getString(R.string.agree_line3));
+        ssb.append(" " + getString(R.string.agree_line3));
         mWaylensAgreement.setText(ssb);
         mWaylensAgreement.setMovementMethod(LinkMovementMethod.getInstance());
 

@@ -42,7 +42,8 @@
 
         <activity
             android:name=".ui.welcome.OvertureActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:noHistory="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -55,7 +56,6 @@
 
         <activity
             android:name=".ui.welcome.FirstInstallActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait">
 
         </activity>

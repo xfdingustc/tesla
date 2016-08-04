@@ -71,16 +71,12 @@ public class OvertureActivity extends BaseActivity {
 
 
     private void redirectTo() {
-        Intent intent = new Intent();
-//        boolean enterSetup = VdtCameraManager.getManager().isConnected();
         if (isUpdated()) {
-            intent.setClass(this, FirstInstallActivity.class);
+            FirstInstallActivity.launch(this);
         } else {
-            intent.setClass(this, MainActivity.class);
+            MainActivity.launch(this);
         }
-        startActivity(intent);
-        //overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-        finish();
+
     }
 
 
