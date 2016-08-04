@@ -22,6 +22,7 @@ public class CommentEvent extends NotificationEvent {
 
     CommentEvent(JSONObject jsonObject) {
         super(jsonObject);
+        this.mNotificationType = NOTIFICATION_TYPE_COMMENT;
     }
 
     public static CommentEvent fromJson(JSONObject jsonObject) {
@@ -32,6 +33,7 @@ public class CommentEvent extends NotificationEvent {
         commentEvent.author = User.fromJson(jsonComment.optJSONObject("author"));
         commentEvent.replyTo = User.fromJson(jsonComment.optJSONObject("replyTo"));
         commentEvent.createTime = jsonComment.optLong("createTime");
+        commentEvent.time = commentEvent.createTime;
         return commentEvent;
     }
 

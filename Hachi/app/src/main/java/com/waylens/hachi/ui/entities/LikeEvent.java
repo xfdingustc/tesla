@@ -13,6 +13,7 @@ public class LikeEvent extends NotificationEvent {
 
     LikeEvent(JSONObject jsonObject) {
         super(jsonObject);
+        this.mNotificationType = NOTIFICATION_TYPE_LIKE;
     }
 
     public static LikeEvent fromJson(JSONObject jsonObject) {
@@ -22,6 +23,7 @@ public class LikeEvent extends NotificationEvent {
             likeEvent.likeID = jsonLike.optLong("likeID");
             likeEvent.liker = User.fromJson(jsonLike.optJSONObject("user"));
             likeEvent.createTime = jsonLike.optLong("createTime");
+            likeEvent.time = likeEvent.createTime;
         }
         return likeEvent;
     }

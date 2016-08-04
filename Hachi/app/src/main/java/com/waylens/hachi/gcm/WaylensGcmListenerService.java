@@ -87,7 +87,7 @@ public class WaylensGcmListenerService extends GcmListenerService {
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_notification)
                 .setColor(getResources().getColor(R.color.material_deep_orange_500))
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(message)

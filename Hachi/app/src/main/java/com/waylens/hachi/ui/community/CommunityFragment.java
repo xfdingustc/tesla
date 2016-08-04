@@ -18,6 +18,7 @@ import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.community.feed.FeedFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import butterknife.BindView;
@@ -67,17 +68,23 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         super.onResume();
         getToolbar().getMenu().clear();
         getToolbar().inflateMenu(R.menu.menu_community);
-
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            getToolbar().getMenu().removeItem(R.id.my_notification);
+        }
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.search:
                         MomentSearchActivity.launch(getActivity());
-                        break;
+                        return false;
+                    case R.id.my_notification:
+                        NotificationActivity.launch(getActivity());
+                        return false;
+                    default:
+                        return false;
                 }
 
-                return true;
             }
         });
     }

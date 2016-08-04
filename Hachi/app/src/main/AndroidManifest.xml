@@ -79,6 +79,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.activities.NotificationActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.activities.FollowListActivity"
             android:screenOrientation="portrait"/>
 

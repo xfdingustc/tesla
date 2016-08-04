@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/comment_root_layout"
+    android:id="@+id/follow_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -13,43 +13,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/comment_user_avatar"
+            android:id="@+id/follow_user_avatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/settings_profile_photo_default"
             />
-
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:orientation="vertical">
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/follow_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/comment_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="richardliang"/>
-                <TextView
-                    android:id="@+id/moment_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="Video title"/>
-            </LinearLayout>
+                tools:text="Someone followed you."/>
 
             <TextView
-                android:id="@+id/comment_time"
+                android:id="@+id/follow_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/Base.TextAppearance.AppCompat.Caption"
                 tools:text="Just now"/>
         </LinearLayout>
         <ImageView
@@ -59,10 +49,8 @@
             android:layout_gravity="end"
             android:contentDescription="@null"/>
     </LinearLayout>
-
     <View
         android:background="@color/settings_line_separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
-
 </LinearLayout>

@@ -64,9 +64,9 @@ public class GcmIntentService extends IntentService {
         }
         String msg = (user!=null ? user : "Some one") + " left a message for you.";
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Bitmap largeBitmap =  BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap largeBitmap =  BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_app);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_notification)
                 .setColor(getResources().getColor(R.color.material_deep_orange_500))
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(msg)

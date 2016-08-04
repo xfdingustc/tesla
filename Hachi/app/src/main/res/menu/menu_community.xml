@@ -8,5 +8,12 @@
         android:title="search"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/my_notification"
+        android:icon="@drawable/navbar_notification"
+        android:title="waylens_notification"
+        app:showAsAction="always"/>
+
+
 
 </menu>
