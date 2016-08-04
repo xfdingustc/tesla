@@ -17,14 +17,14 @@ android {
         applicationId "com.waylens.hachi"
         minSdkVersion 18
         targetSdkVersion 22
-        versionCode 100
-        versionName "0.3.4.1"
+        versionCode 101
+        versionName "0.3.4.2"
 //        renderscriptTargetApi 22
 //        renderscriptSupportModeEnabled true
         multiDexEnabled true
 
 //        ndk {
-//            moduleName "HttpRemuxer"
+//            moduleName "HttpRemuxer"A
 //            ldLibs "log"
 //            abiFilters "armeabi", "armeabi-v7a"
 //        }
@@ -129,8 +129,8 @@ dependencies {
     //    compile 'com.github.bumptech.glide:volley-integration:1.4.0'
 
     //    compile 'cn.aigestudio.downloader:Downloader:1.4.3'
-    debugCompile 'com.github.moduth:blockcanary-android:1.2.1'
-    releaseCompile 'com.github.moduth:blockcanary-no-op:1.2.1'
+//    debugCompile 'com.github.moduth:blockcanary-android:1.2.1'
+//    releaseCompile 'com.github.moduth:blockcanary-no-op:1.2.1'
     compile 'com.xfdingustc:mjpegview:0.1.3'
     compile 'com.xfdingustc:snipe:1.1.2'
     compile 'io.reactivex:rxjava:1.1.7'

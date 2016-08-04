@@ -1,12 +1,10 @@
 package com.waylens.hachi.app;
 
-import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
-import com.github.moduth.blockcanary.BlockCanary;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.hardware.CameraDiscovery;
@@ -84,7 +82,7 @@ public class Hachi extends MultiDexApplication {
 
 
 //        FIR.init(this);
-        BlockCanary.install(this, new AppBlockCanaryContext()).start();
+       
 
         CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
             @Override
