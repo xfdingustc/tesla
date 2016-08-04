@@ -19,6 +19,7 @@ import com.xfdingustc.snipe.vdb.ClipSetManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -82,6 +83,12 @@ public class PlayListEditor {
 
     public void reconstruct() {
         mClipSet = ClipSetManager.getManager().getClipSet(mPlayListId);
+    }
+
+    public Observable<Void> buildRx(Clip clip) {
+        List<Clip> clipList = new ArrayList<>();
+        clipList.add(clip);
+        return buildRx(clipList);
     }
 
 

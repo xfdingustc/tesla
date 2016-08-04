@@ -42,7 +42,7 @@ public class PreviewActivity extends ClipPlayActivity {
 
     public static void launch(Activity activity, int playlistId, View transitionView) {
         Intent intent = new Intent(activity, PreviewActivity.class);
-        intent.putExtra("playListId", playlistId);
+        intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
         ActivityOptionsCompat options = ActivityOptionsCompat

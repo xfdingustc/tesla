@@ -2,8 +2,13 @@ package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.Toolbar;
+import android.transition.ChangeBounds;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -21,6 +26,7 @@ import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
+import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbRequest;
 import com.xfdingustc.snipe.VdbRequestQueue;
@@ -52,17 +58,11 @@ import rx.Subscriber;
  */
 public class FootageActivity extends ClipPlayActivity {
     private static final String TAG = FootageActivity.class.getSimpleName();
-
-    private ClipPlayFragment mClipPlayFragment;
-
+    private static final String EXTRA_PLAYLIST_ID = "playListId";
+    private int mPlaylistId = 0;
     private ClipSetManager mClipSetManager = ClipSetManager.getManager();
 
     private static final int DEFAULT_BOOKMARK_LENGTH = 30000;
-
-
-    private static final String CLIPSET_INDEX = "clipsetindex";
-
-    private int mClipSetIndex;
 
     private int mDeleteClipCount = 0;
 
@@ -70,7 +70,7 @@ public class FootageActivity extends ClipPlayActivity {
     private ClipSet mFootageClipSet;
     private ClipSet mBookmarkClipSet;
 
-    private PlayListEditor mPlaylistEditor;
+
 
 
     @BindView(R.id.vsRoot)
@@ -91,15 +91,7 @@ public class FootageActivity extends ClipPlayActivity {
 
     }
 
-    @Subscribe
-    public void onEventCameraConnection(CameraConnectionEvent event) {
-        switch (event.getWhat()) {
-            case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
-                initCamera();
-                refreshFootageClipSet();
-                break;
-        }
-    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
@@ -154,10 +146,14 @@ public class FootageActivity extends ClipPlayActivity {
     }
 
 
-    public static void launch(Activity activity, int clipSetIndex) {
+    public static void launch(Activity activity, int playlistId, View transitionView) {
         Intent intent = new Intent(activity, FootageActivity.class);
-        intent.putExtra(CLIPSET_INDEX, clipSetIndex);
-        activity.startActivity(intent);
+        intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+            false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
+        ActivityOptionsCompat options = ActivityOptionsCompat
+            .makeSceneTransitionAnimation(activity, pairs);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
     @Override
@@ -169,7 +165,7 @@ public class FootageActivity extends ClipPlayActivity {
     @Override
     protected void init() {
         super.init();
-        mClipSetIndex = getIntent().getIntExtra(CLIPSET_INDEX, ClipSetManager.CLIP_SET_TYPE_ALLFOOTAGE);
+
         initViews();
     }
 
@@ -183,7 +179,14 @@ public class FootageActivity extends ClipPlayActivity {
         });
         setupToolbar();
         mClipSetProgressBar.init(mVdbRequestQueue);
-        refreshFootageClipSet();
+
+        mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
+        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
+        mPlaylistEditor.reconstruct();
+        mFootageClipSet = getClipSet();
+        embedVideoPlayFragment(true);
+
+//        refreshFootageClipSet();
 
     }
 
@@ -222,54 +225,23 @@ public class FootageActivity extends ClipPlayActivity {
 
     @Override
     public void setupToolbar() {
+        super.setupToolbar();
         if (getToolbar() != null) {
             getToolbar().setTitle(R.string.footage);
             getToolbar().setNavigationIcon(R.drawable.navbar_close);
             getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finish();
+                    onBackPressed();
                 }
             });
         }
-        super.setupToolbar();
-    }
-
-    private void setupClipPlayFragment(ClipSet clipSet) {
-        mClipSetManager.updateClipSet(mClipSetIndex, clipSet);
-        UrlProvider urlProvider1 = new PlaylistUrlProvider(mVdbRequestQueue, 0x101);
-
-        mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mClipSetIndex, urlProvider1,
-            ClipPlayFragment.ClipMode.SINGLE, ClipPlayFragment.CoverMode.NORMAL);
-
-        getFragmentManager().beginTransaction().add(R.id.player_fragment_content, mClipPlayFragment).commit();
-        Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
-        doMakePlaylist(clipSet);
 
     }
 
-    private void doMakePlaylist(final ClipSet clipSet) {
-        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, 0x101);
 
-        mPlaylistEditor.buildRx(clipSet.getClipList())
-            .subscribe(new Subscriber<Void>() {
-                @Override
-                public void onCompleted() {
-                    Logger.t(TAG).d("clipSet count: " + clipSet.getCount());
-                }
 
-                @Override
-                public void onError(Throwable e) {
 
-                }
-
-                @Override
-                public void onNext(Void aVoid) {
-
-                }
-            });
-
-    }
 
 
     private void setupClipProgressBar() {
@@ -277,19 +249,7 @@ public class FootageActivity extends ClipPlayActivity {
     }
 
 
-    private void refreshFootageClipSet() {
-        if (mVdbRequestQueue == null) {
-            return;
-        }
 
-        mFootageClipSet = mClipSetManager.getClipSet(mClipSetIndex);
-        mClipSetManager.updateClipSet(ClipSetManager.CLIP_SET_TYPE_TMP, mFootageClipSet);
-
-        setupClipPlayFragment(mFootageClipSet);
-        //setupClipProgressBar(clipSet);
-
-
-    }
 
     private void refreshBookmarkClipSet() {
         ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_MARKED, ClipSetExRequest
@@ -297,13 +257,7 @@ public class FootageActivity extends ClipPlayActivity {
             @Override
             public void onResponse(ClipSet response) {
                 mBookmarkClipSet = response;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setupClipProgressBar();
-                    }
-                });
-
+                setupClipProgressBar();
             }
         }, new VdbResponse.ErrorListener() {
             @Override
@@ -346,7 +300,7 @@ public class FootageActivity extends ClipPlayActivity {
 
     @Override
     protected ClipSet getClipSet() {
-        return mClipSetManager.getClipSet(mClipSetIndex);
+        return mClipSetManager.getClipSet(mPlaylistId);
     }
 
     private void toEnhance(List<Clip> clipList) {

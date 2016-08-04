@@ -251,11 +251,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     return;
                 }
                 if (mClipSetType == Clip.TYPE_MARKED) {
-                    popClipPreviewFragment(clip, transitionView);
+                    toPreview(clip, transitionView);
                 } else {
-                    ClipSet clipSet = new ClipSet(Clip.TYPE_BUFFERED);
-                    clipSet.addClip(clip);
-                    launchFootageActivity(clipSet);
+                    launchFootageActivity(clip, transitionView);
                 }
 
 
@@ -440,16 +438,25 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         }
     }
 
+    @Override
+    public boolean onInterceptBackPressed() {
+        if (mIsMultipleMode) {
+            mIsMultipleMode = false;
+            mAdapter.setMultiSelectedMode(false);
+            return true;
+        }
+        return false;
+    }
 
-    private void popClipPreviewFragment(final Clip clip, final View transitionView) {
-        ArrayList<Clip> clipList = new ArrayList<>();
-        clipList.add(clip);
+
+    private void toPreview(final Clip clip, final View transitionView) {
+
         mRefreshLayout.setRefreshing(true);
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
 
 
-        playListEditor.buildRx(clipList)
+        playListEditor.buildRx(clip)
             .subscribe(new Subscriber<Void>() {
                 @Override
                 public void onCompleted() {
@@ -465,7 +472,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     snackbar.setAction(R.string.retry, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            popClipPreviewFragment(clip, transitionView);
+                            toPreview(clip, transitionView);
                         }
                     });
                     snackbar.show();
@@ -478,21 +485,43 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             });
     }
 
-    private void launchFootageActivity(ClipSet clipSet) {
-        ClipSetManager.getManager().updateClipSet(ClipSetManager.CLIP_SET_TYPE_MANUAL, clipSet);
-        FootageActivity.launch(getActivity(), ClipSetManager.CLIP_SET_TYPE_MANUAL);
+    private void launchFootageActivity(final Clip clip, final View transitionView) {
+        mRefreshLayout.setRefreshing(true);
+        final int playlistId = 0x100;
+        PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
+        playListEditor.buildRx(clip)
+            .subscribe(new Subscriber<Void>() {
+                @Override
+                public void onCompleted() {
+                    mRefreshLayout.setRefreshing(false);
+                    FootageActivity.launch(getActivity(), playlistId, transitionView);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                    mRefreshLayout.setRefreshing(false);
+                    Snackbar snackbar = Snackbar.make(mRefreshLayout, R.string.camera_no_response, Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.retry, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            launchFootageActivity(clip, transitionView);
+                        }
+                    });
+                    snackbar.show();
+                }
+
+                @Override
+                public void onNext(Void aVoid) {
+
+                }
+            });
+
+
     }
 
 
-    @Override
-    public boolean onInterceptBackPressed() {
-        if (mIsMultipleMode) {
-            mIsMultipleMode = false;
-            mAdapter.setMultiSelectedMode(false);
-            return true;
-        }
-        return false;
-    }
+
 
 
     private void toEnhance() {
