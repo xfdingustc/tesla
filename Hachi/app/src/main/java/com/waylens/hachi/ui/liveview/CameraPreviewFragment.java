@@ -56,6 +56,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,9 +136,11 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.recordDot)
     ImageView mRecordDot;
 
-    @Nullable
     @BindView(R.id.wifiMode)
     ImageView mWifiMode;
+
+    @BindView(R.id.wifi_mode_description)
+    TextView mWifiModeDescription;
 
     @Nullable
     @BindView(R.id.ivBatterStatus)
@@ -188,6 +191,43 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     @BindView(R.id.controlPanel)
     RelativeLayout mControlPanel;
+
+    @BindView(R.id.tv_space_left)
+    TextView mTvSpaceLeft;
+
+    @BindView(R.id.pull)
+    ImageView mPull;
+
+    @BindView(R.id.push)
+    ImageView mPush;
+
+    @BindView(R.id.detail_info_panel)
+    View mDetailInfoPanel;
+
+    @BindView(R.id.highlight_space)
+    TextView mHighlightSpace;
+
+    @BindView(R.id.loop_record_space)
+    TextView mLoopRecordSpace;
+
+    @BindView(R.id.remote_ctrl_status)
+    TextView mRemoteStatus;
+
+    @BindView(R.id.obd_ctrl_status)
+    TextView mObdStatus;
+
+
+    @OnClick(R.id.pull)
+    public void onPullClicked() {
+        mDetailInfoPanel.setVisibility(View.VISIBLE);
+        mPull.setVisibility(View.GONE);
+    }
+
+    @OnClick(R.id.push)
+    public void onPushClicked() {
+        mDetailInfoPanel.setVisibility(View.GONE);
+        mPull.setVisibility(View.VISIBLE);
+    }
 
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
@@ -487,6 +527,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             getToolbar().setVisibility(View.GONE);
 
             mInfoView.setVisibility(View.GONE);
+            mDetailInfoPanel.setVisibility(View.GONE);
             RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
             params1.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
@@ -676,6 +717,13 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                     mStorageView.setMax((int) (response.total / (1024 * 1024)));
                     mStorageView.setProgress((int) (response.marked / (1024 * 1024)));
                     mStorageView.setSecondaryProgress((int) (response.used / (1024 * 1024)));
+
+                    mTvSpaceLeft.setText(getSpaceString(response.total - response.used) + " " + getString(R.string.ready_to_record));
+
+                    mHighlightSpace.setText(getSpaceString(response.marked));
+                    mLoopRecordSpace.setText(getSpaceString(response.used - response.marked));
+
+
                 }
             }, new VdbResponse.ErrorListener() {
                 @Override
@@ -688,6 +736,20 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 mVdbRequestQueue.add(request);
             }
         }
+    }
+
+    private String getSpaceString(long space) {
+        long spaceInM = space / (1024 * 1024);
+
+        String spaceStr;
+        if (spaceInM > 1024) {
+            BigDecimal tmp = new BigDecimal(spaceInM / 1024);
+            spaceStr =  String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " GB";
+        } else {
+            BigDecimal tmp = new BigDecimal(spaceInM);
+            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " MB";
+        }
+        return spaceStr;
     }
 
 
@@ -882,8 +944,12 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         if (mInfoView != null) {
             int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
             mInfoView.setVisibility(visibility);
+
             if (visibility == View.VISIBLE) {
+                mPull.setVisibility(visibility);
                 updateCameraInfoPanel();
+            } else {
+                mDetailInfoPanel.setVisibility(visibility);
             }
         }
     }
@@ -922,8 +988,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         int wifiMode = mVdtCamera.getWifiMode();
         if (wifiMode == VdtCamera.WIFI_MODE_AP) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_ap);
+            mWifiModeDescription.setText("Your phone is directly connected to camera");
         } else if (wifiMode == VdtCamera.WIFI_MODE_CLIENT) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_client);
+            mWifiModeDescription.setText("Your phone is connected to camera through router");
         }
 
 
@@ -932,14 +1000,18 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
         if (obdState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mObd.setAlpha(0.2f);
+            mObdStatus.setText("OFF");
         } else {
             mObd.setAlpha(1.0f);
+            mObdStatus.setText("ON");
         }
 
         if (remoteCtrState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mRemoteCtrl.setAlpha(0.2f);
+            mRemoteStatus.setText("OFF");
         } else {
             mRemoteCtrl.setAlpha(1.0f);
+            mRemoteStatus.setText("ON");
         }
 
 

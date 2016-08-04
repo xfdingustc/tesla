@@ -5,7 +5,8 @@
               android:layout_height="wrap_content"
               android:alpha="0.9"
               android:background="#141618"
-              android:orientation="vertical"              >
+              android:orientation="vertical"
+              xmlns:tools="http://schemas.android.com/tools">
 
 
     <LinearLayout
@@ -17,11 +18,48 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/rec_info_sdcard"
+            android:layout_marginRight="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_space_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:text="3.9GB ready to record"/>
+
+
+
+
+
+
+
+
+        <ImageView
+            android:id="@+id/remote_ctrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:rotation="90"
+            android:src="@drawable/rec_info_remote_control_on"/>
+
+
+        <ImageView
+            android:id="@+id/obd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/rec_info_obd_on"/>
 
         <ImageView
             android:id="@+id/ivBatterStatus"
@@ -42,43 +80,11 @@
             android:id="@+id/tvBatteryVol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
+
             android:gravity="center_vertical"
             android:text="100%"
             android:textColor="@color/text_camera_info"
             android:textSize="14sp"/>
-
-        <ImageView
-            android:id="@+id/wifiMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:src="@drawable/rec_info_camera_mode_ap"/>
-
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"></View>
-
-        <ImageView
-            android:id="@+id/remote_ctrl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="2dp"
-            android:rotation="90"
-            android:src="@drawable/rec_info_remote_control_on"/>
-
-
-
-        <ImageView
-            android:id="@+id/obd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/rec_info_obd_on"/>
 
 
     </LinearLayout>
@@ -88,48 +94,19 @@
         style="?android:progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:progressDrawable="@drawable/default_progress_bar"/>
 
-    <LinearLayout
-        android:id="@+id/legend"
-        android:layout_width="match_parent"
+
+    <ImageView
+        android:id="@+id/pull"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <View
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:layout_marginRight="8dp"
-            android:background="@color/style_color_primary2"></View>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:text="Mark Space"
-            android:textColor="@color/text_camera_info"
-            android:textSize="14sp"/>
-
-        <View
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:layout_marginRight="8dp"
-            android:background="@color/material_orange_300"></View>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Used Space"
-            android:textColor="@color/text_camera_info"
-            android:textSize="14sp"/>
-    </LinearLayout>
+        android:padding="16dp"
+        android:src="@drawable/rec_info_pull"
+        android:layout_gravity="center_horizontal"/>
 
 
 </LinearLayout>

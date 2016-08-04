@@ -130,6 +130,169 @@
             android:visibility="gone"
             tools:visibility="visible"/>
 
+        <LinearLayout
+            android:id="@+id/detail_info_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/infoPanel"
+            android:background="?attr/defaultBgColorDark"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="8dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@color/style_color_primary"
+                    android:layout_gravity="center_vertical"></View>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/highlights"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/highlight_space"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="12.1GB"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="8dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@color/material_orange_300"
+                    android:layout_gravity="center_vertical"></View>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Loop Recording Space"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/loop_record_space"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="3.9GB"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="16dp"
+                    android:src="@drawable/rec_info_remote_control_on"
+                    android:layout_gravity="center_vertical"></ImageView>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Remote Control"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/remote_ctrl_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="ON"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="16dp"
+                    android:src="@drawable/rec_info_obd_on"
+                    android:layout_gravity="center_vertical"></ImageView>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="OBD"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/obd_ctrl_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="ON"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/wifiMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:src="@drawable/rec_info_camera_mode_ap"/>
+
+            <TextView
+                android:id="@+id/wifi_mode_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                tools:text="Your phone is directly connected to camera"/>
+
+            <ImageView
+                android:id="@+id/push"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:rotation="180"
+                android:src="@drawable/rec_info_pull"
+                android:layout_gravity="center_horizontal"/>
+
+
+        </LinearLayout>
+
         <include layout="@layout/fragment_camera_connect"/>
     </RelativeLayout>
 
