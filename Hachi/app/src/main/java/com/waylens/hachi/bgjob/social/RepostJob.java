@@ -43,7 +43,7 @@ public class RepostJob extends Job {
         Logger.t(TAG).d("on run momentId: " + mMomentId + " provider: " + mSocialProvider);
         RepostBody body = new RepostBody(mMomentId, mSocialProvider);
         RepostResponse repostResponse = mHachi.repost(body).execute().body();
-        mEventBus.post(new SocialEvent(SocialEvent.EVENT_WHAT_REPOST, repostResponse.result, mSocialProvider));
+        mEventBus.post(new SocialEvent(SocialEvent.EVENT_WHAT_REPOST, repostResponse, mSocialProvider));
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.waylens.hachi.bgjob.social.event;
 
+import com.waylens.hachi.rest.response.RepostResponse;
+
 import java.util.Objects;
 
 /**
@@ -10,12 +12,12 @@ public class SocialEvent {
     public static final int EVENT_WHAT_REPOST = 0;
 
     private final int mWhat;
-    private final boolean mResult;
+    private final RepostResponse mResponse;
     private final Object mExtra;
 
-    public SocialEvent(int what, boolean result, Object extra) {
+    public SocialEvent(int what, RepostResponse response, Object extra) {
         this.mWhat = what;
-        this.mResult = result;
+        this.mResponse = response;
         this.mExtra = extra;
     }
 
@@ -23,8 +25,8 @@ public class SocialEvent {
         return mWhat;
     }
 
-    public boolean getResult() {
-        return mResult;
+    public RepostResponse getResponse() {
+        return mResponse;
     }
 
     public Object getExtra() {
