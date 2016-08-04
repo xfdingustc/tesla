@@ -360,7 +360,7 @@ public class SessionManager {
     }
 
 
-    
+
 
     public void updateLinkStatus(String userName, boolean isLinked) {
         setUserName(userName);
