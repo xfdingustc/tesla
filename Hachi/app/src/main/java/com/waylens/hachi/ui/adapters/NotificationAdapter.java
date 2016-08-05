@@ -168,6 +168,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (!TextUtils.isEmpty(commentEvent.title)) {
             holder.momentTitle.setText(mContext.getResources().getString(R.string.in_moment) + " " + commentEvent.title + ".");
         }
+
+        Logger.t(TAG).d(commentEvent.thumbnail);
+
         Glide.with(mContext)
                 .load(commentEvent.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -199,6 +202,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.momentTitle.setText(" " + likeEvent.title + ".");
         }
 
+        Logger.t(TAG).d(likeEvent.thumbnail);
         Glide.with(mContext)
                 .load(likeEvent.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

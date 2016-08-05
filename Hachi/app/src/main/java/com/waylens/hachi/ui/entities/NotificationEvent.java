@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.entities;
 
+import com.orhanobut.logger.Logger;
+
 import org.json.JSONObject;
 
 /**
@@ -24,6 +26,7 @@ public class NotificationEvent {
         isRead = jsonObject.optBoolean("isRead");
 
         JSONObject jsonMoment = jsonObject.optJSONObject("moment");
+        Logger.t("Notification Event").d(jsonObject.toString());
         if (jsonMoment != null) {
             momentID = jsonMoment.optLong("momentID");
             title = jsonMoment.optString("title");
@@ -32,7 +35,7 @@ public class NotificationEvent {
                 videoID = jsonMoment.optString("videoID");
                 thumbnail = String.format(Moment.YOUTUBE_THUMBNAIL, videoID);
             } else {
-                thumbnail = jsonMoment.optString("thumbnail");
+                thumbnail = jsonMoment.optString("videoThumbnail");
             }
         }
     }
