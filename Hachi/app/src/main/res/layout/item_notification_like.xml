@@ -4,7 +4,8 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+              xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -41,13 +42,27 @@
             tools:text="Just now"/>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/moment_thumbnail"
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:id="@+id/video_fragment_container"
         android:layout_width="72dp"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
         android:layout_margin="16dp"
-        android:contentDescription="@null"
-        android:scaleType="fitXY"/>
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.12"
+            android:background="@drawable/stroke_rect"></FrameLayout>
+
+        <ImageView
+            android:id="@+id/moment_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"/>
+
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 
 </LinearLayout>
