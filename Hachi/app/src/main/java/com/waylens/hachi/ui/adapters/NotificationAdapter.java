@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -27,8 +28,6 @@ import com.waylens.hachi.ui.entities.NotificationEvent;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -49,6 +48,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     PrettyTime mPrettyTime;
 
     Context mContext;
+
+    private boolean mHasMore = true;
 
 
     public NotificationAdapter(ArrayList<NotificationEvent> notificationEvents, Context context, OnListItemClickListener listener) {
@@ -92,15 +93,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             default:
                 break;
         }
-        return null;
+        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
+        return new LoadingViewHolder(itemView);
     }
 
     @Override
     public int getItemCount() {
         if (mNotificationEvents != null) {
-            return mNotificationEvents.size();
+            return mNotificationEvents.size() + 1;
         } else {
-            return 0;
+            return 1;
         }
     }
 
@@ -116,33 +118,42 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final NotificationEvent notificationEvent = mNotificationEvents.get(position);
-        final long eventID = notificationEvent.eventID;
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!notificationEvent.isRead) {
-                    notificationEvent.isRead = true;
-                    notifyItemChanged(position);
+        if (position < mNotificationEvents.size()) {
+            final NotificationEvent notificationEvent = mNotificationEvents.get(position);
+            final long eventID = notificationEvent.eventID;
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!notificationEvent.isRead) {
+                        notificationEvent.isRead = true;
+                        notifyItemChanged(position);
+                    }
+                    if (mOnListItemClickListener != null) {
+                        mOnListItemClickListener.onItemClicked(eventID);
+                    }
                 }
-                if (mOnListItemClickListener != null) {
-                    mOnListItemClickListener.onItemClicked(eventID);
-                }
+            });
+            switch (notificationEvent.mNotificationType) {
+                case NotificationEvent.NOTIFICATION_TYPE_COMMENT:
+                    onBindCommentViewHolder((NotificationCommentVH) holder, position);
+                    break;
+                case NotificationEvent.NOTIFICATION_TYPE_LIKE:
+                    onBindLikeViewHolder((NotificationLikeVH) holder, position);
+                    break;
+                case NotificationEvent.NOTIFICATION_TYPE_FOLLOW:
+                    onBindFollowViewHolder((NotificationFollowVH) holder, position);
+                    break;
+                default:
+                    break;
             }
-        });
-        switch (notificationEvent.mNotificationType) {
-            case NotificationEvent.NOTIFICATION_TYPE_COMMENT:
-                onBindCommentViewHolder((NotificationCommentVH)holder, position);
-                break;
-            case NotificationEvent.NOTIFICATION_TYPE_LIKE:
-                onBindLikeViewHolder((NotificationLikeVH)holder, position);
-                break;
-            case NotificationEvent.NOTIFICATION_TYPE_FOLLOW:
-                onBindFollowViewHolder((NotificationFollowVH)holder, position);
-                break;
-            default:
-                break;
+            return;
         }
+        onBindLoadingViewHolder((LoadingViewHolder)holder, position);
+    }
+
+    public void setHasMore(boolean hasMore) {
+        mHasMore = hasMore;
+        notifyItemChanged(mNotificationEvents.size());
     }
 
     private void onBindCommentViewHolder(final NotificationCommentVH holder, int position) {
@@ -233,6 +244,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
+    private void onBindLoadingViewHolder(LoadingViewHolder holder, int position) {
+        if (mHasMore) {
+            holder.viewAnimator.setDisplayedChild(0);
+        } else {
+            holder.viewAnimator.setDisplayedChild(1);
+        }
+    }
+
     public static class NotificationCommentVH extends RecyclerView.ViewHolder {
 
         @BindView(R.id.comment_root_layout)
@@ -303,5 +322,20 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public interface OnListItemClickListener {
         void onItemClicked(long eventID);
+    }
+
+    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.view_animator)
+        ViewAnimator viewAnimator;
+
+        @BindView(R.id.tv_no_more)
+        TextView textView;
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            textView.setText(R.string.no_more_notifications);
+        }
     }
 }

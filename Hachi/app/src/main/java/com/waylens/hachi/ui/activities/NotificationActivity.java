@@ -325,9 +325,14 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
                     }
 
                     Logger.t(TAG).d("c f l: " + mCommentCursor + " " + mFollowCursor + " " + mLikeCursor);
-                    mRvNotificationList.setEnableLoadMore(Math.max(mCommentCursor > mFollowCursor ?
-                        mCommentCursor : mFollowCursor, mLikeCursor) > 0);
                     mRvNotificationList.setIsLoadingMore(false);
+
+                    if (mCommentCursor > 0 || mFollowCursor > 0 || mLikeCursor > 0) {
+                        mRvNotificationList.setEnableLoadMore(true);
+                        mAdapter.setHasMore(true);
+                    } else {
+                        mAdapter.setHasMore(false);
+                    }
 
                 }
 
@@ -458,5 +463,4 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
         MainActivity.launch(this);
         finish();
     }
-
 }

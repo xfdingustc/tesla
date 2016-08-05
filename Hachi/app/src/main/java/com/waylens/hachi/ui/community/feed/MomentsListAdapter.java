@@ -148,6 +148,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 momentPosition -= 1;
             }
             onBindMomentViewHolder((MomentViewHolder) holder, momentPosition);
+            onBindMomentViewHolder((MomentViewHolder) holder, momentPosition);
         } else if (viewType == ITEM_VIEW_TYPE_HEADER) {
             mHeaderView.onBindHeaderViewHolder(holder);
         } else {
