@@ -67,18 +67,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (mNotificationEvents == null) {
                 mNotificationEvents = new ArrayList<>();
             }
+            int start = mNotificationEvents.size();
+            int length = notificationEvents.size();
             mNotificationEvents.addAll(notificationEvents);
-            Collections.sort(mNotificationEvents, new Comparator<NotificationEvent>() {
-                @Override
-                public int compare(NotificationEvent notificationEvent, NotificationEvent t1) {
-                    if (notificationEvent.time <= t1.time)
-                        return 1;
-                    else
-                        return -1;
-                }
-            });
             Logger.t(TAG).d("mNotification List size = " + mNotificationEvents.size());
-            notifyDataSetChanged();
+            notifyItemRangeInserted(start, length);
         }
     }
 

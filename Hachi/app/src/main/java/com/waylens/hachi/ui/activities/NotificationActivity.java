@@ -32,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -306,6 +308,15 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
                     mLikeList.clear();
                     mFollowList.clear();
                     Logger.t(TAG).d("notification list length = " + mNotificationList.size());
+                    Collections.sort(mNotificationList, new Comparator<NotificationEvent>() {
+                        @Override
+                        public int compare(NotificationEvent notificationEvent, NotificationEvent t1) {
+                            if (notificationEvent.time <= t1.time)
+                                return 1;
+                            else
+                                return -1;
+                        }
+                    });
                     mAdapter.addNotifications(mNotificationList, isRefresh);
                     if (mNotificationViewAnimator != null) {
                         mNotificationViewAnimator.setDisplayedChild(1);
