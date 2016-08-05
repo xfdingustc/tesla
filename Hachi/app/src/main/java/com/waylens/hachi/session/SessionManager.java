@@ -439,6 +439,7 @@ public class SessionManager {
             public void onResponse(Call<SimpleBoolResponse> call, Response<SimpleBoolResponse> response) {
                 Logger.t(TAG).d("device logout " + response.body().result);
                 PreferenceUtils.remove(PreferenceUtils.TOKEN);
+                PreferenceUtils.remove(PreferenceUtils.SEND_GCM_TOKEN_SERVER);
             }
 
             @Override
