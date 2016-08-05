@@ -1,13 +1,10 @@
 package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.ViewAnimator;
 
@@ -27,8 +24,6 @@ import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.ui.entities.FollowEvent;
 import com.waylens.hachi.ui.entities.LikeEvent;
 import com.waylens.hachi.ui.entities.NotificationEvent;
-import com.waylens.hachi.ui.fragments.NotificationCommentsFragment;
-import com.waylens.hachi.ui.fragments.NotificationLikesFragment;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -36,29 +31,21 @@ import com.waylens.hachi.utils.VolleyUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by xiaofei on 2015/8/4.
  */
-public class NotificationActivity extends BaseActivity implements RecyclerViewExt.OnLoadMoreListener{
+public class NotificationActivity extends BaseActivity implements RecyclerViewExt.OnLoadMoreListener {
     public static final String TAG = NotificationActivity.class.getSimpleName();
     public static final int DEFAULT_COUNT = 10;
 
@@ -148,7 +135,9 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
     }
 
     private Observable<Void> LoadComments(boolean isRefresh) {
-        if (isRefresh) {mCommentCursor = 0;}
+        if (isRefresh) {
+            mCommentCursor = 0;
+        }
         final String qs = String.format(Constants.API_QS_COMMON, mCommentCursor, DEFAULT_COUNT);
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
@@ -158,9 +147,9 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
                         subscriber.onCompleted();
                         return;
                     }
-                    RequestFuture<JSONObject > future = RequestFuture.newFuture();
+                    RequestFuture<JSONObject> future = RequestFuture.newFuture();
                     AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.GET,
-                            Constants.API_NOTIFICATIONS_COMMENTS + qs, future, future);
+                        Constants.API_NOTIFICATIONS_COMMENTS + qs, future, future);
                     mRequestQueue.add(request);
                     JSONObject response = future.get();
 
@@ -195,11 +184,13 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
 
             }
         }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+            .observeOn(AndroidSchedulers.mainThread());
     }
 
     private Observable<Void> LoadLikes(boolean isRefresh) {
-        if (isRefresh) {mLikeCursor = 0;}
+        if (isRefresh) {
+            mLikeCursor = 0;
+        }
         final String qs = String.format(Constants.API_QS_COMMON, mLikeCursor, DEFAULT_COUNT);
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
@@ -209,9 +200,9 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
                         subscriber.onCompleted();
                         return;
                     }
-                    RequestFuture<JSONObject > future = RequestFuture.newFuture();
+                    RequestFuture<JSONObject> future = RequestFuture.newFuture();
                     AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.GET,
-                            Constants.API_NOTIFICATIONS_LIKES + qs, future, future);
+                        Constants.API_NOTIFICATIONS_LIKES + qs, future, future);
                     mRequestQueue.add(request);
                     JSONObject response = future.get();
                     Logger.t(TAG).d("load likes successfully");
@@ -243,11 +234,13 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+            .observeOn(AndroidSchedulers.mainThread());
     }
 
     private Observable<Void> LoadFollows(boolean isRefresh) {
-        if (isRefresh) {   mFollowCursor = 0; }
+        if (isRefresh) {
+            mFollowCursor = 0;
+        }
         final String qs = String.format(Constants.API_QS_COMMON, mFollowCursor, DEFAULT_COUNT);
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
@@ -257,9 +250,9 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
                         subscriber.onCompleted();
                         return;
                     }
-                    RequestFuture<JSONObject > future = RequestFuture.newFuture();
+                    RequestFuture<JSONObject> future = RequestFuture.newFuture();
                     AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.GET,
-                            Constants.API_NOTIFICATIONS_FOLLOWS + qs, future, future);
+                        Constants.API_NOTIFICATIONS_FOLLOWS + qs, future, future);
                     mRequestQueue.add(request);
                     JSONObject response = future.get();
                     Logger.t(TAG).d("load follows successfully");
@@ -291,7 +284,7 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+            .observeOn(AndroidSchedulers.mainThread());
     }
 
     private void loadNotifications(final boolean isRefresh) {
@@ -320,7 +313,7 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
 
                     Logger.t(TAG).d("c f l: " + mCommentCursor + " " + mFollowCursor + " " + mLikeCursor);
                     mRvNotificationList.setEnableLoadMore(Math.max(mCommentCursor > mFollowCursor ?
-                            mCommentCursor : mFollowCursor, mLikeCursor) > 0);
+                        mCommentCursor : mFollowCursor, mLikeCursor) > 0);
                     mRvNotificationList.setIsLoadingMore(false);
 
                 }
@@ -410,7 +403,7 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
         JSONArray types = new JSONArray();
         JSONObject params = new JSONObject();
         final ArrayList<Long> markReadIDs = new ArrayList<>();
-        for (Map.Entry<Long, NotiEvent> entry:mUnreadEventMap.entrySet()) {
+        for (Map.Entry<Long, NotiEvent> entry : mUnreadEventMap.entrySet()) {
             if (entry.getValue().isRead) {
                 markReadIDs.add(entry.getKey());
                 ids.put(entry.getKey());
@@ -424,22 +417,22 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
             Logger.t(TAG).d(e.getMessage());
         }
         mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_COMMENTS_MARK_READ, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (response.optBoolean("result")) {
-                            for(long eventID : markReadIDs) {
-                                mUnreadEventMap.remove(eventID);
-                            }
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if (response.optBoolean("result")) {
+                        for (long eventID : markReadIDs) {
+                            mUnreadEventMap.remove(eventID);
                         }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
-                    }
-                }));
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
+                }
+            }));
     }
 
     public class NotiEvent {

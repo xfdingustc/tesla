@@ -166,7 +166,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.commentUserName.setText(commentEvent.author.userName + " " + mContext.getResources().getString(R.string.made_comment) + " ");
         holder.commentTime.setText(mPrettyTime.formatUnrounded(new Date(commentEvent.createTime)));
         if (!TextUtils.isEmpty(commentEvent.title)) {
-            holder.momentTitle.setText(mContext.getResources().getString(R.string.in_moment) + " " + commentEvent.title + ".");
+            holder.commentUserName.append(": " + commentEvent.title + ".");
         }
 
         Logger.t(TAG).d(commentEvent.thumbnail);
@@ -199,7 +199,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.likeUserName.setText(likeEvent.liker.userName + " " + mContext.getResources().getString(R.string.like_your_post));
         holder.likeTime.setText(mPrettyTime.formatUnrounded(new Date(likeEvent.createTime)));
         if (!TextUtils.isEmpty(likeEvent.title)) {
-            holder.momentTitle.setText(" " + likeEvent.title + ".");
+            holder.likeUserName.append(": " + likeEvent.title + ".");
         }
 
         Logger.t(TAG).d(likeEvent.thumbnail);
@@ -254,8 +254,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @BindView(R.id.comment_time)
         TextView commentTime;
 
-        @BindView(R.id.moment_title)
-        TextView momentTitle;
+
 
         @BindView(R.id.moment_thumbnail)
         ImageView momentThumbnail;
@@ -279,9 +278,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @BindView(R.id.like_time)
         TextView likeTime;
-
-        @BindView(R.id.moment_title)
-        TextView momentTitle;
 
         @BindView(R.id.moment_thumbnail)
         ImageView momentThumbnail;

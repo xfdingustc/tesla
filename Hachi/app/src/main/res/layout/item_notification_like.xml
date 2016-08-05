@@ -1,77 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/like_root_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="8dp"
-    android:orientation="vertical">
+<LinearLayout android:id="@+id/like_root_layout"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/like_user_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/settings_profile_photo_default"
+        />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/like_user_avatar"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/settings_profile_photo_default"
-            />
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/like_user_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:orientation="vertical">
+            style="@style/HachiTextViewSubHeader"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="richardliang likes your post"/>
 
-
-
-                <TextView
-                    android:id="@+id/like_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    tools:text="richardliang likes your post"/>
-
-                <TextView
-                    android:id="@+id/moment_title"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="Video title"/>
-
-
-                <TextView
-                    android:id="@+id/like_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    style="@style/Base.TextAppearance.AppCompat.Caption"
-                    tools:text="Just now"/>
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/moment_thumbnail"
-            android:layout_width="96dp"
-            android:layout_height="54dp"
-            android:contentDescription="@null"/>
-        
+        <TextView
+            android:id="@+id/like_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/app_text_color_secondary"
+            android:textSize="14dp"
+            tools:text="Just now"/>
     </LinearLayout>
 
-    <View
-        android:background="@color/settings_line_separator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"></View>
+    <ImageView
+        android:id="@+id/moment_thumbnail"
+        android:layout_width="72dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"/>
+
 
 </LinearLayout>
