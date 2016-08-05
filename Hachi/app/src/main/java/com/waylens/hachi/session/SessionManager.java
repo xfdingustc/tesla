@@ -1,6 +1,5 @@
 package com.waylens.hachi.session;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -16,8 +15,8 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SignInResponse;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UserInfo;
-import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -44,7 +43,8 @@ public class SessionManager {
     private int mLoginType;
 
 
-    private String mRegion;
+
+
 
     private SessionManager() {
 
@@ -375,22 +375,6 @@ public class SessionManager {
         setIsLinked(isLinked);
     }
 
-    public void saveUserProfile(JSONObject response) {
-        try {
-
-            mRegion = response.getString("region");
-
-            setUserName(response.getString("userName"));
-            setEmail(response.getString("email"));
-            setAvatar(response.getString("avatarUrl"));
-            setBirthday(response.getString("birthday"));
-            setGender(response.getString("gender"));
-
-            PreferenceUtils.putString(PreferenceUtils.REGION, mRegion);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void saveUserProfile(UserInfo userInfo) {
         setUserName(userInfo.userName);
@@ -433,8 +417,8 @@ public class SessionManager {
     public void logout() {
         mLoginType = LOGIN_TYPE_USERNAME_PASSWORD;
         PreferenceUtils.remove(PreferenceUtils.USER_ID);
-        PreferenceUtils.remove(PreferenceUtils.TOKEN);
         PreferenceUtils.remove(PreferenceUtils.AVATAR_URL);
+        PreferenceUtils.remove(PreferenceUtils.AVATAR_URL_THUMBNAIL);
         PreferenceUtils.remove(PreferenceUtils.LOGIN_TYPE);
         PreferenceUtils.remove(PreferenceUtils.IS_LINKED);
         PreferenceUtils.remove(PreferenceUtils.IS_VERIFIED);
@@ -448,6 +432,22 @@ public class SessionManager {
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
         }
+
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        hachiApi.deviceLogout().enqueue(new Callback<SimpleBoolResponse>() {
+            @Override
+            public void onResponse(Call<SimpleBoolResponse> call, Response<SimpleBoolResponse> response) {
+                Logger.t(TAG).d("device logout " + response.body().result);
+                PreferenceUtils.remove(PreferenceUtils.TOKEN);
+            }
+
+            @Override
+            public void onFailure(Call<SimpleBoolResponse> call, Throwable t) {
+                Logger.t(TAG).d("device layout failed");
+            }
+        });
+
+
     }
 
 

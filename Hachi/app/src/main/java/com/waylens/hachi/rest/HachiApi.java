@@ -128,6 +128,7 @@ public interface HachiApi {
     @POST("/api/share/moments")
     Call<RepostResponse> repost(@Body RepostBody repostBody);
 
-
+    @GET("/api/devices/logout")
+    Call<SimpleBoolResponse> deviceLogout();
 
 }

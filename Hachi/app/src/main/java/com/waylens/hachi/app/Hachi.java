@@ -82,7 +82,7 @@ public class Hachi extends MultiDexApplication {
 
 
 //        FIR.init(this);
-       
+
 
         CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
             @Override

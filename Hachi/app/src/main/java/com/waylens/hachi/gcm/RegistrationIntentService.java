@@ -16,11 +16,9 @@
 
 package com.waylens.hachi.gcm;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -39,6 +37,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.PushUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 
 import org.json.JSONException;
@@ -47,9 +46,15 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class RegistrationIntentService extends IntentService {
-
-    private static final String TAG = "RegIntentService";
+    private static final String TAG = RegistrationIntentService.class.getSimpleName();
     private static final String[] TOPICS = {"global"};
+
+    public static void launch(Activity activity) {
+        if (SessionManager.getInstance().isLoggedIn() && PushUtils.checkGooglePlayServices(activity)) {
+            Intent intent = new Intent(activity, RegistrationIntentService.class);
+            activity.startService(intent);
+        }
+    }
 
     public RegistrationIntentService() {
         super(TAG);

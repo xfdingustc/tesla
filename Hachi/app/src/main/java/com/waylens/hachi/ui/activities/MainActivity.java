@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -21,8 +20,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -36,7 +33,6 @@ import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.PushUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -136,10 +132,8 @@ public class MainActivity extends BaseActivity {
         mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.liveView);
 
         initViews();
-        if (mSessionManager.isLoggedIn() && PushUtils.checkGooglePlayServices(this)) {
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
+
+        RegistrationIntentService.launch(this);
 
         if (VdtCameraManager.getManager().isConnected()) {
             initFragment(TAB_TAG_LIVE_VIEW);

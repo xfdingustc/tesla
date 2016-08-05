@@ -19,6 +19,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SignInPostBody;
@@ -171,7 +172,7 @@ public class SignInFragment extends BaseFragment {
             @Override
             public void onFailure(Call<SignInResponse> call, Throwable t) {
                 onSignInFailed(t);
-                Logger.d(t.getMessage());
+//                Logger.d(t.getMessage());
             }
         });
 
@@ -223,6 +224,7 @@ public class SignInFragment extends BaseFragment {
                         Logger.d(response.toString(), this);
                         SessionManager.getInstance().saveLoginInfo(response);
                         getActivity().setResult(Activity.RESULT_OK);
+                        RegistrationIntentService.launch(getActivity());
                         getActivity().finish();
                     }
                 })
