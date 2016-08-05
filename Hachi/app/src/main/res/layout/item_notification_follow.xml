@@ -19,13 +19,14 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/follow_user_avatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:src="@drawable/settings_profile_photo_default"
             />
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:orientation="vertical">
@@ -33,19 +34,23 @@
                 android:id="@+id/follow_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 tools:text="Someone followed you."/>
 
             <TextView
                 android:id="@+id/follow_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 style="@style/Base.TextAppearance.AppCompat.Caption"
                 tools:text="Just now"/>
         </LinearLayout>
         <ImageView
             android:id="@+id/moment_thumbnail"
-            android:layout_width="128dp"
-            android:layout_height="72dp"
+            android:layout_width="96dp"
+            android:layout_height="54dp"
             android:layout_gravity="end"
             android:contentDescription="@null"/>
     </LinearLayout>

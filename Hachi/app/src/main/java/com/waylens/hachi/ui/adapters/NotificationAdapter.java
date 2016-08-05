@@ -16,6 +16,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.UserProfileActivity;
+import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.ui.entities.FollowEvent;
 import com.waylens.hachi.ui.entities.LikeEvent;
@@ -149,8 +152,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private void onBindCommentViewHolder(NotificationCommentVH holder, int position) {
-        CommentEvent commentEvent = (CommentEvent) mNotificationEvents.get(position);
+    private void onBindCommentViewHolder(final NotificationCommentVH holder, int position) {
+        final CommentEvent commentEvent = (CommentEvent) mNotificationEvents.get(position);
 /*        if (commentEvent.isRead) {
             holder.commentRootLayout.setAlpha((float) 0.5);
         }*/
@@ -165,15 +168,21 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (!TextUtils.isEmpty(commentEvent.title)) {
             holder.momentTitle.setText(mContext.getResources().getString(R.string.in_moment) + " " + commentEvent.title + ".");
         }
-        Glide.with(context)
+        Glide.with(mContext)
                 .load(commentEvent.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .into(holder.momentThumbnail);
+        holder.commentRootLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MomentActivity.launch((BaseActivity) mContext, commentEvent.momentID, commentEvent.thumbnail, holder.momentThumbnail);
+            }
+        });
     }
 
-    private void onBindLikeViewHolder(NotificationLikeVH holder, int position) {
-        LikeEvent likeEvent = (LikeEvent) mNotificationEvents.get(position);
+    private void onBindLikeViewHolder(final NotificationLikeVH holder, int position) {
+        final LikeEvent likeEvent = (LikeEvent) mNotificationEvents.get(position);
 /*        if (likeEvent.isRead) {
             holder.likeRootLayout.setAlpha((float) 0.5);
         }*/
@@ -190,15 +199,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.momentTitle.setText(" " + likeEvent.title + ".");
         }
 
-        Glide.with(context)
+        Glide.with(mContext)
                 .load(likeEvent.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .into(holder.momentThumbnail);
+
+        holder.likeRootLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MomentActivity.launch((BaseActivity) mContext, likeEvent.momentID, likeEvent.thumbnail, holder.momentThumbnail);
+            }
+        });
     }
 
     private void onBindFollowViewHolder(NotificationFollowVH holder, int position) {
-        FollowEvent followEvent = (FollowEvent) mNotificationEvents.get(position);
+        final FollowEvent followEvent = (FollowEvent) mNotificationEvents.get(position);
 /*        if (followEvent.isRead) {
             holder.followRootLayout.setAlpha((float) 0.5);
         }*/
@@ -211,6 +227,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.followUserName.setText(followEvent.follower.userName + " " + mContext.getResources().getString(R.string.start_follow));
         holder.followTime.setText(mPrettyTime.formatUnrounded(new Date(followEvent.createTime)));
+
+        holder.followRootLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserProfileActivity.launch((BaseActivity) mContext, followEvent.follower.userID);
+            }
+        });
     }
 
     public static class NotificationCommentVH extends RecyclerView.ViewHolder {
