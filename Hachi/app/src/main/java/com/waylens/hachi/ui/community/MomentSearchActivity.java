@@ -80,7 +80,7 @@ public class MomentSearchActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mSearchView.closeSearch();
-                queryMoments(query);
+                queryMoments(query.trim());
                 return true;
             }
 
