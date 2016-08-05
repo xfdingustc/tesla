@@ -20,7 +20,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.NotificationAdapter;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.entities.CommentEvent;
 import com.waylens.hachi.ui.entities.FollowEvent;
 import com.waylens.hachi.ui.entities.LikeEvent;
@@ -98,6 +100,10 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            finish();
+        }
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(this);
         mUnreadEventMap = new ConcurrentHashMap<>();
         init();
@@ -386,6 +392,7 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MainActivity.launch(NotificationActivity.this);
                 finish();
             }
         });
@@ -438,6 +445,12 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
     public class NotiEvent {
         public boolean isRead;
         public Constants.EventType eventType;
+    }
+
+    @Override
+    public void onBackPressed() {
+        MainActivity.launch(this);
+        finish();
     }
 
 }
