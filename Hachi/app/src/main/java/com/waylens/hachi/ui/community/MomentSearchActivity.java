@@ -25,6 +25,8 @@ import com.waylens.hachi.ui.entities.Moment;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +82,13 @@ public class MomentSearchActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mSearchView.closeSearch();
-                queryMoments(query.trim());
+                try {
+                    String newQuery = URLEncoder.encode(query, "UTF-8");
+                    queryMoments(newQuery);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
                 return true;
             }
 
