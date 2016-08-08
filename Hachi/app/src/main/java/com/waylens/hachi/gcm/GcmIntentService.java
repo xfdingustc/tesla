@@ -27,6 +27,13 @@ import java.util.ArrayList;
  * Created by lshw on 16/8/2.
  */
 public class GcmIntentService extends IntentService {
+    public static final String KEY_COMMENT_MOMENT= "@string/comment_moment";
+
+    public static final String KEY_FOLLOW_USER = "@string/follow_user";
+
+    public static final String KEY_LIKE_MOMENT = "@string/like_moment";
+
+    public static final String KEY_REFER_USER = "@string/refer_user";
 
     public static String TAG = GcmIntentService.class.getSimpleName();
 
@@ -52,18 +59,41 @@ public class GcmIntentService extends IntentService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
+        Logger.t(TAG).d(data.toString());
+        String messageID = data.getString("google.message_id");
         String action = data.getString("gcm.notification.body_loc_key");
         Logger.t(TAG).d(action);
         String stringArray = data.getString("gcm.notification.body_loc_args");
         Logger.t(TAG).d(stringArray);
-        String user = null;
+        String user, moment;
+        String msg = null;
         try {
             JSONArray jsonArray = new JSONArray(stringArray);
-            user = jsonArray.getString(0);
+            switch (action) {
+                case KEY_COMMENT_MOMENT:
+                    user = jsonArray.optString(0);
+                    moment = jsonArray.optString(1);
+                    msg = String.format(getResources().getString(R.string.comment_notification), user, moment);
+                    break;
+                case KEY_LIKE_MOMENT:
+                    user =jsonArray.optString(0);
+                    moment = jsonArray.optString(1);
+                    msg = String.format(getResources().getString(R.string.like_notification), user, moment);
+                    break;
+                case KEY_FOLLOW_USER:
+                    user = jsonArray.optString(0);
+                    msg = String.format(getResources().getString(R.string.follow_notification), user);
+                    break;
+                case KEY_REFER_USER:
+                    user = jsonArray.optString(0);
+                    moment = jsonArray.optString(1);
+                    msg = String.format(getResources().getString(R.string.reply_notification), user, moment);
+                    break;
+            }
         } catch (JSONException e) {
-            Logger.t(TAG).d(e.getMessage());
+            e.printStackTrace();
         }
-        String msg = (user!=null ? user : "Some one") + " left a message for you.";
+
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Bitmap largeBitmap =  BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_app);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
@@ -79,6 +109,6 @@ public class GcmIntentService extends IntentService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(messageID, 0, notificationBuilder.build());
     }
 }

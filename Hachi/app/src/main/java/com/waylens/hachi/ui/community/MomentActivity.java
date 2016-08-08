@@ -53,6 +53,7 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
+import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.event.SocialEvent;
@@ -485,6 +486,14 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void toggleFollowState() {
+        JobManager jobManager = BgJobManager.getManager();
+        FollowJob job = new FollowJob(mMomentInfo.owner.userID, !mFollowInfo.isMyFollowing);
+        jobManager.addJobInBackground(job);
+        if (!mFollowInfo.isMyFollowing) {
+            mFollowInfo.followers--;
+        } else {
+            mFollowInfo.followers++;
+        }
         mFollowInfo.isMyFollowing = !mFollowInfo.isMyFollowing;
         updateFollowTextView();
     }
