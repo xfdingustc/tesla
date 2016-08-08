@@ -181,7 +181,7 @@ public class MultiSegSeekbar extends View {
 
             mActiveColor = a.getColor(R.styleable.MultiSegSeekbar_segActiveColor, Color.WHITE);
             mInactiveColor = a.getColor(R.styleable.MultiSegSeekbar_segInactiveColor, Color.GRAY);
-            mProgressColor = a.getColor(R.styleable.MultiSegSeekbar_progressColor, getResources().getColor(R.color.style_color_accent));
+            mProgressColor = a.getColor(R.styleable.MultiSegSeekbar_progressColor, getResources().getColor(R.color.style_color_primary));
             mDividerWidth = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_dividerWidth,
                 ViewUtils.dp2px(DEFAULT_DIVIDER_WIDTH_DP));
             mBarHeight = a.getDimensionPixelSize(R.styleable.MultiSegSeekbar_barHeight,

@@ -70,7 +70,7 @@
         android:layout_marginBottom="48dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
-        style="@style/ActionButton"
+        android:background="@color/style_color_primary"
         android:text="@string/try_again"
         android:visibility="gone"/>
 </RelativeLayout>

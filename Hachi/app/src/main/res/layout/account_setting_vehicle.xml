@@ -9,7 +9,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/vehicle"
-        android:textColor="@color/style_color_accent"
+        android:textColor="@color/style_color_primary"
         android:textSize="18sp"/>
 
     <LinearLayout

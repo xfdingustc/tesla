@@ -93,7 +93,7 @@ public class CircularProgressView extends View {
         progressPaint = new Paint();
         progressPaint.setAntiAlias(true);
         progressPaint.setStyle(Paint.Style.STROKE);
-        progressPaint.setColor(getResources().getColor(R.color.style_color_accent));
+        progressPaint.setColor(getResources().getColor(R.color.style_color_primary));
         progressPaint.setStrokeWidth(PROGRESS_STROKE_SIZE);
     }
 
