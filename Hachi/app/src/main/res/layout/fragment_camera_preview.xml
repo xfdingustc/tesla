@@ -153,7 +153,7 @@
                     android:layout_width="24dp"
                     android:layout_height="8dp"
                     android:layout_marginRight="16dp"
-                    android:background="@color/style_color_primary"
+                    android:background="@color/style_color_accent"
                     android:layout_gravity="center_vertical"></View>
 
                 <TextView

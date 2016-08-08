@@ -111,9 +111,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="16dp"
-                android:textColor="@color/style_color_primary"
+                android:textColor="@color/style_color_accent"
                 android:textSize="14sp"
-                tools:text="@string/add_follow"
+                tools:text="@string/follow"
                 />
 
         </LinearLayout>

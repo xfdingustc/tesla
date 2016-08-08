@@ -84,7 +84,7 @@
         android:layout_marginBottom="64dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
-        android:background="@color/style_color_primary"
+        style="@style/ActionButton"
         android:text="@string/connect_your_home_wifi"
         android:visibility="gone"
         />

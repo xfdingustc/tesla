@@ -11,7 +11,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/social_media"
-        android:textColor="@color/style_color_primary"
+        android:textColor="@color/style_color_accent"
         android:textSize="18sp"/>
 
 

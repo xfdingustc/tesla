@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
-        android:textColor="@color/style_color_primary"
+        android:textColor="@color/style_color_accent"
         android:textSize="18sp"
         android:text="indroduce"/>
 
