@@ -70,7 +70,7 @@
         android:layout_marginTop="8dp"
         android:alpha="0.87"
         android:text="@string/also_post_on"
-        android:textColor="@color/style_color_primary2"
+        android:textColor="@color/style_color_accent"
         style="@style/HachiTextViewCaption"
         android:textSize="15sp"/>
 
