@@ -398,4 +398,7 @@
 	<string name="like_notification">%1$s liked your moment \'%2$s\'.</string>
 	<string name="follow_notification">%1$s started following you.</string>
 	<string name="reply_notification">%1$s replied to you in moment \'%2$s\'.</string>
+	<string name="edit">Edit</string>
+	<string name="edit_moment">Edit Moment</string>
+	<string name="title">Title</string>
 </resources>

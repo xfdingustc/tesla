@@ -4,6 +4,7 @@ import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
+import com.waylens.hachi.rest.body.MomentUpdateBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
@@ -130,5 +131,8 @@ public interface HachiApi {
 
     @GET("/api/devices/logout")
     Call<SimpleBoolResponse> deviceLogout();
+
+    @POST("/api/moments/update/{momentId}")
+    Call<SimpleBoolResponse> updateMoment(@Path("momentId") long momentId, @Body MomentUpdateBody momentUpdatebody);
 
 }

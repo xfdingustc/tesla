@@ -37,6 +37,7 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
+import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 
@@ -217,6 +218,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     popupMenu.getMenu().removeItem(R.id.report);
                 } else {
                     popupMenu.getMenu().removeItem(R.id.delete);
+                    popupMenu.getMenu().removeItem(R.id.edit);
                 }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -228,6 +230,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             case R.id.delete:
                                 onDeleteClick(moment.id, holder.getAdapterPosition());
                                 break;
+                            case R.id.edit:
+                                onEditClick(moment, holder);
 
                         }
                         return true;
@@ -271,6 +275,10 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         });
 
+    }
+
+    private void onEditClick(Moment moment, final MomentViewHolder holder) {
+        MomentEditActivity.launch((Activity)mContext, moment, holder.videoCover);
     }
 
 
