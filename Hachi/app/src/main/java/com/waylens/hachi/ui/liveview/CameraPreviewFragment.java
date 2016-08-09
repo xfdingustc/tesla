@@ -41,6 +41,7 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
@@ -718,10 +719,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                     mStorageView.setProgress((int) (response.marked / (1024 * 1024)));
                     mStorageView.setSecondaryProgress((int) (response.used / (1024 * 1024)));
 
-                    mTvSpaceLeft.setText(getSpaceString(response.total - response.used) + " " + getString(R.string.ready_to_record));
+                    mTvSpaceLeft.setText(Utils.getSpaceString(response.total - response.used) + " " + getString(R.string.ready_to_record));
 
-                    mHighlightSpace.setText(getSpaceString(response.marked));
-                    mLoopRecordSpace.setText(getSpaceString(response.used - response.marked));
+                    mHighlightSpace.setText(Utils.getSpaceString(response.marked));
+                    mLoopRecordSpace.setText(Utils.getSpaceString(response.used - response.marked));
 
 
                 }
@@ -738,19 +739,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         }
     }
 
-    private String getSpaceString(long space) {
-        long spaceInM = space / (1024 * 1024);
 
-        String spaceStr;
-        if (spaceInM > 1024) {
-            BigDecimal tmp = new BigDecimal(spaceInM / 1024);
-            spaceStr =  String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " GB";
-        } else {
-            BigDecimal tmp = new BigDecimal(spaceInM);
-            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " MB";
-        }
-        return spaceStr;
-    }
 
 
     private void updateMicControlButton() {

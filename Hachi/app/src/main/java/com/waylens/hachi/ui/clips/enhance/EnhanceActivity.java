@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -41,6 +43,7 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
+import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.DownloadUrlRequest;
@@ -92,6 +95,9 @@ public class EnhanceActivity extends ClipPlayActivity {
     private GaugeListAdapter mGaugeListAdapter;
 
     private MaterialDialog mDownloadDialog;
+
+    private BottomSheetDialog mDownloadBottomSheetDialog;
+    private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
 
 
     public static void launch(Activity activity, int playlistId) {
@@ -389,25 +395,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                         toShare();
                         break;
                     case R.id.menu_to_download:
-                        new MaterialDialog.Builder(EnhanceActivity.this)
-                            .title(R.string.download)
-                            .items(R.array.download_resolution)
-                            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                                @Override
-                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-//                            showToast(which + ": " + text);
-                                    return true; // allow selection
-                                }
-                            })
-                            .positiveText(R.string.download)
-                            .negativeText(R.string.cancel)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    doDownloadClips(dialog.getSelectedIndex());
-                                }
-                            })
-                            .show();
+                        showDownloadBottomSheetDialog();
                         break;
                 }
                 return true;
@@ -415,6 +403,66 @@ public class EnhanceActivity extends ClipPlayActivity {
 
         });
 
+    }
+
+    private void showDownloadBottomSheetDialog() {
+
+        Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
+        DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
+            .Listener<ClipDownloadInfo>() {
+            @Override
+            public void onResponse(final ClipDownloadInfo response) {
+                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
+                Logger.t(TAG).d("on response: " + response.sub.url);
+//                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
+
+                mDownloadBottomSheetDialog = new BottomSheetDialog(EnhanceActivity.this);
+                View view = getLayoutInflater().inflate(R.layout.bottom_sheet_download, null);
+
+                TextView tvFullHd = (TextView) view.findViewById(R.id.full_hd);
+                TextView tvSd = (TextView) view.findViewById(R.id.sd);
+
+                view.findViewById(R.id.ll_fullhd).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mDownloadInfo = response.main;
+                        doDownloadStream(mDownloadInfo);
+                        mDownloadBottomSheetDialog.dismiss();
+                    }
+                });
+
+                view.findViewById(R.id.ll_sd).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mDownloadInfo = response.sub;
+                        doDownloadStream(mDownloadInfo);
+                        mDownloadBottomSheetDialog.dismiss();
+                    }
+                });
+
+
+                tvFullHd.setText(getString(R.string.fullhd, Utils.getSpaceString(response.main.size)));
+                tvSd.setText(getString(R.string.sd, Utils.getSpaceString(response.sub.size)));
+
+                mDownloadBottomSheetDialog.setContentView(view);
+
+                mDownloadBottomSheetDialog.show();
+
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+        mVdbRequestQueue.add(request);
+
+    }
+
+    private void doDownloadStream(ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
+        JobManager jobManager = BgJobManager.getManager();
+        DownloadJob job = new DownloadJob(getClipSet().getClip(0).streams[0], downloadInfo);
+        jobManager.addJobInBackground(job);
     }
 
     private void toShare() {
@@ -446,40 +494,6 @@ public class EnhanceActivity extends ClipPlayActivity {
         }
     }
 
-
-    private void doDownloadClips(final int selectIndex) {
-        Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
-        DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
-            .Listener<ClipDownloadInfo>() {
-            @Override
-            public void onResponse(ClipDownloadInfo response) {
-                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
-                Logger.t(TAG).d("on response: " + response.sub.url);
-//                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
-
-
-                ClipDownloadInfo.StreamDownloadInfo downloadInfo;
-                if (selectIndex == 0) {
-                    downloadInfo = response.sub;
-                } else {
-                    downloadInfo = response.main;
-                }
-
-                JobManager jobManager = BgJobManager.getManager();
-                DownloadJob job = new DownloadJob(getClipSet().getClip(0).streams[0], downloadInfo);
-                jobManager.addJobInBackground(job);
-
-                //startDownload(response, 0, clipSegment.getClip().streams[0]);
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-
-            }
-        });
-        mVdbRequestQueue.add(request);
-
-    }
 
     private void configEnhanceView() {
 //        mClipsEditView.setClipIndex(mPlaylistEditor.getPlaylistId());

@@ -19,14 +19,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.response.SignInResponse;
-import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
@@ -45,7 +45,6 @@ public class SignInFragment extends BaseFragment {
     private static final String TAG = SignInFragment.class.getSimpleName();
 
     private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
-
 
 
     @BindView(R.id.button_animator)
@@ -84,9 +83,10 @@ public class SignInFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_signin, savedInstanceState);
-        if(getArguments() != null)
+        if (getArguments() != null) {
             mEmail = getArguments().getString("email");
             mTvSignInEmail.setText(mEmail);
+        }
         Logger.t(TAG).d("Signin frament is invoked", this, mEmail);
         initViews();
         return view;
@@ -121,7 +121,6 @@ public class SignInFragment extends BaseFragment {
     }
 
 
-
     @Override
     public void onStop() {
         super.onStop();
@@ -129,7 +128,6 @@ public class SignInFragment extends BaseFragment {
             mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_IN);
         }
     }
-
 
 
     void initViews() {
@@ -156,12 +154,12 @@ public class SignInFragment extends BaseFragment {
             public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
                 if (response.code() == 200) {
                     onSignInSuccessful(response.body());
-                } else if(response.code() == 401) {
+                } else if (response.code() == 401) {
                     MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                            .content(R.string.incorrect_email_or_password)
-                            .positiveText(R.string.ok)
-                            .negativeText(R.string.cancel)
-                            .show();
+                        .content(R.string.incorrect_email_or_password)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .show();
                     mButtonAnimator.setDisplayedChild(0);
                 } else {
                     onSignInFailed(new Throwable("Sign in failed"));
@@ -182,10 +180,10 @@ public class SignInFragment extends BaseFragment {
         mButtonAnimator.setDisplayedChild(0);
         //showMessage(ServerMessage.parseServerError(error).msgResID);
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .content(R.string.failed_to_sign_in)
-                .positiveText(android.R.string.ok)
-                .negativeText(android.R.string.cancel)
-                .show();
+            .content(R.string.failed_to_sign_in)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .show();
     }
 
     private void onSignInSuccessful(SignInResponse response) {
@@ -215,20 +213,20 @@ public class SignInFragment extends BaseFragment {
         });*/
 
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                .url(Constants.API_DEVICE_LOGIN)
-                .postBody("deviceType", "ANDROID")
-                .postBody("deviceID", "xfding")
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Logger.d(response.toString(), this);
-                        SessionManager.getInstance().saveLoginInfo(response);
-                        getActivity().setResult(Activity.RESULT_OK);
-                        RegistrationIntentService.launch(getActivity());
-                        getActivity().finish();
-                    }
-                })
-                .build();
+            .url(Constants.API_DEVICE_LOGIN)
+            .postBody("deviceType", "ANDROID")
+            .postBody("deviceID", "xfding")
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Logger.d(response.toString(), this);
+                    SessionManager.getInstance().saveLoginInfo(response);
+                    getActivity().setResult(Activity.RESULT_OK);
+                    RegistrationIntentService.launch(getActivity());
+                    getActivity().finish();
+                }
+            })
+            .build();
         mVolleyRequestQueue.add(request);
     }
 }

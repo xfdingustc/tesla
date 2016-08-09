@@ -751,7 +751,7 @@ public class MomentActivity extends BaseActivity {
                         }
                     })
                     .positiveText(R.string.report)
-                    .negativeText(android.R.string.cancel)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

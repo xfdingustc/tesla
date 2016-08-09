@@ -201,8 +201,8 @@
 	<string name="yesterday">Yesterday</string>
 	<string name="mic">Mic</string>
 	<string name="speaker">Speaker</string>
-	<string name="sd">SD</string>
-	<string name="fullhd">Full HD</string>
+	<string name="sd">360P(%1$s)</string>
+	<string name="fullhd">1080P(%1$s)</string>
 	<string name="connect_your_home_wifi">Connect to your preferred WiFi network</string>
 	<string name="storage">Storage</string>
 	<string name="manually_select_wifi_network"><u>Option 2: A More Manual Way to Connect</u></string>

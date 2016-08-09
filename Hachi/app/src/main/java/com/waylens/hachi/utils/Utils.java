@@ -14,6 +14,7 @@ import android.view.ViewParent;
 
 import com.waylens.hachi.app.Hachi;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 public final class Utils {
@@ -52,6 +53,20 @@ public final class Utils {
     public static void measureView(View view) {
         view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0,
             MeasureSpec.UNSPECIFIED));
+    }
+
+    public static String getSpaceString(long space) {
+        long spaceInM = space / (1024 * 1024);
+
+        String spaceStr;
+        if (spaceInM > 1024) {
+            BigDecimal tmp = new BigDecimal(spaceInM / 1024);
+            spaceStr =  String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " GB";
+        } else {
+            BigDecimal tmp = new BigDecimal(spaceInM);
+            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " MB";
+        }
+        return spaceStr;
     }
 
     public static int getScreenWidth(Activity activity) {
