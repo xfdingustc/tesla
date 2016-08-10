@@ -18,7 +18,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +31,6 @@ import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -147,8 +145,7 @@ public class MomentActivity extends BaseActivity {
         intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
-        ActivityOptionsCompat options = ActivityOptionsCompat
-            .makeSceneTransitionAnimation(activity, pairs);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
@@ -182,7 +179,6 @@ public class MomentActivity extends BaseActivity {
 
     @BindView(R.id.add_follow)
     TextView mAddFollow;
-
 
 
     @BindView(R.id.btn_repost)
@@ -505,7 +501,6 @@ public class MomentActivity extends BaseActivity {
         }
         return true;
     }
-
 
 
     private void queryMomentInfo() {
