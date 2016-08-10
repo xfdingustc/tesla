@@ -113,7 +113,7 @@
                 android:layout_margin="16dp"
                 android:textColor="@color/style_color_primary"
                 android:textSize="14sp"
-                tools:text="@string/add_follow"
+                tools:text="@string/follow"
                 />
 
         </LinearLayout>

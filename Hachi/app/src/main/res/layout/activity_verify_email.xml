@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:weightSum="1">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:weightSum="1">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="90dp"
-        android:src="@drawable/waylens_logo_140x98"
-        android:layout_gravity="center_horizontal" />
-
+        android:src="@drawable/waylens_logo_140x98"/>
 
 
     <TextView
         android:id="@+id/tvEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:textColor="#FF7F7F7F"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp" />
+        android:textSize="18sp"/>
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="bottom"
-        android:gravity="bottom|center_horizontal">
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:layout_gravity="bottom"
+                  android:gravity="bottom|center_horizontal"
+                  android:orientation="vertical">
 
         <Button
             android:id="@+id/btn_verify_email_address"
@@ -41,17 +40,17 @@
             android:layout_marginBottom="30dp"
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
-            android:textSize="18sp"
-            android:text="@string/verify_email"/>
+            android:text="@string/verify_email"
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/resend_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="64dp"
             android:text="@string/resend_email"
             android:textColor="#FFF5F5F5"
-            android:textSize="18sp"
-            android:layout_marginBottom="64dp" />
-    </LinearLayout>>
+            android:textSize="18sp"/>
+    </LinearLayout>
 
 </LinearLayout>
