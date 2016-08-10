@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.community.feed;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;

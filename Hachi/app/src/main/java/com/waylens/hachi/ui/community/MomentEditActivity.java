@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.community;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,6 +27,8 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.utils.TransitionHelper;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +53,8 @@ public class MomentEditActivity extends BaseActivity {
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
+
+
 
     @BindView(R.id.moment_cover)
     ImageView mMomentCover;
@@ -115,13 +120,14 @@ public class MomentEditActivity extends BaseActivity {
 
     private void doModifyMoment() {
         HachiApi mHachiApi = HachiService.createHachiApiService();
-        MomentUpdateBody body = new MomentUpdateBody();
+        final MomentUpdateBody body = new MomentUpdateBody();
         body.title = mMomentTitle.getEditableText().toString();
-        body.desc = mMomentDescription.getEditableText().toString();
+        body.description = mMomentDescription.getEditableText().toString();
         mHachiApi.updateMoment(mMoment.id, body).enqueue(new Callback<SimpleBoolResponse>() {
             @Override
             public void onResponse(Call<SimpleBoolResponse> call, Response<SimpleBoolResponse> response) {
                 Logger.t(TAG).d("result: " + response.body().result);
+                EventBus.getDefault().post(new MomentChangeEvent(mMoment.id, body));
                 onBackPressed();
             }
 

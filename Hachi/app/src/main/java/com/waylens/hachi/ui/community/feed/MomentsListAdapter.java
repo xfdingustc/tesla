@@ -37,10 +37,14 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
+import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
@@ -73,9 +77,24 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private IMomentListAdapterHeaderView mHeaderView = null;
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMomentChanged(MomentChangeEvent event) {
+        for (int i = 0; i < mMoments.size(); i++) {
+            Moment moment = mMoments.get(i);
+            if (moment.id == event.getMomentId()) {
+                moment.title = event.getMomentUpdateBody().title;
+                moment.description = event.getMomentUpdateBody().description;
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
     public MomentsListAdapter(Context context) {
         this.mContext = context;
         mPrettyTime = new PrettyTime();
+
+        EventBus.getDefault().register(this);
 
     }
 

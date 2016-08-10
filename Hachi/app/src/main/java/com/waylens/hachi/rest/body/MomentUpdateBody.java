@@ -7,6 +7,6 @@ import java.util.List;
  */
 public class MomentUpdateBody {
     public String title;
-    public String desc;
+    public String description;
     public List<String> hashTags;
 }
