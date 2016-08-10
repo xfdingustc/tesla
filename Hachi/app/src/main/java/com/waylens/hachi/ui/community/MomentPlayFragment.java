@@ -21,16 +21,23 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.android.volley.Cache;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
+import com.google.zxing.common.StringUtils;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
+import com.waylens.hachi.app.CachedJsonRequest;
 import com.waylens.hachi.library.player.HachiPlayer;
 import com.waylens.hachi.library.player.HlsRendererBuilder;
 import com.waylens.hachi.library.player.Utils;
@@ -53,6 +60,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,8 +73,10 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 
@@ -99,7 +109,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     private VideoHandler mHandler;
 
-//    private MomentInfo mMoment;
+    private MomentInfo mMoment;
 
     private long mMomentId;
 
@@ -233,7 +243,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mMomentId = args.getLong(EXTRA_MOMENT_ID);
         mMomentCover = args.getString(EXTRA_MOMENT_COVER);
 
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = Volley.newRequestQueue(getActivity(), 500 * 1000 * 1000);
         mRequestQueue.start();
 
     }
@@ -354,12 +364,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
         mIsActivityStopped = false;
-//        if (!mMoment.moment.overlay.isEmpty()) {
-//            Logger.t(TAG).d("setting gauge!!!");
-//            mGaugeView.changeGaugeSetting(mMoment.moment.overlay);
-//        } else {
-//            Logger.t(TAG).d("overlay empty");
-//        }
     }
 
 
@@ -382,6 +386,14 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         super.onDestroy();
         mRawDataState = RAW_DATA_STATE_UNKNOWN;
         releasePlayer();
+    }
+    public void doGaugeSetting(MomentInfo momentInfo) {
+        if (!momentInfo.moment.overlay.isEmpty()) {
+            Logger.t(TAG).d("setting gauge!!!");
+            mGaugeView.changeGaugeSetting(momentInfo.moment.overlay);
+        } else {
+            Logger.t(TAG).d("overlay empty");
+        }
     }
 
 
@@ -546,13 +558,53 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         openVideo(true);
     }
 
+    private MomentPlayInfo updateMomentInfo(MomentPlayInfo momentPlayInfo, MomentInfo momentInfo) {
+        mMoment = momentInfo;
+        return momentPlayInfo;
+    }
+
     private void getMomentPlayInfo() {
         if (mMomentId == Moment.INVALID_MOMENT_ID) {
             return;
         }
 
+        Observable<MomentInfo> observableMomentInfo  = mHachi.getMomentInfoRx(mMomentId);
 
-        mHachi.getMomentPlayInfo(mMomentId)
+        Observable<MomentPlayInfo> observableMomentPlayInfo = mHachi.getMomentPlayInfo(mMomentId);
+
+        Observable.zip(observableMomentInfo, observableMomentPlayInfo, new Func2<MomentInfo, MomentPlayInfo, MomentPlayInfo>() {
+
+            @Override
+            public MomentPlayInfo call(MomentInfo momentInfo, MomentPlayInfo momentPlayInfo) {
+                mMoment = momentInfo;
+                return momentPlayInfo;
+            }
+        }).subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(new Observer<MomentPlayInfo>() {
+              @Override
+              public void onCompleted() {
+                  doGaugeSetting(mMoment);
+                  calcRawDataTimeInfo();
+                  loadRawData(0);
+
+              }
+
+              @Override
+              public void onError(Throwable e) {
+
+              }
+
+              @Override
+              public void onNext(MomentPlayInfo momentPlayInfo) {
+                  Logger.t(TAG).d("Get moment play info");
+//                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
+                  mMomentPlayInfo = momentPlayInfo;
+              }
+          });
+
+
+/*        mHachi.getMomentPlayInfo(mMomentId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<MomentPlayInfo>() {
@@ -576,7 +628,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
                     loadRawData(0);
                 }
-            });
+            });*/
 
 
         mProgressLoading.setVisibility(View.VISIBLE);
@@ -612,9 +664,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             onLoadRawDataSuccessfully();
             return;
         }
+        Logger.t(TAG).d(mMomentPlayInfo.rawDataUrl.get(index).url);
 
-
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+        CachedJsonRequest request = new CachedJsonRequest.Builder()
             .url(mMomentPlayInfo.rawDataUrl.get(index).url)
             .listner(new Response.Listener<JSONObject>() {
                 @Override
@@ -642,6 +694,16 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             })
             .build();
         request.setTag(TAG);
+/*        request.getCacheKey();
+        File cacheDir = new File(getActivity().getCacheDir(), "volley");
+        DiskBasedCache diskBasedCache = new DiskBasedCache(cacheDir);
+        diskBasedCache.initialize();
+        Cache.Entry entry = diskBasedCache.get(request.getCacheKey());
+        if (entry != null) {
+            Logger.t(TAG).d(ToStringUtils.getString(entry));
+        } else {
+            Logger.t(TAG).d("entry == null");
+        }*/
         mRequestQueue.add(request);
 
 

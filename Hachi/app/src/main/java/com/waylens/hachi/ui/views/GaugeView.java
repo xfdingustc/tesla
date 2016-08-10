@@ -76,6 +76,15 @@ public class GaugeView extends FrameLayout {
             default:
                 break;
         }
+        if (mGaugeMode != MODE_MOMENT) {
+            mWebView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    initGaugeView();
+                    super.onPageFinished(view, url);
+                }
+            });
+        }
     }
 
     private void init(Context context) {
@@ -88,14 +97,6 @@ public class GaugeView extends FrameLayout {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.loadUrl("file:///android_asset/build/api.html");
-        mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                initGaugeView();
-                super.onPageFinished(view, url);
-            }
-        });
-
     }
 
 
