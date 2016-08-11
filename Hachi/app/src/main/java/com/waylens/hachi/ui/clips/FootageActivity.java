@@ -170,6 +170,8 @@ public class FootageActivity extends ClipPlayActivity {
                     return true;
                 }
             });
+        } else {
+            setupToolbar();
         }
 
     }

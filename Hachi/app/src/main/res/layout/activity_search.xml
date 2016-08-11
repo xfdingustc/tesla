@@ -5,26 +5,12 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <FrameLayout
+
+
+    <com.lapism.searchview.SearchView
+        android:id="@+id/searchView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:elevation="@dimen/default_elevation"
-            app:layout_scrollFlags="scroll"
-            app:navigationIcon="@drawable/navbar_back"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-
-    </FrameLayout>
+        android:layout_height="wrap_content" />
 
     <ViewAnimator
         android:id="@+id/view_animator"

@@ -11,7 +11,6 @@ import android.widget.ViewAnimator;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -60,8 +59,8 @@ public class VehiclePickActivity extends BaseActivity {
     @BindView(R.id.rv_content_list)
     RecyclerView mRvContentList;
 
-    @BindView(R.id.search_view)
-    MaterialSearchView mSearchView;
+//    @BindView(R.id.search_view)
+//    MaterialSearchView mSearchView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,28 +68,28 @@ public class VehiclePickActivity extends BaseActivity {
         init();
 
 
-        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                switch (mCurrentStep) {
-                    case STEP_MAKER:
-                        mMakerAdapter.getFilter().filter(newText);
-                        break;
-                    case STEP_MODEL:
-                        mModelAdapter.getFilter().filter(newText);
-                        break;
-                    case STEP_YEAR:
-                        mYearAdapter.getFilter().filter(newText);
-                        break;
-                }
-                return true;
-            }
-        });
+//        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                switch (mCurrentStep) {
+//                    case STEP_MAKER:
+//                        mMakerAdapter.getFilter().filter(newText);
+//                        break;
+//                    case STEP_MODEL:
+//                        mModelAdapter.getFilter().filter(newText);
+//                        break;
+//                    case STEP_YEAR:
+//                        mYearAdapter.getFilter().filter(newText);
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
     }
 
     @Override
@@ -118,8 +117,8 @@ public class VehiclePickActivity extends BaseActivity {
                 finish();
             }
         });
-        getToolbar().inflateMenu(R.menu.menu_search);
-        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
+//        getToolbar().inflateMenu(R.menu.menu_search);
+//        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
 
 
@@ -176,9 +175,9 @@ public class VehiclePickActivity extends BaseActivity {
                     mViewAnimator.setDisplayedChild(1);
                     renderModelList(response);
                     mCurrentStep = STEP_MODEL;
-                    if (mSearchView != null) {
-                        mSearchView.closeSearch();
-                    }
+//                    if (mSearchView != null) {
+//                        mSearchView.closeSearch();
+//                    }
                 }
             })
             .build();
@@ -223,9 +222,9 @@ public class VehiclePickActivity extends BaseActivity {
                     mViewAnimator.setDisplayedChild(1);
                     renderYearList(response);
                     mCurrentStep = STEP_YEAR;
-                    if (mSearchView != null) {
-                        mSearchView.closeSearch();
-                    }
+//                    if (mSearchView != null) {
+//                        mSearchView.closeSearch();
+//                    }
                 }
             })
             .build();

@@ -1,33 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:focusable="true"
-              android:focusableInTouchMode="true">
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:elevation="@dimen/default_elevation"
-            app:layout_scrollFlags="scroll"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:navigationIcon="@drawable/navbar_back"/>
-
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
 
 
-    </FrameLayout>
-
+   <include layout="@layout/toolbar_default"/>
 
 
     <ViewAnimator
@@ -46,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
     </ViewAnimator>
-
 
 
 </LinearLayout>

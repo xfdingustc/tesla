@@ -5,15 +5,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.lapism.searchview.SearchAdapter;
+import com.lapism.searchview.SearchHistoryTable;
+import com.lapism.searchview.SearchItem;
+import com.lapism.searchview.SearchView;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -31,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/8/3.
@@ -40,20 +45,21 @@ public class MomentSearchActivity extends BaseActivity {
     private static final String TAG = MomentSearchActivity.class.getSimpleName();
     private VideoItemAdapter mVideoItemAdapter;
 
+    private SearchHistoryTable mHistoryDatabase;
+
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, MomentSearchActivity.class);
         activity.startActivity(intent);
     }
 
-    @BindView(R.id.search_view)
-    MaterialSearchView mSearchView;
+    @BindView(R.id.searchView)
+    SearchView mSearchView;
 
     @BindView(R.id.moment_list)
     RecyclerView mMomentList;
 
     @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
-
 
 
     @Override
@@ -71,41 +77,90 @@ public class MomentSearchActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_search);
-        setupToolbar();
+//        setupToolbar();
 
         mMomentList.setLayoutManager(new LinearLayoutManager(this));
         mVideoItemAdapter = new VideoItemAdapter(this);
         mMomentList.setAdapter(mVideoItemAdapter);
 
-        mSearchView.setVoiceSearch(true);
-        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mSearchView.closeSearch();
-                try {
-                    String newQuery = URLEncoder.encode(query, "UTF-8");
-                    queryMoments(newQuery);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+        setupSearchView();
+
+
+    }
+
+    private void setupSearchView() {
+        mHistoryDatabase = new SearchHistoryTable(this);
+
+
+        if (mSearchView != null) {
+            mSearchView.setVersion(SearchView.VERSION_TOOLBAR);
+            mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG);
+            mSearchView.setTextSize(16);
+            mSearchView.setHint("Search");
+            mSearchView.setDivider(false);
+            mSearchView.setVoice(true);
+            mSearchView.setVoiceText("Set permission on Android 6+ !");
+            mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
+            mSearchView.setShadowColor(ContextCompat.getColor(this, R.color.search_shadow_layout));
+            mSearchView.setTheme(SearchView.THEME_DARK, true);
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    String newQuery = null;
+                    try {
+                        mHistoryDatabase.addItem(new SearchItem(query));
+                        newQuery = URLEncoder.encode(query, "UTF-8");
+                        queryMoments(newQuery);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    // mSearchView.close(false);
+                    return true;
                 }
 
-                return true;
-            }
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+            mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
+                @Override
+                public void onOpen() {
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        mSearchView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSearchView.showSearch();
-            }
-        }, 200);
+                }
+
+                @Override
+                public void onClose() {
+
+                }
+            });
+
+            List<SearchItem> suggestionsList = new ArrayList<>();
+
+
+            SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
+            searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
+                    String query = textView.getText().toString();
+                    String newQuery = null;
+                    try {
+                        newQuery = URLEncoder.encode(query, "UTF-8");
+                        queryMoments(newQuery);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    // mSearchView.close(false);
+                }
+            });
+            mSearchView.setAdapter(searchAdapter);
+        }
     }
 
     private void queryMoments(String query) {
+        mSearchView.close(true);
         mViewAnimator.setVisibility(View.VISIBLE);
         mViewAnimator.setDisplayedChild(0);
         final String requestUrl = Constants.API_MOMENTS_SEARCH + "?key=" + query + "&count=20";
@@ -151,30 +206,25 @@ public class MomentSearchActivity extends BaseActivity {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        getToolbar().setTitle(R.string.search_hint);
+//        getToolbar().setTitle(R.string.search_hint);
         getToolbar().inflateMenu(R.menu.menu_search);
-        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
+//        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
-            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (matches != null && matches.size() > 0) {
-                String searchWrd = matches.get(0);
+        if (requestCode == SearchView.SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (results != null && results.size() > 0) {
+                String searchWrd = results.get(0);
                 if (!TextUtils.isEmpty(searchWrd)) {
-                    mSearchView.setQuery(searchWrd, false);
+                    mSearchView.setQuery(searchWrd);
                 }
             }
-
-            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
-
 
 
 }

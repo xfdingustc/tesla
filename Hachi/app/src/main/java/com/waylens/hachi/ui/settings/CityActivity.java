@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.ViewSwitcher;
 
 import com.android.volley.Response;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -56,26 +56,26 @@ public class CityActivity extends BaseActivity {
     @BindView(R.id.rv_city_list)
     RecyclerView mRvCityList;
 
-    @BindView(R.id.search_view)
-    MaterialSearchView mSearchView;
+//    @BindView(R.id.search_view)
+//    MaterialSearchView mSearchView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
 
-        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mAdapter.getFilter().filter(newText);
-                return true;
-            }
-        });
+//        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                mAdapter.getFilter().filter(newText);
+//                return true;
+//            }
+//        });
     }
 
     @Override
@@ -109,8 +109,8 @@ public class CityActivity extends BaseActivity {
             }
         });
         getToolbar().setTitle(mName);
-        getToolbar().inflateMenu(R.menu.menu_search);
-        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
+//        getToolbar().inflateMenu(R.menu.menu_search);
+//        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
 
 
