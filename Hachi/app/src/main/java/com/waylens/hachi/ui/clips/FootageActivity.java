@@ -2,7 +2,10 @@ package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -15,6 +18,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.BgJobHelper;
+import com.waylens.hachi.bgjob.timelapse.TimelapseEvent;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
@@ -39,6 +44,7 @@ import com.xfdingustc.snipe.vdb.ClipSetPos;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -60,9 +66,12 @@ public class FootageActivity extends ClipPlayActivity {
 
     private int mDeleteClipCount = 0;
 
+    private BottomSheetDialog mTimeLaspeBottomSheetDialog;
 
     private ClipSet mFootageClipSet;
     private ClipSet mBookmarkClipSet;
+
+    private MaterialDialog mTimeLapseDialog;
 
 
     @BindView(R.id.vsRoot)
@@ -93,6 +102,35 @@ public class FootageActivity extends ClipPlayActivity {
         mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getClipDate(), clipSetPos.getClipTimeMs())));
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTimelapseEvent(TimelapseEvent event) {
+        switch (event.getWhat()) {
+            case TimelapseEvent.EVENT_START:
+                mTimeLapseDialog = new MaterialDialog.Builder(this)
+                    .title(R.string.time_lapse)
+                    .progress(false, 100)
+                    .show();
+                break;
+            case TimelapseEvent.EVENT_PROGRESS:
+                int progress = (Integer)event.getExtra();
+                mTimeLapseDialog.setProgress(progress);
+                break;
+            case TimelapseEvent.EVENT_END:
+                mTimeLapseDialog.dismiss();
+                final String videoUrl = (String) event.getExtra();
+                Snackbar snackbar = Snackbar.make(mRootView, ("Stream has been download into " + videoUrl), Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.open, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(new File(videoUrl)), "video/mp4");
+                        startActivity(intent);
+                    }
+                });
+                snackbar.show();
+        }
+    }
+
     @Subscribe
     public void onEventClipSelectEvent(final ClipSelectEvent event) {
         getToolbar().getMenu().clear();
@@ -114,8 +152,8 @@ public class FootageActivity extends ClipPlayActivity {
                         case R.id.menu_to_delete:
                             MaterialDialog dialog = new MaterialDialog.Builder(FootageActivity.this)
                                 .content(R.string.delete_bookmark_confirm)
-                                .positiveText(android.R.string.ok)
-                                .negativeText(android.R.string.cancel)
+                                .positiveText(R.string.ok)
+                                .negativeText(R.string.cancel)
                                 .callback(new MaterialDialog.ButtonCallback() {
                                     @Override
                                     public void onPositive(MaterialDialog dialog) {
@@ -214,19 +252,69 @@ public class FootageActivity extends ClipPlayActivity {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        if (getToolbar() != null) {
-            getToolbar().setTitle(R.string.footage);
-            getToolbar().setNavigationIcon(R.drawable.navbar_close);
-            getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
+        getToolbar().setTitle(R.string.footage);
+        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        getToolbar().getMenu().clear();
+        getToolbar().inflateMenu(R.menu.menu_footage);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.time_lapse:
+                        showTimeLapseBottomSheet();
+                        break;
                 }
-            });
-        }
-
+                return true;
+            }
+        });
     }
 
+    private void showTimeLapseBottomSheet() {
+        mTimeLaspeBottomSheetDialog = new BottomSheetDialog(this);
+        mTimeLaspeBottomSheetDialog.setContentView(R.layout.bottom_sheet_time_lapse);
+        mTimeLaspeBottomSheetDialog.findViewById(R.id.fifteen).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doTimeLapse(15);
+                mTimeLaspeBottomSheetDialog.dismiss();
+            }
+        });
+
+        mTimeLaspeBottomSheetDialog.findViewById(R.id.thirty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doTimeLapse(30);
+                mTimeLaspeBottomSheetDialog.dismiss();
+            }
+        });
+
+        mTimeLaspeBottomSheetDialog.findViewById(R.id.sixty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doTimeLapse(60);
+                mTimeLaspeBottomSheetDialog.dismiss();
+            }
+        });
+
+        mTimeLaspeBottomSheetDialog.findViewById(R.id.onehundredandtwenty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doTimeLapse(120);
+                mTimeLaspeBottomSheetDialog.dismiss();
+            }
+        });
+        mTimeLaspeBottomSheetDialog.show();
+    }
+
+    private void doTimeLapse(int speed) {
+        BgJobHelper.timeLapse(getClipSet().getClip(0), speed);
+    }
 
     private void setupClipProgressBar() {
         mClipSetProgressBar.setClipSet(mFootageClipSet, mBookmarkClipSet);
