@@ -401,6 +401,4 @@
 	<string name="edit">Edit</string>
 	<string name="edit_moment">Edit Moment</string>
 	<string name="title">Title</string>
-	<string name="time_lapse">Time Lapse</string>
-	<string name="generate_time_lapse">Generatinga time-lapse video</string>
 </resources>
