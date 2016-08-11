@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--<include layout="@layout/toolbar_default" />-->
+
+    <android.support.design.widget.AppBarLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="?attr/toolbarColor">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:elevation="@dimen/default_elevation"
+            app:layout_scrollFlags="scroll"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/iconSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_speed" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/speed"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="18sp" />
+
+
+                <com.waylens.hachi.ui.views.rangbar.RangeBar
+                    android:id="@+id/rangeBarSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    custom:connectingLineColor="@color/app_text_color_primary"
+                    custom:pinColor="@color/app_text_color_primary"
+                    custom:rangeBarColor="@color/app_text_color_primary"
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary"
+                    custom:tickEnd="120"
+                    custom:tickInterval="10"
+                    custom:tickStart="0" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/settings_line_separator"></View>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/iconAccel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_accel" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/accel"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="18sp" />
+
+
+                <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarAccel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    custom:connectingLineColor="@color/app_text_color_primary"
+                    custom:pinColor="@color/app_text_color_primary"
+                    custom:rangeBarColor="@color/app_text_color_primary"
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/settings_line_separator"></View>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/iconBrake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_brake" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/brake"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="18sp" />
+
+
+                <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarBrake"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    custom:connectingLineColor="@color/app_text_color_primary"
+                    custom:pinColor="@color/app_text_color_primary"
+                    custom:rangeBarColor="@color/app_text_color_primary"
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/settings_line_separator"></View>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/iconTurn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_turn" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/turn"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="18sp" />
+
+
+                <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarTurn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    custom:connectingLineColor="@color/app_text_color_primary"
+                    custom:pinColor="@color/app_text_color_primary"
+                    custom:rangeBarColor="@color/app_text_color_primary"
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/settings_line_separator"></View>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/iconBump"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_search_bump" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/bump"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="18sp" />
+
+
+                <com.appyvet.rangebar.RangeBar
+                    android:id="@+id/rangeBarBump"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    custom:connectingLineColor="@color/app_text_color_primary"
+                    custom:pinColor="@color/app_text_color_primary"
+                    custom:rangeBarColor="@color/app_text_color_primary"
+                    custom:selectorColor="@color/app_text_color_primary"
+                    custom:tickColor="@color/app_text_color_primary" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/settings_line_separator"></View>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnCreateRemix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="32dp"
+        android:background="@color/style_color_primary"
+        android:text="@string/create_smart_remix" />
+
+    <ProgressBar
+        android:id="@+id/rawdata"
+        style="?android:progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp" />
+
+    <TextView
+        android:id="@+id/tvClipSelected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0 clip selected"
+        android:textColor="?attr/appTextColorPrimary"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        />
+
+</LinearLayout>
