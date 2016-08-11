@@ -47,6 +47,9 @@ public class GaugeView extends FrameLayout {
 
     private DateFormat mDateFormat;
 
+    private boolean mIsLoadingFinish = false;
+
+
 
 
     private int iioPressure;
@@ -97,6 +100,12 @@ public class GaugeView extends FrameLayout {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.loadUrl("file:///android_asset/build/api.html");
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                mIsLoadingFinish = true;
+            }
+        });
     }
 
 
@@ -185,33 +194,39 @@ public class GaugeView extends FrameLayout {
     }
 
     public void changeGaugeSetting(final Map<String, String> overlaySetting) {
-
-
-        mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                String theme = overlaySetting.get("theme");
-                if (theme == null) {
-                    theme = GaugeSettingManager.getManager().getTheme();
+        if (mIsLoadingFinish) {
+            doGaugeSetting(overlaySetting);
+        } else {
+            mWebView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    doGaugeSetting(overlaySetting);
                 }
-                changeGaugeTheme(theme);
-                Logger.t(TAG).d("theme:" + theme);
+            });
+        }
+    }
 
-                String[] gaugeParams = GaugeInfoItem.OPTION_JS_PARAMS;
-                String param = null;
-                for (int i = 0; i < gaugeParams.length; i++) {
-                    if ((param = overlaySetting.get(gaugeParams[i])) != null) {
-                        if (param.equals("L") || param.equals("M") || param.equals("S")) {
-                            String jsApi = "javascript:setState({'" + gaugeParams[i] + "':'" + param + "'})";
-                            Logger.t(TAG).d(jsApi);
-                            mWebView.loadUrl(jsApi);
-                        }
-                    }
+    public void doGaugeSetting(Map<String, String> overlaySetting) {
+        String theme = overlaySetting.get("theme");
+        if (theme == null) {
+            theme = GaugeSettingManager.getManager().getTheme();
+        }
+        changeGaugeTheme(theme);
+        Logger.t(TAG).d("theme:" + theme);
+
+        String[] gaugeParams = GaugeInfoItem.OPTION_JS_PARAMS;
+        String param = null;
+        for (int i = 0; i < gaugeParams.length; i++) {
+            if ((param = overlaySetting.get(gaugeParams[i])) != null) {
+                if (param.equals("L") || param.equals("M") || param.equals("S")) {
+                    String jsApi = "javascript:setState({'" + gaugeParams[i] + "':'" + param + "'})";
+                    Logger.t(TAG).d(jsApi);
+                    mWebView.loadUrl(jsApi);
                 }
-                mWebView.loadUrl("javascript:update()");
-
             }
-        });
+        }
+        mWebView.loadUrl("javascript:update()");
+
     }
 
 

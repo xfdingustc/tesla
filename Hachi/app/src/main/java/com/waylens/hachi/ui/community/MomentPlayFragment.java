@@ -271,7 +271,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         View view = inflater.inflate(R.layout.fragment_moment_play, container, false);
         ButterKnife.bind(this, view);
         mHandler = new VideoHandler(this);
-        mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
+        mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
         initViews();
         return view;
     }
@@ -576,7 +576,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
             @Override
             public MomentPlayInfo call(MomentInfo momentInfo, MomentPlayInfo momentPlayInfo) {
+                Logger.t(TAG).d("set momentInfo " + momentInfo);
                 mMoment = momentInfo;
+                Logger.t(TAG).d(momentInfo.moment.overlay.toString());
                 return momentPlayInfo;
             }
         }).subscribeOn(Schedulers.io())
@@ -584,14 +586,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
           .subscribe(new Observer<MomentPlayInfo>() {
               @Override
               public void onCompleted() {
-                  doGaugeSetting(mMoment);
-                  calcRawDataTimeInfo();
-                  loadRawData(0);
 
               }
 
               @Override
               public void onError(Throwable e) {
+                  Logger.t(TAG).d(e.getMessage());
 
               }
 
@@ -600,6 +600,10 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                   Logger.t(TAG).d("Get moment play info");
 //                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
                   mMomentPlayInfo = momentPlayInfo;
+                  doGaugeSetting(mMoment);
+                  calcRawDataTimeInfo();
+                  loadRawData(0);
+
               }
           });
 
@@ -888,6 +892,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 rawDataItemList.add(rawDataItem);
             }
             if (!rawDataItemList.isEmpty()) {
+                Logger.t(TAG).d("update raw data!");
+                Logger.t(TAG).d(rawDataItemList.toString());
                 mGaugeView.updateRawDateItem(rawDataItemList);
             }
         }

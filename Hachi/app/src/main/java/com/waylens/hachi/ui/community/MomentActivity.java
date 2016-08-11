@@ -511,7 +511,7 @@ public class MomentActivity extends BaseActivity {
             .doOnNext(new Action1<MomentInfo>() {
                 @Override
                 public void call(MomentInfo momentInfo) {
-                    //mMomentPlayFragment.doGaugeSetting(momentInfo);
+                    mMomentPlayFragment.doGaugeSetting(momentInfo);
                     updateFollowInfo(momentInfo.owner.userID);
                 }
             })
