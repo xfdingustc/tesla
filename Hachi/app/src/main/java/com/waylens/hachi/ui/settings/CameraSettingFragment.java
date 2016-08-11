@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
@@ -71,6 +72,8 @@ public class CameraSettingFragment extends PreferenceFragment {
     private static final String TAG = CameraSettingFragment.class.getSimpleName();
     private static final String DOWNLOAD_FOLDER_NAME = "Waylens";
     private static final String DOWNLOAD_FILE_NAME = "firmware";
+    private static final String[] AUTO_OFF_TIME = {"Never", "10s", "30s", "60s", "2min", "5min"};
+
     private VdtCamera mVdtCamera;
 
     private Preference mCameraName;
@@ -80,6 +83,8 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mStorage;
     private Preference mConnectivity;
     private Preference mFirmware;
+    private Preference mDisplay;
+
 
     private FirmwareInfo mFirmwareInfo;
 
@@ -91,6 +96,12 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Switch mSpeakerSwitch;
     private SeekBar mAudioSeekbar;
     private ImageView mSpeakerImage;
+
+    private SeekBar mBrightnessSeekbar;
+    private NumberPicker mAutoOffNumber;
+    private TextView mBrightness;
+
+
 
     private PieChart mStorageChart;
 
@@ -161,6 +172,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         initVideoPreference();
         initAudioPreference();
         initStoragePreference();
+        initDisplayPreference();
         initConnectivityPreference();
         initFirmwarePreference();
     }
@@ -385,6 +397,75 @@ public class CameraSettingFragment extends PreferenceFragment {
         });
     }
 
+    private void initDisplayPreference() {
+        mDisplay = findPreference("display");
+        mDisplay.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.display)
+                        .customView(R.layout.dialog_display_setting, true)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                int brightness = mBrightnessSeekbar.getProgress();
+                                int autoOffTimePos = mAutoOffNumber.getValue();
+                                String autoOffTime = AUTO_OFF_TIME[autoOffTimePos];
+                                mVdtCamera.setDisplayBrightness(brightness);
+                                mVdtCamera.setDisplayAutoOffTime(autoOffTime);
+                            }
+                        })
+                        .show();
+
+                mBrightnessSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbBrightness);
+                mBrightness = (TextView) dialog.getCustomView().findViewById(R.id.tv_brightness);
+                mAutoOffNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
+                mBrightnessSeekbar.setMax(10);
+
+                mAutoOffNumber.setDisplayedValues(AUTO_OFF_TIME);
+                mAutoOffNumber.setMinValue(0);
+                mAutoOffNumber.setMaxValue(AUTO_OFF_TIME.length - 1);
+
+                int brightness = mVdtCamera.getDisplayBrightness();
+                String autoOffTime = mVdtCamera.getDisplayAutoOffTime();
+                int autoOffTimePos = -1;
+                for(int i = 0; i < AUTO_OFF_TIME.length; i++) {
+                    if (AUTO_OFF_TIME[i].equals(autoOffTime)) {
+                        autoOffTimePos = i;
+                        break;
+                    }
+                }
+                mBrightnessSeekbar.setProgress(brightness);
+                mBrightness.setText(String.valueOf(brightness));
+                if (autoOffTimePos != 0) {
+                    mAutoOffNumber.setValue(autoOffTimePos);
+                }
+
+                mBrightnessSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                        Logger.t(TAG).d(i);
+                        mBrightness.setText(String.valueOf(i));
+                    }
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
+
+                return true;
+            }
+        });
+    }
+
     private void showStorageInfo() {
         GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
             @Override
@@ -546,16 +627,16 @@ public class CameraSettingFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .title(R.string.bookmark)
-                    .customView(R.layout.dialog_bookmark_change, true)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mVdtCamera.setMarkTime(mBeforeNumber.getValue(), mAfterNumber.getValue());
-                        }
-                    }).show();
+                        .title(R.string.bookmark)
+                        .customView(R.layout.dialog_bookmark_change, true)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                mVdtCamera.setMarkTime(mBeforeNumber.getValue(), mAfterNumber.getValue());
+                            }
+                        }).show();
 
                 mBeforeNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npBefore);
                 mAfterNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAfter);

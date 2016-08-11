@@ -400,7 +400,10 @@
 	<string name="reply_notification">%1$s replied to you in moment \'%2$s\'.</string>
 	<string name="edit">Edit</string>
 	<string name="edit_moment">Edit Moment</string>
+	<string name="display">Display</string>
+	<string name="auto_off">Auto Off</string>
+	<string name="brightness">Brightness</string>
 	<string name="title">Title</string>
 	<string name="time_lapse">Time Lapse</string>
-	<string name="generate_time_lapse">Generatinga time-lapse video</string>
+	<string name="generate_time_lapse">Generating a time-lapse video</string>
 </resources>

@@ -52,11 +52,15 @@
             android:layout="@layout/preference_item"
             android:title="@string/connectivity"/>
 
+        <Preference
+            android:key="power"
+            android:layout="@layout/preference_item"
+            android:title="@string/power"/>
 
-        <!--<Preference-->
-            <!--android:key="power"-->
-            <!--android:layout="@layout/preference_item"-->
-            <!--android:title="@string/power"/>-->
+        <Preference
+            android:key="display"
+            android:layout="@layout/preference_item"
+            android:title="Display"/>
 
     </PreferenceCategory>
 

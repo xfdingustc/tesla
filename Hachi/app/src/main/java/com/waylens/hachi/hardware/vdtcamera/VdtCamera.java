@@ -187,6 +187,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private int mMarkBeforeTime = -1;
     private int mMarkAfterTime = -1;
 
+    private int mDisplayBrightness = 0;
+    private String mAutoOffTime = null;
+
     private int mWifiMode = WIFI_MODE_UNKNOWN;
     public int mNumWifiAP = 0;
 
@@ -424,6 +427,25 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
         Logger.t(TAG).d("speakerState:" + speakerState);
         mCommunicationBus.sendCommand(CMD_SET_SPEAKER_STATUS, speakerState, volume);
+    }
+
+    public int getDisplayBrightness() {
+        mCommunicationBus.sendCommand(CMD_GET_DISPLAY_BRIGHTNESS);
+        return mDisplayBrightness;
+    }
+
+    public void setDisplayBrightness(int brightness) {
+        Logger.t(TAG).d("display brightness:" +  brightness);
+        mCommunicationBus.sendCommand(CMD_SET_DISPLAY_BRIGHTNESS, brightness);
+    }
+
+    public String getDisplayAutoOffTime() {
+        mCommunicationBus.sendCommand(CMD_GET_DISPLAY_AUTO_OFF_TIME);
+        return mAutoOffTime;
+    }
+
+    public void setDisplayAutoOffTime(String autoOffTime) {
+        mCommunicationBus.sendCommand(CMD_SET_DISPLAY_AUTO_OFF_TIME, autoOffTime);
     }
 
     public void setWifiMode(int wifiMode) {
@@ -689,6 +711,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_REC_GET_MARK_TIME);
         mCommunicationBus.sendCommand(CMD_CAM_MSG_BATTERY_INFOR);
         mCommunicationBus.sendCommand(CMD_GET_SPEAKER_STATUS);
+        mCommunicationBus.sendCommand(CMD_GET_DISPLAY_BRIGHTNESS);
+        mCommunicationBus.sendCommand(CMD_GET_DISPLAY_AUTO_OFF_TIME);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
@@ -1241,6 +1265,43 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
     }
 
+    private void ack_setDisplayBrightness(String p1, String p2) {
+        try {
+            mDisplayBrightness = Integer.parseInt(p1);
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("cmd_set_display_brightness: p1: %s, p2: %s", p1, p2), e);
+        }
+    }
+
+
+    private void ack_getDisplayBrightness(String p1, String p2) {
+        Logger.t(TAG).d(String.format("ack_get_display_brightness: p1: %s, p2: %s", p1, p2));
+        try {
+            mDisplayBrightness = Integer.parseInt(p1);
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("ack_get_display_brightness: p1: %s, p2: %s", p1, p2), e);
+        }
+    }
+
+    private void ack_setDisplayAutoOffTime(String p1, String p2) {
+        try {
+            mAutoOffTime = p1;
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("cmd_set_display_auto_off_time: p1: %s, p2: %s", p1, p2), e);
+        }
+    }
+
+
+    private void ack_getDisplayAutoOffTime(String p1, String p2) {
+        Logger.t(TAG).d(String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2));
+        try {
+            mAutoOffTime = p1;
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2), e);
+        }
+    }
+
+
 
     private void handleCameraMessage(int cmd, String p1, String p2) {
         switch (cmd) {
@@ -1359,6 +1420,18 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 break;
             case CMD_REC_SET_MARK_TIME:
                 ack_Rec_SetMarkTime(p1, p2);
+                break;
+            case CMD_GET_DISPLAY_BRIGHTNESS:
+                ack_getDisplayBrightness(p1, p2);
+                break;
+            case CMD_SET_DISPLAY_BRIGHTNESS:
+                ack_setDisplayBrightness(p1, p2);
+                break;
+            case CMD_GET_DISPLAY_AUTO_OFF_TIME:
+                ack_getDisplayAutoOffTime(p1, p2);
+                break;
+            case CMD_SET_DISPLAY_AUTO_OFF_TIME:
+                ack_setDisplayAutoOffTime(p1, p2);
                 break;
             default:
                 //Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
