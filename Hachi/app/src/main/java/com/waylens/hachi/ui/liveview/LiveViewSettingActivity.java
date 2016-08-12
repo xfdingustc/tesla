@@ -34,10 +34,12 @@ public class LiveViewSettingActivity extends BaseActivity {
     private int mOriginRecordMode;
     private int mOriginVideoResolution;
     private int mOriginVideoFramerate;
+    private int mOriginOverlayState;
 
     private int mChangedRecordMode;
     private int mChangedVideoResolution;
     private int mChangedVideoFramerate;
+    private int mChangedOverlayState;
 
 //    private OptionsPickerView mQualityPickerView;
 
@@ -89,6 +91,10 @@ public class LiveViewSettingActivity extends BaseActivity {
             case VideoSettingChangEvent.WHAT_RESOLUTION:
                 mChangedVideoResolution = event.getValue();
                 break;
+            case VideoSettingChangEvent.WHAT_TIMESTAMP:
+                mChangedOverlayState = event.getValue();
+            default:
+                break;
         }
         checkIfChanged();
     }
@@ -122,6 +128,7 @@ public class LiveViewSettingActivity extends BaseActivity {
         mOriginRecordMode = mCamera.getRecordMode();
         mOriginVideoResolution = mChangedVideoResolution = mCamera.getVideoResolution();
         mOriginVideoFramerate = mChangedVideoFramerate = mCamera.getVideoFramerate();
+        mOriginOverlayState = mChangedOverlayState = mCamera.getOVerlayState();
         mChangedRecordMode = mOriginRecordMode;
         initViews();
     }
@@ -152,7 +159,8 @@ public class LiveViewSettingActivity extends BaseActivity {
         boolean changed = false;
         if (mOriginVideoFramerate != mChangedVideoFramerate
             || mOriginVideoResolution != mChangedVideoResolution
-            || mOriginRecordMode != mChangedRecordMode) {
+            || mOriginRecordMode != mChangedRecordMode
+            || mOriginOverlayState != mChangedOverlayState) {
             changed = true;
         }
 
@@ -209,5 +217,11 @@ public class LiveViewSettingActivity extends BaseActivity {
         if (mOriginVideoFramerate != mChangedVideoFramerate) {
 //            mCamera.setV
         }
+
+        if (mOriginOverlayState != mChangedOverlayState) {
+            mCamera.setOverlayState(mChangedOverlayState);
+            mCamera.getOVerlayState();
+        }
+        finish();
     }
 }

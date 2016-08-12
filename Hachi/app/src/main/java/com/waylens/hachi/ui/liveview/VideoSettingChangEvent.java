@@ -9,6 +9,7 @@ public class VideoSettingChangEvent {
 
     public static final int WHAT_FRAMERATE = 0;
     public static final int WHAT_RESOLUTION = 1;
+    public static final int WHAT_TIMESTAMP = 2;
 
     public VideoSettingChangEvent(int what, int value) {
         this.mWhat = what;

@@ -60,7 +60,7 @@
         <Preference
             android:key="display"
             android:layout="@layout/preference_item"
-            android:title="Display"/>
+            android:title="@string/display"/>
 
     </PreferenceCategory>
 

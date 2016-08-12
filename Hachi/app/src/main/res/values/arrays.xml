@@ -187,4 +187,9 @@
         <item>@string/sd</item>
         <item>@string/fullhd</item>
     </string-array>
+
+    <string-array name="timestamp_state" translatable="false">
+        <item>@string/timestamp_off</item>
+        <item>@string/timestamp_on</item>
+    </string-array>
 </resources>

@@ -170,7 +170,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private int mRecordState = STATE_RECORD_UNKNOWN;
     private int mRecordTime = 0;
 
-    private int mOverlayFlags = -1;
+    private int mOverlayFlags = 0;
 
     private int mVideoResolutionList = 0;
     private int mVideoResolutionIndex = VIDEO_RESOLUTION_UNKNOWN;
@@ -437,6 +437,15 @@ public class VdtCamera implements VdtCameraCmdConsts {
     public void setDisplayBrightness(int brightness) {
         Logger.t(TAG).d("display brightness:" +  brightness);
         mCommunicationBus.sendCommand(CMD_SET_DISPLAY_BRIGHTNESS, brightness);
+    }
+
+    public int getOVerlayState() {
+        mCommunicationBus.sendCommand(CMD_REC_GET_OVERLAY_STATE);
+        return mOverlayFlags;
+    }
+
+    public void setOverlayState(int overlayState) {
+        mCommunicationBus.sendCommand(CMD_REC_SET_OVERLAY, overlayState & 2);
     }
 
     public String getDisplayAutoOffTime() {
@@ -713,6 +722,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_GET_SPEAKER_STATUS);
         mCommunicationBus.sendCommand(CMD_GET_DISPLAY_BRIGHTNESS);
         mCommunicationBus.sendCommand(CMD_GET_DISPLAY_AUTO_OFF_TIME);
+        mCommunicationBus.sendCommand(CMD_REC_GET_OVERLAY_STATE);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
@@ -1228,7 +1238,13 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private void ack_Rec_getOverlayState(String p1, String p2) {
         int flags = Integer.parseInt(p1);
-        mOverlayFlags = flags;
+        mOverlayFlags = 2 & flags;
+    }
+
+    private void ack_Rec_setOverlayState(String p1, String p2) {
+        Logger.t(TAG).d(String.format("cmd_setOverlayState: p1: %s, p2: %s", p1, p2));
+        int flags = Integer.parseInt(p1);
+        //mOverlayFlags = 2 & flags;
     }
 
 
@@ -1388,6 +1404,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 break;
             case CMD_GET_SPEAKER_STATUS:
                 ack_CAM_getSpeakerStatus(p1, p2);
+                break;
             case CMD_REC_LIST_RESOLUTIONS:
                 ack_Rec_List_Resolutions(p1, p2);
                 break;
@@ -1414,6 +1431,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 break;
             case CMD_REC_GET_OVERLAY_STATE:
                 ack_Rec_getOverlayState(p1, p2);
+                break;
+            case CMD_REC_SET_OVERLAY:
+                ack_Rec_setOverlayState(p1, p2);
                 break;
             case CMD_REC_GET_MARK_TIME:
                 ack_Rec_GetMarkTime(p1, p2);
