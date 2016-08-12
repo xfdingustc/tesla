@@ -1,16 +1,26 @@
 package com.waylens.hachi.ui.community;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.lapism.searchview.SearchAdapter;
+import com.lapism.searchview.SearchItem;
+import com.lapism.searchview.SearchView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
@@ -21,6 +31,9 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.utils.VolleyUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 
 
@@ -30,11 +43,14 @@ import butterknife.BindView;
 public class CommunityFragment extends BaseFragment implements FragmentNavigator{
     private static final String TAG = CommunityFragment.class.getSimpleName();
 
-    private RequestQueue mRequestQueue;
+    private SimpleFragmentPagerAdapter mFeedPageAdapter;
 
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
-    private SimpleFragmentPagerAdapter mFeedPageAdapter;
+
+    @BindView(R.id.searchView)
+    SearchView mSearchView;
+
 
     @Override
     protected String getRequestTag() {
@@ -44,16 +60,59 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_moment, savedInstanceState);
-
+        setupSearchView();
         setupViewPager();
         return view;
+    }
+
+    private void setupSearchView() {
+        mSearchView.setVersion(SearchView.VERSION_MENU_ITEM);
+        mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM);
+        mSearchView.setHint("Search");
+        mSearchView.setTextSize(16);
+        mSearchView.setHint("Search");
+        mSearchView.setDivider(false);
+        mSearchView.setVoice(true);
+        mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
+        mSearchView.setShadowColor(ContextCompat.getColor(getActivity(), R.color.search_shadow_layout));
+        mSearchView.setTheme(SearchView.THEME_DARK, true);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+//                    getData(query, 0);
+                // mSearchView.close(false);
+                MomentSearchActivity.launch(getActivity(), query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+
+        List<SearchItem> suggestionsList = new ArrayList<>();
+
+
+        SearchAdapter searchAdapter = new SearchAdapter(getActivity(), suggestionsList);
+        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
+                String query = textView.getText().toString();
+//                    getData(query, position);
+                MomentSearchActivity.launch(getActivity(), query);
+            }
+        });
+        mSearchView.setAdapter(searchAdapter);
     }
 
     @Override
@@ -76,7 +135,8 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.search:
-                        MomentSearchActivity.launch(getActivity());
+//                        MomentSearchActivity.launch(getActivity());
+                        mSearchView.open(true);
                         return false;
                     case R.id.my_notification:
                         NotificationActivity.launch(getActivity());
@@ -125,4 +185,20 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
             mFeedPageAdapter.notifyDataSetChanged();
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SearchView.SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (results != null && results.size() > 0) {
+                String searchWrd = results.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    mSearchView.setQuery(searchWrd);
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
 }

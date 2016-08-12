@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.lapism.searchview.SearchView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -35,6 +38,7 @@ import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -355,6 +359,13 @@ public class MainActivity extends BaseActivity {
                     ((CommunityFragment) mCurrentFragment).notifyDateChanged();
                 }
                 break;
+            case SearchView.SPEECH_REQUEST_CODE:
+                if (resultCode == RESULT_OK && (mCurrentFragment instanceof CommunityFragment)) {
+                    mCurrentFragment.onActivityResult(requestCode, resultCode, data);
+                }
+                break;
+
+
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }

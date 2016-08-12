@@ -19,7 +19,6 @@ import com.lapism.searchview.SearchAdapter;
 import com.lapism.searchview.SearchHistoryTable;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -43,12 +42,16 @@ import butterknife.BindView;
  */
 public class MomentSearchActivity extends BaseActivity {
     private static final String TAG = MomentSearchActivity.class.getSimpleName();
+    private static final String EXTRA_QUERY = "extra_query";
     private VideoItemAdapter mVideoItemAdapter;
 
     private SearchHistoryTable mHistoryDatabase;
 
-    public static void launch(Activity activity) {
+    private String mQuery;
+
+    public static void launch(Activity activity, String query) {
         Intent intent = new Intent(activity, MomentSearchActivity.class);
+        intent.putExtra(EXTRA_QUERY, query);
         activity.startActivity(intent);
     }
 
@@ -72,6 +75,7 @@ public class MomentSearchActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+        mQuery = getIntent().getStringExtra(EXTRA_QUERY);
         initViews();
     }
 
@@ -85,78 +89,64 @@ public class MomentSearchActivity extends BaseActivity {
 
         setupSearchView();
 
-
+        mSearchView.setQuery(mQuery);
     }
 
     private void setupSearchView() {
         mHistoryDatabase = new SearchHistoryTable(this);
 
 
-        if (mSearchView != null) {
-            mSearchView.setVersion(SearchView.VERSION_TOOLBAR);
-            mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG);
-            mSearchView.setTextSize(16);
-            mSearchView.setHint("Search");
-            mSearchView.setDivider(false);
-            mSearchView.setVoice(true);
-            mSearchView.setVoiceText("Set permission on Android 6+ !");
-            mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
-            mSearchView.setShadowColor(ContextCompat.getColor(this, R.color.search_shadow_layout));
-            mSearchView.setTheme(SearchView.THEME_DARK, true);
-            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    String newQuery = null;
-                    try {
-                        mHistoryDatabase.addItem(new SearchItem(query));
-                        newQuery = URLEncoder.encode(query, "UTF-8");
-                        queryMoments(newQuery);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    // mSearchView.close(false);
-                    return true;
+        mSearchView.setVersion(SearchView.VERSION_TOOLBAR);
+        mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG);
+        mSearchView.setTextSize(16);
+        mSearchView.setHint("Search");
+        mSearchView.setDivider(false);
+        mSearchView.setVoice(true);
+        mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
+        mSearchView.setShadowColor(ContextCompat.getColor(this, R.color.search_shadow_layout));
+        mSearchView.setTheme(SearchView.THEME_DARK, true);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String newQuery = null;
+                try {
+                    mHistoryDatabase.addItem(new SearchItem(query));
+                    newQuery = URLEncoder.encode(query, "UTF-8");
+                    queryMoments(newQuery);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                // mSearchView.close(false);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+
+        List<SearchItem> suggestionsList = new ArrayList<>();
+
+
+        SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
+        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
+                String query = textView.getText().toString();
+                try {
+                    String newQuery = URLEncoder.encode(query, "UTF-8");
+                    queryMoments(newQuery);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
 
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
-            mSearchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
-                @Override
-                public void onOpen() {
-
-                }
-
-                @Override
-                public void onClose() {
-
-                }
-            });
-
-            List<SearchItem> suggestionsList = new ArrayList<>();
-
-
-            SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
-            searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
-                    String query = textView.getText().toString();
-                    String newQuery = null;
-                    try {
-                        newQuery = URLEncoder.encode(query, "UTF-8");
-                        queryMoments(newQuery);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-
-                    // mSearchView.close(false);
-                }
-            });
-            mSearchView.setAdapter(searchAdapter);
-        }
+                // mSearchView.close(false);
+            }
+        });
+        mSearchView.setAdapter(searchAdapter);
     }
 
     private void queryMoments(String query) {
