@@ -25,9 +25,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 
-
 import com.google.zxing.PlanarYUVLuminanceSource;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.ui.manualsetup.ScanQrCodeActivity;
 import com.waylens.hachi.ui.manualsetup.qrcode.util.Constants;
 
@@ -95,13 +93,10 @@ public final class DecodeHandler extends Handler {
 
         mDecodeUtils.setDataMode(activity.getDataMode());
 
-        String zbarStr = mDecodeUtils.decodeWithZbar(rotatedData, size.width, size.height, cropRect);
+
         String zxingStr = mDecodeUtils.decodeWithZxing(rotatedData, size.width, size.height, cropRect);
 
-        if (!TextUtils.isEmpty(zbarStr)) {
-            mDecodeMode = DecodeUtils.DECODE_MODE_ZBAR;
-            resultStr = zbarStr;
-        } else if (!TextUtils.isEmpty(zxingStr)) {
+        if (!TextUtils.isEmpty(zxingStr)) {
             mDecodeMode = DecodeUtils.DECODE_MODE_ZXING;
             resultStr = zxingStr;
         }
@@ -113,8 +108,8 @@ public final class DecodeHandler extends Handler {
                 Message message = Message.obtain(handler, Constants.ID_DECODE_SUCCESS, resultStr);
                 Bundle bundle = new Bundle();
                 PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(rotatedData, size.width, size.height,
-                        cropRect.left, cropRect.top,
-                        cropRect.width(), cropRect.height(), false);
+                    cropRect.left, cropRect.top,
+                    cropRect.width(), cropRect.height(), false);
 
                 bundle.putInt(DecodeThread.DECODE_MODE, mDecodeMode);
                 bundle.putString(DecodeThread.DECODE_TIME, (end - start) + "ms");
