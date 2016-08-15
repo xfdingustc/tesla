@@ -15,7 +15,7 @@ import java.util.List;
  * Created by Xiaofei on 2016/7/13.
  */
 public class UploadManager {
-    private static UploadManager mSharedUploadManager = new UploadManager();
+    private static UploadManager mSharedUploadManager = null;
     private final List<UploadMomentJob> mUploadJobList;
 
     private EventBus mEventBus = EventBus.getDefault();
@@ -45,7 +45,11 @@ public class UploadManager {
 
     public static UploadManager getManager() {
         if (mSharedUploadManager == null) {
-            mSharedUploadManager = new UploadManager();
+            synchronized (UploadManager.class) {
+                if (mSharedUploadManager == null) {
+                    mSharedUploadManager = new UploadManager();
+                }
+            }
         }
         return mSharedUploadManager;
     }
@@ -61,16 +65,11 @@ public class UploadManager {
             WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(i);
             if (oneListenr != null) {
                 OnUploadJobStateChangeListener listener = oneListenr.get();
-
                 if (listener != null) {
                     listener.onUploadJobAdded();
                 }
-
             }
-
-
         }
-
     }
 
     private void removeJob(UploadMomentJob job) {

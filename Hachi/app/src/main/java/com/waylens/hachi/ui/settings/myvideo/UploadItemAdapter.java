@@ -1,9 +1,8 @@
-package com.waylens.hachi.ui.settings;
+package com.waylens.hachi.ui.settings.myvideo;
 
 import android.app.Activity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,65 +15,34 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.ui.entities.Moment;
-
-import org.ocpsoft.prettytime.PrettyTime;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Xiaofei on 2016/6/17.
+ * Created by Xiaofei on 2016/8/15.
  */
-public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UploadManager.OnUploadJobStateChangeListener {
-    private static final String TAG = VideoItemAdapter.class.getSimpleName();
-
+public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UploadManager.OnUploadJobStateChangeListener {
     private final Activity mActivity;
-    private List<Moment> mUploadedMomentList = new ArrayList<>();
-    private PrettyTime mPrettyTime = new PrettyTime();
     private UploadManager mUploadManager = UploadManager.getManager();
-
-
-    public VideoItemAdapter(Activity activity) {
+    public UploadItemAdapter(Activity activity) {
         this.mActivity = activity;
         mUploadManager.addOnUploadJobStateChangedListener(this);
-    }
-
-
-
-    public void setUploadedMomentList(List<Moment> momentList) {
-        this.mUploadedMomentList = momentList;
-        notifyDataSetChanged();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_simple, parent, false);
-        return new VideoItemViewHolder(view);
+        return new UploadVideoItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (position < mUploadManager.getJobCount()) {
-            onBindUploadingViewHolder(holder, position);
-        } else {
-            onBindUploadedViewHolder(holder, position - mUploadManager.getJobCount());
-        }
-
-    }
-
-    private void onBindUploadingViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
+        final UploadVideoItemViewHolder videoItemViewHolder = (UploadVideoItemViewHolder) holder;
         final UploadMomentJob uploadMomentJob = mUploadManager.getUploadJob(position);
         LocalMoment localMoment = uploadMomentJob.getLocalMoment();
         videoItemViewHolder.momentTitle.setText(localMoment.title);
@@ -127,12 +95,9 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         });
 
-        if (position == mUploadManager.getJobCount() - 1) {
-            videoItemViewHolder.separator.setVisibility(View.VISIBLE);
-        } else {
-            videoItemViewHolder.separator.setVisibility(View.GONE);
-        }
+
     }
+
 
     private void updateUploadStatus(int state, TextView description) {
         switch (state) {
@@ -171,40 +136,9 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private void onBindUploadedViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
-        final Moment uploadedMoment = mUploadedMomentList.get(position);
-        videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
-        videoItemViewHolder.momentTitle.setText(uploadedMoment.title);
-        videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
-        videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(uploadedMoment.uploadTime)));
-        videoItemViewHolder.description.setVisibility(View.VISIBLE);
-        Glide.with(mActivity)
-            .load(uploadedMoment.thumbnail)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .into(videoItemViewHolder.videoCover);
-
-        videoItemViewHolder.videoDuration.setText(DateUtils.formatElapsedTime(uploadedMoment.duration / 1000l));
-        videoItemViewHolder.btnMore.setVisibility(View.GONE);
-        videoItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MomentActivity.launch(mActivity, uploadedMoment.id, uploadedMoment.thumbnail, videoItemViewHolder.videoCover);
-            }
-        });
-
-        if (position == getItemCount() - 1) {
-            videoItemViewHolder.separator.setVisibility(View.VISIBLE);
-        } else {
-            videoItemViewHolder.separator.setVisibility(View.GONE);
-        }
-
-    }
-
     @Override
     public int getItemCount() {
-        return mUploadManager.getJobCount() + mUploadedMomentList.size();
+        return mUploadManager.getJobCount();
     }
 
     @Override
@@ -214,18 +148,16 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onUploadJobAdded() {
-
+        notifyDataSetChanged();
     }
 
     @Override
     public void onUploadJobRemoved() {
-        Logger.t(TAG).d("upload remove!!");
         notifyDataSetChanged();
     }
 
 
-    public class VideoItemViewHolder extends RecyclerView.ViewHolder {
-
+    public class UploadVideoItemViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.moment_title)
         TextView momentTitle;
 
@@ -247,11 +179,7 @@ public class VideoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @BindView(R.id.btn_more)
         ImageButton btnMore;
 
-
-        @BindView(R.id.separator)
-        View separator;
-
-        public VideoItemViewHolder(View itemView) {
+        public UploadVideoItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

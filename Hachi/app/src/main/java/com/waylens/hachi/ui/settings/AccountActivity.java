@@ -29,6 +29,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
+import com.waylens.hachi.ui.settings.myvideo.VideoActivity;
 import com.waylens.hachi.utils.FastBlurUtil;
 
 import org.greenrobot.eventbus.EventBus;

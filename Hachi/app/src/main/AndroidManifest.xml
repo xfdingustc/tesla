@@ -169,7 +169,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.settings.VideoActivity"
+            android:name=".ui.settings.myvideo.VideoActivity"
             android:screenOrientation="portrait"/>
 
         <activity

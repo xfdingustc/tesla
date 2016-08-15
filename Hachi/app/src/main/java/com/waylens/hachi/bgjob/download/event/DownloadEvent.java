@@ -1,5 +1,7 @@
 package com.waylens.hachi.bgjob.download.event;
 
+import com.waylens.hachi.bgjob.download.DownloadJob;
+
 /**
  * Created by Xiaofei on 2016/5/5.
  */
@@ -19,23 +21,24 @@ public class DownloadEvent {
 
 
     private final int mWhat;
-    private final Object mExtra;
+    private final DownloadJob mJob;
 
 
     public DownloadEvent(int what) {
-        this(what, 0);
+        this(what, null);
     }
 
-    public DownloadEvent(int what, Object extra) {
+
+    public DownloadEvent(int what, DownloadJob job) {
         this.mWhat = what;
-        this.mExtra = extra;
+        this.mJob = job;
     }
 
     public int getWhat() {
         return mWhat;
     }
 
-    public Object getExtra() {
-        return mExtra;
+    public DownloadJob getJob() {
+        return mJob;
     }
 }

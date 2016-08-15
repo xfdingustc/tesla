@@ -6,9 +6,44 @@
 
     <include layout="@layout/toolbar_default"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_video_list"
+    <com.waylens.hachi.view.InertiaScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/uploading_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/settings_line_separator"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/download_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/settings_line_separator"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/moment_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+
+    </com.waylens.hachi.view.InertiaScrollView>
+
+
 
 </LinearLayout>

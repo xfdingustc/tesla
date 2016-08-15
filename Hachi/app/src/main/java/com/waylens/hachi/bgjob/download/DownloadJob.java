@@ -7,6 +7,7 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
+import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
@@ -26,19 +27,21 @@ public class DownloadJob extends Job {
     private EventBus mEventBus = EventBus.getDefault();
     private String mDownloadFilePath;
 
+    private int mDownloadProgress;
+
+    private DownloadManager mDownloadManager = DownloadManager.getManager();
+
 
     public DownloadJob(Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
         super(new Params(0).requireNetwork().setPersistent(false));
 
         this.mStreamInfo = streamInfo;
         this.mDownloadInfo = downloadInfo;
-
-
     }
 
     @Override
     public void onAdded() {
-
+        mDownloadManager.addJob(this);
     }
 
     @Override
@@ -58,7 +61,6 @@ public class DownloadJob extends Job {
 
 
     private void downloadVideo() {
-
         RemuxerParams params = new RemuxerParams();
         // clip params
         params.setClipDate(mDownloadInfo.clipDate);
@@ -115,8 +117,6 @@ public class DownloadJob extends Job {
             }
         });
 
-        // TODO:
-        //broadcastInfo(REASON_DOWNLOAD_STARTED, DOWNLOAD_STATE_RUNNING, item, 0, remain);
 
         int clipDate = params.getClipDate();
         long clipTimeMs = params.getClipTimeMs();
@@ -142,15 +142,23 @@ public class DownloadJob extends Job {
 
     private void handleRemuxerProgress(int progress) {
 //        broadcastDownloadProgress(progress);
-        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, progress));
-        Logger.t(TAG).d("download progress: " + progress);
+        mDownloadProgress = progress;
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, this));
+//        Logger.t(TAG).d("download progress: " + progress);
     }
 
 
     private void handleRemuxerFinished() {
-//        broadcastDownloadFinished();
-        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, mDownloadFilePath));
-        Logger.t(TAG).d("download started: ");
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, this));
+//        mDownloadManager.removeJob(this);
+        Logger.t(TAG).d("download finished");
+    }
 
+    public int getDownloadProgress() {
+        return mDownloadProgress;
+    }
+
+    public String getOutputFile() {
+        return mDownloadFilePath;
     }
 }
