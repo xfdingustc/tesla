@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.lapism.searchview.SearchAdapter;
+import com.lapism.searchview.SearchHistoryTable;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
 import com.waylens.hachi.R;
@@ -45,11 +46,15 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     private SimpleFragmentPagerAdapter mFeedPageAdapter;
 
+    private SearchHistoryTable mHistoryDatabase;
+
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
 
     @BindView(R.id.searchView)
     SearchView mSearchView;
+
+
 
 
     @Override
@@ -73,11 +78,12 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     }
 
     private void setupSearchView() {
+        mHistoryDatabase = new SearchHistoryTable(getActivity());
+        mHistoryDatabase.setHistorySize(5);
         mSearchView.setVersion(SearchView.VERSION_MENU_ITEM);
         mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM);
-        mSearchView.setHint("Search");
+        mSearchView.setHint(R.string.search_hint);
         mSearchView.setTextSize(16);
-        mSearchView.setHint("Search");
         mSearchView.setDivider(false);
         mSearchView.setVoice(true);
         mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
@@ -86,8 +92,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-//                    getData(query, 0);
-                // mSearchView.close(false);
+                mHistoryDatabase.addItem(new SearchItem(query));
                 MomentSearchActivity.launch(getActivity(), query);
                 return true;
             }
@@ -106,6 +111,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+
                 TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
                 String query = textView.getText().toString();
 //                    getData(query, position);

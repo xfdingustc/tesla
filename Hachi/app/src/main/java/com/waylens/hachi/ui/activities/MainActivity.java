@@ -83,7 +83,6 @@ public class MainActivity extends BaseActivity {
 
     private CircleImageView mUserAvatar;
     private TextView mUsername;
-    private TextView mEmail;
     private boolean mIsRestored;
 
     private Snackbar mReturnSnackBar;
@@ -187,7 +186,6 @@ public class MainActivity extends BaseActivity {
 
         if (!mIsRestored) {
             transaction.add(R.id.fragment_content, fragment).commit();
-
         }
 
         mCurrentFragment = fragment;
@@ -256,7 +254,6 @@ public class MainActivity extends BaseActivity {
     private void setupNavigationView() {
         mUserAvatar = (CircleImageView) mNavView.getHeaderView(0).findViewById(R.id.civUserAvatar);
         mUsername = (TextView) mNavView.getHeaderView(0).findViewById(R.id.tvUserName);
-        mEmail = (TextView) mNavView.getHeaderView(0).findViewById(R.id.tvEmail);
         mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {

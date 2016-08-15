@@ -94,12 +94,11 @@ public class MomentSearchActivity extends BaseActivity {
 
     private void setupSearchView() {
         mHistoryDatabase = new SearchHistoryTable(this);
-
-
         mSearchView.setVersion(SearchView.VERSION_TOOLBAR);
         mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG);
         mSearchView.setTextSize(16);
-        mSearchView.setHint("Search");
+        mSearchView.setHint(R.string.search_hint);
+        mSearchView.setText(mQuery);
         mSearchView.setDivider(false);
         mSearchView.setVoice(true);
         mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
@@ -143,7 +142,6 @@ public class MomentSearchActivity extends BaseActivity {
                     e.printStackTrace();
                 }
 
-                // mSearchView.close(false);
             }
         });
         mSearchView.setAdapter(searchAdapter);
