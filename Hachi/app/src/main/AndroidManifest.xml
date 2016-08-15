@@ -83,6 +83,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.settings.ProfileSettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.activities.FollowListActivity"
             android:screenOrientation="portrait"/>
 
@@ -165,7 +169,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.clips.upload.UploadActivity"
+            android:name=".ui.settings.VideoActivity"
             android:screenOrientation="portrait"/>
 
         <activity

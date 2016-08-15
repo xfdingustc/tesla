@@ -24,11 +24,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -41,7 +36,6 @@ import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
-import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,12 +44,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -64,8 +56,8 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Xiaofei on 2016/5/3.
  */
-public class AccountSettingPreferenceFragment extends PreferenceFragment {
-    private static final String TAG = AccountSettingPreferenceFragment.class.getSimpleName();
+public class ProfileSettingPreferenceFragment extends PreferenceFragment {
+    private static final String TAG = ProfileSettingPreferenceFragment.class.getSimpleName();
 
     private static final int REQUEST_FACEBOOK = 0x100;
     private static final int REQUEST_YOUTUBE = 0x101;
@@ -79,7 +71,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private Preference mRegion;
     private Preference mFacebook;
     private Preference mYoutube;
-    private Preference mLogout;
+
 
     private PreferenceCategory mVehicle;
     private Preference mAddCar;
@@ -150,13 +142,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mVehicle = (PreferenceCategory) findPreference("vehicle");
         mAddCar = findPreference("add_car");
 
-/*        Preference newCar = new Preference(this.getActivity());
-        newCar.setKey("bmw");
-        newCar.setLayoutResource(R.layout.preference_item);
 
-        mVehicle.addPreference(newCar);*/
-
-        mLogout = findPreference("logout");
         setupSocialMedia();
 
         mEmail.setSummary(mSessionManager.getEmail());
@@ -165,18 +151,8 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
         mRegion.setSummary(mSessionManager.getRegion());
 
 
-        final int gender = mSessionManager.getGenderInt();
-        switch (gender) {
-            case 0:
-                mGender.setSummary(R.string.male);
-                break;
-            case 1:
-                mGender.setSummary(R.string.female);
-                break;
-            default:
-                mGender.setSummary(R.string.rather_not_to_say);
-                break;
-        }
+        mGender.setSummary(mSessionManager.getGender());
+
 
         mChangePassword.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -233,7 +209,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title("Please choose your gender")
                     .items(R.array.gender_list)
-                    .itemsCallbackSingleChoice(gender, new MaterialDialog.ListCallbackSingleChoice() {
+                    .itemsCallbackSingleChoice(mSessionManager.getGenderInt(), new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                             return true;
@@ -328,24 +304,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             }
         });
 
-        mLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .title(R.string.logout)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mSessionManager.logout();
-                            getActivity().finish();
-                        }
-                    })
-                    .show();
-                return true;
-            }
-        });
+
     }
 
     private void setupSocialMedia() {
@@ -364,7 +323,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (mSessionManager.getFacebookName() == null) {
-                    FacebookAuthorizeActivity.launch(AccountSettingPreferenceFragment.this, REQUEST_FACEBOOK);
+                    FacebookAuthorizeActivity.launch(ProfileSettingPreferenceFragment.this, REQUEST_FACEBOOK);
                 } else {
                     unbindSocialMedia(SocialProvider.FACEBOOK);
                 }
@@ -380,7 +339,7 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (mSessionManager.getYoutubeName() == null) {
-                    GoogleAuthorizeActivity.launch(AccountSettingPreferenceFragment.this, REQUEST_YOUTUBE);
+                    GoogleAuthorizeActivity.launch(ProfileSettingPreferenceFragment.this, REQUEST_YOUTUBE);
                 } else {
                     unbindSocialMedia(SocialProvider.YOUTUBE);
                 }
@@ -390,8 +349,6 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
 
         });
     }
-
-
 
 
     private void unbindSocialMedia(final String facebook) {
@@ -459,14 +416,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
     private void updateVehicle() {
         Logger.t(TAG).d("update Vehicle!");
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                .url(Constants.API_USER_VEHICLE)
-                .listner(new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        renderVehicle(response);
-                    }
-                })
-                .build();
+            .url(Constants.API_USER_VEHICLE)
+            .listner(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    renderVehicle(response);
+                }
+            })
+            .build();
         mRequestQueue.add(request);
     }
 
@@ -484,34 +441,33 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 oneVehicle.model = object.getString("model");
                 Preference oneCar = new Preference(this.getActivity());
                 oneCar.setKey(String.valueOf(oneVehicle.modelYearID));
-                oneCar.setLayoutResource(R.layout.preference_item);
                 oneCar.setSummary(oneVehicle.maker + "  " + oneVehicle.model + "  " + oneVehicle.year);
                 oneCar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(final Preference preference) {
                         final long modelYearID = Long.valueOf(preference.getKey());
                         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                                .content(R.string.delete_car_confirm)
-                                .positiveText(R.string.ok)
-                                .negativeText(R.string.cancel)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                                                .delete()
-                                                .url(Constants.API_USER_VEHICLE + "/" + modelYearID)
-                                                .listner(new Response.Listener<JSONObject>() {
-                                                    @Override
-                                                    public void onResponse(JSONObject response) {
-                                                        mVehicle.removePreference(preference);
-                                                    }
-                                                })
-                                                .build();
+                            .content(R.string.delete_car_confirm)
+                            .positiveText(R.string.ok)
+                            .negativeText(R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+                                        .delete()
+                                        .url(Constants.API_USER_VEHICLE + "/" + modelYearID)
+                                        .listner(new Response.Listener<JSONObject>() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                mVehicle.removePreference(preference);
+                                            }
+                                        })
+                                        .build();
 
-                                        mRequestQueue.add(request.setTag(TAG));
-                                    }
-                                })
-                                .build();
+                                    mRequestQueue.add(request.setTag(TAG));
+                                }
+                            })
+                            .build();
                         dialog.show();
                         return false;
                     }
@@ -560,15 +516,15 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    String i18nGender;
-                    if (gender.equals("MALE")) {
-                        i18nGender = getString(R.string.male);
-                    } else if (gender.equals("FEMALE")) {
-                        i18nGender = getString(R.string.female);
-                    } else {
-                        i18nGender = getString(R.string.rather_not_to_say);
-                    }
-                    mGender.setSummary(i18nGender);
+                    mSessionManager.setGender(gender);
+                    mGender.setSummary(mSessionManager.getGender());
+                    Snackbar.make(getView(), R.string.gender_update, Snackbar.LENGTH_SHORT).show();
+                }
+            })
+            .errorListener(new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Snackbar.make(getView(), new String(error.networkResponse.data), Snackbar.LENGTH_LONG).show();
                 }
             })
             .build();
@@ -585,6 +541,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 public void onResponse(JSONObject response) {
                     mUserName.setSummary(newUserName);
                     mSessionManager.setUserName(newUserName);
+                    Snackbar.make(getView(), R.string.username_update, Snackbar.LENGTH_SHORT).show();
+                }
+            })
+            .errorListener(new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Logger.t(TAG).d(error.toString());
+                    Snackbar.make(getView(), new String(error.networkResponse.data), Snackbar.LENGTH_SHORT).show();
                 }
             })
             .build();
@@ -599,6 +563,14 @@ public class AccountSettingPreferenceFragment extends PreferenceFragment {
                 @Override
                 public void onResponse(JSONObject response) {
                     mBirthday.setSummary(birthday);
+                    mSessionManager.setBirthday(birthday);
+                    Snackbar.make(getView(), R.string.birthday_update, Snackbar.LENGTH_SHORT).show();
+                }
+            })
+            .errorListener(new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Snackbar.make(getView(), new String(error.networkResponse.data), Snackbar.LENGTH_SHORT).show();
                 }
             })
             .build();

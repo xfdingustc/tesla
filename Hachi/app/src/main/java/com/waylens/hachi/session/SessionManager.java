@@ -159,7 +159,7 @@ public class SessionManager {
         }
     }
 
-    private void setGender(String gender) {
+    public void setGender(String gender) {
         int genderInt = -1;
         if (gender.equals("MALE")) {
             genderInt = 0;

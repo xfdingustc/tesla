@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.clips.upload;
+package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.support.v7.widget.PopupMenu;

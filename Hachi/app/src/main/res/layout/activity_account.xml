@@ -68,69 +68,72 @@
 
             </FrameLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/account"
-                android:textColor="@color/style_color_primary"
-                android:textSize="18sp"/>
-
-
             <LinearLayout
+                android:id="@+id/profile_setting"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/settings_menu_account"
+                    android:tint="@color/app_text_color_primary"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:ellipsize="marquee"
-                    android:fadingEdge="horizontal"
-                    android:singleLine="true"
-                    android:text="@string/email"
-                    android:textColor="?attr/appTextColorPrimary"
-                    android:textSize="16sp"
-                    />
-
-                <TextView
-                    android:id="@+id/email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-
-                    android:textColor="?attr/appTextColorSecondary"
-                    android:textSize="14sp"
-                    tools:text="email"/>
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/profile_setting"
+                    android:textSize="18sp"
+                    tools:text="Profile setting"/>
 
             </LinearLayout>
 
-
             <LinearLayout
-                android:id="@+id/change_password"
+                android:id="@+id/my_videos"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_video_collection_white_24dp"
+                    android:tint="@color/app_text_color_primary"
+                    />
 
                 <TextView
-
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:fadingEdge="horizontal"
-                    android:singleLine="true"
-                    android:text="@string/change_password"
-                    android:textColor="?attr/appTextColorPrimary"
-                    android:textSize="16sp"
-                    />
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="16dp"
+                    android:text="@string/my_videos"
+                    android:textSize="18sp"
+                    tools:text="My videos"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/navbar_notification"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="16dp"
+                    android:text="@string/notification"
+                    android:textSize="18sp"
+                    tools:text="Notification"/>
 
             </LinearLayout>
 
@@ -141,20 +144,12 @@
                 android:background="@color/settings_line_separator"/>
 
 
-
-            <include layout="@layout/account_setting_profile"/>
-
-            <include layout="@layout/account_setting_vehicle"/>
-
-            <include layout="@layout/account_setting_social_media"/>
-
-
             <Button
-                style="@style/ActionButton"
                 android:id="@+id/btn_logout"
-                android:layout_margin="16dp"
+                style="@style/ActionButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:text="@string/logout"/>
         </LinearLayout>
     </ScrollView>

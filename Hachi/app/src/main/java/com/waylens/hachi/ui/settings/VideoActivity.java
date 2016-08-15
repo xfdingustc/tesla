@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.clips.upload;
+package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
@@ -33,15 +32,15 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2016/6/17.
  */
-public class UploadActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
-    private static final String TAG = UploadActivity.class.getSimpleName();
+public class VideoActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
+    private static final String TAG = VideoActivity.class.getSimpleName();
 
     private VideoItemAdapter mVideoItemAdapter;
 
     private EventBus mEventBus = EventBus.getDefault();
 
     public static void launch(Activity activity) {
-        Intent intent = new Intent(activity, UploadActivity.class);
+        Intent intent = new Intent(activity, VideoActivity.class);
         activity.startActivity(intent);
     }
 
@@ -59,19 +58,19 @@ public class UploadActivity extends BaseActivity implements UploadManager.OnUplo
     @Override
     public void finish() {
         if (UploadManager.getManager().getUploadingJobCount() > 0) {
-            MaterialDialog dialog = new MaterialDialog.Builder(UploadActivity.this)
+            MaterialDialog dialog = new MaterialDialog.Builder(VideoActivity.this)
                 .content(R.string.exit_video_upload_confirm)
                 .negativeText(R.string.stay)
                 .positiveText(R.string.leave_anyway)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        UploadActivity.super.finish();
+                        VideoActivity.super.finish();
                     }
                 })
                 .show();
         } else {
-            UploadActivity.super.finish();
+            VideoActivity.super.finish();
         }
     }
 

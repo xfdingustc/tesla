@@ -24,7 +24,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.clips.upload.VideoItemAdapter;
+import com.waylens.hachi.ui.settings.VideoItemAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 
 import org.json.JSONArray;

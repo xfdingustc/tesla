@@ -412,4 +412,8 @@
 	<string name="timestamp_off">OFF</string>
 	<string name="search_hint">Search</string>
 	<string name="video_buffer">Video Buffer</string>
+	<string name="profile_setting">Profile setting</string>
+	<string name="my_videos">My videos</string>
+	<string name="username_update_failed">Failed to update new username</string>
+	<string name="birthday_update_failed">Failed to update birthday</string>
 </resources>
