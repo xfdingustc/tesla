@@ -39,7 +39,7 @@ import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
-import com.waylens.hachi.ui.settings.VideoActivity;
+import com.waylens.hachi.ui.settings.myvideo.VideoActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.snipe.vdb.ClipSetManager;

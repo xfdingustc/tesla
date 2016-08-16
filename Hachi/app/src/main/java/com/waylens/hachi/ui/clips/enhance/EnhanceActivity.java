@@ -43,6 +43,7 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
+import com.waylens.hachi.ui.settings.myvideo.VideoActivity;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
@@ -94,7 +95,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     private int mPlaylistId;
     private GaugeListAdapter mGaugeListAdapter;
 
-    private MaterialDialog mDownloadDialog;
+
 
     private BottomSheetDialog mDownloadBottomSheetDialog;
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
@@ -225,42 +226,42 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventDownload(DownloadEvent event) {
-        switch (event.getWhat()) {
-            case DownloadEvent.DOWNLOAD_WHAT_START:
-                mDownloadDialog = new MaterialDialog.Builder(this)
-                    .title(R.string.downloading)
-                    .contentGravity(GravityEnum.CENTER)
-                    .progress(false, 100, true)
-                    .show();
-                mDownloadDialog.setCanceledOnTouchOutside(false);
-                break;
-            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
-                if (mDownloadDialog != null) {
-                    int progress = (Integer) event.getExtra();
-                    mDownloadDialog.setProgress(progress);
-                }
-                break;
-            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
-                if (mDownloadDialog != null) {
-                    mDownloadDialog.dismiss();
-                }
-
-                final String videoUrl = (String) event.getExtra();
-                Snackbar snackbar = Snackbar.make(btnAddMusic, ("Stream has been download into " + videoUrl), Snackbar.LENGTH_LONG);
-                snackbar.setAction(R.string.open, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(new File(videoUrl)), "video/mp4");
-                        startActivity(intent);
-                    }
-                });
-                snackbar.show();
-                break;
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onEventDownload(DownloadEvent event) {
+//        switch (event.getWhat()) {
+//            case DownloadEvent.DOWNLOAD_WHAT_START:
+//                mDownloadDialog = new MaterialDialog.Builder(this)
+//                    .title(R.string.downloading)
+//                    .contentGravity(GravityEnum.CENTER)
+//                    .progress(false, 100, true)
+//                    .show();
+//                mDownloadDialog.setCanceledOnTouchOutside(false);
+//                break;
+//            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
+//                if (mDownloadDialog != null) {
+//                    int progress = (Integer) event.getExtra();
+//                    mDownloadDialog.setProgress(progress);
+//                }
+//                break;
+//            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
+//                if (mDownloadDialog != null) {
+//                    mDownloadDialog.dismiss();
+//                }
+//
+//                final String videoUrl = (String) event.getExtra();
+//                Snackbar snackbar = Snackbar.make(btnAddMusic, ("Stream has been download into " + videoUrl), Snackbar.LENGTH_LONG);
+//                snackbar.setAction(R.string.open, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Intent intent = new Intent(Intent.ACTION_VIEW);
+//                        intent.setDataAndType(Uri.fromFile(new File(videoUrl)), "video/mp4");
+//                        startActivity(intent);
+//                    }
+//                });
+//                snackbar.show();
+//                break;
+//        }
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
@@ -427,6 +428,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     public void onClick(View view) {
                         mDownloadInfo = response.main;
                         doDownloadStream(mDownloadInfo);
+                        VideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });
@@ -436,6 +438,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     public void onClick(View view) {
                         mDownloadInfo = response.sub;
                         doDownloadStream(mDownloadInfo);
+                        VideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });

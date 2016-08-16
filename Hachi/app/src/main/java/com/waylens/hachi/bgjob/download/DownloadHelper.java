@@ -19,6 +19,11 @@ public class DownloadHelper {
         return getDownloadPath(VIDEO_DOWNLOAD_PATH);
     }
 
+    public static File[] getDownloadedFileList() {
+        File downloadDir = new File(getVideoDownloadPath());
+        return downloadDir.listFiles();
+    }
+
     public static String getPicturePath() {
         return getDownloadPath(PICTURE_DOWNLOAD_PATH);
     }

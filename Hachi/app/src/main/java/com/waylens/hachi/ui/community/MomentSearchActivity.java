@@ -24,7 +24,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.settings.VideoItemAdapter;
+import com.waylens.hachi.ui.settings.myvideo.MomentItemAdapter;
 import com.waylens.hachi.ui.entities.Moment;
 
 import org.json.JSONArray;
@@ -43,7 +43,7 @@ import butterknife.BindView;
 public class MomentSearchActivity extends BaseActivity {
     private static final String TAG = MomentSearchActivity.class.getSimpleName();
     private static final String EXTRA_QUERY = "extra_query";
-    private VideoItemAdapter mVideoItemAdapter;
+    private MomentItemAdapter mVideoItemAdapter;
 
     private SearchHistoryTable mHistoryDatabase;
 
@@ -84,7 +84,7 @@ public class MomentSearchActivity extends BaseActivity {
 //        setupToolbar();
 
         mMomentList.setLayoutManager(new LinearLayoutManager(this));
-        mVideoItemAdapter = new VideoItemAdapter(this);
+        mVideoItemAdapter = new MomentItemAdapter(this);
         mMomentList.setAdapter(mVideoItemAdapter);
 
         setupSearchView();

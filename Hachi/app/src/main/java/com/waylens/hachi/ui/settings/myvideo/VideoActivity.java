@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.settings;
+package com.waylens.hachi.ui.settings.myvideo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -35,7 +35,9 @@ import butterknife.BindView;
 public class VideoActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
     private static final String TAG = VideoActivity.class.getSimpleName();
 
-    private VideoItemAdapter mVideoItemAdapter;
+    private MomentItemAdapter mVideoItemAdapter;
+    private UploadItemAdapter mUploadItemAdapter;
+    private DownloadItemAdapter mDownloadItemAdapter;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -45,8 +47,15 @@ public class VideoActivity extends BaseActivity implements UploadManager.OnUploa
     }
 
 
-    @BindView(R.id.my_video_list)
-    RecyclerView mRvMyVideoList;
+    @BindView(R.id.moment_list)
+    RecyclerView mRvMomentList;
+
+    @BindView(R.id.uploading_list)
+    RecyclerView mRvUploadingList;
+
+    @BindView(R.id.download_list)
+    RecyclerView mRvDownloadList;
+
 
 
     @Override
@@ -119,14 +128,20 @@ public class VideoActivity extends BaseActivity implements UploadManager.OnUploa
     }
 
     private void setupMyVideoList() {
-        mRvMyVideoList.setLayoutManager(new LinearLayoutManager(this));
-        mVideoItemAdapter = new VideoItemAdapter(this);
-        mRvMyVideoList.setAdapter(mVideoItemAdapter);
-        mRvMyVideoList.setLayoutManager(new LinearLayoutManager(this));
+        mRvUploadingList.setLayoutManager(new LinearLayoutManager(this));
+        mUploadItemAdapter = new UploadItemAdapter(this);
+        mRvUploadingList.setAdapter(mUploadItemAdapter);
+
+        mRvMomentList.setLayoutManager(new LinearLayoutManager(this));
+        mVideoItemAdapter = new MomentItemAdapter(this);
+        mRvMomentList.setAdapter(mVideoItemAdapter);
+
+        mRvDownloadList.setLayoutManager(new LinearLayoutManager(this));
+        mDownloadItemAdapter = new DownloadItemAdapter(this);
+        mRvDownloadList.setAdapter(mDownloadItemAdapter);
+
         UploadManager.getManager().addOnUploadJobStateChangedListener(this);
         loadUserMoment(0, false);
-
-
     }
 
 
