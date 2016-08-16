@@ -2,12 +2,10 @@ package com.waylens.hachi.ui.clips.enhance;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
@@ -28,7 +25,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.download.DownloadJob;
-import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
@@ -43,13 +39,15 @@ import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
-import com.waylens.hachi.ui.settings.myvideo.VideoActivity;
+import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
+import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.DownloadUrlRequest;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipDownloadInfo;
+import com.xfdingustc.snipe.vdb.ClipPos;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
 import com.xfdingustc.snipe.vdb.ClipSetPos;
@@ -57,7 +55,6 @@ import com.xfdingustc.snipe.vdb.ClipSetPos;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -278,7 +275,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Logger.t(TAG).d("register");
+//        Logger.t(TAG).d("register");
         mEventBus.register(mPlaylistEditor);
         mEventBus.register(mClipsEditView);
 //        mEventBus.register(this);
@@ -428,7 +425,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     public void onClick(View view) {
                         mDownloadInfo = response.main;
                         doDownloadStream(mDownloadInfo);
-                        VideoActivity.launch(EnhanceActivity.this);
+                        DownloadVideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });
@@ -438,7 +435,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     public void onClick(View view) {
                         mDownloadInfo = response.sub;
                         doDownloadStream(mDownloadInfo);
-                        VideoActivity.launch(EnhanceActivity.this);
+                        DownloadVideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });
@@ -464,7 +461,7 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private void doDownloadStream(ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
         JobManager jobManager = BgJobManager.getManager();
-        DownloadJob job = new DownloadJob(getClipSet().getClip(0).streams[0], downloadInfo);
+        DownloadJob job = new DownloadJob(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], downloadInfo);
         jobManager.addJobInBackground(job);
     }
 

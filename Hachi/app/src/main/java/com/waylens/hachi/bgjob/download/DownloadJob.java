@@ -13,6 +13,7 @@ import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipDownloadInfo;
+import com.xfdingustc.snipe.vdb.ClipPos;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,6 +23,7 @@ import org.greenrobot.eventbus.EventBus;
 public class DownloadJob extends Job {
     private static final String TAG = DownloadJob.class.getSimpleName();
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
+    private Clip mClip;
     private Clip.StreamInfo mStreamInfo;
 
     private EventBus mEventBus = EventBus.getDefault();
@@ -32,9 +34,9 @@ public class DownloadJob extends Job {
     private DownloadManager mDownloadManager = DownloadManager.getManager();
 
 
-    public DownloadJob(Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
+    public DownloadJob(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
         super(new Params(0).requireNetwork().setPersistent(false));
-
+        this.mClip = clip;
         this.mStreamInfo = streamInfo;
         this.mDownloadInfo = downloadInfo;
     }
@@ -160,5 +162,9 @@ public class DownloadJob extends Job {
 
     public String getOutputFile() {
         return mDownloadFilePath;
+    }
+
+    public ClipPos getClipStartPos() {
+        return new ClipPos(mClip);
     }
 }

@@ -29,7 +29,8 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
-import com.waylens.hachi.ui.settings.myvideo.VideoActivity;
+import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
+import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.utils.FastBlurUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -78,9 +79,14 @@ public class AccountActivity extends BaseActivity {
     }
 
 
+    @OnClick(R.id.my_moments)
+    public void onMyMomentsClicked() {
+        MyMomentActivity.launch(this);
+    }
+
     @OnClick(R.id.my_videos)
     public void onMyVideosClicked() {
-        VideoActivity.launch(this);
+        DownloadVideoActivity.launch(this);
     }
 
     @OnClick(R.id.notification)

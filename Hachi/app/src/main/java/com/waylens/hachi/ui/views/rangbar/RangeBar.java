@@ -352,7 +352,7 @@ public class RangeBar extends View {
 
         float xPos = marginLeft + (mLeftIndex / (float) (mTickCount - 1)) * barLength;
         mLeftThumb.setX(marginLeft + (mLeftIndex / (float) (mTickCount - 1)) * barLength);
-        Logger.t(TAG).d("xPos: " + xPos);
+//        Logger.t(TAG).d("xPos: " + xPos);
         mLeftThumb.setXValue(getPinValue(mLeftIndex));
         mRightThumb.setX(marginLeft + (mRightIndex / (float) (mTickCount - 1)) * barLength);
         mRightThumb.setXValue(getPinValue(mRightIndex));

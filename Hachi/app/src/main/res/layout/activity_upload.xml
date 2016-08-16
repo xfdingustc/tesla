@@ -25,10 +25,7 @@
                 android:layout_height="1dp"
                 android:background="@color/settings_line_separator"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/download_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
 
             <View
                 android:layout_width="match_parent"

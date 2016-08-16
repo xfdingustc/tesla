@@ -2,10 +2,7 @@ package com.waylens.hachi.ui.settings.myvideo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,20 +12,19 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.bgjob.download.DownloadJob;
+import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
+import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/8/15.
@@ -39,9 +35,12 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private DownloadManager mDownloadManager = DownloadManager.getManager();
 
+    private File[] mDownloadedFileList;
+
     public DownloadItemAdapter(Activity activity) {
         this.mActivity = activity;
         mDownloadManager.addListener(this);
+        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
     }
 
     @Override
@@ -73,51 +72,38 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onDownloadJobRemoved() {
+        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
         notifyDataSetChanged();
     }
 
     private void onBindDownloadingViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Logger.t(TAG).d("bind downloading view holder: " + position);
         DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
         DownloadJob job = DownloadManager.getManager().getDownloadJob(position);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(job.getDownloadProgress());
+        Glide.with(mActivity)
+            .using(new SnipeGlideLoader(VdtCameraManager.getManager().getCurrentVdbRequestQueue()))
+            .load(job.getClipStartPos())
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .crossFade()
+            .into(videoItemViewHolder.videoCover);
         if (job.getOutputFile() != null) {
             videoItemViewHolder.momentTitle.setText(new File(job.getOutputFile()).getName());
         }
+        videoItemViewHolder.videoDuration.setVisibility(View.GONE);
+        videoItemViewHolder.btnMore.setVisibility(View.GONE);
     }
 
     private void onBindDownloadedViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Logger.t(TAG).d("bind downloaded view holder: " + position);
+
         final DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
-        File[] downloadedFiles = DownloadHelper.getDownloadedFileList();
-        final File oneDownloadedFile = downloadedFiles[position];
 
-        Observable.create(new Observable.OnSubscribe<Bitmap>() {
-            @Override
-            public void call(Subscriber<? super Bitmap> subscriber) {
-                Bitmap bitmap = getVideoBitmap(oneDownloadedFile.toString(), 384, 216, MediaStore.Images.Thumbnails.MICRO_KIND);
-                subscriber.onNext(bitmap);
-            }
-        })
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<Bitmap>() {
-                @Override
-                public void onCompleted() {
+        final File oneDownloadedFile = mDownloadedFileList[position];
 
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onNext(Bitmap bitmap) {
-                    videoItemViewHolder.videoCover.setImageBitmap(bitmap);
-                }
-            });
+        Glide.with(mActivity)
+            .loadFromMediaStore(Uri.fromFile(oneDownloadedFile))
+            .crossFade()
+            .into(videoItemViewHolder.videoCover);
 
 
         videoItemViewHolder.momentTitle.setText(oneDownloadedFile.getName());
@@ -131,24 +117,15 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mActivity.startActivity(intent);
             }
         });
+        videoItemViewHolder.videoDuration.setVisibility(View.GONE);
 
-
-    }
-
-    public Bitmap getVideoBitmap(String filePath, int width, int height, int kind) {
-
-        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(filePath, kind);
-
-
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-
-        return bitmap;
+        videoItemViewHolder.btnMore.setVisibility(View.GONE);
     }
 
 
     @Override
     public int getItemCount() {
-        return mDownloadManager.getCount() + DownloadHelper.getDownloadedFileList().length;
+        return mDownloadManager.getCount() + mDownloadedFileList.length;
     }
 
 

@@ -418,5 +418,6 @@
 	<string name="birthday_update_failed">Failed to update birthday</string>
 	<string name="screen_saver">Screen Saver</string>
 	<string name="auto_power_off">Auto Power Off</string>
-
+	<string name="my_moments">My moments</string>
+	<string name="download_videos">Download videos</string>
 </resources>

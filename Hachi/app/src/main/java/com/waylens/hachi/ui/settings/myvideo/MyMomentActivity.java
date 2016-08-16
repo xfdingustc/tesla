@@ -32,17 +32,17 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2016/6/17.
  */
-public class VideoActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
-    private static final String TAG = VideoActivity.class.getSimpleName();
+public class MyMomentActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
+    private static final String TAG = MyMomentActivity.class.getSimpleName();
 
     private MomentItemAdapter mVideoItemAdapter;
     private UploadItemAdapter mUploadItemAdapter;
-    private DownloadItemAdapter mDownloadItemAdapter;
+
 
     private EventBus mEventBus = EventBus.getDefault();
 
     public static void launch(Activity activity) {
-        Intent intent = new Intent(activity, VideoActivity.class);
+        Intent intent = new Intent(activity, MyMomentActivity.class);
         activity.startActivity(intent);
     }
 
@@ -52,10 +52,6 @@ public class VideoActivity extends BaseActivity implements UploadManager.OnUploa
 
     @BindView(R.id.uploading_list)
     RecyclerView mRvUploadingList;
-
-    @BindView(R.id.download_list)
-    RecyclerView mRvDownloadList;
-
 
 
     @Override
@@ -67,19 +63,19 @@ public class VideoActivity extends BaseActivity implements UploadManager.OnUploa
     @Override
     public void finish() {
         if (UploadManager.getManager().getUploadingJobCount() > 0) {
-            MaterialDialog dialog = new MaterialDialog.Builder(VideoActivity.this)
+            MaterialDialog dialog = new MaterialDialog.Builder(MyMomentActivity.this)
                 .content(R.string.exit_video_upload_confirm)
                 .negativeText(R.string.stay)
                 .positiveText(R.string.leave_anyway)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        VideoActivity.super.finish();
+                        MyMomentActivity.super.finish();
                     }
                 })
                 .show();
         } else {
-            VideoActivity.super.finish();
+            MyMomentActivity.super.finish();
         }
     }
 
@@ -116,7 +112,7 @@ public class VideoActivity extends BaseActivity implements UploadManager.OnUploa
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        getToolbar().setTitle(R.string.video);
+        getToolbar().setTitle(R.string.my_moments);
 
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,9 +132,7 @@ public class VideoActivity extends BaseActivity implements UploadManager.OnUploa
         mVideoItemAdapter = new MomentItemAdapter(this);
         mRvMomentList.setAdapter(mVideoItemAdapter);
 
-        mRvDownloadList.setLayoutManager(new LinearLayoutManager(this));
-        mDownloadItemAdapter = new DownloadItemAdapter(this);
-        mRvDownloadList.setAdapter(mDownloadItemAdapter);
+
 
         UploadManager.getManager().addOnUploadJobStateChangedListener(this);
         loadUserMoment(0, false);
