@@ -416,4 +416,7 @@
 	<string name="my_videos">My videos</string>
 	<string name="username_update_failed">Failed to update new username</string>
 	<string name="birthday_update_failed">Failed to update birthday</string>
+	<string name="screen_saver">Screen Saver</string>
+	<string name="auto_power_off">Auto Power Off</string>
+
 </resources>

@@ -52,6 +52,7 @@ import com.xfdingustc.snipe.vdb.SpaceInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -74,6 +75,9 @@ public class CameraSettingFragment extends PreferenceFragment {
     private static final String DOWNLOAD_FILE_NAME = "firmware";
     private static final String[] AUTO_OFF_TIME = {"Never", "10s", "30s", "60s", "2min", "5min"};
 
+    private static final String[] POWER_AUTO_OFF_TIME = {"Never", "30s", "60s", "2min", "5min"};
+
+    private static final String[] SCREEN_SAVER_STYLE = {"All Black", "Dot"};
     private VdtCamera mVdtCamera;
 
     private Preference mCameraName;
@@ -84,6 +88,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mConnectivity;
     private Preference mFirmware;
     private Preference mDisplay;
+    private Preference mPower;
 
 
     private FirmwareInfo mFirmwareInfo;
@@ -100,6 +105,10 @@ public class CameraSettingFragment extends PreferenceFragment {
     private SeekBar mBrightnessSeekbar;
     private NumberPicker mAutoOffNumber;
     private TextView mBrightness;
+
+    private TextView mTvPower;
+    private NumberPicker mNpScreenSaver;
+    private NumberPicker mNpAutoPowerOff;
 
 
 
@@ -173,6 +182,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         initAudioPreference();
         initStoragePreference();
         initDisplayPreference();
+        initPowerPreference();
         initConnectivityPreference();
         initFirmwarePreference();
     }
@@ -414,8 +424,12 @@ public class CameraSettingFragment extends PreferenceFragment {
                                 int brightness = mBrightnessSeekbar.getProgress();
                                 int autoOffTimePos = mAutoOffNumber.getValue();
                                 String autoOffTime = AUTO_OFF_TIME[autoOffTimePos];
+                                int screenSaverPos = mNpScreenSaver.getValue();
+                                String screenSaver = SCREEN_SAVER_STYLE[screenSaverPos];
                                 mVdtCamera.setDisplayBrightness(brightness);
                                 mVdtCamera.setDisplayAutoOffTime(autoOffTime);
+                                mVdtCamera.setScreenSaverStyle(screenSaver);
+                                mVdtCamera.getScreenSaverStyle();
                             }
                         })
                         .show();
@@ -423,11 +437,29 @@ public class CameraSettingFragment extends PreferenceFragment {
                 mBrightnessSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbBrightness);
                 mBrightness = (TextView) dialog.getCustomView().findViewById(R.id.tv_brightness);
                 mAutoOffNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
+                mNpScreenSaver = (NumberPicker) dialog.getCustomView().findViewById(R.id.npScreen);
+                mNpScreenSaver.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                 mBrightnessSeekbar.setMax(10);
-
+                mAutoOffNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                 mAutoOffNumber.setDisplayedValues(AUTO_OFF_TIME);
                 mAutoOffNumber.setMinValue(0);
                 mAutoOffNumber.setMaxValue(AUTO_OFF_TIME.length - 1);
+
+                mNpScreenSaver.setDisplayedValues(SCREEN_SAVER_STYLE);
+                mNpScreenSaver.setMinValue(0);
+                mNpScreenSaver.setMaxValue(SCREEN_SAVER_STYLE.length - 1);
+
+                String screenSaverStyle = mVdtCamera.getScreenSaverStyle();
+                int screenSaverStylePos = -1;
+                for(int i = 0; i < SCREEN_SAVER_STYLE.length; i++) {
+                    if (SCREEN_SAVER_STYLE[i].equals(screenSaverStyle)) {
+                        screenSaverStylePos = i;
+                        break;
+                    }
+                }
+                if (screenSaverStylePos != -1) {
+                    mNpScreenSaver.setValue(screenSaverStylePos);
+                }
 
                 int brightness = mVdtCamera.getDisplayBrightness();
                 String autoOffTime = mVdtCamera.getDisplayAutoOffTime();
@@ -461,6 +493,53 @@ public class CameraSettingFragment extends PreferenceFragment {
                     }
                 });
 
+                return true;
+            }
+        });
+    }
+
+    private void initPowerPreference() {
+        mPower = findPreference("power");
+        mPower.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.power)
+                        .customView(R.layout.dialog_power_setting, true)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                int autoOffTimePos = mNpAutoPowerOff.getValue();
+                                String autoOffTime = POWER_AUTO_OFF_TIME[autoOffTimePos];
+                                mVdtCamera.setAutoPowerOffDelay(autoOffTime);
+                            }
+                        })
+                        .show();
+
+                mTvPower = (TextView) dialog.getCustomView().findViewById(R.id.tv_power);
+                mNpAutoPowerOff  = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
+                mNpAutoPowerOff.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+                int batteryVolume = mVdtCamera.getBatteryVolume();
+                mTvPower.setText(String.valueOf(batteryVolume));
+
+                mNpAutoPowerOff.setDisplayedValues(POWER_AUTO_OFF_TIME);
+                mNpAutoPowerOff.setMinValue(0);
+                mNpAutoPowerOff.setMaxValue(POWER_AUTO_OFF_TIME.length - 1);
+
+                String autoPowerOffDelay = mVdtCamera.getAutoPowerOffDelay();
+                int autoPowerOffDelayPos = -1;
+                for(int i = 0; i < POWER_AUTO_OFF_TIME.length; i++) {
+                    if (POWER_AUTO_OFF_TIME[i].equals(autoPowerOffDelay)) {
+                        autoPowerOffDelayPos = i;
+                        break;
+                    }
+                }
+                if (autoPowerOffDelayPos != -1) {
+                    mNpAutoPowerOff.setValue(autoPowerOffDelayPos);
+                }
                 return true;
             }
         });
@@ -640,6 +719,8 @@ public class CameraSettingFragment extends PreferenceFragment {
 
                 mBeforeNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npBefore);
                 mAfterNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAfter);
+                mBeforeNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                mAfterNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                 mBeforeNumber.setMaxValue(MAX_BOOKMARK_LENGHT);
                 mAfterNumber.setMaxValue(MAX_BOOKMARK_LENGHT);
                 mBeforeNumber.setMinValue(0);

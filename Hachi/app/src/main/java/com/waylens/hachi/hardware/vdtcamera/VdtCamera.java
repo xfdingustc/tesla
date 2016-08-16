@@ -189,6 +189,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private int mDisplayBrightness = 0;
     private String mAutoOffTime = null;
+    private String mAutoPowerOffDelay = null;
+    private String mScreenSaverStyle = null;
 
     private int mWifiMode = WIFI_MODE_UNKNOWN;
     public int mNumWifiAP = 0;
@@ -457,6 +459,28 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_SET_DISPLAY_AUTO_OFF_TIME, autoOffTime);
     }
 
+    public String getAutoPowerOffDelay() {
+        mCommunicationBus.sendCommand(CMD_GET_AUTO_POWER_OFF_DELAY);
+        return mAutoPowerOffDelay;
+    }
+
+    public void setAutoPowerOffDelay(String autoPowerOffDelay) {
+        Logger.t(TAG).d(autoPowerOffDelay);
+        mCommunicationBus.sendCommand(CMD_SET_AUTO_POWER_OFF_DELAY, autoPowerOffDelay);
+    }
+
+    public String getScreenSaverStyle() {
+        Logger.t(TAG).d(String.format("getScreenSaverStyle" + mScreenSaverStyle));
+        mCommunicationBus.sendCommand(CMD_GET_SCREEN_SAVER_STYLE);
+        return mScreenSaverStyle;
+    }
+
+    public void setScreenSaverStyle(String screenSaverStyle) {
+        Logger.t(TAG).d(screenSaverStyle);
+        mCommunicationBus.sendCommand(CMD_SET_SCREEN_SAVER_STYLE, screenSaverStyle);
+    }
+
+
     public void setWifiMode(int wifiMode) {
         mCommunicationBus.sendCommand(CMD_NETWORK_CONNECT_HOST, wifiMode);
     }
@@ -723,6 +747,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_GET_DISPLAY_BRIGHTNESS);
         mCommunicationBus.sendCommand(CMD_GET_DISPLAY_AUTO_OFF_TIME);
         mCommunicationBus.sendCommand(CMD_REC_GET_OVERLAY_STATE);
+        mCommunicationBus.sendCommand(CMD_GET_AUTO_POWER_OFF_DELAY);
+        mCommunicationBus.sendCommand(CMD_GET_SCREEN_SAVER_STYLE);
         long timeMillis = System.currentTimeMillis();
         int timeZone = TimeZone.getDefault().getRawOffset();
 
@@ -967,8 +993,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
             mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
             mRecordState = state;
         }
-
-
     }
 
 
@@ -1317,6 +1341,43 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
     }
 
+    private void ack_setAutoPowerOffDelay(String p1, String p2) {
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
+        try {
+            mAutoPowerOffDelay = p1;
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
+        }
+    }
+
+    private void ack_getAutoPowerOffDelay(String p1, String p2) {
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
+        try {
+            mAutoPowerOffDelay = p1;
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
+        }
+    }
+
+    private void ack_setScreenSaverStyle(String p1, String p2) {
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
+        try {
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
+        }
+    }
+
+    private void ack_getScreenSaverStyle(String p1, String p2) {
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
+        try {
+            mScreenSaverStyle = p1;
+        } catch (Exception e) {
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
+        }
+    }
+
+
+
 
 
     private void handleCameraMessage(int cmd, String p1, String p2) {
@@ -1452,6 +1513,18 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 break;
             case CMD_SET_DISPLAY_AUTO_OFF_TIME:
                 ack_setDisplayAutoOffTime(p1, p2);
+                break;
+            case CMD_GET_AUTO_POWER_OFF_DELAY:
+                ack_getAutoPowerOffDelay(p1, p2);
+                break;
+            case CMD_SET_AUTO_POWER_OFF_DELAY:
+                ack_setAutoPowerOffDelay(p1, p2);
+                break;
+            case CMD_GET_SCREEN_SAVER_STYLE:
+                ack_getScreenSaverStyle(p1, p2);
+                break;
+            case CMD_SET_SCREEN_SAVER_STYLE:
+                ack_setScreenSaverStyle(p1, p2);
                 break;
             default:
                 //Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
