@@ -2,28 +2,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/recording_quality"
-        android:layout="@layout/preference_category_widget">
+        android:title="@string/recording_quality">
 
         <Preference
             android:key="resolution"
-            android:layout="@layout/preference_item_icon"
             android:title="@string/resolution"/>
 
         <Preference
             android:key="framerate"
-            android:layout="@layout/preference_item_icon"
-            android:title="@string/framerate"
-            />
+            android:title="@string/framerate"/>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/timestamp_on_video"
-        android:layout="@layout/preference_category_widget">
+        android:title="@string/timestamp_on_video">
 
         <Preference
             android:key="timestamp"
-            android:layout="@layout/preference_item_icon"
             android:title="@string/timestamp"/>
 
     </PreferenceCategory>

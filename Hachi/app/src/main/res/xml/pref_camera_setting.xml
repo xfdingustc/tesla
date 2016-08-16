@@ -2,81 +2,44 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <PreferenceCategory
-        android:layout="@layout/preference_category_widget">
+    <Preference
+        android:key="cameraName"
+        android:title="@string/camera_name"/>
+
+    <Preference
+        android:key="video"
+        android:title="@string/video"/>
+
+    <Preference
+        android:key="audio"
+        android:title="@string/audio"/>
 
 
-        <Preference
-            android:key="cameraName"
-            android:layout="@layout/preference_item"
-            android:title="@string/camera_name"/>
-
-        <Preference
-            android:key="video"
-            android:layout="@layout/preference_item"
-            android:title="@string/video"/>
-
-        <Preference
-            android:key="audio"
-            android:layout="@layout/preference_item"
-            android:title="@string/audio"/>
-
-    </PreferenceCategory>
+    <Preference
+        android:key="bookmark"
+        android:title="@string/highlights"/>
 
 
-    <PreferenceCategory
-        android:layout="@layout/preference_category_widget">
+    <Preference
+        android:key="storage"
+        android:title="@string/storage"/>
+
+    <Preference
+        android:key="connectivity"
+        android:title="@string/connectivity"/>
+
+    <Preference
+        android:key="power"
+        android:title="@string/power"/>
+
+    <Preference
+        android:key="display"
+        android:title="@string/display"/>
 
 
-        <Preference
-            android:key="bookmark"
-            android:layout="@layout/preference_item"
-            android:title="@string/highlights"/>
+    <Preference
+        android:key="firmware"
+        android:title="@string/firmware"/>
 
-
-
-    </PreferenceCategory>
-
-
-    <PreferenceCategory
-        android:layout="@layout/preference_category_widget">
-
-
-        <Preference
-            android:key="storage"
-            android:layout="@layout/preference_item"
-            android:title="@string/storage"/>
-
-        <Preference
-            android:key="connectivity"
-            android:layout="@layout/preference_item"
-            android:title="@string/connectivity"/>
-
-        <Preference
-            android:key="power"
-            android:layout="@layout/preference_item"
-            android:title="@string/power"/>
-
-        <Preference
-            android:key="display"
-            android:layout="@layout/preference_item"
-            android:title="@string/display"/>
-
-    </PreferenceCategory>
-
-
-
-    <PreferenceCategory
-        android:layout="@layout/preference_category_widget">
-
-
-        <Preference
-            android:key="firmware"
-            android:layout="@layout/preference_item"
-            android:title="@string/firmware"/>
-
-
-
-    </PreferenceCategory>
 
 </PreferenceScreen>
