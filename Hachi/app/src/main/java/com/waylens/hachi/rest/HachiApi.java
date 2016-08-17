@@ -21,6 +21,8 @@ import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
+import com.waylens.hachi.rest.response.MusicCategoryResponse;
+import com.waylens.hachi.rest.response.MusicList;
 import com.waylens.hachi.rest.response.RawDataResponse;
 import com.waylens.hachi.rest.response.RepostResponse;
 import com.waylens.hachi.rest.response.SignUpResponse;
@@ -134,5 +136,11 @@ public interface HachiApi {
 
     @POST("/api/moments/update/{momentId}")
     Call<SimpleBoolResponse> updateMoment(@Path("momentId") long momentId, @Body MomentUpdateBody momentUpdatebody);
+
+    @GET("/api/musics/categories")
+    Call<MusicCategoryResponse> getMusicCategories();
+
+    @GET("/api/musics/categories/{categoryId}")
+    Observable<MusicList> getMusicList(@Path("categoryId") long categoryId);
 
 }

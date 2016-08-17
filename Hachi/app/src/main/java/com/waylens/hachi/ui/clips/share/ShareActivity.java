@@ -361,9 +361,9 @@ public class ShareActivity extends ClipPlayActivity {
 
     private void doShareMoment() {
         String title = mEtMomentTitle.getEditableText().toString();
-//        if (TextUtils.isEmpty(title)) {
+//        if (TextUtils.isEmpty(name)) {
 //            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//            title = "Created " + format.format(System.currentTimeMillis());
+//            name = "Created " + format.format(System.currentTimeMillis());
 //        }
 
         String descrption = mEtMomentDescription.getEditableText().toString();
@@ -372,7 +372,7 @@ public class ShareActivity extends ClipPlayActivity {
         Map<String, String> gaugeSettings = GaugeSettingManager.getManager().getGaugeSettingMap();
 
 
-        Logger.t(TAG).d("share title: " + title);
+        Logger.t(TAG).d("share name: " + title);
 
         LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption,
             tags, mSocialPrivacy, mAudioId, gaugeSettings,

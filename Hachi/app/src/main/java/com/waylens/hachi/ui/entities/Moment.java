@@ -116,7 +116,7 @@ public class Moment implements Serializable {
             moment.videoURL = jsonMoment.optString("videoUrl");
         }
 
-        moment.title = jsonMoment.optString("title");
+        moment.title = jsonMoment.optString("name");
         moment.description = jsonMoment.optString("description");
 
         moment.captureTime = jsonMoment.optString("captureTime");

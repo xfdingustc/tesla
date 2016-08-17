@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:indeterminateTint="@color/style_color_accent"
         />
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -30,9 +31,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="@string/error_loading_musics"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:layout_gravity="center"/>
+        android:textSize="20sp"/>
 
 </ViewAnimator>

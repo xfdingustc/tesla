@@ -33,21 +33,19 @@ import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
-import com.waylens.hachi.ui.clips.MusicDownloadActivity;
 import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
+import com.waylens.hachi.ui.clips.music.MusicListSelectActivity;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
-import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.DownloadUrlRequest;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipDownloadInfo;
-import com.xfdingustc.snipe.vdb.ClipPos;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
 import com.xfdingustc.snipe.vdb.ClipSetPos;
@@ -145,20 +143,18 @@ public class EnhanceActivity extends ClipPlayActivity {
     @OnClick(R.id.btn_music)
     public void onClickMusic(View view) {
         btnGauge.setSelected(false);
-//        btnRemix.setSelected(false);
-//        view.setSelected(!view.isSelected());
         if (mMusicItem == null) {
-            MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
+            MusicListSelectActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
         } else {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title(mMusicItem.title)
+                .title(mMusicItem.name)
                 .content(mMusicItem.description)
                 .positiveText(R.string.change)
                 .negativeText(R.string.remove)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        MusicDownloadActivity.launchForResult(EnhanceActivity.this, REQUEST_CODE_ADD_MUSIC);
+                        MusicListSelectActivity.launchForResult(EnhanceActivity.this, REQUEST_CODE_ADD_MUSIC);
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -173,10 +169,7 @@ public class EnhanceActivity extends ClipPlayActivity {
 //        updateMusicUI();
     }
 
-    @OnClick(R.id.btn_add_music)
-    public void addMusic() {
-        MusicDownloadActivity.launchForResult(this, REQUEST_CODE_ADD_MUSIC);
-    }
+
 
     @OnClick(R.id.btn_remove)
     public void removeMusic() {
@@ -228,7 +221,7 @@ public class EnhanceActivity extends ClipPlayActivity {
 //        switch (event.getWhat()) {
 //            case DownloadEvent.DOWNLOAD_WHAT_START:
 //                mDownloadDialog = new MaterialDialog.Builder(this)
-//                    .title(R.string.downloading)
+//                    .name(R.string.downloading)
 //                    .contentGravity(GravityEnum.CENTER)
 //                    .progress(false, 100, true)
 //                    .show();

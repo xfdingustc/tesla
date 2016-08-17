@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.clips;
+package com.waylens.hachi.ui.clips.music;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,20 +12,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.rest.response.MusicCategoryResponse;
+import com.waylens.hachi.rest.response.MusicList;
+import com.waylens.hachi.rxjava.SimpleSubscribe;
 import com.waylens.hachi.ui.adapters.MusicListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -33,28 +31,20 @@ import com.waylens.hachi.ui.helpers.DownloadHelper;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.VolleyUtil;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
+import static com.waylens.hachi.rest.response.MusicCategoryResponse.MusicCategory;
 
-/**
- * Created by Richard on 2/1/16.
- */
 public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMusicActionListener {
     private static final String TAG = MusicFragment.class.getSimpleName();
 
-    @BindView(R.id.music_list_view)
-    RecyclerViewExt mMusicListView;
+    private static final String EXTRA_MUSIC_CATEGORY = "extra.music.category";
 
-    @BindView(R.id.view_animator)
-    ViewAnimator mViewAnimator;
+    private MusicCategory mMusicCategory;
 
-    @BindView(R.id.refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
 
     MusicListAdapter mMusicListAdapter;
 
@@ -65,14 +55,33 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
     MusicItem mMusicItem;
     MusicListAdapter.ViewHolder mViewHolder;
 
+    @BindView(R.id.music_list_view)
+    RecyclerViewExt mMusicListView;
+
+    @BindView(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
+
     @Override
     protected String getRequestTag() {
         return TAG;
     }
 
+
+    public static MusicFragment newInstance(MusicCategory category) {
+        MusicFragment fragment = new MusicFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(EXTRA_MUSIC_CATEGORY, category);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mMusicCategory = (MusicCategoryResponse.MusicCategory) getArguments().getSerializable(EXTRA_MUSIC_CATEGORY);
         mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mDownloadHelper = new DownloadHelper(getActivity(), mListener);
     }
@@ -118,44 +127,40 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
         super.onDestroyView();
     }
 
-    void loadMusicList() {
+    private void loadMusicList() {
         mViewAnimator.setDisplayedChild(0);
-        String url = Constants.HOST_URL + Constants.API_MUSICS;
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onLoadMusicsSuccessful(response);
+
+        mHachi.getMusicList(mMusicCategory.id)
+            .subscribeOn(Schedulers.io())
+            .map(new Func1<MusicList, MusicList>() {
+                @Override
+                public MusicList call(MusicList musicList) {
+                    for (MusicItem item : musicList.musicList) {
+                        item.checkLocalFile(Hachi.getContext());
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (mViewAnimator != null) {
-                            mViewAnimator.setDisplayedChild(2);
-                        }
+                    return musicList;
+                }
+            })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MusicList>() {
+                @Override
+                public void onNext(MusicList musicList) {
+                    onLoadMusicsSuccessful(musicList);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    super.onError(e);
+                    if (mViewAnimator != null) {
+                        mViewAnimator.setDisplayedChild(2);
                     }
-                }).setTag(Constants.API_MUSICS));
+                }
+            });
     }
 
-    void onLoadMusicsSuccessful(JSONObject response) {
-        ArrayList<MusicItem> musicItems = new ArrayList<>();
-        JSONArray jsonArray = response.optJSONArray("musicList");
-        if (jsonArray == null) {
-            return;
-        }
-        for (int i = 0; i < jsonArray.length(); i++) {
-            MusicItem musicItem = MusicItem.fromJson(jsonArray.optJSONObject(i), getActivity());
-            if (musicItem != null) {
-                musicItems.add(musicItem);
-                if (!musicItem.isDownloaded()) {
-                    Logger.t(TAG).d("Should Download: " + musicItem);
-                } else {
-                    Logger.t(TAG).d("Exist: " + musicItem);
-                }
-            }
-        }
-        mMusicListAdapter.setMusicItems(musicItems);
+
+    private void onLoadMusicsSuccessful(MusicList musicList) {
+        mMusicListAdapter.setMusicItems(musicList.musicList);
         mViewAnimator.setDisplayedChild(1);
     }
 
@@ -191,13 +196,13 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
         mViewHolder = holder;
 
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             continueDownloadMusic();
         } else {
             ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MusicDownloadActivity.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                MusicListSelectActivity.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
     }
 

@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.entities;
 
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,7 +26,7 @@ public class MusicItem implements DownloadHelper.Downloadable {
 
     public int id;
 
-    public String title;
+    public String name;
 
     public String description;
 
@@ -52,18 +51,19 @@ public class MusicItem implements DownloadHelper.Downloadable {
         MusicItem item = new MusicItem();
 
         item.id = jsonObject.optInt("id");
-        item.title = jsonObject.optString("name");
+        item.name = jsonObject.optString("name");
         item.description = jsonObject.optString("description");
         item.url = jsonObject.optString("url");
         item.md5sum = jsonObject.optString("md5sum");
         item.duration = jsonObject.optInt("duration");
         item.updateTime = jsonObject.optLong("updateTime");
-        item.destFileName = "music-" + item.id + ".m4a";
+
         item.checkLocalFile(context);
         return item;
     }
 
-    void checkLocalFile(Context context) {
+    public void checkLocalFile(Context context) {
+        destFileName = "music-" + id + ".m4a";
         File dir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
         if (dir == null) {
             status = STATUS_REMOTE;
@@ -96,7 +96,7 @@ public class MusicItem implements DownloadHelper.Downloadable {
 
     @Override
     public String toString() {
-        return String.format("[%d] %s", id, title);
+        return String.format("[%d] %s", id, name);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class MusicItem implements DownloadHelper.Downloadable {
         request.setVisibleInDownloadsUi(true);
         request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_MUSIC, destFileName);
         //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, destFileName);
-        request.setTitle(title);
+        request.setTitle(name);
         return request;
     }
 
@@ -123,7 +123,7 @@ public class MusicItem implements DownloadHelper.Downloadable {
     public Bundle toBundle() {
         Bundle data = new Bundle();
         data.putInt("id", id);
-        data.putString("title", title);
+        data.putString("name", name);
         data.putString("localPath", localPath);
         data.putInt("duration", duration);
         return data;
@@ -133,7 +133,7 @@ public class MusicItem implements DownloadHelper.Downloadable {
         MusicItem musicItem = new MusicItem();
         musicItem.id = bundle.getInt("id");
         musicItem.duration = bundle.getInt("duration");
-        musicItem.title = bundle.getString("title");
+        musicItem.name = bundle.getString("name");
         musicItem.localPath = bundle.getString("localPath");
         return musicItem;
     }

@@ -214,7 +214,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.clips.MusicDownloadActivity"
+            android:name=".ui.clips.music.MusicListSelectActivity"
             android:screenOrientation="portrait"/>
 
         <activity

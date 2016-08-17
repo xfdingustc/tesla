@@ -29,7 +29,7 @@ public class NotificationEvent {
         Logger.t("Notification Event").d(jsonObject.toString());
         if (jsonMoment != null) {
             momentID = jsonMoment.optLong("momentID");
-            title = jsonMoment.optString("title");
+            title = jsonMoment.optString("name");
             provider = jsonMoment.optString("provider");
             if (Moment.PROVIDER_YOUTUBE.equals(provider)) {
                 videoID = jsonMoment.optString("videoID");

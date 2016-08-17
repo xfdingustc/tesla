@@ -772,7 +772,7 @@ public class MomentActivity extends BaseActivity {
 //                                case R.id.report:
 //
 //                                    MaterialDialog dialog = new MaterialDialog.Builder(MomentActivity.this)
-//                                        .title(R.string.report)
+//                                        .name(R.string.report)
 //                                        .items(R.array.report_reason)
 //                                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
 //                                            @Override

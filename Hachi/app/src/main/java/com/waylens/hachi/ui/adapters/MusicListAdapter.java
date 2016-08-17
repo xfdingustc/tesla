@@ -19,6 +19,7 @@ import com.waylens.hachi.ui.helpers.DownloadHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 import butterknife.BindView;
@@ -29,7 +30,7 @@ import butterknife.ButterKnife;
  */
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder> {
 
-    ArrayList<MusicItem> mMusicItems = new ArrayList<>();
+    List<MusicItem> mMusicItems = new ArrayList<>();
 
     int mPreviewIndex = -1;
 
@@ -48,7 +49,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         mLayoutManager = layoutManager;
     }
 
-    public void setMusicItems(ArrayList<MusicItem> musicItems) {
+    public void setMusicItems(List<MusicItem> musicItems) {
         if (musicItems == null) {
             return;
         }
@@ -65,7 +66,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final MusicItem musicItem = mMusicItems.get(position);
-        holder.musicTitle.setText(musicItem.title);
+        holder.musicTitle.setText(musicItem.name);
         holder.musicLength.setText(DateUtils.formatElapsedTime(musicItem.duration));
         holder.musicIcon.setImageResource(R.drawable.music_cloud);
 
