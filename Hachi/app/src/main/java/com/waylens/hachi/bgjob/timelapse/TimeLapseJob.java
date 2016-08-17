@@ -11,7 +11,9 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
+import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.bgjob.Exportable;
+import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.xfdingustc.snipe.VdbRequestFuture;
@@ -26,6 +28,8 @@ import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -45,6 +49,10 @@ public class TimeLapseJob extends Job implements Exportable {
 
     private String mOutputFile;
 
+    private DownloadManager mDownloadManager = DownloadManager.getManager();
+
+    private int mExportProgress;
+
 
     private BlockingQueue<VdbImage> mVdbImageBitmapQueue = new LinkedBlockingQueue<>();
 
@@ -57,7 +65,7 @@ public class TimeLapseJob extends Job implements Exportable {
 
     @Override
     public void onAdded() {
-
+        mDownloadManager.addJob(this);
     }
 
     @Override
@@ -72,12 +80,12 @@ public class TimeLapseJob extends Job implements Exportable {
 
     @Override
     public int getExportProgress() {
-        return 0;
+        return mExportProgress;
     }
 
     @Override
     public String getOutputFile() {
-        return null;
+        return mOutputFile;
     }
 
     @Override
@@ -89,7 +97,7 @@ public class TimeLapseJob extends Job implements Exportable {
 
         mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
 
-        mEventBus.post(new TimelapseEvent(TimelapseEvent.EVENT_START));
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
         new GetVdbImageThread().start();
 
         mOutputFile = RemuxHelper.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
@@ -122,8 +130,8 @@ public class TimeLapseJob extends Job implements Exportable {
 
             Log.d(TAG, "encode one frame encode time: " + vdbImage.pts + " startTime: " + mClip.getStartTimeMs() + " endTime: " + mClip.getEndTimeMs());
 
-            int progress = (int) (((vdbImage.pts - mClip.getStartTimeMs()) * 100) / mClip.getDurationMs());
-            mEventBus.post(new TimelapseEvent(TimelapseEvent.EVENT_PROGRESS, progress));
+            mExportProgress = (int) (((vdbImage.pts - mClip.getStartTimeMs()) * 100) / mClip.getDurationMs());
+            mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, this));
 
 
         }
@@ -134,7 +142,7 @@ public class TimeLapseJob extends Job implements Exportable {
         String newFilename = fileName + ".mp4";
         file.renameTo(new File(newFilename));
         mOutputFile = file.getAbsolutePath();
-        mEventBus.post(new TimelapseEvent(TimelapseEvent.EVENT_END, mOutputFile));
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, this));
 
         recorder.stop();
     }
@@ -161,15 +169,13 @@ public class TimeLapseJob extends Job implements Exportable {
                 VdbImageRequest request = new VdbImageRequest(clipPos, vdbRequestFuture,
                     vdbRequestFuture, 0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.ARGB_8888, null);
                 mVdbRequestQueue.add(request);
-                long time = System.currentTimeMillis();
                 try {
+                    long time = System.currentTimeMillis();
+                    Log.d(TAG, "fetch one frame " + encodeTime);
                     Bitmap thumbnail = vdbRequestFuture.get();
-
                     mVdbImageBitmapQueue.offer(new VdbImage(thumbnail, encodeTime));
-                    Log.d(TAG, "Get one bit: " + (System.currentTimeMillis() - time) + " " + thumbnail.getWidth() + " X " + thumbnail.getHeight());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                    Log.d(TAG, "Get one bit: " + (System.currentTimeMillis() - time));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 

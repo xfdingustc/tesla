@@ -2,10 +2,8 @@ package com.waylens.hachi.ui.clips;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -19,12 +17,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
-import com.waylens.hachi.bgjob.timelapse.TimelapseEvent;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
+import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbRequest;
@@ -44,7 +42,6 @@ import com.xfdingustc.snipe.vdb.ClipSetPos;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -102,34 +99,6 @@ public class FootageActivity extends ClipPlayActivity {
         mTvClipPosTime.setText(simpleDateFormat.format(DateTime.getTimeDate(clip.getClipDate(), clipSetPos.getClipTimeMs())));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTimelapseEvent(TimelapseEvent event) {
-        switch (event.getWhat()) {
-            case TimelapseEvent.EVENT_START:
-                mTimeLapseDialog = new MaterialDialog.Builder(this)
-                    .title(R.string.time_lapse)
-                    .progress(false, 100)
-                    .show();
-                break;
-            case TimelapseEvent.EVENT_PROGRESS:
-                int progress = (Integer)event.getExtra();
-                mTimeLapseDialog.setProgress(progress);
-                break;
-            case TimelapseEvent.EVENT_END:
-                mTimeLapseDialog.dismiss();
-                final String videoUrl = (String) event.getExtra();
-                Snackbar snackbar = Snackbar.make(mRootView, ("Stream has been download into " + videoUrl), Snackbar.LENGTH_LONG);
-                snackbar.setAction(R.string.open, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(new File(videoUrl)), "video/mp4");
-                        startActivity(intent);
-                    }
-                });
-                snackbar.show();
-        }
-    }
 
     @Subscribe
     public void onEventClipSelectEvent(final ClipSelectEvent event) {
@@ -232,23 +201,6 @@ public class FootageActivity extends ClipPlayActivity {
         mEventBus.unregister(mClipSetProgressBar);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mVdbRequestQueue != null) {
-            mVdbRequestQueue.cancelAll(new VdbRequestQueue.RequestFilter() {
-                @Override
-                public boolean apply(VdbRequest<?> request) {
-                    if (request instanceof VdbImageRequest) {
-//                        Logger.t(TAG).d("cancel image quest");
-                        return true;
-                    }
-
-                    return false;
-                }
-            });
-        }
-    }
 
 
     @Override
@@ -284,7 +236,6 @@ public class FootageActivity extends ClipPlayActivity {
             @Override
             public void onClick(View view) {
                 doTimeLapse(15);
-                mTimeLaspeBottomSheetDialog.dismiss();
             }
         });
 
@@ -292,7 +243,6 @@ public class FootageActivity extends ClipPlayActivity {
             @Override
             public void onClick(View view) {
                 doTimeLapse(30);
-                mTimeLaspeBottomSheetDialog.dismiss();
             }
         });
 
@@ -300,7 +250,6 @@ public class FootageActivity extends ClipPlayActivity {
             @Override
             public void onClick(View view) {
                 doTimeLapse(60);
-                mTimeLaspeBottomSheetDialog.dismiss();
             }
         });
 
@@ -308,14 +257,16 @@ public class FootageActivity extends ClipPlayActivity {
             @Override
             public void onClick(View view) {
                 doTimeLapse(120);
-                mTimeLaspeBottomSheetDialog.dismiss();
             }
         });
         mTimeLaspeBottomSheetDialog.show();
     }
 
     private void doTimeLapse(int speed) {
+        Logger.t(TAG).d("clip start time: " + getClipSet().getClip(0).getStartTimeMs());
         BgJobHelper.timeLapse(getClipSet().getClip(0), speed);
+        mTimeLaspeBottomSheetDialog.dismiss();
+        DownloadVideoActivity.launch(FootageActivity.this);
     }
 
     private void setupClipProgressBar() {
