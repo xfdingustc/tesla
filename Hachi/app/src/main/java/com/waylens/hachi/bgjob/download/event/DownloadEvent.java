@@ -1,6 +1,5 @@
 package com.waylens.hachi.bgjob.download.event;
 
-import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.bgjob.download.DownloadJob;
 
 /**
@@ -22,7 +21,7 @@ public class DownloadEvent {
 
 
     private final int mWhat;
-    private final Exportable mJob;
+    private final DownloadJob mJob;
 
 
     public DownloadEvent(int what) {
@@ -30,7 +29,7 @@ public class DownloadEvent {
     }
 
 
-    public DownloadEvent(int what, Exportable job) {
+    public DownloadEvent(int what, DownloadJob job) {
         this.mWhat = what;
         this.mJob = job;
     }
@@ -39,7 +38,7 @@ public class DownloadEvent {
         return mWhat;
     }
 
-    public Exportable getJob() {
+    public DownloadJob getJob() {
         return mJob;
     }
 }
