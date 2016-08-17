@@ -17,7 +17,7 @@
             android:textSize="18sp"
             android:textColor="?attr/appTextColorPrimary"
             android:layout_gravity="center_vertical"
-            android:text="@string/power"/>
+            android:text="@string/battery"/>
 
         <TextView
             android:id="@+id/tv_power"

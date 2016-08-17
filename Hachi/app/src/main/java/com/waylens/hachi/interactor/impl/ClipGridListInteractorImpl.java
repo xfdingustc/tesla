@@ -1,5 +1,7 @@
 package com.waylens.hachi.interactor.impl;
 
+import android.widget.Toast;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
@@ -15,6 +17,7 @@ import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipSet;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -51,9 +54,18 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
     @Override
     public void getClipSet() {
 
-        ClipSetExRequest request = new ClipSetExRequest(mClipSetType, mFlag, mAttr, new VdbResponse.Listener<ClipSet>() {
+        ClipSetExRequest request = new ClipSetExRequest(mClipSetType, mFlag | ClipSetExRequest.FLAG_CLIP_DESC, mAttr, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
+                ArrayList<Clip> clipList = response.getClipList();
+                String vin = null;
+                for( Clip clip : clipList) {
+                    Logger.t(TAG).d("Vin  = " + clip.getVin());
+                    if (clip.getVin() != null) {
+                        vin = clip.getVin();
+                    }
+                }
+                Logger.t(TAG).d("Get Inserted response\tvin = " + vin);
                 mLoadListener.onSuccess(response);
             }
         }, new VdbResponse.ErrorListener() {

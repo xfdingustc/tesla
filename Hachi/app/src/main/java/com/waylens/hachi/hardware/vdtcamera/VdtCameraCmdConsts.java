@@ -114,6 +114,8 @@ public interface VdtCameraCmdConsts {
     int CMD_GET_CONNECTED_CLIENTS_INFO  = 87;
     int CMD_CAM_NEW_CONNECTION          = 88;
     int CMD_CAM_CLOSE_CONNECTION        = 89;
+    int CMD_GET_OBD_VIN                 = 90;
+    int CMD_SET_CLIP_VIN_STYLE          = 91;
     int CMD_SET_SCREEN_SAVER_STYLE      = 93;
     int CMD_GET_SCREEN_SAVER_STYLE      = 94;
 
