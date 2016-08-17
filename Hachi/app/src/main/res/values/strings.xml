@@ -420,4 +420,6 @@
 	<string name="auto_power_off">Auto Power Off</string>
 	<string name="my_moments">My moments</string>
 	<string name="download_videos">Download videos</string>
+	<string name="delete_file">Delete file %1$s?</string>
+	<string name="exported">%1$s%% exported</string>
 </resources>

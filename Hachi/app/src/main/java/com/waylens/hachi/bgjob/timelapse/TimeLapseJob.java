@@ -11,6 +11,7 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
+import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.xfdingustc.snipe.VdbRequestFuture;
@@ -21,6 +22,7 @@ import com.xfdingustc.snipe.vdb.ClipPos;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -29,7 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by Xiaofei on 2016/8/10.
  */
-public class TimeLapseJob extends Job {
+public class TimeLapseJob extends Job implements Exportable {
     private static final String TAG = TimeLapseJob.class.getSimpleName();
     private final Clip mClip;
     private final int mSpeed;
@@ -40,6 +42,8 @@ public class TimeLapseJob extends Job {
     private FFmpegFrameRecorder recorder;
 
     private EventBus mEventBus = EventBus.getDefault();
+
+    private String mOutputFile;
 
 
     private BlockingQueue<VdbImage> mVdbImageBitmapQueue = new LinkedBlockingQueue<>();
@@ -61,6 +65,26 @@ public class TimeLapseJob extends Job {
         encodeClipThumbnails();
     }
 
+    @Override
+    public String getJobId() {
+        return getId();
+    }
+
+    @Override
+    public int getExportProgress() {
+        return 0;
+    }
+
+    @Override
+    public String getOutputFile() {
+        return null;
+    }
+
+    @Override
+    public ClipPos getClipStartPos() {
+        return new ClipPos(mClip);
+    }
+
     private void encodeClipThumbnails() throws Throwable {
 
         mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
@@ -68,7 +92,7 @@ public class TimeLapseJob extends Job {
         mEventBus.post(new TimelapseEvent(TimelapseEvent.EVENT_START));
         new GetVdbImageThread().start();
 
-        String outputFile = RemuxHelper.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
+        mOutputFile = RemuxHelper.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
 
 
         while (true) {
@@ -78,7 +102,7 @@ public class TimeLapseJob extends Job {
             }
 
             if (recorder == null) {
-                recorder = new FFmpegFrameRecorder(outputFile, vdbImage.thumbnail.getWidth(), vdbImage.thumbnail.getHeight());
+                recorder = new FFmpegFrameRecorder(mOutputFile, vdbImage.thumbnail.getWidth(), vdbImage.thumbnail.getHeight());
 
                 recorder.setFormat("mp4");
                 recorder.setFrameRate(mSpeed);// 录像帧率
@@ -104,9 +128,14 @@ public class TimeLapseJob extends Job {
 
         }
 
-        mEventBus.post(new TimelapseEvent(TimelapseEvent.EVENT_END, outputFile));
 
-        Log.d("test", "录制完成....");
+        File file = new File(mOutputFile);
+        String fileName = file.getAbsolutePath();
+        String newFilename = fileName + ".mp4";
+        file.renameTo(new File(newFilename));
+        mOutputFile = file.getAbsolutePath();
+        mEventBus.post(new TimelapseEvent(TimelapseEvent.EVENT_END, mOutputFile));
+
         recorder.stop();
     }
 
@@ -129,12 +158,12 @@ public class TimeLapseJob extends Job {
             while (encodeTime < mClip.getEndTimeMs()) {
                 VdbRequestFuture<Bitmap> vdbRequestFuture = VdbRequestFuture.newFuture();
                 ClipPos clipPos = new ClipPos(mClip, encodeTime);
-                VdbImageRequest request = new VdbImageRequest(clipPos, vdbRequestFuture, vdbRequestFuture, 0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.ARGB_8888, null);
+                VdbImageRequest request = new VdbImageRequest(clipPos, vdbRequestFuture,
+                    vdbRequestFuture, 0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.ARGB_8888, null);
                 mVdbRequestQueue.add(request);
                 long time = System.currentTimeMillis();
-                Bitmap thumbnail = null;
                 try {
-                    thumbnail = vdbRequestFuture.get();
+                    Bitmap thumbnail = vdbRequestFuture.get();
 
                     mVdbImageBitmapQueue.offer(new VdbImage(thumbnail, encodeTime));
                     Log.d(TAG, "Get one bit: " + (System.currentTimeMillis() - time) + " " + thumbnail.getWidth() + " X " + thumbnail.getHeight());

@@ -91,11 +91,10 @@
             <ImageButton
                 android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
-                android:layout_width="24dp"
+                android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="8dp"
-                android:layout_marginLeft="8dp"
+                android:paddingBottom="8dp"
                 android:src="@drawable/social_more"
                 />
 

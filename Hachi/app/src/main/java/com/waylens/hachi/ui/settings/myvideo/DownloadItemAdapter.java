@@ -3,8 +3,12 @@ package com.waylens.hachi.ui.settings.myvideo;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -12,16 +16,23 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.DownloadManager;
+import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.bgjob.download.DownloadJob;
+import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.io.File;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +45,8 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Activity mActivity;
 
     private DownloadManager mDownloadManager = DownloadManager.getManager();
+
+    private PrettyTime mPrettyTime = new PrettyTime();
 
     private File[] mDownloadedFileList;
 
@@ -61,7 +74,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onDownloadJobStateChanged(DownloadJob job, int index) {
+    public void onDownloadJobStateChanged(Exportable job, int index) {
         notifyItemChanged(index);
     }
 
@@ -78,9 +91,9 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void onBindDownloadingViewHolder(RecyclerView.ViewHolder holder, int position) {
         DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
-        DownloadJob job = DownloadManager.getManager().getDownloadJob(position);
+        Exportable job = DownloadManager.getManager().getDownloadJob(position);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
-        videoItemViewHolder.uploadProgress.setProgress(job.getDownloadProgress());
+        videoItemViewHolder.uploadProgress.setProgress(job.getExportProgress());
         Glide.with(mActivity)
             .using(new SnipeGlideLoader(VdtCameraManager.getManager().getCurrentVdbRequestQueue()))
             .load(job.getClipStartPos())
@@ -92,9 +105,10 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         videoItemViewHolder.videoDuration.setVisibility(View.GONE);
         videoItemViewHolder.btnMore.setVisibility(View.GONE);
+        videoItemViewHolder.description.setText(mActivity.getString(R.string.exported, String.valueOf(job.getExportProgress())));
     }
 
-    private void onBindDownloadedViewHolder(RecyclerView.ViewHolder holder, int position) {
+    private void onBindDownloadedViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         final DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
 
@@ -119,7 +133,40 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
         videoItemViewHolder.videoDuration.setVisibility(View.GONE);
 
-        videoItemViewHolder.btnMore.setVisibility(View.GONE);
+        videoItemViewHolder.btnMore.setVisibility(View.VISIBLE);
+        videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(oneDownloadedFile.lastModified())));
+        videoItemViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_downloaded, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.delete:
+                                new MaterialDialog.Builder(mActivity)
+                                    .title(mActivity.getString(R.string.delete_file, oneDownloadedFile.getName()))
+                                    .positiveText(R.string.delete)
+                                    .negativeText(R.string.cancel)
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                            oneDownloadedFile.delete();
+                                            mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+                                            notifyDataSetChanged();
+                                        }
+                                    })
+                                    .show();
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
     }
 
 

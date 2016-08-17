@@ -1,5 +1,6 @@
 package com.waylens.hachi.app;
 
+import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class DownloadManager {
     private EventBus mEventBus = EventBus.getDefault();
-    private List<DownloadJob> mDownloadJobList;
+    private List<Exportable> mDownloadJobList;
     private List<WeakReference<OnDownloadJobStateChangeListener>> mListenerList;
 
     private static DownloadManager mSharedManager = null;
@@ -56,7 +57,7 @@ public class DownloadManager {
         mListenerList.add(new WeakReference<>(listener));
     }
 
-    public void addJob(DownloadJob job) {
+    public void addJob(Exportable job) {
         mDownloadJobList.add(job);
         for (int i = 0; i < mListenerList.size(); i++) {
             WeakReference<OnDownloadJobStateChangeListener> oneListenr = mListenerList.get(i);
@@ -69,7 +70,7 @@ public class DownloadManager {
         }
     }
 
-    public void removeJob(DownloadJob job) {
+    public void removeJob(Exportable job) {
         mDownloadJobList.remove(job);
         for (int i = 0; i < mListenerList.size(); i++) {
             WeakReference<OnDownloadJobStateChangeListener> oneListenr = mListenerList.get(i);
@@ -86,14 +87,14 @@ public class DownloadManager {
         return mDownloadJobList.size();
     }
 
-    public DownloadJob getDownloadJob(int index) {
+    public Exportable getDownloadJob(int index) {
         return mDownloadJobList.get(index);
     }
 
-    public void notifyUploadStateChanged(DownloadJob job) {
+    public void notifyUploadStateChanged(Exportable job) {
         for (int i = 0; i < mDownloadJobList.size(); i++) {
-            DownloadJob oneJob = mDownloadJobList.get(i);
-            if (oneJob.getId() == job.getId()) {
+            Exportable oneJob = mDownloadJobList.get(i);
+            if (oneJob.getJobId() == job.getJobId()) {
                 for (int j = 0; j < mListenerList.size(); j++) {
                     WeakReference<OnDownloadJobStateChangeListener> oneListenr = mListenerList.get(j);
                     if (oneListenr != null) {
@@ -108,7 +109,7 @@ public class DownloadManager {
     }
 
     public interface OnDownloadJobStateChangeListener {
-        void onDownloadJobStateChanged(DownloadJob job, int index);
+        void onDownloadJobStateChanged(Exportable job, int index);
 
         void onDownloadJobAdded();
 

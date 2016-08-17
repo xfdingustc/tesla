@@ -8,6 +8,7 @@ import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.app.DownloadManager;
+import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
@@ -17,10 +18,12 @@ import com.xfdingustc.snipe.vdb.ClipPos;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
+
 /**
  * Created by Xiaofei on 2016/5/4.
  */
-public class DownloadJob extends Job {
+public class DownloadJob extends Job implements Exportable {
     private static final String TAG = DownloadJob.class.getSimpleName();
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
     private Clip mClip;
@@ -152,18 +155,32 @@ public class DownloadJob extends Job {
 
     private void handleRemuxerFinished() {
         mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, this));
+        File file = new File(mDownloadFilePath);
+        String fileName = file.getAbsolutePath();
+        String newFilename = fileName + ".mp4";
+        file.renameTo(new File(newFilename));
+        mDownloadFilePath = file.getAbsolutePath();
 //        mDownloadManager.removeJob(this);
-        Logger.t(TAG).d("download finished");
+        Logger.t(TAG).d("download finished " + mDownloadFilePath);
     }
 
-    public int getDownloadProgress() {
+
+    @Override
+    public String getJobId() {
+        return getId();
+    }
+
+    @Override
+    public int getExportProgress() {
         return mDownloadProgress;
     }
 
+    @Override
     public String getOutputFile() {
         return mDownloadFilePath;
     }
 
+    @Override
     public ClipPos getClipStartPos() {
         return new ClipPos(mClip);
     }
