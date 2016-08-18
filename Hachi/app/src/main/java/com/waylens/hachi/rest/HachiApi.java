@@ -12,6 +12,7 @@ import com.waylens.hachi.rest.body.RepostBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
+import com.waylens.hachi.rest.body.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
@@ -142,5 +143,8 @@ public interface HachiApi {
 
     @GET("/api/musics/categories/{categoryId}")
     Observable<MusicList> getMusicList(@Path("categoryId") long categoryId);
+
+    @GET("/api/vehicle")
+    Call<VinQueryResponse> queryByVin(@Query("vin") String vin);
 
 }

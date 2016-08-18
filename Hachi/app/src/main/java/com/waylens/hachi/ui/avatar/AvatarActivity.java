@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.manualsetup.qrcode.util.CommonUtils;
 import com.waylens.hachi.ui.views.ClipImageView;
 import com.waylens.hachi.utils.ImageUtils;
 
@@ -89,9 +92,11 @@ public class AvatarActivity extends BaseActivity {
 
     private void jump2TakePhoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        ContentValues values = new ContentValues(1);
+        ContentValues values = new ContentValues(2);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        mAvatarUri = Uri.fromFile(new File(GlobalVariables.getPictureName()));
+        //mAvatarUri = Uri.fromFile(new File(GlobalVariables.getPictureName()));
+        mAvatarUri = GlobalVariables.getPictureUri();
+        Logger.t(TAG).d(mAvatarUri.getPath());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mAvatarUri);
         startActivityForResult(intent, TAKE_PHOTO);
     }
@@ -226,10 +231,39 @@ public class AvatarActivity extends BaseActivity {
             dstImgPath = mImgCachePath + "/" + dstFileName;
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
+            int orientation = -1;
 
-            BitmapFactory.decodeFile(srcImgPath, options);
+            try {
+                ExifInterface exif = new ExifInterface(srcImgPath);
+                orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                Logger.t(TAG).d("orientation:" + orientation);
+            } catch (IOException e) {
+                Logger.t(TAG).d(e.getMessage());
+            }
+            Bitmap bitmap = BitmapFactory.decodeFile(srcImgPath);
+            Matrix m = new Matrix();
+            switch(orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    m.postRotate(90);
+                    bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    m.postRotate(180);
+                    bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    m.postRotate(270);
+                    bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
+                    break;
+                default:
+                    break;
+            }
+
+/*            BitmapFactory.decodeFile(srcImgPath, options);
             int w = options.outWidth;
-            int h = options.outHeight;
+            int h = options.outHeight;*/
+            int w = bmp.getWidth();
+            int h = bmp.getHeight();
             int newW = w, newH = h;
             float ratio = 1;
             if (w <= h) {
@@ -248,7 +282,7 @@ public class AvatarActivity extends BaseActivity {
             options.inJustDecodeBounds = false;
             options.inSampleSize = 1;
 
-            bmp = BitmapFactory.decodeFile(srcImgPath, options);
+            //bmp = BitmapFactory.decodeFile(srcImgPath, options);
             if (ratio > 1.0f) {
                 bmp = ImageUtils.zoomBitmap(bmp, newW, newH);
             }

@@ -110,7 +110,7 @@ public class AuthorizeActivity extends BaseActivity {
 
             @Override
             public void onError(FacebookException error) {
-                Logger.t(TAG).d("on error");
+                Logger.t(TAG).d("on error" + error.getMessage());
                 Snackbar.make(mFBLoginButton, R.string.login_error_facebook, Snackbar.LENGTH_SHORT).show();
             }
         });
