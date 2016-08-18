@@ -113,8 +113,9 @@ public class SignUpFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_signup, savedInstanceState);
-        if(getArguments() != null)
+        if(getArguments() != null) {
             mEmail = getArguments().getString("email");
+        }
         mTvSignUpEmail.setText(mEmail);
         Logger.t(TAG).d("Signup frament is invoked", this, mEmail);
         initViews();

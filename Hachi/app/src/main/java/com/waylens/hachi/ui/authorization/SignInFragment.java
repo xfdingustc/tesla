@@ -85,9 +85,9 @@ public class SignInFragment extends BaseFragment {
         View view = createFragmentView(inflater, container, R.layout.fragment_signin, savedInstanceState);
         if (getArguments() != null) {
             mEmail = getArguments().getString("email");
-            mTvSignInEmail.setText(mEmail);
         }
-        Logger.t(TAG).d("Signin frament is invoked", this, mEmail);
+        mTvSignInEmail.setText(mEmail);
+        Logger.t(TAG).d("Signin frament is invoked" + mEmail);
         initViews();
         return view;
     }

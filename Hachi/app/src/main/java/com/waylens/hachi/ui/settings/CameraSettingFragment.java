@@ -424,12 +424,12 @@ public class CameraSettingFragment extends PreferenceFragment {
                                 int brightness = mBrightnessSeekbar.getProgress();
                                 int autoOffTimePos = mAutoOffNumber.getValue();
                                 String autoOffTime = AUTO_OFF_TIME[autoOffTimePos];
-                                int screenSaverPos = mNpScreenSaver.getValue();
-                                String screenSaver = SCREEN_SAVER_STYLE[screenSaverPos];
+/*                                int screenSaverPos = mNpScreenSaver.getValue();
+                                String screenSaver = SCREEN_SAVER_STYLE[screenSaverPos];*/
                                 mVdtCamera.setDisplayBrightness(brightness);
                                 mVdtCamera.setDisplayAutoOffTime(autoOffTime);
-                                mVdtCamera.setScreenSaverStyle(screenSaver);
-                                mVdtCamera.getScreenSaverStyle();
+/*                                mVdtCamera.setScreenSaverStyle(screenSaver);
+                                mVdtCamera.getScreenSaverStyle();*/
                             }
                         })
                         .show();
@@ -437,15 +437,15 @@ public class CameraSettingFragment extends PreferenceFragment {
                 mBrightnessSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbBrightness);
                 mBrightness = (TextView) dialog.getCustomView().findViewById(R.id.tv_brightness);
                 mAutoOffNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
-                mNpScreenSaver = (NumberPicker) dialog.getCustomView().findViewById(R.id.npScreen);
-                mNpScreenSaver.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+/*                mNpScreenSaver = (NumberPicker) dialog.getCustomView().findViewById(R.id.npScreen);
+                mNpScreenSaver.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);*/
                 mBrightnessSeekbar.setMax(10);
                 mAutoOffNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                 mAutoOffNumber.setDisplayedValues(AUTO_OFF_TIME);
                 mAutoOffNumber.setMinValue(0);
                 mAutoOffNumber.setMaxValue(AUTO_OFF_TIME.length - 1);
 
-                mNpScreenSaver.setDisplayedValues(SCREEN_SAVER_STYLE);
+/*                mNpScreenSaver.setDisplayedValues(SCREEN_SAVER_STYLE);
                 mNpScreenSaver.setMinValue(0);
                 mNpScreenSaver.setMaxValue(SCREEN_SAVER_STYLE.length - 1);
 
@@ -459,7 +459,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                 }
                 if (screenSaverStylePos != -1) {
                     mNpScreenSaver.setValue(screenSaverStylePos);
-                }
+                }*/
 
                 int brightness = mVdtCamera.getDisplayBrightness();
                 String autoOffTime = mVdtCamera.getDisplayAutoOffTime();
