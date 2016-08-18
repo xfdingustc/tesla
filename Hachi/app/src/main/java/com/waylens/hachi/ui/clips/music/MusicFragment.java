@@ -24,7 +24,6 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
 import com.waylens.hachi.rxjava.SimpleSubscribe;
-import com.waylens.hachi.ui.adapters.MusicListAdapter;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.DownloadHelper;

@@ -11,9 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -28,6 +26,7 @@ import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.rxjava.SimpleSubscribe;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -58,7 +57,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import rx.Subscriber;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -81,15 +79,12 @@ public class EnhanceActivity extends ClipPlayActivity {
     private static final int ACTION_NONE = -1;
     private static final int ACTION_OVERLAY = 0;
     private static final int ACTION_ADD_VIDEO = 1;
-    private static final int ACTION_ADD_MUSIC = 2;
-    private static final int ACTION_SMART_REMIX = 3;
 
     public static final int PLAYLIST_INDEX = 0x100;
 
     private MusicItem mMusicItem;
     private int mPlaylistId;
     private GaugeListAdapter mGaugeListAdapter;
-
 
 
     private BottomSheetDialog mDownloadBottomSheetDialog;
@@ -120,21 +115,6 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     @BindView(R.id.btn_music)
     View btnMusic;
-
-    @BindView(R.id.btn_add_music)
-    Button btnAddMusic;
-
-    @BindView(R.id.btn_remove)
-    View btnRemove;
-
-    @BindView(R.id.spinner_theme)
-    Spinner mThemeSpinner;
-
-    @BindView(R.id.spinner_length)
-    Spinner mLengthSpinner;
-
-    @BindView(R.id.spinner_clip_src)
-    Spinner mClipSrcSpinner;
 
     @BindView(R.id.style_radio_group)
     RadioGroup mStyleRadioGroup;
@@ -170,12 +150,6 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
 
-
-    @OnClick(R.id.btn_remove)
-    public void removeMusic() {
-        mMusicItem = null;
-        mClipPlayFragment.setAudioUrl(null);
-    }
 
     @OnClick(R.id.btn_gauge)
     public void showGauge(View view) {
@@ -215,43 +189,6 @@ public class EnhanceActivity extends ClipPlayActivity {
         startActivityForResult(intent, REQUEST_CODE_ENHANCE);
     }
 
-
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onEventDownload(DownloadEvent event) {
-//        switch (event.getWhat()) {
-//            case DownloadEvent.DOWNLOAD_WHAT_START:
-//                mDownloadDialog = new MaterialDialog.Builder(this)
-//                    .name(R.string.downloading)
-//                    .contentGravity(GravityEnum.CENTER)
-//                    .progress(false, 100, true)
-//                    .show();
-//                mDownloadDialog.setCanceledOnTouchOutside(false);
-//                break;
-//            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
-//                if (mDownloadDialog != null) {
-//                    int progress = (Integer) event.getExtra();
-//                    mDownloadDialog.setProgress(progress);
-//                }
-//                break;
-//            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
-//                if (mDownloadDialog != null) {
-//                    mDownloadDialog.dismiss();
-//                }
-//
-//                final String videoUrl = (String) event.getExtra();
-//                Snackbar snackbar = Snackbar.make(btnAddMusic, ("Stream has been download into " + videoUrl), Snackbar.LENGTH_LONG);
-//                snackbar.setAction(R.string.open, new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(Intent.ACTION_VIEW);
-//                        intent.setDataAndType(Uri.fromFile(new File(videoUrl)), "video/mp4");
-//                        startActivity(intent);
-//                    }
-//                });
-//                snackbar.show();
-//                break;
-//        }
-//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
@@ -306,17 +243,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     Logger.t(TAG).d("append clips: " + clips.size());
                     if (clips.size() > 0) {
                         mPlaylistEditor.addRx(clips)
-                            .subscribe(new Subscriber<Void>() {
-                                @Override
-                                public void onCompleted() {
-
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-
-                                }
-
+                            .subscribe(new SimpleSubscribe<Void>() {
                                 @Override
                                 public void onNext(Void aVoid) {
 
@@ -362,7 +289,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activity_enhance2);
+        setContentView(R.layout.activity_enhance);
         setupToolbar();
         mClipsEditView.setVisibility(View.VISIBLE);
     }

@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.clips.music;
 
 import android.media.MediaPlayer;
 import android.support.v7.widget.LinearLayoutManager;
@@ -59,7 +59,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bg_music_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_music, parent, false);
         return new ViewHolder(view);
     }
 
@@ -67,6 +67,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final MusicItem musicItem = mMusicItems.get(position);
         holder.musicTitle.setText(musicItem.name);
+        holder.musicDescription.setText(musicItem.description);
         holder.musicLength.setText(DateUtils.formatElapsedTime(musicItem.duration));
         holder.musicIcon.setImageResource(R.drawable.music_cloud);
 
@@ -195,6 +196,9 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
         @BindView(R.id.music_title)
         TextView musicTitle;
+
+        @BindView(R.id.music_description)
+        TextView musicDescription;
 
         @BindView(R.id.music_length)
         TextView musicLength;
