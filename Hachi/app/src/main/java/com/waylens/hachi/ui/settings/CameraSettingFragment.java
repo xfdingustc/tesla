@@ -7,15 +7,13 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.text.InputType;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -41,6 +39,7 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.library.crs_svr.HashUtils;
+import com.waylens.hachi.preference.seekbarpreference.SeekBarPreference;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
@@ -52,7 +51,6 @@ import com.xfdingustc.snipe.vdb.SpaceInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -83,7 +81,10 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private Preference mCameraName;
     private Preference mVideo;
-    private Preference mAudio;
+    private PreferenceCategory mAudio;
+    private SwitchPreference mMic;
+    private SwitchPreference mSpeaker;
+    private SeekBarPreference mSpeakerVol;
     private Preference mBookmark;
     private Preference mStorage;
     private Preference mConnectivity;
@@ -98,10 +99,10 @@ public class CameraSettingFragment extends PreferenceFragment {
     private NumberPicker mBeforeNumber;
     private NumberPicker mAfterNumber;
 
-    private Switch mMicSwitch;
-    private Switch mSpeakerSwitch;
-    private SeekBar mAudioSeekbar;
-    private ImageView mSpeakerImage;
+//    private Switch mMicSwitch;
+//    private Switch mSpeakerSwitch;
+//    private SeekBar mAudioSeekbar;
+//    private ImageView mSpeakerImage;
 
     private SeekBar mBrightnessSeekbar;
     private NumberPicker mAutoOffNumber;
@@ -110,7 +111,6 @@ public class CameraSettingFragment extends PreferenceFragment {
     private TextView mTvPower;
     private NumberPicker mNpScreenSaver;
     private NumberPicker mNpAutoPowerOff;
-
 
 
     private PieChart mStorageChart;
@@ -435,6 +435,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                         })
                         .show();
 
+
                 mBrightnessSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbBrightness);
                 mBrightness = (TextView) dialog.getCustomView().findViewById(R.id.tv_brightness);
                 mAutoOffNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
@@ -466,7 +467,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
                 String screenSaverStyle = mVdtCamera.getScreenSaverStyle();
                 int screenSaverStylePos = -1;
-                for(int i = 0; i < SCREEN_SAVER_STYLE.length; i++) {
+                for (int i = 0; i < SCREEN_SAVER_STYLE.length; i++) {
                     if (SCREEN_SAVER_STYLE[i].equals(screenSaverStyle)) {
                         screenSaverStylePos = i;
                         break;
@@ -479,7 +480,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                 int brightness = mVdtCamera.getDisplayBrightness();
                 String autoOffTime = mVdtCamera.getDisplayAutoOffTime();
                 int autoOffTimePos = -1;
-                for(int i = 0; i < AUTO_OFF_TIME.length; i++) {
+                for (int i = 0; i < AUTO_OFF_TIME.length; i++) {
                     if (AUTO_OFF_TIME[i].equals(autoOffTime)) {
                         autoOffTimePos = i;
                         break;
@@ -497,6 +498,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                         Logger.t(TAG).d(i);
                         mBrightness.setText(String.valueOf(i));
                     }
+
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
 
@@ -519,19 +521,19 @@ public class CameraSettingFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.power)
-                        .customView(R.layout.dialog_power_setting, true)
-                        .positiveText(R.string.ok)
-                        .negativeText(R.string.cancel)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                int autoOffTimePos = mNpAutoPowerOff.getValue();
-                                String autoOffTime = POWER_AUTO_OFF_TIME[autoOffTimePos];
-                                mVdtCamera.setAutoPowerOffDelay(autoOffTime);
-                            }
-                        })
-                        .show();
+                    .title(R.string.power)
+                    .customView(R.layout.dialog_power_setting, true)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            int autoOffTimePos = mNpAutoPowerOff.getValue();
+                            String autoOffTime = POWER_AUTO_OFF_TIME[autoOffTimePos];
+                            mVdtCamera.setAutoPowerOffDelay(autoOffTime);
+                        }
+                    })
+                    .show();
 
                 mTvPower = (TextView) dialog.getCustomView().findViewById(R.id.tv_power);
                 mNpAutoPowerOff  = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
@@ -549,6 +551,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                     }
                 }*/
 
+
                 mNpAutoPowerOff.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
                 int batteryVolume = mVdtCamera.getBatteryVolume();
@@ -560,7 +563,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
                 String autoPowerOffDelay = mVdtCamera.getAutoPowerOffDelay();
                 int autoPowerOffDelayPos = -1;
-                for(int i = 0; i < POWER_AUTO_OFF_TIME.length; i++) {
+                for (int i = 0; i < POWER_AUTO_OFF_TIME.length; i++) {
                     if (POWER_AUTO_OFF_TIME[i].equals(autoPowerOffDelay)) {
                         autoPowerOffDelayPos = i;
                         break;
@@ -637,52 +640,88 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initAudioPreference() {
-        mAudio = findPreference("audio");
-        mAudio.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        mAudio = (PreferenceCategory)findPreference("audio");
+        mMic = (SwitchPreference) findPreference("mic");
+        mMic.setChecked(mVdtCamera.isMicOn());
+        mMic.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .title(R.string.audio_setting)
-                    .customView(R.layout.dialog_audio_setting, true)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mVdtCamera.setAudioMic(mMicSwitch.isChecked(), 0);
-                            int volume = mAudioSeekbar.getProgress();
-                            mVdtCamera.setSpeakerStatus(mSpeakerSwitch.isChecked(), volume);
-                        }
-                    })
-                    .show();
-
-                mMicSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swMic);
-                mAudioSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbSpeakerVolume);
-                mSpeakerSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swSpeaker);
-                mSpeakerImage = (ImageView) dialog.getCustomView().findViewById(R.id.speakerImage);
-                mAudioSeekbar.setMax(10);
-
-                boolean isMicOn = mVdtCamera.isMicOn();
-                boolean isSpeakerOn = mVdtCamera.isSpeakerOn();
-                int speakerVol = mVdtCamera.getSpeakerVol();
-                mSpeakerSwitch.setChecked(isSpeakerOn);
-                if (!isSpeakerOn) {
-                    mAudioSeekbar.setVisibility(View.INVISIBLE);
-                    mSpeakerImage.setVisibility(View.INVISIBLE);
-                }
-                mAudioSeekbar.setProgress(speakerVol);
-                mMicSwitch.setChecked(isMicOn);
-                mSpeakerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        mAudioSeekbar.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
-                        mSpeakerImage.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
-                    }
-                });
-
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Logger.t(TAG).d("set audio mic: " + !mMic.isChecked());
+                mVdtCamera.setAudioMic(!mMic.isChecked(), 0);
                 return true;
             }
         });
+
+        mSpeaker = (SwitchPreference) findPreference("speaker");
+        mSpeaker.setChecked(mVdtCamera.isSpeakerOn());
+        mSpeaker.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Logger.t(TAG).d("set audio speaker: " + !mSpeaker.isChecked());
+                mVdtCamera.setSpeakerStatus(!mSpeaker.isChecked(), mVdtCamera.getSpeakerVol());
+                mSpeakerVol.setEnabled(!mSpeaker.isChecked());
+                return true;
+            }
+        });
+
+        mSpeakerVol = (SeekBarPreference)findPreference("speakerVol");
+        mSpeakerVol.setCurrentValue(mVdtCamera.getSpeakerVol());
+        mSpeakerVol.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Logger.t(TAG).d("mSpeakerVol: " + mSpeakerVol.getCurrentValue());
+                mVdtCamera.setSpeakerStatus(mSpeaker.isChecked(), mSpeakerVol.getCurrentValue());
+                return true;
+            }
+        });
+
+
+//            mAudio = findPreference("audio");
+//        mAudio.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                    .title(R.string.audio_setting)
+//                    .customView(R.layout.dialog_audio_setting, true)
+//                    .positiveText(R.string.ok)
+//                    .negativeText(R.string.cancel)
+//                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                        @Override
+//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                            mVdtCamera.setAudioMic(mMicSwitch.isChecked(), 0);
+//                            int volume = mAudioSeekbar.getProgress();
+//                            mVdtCamera.setSpeakerStatus(mSpeakerSwitch.isChecked(), volume);
+//                        }
+//                    })
+//                    .show();
+//
+//                mMicSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swMic);
+//                mAudioSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbSpeakerVolume);
+//                mSpeakerSwitch = (Switch) dialog.getCustomView().findViewById(R.id.swSpeaker);
+//                mSpeakerImage = (ImageView) dialog.getCustomView().findViewById(R.id.speakerImage);
+//                mAudioSeekbar.setMax(10);
+//
+//                boolean isMicOn = mVdtCamera.isMicOn();
+//                boolean isSpeakerOn = mVdtCamera.isSpeakerOn();
+//                int speakerVol = mVdtCamera.getSpeakerVol();
+//                mSpeakerSwitch.setChecked(isSpeakerOn);
+//                if (!isSpeakerOn) {
+//                    mAudioSeekbar.setVisibility(View.INVISIBLE);
+//                    mSpeakerImage.setVisibility(View.INVISIBLE);
+//                }
+//                mAudioSeekbar.setProgress(speakerVol);
+//                mMicSwitch.setChecked(isMicOn);
+//                mSpeakerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                        mAudioSeekbar.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+//                        mSpeakerImage.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+//                    }
+//                });
+//
+//                return true;
+//            }
+//        });
     }
 
     private void initVideoPreference() {
@@ -735,16 +774,16 @@ public class CameraSettingFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.bookmark)
-                        .customView(R.layout.dialog_bookmark_change, true)
-                        .positiveText(R.string.ok)
-                        .negativeText(R.string.cancel)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                mVdtCamera.setMarkTime(mBeforeNumber.getValue(), mAfterNumber.getValue());
-                            }
-                        }).show();
+                    .title(R.string.bookmark)
+                    .customView(R.layout.dialog_bookmark_change, true)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mVdtCamera.setMarkTime(mBeforeNumber.getValue(), mAfterNumber.getValue());
+                        }
+                    }).show();
 
                 mBeforeNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npBefore);
                 mAfterNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAfter);

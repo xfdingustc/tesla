@@ -53,35 +53,6 @@ public class LiveViewSettingActivity extends BaseActivity {
     }
 
 
-//    @Bind(R.id.btnContinuous)
-//    RadioButton mBtnContinuous;
-//
-//    @Bind(R.id.btnManual)
-//    RadioButton mBtnManual;
-
-//    @Bind(R.id.tvRecordModeInfo)
-//    TextView mTvRecordModeInfo;
-
-//    @BindView(R.id.resolution_framerate)
-//    TextView mResolutionFramerate;
-
-
-//    @OnClick(R.id.btnContinuous)
-//    public void onBtnContinuousClicked() {
-//        mTvRecordModeInfo.setText(getText(R.string.continuous_info));
-//        mChangedRecordMode |= VdtCamera.FLAG_LOOP_RECORD;
-//        mChangedRecordMode |= VdtCamera.FLAG_AUTO_RECORD;
-//        checkIfChanged();
-//    }
-//
-//    @OnClick(R.id.btnManual)
-//    public void onBtnManualClicked() {
-//        mTvRecordModeInfo.setText(getText(R.string.manual_info));
-//        mChangedRecordMode &= ~VdtCamera.FLAG_LOOP_RECORD;
-//        mChangedRecordMode &= ~VdtCamera.FLAG_AUTO_RECORD;
-//        checkIfChanged();
-//    }
-
     @Subscribe
     public void onEventVideoSettingChange(VideoSettingChangEvent event) {
         switch (event.getWhat()) {

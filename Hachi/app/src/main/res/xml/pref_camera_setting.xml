@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:sample="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/general">
         <Preference
@@ -12,14 +13,40 @@
     </PreferenceCategory>
 
 
-    <Preference
-        android:key="video"
-        android:title="@string/video"/>
+    <PreferenceCategory android:title="@string/video">
+        <Preference
+            android:key="video"
+            android:title="@string/video"/>
+    </PreferenceCategory>
 
-    <Preference
+
+    <PreferenceCategory
         android:key="audio"
-        android:title="@string/audio"/>
+        android:title="@string/audio">
 
+        <SwitchPreference
+            android:key="mic"
+            android:title="@string/mic"
+            android:drawableTint="@color/style_color_accent"
+            android:buttonTint="@color/style_color_accent"
+            android:thumbTint="@color/style_color_accent"
+            />
+
+        <SwitchPreference
+            android:key="speaker"
+            android:title="@string/speaker"/>
+
+        <com.waylens.hachi.preference.seekbarpreference.SeekBarPreference
+            android:key="speakerVol"
+            android:title="@string/speaker_vol"
+            android:icon="@drawable/settings_beeps_level"
+            android:layout="@layout/preference_seekbar"
+            android:dependency="speaker"
+            sample:msbp_interval="1"
+            sample:msbp_maxValue="10"
+            sample:msbp_minValue="0"/>
+
+    </PreferenceCategory>
 
     <Preference
         android:key="bookmark"
@@ -41,9 +68,6 @@
     <Preference
         android:key="display"
         android:title="@string/display"/>
-
-
-
 
 
 </PreferenceScreen>
