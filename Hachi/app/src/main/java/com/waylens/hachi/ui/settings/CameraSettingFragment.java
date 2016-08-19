@@ -55,6 +55,7 @@ import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -439,6 +440,20 @@ public class CameraSettingFragment extends PreferenceFragment {
                 mAutoOffNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
 /*                mNpScreenSaver = (NumberPicker) dialog.getCustomView().findViewById(R.id.npScreen);
                 mNpScreenSaver.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);*/
+
+/*                Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+                for (Field pf : pickerFields) {
+                    if (pf.getName().equals("mSelectionDividersDistance")) {
+                        pf.setAccessible(true);
+                        try {
+                            int result = 72;
+                            pf.set(mAutoOffNumber, result);
+                        } catch (IllegalAccessException e) {
+                            Logger.t(TAG).d(e.getMessage());
+                        }
+                    }
+                }*/
+
                 mBrightnessSeekbar.setMax(10);
                 mAutoOffNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                 mAutoOffNumber.setDisplayedValues(AUTO_OFF_TIME);
@@ -520,6 +535,20 @@ public class CameraSettingFragment extends PreferenceFragment {
 
                 mTvPower = (TextView) dialog.getCustomView().findViewById(R.id.tv_power);
                 mNpAutoPowerOff  = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
+
+/*                Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+                for (Field pf : pickerFields) {
+                    if (pf.getName().equals("mSelectionDividersDistance")) {
+                        pf.setAccessible(true);
+                        try {
+                            int result = 72;
+                            pf.set(mNpAutoPowerOff, result);
+                        } catch (IllegalAccessException e) {
+                            Logger.t(TAG).d(e.getMessage());
+                        }
+                    }
+                }*/
+
                 mNpAutoPowerOff.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
                 int batteryVolume = mVdtCamera.getBatteryVolume();

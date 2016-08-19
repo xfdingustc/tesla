@@ -422,6 +422,8 @@
 	<string name="download_videos">Download videos</string>
 	<string name="delete_file">Delete file %1$s?</string>
 	<string name="exported">%1$s%% exported</string>
+	<string name="speaker_vol">Speaker volume</string>
 	<string name="sleep_after">Sleep After</string>
 	<string name="battery">Battery</string>
+	<string name="moment_lost">This Moment is lost.</string>
 </resources>

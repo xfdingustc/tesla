@@ -44,6 +44,7 @@ import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.zxing.common.StringUtils;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -78,6 +79,7 @@ import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.TransitionHelper;
 
+import org.apache.mina.proxy.utils.StringUtilities;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -86,6 +88,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -505,17 +509,34 @@ public class MomentActivity extends BaseActivity {
 
     private void queryMomentInfo() {
 
-        mHachi.getMomentInfoRx(mMomentId)
+        mHachi.getMomentInfo(mMomentId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext(new Action1<MomentInfo>() {
+            .doOnNext(new Action1<retrofit2.Response<MomentInfo>>() {
                 @Override
-                public void call(MomentInfo momentInfo) {
-                    mMomentPlayFragment.doGaugeSetting(momentInfo);
-                    updateFollowInfo(momentInfo.owner.userID);
+                public void call(retrofit2.Response<MomentInfo> response) {
+                    Logger.t(TAG).d("do on next");
+                    if (response.isSuccessful()) {
+                        MomentInfo momentInfo = response.body();
+                        mMomentPlayFragment.doGaugeSetting(momentInfo);
+                        updateFollowInfo(momentInfo.owner.userID);
+                    } else {
+                        Logger.t(TAG).d("code:" + response.code());
+                        Logger.t(TAG).d("body:" + response.body());
+                        Logger.t(TAG).d("error body:" + response.errorBody());
+                        Snackbar.make(mPlayContainer, getString(R.string.moment_lost), Snackbar.LENGTH_LONG).show();
+                        TimerTask timerTask = new TimerTask() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(timerTask, 2 * 1000);
+                    }
                 }
             })
-            .subscribe(new rx.Observer<MomentInfo>() {
+            .subscribe(new rx.Observer<retrofit2.Response<MomentInfo> >() {
                 @Override
                 public void onCompleted() {
 
@@ -523,13 +544,23 @@ public class MomentActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
+                    Logger.t(TAG).d(e.getMessage());
 
                 }
 
                 @Override
-                public void onNext(MomentInfo momentInfo) {
-                    mMomentInfo = momentInfo;
-                    showMomentInfo();
+                public void onNext(retrofit2.Response<MomentInfo> response) {
+                    if (response.isSuccessful() ) {
+                        Logger.t(TAG).d("code:" + response.code());
+                        Logger.t(TAG).d("body:" + response.body());
+                        MomentInfo momentInfo = response.body();
+                        mMomentInfo = momentInfo;
+                        showMomentInfo();
+                    } else {
+                        Logger.t(TAG).d("code:" + response.code());
+                        Logger.t(TAG).d("body:" + response.body());
+                        Logger.t(TAG).d("error body:" + response.errorBody());
+                    }
                 }
             });
 

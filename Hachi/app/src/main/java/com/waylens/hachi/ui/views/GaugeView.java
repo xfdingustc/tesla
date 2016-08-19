@@ -169,6 +169,9 @@ public class GaugeView extends FrameLayout {
 
     private void changeGaugeTheme(String theme) {
         Logger.t(TAG).d("set gauge theme as: " + theme);
+        if (theme.equals("")) {
+            theme = "default";
+        }
         mWebView.loadUrl("javascript:setTheme('" + theme + "')");
     }
 

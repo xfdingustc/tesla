@@ -33,6 +33,7 @@ import com.waylens.hachi.rest.response.SignInResponse;
 import com.waylens.hachi.ui.entities.UserProfile;
 
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -63,8 +64,8 @@ public interface HachiApi {
     @POST("/api/friends/unfollow")
     Call<SimpleBoolResponse> unfollow(@Body FollowPostBody followPostBody);
 
-//    @GET("/api/moments/{momentId}")
-//    Call<MomentInfo> getMomentInfo(@Path("momentId") long momentId);
+    @GET("/api/moments/{momentId}")
+    Observable<Response<MomentInfo>> getMomentInfo(@Path("momentId") long momentId);
 
     @GET("/api/users/{userId}/moments")
     Call<MomentListResponse> getUserMoments(@Path("userId") String userId, @Query("cursor") int cursor);
