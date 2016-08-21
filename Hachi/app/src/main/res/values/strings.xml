@@ -423,10 +423,7 @@
 	<string name="delete_file">Delete file %1$s?</string>
 	<string name="exported">%1$s%% exported</string>
 	<string name="speaker_vol">Speaker volume</string>
-<<<<<<< 3704bbc64a020f6f8bed09536a27d01c94a6e5ff
 	<string name="sleep_after">Sleep After</string>
 	<string name="battery">Battery</string>
 	<string name="moment_lost">This Moment is lost.</string>
-=======
->>>>>>> refine setting
 </resources>
