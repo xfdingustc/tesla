@@ -183,9 +183,21 @@
         <item>Other</item>
     </string-array>
 
-    <string-array name="download_resolution" translatable="false">
-        <item>@string/sd</item>
-        <item>@string/fullhd</item>
+
+    <string-array name="auto_power_off_times" translatable="false">
+        <item>@string/ten_seconds</item>
+        <item>@string/thirty_seconds</item>
+        <item>@string/sixty_seconds</item>
+        <item>@string/two_minutes</item>
+        <item>@string/five_minutes</item>
+    </string-array>
+
+    <string-array name="auto_power_off_time_values" translatable="false">
+        <item>10s</item>
+        <item>30s</item>
+        <item>60s</item>
+        <item>2min</item>
+        <item>5min</item>
     </string-array>
 
     <string-array name="timestamp_state" translatable="false">

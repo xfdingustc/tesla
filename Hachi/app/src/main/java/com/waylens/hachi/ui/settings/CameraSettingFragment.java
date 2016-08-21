@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
@@ -74,6 +76,9 @@ public class CameraSettingFragment extends PreferenceFragment {
     private static final String DOWNLOAD_FILE_NAME = "firmware";
     private static final String[] AUTO_OFF_TIME = {"Never", "10s", "30s", "60s", "2min", "5min"};
 
+    private static final String POWER_AUTOOFF_NEVER = "Never";
+    private static final String POWER_AUTOOFF_30S = "30s";
+
     private static final String[] POWER_AUTO_OFF_TIME = {"Never", "30s", "60s", "2min", "5min"};
 
     private static final String[] SCREEN_SAVER_STYLE = {"All Black", "Dot"};
@@ -81,7 +86,6 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private Preference mCameraName;
     private Preference mVideo;
-    private PreferenceCategory mAudio;
     private SwitchPreference mMic;
     private SwitchPreference mSpeaker;
     private SeekBarPreference mSpeakerVol;
@@ -89,8 +93,11 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mStorage;
     private Preference mConnectivity;
     private Preference mFirmware;
-    private Preference mDisplay;
-    private Preference mPower;
+    private SeekBarPreference mBrightness;
+//    private Preference mDisplay;
+    private Preference mBattery;
+    private SwitchPreference mAutoPowerOff;
+    private ListPreference mAutoPowerOffTime;
 
 
     private FirmwareInfo mFirmwareInfo;
@@ -99,14 +106,9 @@ public class CameraSettingFragment extends PreferenceFragment {
     private NumberPicker mBeforeNumber;
     private NumberPicker mAfterNumber;
 
-//    private Switch mMicSwitch;
-//    private Switch mSpeakerSwitch;
-//    private SeekBar mAudioSeekbar;
-//    private ImageView mSpeakerImage;
-
     private SeekBar mBrightnessSeekbar;
     private NumberPicker mAutoOffNumber;
-    private TextView mBrightness;
+//    private TextView mBrightness;
 
     private TextView mTvPower;
     private NumberPicker mNpScreenSaver;
@@ -409,172 +411,148 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initDisplayPreference() {
-        mDisplay = findPreference("display");
-        mDisplay.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.display)
-                        .customView(R.layout.dialog_display_setting, true)
-                        .positiveText(R.string.ok)
-                        .negativeText(R.string.cancel)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                                int brightness = mBrightnessSeekbar.getProgress();
-                                int autoOffTimePos = mAutoOffNumber.getValue();
-                                String autoOffTime = AUTO_OFF_TIME[autoOffTimePos];
-/*                                int screenSaverPos = mNpScreenSaver.getValue();
-                                String screenSaver = SCREEN_SAVER_STYLE[screenSaverPos];*/
-                                mVdtCamera.setDisplayBrightness(brightness);
-                                mVdtCamera.setDisplayAutoOffTime(autoOffTime);
-/*                                mVdtCamera.setScreenSaverStyle(screenSaver);
-                                mVdtCamera.getScreenSaverStyle();*/
-                            }
-                        })
-                        .show();
-
-
-                mBrightnessSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbBrightness);
-                mBrightness = (TextView) dialog.getCustomView().findViewById(R.id.tv_brightness);
-                mAutoOffNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
-/*                mNpScreenSaver = (NumberPicker) dialog.getCustomView().findViewById(R.id.npScreen);
-                mNpScreenSaver.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);*/
-
-/*                Field[] pickerFields = NumberPicker.class.getDeclaredFields();
-                for (Field pf : pickerFields) {
-                    if (pf.getName().equals("mSelectionDividersDistance")) {
-                        pf.setAccessible(true);
-                        try {
-                            int result = 72;
-                            pf.set(mAutoOffNumber, result);
-                        } catch (IllegalAccessException e) {
-                            Logger.t(TAG).d(e.getMessage());
-                        }
-                    }
-                }*/
-
-                mBrightnessSeekbar.setMax(10);
-                mAutoOffNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                mAutoOffNumber.setDisplayedValues(AUTO_OFF_TIME);
-                mAutoOffNumber.setMinValue(0);
-                mAutoOffNumber.setMaxValue(AUTO_OFF_TIME.length - 1);
-
-/*                mNpScreenSaver.setDisplayedValues(SCREEN_SAVER_STYLE);
-                mNpScreenSaver.setMinValue(0);
-                mNpScreenSaver.setMaxValue(SCREEN_SAVER_STYLE.length - 1);
-
-                String screenSaverStyle = mVdtCamera.getScreenSaverStyle();
-                int screenSaverStylePos = -1;
-                for (int i = 0; i < SCREEN_SAVER_STYLE.length; i++) {
-                    if (SCREEN_SAVER_STYLE[i].equals(screenSaverStyle)) {
-                        screenSaverStylePos = i;
-                        break;
-                    }
-                }
-                if (screenSaverStylePos != -1) {
-                    mNpScreenSaver.setValue(screenSaverStylePos);
-                }*/
-
-                int brightness = mVdtCamera.getDisplayBrightness();
-                String autoOffTime = mVdtCamera.getDisplayAutoOffTime();
-                int autoOffTimePos = -1;
-                for (int i = 0; i < AUTO_OFF_TIME.length; i++) {
-                    if (AUTO_OFF_TIME[i].equals(autoOffTime)) {
-                        autoOffTimePos = i;
-                        break;
-                    }
-                }
-                mBrightnessSeekbar.setProgress(brightness);
-                mBrightness.setText(String.valueOf(brightness));
-                if (autoOffTimePos != 0) {
-                    mAutoOffNumber.setValue(autoOffTimePos);
-                }
-
-                mBrightnessSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                        Logger.t(TAG).d(i);
-                        mBrightness.setText(String.valueOf(i));
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                });
-
-                return true;
-            }
-        });
+//        mDisplay = findPreference("display");
+//        mDisplay.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.display)
+//                        .customView(R.layout.dialog_display_setting, true)
+//                        .positiveText(R.string.ok)
+//                        .negativeText(R.string.cancel)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//
+//                                int brightness = mBrightnessSeekbar.getProgress();
+//                                int autoOffTimePos = mAutoOffNumber.getValue();
+//                                String autoOffTime = AUTO_OFF_TIME[autoOffTimePos];
+///*                                int screenSaverPos = mNpScreenSaver.getValue();
+//                                String screenSaver = SCREEN_SAVER_STYLE[screenSaverPos];*/
+//                                mVdtCamera.setDisplayBrightness(brightness);
+//                                mVdtCamera.setDisplayAutoOffTime(autoOffTime);
+///*                                mVdtCamera.setScreenSaverStyle(screenSaver);
+//                                mVdtCamera.getScreenSaverStyle();*/
+//                            }
+//                        })
+//                        .show();
+//
+//
+//                mBrightnessSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.sbBrightness);
+//                mBrightness = (TextView) dialog.getCustomView().findViewById(R.id.tv_brightness);
+//                mAutoOffNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
+///*                mNpScreenSaver = (NumberPicker) dialog.getCustomView().findViewById(R.id.npScreen);
+//                mNpScreenSaver.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);*/
+//
+///*                Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+//                for (Field pf : pickerFields) {
+//                    if (pf.getName().equals("mSelectionDividersDistance")) {
+//                        pf.setAccessible(true);
+//                        try {
+//                            int result = 72;
+//                            pf.set(mAutoOffNumber, result);
+//                        } catch (IllegalAccessException e) {
+//                            Logger.t(TAG).d(e.getMessage());
+//                        }
+//                    }
+//                }*/
+//
+//                mBrightnessSeekbar.setMax(10);
+//                mAutoOffNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+//                mAutoOffNumber.setDisplayedValues(AUTO_OFF_TIME);
+//                mAutoOffNumber.setMinValue(0);
+//                mAutoOffNumber.setMaxValue(AUTO_OFF_TIME.length - 1);
+//
+///*                mNpScreenSaver.setDisplayedValues(SCREEN_SAVER_STYLE);
+//                mNpScreenSaver.setMinValue(0);
+//                mNpScreenSaver.setMaxValue(SCREEN_SAVER_STYLE.length - 1);
+//
+//                String screenSaverStyle = mVdtCamera.getScreenSaverStyle();
+//                int screenSaverStylePos = -1;
+//                for (int i = 0; i < SCREEN_SAVER_STYLE.length; i++) {
+//                    if (SCREEN_SAVER_STYLE[i].equals(screenSaverStyle)) {
+//                        screenSaverStylePos = i;
+//                        break;
+//                    }
+//                }
+//                if (screenSaverStylePos != -1) {
+//                    mNpScreenSaver.setValue(screenSaverStylePos);
+//                }*/
+//
+//                int brightness = mVdtCamera.getDisplayBrightness();
+//                String autoOffTime = mVdtCamera.getDisplayAutoOffTime();
+//                int autoOffTimePos = -1;
+//                for (int i = 0; i < AUTO_OFF_TIME.length; i++) {
+//                    if (AUTO_OFF_TIME[i].equals(autoOffTime)) {
+//                        autoOffTimePos = i;
+//                        break;
+//                    }
+//                }
+//                mBrightnessSeekbar.setProgress(brightness);
+//                mBrightness.setText(String.valueOf(brightness));
+//                if (autoOffTimePos != 0) {
+//                    mAutoOffNumber.setValue(autoOffTimePos);
+//                }
+//
+//                mBrightnessSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//                    @Override
+//                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+//                        Logger.t(TAG).d(i);
+//                        mBrightness.setText(String.valueOf(i));
+//                    }
+//
+//                    @Override
+//                    public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//                    }
+//                });
+//
+//                return true;
+//            }
+//        });
     }
 
     private void initPowerPreference() {
-        mPower = findPreference("power");
-        mPower.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        mBattery = findPreference("battery");
+        mBattery.setSummary(String.valueOf(mVdtCamera.getBatteryVolume()) + "%");
+        mAutoPowerOff = (SwitchPreference)findPreference("auto_power_off");
+        String autoPowerOffDelay = mVdtCamera.getAutoPowerOffDelay();
+        if (autoPowerOffDelay.equals(POWER_AUTOOFF_NEVER)) {
+            mAutoPowerOff.setChecked(false);
+        } else {
+            mAutoPowerOff.setChecked(true);
+        }
+        mAutoPowerOff.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                    .title(R.string.power)
-                    .customView(R.layout.dialog_power_setting, true)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            int autoOffTimePos = mNpAutoPowerOff.getValue();
-                            String autoOffTime = POWER_AUTO_OFF_TIME[autoOffTimePos];
-                            mVdtCamera.setAutoPowerOffDelay(autoOffTime);
-                        }
-                    })
-                    .show();
-
-                mTvPower = (TextView) dialog.getCustomView().findViewById(R.id.tv_power);
-                mNpAutoPowerOff  = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAutoOff);
-
-/*                Field[] pickerFields = NumberPicker.class.getDeclaredFields();
-                for (Field pf : pickerFields) {
-                    if (pf.getName().equals("mSelectionDividersDistance")) {
-                        pf.setAccessible(true);
-                        try {
-                            int result = 72;
-                            pf.set(mNpAutoPowerOff, result);
-                        } catch (IllegalAccessException e) {
-                            Logger.t(TAG).d(e.getMessage());
-                        }
-                    }
-                }*/
-
-
-                mNpAutoPowerOff.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
-                int batteryVolume = mVdtCamera.getBatteryVolume();
-                mTvPower.setText(String.valueOf(batteryVolume));
-
-                mNpAutoPowerOff.setDisplayedValues(POWER_AUTO_OFF_TIME);
-                mNpAutoPowerOff.setMinValue(0);
-                mNpAutoPowerOff.setMaxValue(POWER_AUTO_OFF_TIME.length - 1);
-
-                String autoPowerOffDelay = mVdtCamera.getAutoPowerOffDelay();
-                int autoPowerOffDelayPos = -1;
-                for (int i = 0; i < POWER_AUTO_OFF_TIME.length; i++) {
-                    if (POWER_AUTO_OFF_TIME[i].equals(autoPowerOffDelay)) {
-                        autoPowerOffDelayPos = i;
-                        break;
-                    }
-                }
-                if (autoPowerOffDelayPos != -1) {
-                    mNpAutoPowerOff.setValue(autoPowerOffDelayPos);
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (mAutoPowerOff.isChecked()) {
+                    mVdtCamera.setAutoPowerOffDelay(POWER_AUTOOFF_NEVER);
+                } else {
+                    mVdtCamera.setAutoPowerOffDelay(POWER_AUTOOFF_30S);
+                    mAutoPowerOffTime.setSummary(POWER_AUTOOFF_30S);
                 }
                 return true;
             }
         });
+        Logger.t(TAG).d("audio power off: " + autoPowerOffDelay);
+        mAutoPowerOffTime = (ListPreference)findPreference("auto_power_off_time");
+        mAutoPowerOffTime.setSummary(autoPowerOffDelay);
+        mAutoPowerOffTime.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Logger.t(TAG).d("new Value: " + o.toString());
+                mAutoPowerOffTime.setSummary(o.toString());
+                mVdtCamera.setAutoPowerOffDelay(o.toString());
+                return false;
+            }
+        });
+
+
     }
 
     private void showStorageInfo() {
@@ -640,7 +618,6 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initAudioPreference() {
-        mAudio = (PreferenceCategory)findPreference("audio");
         mMic = (SwitchPreference) findPreference("mic");
         mMic.setChecked(mVdtCamera.isMicOn());
         mMic.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -753,8 +730,8 @@ public class CameraSettingFragment extends PreferenceFragment {
 
                         }
                     })
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

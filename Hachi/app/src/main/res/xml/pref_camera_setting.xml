@@ -7,6 +7,11 @@
             android:key="cameraName"
             android:title="@string/camera_name"/>
 
+
+        <Preference
+            android:key="storage"
+            android:title="@string/storage"/>
+
         <Preference
             android:key="firmware"
             android:title="@string/firmware"/>
@@ -26,22 +31,18 @@
 
         <SwitchPreference
             android:key="mic"
-            android:title="@string/mic"
-            android:drawableTint="@color/style_color_accent"
-            android:buttonTint="@color/style_color_accent"
-            android:thumbTint="@color/style_color_accent"
-            />
+            android:title="@string/mic"/>
 
         <SwitchPreference
             android:key="speaker"
             android:title="@string/speaker"/>
 
         <com.waylens.hachi.preference.seekbarpreference.SeekBarPreference
-            android:key="speakerVol"
-            android:title="@string/speaker_vol"
-            android:icon="@drawable/settings_beeps_level"
-            android:layout="@layout/preference_seekbar"
             android:dependency="speaker"
+            android:icon="@drawable/settings_beeps_level"
+            android:key="speakerVol"
+            android:layout="@layout/preference_seekbar"
+            android:title="@string/speaker_vol"
             sample:msbp_interval="1"
             sample:msbp_maxValue="10"
             sample:msbp_minValue="0"/>
@@ -53,21 +54,48 @@
         android:title="@string/highlights"/>
 
 
-    <Preference
-        android:key="storage"
-        android:title="@string/storage"/>
+    <PreferenceCategory
+        android:key="power"
+        android:title="@string/power">
+
+        <Preference
+            android:key="battery"
+            android:title="@string/battery"/>
+
+        <SwitchPreference
+            android:key="auto_power_off"
+            android:title="@string/auto_power_off"/>
+
+        <ListPreference
+            android:dependency="auto_power_off"
+            android:entries="@array/auto_power_off_times"
+            android:entryValues="@array/auto_power_off_time_values"
+            android:key="auto_power_off_time"
+            android:title="@string/auto_power_off_time"/>
+
+    </PreferenceCategory>
+
 
     <Preference
         android:key="connectivity"
         android:title="@string/connectivity"/>
 
-    <Preference
-        android:key="power"
-        android:title="@string/power"/>
 
-    <Preference
+    <PreferenceCategory
         android:key="display"
-        android:title="@string/display"/>
+        android:title="@string/display">
+
+
+        <com.waylens.hachi.preference.seekbarpreference.SeekBarPreference
+            android:icon="@drawable/settings_brighteness"
+            android:key="brightness"
+            android:layout="@layout/preference_seekbar"
+            android:title="@string/brightness"
+            sample:msbp_interval="1"
+            sample:msbp_maxValue="10"
+            sample:msbp_minValue="0"/>
+
+    </PreferenceCategory>
 
 
 </PreferenceScreen>

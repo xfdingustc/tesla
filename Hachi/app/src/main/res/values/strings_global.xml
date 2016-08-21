@@ -32,6 +32,14 @@
     <string name="moment_cover" translatable="false">moment_cover</string>
     <string name="clip_cover" translatable="false">clip_cover</string>
 
+    <string name="ten_seconds" translatable="false">10 seconds</string>
+    <string name="thirty_seconds" translatable="false">30 seconds</string>
+    <string name="sixty_seconds" translatable="false">60 seconds</string>
+    <string name="two_minutes" translatable="false">2 minutes</string>
+    <string name="five_minutes" translatable="false">5 minutes</string>
+
+
+
 
 
 </resources>
