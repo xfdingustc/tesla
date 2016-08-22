@@ -19,9 +19,11 @@
 
 
     <PreferenceCategory android:title="@string/video">
-        <Preference
-            android:key="video"
-            android:title="@string/video"/>
+        <ListPreference
+            android:key="resolution"
+            android:title="@string/resolution"
+            android:entries="@array/resolution_framerate_list"
+            android:entryValues="@array/resolution_framerate_list_index"/>
 
         <SwitchPreference
             android:key="timestamp"

@@ -553,6 +553,27 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
     }
 
+    public String getVideoResolutionStr() {
+        mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
+        Logger.t(TAG).d(mVideoResolutionIndex);
+        switch (mVideoResolutionIndex) {
+            case VIDEO_RESOLUTION_1080P30:
+                return "1080p30";
+            case VIDEO_RESOLUTION_1080P60:
+                return "1080p60";
+            case VIDEO_RESOLUTION_720P30:
+                return "720p30";
+            case VIDEO_RESOLUTION_720P60:
+                return "720p60";
+            case VIDEO_RESOLUTION_720P120:
+                return "720p120";
+            default:
+                return "Unknown";
+        }
+
+
+    }
+
     public int getVideoFramerate() {
         mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
         Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
@@ -738,6 +759,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_CAM_GET_NAME);
         mCommunicationBus.sendCommand(CMD_CAM_MSG_MIC_INFOR);
         mCommunicationBus.sendCommand(CMD_REC_GET_REC_MODE);
+        mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
         mCommunicationBus.sendCommand(CMD_REC_LIST_RESOLUTIONS);
         mCommunicationBus.sendCommand(CMD_CAM_GET_GET_ALL_INFOR);
         mCommunicationBus.sendCommand(CMD_CAM_GET_STATE);
@@ -827,6 +849,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void setVideoResolution(int resolutionIndex) {
+        mVideoResolutionIndex = resolutionIndex;
         mCommunicationBus.sendCommand(CMD_REC_SET_RESOLUTION, resolutionIndex);
     }
 

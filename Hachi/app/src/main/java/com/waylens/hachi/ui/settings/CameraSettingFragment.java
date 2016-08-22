@@ -33,7 +33,6 @@ import com.waylens.hachi.library.crs_svr.HashUtils;
 import com.waylens.hachi.preference.seekbarpreference.SeekBarPreference;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
 import com.waylens.hachi.ui.services.download.InetDownloadService;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.snipe.SnipeError;
@@ -70,7 +69,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private VdtCamera mVdtCamera;
 
     private Preference mCameraName;
-    private Preference mVideo;
+    private ListPreference mResolution;
     private SwitchPreference mTimestamp;
     private SwitchPreference mMic;
     private SwitchPreference mSpeaker;
@@ -156,7 +155,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private void initPreference() {
         mCameraName = findPreference("cameraName");
         mBookmark = findPreference("bookmark");
-        mVideo = findPreference("video");
+        mResolution = (ListPreference) findPreference("resolution");
         mTimestamp = (SwitchPreference) findPreference("timestamp");
         mMic = (SwitchPreference) findPreference("mic");
         mSpeaker = (SwitchPreference) findPreference("speaker");
@@ -502,10 +501,26 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private void initVideoPreference() {
 
-        mVideo.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        mResolution.setSummary(mVdtCamera.getVideoResolutionStr());
+        mResolution.setDefaultValue(mVdtCamera.getVideoResolution());
+        mResolution.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                LiveViewSettingActivity.launch(getActivity());
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                mVdtCamera.setVideoResolution(Integer.valueOf(o.toString()));
+                mResolution.setSummary(mVdtCamera.getVideoResolutionStr());
+//                mVdtCamera.setVideoResolution(mResolution.getValue());
+                return true;
+            }
+        });
+
+        boolean isOverlayShown = (mVdtCamera.getOverlayState() == 0) ? false : true;
+        mTimestamp.setChecked(isOverlayShown);
+        mTimestamp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                int newOverlayState = mTimestamp.isChecked() ? 0 : 2;
+                Logger.t(TAG).d("new overlay state: " + newOverlayState);
+                mVdtCamera.setOverlayState(newOverlayState);
                 return true;
             }
         });
@@ -543,18 +558,6 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
 
-
-        boolean isOverlayShown = (mVdtCamera.getOverlayState() == 0) ? false : true;
-        mTimestamp.setChecked(isOverlayShown);
-        mTimestamp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                int newOverlayState = mTimestamp.isChecked() ? 0 : 2;
-                Logger.t(TAG).d("new overlay state: " + newOverlayState);
-                mVdtCamera.setOverlayState(newOverlayState);
-                return true;
-            }
-        });
 
         mStorage.setSummary(R.string.calculating_space_info);
         mStorage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

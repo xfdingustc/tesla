@@ -229,6 +229,23 @@
         <item>Dot</item>
     </string-array>
 
+    <string-array name="resolution_framerate_list" translatable="false">
+        <item>1080p30</item>
+        <item>1080p60</item>
+        <item>720p30</item>
+        <item>720p60</item>
+        <item>720p120</item>
+    </string-array>
+
+
+    <string-array name="resolution_framerate_list_index" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>8</item>
+    </string-array>
+
     <string-array name="timestamp_state" translatable="false">
         <item>@string/timestamp_off</item>
         <item>@string/timestamp_on</item>
