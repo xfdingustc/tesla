@@ -90,6 +90,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mFirmware;
     private SeekBarPreference mBrightness;
     private ListPreference mScreenSaver;
+    private ListPreference mScreenSaverStyle;
     //    private Preference mDisplay;
     private Preference mBattery;
     private ListPreference mAutoPowerOffTime;
@@ -165,6 +166,19 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initPreference() {
+        mCameraName = findPreference("cameraName");
+        mBookmark = findPreference("bookmark");
+        mVideo = findPreference("video");
+        mMic = (SwitchPreference) findPreference("mic");
+        mSpeaker = (SwitchPreference) findPreference("speaker");
+        mSpeakerVol = (SeekBarPreference) findPreference("speakerVol");
+        mBrightness = (SeekBarPreference) findPreference("brightness");
+        mStorage = findPreference("storage");
+        mScreenSaverStyle = (ListPreference)findPreference("screen_saver_style");
+        mScreenSaver = (ListPreference) findPreference("screen_saver");
+        mBattery = findPreference("battery");
+        mConnectivity = findPreference("connectivity");
+        mFirmware = findPreference("firmware");
         initCameraNamePreference();
         initBookmarkPreference();
         initVideoPreference();
@@ -177,7 +191,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initFirmwarePreference() {
-        mFirmware = findPreference("firmware");
+
         mFirmware.setSummary(mVdtCamera.getApiVersion());
 
         String url = Constants.API_CAMEAR_FIRMWARE;
@@ -375,7 +389,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initConnectivityPreference() {
-        mConnectivity = findPreference("connectivity");
+
         mConnectivity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -386,7 +400,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initStoragePreference() {
-        mStorage = findPreference("storage");
+
         mStorage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -397,7 +411,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initDisplayPreference() {
-        mBrightness = (SeekBarPreference) findPreference("brightness");
+
         Logger.t(TAG).d("display brightness" + mVdtCamera.getDisplayBrightness());
         mBrightness.setCurrentValue(mVdtCamera.getDisplayBrightness());
         mBrightness.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -407,23 +421,46 @@ public class CameraSettingFragment extends PreferenceFragment {
                 return true;
             }
         });
-        mScreenSaver = (ListPreference) findPreference("screen_saver");
+
+
         mScreenSaver.setSummary(mVdtCamera.getScreenSaverTime());
+        updateScreenSaverStyle();
         mScreenSaver.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 Logger.t(TAG).d("screen saver: " + o.toString());
                 mVdtCamera.setScreenSaver(o.toString());
                 mScreenSaver.setSummary(o.toString());
+                updateScreenSaverStyle();
                 return true;
             }
         });
 
 
+        mScreenSaverStyle.setSummary(mVdtCamera.getScreenSaverStyle());
+        mScreenSaverStyle.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                mVdtCamera.setScreenSaverStyle(o.toString());
+                mScreenSaverStyle.setSummary(o.toString());
+                return true;
+            }
+        });
+
+    }
+
+
+    private void updateScreenSaverStyle() {
+        String screenSave = mVdtCamera.getScreenSaverTime();
+        if (screenSave.equals("Never")) {
+            mScreenSaverStyle.setEnabled(false);
+        } else {
+            mScreenSaverStyle.setEnabled(true);
+        }
     }
 
     private void initPowerPreference() {
-        mBattery = findPreference("battery");
+
         mBattery.setSummary(String.valueOf(mVdtCamera.getBatteryVolume()) + "%");
 
         String autoPowerOffDelay = mVdtCamera.getAutoPowerOffDelay();
@@ -507,7 +544,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initAudioPreference() {
-        mMic = (SwitchPreference) findPreference("mic");
+
         mMic.setChecked(mVdtCamera.isMicOn());
         mMic.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -518,7 +555,7 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
 
-        mSpeaker = (SwitchPreference) findPreference("speaker");
+
         mSpeaker.setChecked(mVdtCamera.isSpeakerOn());
         mSpeaker.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -529,7 +566,7 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
 
-        mSpeakerVol = (SeekBarPreference) findPreference("speakerVol");
+
         mSpeakerVol.setCurrentValue(mVdtCamera.getSpeakerVol());
         mSpeakerVol.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -542,7 +579,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initVideoPreference() {
-        mVideo = findPreference("video");
+
         mVideo.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -555,7 +592,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
 
     private void initCameraNamePreference() {
-        mCameraName = findPreference("cameraName");
+
         mCameraName.setSummary(mVdtCamera.getName());
 
         mCameraName.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -586,7 +623,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initBookmarkPreference() {
-        mBookmark = findPreference("bookmark");
+
         mBookmark.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

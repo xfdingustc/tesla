@@ -428,4 +428,7 @@
 	<string name="battery">Battery</string>
 	<string name="moment_lost">This Moment is lost.</string>
 	<string name="never">Never</string>
+	<string name="screen_saver_style">Screen saver style</string>
+	<string name="all_black">All black</string>
+	<string name="dot">Dot</string>
 </resources>

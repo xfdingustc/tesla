@@ -200,21 +200,33 @@
         <item>@string/five_minutes</item>
     </string-array>
 
-    <string-array name="auto_power_off_time_values" translatable="false">
-        <item>Never</item>
-        <item>30s</item>
-        <item>60s</item>
-        <item>2min</item>
-        <item>5min</item>
+    <string-array name="screen_saver_style" translatable="false">
+        <item>@string/all_black</item>
+        <item>@string/dot</item>
     </string-array>
 
-    <string-array name="screen_save_valuer" translatable="false">
+
+    <string-array name="auto_power_off_time_values" translatable="false">
         <item>Never</item>
         <item>10s</item>
         <item>30s</item>
         <item>60s</item>
         <item>2min</item>
         <item>5min</item>
+    </string-array>
+
+    <string-array name="screen_save_values" translatable="false">
+        <item>Never</item>
+        <item>10s</item>
+        <item>30s</item>
+        <item>60s</item>
+        <item>2min</item>
+        <item>5min</item>
+    </string-array>
+
+    <string-array name="screen_saver_style_value" translatable="false">
+        <item>All Black</item>
+        <item>Dot</item>
     </string-array>
 
     <string-array name="timestamp_state" translatable="false">

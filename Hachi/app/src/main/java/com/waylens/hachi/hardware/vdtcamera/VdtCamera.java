@@ -456,6 +456,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void setScreenSaver(String autoOffTime) {
+        mAutoOffTime = autoOffTime;
         mCommunicationBus.sendCommand(CMD_SET_DISPLAY_AUTO_OFF_TIME, autoOffTime);
     }
 
