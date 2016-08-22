@@ -11,7 +11,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewParent;
 
-
 import com.waylens.hachi.app.Hachi;
 
 import java.math.BigDecimal;
@@ -61,10 +60,37 @@ public final class Utils {
         String spaceStr;
         if (spaceInM > 1024) {
             BigDecimal tmp = new BigDecimal(spaceInM / 1024);
-            spaceStr =  String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " GB";
+            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " GB";
         } else {
             BigDecimal tmp = new BigDecimal(spaceInM);
             spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " MB";
+        }
+        return spaceStr;
+    }
+
+    public static String getSpaceNumber(long space) {
+        long spaceInM = space / (1024 * 1024);
+
+        String spaceStr;
+        if (spaceInM > 1024) {
+            BigDecimal tmp = new BigDecimal(spaceInM / 1024);
+            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
+        } else {
+            BigDecimal tmp = new BigDecimal(spaceInM);
+            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
+        }
+        return spaceStr;
+    }
+
+
+    public static String getSpaceUnit(long space) {
+        long spaceInM = space / (1024 * 1024);
+
+        String spaceStr;
+        if (spaceInM > 1024) {
+            spaceStr = "GB";
+        } else {
+            spaceStr = "MB";
         }
         return spaceStr;
     }
@@ -194,9 +220,6 @@ public final class Utils {
             index++;
         return list[index];
     }
-
-
-
 
 
 }

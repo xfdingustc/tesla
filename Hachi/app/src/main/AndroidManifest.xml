@@ -129,6 +129,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.settings.SpaceInfoActivity"
+            android:screenOrientation="portrait"/>
+
+
+        <activity
             android:name=".ui.settings.GeneralSettingActivity"
             android:screenOrientation="portrait"/>
 

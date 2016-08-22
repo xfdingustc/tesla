@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -25,12 +24,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
@@ -42,6 +35,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.liveview.LiveViewSettingActivity;
 import com.waylens.hachi.ui.services.download.InetDownloadService;
+import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
@@ -51,11 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import rx.Observable;
@@ -101,9 +91,6 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private NumberPicker mBeforeNumber;
     private NumberPicker mAfterNumber;
-
-    private PieChart mStorageChart;
-
 
     private static final int MAX_BOOKMARK_LENGHT = 30;
 
@@ -174,7 +161,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         mSpeakerVol = (SeekBarPreference) findPreference("speakerVol");
         mBrightness = (SeekBarPreference) findPreference("brightness");
         mStorage = findPreference("storage");
-        mScreenSaverStyle = (ListPreference)findPreference("screen_saver_style");
+        mScreenSaverStyle = (ListPreference) findPreference("screen_saver_style");
         mScreenSaver = (ListPreference) findPreference("screen_saver");
         mBattery = findPreference("battery");
         mConnectivity = findPreference("connectivity");
@@ -401,13 +388,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private void initStoragePreference() {
 
-        mStorage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                showStorageInfo();
-                return true;
-            }
-        });
+
     }
 
     private void initDisplayPreference() {
@@ -481,67 +462,6 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     }
 
-    private void showStorageInfo() {
-        GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
-            @Override
-            public void onResponse(SpaceInfo response) {
-                showStorageChart(response);
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-
-            }
-        });
-
-        mVdtCamera.getRequestQueue().add(request);
-    }
-
-    private void showStorageChart(SpaceInfo response) {
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-            .customView(R.layout.dialog_storage_info, true)
-            .show();
-
-        mStorageChart = (PieChart) dialog.getCustomView().findViewById(R.id.pieChart);
-
-
-        List<String> storageName = Arrays.asList("Marked", "Used", "Free");
-        List<Entry> spaces = new ArrayList<>();
-        spaces.add(new Entry(response.marked / (1024 * 1024), 1));
-        spaces.add(new Entry((response.used - response.marked) / (1024 * 1024), 2));
-        spaces.add(new Entry((response.total - response.used) / (1024 * 1024), 3));
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(getResources().getColor(R.color.style_color_primary));
-        colors.add(getResources().getColor(R.color.material_deep_orange_300));
-        colors.add(Color.BLACK);
-
-        PieDataSet dataSet = new PieDataSet(spaces, "Storage Info");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
-        dataSet.setColors(colors);
-
-        PieData data = new PieData(storageName, dataSet);
-        data.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                if (value > 1024) {
-                    BigDecimal tmp = new BigDecimal(value / 1024);
-                    return String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " G";
-                } else {
-                    BigDecimal tmp = new BigDecimal(value);
-                    return String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " M";
-                }
-            }
-        });
-        data.setValueTextSize(8f);
-        data.setValueTextColor(Color.WHITE);
-
-        mStorageChart.setData(data);
-        mStorageChart.setCenterText("Storage Info");
-        mStorageChart.highlightValue(null);
-        mStorageChart.invalidate();
-    }
 
     private void initAudioPreference() {
 
@@ -620,6 +540,32 @@ public class CameraSettingFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+
+
+        mStorage.setSummary(R.string.calculating_space_info);
+        mStorage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                SpaceInfoActivity.launch(getActivity());
+                return true;
+            }
+        });
+
+        GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
+            @Override
+            public void onResponse(SpaceInfo response) {
+                String leftSpace = Utils.getSpaceString(response.total - response.used);
+                mStorage.setSummary(getString(R.string.space_free, leftSpace));
+            }
+        }, new VdbResponse.ErrorListener() {
+            @Override
+            public void onErrorResponse(SnipeError error) {
+
+            }
+        });
+
+        mVdtCamera.getRequestQueue().add(request);
     }
 
     private void initBookmarkPreference() {
