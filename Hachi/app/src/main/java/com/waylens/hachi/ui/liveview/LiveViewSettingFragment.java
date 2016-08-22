@@ -90,7 +90,7 @@ public class LiveViewSettingFragment extends PreferenceFragment {
         });
 
         mTimestamp = findPreference("timestamp");
-        final int timeStampOn = mVdtCamera.getOVerlayState() / 2;
+        final int timeStampOn = mVdtCamera.getOverlayState() / 2;
         mTimestamp.setSummary(timeStampOn == 0 ? R.string.timestamp_off : R.string.timestamp_on);
         mTimestamp.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

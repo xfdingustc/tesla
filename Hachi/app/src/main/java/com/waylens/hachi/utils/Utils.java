@@ -55,7 +55,7 @@ public final class Utils {
     }
 
     public static String getSpaceString(long space) {
-        long spaceInM = space / (1024 * 1024);
+        float spaceInM = ((float)space) / (1024 * 1024);
 
         String spaceStr;
         if (spaceInM > 1024) {
@@ -69,7 +69,7 @@ public final class Utils {
     }
 
     public static String getSpaceNumber(long space) {
-        long spaceInM = space / (1024 * 1024);
+        float spaceInM = ((float)space) / (1024 * 1024);
 
         String spaceStr;
         if (spaceInM > 1024) {
@@ -84,7 +84,7 @@ public final class Utils {
 
 
     public static String getSpaceUnit(long space) {
-        long spaceInM = space / (1024 * 1024);
+        float spaceInM = ((float)space) / (1024 * 1024);
 
         String spaceStr;
         if (spaceInM > 1024) {

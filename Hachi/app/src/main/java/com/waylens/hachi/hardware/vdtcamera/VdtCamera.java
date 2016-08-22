@@ -441,13 +441,14 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_SET_DISPLAY_BRIGHTNESS, brightness);
     }
 
-    public int getOVerlayState() {
+    public int getOverlayState() {
         mCommunicationBus.sendCommand(CMD_REC_GET_OVERLAY_STATE);
         return mOverlayFlags;
     }
 
     public void setOverlayState(int overlayState) {
-        mCommunicationBus.sendCommand(CMD_REC_SET_OVERLAY, overlayState & 2);
+        mCommunicationBus.sendCommand(CMD_REC_SET_OVERLAY, overlayState);
+        mOverlayFlags = overlayState;
     }
 
     public String getScreenSaverTime() {

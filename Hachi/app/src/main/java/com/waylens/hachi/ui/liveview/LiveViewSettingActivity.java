@@ -99,7 +99,7 @@ public class LiveViewSettingActivity extends BaseActivity {
         mOriginRecordMode = mCamera.getRecordMode();
         mOriginVideoResolution = mChangedVideoResolution = mCamera.getVideoResolution();
         mOriginVideoFramerate = mChangedVideoFramerate = mCamera.getVideoFramerate();
-        mOriginOverlayState = mChangedOverlayState = mCamera.getOVerlayState();
+        mOriginOverlayState = mChangedOverlayState = mCamera.getOverlayState();
         mChangedRecordMode = mOriginRecordMode;
         initViews();
     }
@@ -146,8 +146,8 @@ public class LiveViewSettingActivity extends BaseActivity {
                             MaterialDialog dialog = new MaterialDialog.Builder(LiveViewSettingActivity.this)
                                 .title(R.string.change_camera_setting)
                                 .content(R.string.change_camera_setting_hint)
-                                .positiveText(android.R.string.ok)
-                                .negativeText(android.R.string.cancel)
+                                .positiveText(R.string.ok)
+                                .negativeText(R.string.cancel)
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -191,7 +191,7 @@ public class LiveViewSettingActivity extends BaseActivity {
 
         if (mOriginOverlayState != mChangedOverlayState) {
             mCamera.setOverlayState(mChangedOverlayState);
-            mCamera.getOVerlayState();
+            mCamera.getOverlayState();
         }
         finish();
     }

@@ -406,8 +406,8 @@
 	<string name="title">Title</string>
 	<string name="time_lapse">Time Lapse</string>
 	<string name="generate_time_lapse">Generating a time-lapse video</string>
-	<string name="timestamp">Timestamp</string>
-	<string name="timestamp_on_video">Timestamp Burned on Video</string>
+	<string name="timestamp_overlay">Timestamp overlay</string>
+	<string name="timestamp_on_video">Timestamp will be burned on the video</string>
 	<string name="timestamp_on">ON</string>
 	<string name="timestamp_off">OFF</string>
 	<string name="search_hint">Search</string>

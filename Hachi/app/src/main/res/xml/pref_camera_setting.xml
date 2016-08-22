@@ -22,6 +22,12 @@
         <Preference
             android:key="video"
             android:title="@string/video"/>
+
+        <SwitchPreference
+            android:key="timestamp"
+            android:persistent="false"
+            android:title="@string/timestamp_overlay"
+            android:summary="@string/timestamp_on_video"/>
     </PreferenceCategory>
 
 
