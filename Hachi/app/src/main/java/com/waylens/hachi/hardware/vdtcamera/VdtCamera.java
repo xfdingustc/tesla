@@ -450,12 +450,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_REC_SET_OVERLAY, overlayState & 2);
     }
 
-    public String getDisplayAutoOffTime() {
+    public String getScreenSaverTime() {
         mCommunicationBus.sendCommand(CMD_GET_DISPLAY_AUTO_OFF_TIME);
         return mAutoOffTime;
     }
 
-    public void setDisplayAutoOffTime(String autoOffTime) {
+    public void setScreenSaver(String autoOffTime) {
         mCommunicationBus.sendCommand(CMD_SET_DISPLAY_AUTO_OFF_TIME, autoOffTime);
     }
 

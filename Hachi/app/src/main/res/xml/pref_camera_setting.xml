@@ -62,16 +62,13 @@
             android:key="battery"
             android:title="@string/battery"/>
 
-        <SwitchPreference
-            android:key="auto_power_off"
-            android:title="@string/auto_power_off"/>
 
         <ListPreference
-            android:dependency="auto_power_off"
             android:entries="@array/auto_power_off_times"
             android:entryValues="@array/auto_power_off_time_values"
-            android:key="auto_power_off_time"
-            android:title="@string/auto_power_off_time"/>
+            android:key="auto_power_off"
+            android:persistent="false"
+            android:title="@string/auto_power_off"/>
 
     </PreferenceCategory>
 
@@ -94,6 +91,12 @@
             sample:msbp_interval="1"
             sample:msbp_maxValue="10"
             sample:msbp_minValue="0"/>
+
+        <ListPreference
+            android:entries="@array/screen_saver"
+            android:entryValues="@array/screen_save_valuer"
+            android:key="screen_saver"
+            android:title="@string/screen_saver"/>
 
     </PreferenceCategory>
 

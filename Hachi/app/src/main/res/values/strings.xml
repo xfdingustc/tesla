@@ -416,7 +416,7 @@
 	<string name="my_videos">My videos</string>
 	<string name="username_update_failed">Failed to update new username</string>
 	<string name="birthday_update_failed">Failed to update birthday</string>
-	<string name="screen_saver">Screen Saver</string>
+	<string name="screen_saver">Screen saver</string>
 	<string name="auto_power_off">Auto power off</string>
 	<string name="auto_power_off_time">Auto power off time</string>
 	<string name="my_moments">My moments</string>
@@ -427,4 +427,5 @@
 	<string name="sleep_after">Sleep After</string>
 	<string name="battery">Battery</string>
 	<string name="moment_lost">This Moment is lost.</string>
+	<string name="never">Never</string>
 </resources>
