@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.rxjava.RxBus;
@@ -73,6 +74,12 @@ public class MusicListSelectActivity extends BaseActivity {
     public void setupToolbar() {
         super.setupToolbar();
         getToolbar().setTitle(R.string.add_music);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
 

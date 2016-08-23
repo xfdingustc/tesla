@@ -2,16 +2,26 @@ package com.waylens.hachi.ui.user;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobManager;
@@ -19,10 +29,12 @@ import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.FollowListActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.IMomentListAdapterHeaderView;
 import com.waylens.hachi.ui.settings.AccountActivity;
+import com.waylens.hachi.utils.FastBlurUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +66,7 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
 
     @Override
     public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
-        UserProfileHeaderViewHolder holder = (UserProfileHeaderViewHolder) viewHolder;
+        final UserProfileHeaderViewHolder holder = (UserProfileHeaderViewHolder) viewHolder;
 
         Glide.with(mActivity)
             .load(mUserInfo.avatarUrl)
@@ -62,6 +74,55 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
             .placeholder(R.drawable.menu_profile_photo_default)
             .dontAnimate()
             .into(holder.civUserAvatar);
+
+        Target blurTarget = new SimpleTarget() {
+            @Override
+            public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
+                if (!(resource instanceof Bitmap)) {
+                    return;
+                }
+
+                Bitmap bitmap = (Bitmap) resource;
+
+                float aspectRatio = (float)holder.mBlurAvatar.getWidth() / holder.mBlurAvatar.getHeight();
+                int cropHeight = (int)(bitmap.getWidth() / aspectRatio);
+                Logger.t(TAG).d("ratio: " + aspectRatio + " cropHeight: " + cropHeight);
+                Bitmap cropBitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - cropHeight) /2 , bitmap.getWidth(), cropHeight);
+                Palette.generateAsync(cropBitmap, 24, new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette palette) {
+                        Palette.Swatch vibrant = palette.getVibrantSwatch();
+                        if (vibrant != null) {
+                            ((BaseActivity)mActivity).getToolbar().setBackgroundColor(vibrant.getRgb());
+                        } else {
+                            Logger.t(TAG).d("failed to get virant");
+                        }
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                            Palette.Swatch darkvibrant = palette.getDarkVibrantSwatch();
+                            if (darkvibrant != null) {
+                                Window window = mActivity.getWindow();
+                                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                window.setStatusBarColor(darkvibrant.getRgb());
+                            }
+                        }
+
+
+                    }
+                });
+                Bitmap blurBitmap = FastBlurUtil.doBlur(cropBitmap, 8, true);
+                holder.mBlurAvatar.setImageBitmap(blurBitmap);
+
+            }
+        };
+
+        Glide.with(mActivity)
+            .load(mUserInfo.avatarUrl)
+            .asBitmap()
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .into(blurTarget);
 
 
         holder.mUserName.setText(mUserInfo.displayName);
@@ -111,6 +172,9 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
 
         @BindView(R.id.btn_account_setting)
         ImageButton mBtnAccountSetting;
+
+        @BindView(R.id.image_blur)
+        ImageView mBlurAvatar;
 
         @OnClick(R.id.btnFollowersCount)
         public void onBtnFollowerCountClicked() {
