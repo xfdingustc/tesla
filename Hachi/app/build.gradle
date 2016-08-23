@@ -142,6 +142,7 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 //    compile 'com.miguelcatalan:materialsearchview:1.4.0'
     compile 'com.lapism:searchview:3.4.1'
+    compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
 
 }
 
