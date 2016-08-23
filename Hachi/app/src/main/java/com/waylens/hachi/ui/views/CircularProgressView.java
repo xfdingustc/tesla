@@ -239,6 +239,6 @@ public class CircularProgressView extends View {
     }
 
     public interface OnLoadingFinishedListener {
-        public void onLoadingFinished();
+        void onLoadingFinished();
     }
 }

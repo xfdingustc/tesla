@@ -3,10 +3,12 @@ package com.waylens.hachi.ui.settings;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by Xiaofei on 2016/5/13.
  */
-public class FirmwareInfo {
+public class FirmwareInfo implements Serializable {
 
     private String mName;
     private String mUrl;
@@ -29,7 +31,7 @@ public class FirmwareInfo {
             e.printStackTrace();
         }
 
-        return  firmwareInfo;
+        return firmwareInfo;
     }
 
     public String getName() {
