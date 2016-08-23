@@ -10,7 +10,15 @@
         android:id="@+id/user_cover"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="@color/windowBackground"></FrameLayout>
+        android:background="@color/windowBackground">
+
+
+        <ImageView
+            android:id="@+id/image_blur"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
 
 
     <RelativeLayout

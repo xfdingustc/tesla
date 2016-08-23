@@ -105,7 +105,7 @@ dependencies {
     compile 'com.android.support:design:24.1.1'
     compile 'com.android.support:recyclerview-v7:24.1.1'
     compile 'com.android.support:multidex:1.0.1'
-    //    compile 'com.android.support:palette-v7:24.1.1'
+    compile 'com.android.support:palette-v7:24.1.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.orhanobut:logger:1.15'
     compile 'com.mcxiaoke.volley:library:1.0.19'

@@ -3,11 +3,15 @@ package com.waylens.hachi.ui.settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.graphics.Palette;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -19,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.rest.HachiApi;
@@ -223,53 +228,64 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void refreshUserAvatar() {
-        Glide.with(this)
-            .load(mSessionManager.getAvatarUrl())
-            .dontAnimate()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(mAvatar);
-
-        Target blurTarget = new SimpleTarget() {
+        mBlurAvatar.post(new Runnable() {
             @Override
-            public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
-                if (!(resource instanceof Bitmap)) {
-                    return;
-                }
+            public void run() {
+                Glide.with(AccountActivity.this)
+                    .load(mSessionManager.getAvatarUrl())
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(mAvatar);
 
-                Bitmap bitmap = (Bitmap) resource;
-//                Palette.generateAsync(bitmap, 24, new Palette.PaletteAsyncListener() {
-//                    @Override
-//                    public void onGenerated(Palette palette) {
-//                        Palette.Swatch vibrant = palette.getVibrantSwatch();
-//                        if (vibrant != null) {
-//                            getToolbar().setBackgroundColor(vibrant.getRgb());
-//                        }
-//
-//                        Palette.Swatch darkvibrant = palette.getDarkVibrantSwatch();
-//                        if (darkvibrant != null) {
-//                            Window window = getWindow();
-//                            //取消设置透明状态栏,使 ContentView 内容不再覆盖状态栏
-//                            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//                            //需要设置这个 flag 才能调用 setStatusBarColor 来设置状态栏颜色
-//                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//                            //设置状态栏颜色
-//                            window.setStatusBarColor(darkvibrant.getRgb());
-//                        }
-//
-//
-//                    }
-//                });
-                Bitmap blurBitmap = FastBlurUtil.doBlur(bitmap, 8, true);
-                mBlurAvatar.setImageBitmap(blurBitmap);
+                Target blurTarget = new SimpleTarget() {
+                    @Override
+                    public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
+                        if (!(resource instanceof Bitmap)) {
+                            return;
+                        }
 
+                        Bitmap bitmap = (Bitmap) resource;
+
+                        float aspectRatio = (float)mBlurAvatar.getWidth() / mBlurAvatar.getHeight();
+                        int cropHeight = (int)(bitmap.getWidth() / aspectRatio);
+                        Logger.t(TAG).d("ratio: " + aspectRatio + " cropHeight: " + cropHeight);
+                        Bitmap cropBitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - cropHeight) /2 , bitmap.getWidth(), cropHeight);
+                        Palette.generateAsync(cropBitmap, 24, new Palette.PaletteAsyncListener() {
+                            @Override
+                            public void onGenerated(Palette palette) {
+                                Palette.Swatch vibrant = palette.getVibrantSwatch();
+                                if (vibrant != null) {
+                                    getToolbar().setBackgroundColor(vibrant.getRgb());
+                                }
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                                    Palette.Swatch darkvibrant = palette.getDarkVibrantSwatch();
+                                    if (darkvibrant != null) {
+                                        Window window = getWindow();
+                                        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        window.setStatusBarColor(darkvibrant.getRgb());
+                                    }
+                                }
+
+
+                            }
+                        });
+                        Bitmap blurBitmap = FastBlurUtil.doBlur(cropBitmap, 8, true);
+                        mBlurAvatar.setImageBitmap(blurBitmap);
+
+                    }
+                };
+
+                Glide.with(AccountActivity.this)
+                    .load(mSessionManager.getAvatarUrl())
+                    .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .into(blurTarget);
             }
-        };
+        });
 
-        Glide.with(this)
-            .load(mSessionManager.getAvatarUrl())
-            .asBitmap()
-            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-            .into(blurTarget);
     }
 
 
