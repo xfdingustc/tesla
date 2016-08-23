@@ -76,7 +76,7 @@ public class CameraSettingFragment extends PreferenceFragment {
     private SeekBarPreference mSpeakerVol;
     private Preference mBookmark;
     private Preference mStorage;
-    private Preference mConnectivity;
+    private Preference mBluetooth;
     private Preference mFirmware;
     private SeekBarPreference mBrightness;
     private ListPreference mScreenSaver;
@@ -165,7 +165,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         mScreenSaverStyle = (ListPreference) findPreference("screen_saver_style");
         mScreenSaver = (ListPreference) findPreference("screen_saver");
         mBattery = findPreference("battery");
-        mConnectivity = findPreference("connectivity");
+        mBluetooth = findPreference("bluetooth");
         mFirmware = findPreference("firmware");
         initCameraNamePreference();
         initBookmarkPreference();
@@ -377,14 +377,14 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void initConnectivityPreference() {
-
-        mConnectivity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        mBluetooth.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                ConnectivitySettingActivity.launch(getActivity());
+                BluetoothSettingActivity.launch(getActivity());
                 return true;
             }
         });
+
     }
 
     private void initStoragePreference() {

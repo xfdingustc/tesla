@@ -25,6 +25,10 @@
             android:entries="@array/resolution_framerate_list"
             android:entryValues="@array/resolution_framerate_list_index"/>
 
+        <Preference
+            android:key="bookmark"
+            android:title="@string/highlights"/>
+
         <SwitchPreference
             android:key="timestamp"
             android:persistent="false"
@@ -57,9 +61,7 @@
 
     </PreferenceCategory>
 
-    <Preference
-        android:key="bookmark"
-        android:title="@string/highlights"/>
+
 
 
     <PreferenceCategory
@@ -81,11 +83,15 @@
     </PreferenceCategory>
 
 
-    <Preference
+    <PreferenceCategory
         android:key="connectivity"
-        android:title="@string/connectivity"/>
+        android:title="@string/connectivity">
 
+        <Preference
+            android:key="bluetooth"
+            android:title="@string/bt"/>
 
+    </PreferenceCategory>
     <PreferenceCategory
         android:key="display"
         android:title="@string/display">

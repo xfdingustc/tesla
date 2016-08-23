@@ -1,7 +1,9 @@
 package com.waylens.hachi.rest;
 
+import android.os.Build;
 import android.text.TextUtils;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 
@@ -22,13 +24,12 @@ public class HachiService {
 
     public static HachiApi mHachiApiInstance = null;
 
-
+    private static String USER_AGENT = "Android " + Build.VERSION.SDK + ";" + Build.BRAND + Build.MODEL;
     private HachiService() {
 
     }
 
     public static HachiApi createHachiApiService() {
-
         Retrofit.Builder builder = new Retrofit.Builder().addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.HOST_URL);
@@ -41,6 +42,7 @@ public class HachiService {
                     Request request = chain.request();
                     Request newReq = request.newBuilder()
                         .addHeader("X-Auth-Token", token)
+                        .addHeader("User-Agent", USER_AGENT)
                         .build();
                     return chain.proceed(newReq);
                 }
