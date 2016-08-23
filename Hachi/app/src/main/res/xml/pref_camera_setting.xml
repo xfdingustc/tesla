@@ -107,13 +107,13 @@
             sample:msbp_minValue="0"/>
 
         <ListPreference
-            android:entries="@array/screen_saver"
+            android:entries="@array/screen_saver_array"
             android:entryValues="@array/screen_save_values"
             android:key="screen_saver"
             android:title="@string/screen_saver"/>
 
         <ListPreference
-            android:entries="@array/screen_saver_style"
+            android:entries="@array/screen_saver_style_array"
             android:entryValues="@array/screen_saver_style_value"
             android:key="screen_saver_style"
             android:persistent="false"

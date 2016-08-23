@@ -192,7 +192,7 @@
         <item>@string/five_minutes</item>
     </string-array>
 
-    <string-array name="screen_saver" translatable="false">
+    <string-array name="screen_saver_array" translatable="false">
         <item>@string/never</item>
         <item>@string/thirty_seconds</item>
         <item>@string/sixty_seconds</item>
@@ -200,7 +200,7 @@
         <item>@string/five_minutes</item>
     </string-array>
 
-    <string-array name="screen_saver_style" translatable="false">
+    <string-array name="screen_saver_style_array" translatable="false">
         <item>@string/all_black</item>
         <item>@string/dot</item>
     </string-array>
