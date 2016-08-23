@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.google.zxing.common.StringUtils;
+import com.googlecode.javacpp.annotation.Raw;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -644,7 +645,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         for (int i = 0; i < mMomentPlayInfo.rawDataUrl.size(); i++) {
             MomentPlayInfo.RawDataUrl rawDataUrl = mMomentPlayInfo.rawDataUrl.get(i);
             RawDataTimeInfo timeInfo = new RawDataTimeInfo();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
                 Date date = dateFormat.parse(rawDataUrl.captureTime);
                 timeInfo.captureTime = date.getTime();
@@ -827,6 +828,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int psi, int bp, int bhp) {
             RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
+            Logger.t(TAG).d(String.format("speed:%1$d, rmp:%2$d, psi:%3$d, captureTime:%4$d", speed, rpm, psi, captureTime));
             ObdData data = new ObdData(speed, temperature, rpm, tp, psi, false);
             item.data = data;
             mOBDData.add(item);
@@ -839,6 +841,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                                int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
                                int pressure) {
             RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_IIO, captureTime);
+            Logger.t(TAG).d("acc captureTime:" + captureTime);
             IioData data = new IioData();
 
             data.accX = accX;
@@ -886,6 +889,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
             if ((rawDataItem = checkIfUpdated(mOBDData, 0, currentTime)) != null) {
                 mObdDataIndex++;
+                Logger.t(TAG).d(((ObdData)rawDataItem.data).toString());
                 rawDataItemList.add(rawDataItem);
             }
             if (!rawDataItemList.isEmpty() && (rawDataItem = mWeatherData) != null) {
@@ -893,7 +897,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
             if (!rawDataItemList.isEmpty()) {
                 Logger.t(TAG).d("update raw data!");
-                Logger.t(TAG).d(rawDataItemList.toString());
+
                 mGaugeView.updateRawDateItem(rawDataItemList);
             }
         }
@@ -903,8 +907,35 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             if (index >= list.size()) {
                 return null;
             }
+            int low = 0;
+            int high = list.size() -1;
+            int mid, res = -1;
+            if (list.get(low).getPtsMs() > currentTime || list.get(high).getPtsMs() < currentTime ) {
+                return null;
+            }
+            while (low < high) {
+                mid = (low + high) / 2;
+                if (list.get(mid).getPtsMs() == currentTime) {
+                    res = mid;
+                    break;
+                } else if (list.get(mid).getPtsMs() < currentTime){
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+            RawDataItem updateItem = null;
+            if (res != -1) {
+                updateItem = new RawDataItem(list.get(res));
+            } else {
+                updateItem = new RawDataItem(list.get(low));
+            }
 
-            for (int i = 1; i < list.size(); i++) {
+            long startTime = getRawDataIndex(currentTime);
+            updateItem.setPtsMs(startTime + updateItem.getPtsMs());
+            return updateItem;
+
+/*            for (int i = 0; i < list.size(); i++) {
                 RawDataItem item = list.get(i);
                 if (currentTime < item.getPtsMs()) {
 //                  Logger.t(TAG).d("found rawdata: " + i + " currentTime: " + currentTime + " itempts: " + item.getPtsMs());
@@ -914,7 +945,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     return updateItem;
                 }
             }
-            return null;
+            return null;*/
+
         }
 
         private long getRawDataIndex(int currentTime) {

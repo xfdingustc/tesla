@@ -74,7 +74,6 @@ public class GaugeView extends FrameLayout {
             case MODE_MOMENT:
                 mGaugeMode = gaugeMode;
                 mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
-                mDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 break;
             default:
                 break;

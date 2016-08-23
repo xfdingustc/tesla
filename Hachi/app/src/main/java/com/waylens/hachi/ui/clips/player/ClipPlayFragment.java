@@ -451,15 +451,16 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         View view = inflater.inflate(R.layout.fragment_clip_play, container, false);
         ButterKnife.bind(this, view);
+        mWvGauge.setGaugeMode(GaugeView.MODE_CAMERA);
         mHandler = new ControlPanelHandler(this);
         initViews();
-        mWvGauge.setGaugeMode(GaugeView.MODE_CAMERA);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initRawDataView();
 
     }
 
@@ -497,10 +498,43 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     private void initRawDataView() {
-        mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
-        mRawDataLoader.loadRawData();
-        ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
-        setClipSetPos(clipSetPos, true);
+        Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(final Subscriber<? super Void> subscriber) {
+                Logger.t(TAG).d("start loading ");
+                // First load raw data into memory
+                mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
+                mRawDataLoader.loadRawData();
+                subscriber.onCompleted();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.io())
+        .subscribe(new Observer<Void>() {
+            @Override
+            public void onCompleted() {
+                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
+                if (mRawDataLoader != null) {
+                    List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
+                    if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
+                        mWvGauge.updateRawDateItem(rawDataItemList);
+                        Logger.t(TAG).d("update raw data!");
+
+                    }
+                }
+                Logger.t(TAG).d("init gauge view!");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Void aVoid) {
+
+            }
+        });
+
     }
 
 
