@@ -256,6 +256,7 @@ public class AvatarActivity extends BaseActivity {
                     bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
                     break;
                 default:
+                    bmp = bitmap;
                     break;
             }
 

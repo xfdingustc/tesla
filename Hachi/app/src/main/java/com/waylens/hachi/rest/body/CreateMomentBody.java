@@ -27,6 +27,18 @@ public class CreateMomentBody {
 
     public List<String> shareProviders = new ArrayList<>();
 
+    public String vehicleMaker;
+
+    public String vehicleModel;
+
+    public String vehicleYear;
+
+    public String vehicleDesc;
+
+    public List<Long> timingPoints = new ArrayList<>();
+
+    public String MomentType;
+
     public CreateMomentBody(LocalMoment localMoment) {
         this.title = localMoment.title;
         this.desc = localMoment.description;

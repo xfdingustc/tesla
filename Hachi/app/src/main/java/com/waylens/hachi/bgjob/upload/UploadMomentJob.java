@@ -106,7 +106,7 @@ public class UploadMomentJob extends Job {
         mVdbRequestQueue = VdtCameraManager.getManager().getCurrentCamera().getRequestQueue();
         // Step1:  get playlist info:
         VdbRequestFuture<ClipSet> clipSetRequestFuture = VdbRequestFuture.newFuture();
-        ClipSetExRequest request = new ClipSetExRequest(mLocalMoment.playlistId, ClipSetExRequest.FLAG_CLIP_EXTRA, clipSetRequestFuture, clipSetRequestFuture);
+        ClipSetExRequest request = new ClipSetExRequest(mLocalMoment.playlistId, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC, clipSetRequestFuture, clipSetRequestFuture);
         mVdbRequestQueue.add(request);
         ClipSet playlistClipSet = clipSetRequestFuture.get();
 
@@ -115,11 +115,19 @@ public class UploadMomentJob extends Job {
 
         checkIfCancelled();
 
+/*        if (playlistClipSet.getCount() == 1) {
+            Clip clip = playlistClipSet.getClip(0);
+            if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
+                //get race Timeing points
+            }
+        }*/
+
         // Step2: get upload url info:
         for (int i = 0; i < playlistClipSet.getCount(); i++) {
             Logger.t(TAG).d("Try to get upload url, index: " + i);
             VdbRequestFuture<UploadUrl> uploadUrlRequestFuture = VdbRequestFuture.newFuture();
             Clip clip = playlistClipSet.getClip(i);
+            String vin = clip.getVin();
             Bundle parameters = new Bundle();
             parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
             parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, clip.getStartTimeMs());
