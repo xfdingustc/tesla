@@ -197,8 +197,8 @@ public class SignUpFragment extends BaseFragment {
             MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.email_has_been_used)
                     .content(R.string.sign_in_with_this_email)
-                    .positiveText(android.R.string.ok)
-                    .negativeText(android.R.string.cancel)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

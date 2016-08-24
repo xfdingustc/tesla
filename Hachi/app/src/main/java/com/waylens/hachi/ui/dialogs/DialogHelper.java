@@ -33,7 +33,7 @@ public class DialogHelper {
         return new MaterialDialog.Builder(context)
             .title(R.string.report)
             .titleColorRes(R.color.style_color_accent)
-            .iconRes(R.drawable.comment_report)
+            .iconRes(R.drawable.ic_report)
             .items(R.array.report_reason)
             .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
@@ -51,7 +51,6 @@ public class DialogHelper {
         new MaterialDialog.Builder(context)
             .title(R.string.report)
             .titleColorRes(R.color.style_color_accent)
-            .iconRes(R.drawable.comment_report)
             .items(R.array.report_reason)
             .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
@@ -94,8 +93,6 @@ public class DialogHelper {
         return new MaterialDialog.Builder(context)
             .title(R.string.delete_highlight)
             .titleColorRes(R.color.style_color_accent)
-            .iconRes(R.drawable.comment_delete)
-            .limitIconToDefaultSize()
             .content(R.string.delete_bookmark_confirm)
             .negativeText(R.string.cancel)
             .positiveText(R.string.ok)

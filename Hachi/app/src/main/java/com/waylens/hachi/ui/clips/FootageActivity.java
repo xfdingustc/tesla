@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.clips;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -22,16 +24,14 @@ import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
-import com.xfdingustc.snipe.VdbRequest;
-import com.xfdingustc.snipe.VdbRequestQueue;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.AddBookmarkRequest;
 import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
 import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
-import com.xfdingustc.snipe.toolbox.VdbImageRequest;
 import com.xfdingustc.snipe.utils.DateTime;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipPos;
@@ -119,18 +119,12 @@ public class FootageActivity extends ClipPlayActivity {
                             toModify(event.getClipList().get(0));
                             break;
                         case R.id.menu_to_delete:
-                            MaterialDialog dialog = new MaterialDialog.Builder(FootageActivity.this)
-                                .content(R.string.delete_bookmark_confirm)
-                                .positiveText(R.string.ok)
-                                .negativeText(R.string.cancel)
-                                .callback(new MaterialDialog.ButtonCallback() {
-                                    @Override
-                                    public void onPositive(MaterialDialog dialog) {
-                                        doDeleteSelectedClips(event.getClipList());
-                                    }
-                                })
-                                .build();
-                            dialog.show();
+                            DialogHelper.showDeleteHighlightConfirmDialog(FootageActivity.this, new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    doDeleteSelectedClips(event.getClipList());
+                                }
+                            });
 
                             break;
                         default:
@@ -151,8 +145,7 @@ public class FootageActivity extends ClipPlayActivity {
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
-        ActivityOptionsCompat options = ActivityOptionsCompat
-            .makeSceneTransitionAnimation(activity, pairs);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
@@ -200,7 +193,6 @@ public class FootageActivity extends ClipPlayActivity {
         super.onStop();
         mEventBus.unregister(mClipSetProgressBar);
     }
-
 
 
     @Override
