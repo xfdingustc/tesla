@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 
@@ -65,6 +66,22 @@ public class DialogHelper {
                     listener.onPositiveClick();
                 }
             }).show();
+    }
+
+
+    public static MaterialDialog showDeleteHighlightConfirmDialog(Context context,
+                                                                  MaterialDialog.SingleButtonCallback positiveListener) {
+        return new MaterialDialog.Builder(context)
+            .title(R.string.delete_highlight)
+            .titleColorRes(R.color.style_color_accent)
+            .iconRes(R.drawable.btn_edit_action_delete)
+            .limitIconToDefaultSize()
+            .content(R.string.delete_bookmark_confirm)
+            .negativeText(R.string.cancel)
+            .positiveText(R.string.ok)
+            .onPositive(positiveListener)
+            .theme(Theme.DARK)
+            .show();
     }
 
     public interface onPositiveClickListener {

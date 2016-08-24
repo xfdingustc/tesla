@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -29,7 +31,7 @@ import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
-import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
@@ -39,7 +41,6 @@ import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipActionInfo;
 import com.xfdingustc.snipe.vdb.ClipSet;
-import com.xfdingustc.snipe.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -389,19 +390,13 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     mode.finish();
                     break;
                 case R.id.menu_to_delete:
-                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .content(R.string.delete_bookmark_confirm)
-                        .positiveText(R.string.ok)
-                        .negativeText(R.string.cancel)
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                doDeleteSelectedClips();
-                                mode.finish();
-                            }
-                        })
-                        .build();
-                    dialog.show();
+                    DialogHelper.showDeleteHighlightConfirmDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            doDeleteSelectedClips();
+                            mode.finish();
+                        }
+                    });
                     break;
                 case R.id.menu_selete_all:
                     mAdapter.toggleSelectAll(true);

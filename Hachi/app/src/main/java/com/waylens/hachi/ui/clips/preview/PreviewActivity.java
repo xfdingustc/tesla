@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +22,7 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
@@ -130,16 +130,12 @@ public class PreviewActivity extends ClipPlayActivity {
     }
 
     private void confirmDeleteClip() {
-        new MaterialDialog.Builder(this)
-            .content(R.string.delete_bookmark_confirm)
-            .negativeText(R.string.cancel)
-            .positiveText(R.string.ok)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    doDeleteClip();
-                }
-            }).show();
+        DialogHelper.showDeleteHighlightConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                doDeleteClip();
+            }
+        });
     }
 
 

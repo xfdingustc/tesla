@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.community.feed;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -17,25 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.social.ReportJob;
-import com.waylens.hachi.rest.HachiApi;
-import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.body.ReportMomentBody;
-import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
@@ -54,8 +41,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 
 public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

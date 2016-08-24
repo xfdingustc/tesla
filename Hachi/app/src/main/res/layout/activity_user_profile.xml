@@ -7,7 +7,14 @@
     android:orientation="vertical">
 
 
-    <include layout="@layout/toolbar_default"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:elevation="@dimen/default_elevation"
+        app:layout_scrollFlags="scroll"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:navigationIcon="@drawable/navbar_back"/>
 
 
     <com.waylens.hachi.ui.views.RecyclerViewExt
