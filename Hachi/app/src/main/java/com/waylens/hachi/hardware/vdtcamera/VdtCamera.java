@@ -469,6 +469,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     public void setAutoPowerOffDelay(String autoPowerOffDelay) {
         Logger.t(TAG).d(autoPowerOffDelay);
         mCommunicationBus.sendCommand(CMD_SET_AUTO_POWER_OFF_DELAY, autoPowerOffDelay);
+        mAutoPowerOffDelay = autoPowerOffDelay;
     }
 
     public String getScreenSaverStyle() {
@@ -551,6 +552,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
             default:
                 return VIDEO_RESOLUTION_720P;
         }
+    }
+
+
+    public int getVideoResolutionFramerate() {
+        mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
+        return mVideoResolutionIndex;
     }
 
     public String getVideoResolutionStr() {

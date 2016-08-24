@@ -55,7 +55,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:progressDrawable="@drawable/default_progress_bar"
+        android:progressDrawable="@drawable/default_progress_bar_no_radius"
         tools:progress="50"/>
 
     <LinearLayout

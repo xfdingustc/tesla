@@ -215,6 +215,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
 
         mScreenSaver.setSummary(mVdtCamera.getScreenSaverTime());
+        mScreenSaver.setValue(mVdtCamera.getScreenSaverTime());
         updateScreenSaverStyle();
         mScreenSaver.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -229,6 +230,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
 
         mScreenSaverStyle.setSummary(mVdtCamera.getScreenSaverStyle());
+        mScreenSaverStyle.setValue(mVdtCamera.getScreenSaverStyle());
         mScreenSaverStyle.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
@@ -259,12 +261,14 @@ public class CameraSettingFragment extends PreferenceFragment {
         Logger.t(TAG).d("audio power off: " + autoPowerOffDelay);
         mAutoPowerOffTime = (ListPreference) findPreference("auto_power_off");
         mAutoPowerOffTime.setSummary(autoPowerOffDelay);
+        mAutoPowerOffTime.setValue(mVdtCamera.getAutoPowerOffDelay());
         mAutoPowerOffTime.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 Logger.t(TAG).d("new Value: " + o.toString());
                 mAutoPowerOffTime.setSummary(o.toString());
                 mVdtCamera.setAutoPowerOffDelay(o.toString());
+                mAutoPowerOffTime.setValue(mVdtCamera.getAutoPowerOffDelay());
                 return false;
             }
         });
@@ -311,7 +315,8 @@ public class CameraSettingFragment extends PreferenceFragment {
     private void initVideoPreference() {
 
         mResolution.setSummary(mVdtCamera.getVideoResolutionStr());
-        mResolution.setDefaultValue(mVdtCamera.getVideoResolution());
+        Logger.t(TAG).d("video resolution: " + mVdtCamera.getVideoResolutionFramerate());
+        mResolution.setValue(String.valueOf(mVdtCamera.getVideoResolutionFramerate()));
         mResolution.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {

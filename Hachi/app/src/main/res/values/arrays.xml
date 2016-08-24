@@ -194,6 +194,7 @@
 
     <string-array name="screen_saver_array" translatable="false">
         <item>@string/never</item>
+        <item>@string/ten_seconds</item>
         <item>@string/thirty_seconds</item>
         <item>@string/sixty_seconds</item>
         <item>@string/two_minutes</item>
@@ -208,7 +209,6 @@
 
     <string-array name="auto_power_off_time_values" translatable="false">
         <item>Never</item>
-        <item>10s</item>
         <item>30s</item>
         <item>60s</item>
         <item>2min</item>
