@@ -29,9 +29,29 @@ public class DialogHelper {
             }).show();
     }
 
+    public static MaterialDialog showReportUserDialog(Context context, MaterialDialog.SingleButtonCallback positiveListener) {
+        return new MaterialDialog.Builder(context)
+            .title(R.string.report)
+            .titleColorRes(R.color.style_color_accent)
+            .iconRes(R.drawable.comment_report)
+            .items(R.array.report_reason)
+            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                @Override
+                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                    return true;
+                }
+            })
+            .positiveText(R.string.report)
+            .negativeText(R.string.cancel)
+            .onPositive(positiveListener)
+            .show();
+    }
+
     public static void showReportMomentDialog(final Context context, final long momentId) {
         new MaterialDialog.Builder(context)
             .title(R.string.report)
+            .titleColorRes(R.color.style_color_accent)
+            .iconRes(R.drawable.comment_report)
             .items(R.array.report_reason)
             .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
@@ -74,7 +94,7 @@ public class DialogHelper {
         return new MaterialDialog.Builder(context)
             .title(R.string.delete_highlight)
             .titleColorRes(R.color.style_color_accent)
-            .iconRes(R.drawable.btn_edit_action_delete)
+            .iconRes(R.drawable.comment_delete)
             .limitIconToDefaultSize()
             .content(R.string.delete_bookmark_confirm)
             .negativeText(R.string.cancel)
@@ -83,6 +103,8 @@ public class DialogHelper {
             .theme(Theme.DARK)
             .show();
     }
+
+
 
     public interface onPositiveClickListener {
         void onPositiveClick();

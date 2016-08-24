@@ -29,18 +29,14 @@ import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.UserInfo;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.IMomentListAdapterHeaderView;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.user.UserProfileHeaderView;
-import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
-import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
-import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.UserProfile;
-import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 
 import org.json.JSONException;
@@ -200,28 +196,16 @@ public class UserProfileActivity extends BaseActivity {
                         if (!SessionManager.checkUserVerified(UserProfileActivity.this)) {
                             return true;
                         }
-                        MaterialDialog dialog = new MaterialDialog.Builder(UserProfileActivity.this)
-                            .title(R.string.report)
-                            .items(R.array.report_reason)
-                            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                                @Override
-                                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                    return true;
-                                }
-                            })
-                            .positiveText(R.string.report)
-                            .negativeText(R.string.cancel)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    int index = dialog.getSelectedIndex();
-                                    mReportReason = getResources().getStringArray(R.array.report_reason)[index];
-                                    Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
-                                    doReportUser();
-                                }
-                            })
-                            .show();
 
+                        DialogHelper.showReportUserDialog(UserProfileActivity.this, new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                int index = dialog.getSelectedIndex();
+                                mReportReason = getResources().getStringArray(R.array.report_reason)[index];
+                                Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
+                                doReportUser();
+                            }
+                        });
                         break;
                 }
                 return true;
@@ -265,30 +249,6 @@ public class UserProfileActivity extends BaseActivity {
         ReportJob job = new ReportJob(reportUserBody, ReportJob.REPORT_TYPE_USER);
         jobManager.addJobInBackground(job);
 
-        /*String url = Constants.API_REPORT;
-        final JSONObject requestBody = new JSONObject();
-        try {
-            requestBody.put("userId", mUserID);
-            requestBody.put("reason", mReportReason);
-
-            Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    Snackbar.make(mRvUserMomentList, "Report comment successfully", Snackbar.LENGTH_LONG).show();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-
-            mRequestQueue.add(request);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
 
     }
 

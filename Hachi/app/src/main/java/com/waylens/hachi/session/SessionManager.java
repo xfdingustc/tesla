@@ -8,8 +8,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SocialProvider;
@@ -41,9 +41,6 @@ public class SessionManager {
 
 
     private int mLoginType;
-
-
-
 
 
     private SessionManager() {
@@ -90,7 +87,6 @@ public class SessionManager {
     public String getUserName() {
         return PreferenceUtils.getString(PreferenceUtils.USER_NAME, null);
     }
-
 
 
     private void setUserId(String userId) {
@@ -329,7 +325,7 @@ public class SessionManager {
     }
 
 
-    static public boolean checkUserVerified(final Context context) {
+    public static boolean checkUserVerified(final Context context) {
         SessionManager sessionManager = SessionManager.getInstance();
         if (sessionManager.isVerified()) {
             return true;
@@ -353,21 +349,19 @@ public class SessionManager {
                 }
             });
             MaterialDialog dialog = new MaterialDialog.Builder(context)
-                    .content(R.string.verify_email_address)
-                    .positiveText(R.string.verify)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            VerifyEmailActivity.launch(context);
-                        }
-                    })
-                    .show();
+                .content(R.string.verify_email_address)
+                .positiveText(R.string.verify)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        VerifyEmailActivity.launch(context);
+                    }
+                })
+                .show();
             return false;
         }
     }
-
-
 
 
     public void updateLinkStatus(String userName, boolean isLinked) {
