@@ -130,8 +130,11 @@ public class TimeLapseJob extends Job implements Exportable {
 
             Log.d(TAG, "encode one frame encode time: " + vdbImage.pts + " startTime: " + mClip.getStartTimeMs() + " endTime: " + mClip.getEndTimeMs());
 
-            mExportProgress = (int) (((vdbImage.pts - mClip.getStartTimeMs()) * 100) / mClip.getDurationMs());
-            mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, this));
+            int progress = (int) (((vdbImage.pts - mClip.getStartTimeMs()) * 100) / mClip.getDurationMs());
+            if (mExportProgress != progress) {
+                mExportProgress = progress;
+                mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, this));
+            }
 
 
         }
