@@ -184,7 +184,7 @@
                     android:layout_width="24dp"
                     android:layout_height="8dp"
                     android:layout_marginRight="16dp"
-                    android:background="@color/material_orange_300"
+                    android:background="@color/second_progress_color"
                     android:layout_gravity="center_vertical"></View>
 
                 <TextView

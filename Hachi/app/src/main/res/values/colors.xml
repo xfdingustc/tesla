@@ -30,6 +30,8 @@
 
     <color name="upload_mask">#80FE5000</color>
 
+    <color name="second_progress_color">#690008</color>
+
     
 
     <color name="bg_content">#FF1D1F23</color>

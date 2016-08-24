@@ -14,7 +14,7 @@
         <clip>
             <shape>
                 <corners android:radius="2dp" />
-                <solid android:color="@color/material_orange_300"></solid>
+                <solid android:color="@color/second_progress_color"></solid>
             </shape>
         </clip>
 
