@@ -8,7 +8,7 @@ import java.nio.FloatBuffer;
  * Created by Xiaofei on 2015/11/4.
  */
 public class FullFrameRect {
-    public static enum SCREEN_ROTATION {LANDSCAPE, VERTICAL, UPSIDEDOWN_LANDSCAPE, UPSIDEDOWN_VERTICAL}
+    public enum SCREEN_ROTATION {LANDSCAPE, VERTICAL, UPSIDEDOWN_LANDSCAPE, UPSIDEDOWN_VERTICAL}
 
     private final Drawable2d mRectDrawable = new Drawable2d(Drawable2d.Prefab.FULL_RECTANGLE);
     private Texture2dProgram mProgram;
