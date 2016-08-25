@@ -28,6 +28,7 @@ import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -146,19 +147,15 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.delete:
-                                new MaterialDialog.Builder(mActivity)
-                                    .title(mActivity.getString(R.string.delete_file, oneDownloadedFile.getName()))
-                                    .positiveText(R.string.delete)
-                                    .negativeText(R.string.cancel)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            oneDownloadedFile.delete();
-                                            mDownloadedFileList = DownloadHelper.getDownloadedFileList();
-                                            notifyDataSetChanged();
-                                        }
-                                    })
-                                    .show();
+                                DialogHelper.showDeleteFileConfirmDialog(mActivity, oneDownloadedFile, new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        oneDownloadedFile.delete();
+                                        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+                                        notifyDataSetChanged();
+                                    }
+                                });
+
                                 break;
                         }
                         return true;

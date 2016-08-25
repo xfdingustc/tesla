@@ -9,6 +9,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
+import com.waylens.hachi.bgjob.download.DownloadHelper;
+
+import java.io.File;
 
 /**
  * Created by Xiaofei on 2016/7/22.
@@ -98,6 +101,18 @@ public class DialogHelper {
             .positiveText(R.string.ok)
             .onPositive(positiveListener)
             .theme(Theme.DARK)
+            .show();
+    }
+
+
+    public static MaterialDialog showDeleteFileConfirmDialog(Context context, File file, MaterialDialog.SingleButtonCallback positiveListener) {
+        return new MaterialDialog.Builder(context)
+            .title(R.string.delete_file)
+            .titleColorRes(R.color.style_color_accent)
+            .content(context.getString(R.string.delete_file_confirm, file.getName()))
+            .positiveText(R.string.delete)
+            .negativeText(R.string.cancel)
+            .onPositive(positiveListener)
             .show();
     }
 

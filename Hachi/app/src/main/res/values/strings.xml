@@ -421,7 +421,8 @@
 	<string name="auto_power_off_time">Auto power off time</string>
 	<string name="my_moments">My moments</string>
 	<string name="download_videos">Download videos</string>
-	<string name="delete_file">Delete file %1$s?</string>
+	<string name="delete_file">Delete file</string>
+	<string name="delete_file_confirm">%1$s will be delete. Are you sure?</string>
 	<string name="exported">%1$s%% exported</string>
 	<string name="speaker_vol">Speaker volume</string>
 	<string name="sleep_after">Sleep After</string>
