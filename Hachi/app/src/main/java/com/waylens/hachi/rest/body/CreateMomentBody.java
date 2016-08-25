@@ -35,7 +35,7 @@ public class CreateMomentBody {
 
     public String vehicleDesc;
 
-    public List<Long> timingPoints = new ArrayList<>();
+    public List<Long> timingPoints;
 
     public String MomentType;
 

@@ -174,7 +174,7 @@ public class UploadMomentJob extends Job {
         Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
         CreateMomentResponse response = createMomentResponseCall.execute().body();
 
-        Logger.t(TAG).d("Get moment response: " + response.toString());
+        Logger.t(TAG).d("Get moment response: ");
         mLocalMoment.updateUploadInfo(response);
         setUploadState(UPLOAD_STATE_CREATE_MOMENT);
         checkIfCancelled();
