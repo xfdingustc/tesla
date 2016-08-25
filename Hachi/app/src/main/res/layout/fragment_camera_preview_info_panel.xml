@@ -85,15 +85,15 @@
 
     </LinearLayout>
 
-    <ProgressBar
+    <com.waylens.hachi.ui.views.AnimationProgressBar
         android:id="@+id/storageView"
-        style="?android:progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:progressDrawable="@drawable/default_progress_bar"/>
+        android:layout_marginTop="16dp"></com.waylens.hachi.ui.views.AnimationProgressBar>
+
+
 
 
     <ImageView

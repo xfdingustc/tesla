@@ -21,7 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -40,6 +39,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
+import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
@@ -57,7 +57,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,9 +129,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.obd)
     ImageView mObd;
 
-    @Nullable
+
     @BindView(R.id.storageView)
-    ProgressBar mStorageView;
+    AnimationProgressBar mStorageView;
 
     @BindView(R.id.recordDot)
     ImageView mRecordDot;
@@ -842,6 +841,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 break;
             case VdtCamera.STATE_RECORD_STOPPED:
                 mTvCameraRecStatus.setText(R.string.record_stopped);
+                mStorageView.showIndicator(false);
                 break;
             case VdtCamera.STATE_RECORD_STOPPING:
                 mTvCameraRecStatus.setText(R.string.record_stopping);
@@ -857,6 +857,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                     String recStatusText = mTvCameraRecStatus.getText().toString();
                     if (recStatusText == null || recStatusText.isEmpty()) {
                         mTvCameraRecStatus.setText(R.string.continuous_recording);
+                    }
+                    if (!mStorageView.isAnimating()) {
+                        mStorageView.showIndicator(true);
                     }
                 } else {
                     mTvStatusAdditional.setVisibility(View.GONE);
