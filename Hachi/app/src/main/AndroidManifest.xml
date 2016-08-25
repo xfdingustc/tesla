@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+
     <permission
         android:name="com.waylens.hachi.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>

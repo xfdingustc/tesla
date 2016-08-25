@@ -1,5 +1,6 @@
 package com.waylens.hachi.bgjob.download;
 
+import android.media.MediaScannerConnection;
 import android.support.annotation.Nullable;
 
 import com.birbit.android.jobqueue.Job;
@@ -8,6 +9,7 @@ import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.app.DownloadManager;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
@@ -155,12 +157,10 @@ public class DownloadJob extends Job implements Exportable {
 
     private void handleRemuxerFinished() {
         mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, this));
-        File file = new File(mDownloadFilePath);
-        String fileName = file.getAbsolutePath();
-        String newFilename = fileName + ".mp4";
-        file.renameTo(new File(newFilename));
-        mDownloadFilePath = file.getAbsolutePath();
+
 //        mDownloadManager.removeJob(this);
+        MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{
+            mDownloadFilePath.toString()}, null, null);
         Logger.t(TAG).d("download finished " + mDownloadFilePath);
     }
 

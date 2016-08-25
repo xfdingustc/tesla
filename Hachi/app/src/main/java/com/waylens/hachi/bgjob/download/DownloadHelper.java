@@ -1,6 +1,12 @@
 package com.waylens.hachi.bgjob.download;
 
 import android.os.Environment;
+import android.text.TextUtils;
+
+import com.orhanobut.logger.Logger;
+import com.waylens.hachi.app.DownloadManager;
+import com.waylens.hachi.app.UploadManager;
+import com.waylens.hachi.bgjob.Exportable;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -10,8 +16,8 @@ import java.io.FilenameFilter;
  */
 public class DownloadHelper {
 
-    public static final String VIDEO_DOWNLOAD_PATH = "/waylens/video/Vidit/";
-    public static final String PICTURE_DOWNLOAD_PATH = "/waylens/picture/Vidit/";
+    public static final String VIDEO_DOWNLOAD_PATH = "/waylens/video/Waylens/";
+    public static final String PICTURE_DOWNLOAD_PATH = "/waylens/picture/Waylens/";
 
 
     public static String getVideoDownloadPath() {
@@ -23,10 +29,15 @@ public class DownloadHelper {
         File[] fileList = downloadDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
-                if (s.endsWith(".mp4")) {
-                    return true;
+                DownloadManager manager = DownloadManager.getManager();
+                for (int i = 0; i < manager.getCount(); i++) {
+                    Exportable exportable = manager.getDownloadJob(i);
+                    if (!TextUtils.isEmpty(exportable.getOutputFile()) &&exportable.getOutputFile().endsWith(s)) {
+                        return false;
+                    }
                 }
-                return false;
+
+                return true;
             }
         });
 

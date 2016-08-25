@@ -1,6 +1,7 @@
 package com.waylens.hachi.bgjob.timelapse;
 
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,6 +13,7 @@ import com.birbit.android.jobqueue.RetryConstraint;
 import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.waylens.hachi.app.DownloadManager;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
@@ -24,12 +26,8 @@ import com.xfdingustc.snipe.vdb.ClipPos;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -140,11 +138,7 @@ public class TimeLapseJob extends Job implements Exportable {
         }
 
 
-        File file = new File(mOutputFile);
-        String fileName = file.getAbsolutePath();
-        String newFilename = fileName + ".mp4";
-        file.renameTo(new File(newFilename));
-        mOutputFile = file.getAbsolutePath();
+        MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{mOutputFile.toString()}, null, null);
         mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, this));
 
         recorder.stop();

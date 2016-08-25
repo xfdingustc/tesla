@@ -45,9 +45,9 @@ public class RemuxHelper {
 
     private static final String composeFileName(String dir, String fn, int i) {
         if (i == 0) {
-            return dir + fn ;
+            return dir + fn + ".mp4";
         } else {
-            return dir + fn + "-" + Integer.toString(i) ;
+            return dir + fn + "-" + Integer.toString(i) + ".mp4";
         }
     }
 
