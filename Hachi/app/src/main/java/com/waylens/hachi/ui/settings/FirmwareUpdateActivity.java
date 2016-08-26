@@ -15,11 +15,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.library.crs_svr.HashUtils;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.services.download.InetDownloadService;
+import com.xfdingustc.snipe.control.VdtCamera;
 
 import java.io.File;
 

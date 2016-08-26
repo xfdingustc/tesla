@@ -17,14 +17,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.activities.WaylensAgreementActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.xfdingustc.snipe.control.VdtCameraManager;
 
 import butterknife.BindView;
 import butterknife.OnClick;

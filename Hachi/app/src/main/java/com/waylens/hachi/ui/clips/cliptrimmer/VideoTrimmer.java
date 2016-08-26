@@ -23,11 +23,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+
 
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.control.VdtCameraManager;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipPos;
 

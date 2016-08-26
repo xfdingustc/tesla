@@ -12,16 +12,14 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.xfdingustc.snipe.control.VdtCamera;
+import com.xfdingustc.snipe.control.VdtCameraManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-
-import butterknife.OnClick;
 
 /**
  * Created by Xiaofei on 2016/1/8.
@@ -69,9 +67,6 @@ public class LiveViewSettingActivity extends BaseActivity {
         }
         checkIfChanged();
     }
-
-
-
 
 
     @Override

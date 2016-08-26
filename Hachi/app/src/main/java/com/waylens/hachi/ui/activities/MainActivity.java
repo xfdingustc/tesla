@@ -26,7 +26,6 @@ import com.lapism.searchview.SearchView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipVideoFragment;
@@ -36,6 +35,7 @@ import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.xfdingustc.snipe.control.VdtCameraManager;
 
 import java.util.HashMap;
 import java.util.List;

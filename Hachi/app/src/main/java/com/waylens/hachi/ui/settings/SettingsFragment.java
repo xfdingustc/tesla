@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
+import com.xfdingustc.snipe.control.VdtCameraManager;
+import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

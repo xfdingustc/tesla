@@ -12,12 +12,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
+
 
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.xfdingustc.snipe.VdbRequestQueue;
+import com.xfdingustc.snipe.control.VdtCamera;
+import com.xfdingustc.snipe.control.VdtCameraManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

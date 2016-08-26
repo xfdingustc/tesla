@@ -1,47 +1,17 @@
 package com.waylens.hachi.ui.welcome;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.orhanobut.logger.Logger;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.activities.WaylensAgreementActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
-import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.manualsetup.StartupActivity;
-import com.waylens.hachi.utils.PreferenceUtils;
-
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -58,7 +28,6 @@ public class FirstInstallActivity extends BaseActivity {
 
     @BindView(R.id.viewPager)
     ViewPager mViewPager;
-
 
 
     @BindView(R.id.ll_point_indicator)
@@ -154,12 +123,6 @@ public class FirstInstallActivity extends BaseActivity {
             }
         });
     }
-
-
-
-
-
-
 
 
 }

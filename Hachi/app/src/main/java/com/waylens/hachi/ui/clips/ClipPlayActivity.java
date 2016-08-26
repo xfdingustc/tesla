@@ -13,12 +13,12 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
+import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
 
@@ -64,7 +64,6 @@ public class ClipPlayActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -79,8 +78,6 @@ public class ClipPlayActivity extends BaseActivity {
             mPlaylistEditor.cancel();
         }
     }
-
-
 
 
     @Override

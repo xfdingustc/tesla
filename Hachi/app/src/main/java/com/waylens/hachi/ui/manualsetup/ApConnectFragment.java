@@ -25,12 +25,12 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.xfdingustc.mjpegview.library.MjpegView;
+import com.xfdingustc.snipe.control.VdtCameraManager;
+import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

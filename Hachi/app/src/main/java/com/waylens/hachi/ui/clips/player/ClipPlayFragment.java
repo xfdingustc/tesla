@@ -28,13 +28,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.CameraConnectionEvent;
+
 import com.waylens.hachi.eventbus.events.ClipEditEvent;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
+
 import com.waylens.hachi.library.player.HachiPlayer;
 import com.waylens.hachi.library.player.HlsRendererBuilder;
 import com.waylens.hachi.library.player.Utils;
@@ -42,6 +42,8 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.xfdingustc.snipe.control.VdtCamera;
+import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipPos;
 import com.xfdingustc.snipe.vdb.ClipSet;

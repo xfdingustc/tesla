@@ -17,10 +17,10 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.waylens.hachi.R;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.entities.NetworkItemBean;
+import com.xfdingustc.snipe.control.VdtCamera;
+import com.xfdingustc.snipe.control.entities.NetworkItemBean;
 
 import java.util.List;
 

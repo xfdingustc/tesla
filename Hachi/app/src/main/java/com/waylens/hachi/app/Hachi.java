@@ -7,12 +7,12 @@ import android.support.multidex.MultiDexApplication;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.hardware.CameraDiscovery;
-import com.waylens.hachi.hardware.DeviceScanner;
-import com.waylens.hachi.hardware.vdtcamera.VdtCamera;
-import com.waylens.hachi.hardware.vdtcamera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.xfdingustc.snipe.control.VdtCamera;
+import com.xfdingustc.snipe.control.VdtCameraManager;
+import com.xfdingustc.snipe.hardware.CameraDiscovery;
+import com.xfdingustc.snipe.hardware.DeviceScanner;
 
 //import com.bugtags.library.Bugtags;
 //import com.bugtags.library.BugtagsOptions;
