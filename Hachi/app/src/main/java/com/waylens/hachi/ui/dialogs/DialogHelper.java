@@ -117,6 +117,18 @@ public class DialogHelper {
     }
 
 
+    public static MaterialDialog showLeaveEnhanceConfirmDialog(Context context, MaterialDialog.SingleButtonCallback positiveListener) {
+        return new MaterialDialog.Builder(context)
+            .title(R.string.enhance_leave)
+            .titleColorRes(R.color.style_color_accent)
+            .content(R.string.discard_enhance_confirm)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .onPositive(positiveListener)
+            .show();
+    }
+
+
 
     public interface onPositiveClickListener {
         void onPositiveClick();

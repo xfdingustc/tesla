@@ -51,7 +51,7 @@
 	<string name="delete">Delete</string>
 	<string name="delete_bookmark_confirm">Deleting highlights is irreversible, are you sure?</string>
 	<string name="discard">Discard </string>
-	<string name="discard_enhance_confirm">Your editing will NOT be saved nor retrievable. Confirm to preceed?</string>
+	<string name="discard_enhance_confirm">Your editing will NOT be saved. Confirm to preceed?</string>
 	<string name="discard_the_enhance">Discard edits</string>
 	<string name="distance_restrict">"3. Your mobile phone is within 30-meter radius of your camera."</string>
 	<string name="download">Download</string>
@@ -441,4 +441,5 @@
 	<string name="cancel_firmware_upgrade">Cancel firmware upgrading? </string>
 	<string name="continuee">continue</string>
 	<string name="delete_highlight">Delete highlights</string>
+	<string name="enhance_leave">Leave enhance</string>
 </resources>

@@ -37,6 +37,7 @@ import com.waylens.hachi.ui.clips.music.MusicListSelectActivity;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.utils.Utils;
@@ -220,18 +221,16 @@ public class EnhanceActivity extends ClipPlayActivity {
 //        mEventBus.unregister(this);
     }
 
+
     @Override
-    public void finish() {
-        MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
-            .content(R.string.discard_enhance_confirm)
-            .positiveText(R.string.ok)
-            .negativeText(R.string.cancel)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    EnhanceActivity.super.finish();
-                }
-            }).show();
+    public void onBackPressed() {
+        DialogHelper.showLeaveEnhanceConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                EnhanceActivity.super.onBackPressed();
+            }
+        });
+
     }
 
     @Override
@@ -300,6 +299,12 @@ public class EnhanceActivity extends ClipPlayActivity {
         super.setupToolbar();
         getToolbar().setTitle(R.string.enhance);
         getToolbar().getMenu().clear();
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         getToolbar().inflateMenu(R.menu.menu_enhance);
         if (getClipSet() != null && getClipSet().getCount() == 0) {
             getToolbar().getMenu().removeItem(R.id.menu_to_share);
