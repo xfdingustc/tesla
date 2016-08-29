@@ -1,5 +1,7 @@
 package com.waylens.hachi.rest.body;
 
+import android.os.LocaleList;
+
 import com.waylens.hachi.ui.entities.LocalMoment;
 
 import java.util.ArrayList;
@@ -27,23 +29,43 @@ public class CreateMomentBody {
 
     public List<String> shareProviders = new ArrayList<>();
 
-    public String vehicleMaker;
+    public String vehicleMaker = null;
 
-    public String vehicleModel;
+    public String vehicleModel = null;
 
-    public String vehicleYear;
+    public int vehicleYear;
 
-    public String vehicleDesc;
+    public String vehicleDesc = null;
 
-    public List<Long> timingPoints;
+    public TimingPointsList timingPoints = null;
 
-    public String MomentType;
+    public String momentType = null;
 
     public CreateMomentBody(LocalMoment localMoment) {
         this.title = localMoment.title;
         this.desc = localMoment.description;
         this.accessLevel = localMoment.accessLevel;
         this.overlay = localMoment.gaugeSettings;
+
+        if (localMoment.momentType.equals("RACING")) {
+            momentType = "RACING";
+            timingPoints = new TimingPointsList();
+            for (long t:localMoment.mTimingPoints) {
+                Logger.d(t);
+            }
+            timingPoints.t1 = localMoment.mTimingPoints.get(0);
+            timingPoints.t2 = localMoment.mTimingPoints.get(1);
+            timingPoints.t3 = localMoment.mTimingPoints.get(2);
+            timingPoints.t4 = localMoment.mTimingPoints.get(3);
+            timingPoints.t5 = localMoment.mTimingPoints.get(4);
+            timingPoints.t6 = localMoment.mTimingPoints.get(5);
+        }
+        if (localMoment.mVehicleMaker != null) {
+            vehicleMaker = localMoment.mVehicleMaker;
+            vehicleModel = localMoment.mVehicleModel;
+            vehicleYear = localMoment.mVehicleYear;
+        }
+        vehicleDesc = localMoment.mVehicleDesc;
 
         Logger.d("after overlay setting");
 
@@ -62,5 +84,14 @@ public class CreateMomentBody {
             shareProviders.add(SocialProvider.YOUTUBE);
         }
 
+    }
+
+    public class TimingPointsList {
+        public long t1;
+        public long t2;
+        public long t3;
+        public long t4;
+        public long t5;
+        public long t6;
     }
 }

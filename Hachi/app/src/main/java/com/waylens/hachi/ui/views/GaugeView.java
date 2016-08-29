@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.xfdingustc.snipe.vdb.rawdata.GpsData;
 import com.xfdingustc.snipe.vdb.rawdata.IioData;
@@ -26,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -69,7 +71,7 @@ public class GaugeView extends FrameLayout {
         switch (gaugeMode) {
             case MODE_CAMERA:
                 mGaugeMode = gaugeMode;
-                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss", Locale.getDefault());
+                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss"/*, Locale.getDefault()*/);
                 break;
             case MODE_MOMENT:
                 mGaugeMode = gaugeMode;
@@ -195,14 +197,18 @@ public class GaugeView extends FrameLayout {
         mWebView.loadUrl(jsApi);
     }
 
-    public void changeGaugeSetting(final Map<String, String> overlaySetting) {
+    public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {
         if (mIsLoadingFinish) {
+            Logger.t(TAG).d("loading finish");
             doGaugeSetting(overlaySetting);
         } else {
             mWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     doGaugeSetting(overlaySetting);
+                    if (timePoints != null) {
+                        setRaceTimingPoints(timePoints);
+                    }
                 }
             });
         }
@@ -228,10 +234,41 @@ public class GaugeView extends FrameLayout {
             }
         }
         mWebView.loadUrl("javascript:update()");
+        if (overlaySetting.get("CountDown") != null) {
+            String jsApi = "javascript:setGauge('CountDown','S')";
+            Logger.t(TAG).d(jsApi);
+            mWebView.loadUrl(jsApi);
+        }
 
     }
 
+    public void setRaceTimingPoints(ArrayList<Long> raceTimingPoints) {
+        JSONObject timePoints = new JSONObject();
+        try {
+            if (raceTimingPoints.get(0) > 0) {
+                timePoints.put("t1", raceTimingPoints.get(0));
+            }
+            timePoints.put("t2", raceTimingPoints.get(1));
+            timePoints.put("t3", raceTimingPoints.get(2));
+            timePoints.put("t4", raceTimingPoints.get(3));
+            if (raceTimingPoints.get(4) > 0) {
+                timePoints.put("t5", raceTimingPoints.get(4));
+            }
+            if (raceTimingPoints.get(5) > 0) {
+                timePoints.put("t6", raceTimingPoints.get(5));
+            }
+        } catch (JSONException e) {
+            Logger.t(TAG).d(e.getMessage());
+        }
+        final String jsApi = "javascript:setTimePoints(" + timePoints.toString() + ")";
+        Logger.t(TAG).d(jsApi);
+        mWebView.loadUrl(jsApi);
+    }
 
+    public void setPlayTime(int currentTime) {
+        String playTime = "javascript:setPlayTime(" + currentTime + ")";
+        mWebView.loadUrl(playTime);
+    }
 
     public void updateRawDateItem(List<RawDataItem> itemList) {
         JSONObject state = new JSONObject();
@@ -315,7 +352,7 @@ public class GaugeView extends FrameLayout {
 
 
         String callJS1 = "javascript:setRawData(" + sb.toString() + ")";
-//        Logger.t(TAG).d(callJS1);
+        Logger.t(TAG).d(callJS1);
 //        String callJS2 = "javascript:setRawData(" + "{time:" + data + "})";
 //        Logger.t(TAG).d("callJS: " + callJS1);
         mWebView.loadUrl(callJS1);

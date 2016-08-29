@@ -68,6 +68,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -246,7 +247,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
         mRequestQueue = Volley.newRequestQueue(getActivity(), 500 * 1000 * 1000);
         mRequestQueue.start();
-
     }
 
     @Override
@@ -331,8 +331,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     mBtnPlayPause.toggle(true);
                 }
                 break;
-
-
         }
     }
 
@@ -388,10 +386,16 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mRawDataState = RAW_DATA_STATE_UNKNOWN;
         releasePlayer();
     }
-    public void doGaugeSetting(MomentInfo momentInfo) {
+    public void doGaugeSetting(MomentInfo momentInfo, ArrayList<Long> timePoints) {
         if (!momentInfo.moment.overlay.isEmpty()) {
             Logger.t(TAG).d("setting gauge!!!");
-            mGaugeView.changeGaugeSetting(momentInfo.moment.overlay);
+            for (Map.Entry<String, String> entry : momentInfo.moment.overlay.entrySet()) {
+                Logger.t(TAG).d("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            }
+            if (momentInfo.moment.momentType != null && momentInfo.moment.momentType.equals("RACING")) {
+                momentInfo.moment.overlay.put("CountDown", "S");
+            }
+            mGaugeView.changeGaugeSetting(momentInfo.moment.overlay, timePoints);
         } else {
             Logger.t(TAG).d("overlay empty");
         }
@@ -579,7 +583,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             public MomentPlayInfo call(MomentInfo momentInfo, MomentPlayInfo momentPlayInfo) {
                 Logger.t(TAG).d("set momentInfo " + momentInfo);
                 mMoment = momentInfo;
-                Logger.t(TAG).d(momentInfo.moment.overlay.toString());
+                //Logger.t(TAG).d(momentInfo.moment.overlay.toString());
                 return momentPlayInfo;
             }
         }).subscribeOn(Schedulers.io())
@@ -601,7 +605,39 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                   Logger.t(TAG).d("Get moment play info");
 //                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
                   mMomentPlayInfo = momentPlayInfo;
-                  doGaugeSetting(mMoment);
+                  MomentInfo.MomentBasicInfo momentBasicInfo = mMoment.moment;
+                  Logger.t(TAG).d("Moment Play Fragment!");
+                  long momentCaptureTime = -1;
+                  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                  try {
+                      Date date = dateFormat.parse(mMoment.moment.captureTime);
+                      momentCaptureTime = date.getTime();
+                  } catch (ParseException e) {
+                      e.printStackTrace();
+                  }
+                  ArrayList<Long> arrayList = null;
+                  if (momentBasicInfo.momentType != null && momentBasicInfo.momentType.equals("RACING") ) {
+                      arrayList = new ArrayList<Long>(6);
+                      if (momentBasicInfo.momentTimingInfo.t1 > 0) {
+                          arrayList.add(0, momentBasicInfo.momentTimingInfo.t1 - momentCaptureTime);
+                      } else {
+                          arrayList.add(0, (long)-1);
+                      }
+                      arrayList.add(1, momentBasicInfo.momentTimingInfo.t2 - momentCaptureTime);
+                      arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_2 + arrayList.get(1));
+                      arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_2 + arrayList.get(1));
+                      if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
+                          arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_2 + arrayList.get(1));
+                      } else {
+                          arrayList.add(4, (long)-1);
+                      }
+                      if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
+                          arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_2 + arrayList.get(1));
+                      } else {
+                          arrayList.add(5, (long)-1);
+                      }
+                  }
+                  doGaugeSetting(mMoment, arrayList);
                   calcRawDataTimeInfo();
                   loadRawData(0);
 
@@ -646,6 +682,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             MomentPlayInfo.RawDataUrl rawDataUrl = mMomentPlayInfo.rawDataUrl.get(i);
             RawDataTimeInfo timeInfo = new RawDataTimeInfo();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Logger.t(TAG).d(dateFormat.getTimeZone().getDisplayName());
+            Logger.t(TAG).d("capture time:" + rawDataUrl.captureTime);
             try {
                 Date date = dateFormat.parse(rawDataUrl.captureTime);
                 timeInfo.captureTime = date.getTime();
@@ -828,7 +866,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
         public void addObdData(long captureTime, int speed, int rpm, int temperature, int tp, int psi, int bp, int bhp) {
             RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_OBD, captureTime);
-            Logger.t(TAG).d(String.format("speed:%1$d, rmp:%2$d, psi:%3$d, captureTime:%4$d", speed, rpm, psi, captureTime));
+            //Logger.t(TAG).d(String.format("speed:%1$d, rmp:%2$d, psi:%3$d, captureTime:%4$d", speed, rpm, psi, captureTime));
             ObdData data = new ObdData(speed, temperature, rpm, tp, psi, false);
             item.data = data;
             mOBDData.add(item);
@@ -841,7 +879,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                                int quaternionW, int quaternionX, int quaternionY, int quaternionZ,
                                int pressure) {
             RawDataItem item = new RawDataItem(RawDataItem.DATA_TYPE_IIO, captureTime);
-            Logger.t(TAG).d("acc captureTime:" + captureTime);
+            //Logger.t(TAG).d("acc captureTime:" + captureTime);
             IioData data = new IioData();
 
             data.accX = accX;
@@ -889,7 +927,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
             if ((rawDataItem = checkIfUpdated(mOBDData, 0, currentTime)) != null) {
                 mObdDataIndex++;
-                Logger.t(TAG).d(((ObdData)rawDataItem.data).toString());
+                //Logger.t(TAG).d(((ObdData)rawDataItem.data).toString());
                 rawDataItemList.add(rawDataItem);
             }
             if (!rawDataItemList.isEmpty() && (rawDataItem = mWeatherData) != null) {
@@ -957,8 +995,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
             return mRawDataTimeInfoList.get(mRawDataTimeInfoList.size() - 1).captureTime;
         }
-
-
     }
 
 
@@ -996,6 +1032,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                         setProgress(currentPos, mPlayerControl.getDuration());
                         //
                         mRawDataAdapter.updateCurrentTime(currentPos);
+                        mGaugeView.setPlayTime(currentPos);
                     }
                 }
             });

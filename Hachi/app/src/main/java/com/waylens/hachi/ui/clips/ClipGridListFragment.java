@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -34,6 +38,7 @@ import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.TransitionHelper;
 import com.waylens.hachi.view.ClipGridListView;
 import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
 import com.xfdingustc.snipe.control.events.MarkLiveMsgEvent;
@@ -168,7 +173,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         int attr;
 
         if (true || mClipSetType == Clip.TYPE_MARKED) {
-            flag = ClipSetExRequest.FLAG_CLIP_EXTRA;
+            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA;
             attr = 0;
         } else {
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
@@ -467,7 +472,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 public void onCompleted() {
                     mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
                     mRefreshLayout.setRefreshing(false);
-                    PreviewActivity.launch(getActivity(), playlistId, transitionView);
+                    Logger.t(TAG).d("type race:" + clip.typeRace);
+                    PreviewActivity.launch(getActivity(), playlistId, transitionView, clip);
                 }
 
                 @Override
@@ -491,6 +497,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 }
             });
     }
+
 
     private void launchFootageActivity(final Clip clip, final View transitionView) {
         mLoadingHandler.sendMessageDelayed(mLoadingHandler.obtainMessage(LoadingHandler.SHOW_LOADING), 1000);

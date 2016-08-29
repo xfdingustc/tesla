@@ -118,7 +118,7 @@ public class UploadMomentJob extends Job {
 /*        if (playlistClipSet.getCount() == 1) {
             Clip clip = playlistClipSet.getClip(0);
             if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
-                //get race Timeing points
+                //get race Timing points
             }
         }*/
 

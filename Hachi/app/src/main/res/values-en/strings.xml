@@ -442,4 +442,9 @@
 	<string name="continuee">continue</string>
 	<string name="delete_highlight">Delete highlights</string>
 	<string name="enhance_leave">Leave enhance</string>
+	<string name="upload_moment">Upload moment</string>
+	<string name="upload_in_ap">Since your camera is working in hotspots mode, we cannot upload moments directly to waylens cloud. We will cache moments in your phone. Once the phone is connected to wifi, it will automatically upload cached moments to waylens cloud. </string>
+	<string name="detected_performance_test">Detected this is a performance test moment.</string>
+	<string name="vehicle_information">Vehicle Information</string>
+	<string name="vehicle_description">Vehicle Description</string>
 </resources>

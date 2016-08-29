@@ -9,7 +9,9 @@ import com.xfdingustc.snipe.vdb.urls.UploadUrl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by Richard on 2/19/16.
@@ -31,6 +33,18 @@ public class LocalMoment implements Serializable {
     public Map<String, String> gaugeSettings;
 
     public ArrayList<Segment> mSegments = new ArrayList<>();
+
+    public String mVehicleMaker = null;
+
+    public String mVehicleModel = null;
+
+    public int mVehicleYear = -1;
+
+    public String mVehicleDesc = null;
+
+    public List<Long> mTimingPoints = null;
+
+    public String momentType = null;
 
 
     public CloudInfo cloudInfo;
@@ -100,7 +114,8 @@ public class LocalMoment implements Serializable {
 
         public String getClipCaptureTime() {
             long offset = uploadURL.realTimeMs - clip.getStartTimeMs();
-            return DateTime.toString(clip.getClipDate(), offset);
+            //timezone offset has been minus twice, so compensate here.
+            return DateTime.toString(clip.getClipDate() + TimeZone.getDefault().getRawOffset(), offset);
         }
     }
 }

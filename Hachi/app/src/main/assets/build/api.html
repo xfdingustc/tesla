@@ -11,61 +11,66 @@
             background: transparent;
         }
     </style>
+    <!--<script src="http://cdn.jsdelivr.net/g/react@15.3.0(react.js+react-dom.js)"></script>-->
+
 </head>
 <body>
 <div id="root" style="width: 100vw">
 </div>
+
 <script type="text/javascript" src="api.js"></script></body>
+
 <script>
     // For on-the-fly (e.g. live view) usage ONLY
     /***  -start- deprecated api*/
     var setState = hachi.gauge.setBuffer.bind(hachi.gauge);
     var update = hachi.gauge.setStateByBuffer.bind(hachi.gauge);
-
     /***  -end- deprecated api*/
-
     /***  -start- new api*/
     var setRawData = hachi.gauge.setRawData.bind(hachi.gauge);
     var setDefaultLayout = hachi.gauge.setDefaultLayout.bind(hachi.gauge);
-    var getCurrentLayout=hachi.gauge.getCurrentLayout.bind(hachi.gauge);
+    var getCurrentLayout = hachi.gauge.getCurrentLayout.bind(hachi.gauge);
     var initDefaultGauge = hachi.gauge.initDefaultGauge.bind(hachi.gauge);
-
     /***  -end- new api*/
-
     var setGauge = hachi.gauge.setGauge.bind(hachi.gauge);
     var setTheme = hachi.gauge.setTheme.bind(hachi.gauge);
+
+
+
+    var setTimePoints = hachi.gauge.setTimePoints.bind(hachi.gauge);
+    var setPlayTime = hachi.gauge.setPlayTime.bind(hachi.gauge);
+
     var isShowMap = function () {
         return !!document.getElementsByClassName('map-core')[0]
     }
     var getMapCorePosition = function () {
-        return document.getElementsByClassName('map-core')[0].getBoundingClientRect();
+        setRawData({
+                    lat: 1,
+                    lng: 1
+                }
+        )
+        var tmp = document.getElementsByClassName('map-core')[0].getBoundingClientRect();
+        return tmp;
         //output:  {top: 43.59375, right: 1774.8294677734375, bottom: 305.6391906738281, left: 1512.7840576171875, width: 262.0454406738281}
     };
     // For static (e.g. transcoding) usage ONLY
     var injectRawData = hachi.gauge.injectRawData.bind(hachi.gauge);
     var updateByFrame = hachi.gauge.updateByFrame.bind(hachi.gauge);
-
     // Utils
     var isMapLoaded = hachi.gauge.isMapLoaded.bind(hachi.gauge);
     var numericMonthDate = hachi.numericMonthDate;
     /**
-    //the default behavior of every gauge is hidden.  you must init gauge when there is no style config or raw data,you can use this method to show the default gauge ,even when the data is empty.
-    //当没有设置style数据或者任何rawdata数据的时候,你必须调用此函数,来显示默认的gauge ,因为所有的gauge默认都是隐藏的.
-
-    //if you apply the gauge style config and set rawData to gauge,this method is useless.
-    //如果你已经设置了 gauge 的style 并且设置了gauge的数值,那么没有必要使用它
-
-
-    initDefaultGauge();
-
-
-    //reset layout,you needn't reset the layout by youself ,you can just use this method to achieve it.
-    //将gauge 设置为默认的布局,可以通过此函数来实现.
-    setDefaultLayout();
-
-    //setDefaultLayout();等价于:
-    setState({
-        showSpeedThrottle: 'L',//options:(L,M,S)
+     //the default behavior of every gauge is hidden.  you must init gauge when there is no style config or raw data,you can use this method to show the default gauge ,even when the data is empty.
+     //当没有设置style数据或者任何rawdata数据的时候,你必须调用此函数,来显示默认的gauge ,因为所有的gauge默认都是隐藏的.
+     //if you apply the gauge style config and set rawData to gauge,this method is useless.
+     //如果你已经设置了 gauge 的style 并且设置了gauge的数值,那么没有必要使用它
+     initDefaultGauge();
+     //reset layout,you needn't reset the layout by youself ,you can just use this method to achieve it.
+     //将gauge 设置为默认的布局,可以通过此函数来实现.
+     setDefaultLayout();
+     //setDefaultLayout();等价于:
+     setState({
+                showSpeedThrottle: 'L',//options:(L,M,S)
                 showRpm: 'M',//options:(L,M,S)
                 showAmbient: 'S',//options:(L,M,S)
                 showTimeDate: 'S',//options:(S)
@@ -74,51 +79,36 @@
                 showGps: 'L',//options:(L,M)
                 showPsi: "S",//options:(L,M,S)
         });
-    update()
-
-
-
-
-    //change theme of dashboard
-    //改变dashboard的主题
-
-    setTheme("neo");
-    setState({theme: "neo"});update();
-
-
-    //change the gauge size
-    //改变gauge 的大小
-
-    setGauge("Rpm", "S");
-    setState({showRpm: "S"});update();
-
-    //update data: in previous version ,you use the setState to update the data.but now it is recommended to use setRawData,for setState method wont auto hide or show gauge.
-    //更新数据的时候我们建议你使用setRawData 而不是setState.因为使用setState不能自动隐藏 gauge.
-
-    // setRawData will clear the previous status:
-
-    // setRawData({A:a,B:b,C:c});   |
-    // setRawData({B:b});           | == setState({B:b});update();
-
-    // setRawData({A:a,B:b,C:c});   |
-    // setRawData({B:b,C:c});       | ==setState({B:b,C:c});update();
-
-
-    // following command will hide all gauge expect rpm gauge
-    // setRawData({rpm: 88.8})
-    // 等价于:
-    // setState({rpm: 88.8, mph: null, throttle: null, psi: null, gforceBA: null, gforceLR: null, lat:null, lng:null, latLngList:null, roll:null, pitch: null, ambient:null, time:null, gpsSpeed: null, obdSpeed: null})
-
-    setRawData({
+     update()
+     //change theme of dashboard
+     //改变dashboard的主题
+     setTheme("neo");
+     setState({theme: "neo"});update();
+     //change the gauge size
+     //改变gauge 的大小
+     setGauge("Rpm", "S");
+     setState({showRpm: "S"});update();
+     //update data: in previous version ,you use the setState to update the data.but now it is recommended to use setRawData,for setState method wont auto hide or show gauge.
+     //更新数据的时候我们建议你使用setRawData 而不是setState.因为使用setState不能自动隐藏 gauge.
+     // setRawData will clear the previous status:
+     // setRawData({A:a,B:b,C:c});   |
+     // setRawData({B:b});           | == setState({B:b});update();
+     // setRawData({A:a,B:b,C:c});   |
+     // setRawData({B:b,C:c});       | ==setState({B:b,C:c});update();
+     // following command will hide all gauge expect rpm gauge
+     // setRawData({rpm: 88.8})
+     // 等价于:
+     // setState({rpm: 88.8, mph: null, throttle: null, psi: null, gforceBA: null, gforceLR: null, lat:null, lng:null, latLngList:null, roll:null, pitch: null, ambient:null, time:null, gpsSpeed: null, obdSpeed: null})
+     setRawData({
         rpm: 88.8
     })
-    // following command will hide all gauge expect speed gauge,
-    setRawData({
+     // following command will hide all gauge expect speed gauge,
+     setRawData({
         mph: 66.6,
         gpsSpeed: 55.5, // we will use gps speed,obd speed and mph will not work;
         obdSpeed: 77.8,
     })
-    setRawData({
+     setRawData({
         rpm: 88.8,
         mph: 88.8, //deprecated ,please set gpsSpeed and obdSpeed
         throttle: 88.8,
@@ -142,15 +132,20 @@
         gpsSpeed: 88.8, // gps speed unit is km/h  it will auto transformed to mph
         obdSpeed: 77.8,// gps speed unit is km/h  it will auto transformed to mph
     })
+     setState({time: new Date('December 17, 1995 03:24:00')});
+     setState({time: numericMonthDate('12 17, 1995 03:24:00')});
+     setState({rpm: 2000});
+     setState({lng: 121});
+     setState({showMap: false});
+     update();// you can update all config  to make it effect in the last line
 
-    setState({time: new Date('December 17, 1995 03:24:00')});
-    setState({time: numericMonthDate('12 17, 1995 03:24:00')});
-    setState({rpm: 2000});
-    setState({lng: 121});
-    setState({showMap: false});
-    update();// you can update all config  to make it effect in the last line
+
+
+     //api for countDown:
+     setTimePoints({t1:123123,t2:123145,t3:3343535,t4:5565657567,t5:67887655,t6:8564332232}) //timestamp(Milliseconds) offset
+     setPlayTime(123) // video play process currenttime,(Milliseconds)
+     setGauge("CountDown", "S");
      */
-
     /**
      * transcoding test demo :
      injectRawData([
@@ -163,5 +158,4 @@
      updateByFrame(0);
      */
 </script>
-
 </html>

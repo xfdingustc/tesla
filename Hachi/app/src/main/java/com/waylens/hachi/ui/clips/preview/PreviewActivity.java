@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.clips.preview;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +15,7 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -28,21 +30,27 @@ import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
+import com.xfdingustc.snipe.vdb.Clip;
 
 /**
  * Created by Xiaofei on 2016/6/16.
  */
 public class PreviewActivity extends ClipPlayActivity {
-    public String TAG = PreviewActivity.class.getSimpleName();
+    public static String TAG = PreviewActivity.class.getSimpleName();
 
     private int mPlaylistId = 0;
 
-    private static final String EXTRA_PLAYLIST_ID = "playListId";
+    public static Clip mClip;
+
+    public static final String EXTRA_PLAYLIST_ID = "playListId";
 
 
-    public static void launch(Activity activity, int playlistId, View transitionView) {
+    public static void launch(Activity activity, int playlistId, View transitionView, Clip clip) {
         Intent intent = new Intent(activity, PreviewActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
+        intent.putExtra("clip", (Parcelable) clip);
+        mClip = clip;
+        Logger.t(TAG).d("type race:" + clip.typeRace);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
         ActivityOptionsCompat options = ActivityOptionsCompat
@@ -53,6 +61,12 @@ public class PreviewActivity extends ClipPlayActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getIntent().getParcelableExtra("clip") == null) {
+            mClip = null;
+        }
+        Logger.t(TAG).d("type race:" + mClip.typeRace);
+        Logger.t(TAG).d("vin:" + mClip.getVin());
+        Logger.t(TAG).d("duration:" + mClip.getDurationMs());
         init();
     }
 
@@ -91,7 +105,8 @@ public class PreviewActivity extends ClipPlayActivity {
                         if (!SessionManager.checkUserVerified(PreviewActivity.this)) {
                             return true;
                         }
-                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1);
+                        Logger.t(TAG).d("typeRace" + mClip.typeRace);
+                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1, mClip);
                         finish();
 
                         break;

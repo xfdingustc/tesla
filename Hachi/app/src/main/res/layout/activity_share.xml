@@ -14,169 +14,230 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <FrameLayout
+            android:id="@+id/player_fragment_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_height="202dp"></FrameLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-
-            <FrameLayout
-                android:id="@+id/player_fragment_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layout_height="202dp"></FrameLayout>
-
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="16dp"
+                tools:src="@drawable/menu_profile_photo_default"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="16dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/user_avatar"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="16dp"
-                    tools:src="@drawable/menu_profile_photo_default"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingTop="16dp">
-
-                    <TextView
-                        android:id="@+id/user_name"
-                        style="@style/HachiTextViewTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="user name"/>
+                <TextView
+                    android:id="@+id/user_name"
+                    style="@style/HachiTextViewTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="user name"/>
 
 
-                    <TextView
-                        android:id="@+id/user_email"
-                        style="@style/HachiTextViewSubHeader"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/app_text_color_secondary"
-                        android:textSize="12sp"
-                        tools:text="email"/>
-
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/user_email"
+                    style="@style/HachiTextViewSubHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/app_text_color_secondary"
+                    android:textSize="12sp"
+                    tools:text="email"/>
 
             </LinearLayout>
 
-            <View
-                style="@style/HachiSepatator"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"/>
+        </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
-                style="@style/TextAppearance.AppCompat.Body2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
+        <View
+            style="@style/HachiSepatator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/moment_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/share_hint"/>
+        <android.support.design.widget.TextInputLayout
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
 
-
-            </android.support.design.widget.TextInputLayout>
-
-
-            <android.support.design.widget.TextInputLayout
-                style="@style/TextAppearance.AppCompat.Body2"
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/moment_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
+                android:hint="@string/share_hint"/>
 
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/moment_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/description"/>
+        </android.support.design.widget.TextInputLayout>
 
 
-            </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
-                style="@style/TextAppearance.AppCompat.Body2"
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/moment_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/spinner_social_privacy"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:visibility="gone"
-                    />
-            </android.support.design.widget.TextInputLayout>
+                android:hint="@string/description"/>
 
 
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/spinner_social_privacy"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:visibility="gone"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/race_layout"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
             <TextView
-                android:id="@+id/other_social"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/also_post_on"
+                android:text="@string/detected_performance_test"
                 android:textColor="@color/style_color_accent"
                 android:textSize="15sp"
                 />
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/btn_facebook"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tv_vehicle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="32dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/btn_platform_facebook"
-                    />
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:singleLine="true"
+                    android:text="@string/vehicle_information"
+                    android:textColor="?attr/appTextColorPrimary"
+                    android:textSize="16sp"/>
 
-                <ImageView
-                    android:id="@+id/btn_youtube"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tv_vehicleInfo"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="32dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/btn_platform_youtube"
-                    />
+                    android:layout_below="@id/tv_vehicle"
+                    android:text=""
+                    android:textColor="?attr/appTextColorSecondary"
+                    android:textSize="14sp"/>
+
+            </RelativeLayout>
+
+            <android.support.design.widget.TextInputLayout
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:orientation="vertical">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/vehicle_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/vehicle_description"/>
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
 
 
-            </LinearLayout>
+        <TextView
+            android:id="@+id/other_social"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/also_post_on"
+            android:textColor="@color/style_color_accent"
+            android:textSize="15sp"
+            />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/btn_facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@null"
+                android:src="@drawable/btn_platform_facebook"
+                />
+
+            <ImageView
+                android:id="@+id/btn_youtube"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@null"
+                android:src="@drawable/btn_platform_youtube"
+                />
 
 
         </LinearLayout>
+
+    </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

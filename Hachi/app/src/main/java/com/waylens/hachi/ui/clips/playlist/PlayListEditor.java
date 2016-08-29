@@ -167,6 +167,17 @@ public class PlayListEditor {
         adjustClipSet(clipSet);
     }
 
+    public ClipSet doGetPlaylistInfoDetailed() throws ExecutionException, InterruptedException {
+        VdbRequestFuture<ClipSet> vdbRequestFuture = VdbRequestFuture.newFuture();
+        ClipSetExRequest request = new ClipSetExRequest(mPlayListId, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA,
+                vdbRequestFuture, vdbRequestFuture);
+
+        add2RequestQueue(request);
+
+        ClipSet clipSet = vdbRequestFuture.get();
+        return clipSet;
+    }
+
     private void adjustClipSet(ClipSet clipSet) {
         Logger.t(TAG).d("origin count: " + mClipSet.getCount() + " new clip: " + clipSet.getCount());
         for (int i = 0; i < mClipSet.getCount(); i++) {
