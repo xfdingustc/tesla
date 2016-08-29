@@ -55,7 +55,7 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
     @Override
     public void getClipSet() {
 
-        ClipSetExRequest request = new ClipSetExRequest(mClipSetType, mFlag | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA, mAttr, new VdbResponse.Listener<ClipSet>() {
+        ClipSetExRequest request = new ClipSetExRequest(mClipSetType, mFlag | ClipSetExRequest.FLAG_CLIP_DESC, mAttr, new VdbResponse.Listener<ClipSet>() {
             @Override
             public void onResponse(ClipSet response) {
                 ArrayList<Clip> clipList = response.getClipList();

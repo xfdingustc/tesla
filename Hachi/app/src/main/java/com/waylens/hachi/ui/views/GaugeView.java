@@ -137,6 +137,29 @@ public class GaugeView extends FrameLayout {
         changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
     }
 
+    public void setDefaultViewAndTimePoints(final ArrayList<Long> timepoints) {
+        Logger.t(TAG).d("loading finish");
+        initGaugeView();
+        if (timepoints != null) {
+            String jsApi = "javascript:setGauge('CountDown','S')";
+            Logger.t(TAG).d(jsApi);
+            mWebView.loadUrl(jsApi);
+        }
+        setRaceTimingPoints(timepoints);
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                initGaugeView();
+                if (timepoints != null) {
+                    String jsApi = "javascript:setGauge('CountDown','S')";
+                    Logger.t(TAG).d(jsApi);
+                    mWebView.loadUrl(jsApi);
+                }
+                setRaceTimingPoints(timepoints);
+            }
+        });
+    }
+
     public void setVisibility(boolean show) {
         if (show) {
             mWebView.setVisibility(View.VISIBLE);

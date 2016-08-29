@@ -605,6 +605,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                   Logger.t(TAG).d("Get moment play info");
 //                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
                   mMomentPlayInfo = momentPlayInfo;
+                  Logger.t(TAG).d("moment play inf:" + momentPlayInfo.beginTime);
                   MomentInfo.MomentBasicInfo momentBasicInfo = mMoment.moment;
                   Logger.t(TAG).d("Moment Play Fragment!");
                   long momentCaptureTime = -1;

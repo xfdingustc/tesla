@@ -15,6 +15,8 @@ public class MomentPlayInfo {
 
     public String captureTime;
 
+    public long beginTime;
+
     public int duration;
 
     public String videoUrl;

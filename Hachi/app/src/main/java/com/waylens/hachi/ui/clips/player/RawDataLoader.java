@@ -69,7 +69,7 @@ public class RawDataLoader {
     }
 
 
-    private RawDataBlock loadRawData(Clip clip, int dataType) {
+    public RawDataBlock loadRawData(Clip clip, int dataType) {
         ClipSegment clipSegment = new ClipSegment(clip);
         Bundle params = new Bundle();
         params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);

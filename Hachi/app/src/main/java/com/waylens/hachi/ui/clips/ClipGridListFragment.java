@@ -173,7 +173,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         int attr;
 
         if (true || mClipSetType == Clip.TYPE_MARKED) {
-            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA;
+            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC;
             attr = 0;
         } else {
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
@@ -473,7 +473,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
                     mRefreshLayout.setRefreshing(false);
                     Logger.t(TAG).d("type race:" + clip.typeRace);
-                    PreviewActivity.launch(getActivity(), playlistId, transitionView, clip);
+                    PreviewActivity.launch(getActivity(), playlistId, transitionView);
                 }
 
                 @Override

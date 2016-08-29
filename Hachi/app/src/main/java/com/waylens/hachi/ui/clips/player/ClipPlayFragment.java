@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -42,13 +43,18 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.control.VdtCamera;
 import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
+import com.xfdingustc.snipe.toolbox.ClipInfoRequest;
+import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipPos;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
 import com.xfdingustc.snipe.vdb.ClipSetPos;
+import com.xfdingustc.snipe.vdb.rawdata.GpsData;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
 import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
 import com.xfdingustc.snipe.vdb.urls.VdbUrl;
 
@@ -58,7 +64,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -499,7 +507,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         releasePlayer();
     }
 
-    private void initRawDataView() {
+    public void initRawDataView() {
         Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(final Subscriber<? super Void> subscriber) {
@@ -537,6 +545,25 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             }
         });
 
+    }
+
+    public void setRaceTimePoints(ArrayList<Long> timePoints) {
+        mWvGauge.setDefaultViewAndTimePoints(timePoints);
+    }
+
+
+    private Clip loadClipInfo(Clip clip) {
+        VdbRequestFuture<Clip> requestFuture = VdbRequestFuture.newFuture();
+        ClipInfoRequest request = new ClipInfoRequest(clip.cid, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA,
+                clip.cid.type, 0, requestFuture, requestFuture);
+        mVdbRequestQueue.add(request);
+        try {
+            Clip retClip = requestFuture.get();
+            return retClip;
+        } catch (Exception e) {
+            Logger.t(TAG).e("Load raw data: " + e.getMessage());
+            return null;
+        }
     }
 
 
@@ -699,7 +726,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
 
-    private void startPreparingClip(final ClipSetPos clipSetPos, final boolean loadRawData) {
+    public void startPreparingClip(final ClipSetPos clipSetPos, final boolean loadRawData) {
         if (mBtnPlayPause.isEnabled() == false) {
             return;
         }
@@ -896,6 +923,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         public void run() {
             if (mMediaPlayer != null && mPlayerControl != null && mPlayerControl.isPlaying()) {
                 refreshProgressBar(getCurrentPlayingTime());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWvGauge.setPlayTime(getCurrentPlayingTime());
+                    }
+                });
             }
 
             if (mNeedSendPlayCompleteEvent) {
@@ -915,8 +948,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, TAG);
                 mEventBus.post(event);
             }
-
-
             if (mRawDataLoader != null) {
                 //mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
             }

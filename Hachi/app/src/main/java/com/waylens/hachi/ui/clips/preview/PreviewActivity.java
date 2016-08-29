@@ -12,6 +12,7 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -22,15 +23,33 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipModifyActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
+import com.waylens.hachi.ui.clips.player.RawDataLoader;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.snipe.SnipeError;
+import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
+import com.xfdingustc.snipe.toolbox.ClipInfoRequest;
+import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.vdb.Clip;
+import com.xfdingustc.snipe.vdb.ClipSet;
+import com.xfdingustc.snipe.vdb.ClipSetPos;
+import com.xfdingustc.snipe.vdb.rawdata.GpsData;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -40,17 +59,16 @@ public class PreviewActivity extends ClipPlayActivity {
 
     private int mPlaylistId = 0;
 
-    public static Clip mClip;
+    private ArrayList<Long> mTimeList = null;
+
+    private String mVin;
 
     public static final String EXTRA_PLAYLIST_ID = "playListId";
 
 
-    public static void launch(Activity activity, int playlistId, View transitionView, Clip clip) {
+    public static void launch(Activity activity, int playlistId, View transitionView) {
         Intent intent = new Intent(activity, PreviewActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
-        intent.putExtra("clip", (Parcelable) clip);
-        mClip = clip;
-        Logger.t(TAG).d("type race:" + clip.typeRace);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
         ActivityOptionsCompat options = ActivityOptionsCompat
@@ -61,12 +79,6 @@ public class PreviewActivity extends ClipPlayActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent().getParcelableExtra("clip") == null) {
-            mClip = null;
-        }
-        Logger.t(TAG).d("type race:" + mClip.typeRace);
-        Logger.t(TAG).d("vin:" + mClip.getVin());
-        Logger.t(TAG).d("duration:" + mClip.getDurationMs());
         init();
     }
 
@@ -85,6 +97,166 @@ public class PreviewActivity extends ClipPlayActivity {
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
         mPlaylistEditor.reconstruct();
         embedVideoPlayFragment(true);
+        getRaceTimeInfo();
+    }
+
+    public void getRaceTimeInfo() {
+        Observable.create(new Observable.OnSubscribe<ArrayList<Long>>() {
+            @Override
+            public void call(final Subscriber<? super ArrayList<Long>> subscriber) {
+                Logger.t(TAG).d("start loading ");
+                // First load raw data into memory
+                RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistId, mVdbRequestQueue);
+                mRawDataLoader.loadRawData();
+
+                ClipSet clipSet = getClipSet();
+                ArrayList<Clip> clipList;
+                if (clipSet != null) {
+                    clipList = clipSet.getClipList();
+                } else {
+                    Logger.t(TAG).d("clipset empty!");
+                    return;
+                }
+
+                String vin = null;
+                for( Clip clip : clipList) {
+                    Logger.t(TAG).d("Vin  = " + clip.getVin());
+                    if (clip.getVin() != null) {
+                        vin = clip.getVin();
+                        mVin = vin;
+                    }
+                    Logger.t(TAG).d("clip" + clip.cid.type);
+                    Clip retClip = loadClipInfo(clip);
+                    Logger.t(TAG).d("typeRace:" + retClip.typeRace);
+                    if ((retClip.typeRace & Clip.TYPE_RACE) > 0) {
+                        Logger.t(TAG).d("duration:" + retClip.getDurationMs());
+                        Logger.t(TAG).d(retClip.typeRace & Clip.MASK_RACE);
+                        Logger.t(TAG).d("t1:" + retClip.raceTimingPoints.get(0));
+                        Logger.t(TAG).d("t2:" + retClip.raceTimingPoints.get(1));
+                        Logger.t(TAG).d("t3:" + retClip.raceTimingPoints.get(2));
+                        Logger.t(TAG).d("t4:" + retClip.raceTimingPoints.get(3));
+                        Logger.t(TAG).d("t5:" + retClip.raceTimingPoints.get(4));
+                        Logger.t(TAG).d("t6:" + retClip.raceTimingPoints.get(5));
+
+                        Logger.t(TAG).d("start loading ");
+                        // First load raw data into memory
+                        RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clip, RawDataItem.DATA_TYPE_GPS);
+                        Logger.t(TAG).d("raw data size:" + rawDataBlock.getItemList().size());
+ /*                       GpsData firstGpsData = (GpsData) rawDataBlock.getItemList().get(0).data;
+                        if (((long) firstGpsData.utc_time * 1000 + firstGpsData.reserved / 1000) >= clip.raceTimingPoints.get(0)) {
+                            Logger.t(TAG).d("find the corresponding video time:" + rawDataBlock.getItemList().get(0).getPtsMs());
+                            continue;
+                        }*/
+                        int searchIndex = -1;
+                        long searchResult = -1;
+                        if ((retClip.typeRace & retClip.MASK_RACE) == retClip.TYPE_RACE_CD3T || (retClip.typeRace & retClip.MASK_RACE) == retClip.TYPE_RACE_CD6T) {
+                            searchIndex = 0;
+                        } else {
+                            searchIndex = 1;
+                        }
+                        ArrayList<Long> timeList = new ArrayList<Long>(6);
+                        long clipStartTime;
+                        for (int i = 1; i < rawDataBlock.getItemList().size(); i++) {
+                            RawDataItem last = rawDataBlock.getItemList().get(i - 1);
+                            RawDataItem current = rawDataBlock.getItemList().get(i);
+                            GpsData lastGpsData = (GpsData) last.data;
+                            GpsData currentGpsData = (GpsData) current.data;
+                            long lastGpsTime = (long) lastGpsData.utc_time * 1000 + lastGpsData.reserved / 1000;
+                            long currentGpsTime = (long) currentGpsData.utc_time * 1000 + currentGpsData.reserved / 1000;
+                            if (lastGpsTime <= retClip.raceTimingPoints.get(searchIndex) && currentGpsTime >= retClip.raceTimingPoints.get(searchIndex)) {
+                                if (2 * retClip.raceTimingPoints.get(searchIndex) <= lastGpsTime + currentGpsTime) {
+                                    Logger.t(TAG).d("gps utc time ms:" + ((long) lastGpsData.utc_time * 1000 + lastGpsData.reserved / 1000));
+                                    Logger.t(TAG).d("find the corresponding video time:" + last.getPtsMs());
+                                    searchResult = last.getPtsMs() + retClip.getClipDate();
+                                } else {
+                                    Logger.t(TAG).d("gps utc time ms:" + ((long) currentGpsData.utc_time * 1000 + currentGpsData.reserved / 1000));
+                                    Logger.t(TAG).d("find the corresponding video time:" + current.getPtsMs());
+                                    searchResult = current.getPtsMs() + retClip.getClipDate();
+                                }
+                                clipStartTime = retClip.getStartTimeMs() + retClip.getClipDate();
+                                if (searchIndex == 0) {
+                                    timeList.add(0, searchResult);
+                                    timeList.add(1, retClip.raceTimingPoints.get(1) - retClip.raceTimingPoints.get(0) + searchResult);
+                                    timeList.add(2, retClip.raceTimingPoints.get(2) - retClip.raceTimingPoints.get(0) + searchResult);
+                                    timeList.add(3, retClip.raceTimingPoints.get(3) - retClip.raceTimingPoints.get(0) + searchResult);
+                                    if (retClip.raceTimingPoints.get(4) > 0) {
+                                        timeList.add(4, retClip.raceTimingPoints.get(4) - retClip.raceTimingPoints.get(0) + searchResult);
+                                    } else {
+                                        timeList.add(4, (long)-1);
+                                    }
+                                    if (retClip.raceTimingPoints.get(5) > 0) {
+                                        timeList.add(5, retClip.raceTimingPoints.get(5) - retClip.raceTimingPoints.get(0) + searchResult);
+                                    } else {
+                                        timeList.add(5, (long)-1);
+                                    }
+                                } else if (searchIndex == 1) {
+                                    timeList.add(0, (long)-1);
+                                    timeList.add(1, searchResult);
+                                    timeList.add(2, retClip.raceTimingPoints.get(2) - retClip.raceTimingPoints.get(1) + searchResult);
+                                    timeList.add(3, retClip.raceTimingPoints.get(3) - retClip.raceTimingPoints.get(1) + searchResult);
+                                    if (retClip.raceTimingPoints.get(4) > 0) {
+                                        timeList.add(4, retClip.raceTimingPoints.get(4) - retClip.raceTimingPoints.get(1) + searchResult);
+                                    } else {
+                                        timeList.add(4, (long)-1);
+                                    }
+                                    if (retClip.raceTimingPoints.get(5) > 0) {
+                                        timeList.add(5, retClip.raceTimingPoints.get(5) - retClip.raceTimingPoints.get(1) + searchResult);
+                                    } else {
+                                        timeList.add(5, (long)-1);
+                                    }
+                                }
+                                mTimeList = timeList;
+                                for( int j = 0; j < timeList.size(); j++) {
+                                    timeList.set(j, timeList.get(j) - clipStartTime);
+                                }
+                                subscriber.onNext(timeList);
+                                break;
+                            }
+                            //Logger.t(TAG).d("utc time:" + currentGpsData.utc_time);
+                            //Logger.t(TAG).d("reserve utc time:" + currentGpsData.reserved);
+                        }
+                    }
+                }
+
+                subscriber.onCompleted();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<ArrayList<Long>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<Long> timeList) {
+                        Logger.t(TAG).d("set time Points");
+                        if (timeList.size() > 0) {
+                            mClipPlayFragment.setRaceTimePoints(timeList);
+                        }
+
+                    }
+                });
+
+    }
+
+    private Clip loadClipInfo(Clip clip) {
+        VdbRequestFuture<Clip> requestFuture = VdbRequestFuture.newFuture();
+        ClipInfoRequest request = new ClipInfoRequest(clip.cid, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA,
+                clip.cid.type, 0, requestFuture, requestFuture);
+        mVdbRequestQueue.add(request);
+        try {
+            Clip retClip = requestFuture.get();
+            return retClip;
+        } catch (Exception e) {
+            Logger.t(TAG).e("Load raw data: " + e.getMessage());
+            return null;
+        }
     }
 
 
@@ -105,8 +277,7 @@ public class PreviewActivity extends ClipPlayActivity {
                         if (!SessionManager.checkUserVerified(PreviewActivity.this)) {
                             return true;
                         }
-                        Logger.t(TAG).d("typeRace" + mClip.typeRace);
-                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1);
+                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1, mVin, mTimeList);
                         finish();
 
                         break;
