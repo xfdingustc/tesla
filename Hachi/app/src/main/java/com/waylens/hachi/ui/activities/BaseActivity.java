@@ -12,8 +12,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
-
-
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.xfdingustc.snipe.VdbRequestQueue;
@@ -44,32 +42,8 @@ public class BaseActivity extends AppCompatActivity {
 
     protected MaterialDialog mProgressDialog;
 
+
     private boolean mIsImmersive = false;
-
-//    protected ImageLoader mImageLoader = ImageLoader.getInstance();
-    /**
-     * Bugtags call
-     */
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        Bugtags.onResume(this);
-//    }
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        Bugtags.onPause(this);
-//    }
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent event) {
-//        Bugtags.onDispatchTouchEvent(this, event);
-//        return super.dispatchTouchEvent(event);
-//    }
-
-    /**
-     * end Bugtags
-     */
-
 
     @Nullable
     @BindView(R.id.toolbar)
@@ -152,8 +126,6 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-
-
     protected void initCamera() {
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
 //        Logger.t("EnhancementActivity").d("get current camera: " + mVdtCamera);
@@ -183,24 +155,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-
-    protected String getServerAddress(Bundle bundle) {
-        return bundle.getString(HOST_STRING);
-    }
-
-    protected VdtCamera getCameraFromIntent(Bundle bundle) {
-        if (bundle == null) {
-            bundle = getIntent().getExtras();
-        }
-        String ssid = bundle.getString(SSID);
-        String hostString = bundle.getString(HOST_STRING);
-        if (ssid == null || hostString == null) {
-            return null;
-        }
-        VdtCameraManager vdtCameraManager = VdtCameraManager.getManager();
-        VdtCamera vdtCamera = vdtCameraManager.findConnectedCamera(ssid, hostString);
-        return vdtCamera;
-    }
 
     public void setImmersiveMode(boolean immersiveMode) {
         if (immersiveMode) {

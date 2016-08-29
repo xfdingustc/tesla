@@ -11,6 +11,7 @@ import com.waylens.hachi.rxjava.RxBus;
 import com.waylens.hachi.rxjava.SimpleSubscribe;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -21,6 +22,8 @@ public class MusicListSelectActivity extends BaseActivity {
 
     public static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 100;
 
+    public Subscription mRxSubscription;
+
     public static void launchForResult(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, MusicListSelectActivity.class);
         activity.startActivityForResult(intent, requestCode);
@@ -30,6 +33,14 @@ public class MusicListSelectActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!mRxSubscription.isUnsubscribed()) {
+            mRxSubscription.unsubscribe();
+        }
     }
 
     @Override
@@ -60,7 +71,7 @@ public class MusicListSelectActivity extends BaseActivity {
     }
 
     private void initEventHandler() {
-        RxBus.getDefault().toObserverable(MusicCategorySelectEvent.class)
+        mRxSubscription = RxBus.getDefault().toObserverable(MusicCategorySelectEvent.class)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<MusicCategorySelectEvent>() {
                 @Override
