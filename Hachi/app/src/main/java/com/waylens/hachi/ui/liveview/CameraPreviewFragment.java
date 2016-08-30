@@ -75,6 +75,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     private Timer mTimer;
 
     private UpdateRecordTimeTask mRecordTimeTask;
+    private UpdateStorageInfoTimeTask mUpdateStorageInfoTimerTask;
 
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private EventBus mEventBus = EventBus.getDefault();
@@ -568,11 +569,11 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     public void startPreview() {
         initCameraPreview();
-
-
         mTimer = new Timer();
         mRecordTimeTask = new UpdateRecordTimeTask();
+        mUpdateStorageInfoTimerTask = new UpdateStorageInfoTimeTask();
         mTimer.schedule(mRecordTimeTask, 1000, 1000);
+        mTimer.schedule(mUpdateStorageInfoTimerTask, 1000, 10000);
     }
 
     public void stopPreview() {
@@ -595,11 +596,8 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
     private void handleOnCameraConnected() {
-
         mCameraNoSignal.setVisibility(View.GONE);
         mCameraConnecting.setVisibility(View.GONE);
-
-
     }
 
 
@@ -649,16 +647,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mVdtCamera.getRecordRecMode();
             mVdtCamera.getRecordTime();
             mVdtCamera.getAudioMicState();
-            mVdtCamera.getRecordResolutionList();
             mVdtCamera.getSetup();
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    updateCameraState();
-                    updateCameraInfoPanel();
-                }
-            });
-
+            updateCameraState();
+            updateCameraInfoPanel();
             openLiveViewData();
         }
 
@@ -822,7 +813,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode()) {
                     String recStatusText = mTvCameraRecStatus.getText().toString();
-                    if (recStatusText == null || recStatusText.isEmpty()) {
+                    if (recStatusText.isEmpty()) {
                         mTvCameraRecStatus.setText(R.string.continuous_recording);
                     }
                     if (!mStorageView.isAnimating()) {
@@ -977,7 +968,16 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             if (vdtCamera != null) {
                 vdtCamera.getRecordTime();
                 EventBus.getDefault().post(new UpdateCameraStatusEvent());
+            }
+        }
+    }
 
+    private class UpdateStorageInfoTimeTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
+                updateSpaceInfo();
             }
         }
     }
