@@ -120,8 +120,14 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.remote_ctrl)
     ImageView mRemoteCtrl;
 
+    @BindView(R.id.detail_remote)
+    ImageView mDetailRemote;
+
     @BindView(R.id.obd)
     ImageView mObd;
+
+    @BindView(R.id.detail_obd)
+    ImageView mDetailObd;
 
 
     @BindView(R.id.storageView)
@@ -365,7 +371,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 }
             }, 1000);
         }
-        ;
     }
 
 
@@ -387,10 +392,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     @Override
     public void setupToolbar() {
-        if (getToolbar() == null) {
-            return;
-        }
-
         if (mVdtCameraManager.getConnectedCameras().size() > 1) {
             List<String> cameraNames = new ArrayList<>();
             List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
@@ -450,10 +451,8 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         super.onStart();
         initVdtCamera();
         if (mVdtCamera != null) {
-
             mCameraNoSignal.setVisibility(View.GONE);
             mCameraConnecting.setVisibility(View.GONE);
-
             initViews();
         } else {
             handleOnCameraDisconnected();
@@ -942,17 +941,21 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
         if (obdState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mObd.setAlpha(0.2f);
+            mDetailObd.setAlpha(0.2f);
             mObdStatus.setText("OFF");
         } else {
             mObd.setAlpha(1.0f);
+            mDetailObd.setAlpha(1.0f);
             mObdStatus.setText("ON");
         }
 
         if (remoteCtrState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mRemoteCtrl.setAlpha(0.2f);
+            mDetailRemote.setAlpha(0.2f);
             mRemoteStatus.setText("OFF");
         } else {
             mRemoteCtrl.setAlpha(1.0f);
+            mDetailRemote.setAlpha(1.0f);
             mRemoteStatus.setText("ON");
         }
 

@@ -212,6 +212,7 @@
                 android:paddingBottom="16dp">
 
                 <ImageView
+                    android:id="@+id/detail_remote"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="16dp"
@@ -242,6 +243,7 @@
                 android:paddingBottom="16dp">
 
                 <ImageView
+                    android:id="@+id/detail_obd"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="16dp"
