@@ -45,7 +45,6 @@ import com.xfdingustc.snipe.control.VdtCameraManager;
 import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
 import com.xfdingustc.snipe.control.events.CameraStateChangeEvent;
 import com.xfdingustc.snipe.control.events.MarkLiveMsgEvent;
-import com.xfdingustc.snipe.control.events.RawDataItemEvent;
 import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
 import com.xfdingustc.snipe.toolbox.LiveRawDataRequest;
 import com.xfdingustc.snipe.vdb.ClipActionInfo;
@@ -358,17 +357,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     }
 
-    @Subscribe
-    public void onEventRawDataItemList(RawDataItemEvent event) {
-        if (mVdtCamera != event.getCamera()) {
-            return;
-        }
-
-        List<RawDataItem> itemList = event.getRawDataItemList();
-        if (itemList != null) {
-            mGaugeView.updateRawDateItem(itemList);
-        }
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMicInfor(MicStateChangeEvent event) {
@@ -761,7 +749,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
-//                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
                     }
                 }, new VdbResponse.ErrorListener() {
                 @Override
@@ -771,8 +759,24 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             });
 
             mVdbRequestQueue.add(request);
+
+            mVdtCamera.setOnRawDataItemUpdateListener(mRawDataUpdateHandler);
         }
     }
+
+    private VdtCamera.OnRawDataUpdateListener mRawDataUpdateHandler = new VdtCamera.OnRawDataUpdateListener() {
+
+        @Override
+        public void OnRawDataUpdate(VdtCamera camera, List<RawDataItem> item) {
+            if (mVdtCamera != camera) {
+                return;
+            }
+
+            if (item != null) {
+                mGaugeView.updateRawDateItem(item);
+            }
+        }
+    };
 
 
     private void closeLiveRawData() {
@@ -781,7 +785,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
-//                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
                     }
                 }, new VdbResponse.ErrorListener() {
                 @Override
@@ -790,8 +794,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 }
             });
             mVdbRequestQueue.add(request);
-//        mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
-
         }
     }
 
