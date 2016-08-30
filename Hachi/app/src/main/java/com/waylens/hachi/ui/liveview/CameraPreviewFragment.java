@@ -27,7 +27,6 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-
 import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -65,7 +64,6 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Optional;
 
 /**
  * Created by Xiaofei on 2016/3/7.
@@ -88,7 +86,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.camera_preview)
     MjpegView mLiveView;
 
-    @Nullable
     @BindView(R.id.spinner)
     Spinner mCameraSpinner;
 
@@ -116,16 +113,12 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.bookmark_message_view)
     View mBookmarkMsgView;
 
-
-    @Nullable
     @BindView(R.id.infoPanel)
     LinearLayout mInfoView;
 
-    @Nullable
     @BindView(R.id.remote_ctrl)
     ImageView mRemoteCtrl;
 
-    @Nullable
     @BindView(R.id.obd)
     ImageView mObd;
 
@@ -142,39 +135,30 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.wifi_mode_description)
     TextView mWifiModeDescription;
 
-    @Nullable
     @BindView(R.id.ivBatterStatus)
     ImageView mIvBatterStatus;
 
-    @Nullable
     @BindView(R.id.ivIsChanging)
     ImageView mIsCharging;
 
-    @Nullable
     @BindView(R.id.tvBatteryVol)
     TextView mTvBatteryVol;
 
-    @Nullable
     @BindView(R.id.cameraConnecting)
     LinearLayout mCameraConnecting;
 
-    @Nullable
     @BindView(R.id.noSignal)
     RelativeLayout mCameraNoSignal;
 
-    @Nullable
     @BindView(R.id.connectIndicator)
     ImageView mIvConnectIdicator;
 
-    @Nullable
     @BindView(R.id.errorPanel)
     LinearLayout mErrorPanel;
 
-    @Nullable
     @BindView(R.id.tvErrorMessage)
     TextView mTvErrorMessage;
 
-    @Nullable
     @BindView(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
@@ -271,7 +255,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
 
-    @Optional
     @OnClick(R.id.add_new_camera)
     public void onAddNewCameraClicked() {
         StartupActivity.launch(getActivity());
@@ -466,10 +449,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         super.onStart();
         initVdtCamera();
         if (mVdtCamera != null) {
-            if (mCameraNoSignal != null) {
-                mCameraNoSignal.setVisibility(View.GONE);
-                mCameraConnecting.setVisibility(View.GONE);
-            }
+
+            mCameraNoSignal.setVisibility(View.GONE);
+            mCameraConnecting.setVisibility(View.GONE);
+
             initViews();
         } else {
             handleOnCameraDisconnected();
@@ -612,28 +595,28 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
     private void handleOnCameraConnected() {
-        if (mCameraNoSignal != null) {
-            mCameraNoSignal.setVisibility(View.GONE);
-            mCameraConnecting.setVisibility(View.GONE);
-        }
+
+        mCameraNoSignal.setVisibility(View.GONE);
+        mCameraConnecting.setVisibility(View.GONE);
+
 
     }
 
 
     private void handleOnCameraDisconnected() {
-        if (mCameraConnecting != null) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mCameraNoSignal.setVisibility(View.VISIBLE);
-                    mCameraConnecting.setVisibility(View.GONE);
-                    mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
-                    AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
-                    animationDrawable.start();
-                    getToolbar().getMenu().clear();
-                }
-            });
-        }
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mCameraNoSignal.setVisibility(View.VISIBLE);
+                mCameraConnecting.setVisibility(View.GONE);
+                mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+                AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+                animationDrawable.start();
+                getToolbar().getMenu().clear();
+            }
+        });
+
     }
 
     protected void init() {
@@ -728,8 +711,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
 
-
-
     private void updateMicControlButton() {
         if (mVdtCamera != null) {
             boolean micEnabled = mVdtCamera.isMicEnabled();
@@ -749,7 +730,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
-                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
                     }
                 }, new VdbResponse.ErrorListener() {
                 @Override
@@ -785,7 +766,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
-                    Logger.t(TAG).d("LiveRawDataResponse: " + response);
+                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
                     }
                 }, new VdbResponse.ErrorListener() {
                 @Override
@@ -794,21 +775,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 }
             });
             mVdbRequestQueue.add(request);
-        }
-    }
-
-    private void handleOnFabClicked() {
-        switch (mVdtCamera.getRecordState()) {
-            case VdtCamera.STATE_RECORD_RECORDING:
-                if (isInCarMode()) {
-                    mVdtCamera.markLiveVideo();
-                } else {
-                    mVdtCamera.stopRecording();
-                }
-                break;
-            case VdtCamera.STATE_RECORD_STOPPED:
-                mVdtCamera.startRecording();
-                break;
         }
     }
 
@@ -851,9 +817,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 break;
             case VdtCamera.STATE_RECORD_STARTING:
                 mTvCameraRecStatus.setText(R.string.record_starting);
-                if (mErrorPanel != null) {
-                    mErrorPanel.setVisibility(View.GONE);
-                }
+                mErrorPanel.setVisibility(View.GONE);
                 break;
             case VdtCamera.STATE_RECORD_RECORDING:
                 if (isInCarMode()) {
@@ -877,14 +841,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         }
         if (recState != VdtCamera.STATE_RECORD_RECORDING) {
             mTvStatusAdditional.setVisibility(View.GONE);
-        }
-    }
-
-
-    private void updateTvStatusAdditional(String text, int visible) {
-        if (mTvStatusAdditional != null) {
-            mTvStatusAdditional.setText(text);
-            mTvStatusAdditional.setVisibility(visible);
         }
     }
 
@@ -936,21 +892,21 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
     private void toggleInfoView() {
-        if (mInfoView != null) {
-            int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-            mInfoView.setVisibility(visibility);
 
-            if (visibility == View.VISIBLE) {
-                mPull.setVisibility(visibility);
-                updateCameraInfoPanel();
-            } else {
-                mDetailInfoPanel.setVisibility(visibility);
-            }
+        int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+        mInfoView.setVisibility(visibility);
+
+        if (visibility == View.VISIBLE) {
+            mPull.setVisibility(visibility);
+            updateCameraInfoPanel();
+        } else {
+            mDetailInfoPanel.setVisibility(visibility);
         }
+
     }
 
     private void updateCameraInfoPanel() {
-        if (mInfoView == null || mInfoView.getVisibility() != View.VISIBLE) {
+        if (mInfoView.getVisibility() != View.VISIBLE) {
             return;
         }
 
