@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
+import com.waylens.hachi.rxjava.RxBus;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -36,6 +37,7 @@ import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
 import com.xfdingustc.snipe.control.BtDevice;
@@ -64,6 +66,8 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Xiaofei on 2016/3/7.
@@ -79,6 +83,8 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private EventBus mEventBus = EventBus.getDefault();
+
+    private Subscription mCameraStateChangeEventSubscription;
 
     private int mFabStartSrc;
 
@@ -297,8 +303,8 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventCameraInfoChanged(CameraStateChangeEvent event) {
+
+    public void onHandleCameraStateChangeEvent(CameraStateChangeEvent event) {
         if (event.getWhat() == CameraStateChangeEvent.CAMERA_STATE_INFO) {
             setupToolbar();
             return;
@@ -324,16 +330,19 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             case CameraStateChangeEvent.CAMERA_STATE_REC_ERROR:
                 int error = (Integer) event.getExtra();
                 Logger.t(TAG).d("On Rec Error: " + error);
-                if (mErrorPanel != null) {
 
-                    mErrorPanel.setVisibility(View.VISIBLE);
-                    mTvErrorIndicator.setText(R.string.recording_error);
-                    switch (error) {
-                        case VdtCamera.ERROR_START_RECORD_NO_CARD:
-                            mTvErrorMessage.setText(R.string.error_msg_no_card);
-                    }
-
+                mErrorPanel.setVisibility(View.VISIBLE);
+                mTvErrorIndicator.setText(R.string.recording_error);
+                switch (error) {
+                    case VdtCamera.ERROR_START_RECORD_NO_CARD:
+                        mTvErrorMessage.setText(R.string.error_msg_no_card);
+                        break;
                 }
+
+                break;
+
+            case CameraStateChangeEvent.CAMERA_STATE_BT_DEVICE_STATUS_CHANGED:
+                updateBtDeviceState();
                 break;
 
         }
@@ -344,7 +353,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventUpdateCameraStatus(UpdateCameraStatusEvent event) {
         updateCameraState();
-
     }
 
 
@@ -366,7 +374,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    updateCameraStatusInfo();
+                    updateRecordState();
                     hideMessage();
                 }
             }, 1000);
@@ -471,6 +479,15 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mEventBus.register(this);
         }
 
+        mCameraStateChangeEventSubscription = RxBus.getDefault().toObserverable(CameraStateChangeEvent.class)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<CameraStateChangeEvent>() {
+                @Override
+                public void onNext(CameraStateChangeEvent cameraStateChangeEvent) {
+                    onHandleCameraStateChangeEvent(cameraStateChangeEvent);
+                }
+            });
+
 
         setupToolbar();
         if (isVisible()) {
@@ -485,6 +502,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         super.onStop();
         stopPreview();
         mEventBus.unregister(this);
+        if (!mCameraStateChangeEventSubscription.isUnsubscribed()) {
+            mCameraStateChangeEventSubscription.unsubscribe();
+        }
     }
 
 
@@ -648,7 +668,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mVdtCamera.getAudioMicState();
             mVdtCamera.getSetup();
             updateCameraState();
-            updateCameraInfoPanel();
+            updateBtDeviceState();
             openLiveViewData();
         }
 
@@ -664,7 +684,8 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     private void updateCameraState() {
         updateCameraInfoPanel();
-        updateCameraStatusInfo();
+        updateBtDeviceState();
+        updateRecordState();
         updateFloatActionButton();
         toggleRecordDot();
     }
@@ -791,7 +812,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
 
-    private void updateCameraStatusInfo() {
+    private void updateRecordState() {
         int recState = mVdtCamera.getRecordState();
 //        Logger.t(TAG).d("rec state: " + recState);
         switch (recState) {
@@ -934,8 +955,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_client);
             mWifiModeDescription.setText("Your phone is connected to camera through router");
         }
+    }
 
-
+    private void updateBtDeviceState() {
         BtDevice obdState = mVdtCamera.getObdDevice();
         BtDevice remoteCtrState = mVdtCamera.getRemoteCtrlDevice();
 
@@ -958,8 +980,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mDetailRemote.setAlpha(1.0f);
             mRemoteStatus.setText("ON");
         }
-
-
     }
 
 

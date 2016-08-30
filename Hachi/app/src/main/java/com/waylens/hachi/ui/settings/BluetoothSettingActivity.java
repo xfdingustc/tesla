@@ -164,7 +164,7 @@ public class BluetoothSettingActivity extends BaseActivity {
                 break;
             case BluetoothEvent.BT_DEVICE_BIND_FINISHED:
             case BluetoothEvent.BT_DEVICE_UNBIND_FINISHED:
-            case BluetoothEvent.BT_DEVICE_STATUS_CHANGED:
+//            case BluetoothEvent.BT_DEVICE_STATUS_CHANGED:
                 refreshBtDevices();
                 break;
             default:
