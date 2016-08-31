@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
-import com.waylens.hachi.rxjava.RxBus;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -37,6 +36,7 @@ import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
+import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
@@ -684,7 +684,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     private void updateCameraState() {
         updateCameraInfoPanel();
-        updateBtDeviceState();
         updateRecordState();
         updateFloatActionButton();
         toggleRecordDot();

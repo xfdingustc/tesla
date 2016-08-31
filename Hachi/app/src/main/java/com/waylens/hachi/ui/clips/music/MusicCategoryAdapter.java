@@ -9,7 +9,8 @@ import android.widget.TextView;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
-import com.waylens.hachi.rxjava.RxBus;
+import com.xfdingustc.rxutils.library.RxBus;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

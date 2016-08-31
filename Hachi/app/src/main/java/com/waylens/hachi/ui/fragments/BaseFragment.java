@@ -38,6 +38,7 @@ public abstract class BaseFragment extends Fragment {
     protected VdbRequestQueue mVdbRequestQueue;
 
 
+
     protected HachiApi mHachi = HachiService.createHachiApiService();
 
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
