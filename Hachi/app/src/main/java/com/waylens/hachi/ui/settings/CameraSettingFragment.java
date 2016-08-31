@@ -279,7 +279,7 @@ public class CameraSettingFragment extends PreferenceFragment {
 
     private void initAudioPreference() {
 
-        mMic.setChecked(mVdtCamera.isMicOn());
+        mMic.setChecked(mVdtCamera.isMicEnabled());
         mMic.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {

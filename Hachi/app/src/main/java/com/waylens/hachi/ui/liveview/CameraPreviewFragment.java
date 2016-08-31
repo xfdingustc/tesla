@@ -27,7 +27,6 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.eventbus.events.MicStateChangeEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -229,8 +228,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
         if (mVdtCamera != null) {
-            boolean isMicOn = mVdtCamera.isMicOn();
-            mVdtCamera.setMicOn(!isMicOn);
+            mVdtCamera.setMicEnabled(!mVdtCamera.isMicEnabled());
         }
     }
 
@@ -345,6 +343,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 updateBtDeviceState();
                 break;
 
+            case CameraStateChangeEvent.CAMEAR_STATE_MICROPHONE_STATUS_CHANGED:
+                updateMicControlButton();
+                break;
+
         }
 
     }
@@ -356,10 +358,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMicInfor(MicStateChangeEvent event) {
-        updateMicControlButton();
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventVdbReadyChanged(VdbReadyInfo event) {
