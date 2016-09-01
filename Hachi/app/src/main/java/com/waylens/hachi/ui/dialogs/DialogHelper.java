@@ -128,6 +128,19 @@ public class DialogHelper {
             .show();
     }
 
+    public static MaterialDialog showUploadCacheConfirmDialog(Context context, MaterialDialog.SingleButtonCallback positiveListener,
+                                                              MaterialDialog.SingleButtonCallback negativeListener) {
+        return new MaterialDialog.Builder(context)
+            .title(R.string.upload_moment)
+            .titleColorRes(R.color.style_color_accent)
+            .content(R.string.upload_in_ap)
+            .positiveText(R.string.understand)
+            .negativeText(R.string.cancel)
+            .onPositive(positiveListener)
+            .onNegative(negativeListener)
+            .show();
+    }
+
 
 
     public interface onPositiveClickListener {

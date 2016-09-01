@@ -18,10 +18,17 @@ public class DownloadHelper {
 
     public static final String VIDEO_DOWNLOAD_PATH = "/waylens/video/Waylens/";
     public static final String PICTURE_DOWNLOAD_PATH = "/waylens/picture/Waylens/";
+    public static final String MOMENT_CACHE_PATH = "/waylens/cache/";
+    public static final String FW_DOWNLOAD_PATH = "/waylens/downloads/firmware/";
+
 
 
     public static String getVideoDownloadPath() {
         return getDownloadPath(VIDEO_DOWNLOAD_PATH);
+    }
+
+    public static String getFirmwareDownloadPath() {
+        return getDownloadPath(FW_DOWNLOAD_PATH) + "firmware.tsf";
     }
 
     public static File[] getDownloadedFileList() {
@@ -49,10 +56,6 @@ public class DownloadHelper {
         return decFileList;
     }
 
-    public static String getPicturePath() {
-        return getDownloadPath(PICTURE_DOWNLOAD_PATH);
-    }
-
 
     private static final String getDownloadPath(String subdir) {
         File sdCardDir = Environment.getExternalStorageDirectory();
@@ -64,4 +67,8 @@ public class DownloadHelper {
         dirFile.mkdirs();
         return dir;
     }
+
+
+
+
 }

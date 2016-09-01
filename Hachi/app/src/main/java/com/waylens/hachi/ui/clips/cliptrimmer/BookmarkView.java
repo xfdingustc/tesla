@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 
 
 import com.waylens.hachi.utils.Utils;
+import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.snipe.vdb.Clip;
 
 
@@ -36,7 +37,7 @@ public class BookmarkView extends FrameLayout {
             bookmarkContainer.setId(viewId);
             addView(bookmarkContainer, params);
 
-            int maringHeight = (int)Utils.dp2Px(4);
+            int maringHeight = ViewUtils.dp2px(4);
 
             View topView = new View(getContext());
             FrameLayout.LayoutParams paramsTop = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, maringHeight);

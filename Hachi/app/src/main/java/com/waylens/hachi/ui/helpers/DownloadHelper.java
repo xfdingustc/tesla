@@ -25,7 +25,7 @@ public class DownloadHelper {
 
     OnDownloadListener mDownloadListener;
 
-    Downloadable mDownloadable;
+    IDownloadable mDownloadable;
 
     public DownloadHelper(Context context, OnDownloadListener listener) {
         mContextReference = new WeakReference<Context>(context);
@@ -33,7 +33,7 @@ public class DownloadHelper {
         mDownloadListener = listener;
     }
 
-    public void download(Downloadable downloadable) {
+    public void download(IDownloadable downloadable) {
         if (downloadManager == null || mContextReference == null || mContextReference.get() == null) {
             return;
         }
@@ -103,13 +103,13 @@ public class DownloadHelper {
         }
     };
 
-    public interface Downloadable {
+    public interface IDownloadable {
         DownloadManager.Request getDownloadRequest(Context context);
     }
 
     public interface OnDownloadListener {
-        void onSuccess(Downloadable downloadable, String filePath);
+        void onSuccess(IDownloadable downloadable, String filePath);
 
-        void onError(Downloadable downloadable);
+        void onError(IDownloadable downloadable);
     }
 }

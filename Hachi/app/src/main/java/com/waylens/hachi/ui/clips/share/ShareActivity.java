@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +23,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
@@ -42,14 +44,14 @@ import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
-import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.LocalMoment;
+import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.utils.ViewUtils;
+import com.xfdingustc.snipe.control.VdtCamera;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     public String mVehicleMaker = null;
 
-    public static Clip mClip;
+//    public static Clip mClip;
 
     public String mVehicleModel = null;
 
@@ -188,22 +190,22 @@ public class ShareActivity extends ClipPlayActivity {
     }
 
 
-    public static void launch(Activity activity, int playListId, int audioId, Clip clip) {
-        Intent intent = new Intent(activity, ShareActivity.class);
-        mClip = clip;
-        intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
-        intent.putExtra(EXTRA_AUDIO_ID, audioId);
-        intent.putExtra("clip", (Parcelable) clip);
-        activity.startActivity(intent);
-    }
+//    public static void launch(Activity activity, int playListId, int audioId, Clip clip) {
+//        Intent intent = new Intent(activity, ShareActivity.class);
+//        mClip = clip;
+//        intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
+//        intent.putExtra(EXTRA_AUDIO_ID, audioId);
+//        intent.putExtra("clip", (Parcelable) clip);
+//        activity.startActivity(intent);
+//    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent().getParcelableExtra("clip") == null) {
-            mClip = null;
-        }
-        Logger.t(TAG).d("typeRace:" + mClip.typeRace);
+//        if (getIntent().getParcelableExtra("clip") == null) {
+//            mClip = null;
+//        }
+//        Logger.t(TAG).d("typeRace:" + mClip.typeRace);
         init();
     }
 
@@ -228,125 +230,125 @@ public class ShareActivity extends ClipPlayActivity {
         setupToolbar();
         Logger.t(TAG).d("init");
         Logger.t(TAG).d("timezone offset" + TimeZone.getDefault().getRawOffset());
-        Logger.t(TAG).d("clip date" + mClip.getClipDate());
+//        Logger.t(TAG).d("clip date" + mClip.getClipDate());
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
-        Observable.create(new Observable.OnSubscribe<Clip>() {
-            @Override
-            public void call(Subscriber<? super Clip> subscriber) {
-                Logger.t(TAG).d("init views");
-                ClipSet clipSet = null;
-                try {
-                    clipSet = mPlaylistEditor.doGetPlaylistInfoDetailed();
-                } catch (Exception e) {
-                    Logger.t(TAG).d(e.getMessage());
-                    subscriber.onError(e);
-                }
-                String vin0 = null;
-                Clip clip = null;
-                //use the clip passed by previewActivty
-                if (mClip != null) {
-                    Logger.t(TAG).d("clip not empty");
-                    clip = mClip;
-                    vin0 = clip.getVin();
-                    subscriber.onNext(clip);
-                }
-                if (vin0 != null) {
-                    String vin = vin0.substring(0, 8) + vin0.substring(9, 11);
-                    try {
-                        Logger.t(TAG).d(vin);
-                        Call<VinQueryResponse> vinQueryResponseCall = mHachi.queryByVin(vin);
-                        Response<VinQueryResponse> response = vinQueryResponseCall.execute();
-                        VinQueryResponse vinQueryResponse = response.body();
-                        Logger.t(TAG).d(response.code() + response.message());
-                        if (vinQueryResponse != null) {
-                            mVehicleMaker = vinQueryResponse.makerName;
-                            mVehicleModel = vinQueryResponse.modelName;
-                            mVehicleYear = vinQueryResponse.year;
-                            Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
-                        }
-
-                    } catch (IOException e) {
-                        Logger.t(TAG).d(e.getMessage());
-                    }
-                }
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Observer<Clip>() {
-            @Override
-            public void onCompleted() {
-                if (mVehicleMaker != null) {
-                    mTvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
-                }
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Logger.t(TAG).d(e.getMessage());
-
-            }
-
-            @Override
-            public void onNext(Clip clip) {
-                //Logger.t(TAG).d("clip count:");
-
-                if (true/*clipSet.getCount() == 1*/) {
-                    Logger.t(TAG).d("typeRace:" + clip.typeRace);
-                    Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
-                    if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
-                        mRaceLayout.setVisibility(View.VISIBLE);
-                        momentType = "RACING";
-                        timingPoints = new ArrayList<Long>(6);
-                        ArrayList<Long> timeList = clip.raceTimingPoints;
-                        switch (clip.typeRace & Clip.MASK_RACE) {
-                            case Clip.TYPE_RACE_CD6T:
-                                timingPoints.add(0, timeList.get(0));
-                                timingPoints.add(1, timeList.get(0) + timeList.get(1));
-                                timingPoints.add(2, timeList.get(0) + timeList.get(2));
-                                timingPoints.add(3, timeList.get(0) + timeList.get(3));
-                                timingPoints.add(4, timeList.get(0) + timeList.get(4));
-                                timingPoints.add(5, timeList.get(0) + timeList.get(5));
-                                break;
-                            case Clip.TYPE_RACE_CD3T:
-                                timingPoints.add(0, timeList.get(0));
-                                timingPoints.add(1, timeList.get(0) + timeList.get(1));
-                                timingPoints.add(2, timeList.get(0) + timeList.get(2));
-                                timingPoints.add(3, timeList.get(0) + timeList.get(3));
-                                timingPoints.add(4, (long)-1);
-                                timingPoints.add(5, (long)-1);
-                                break;
-                            case Clip.TYPE_RACE_AU6T:
-                                timingPoints.add(0, (long)-1);
-                                timingPoints.add(1, timeList.get(0));
-                                timingPoints.add(2, timeList.get(0) + timeList.get(2));
-                                timingPoints.add(3, timeList.get(0) + timeList.get(3));
-                                timingPoints.add(4, timeList.get(0) + timeList.get(4));
-                                timingPoints.add(5, timeList.get(0) + timeList.get(5));
-                                break;
-
-                            case Clip.TYPE_RACE_AU3T:
-                                timingPoints.add(0, (long)-1);
-                                timingPoints.add(1, timeList.get(0));
-                                timingPoints.add(2, timeList.get(0) + timeList.get(2));
-                                timingPoints.add(3, timeList.get(0) + timeList.get(3));
-                                timingPoints.add(4, (long)-1);
-                                timingPoints.add(5, (long)-1);
-                                break;
-                            default:
-                                break;
-                        }
-                        for (long time : timingPoints) {
-                            Logger.t(TAG).d(time);
-                        }
-                        Logger.t(TAG).d(clip.getStartTimeMs());
-
-                    }
-                }
-            }
-        });
+//        Observable.create(new Observable.OnSubscribe<Clip>() {
+//            @Override
+//            public void call(Subscriber<? super Clip> subscriber) {
+//                Logger.t(TAG).d("init views");
+//                ClipSet clipSet = null;
+//                try {
+//                    clipSet = mPlaylistEditor.doGetPlaylistInfoDetailed();
+//                } catch (Exception e) {
+//                    Logger.t(TAG).d(e.getMessage());
+//                    subscriber.onError(e);
+//                }
+//                String vin0 = null;
+//                Clip clip = null;
+//                //use the clip passed by previewActivty
+//                if (mClip != null) {
+//                    Logger.t(TAG).d("clip not empty");
+//                    clip = mClip;
+//                    vin0 = clip.getVin();
+//                    subscriber.onNext(clip);
+//                }
+//                if (vin0 != null) {
+//                    String vin = vin0.substring(0, 8) + vin0.substring(9, 11);
+//                    try {
+//                        Logger.t(TAG).d(vin);
+//                        Call<VinQueryResponse> vinQueryResponseCall = mHachi.queryByVin(vin);
+//                        Response<VinQueryResponse> response = vinQueryResponseCall.execute();
+//                        VinQueryResponse vinQueryResponse = response.body();
+//                        Logger.t(TAG).d(response.code() + response.message());
+//                        if (vinQueryResponse != null) {
+//                            mVehicleMaker = vinQueryResponse.makerName;
+//                            mVehicleModel = vinQueryResponse.modelName;
+//                            mVehicleYear = vinQueryResponse.year;
+//                            Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
+//                        }
+//
+//                    } catch (IOException e) {
+//                        Logger.t(TAG).d(e.getMessage());
+//                    }
+//                }
+//                subscriber.onCompleted();
+//            }
+//        }).subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe(new Observer<Clip>() {
+//                @Override
+//                public void onCompleted() {
+//                    if (mVehicleMaker != null) {
+//                        mTvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+//                    }
+//
+//                }
+//
+//                @Override
+//                public void onError(Throwable e) {
+//                    Logger.t(TAG).d(e.getMessage());
+//
+//                }
+//
+//                @Override
+//                public void onNext(Clip clip) {
+//                    //Logger.t(TAG).d("clip count:");
+//
+//                    if (true/*clipSet.getCount() == 1*/) {
+//                        Logger.t(TAG).d("typeRace:" + clip.typeRace);
+//                        Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
+//                        if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
+//                            mRaceLayout.setVisibility(View.VISIBLE);
+//                            momentType = "RACING";
+//                            timingPoints = new ArrayList<Long>(6);
+//                            ArrayList<Long> timeList = clip.raceTimingPoints;
+//                            switch (clip.typeRace & Clip.MASK_RACE) {
+//                                case Clip.TYPE_RACE_CD6T:
+//                                    timingPoints.add(0, timeList.get(0));
+//                                    timingPoints.add(1, timeList.get(0) + timeList.get(1));
+//                                    timingPoints.add(2, timeList.get(0) + timeList.get(2));
+//                                    timingPoints.add(3, timeList.get(0) + timeList.get(3));
+//                                    timingPoints.add(4, timeList.get(0) + timeList.get(4));
+//                                    timingPoints.add(5, timeList.get(0) + timeList.get(5));
+//                                    break;
+//                                case Clip.TYPE_RACE_CD3T:
+//                                    timingPoints.add(0, timeList.get(0));
+//                                    timingPoints.add(1, timeList.get(0) + timeList.get(1));
+//                                    timingPoints.add(2, timeList.get(0) + timeList.get(2));
+//                                    timingPoints.add(3, timeList.get(0) + timeList.get(3));
+//                                    timingPoints.add(4, (long) -1);
+//                                    timingPoints.add(5, (long) -1);
+//                                    break;
+//                                case Clip.TYPE_RACE_AU6T:
+//                                    timingPoints.add(0, (long) -1);
+//                                    timingPoints.add(1, timeList.get(0));
+//                                    timingPoints.add(2, timeList.get(0) + timeList.get(2));
+//                                    timingPoints.add(3, timeList.get(0) + timeList.get(3));
+//                                    timingPoints.add(4, timeList.get(0) + timeList.get(4));
+//                                    timingPoints.add(5, timeList.get(0) + timeList.get(5));
+//                                    break;
+//
+//                                case Clip.TYPE_RACE_AU3T:
+//                                    timingPoints.add(0, (long) -1);
+//                                    timingPoints.add(1, timeList.get(0));
+//                                    timingPoints.add(2, timeList.get(0) + timeList.get(2));
+//                                    timingPoints.add(3, timeList.get(0) + timeList.get(3));
+//                                    timingPoints.add(4, (long) -1);
+//                                    timingPoints.add(5, (long) -1);
+//                                    break;
+//                                default:
+//                                    break;
+//                            }
+//                            for (long time : timingPoints) {
+//                                Logger.t(TAG).d(time);
+//                            }
+//                            Logger.t(TAG).d(clip.getStartTimeMs());
+//
+//                        }
+//                    }
+//                }
+//            });
 
         embedVideoPlayFragment();
         setupSocialPolicy();
@@ -378,28 +380,6 @@ public class ShareActivity extends ClipPlayActivity {
 //        checkLinkedAccount();
 
     }
-
-//    private void checkLinkedAccount() {
-//        Call<LinkedAccounts> callLinkedAccount = mHachi.getLinkedAccounts();
-//        callLinkedAccount.enqueue(new Callback<LinkedAccounts>() {
-//            @Override
-//            public void onResponse(Call<LinkedAccounts> call, retrofit2.Response<LinkedAccounts> response) {
-//
-//                mLinkedAccounts = response.body();
-//                Logger.t(TAG).d("Get response: " + mLinkedAccounts.linkedAccounts.size());
-//                for (LinkedAccounts.LinkedAccount account : mLinkedAccounts.linkedAccounts) {
-//                    Logger.t(TAG).d("account: " + account.toString());
-//                }
-//                updateSocailButtons();
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<LinkedAccounts> call, Throwable t) {
-//                Logger.t(TAG).d(t.toString());
-//            }
-//        });
-//    }
 
 
     private void setupSocialPolicy() {
@@ -448,7 +428,21 @@ public class ShareActivity extends ClipPlayActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.share:
-                        shareMoment();
+                        if (mVdtCamera.getWifiMode() == VdtCamera.WIFI_MODE_AP) {
+                            DialogHelper.showUploadCacheConfirmDialog(ShareActivity.this, new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    doCacheHighlights();
+                                }
+                            }, new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                }
+                            });
+                        } else {
+                            shareMoment();
+                        }
 
                         break;
                 }
@@ -459,7 +453,12 @@ public class ShareActivity extends ClipPlayActivity {
 
     }
 
+    private void doCacheHighlights() {
+        doShareMoment(true);
+    }
+
     private void shareMoment() {
+
         Call<CloudStorageInfo> createMomentResponseCall = mHachi.getCloudStorageInfo();
         createMomentResponseCall.enqueue(new Callback<CloudStorageInfo>() {
             @Override
@@ -475,7 +474,7 @@ public class ShareActivity extends ClipPlayActivity {
                             .negativeText(R.string.cancel)
                             .show();
                     } else {
-                        doShareMoment();
+                        doShareMoment(false);
                     }
 
                 }
@@ -505,12 +504,7 @@ public class ShareActivity extends ClipPlayActivity {
             mRootScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, final int scrollY, int oldScrollX, int oldScrollY) {
-//                Log.i("test", "scroolY = " + scrollY);
-
                     mPlayerContainer.setY(originY + scrollY / 2);
-
-//                ViewGroup.LayoutParams newParam = new ViewGroup.LayoutParams(width, height - scrollY);
-//                frame.setLayoutParams(newParam);
 
                     mPlayerContainer.setClipToOutline(true);
                     mPlayerContainer.setOutlineProvider(new ViewOutlineProvider() {
@@ -527,7 +521,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     }
 
-    private void doShareMoment() {
+    private void doShareMoment(boolean cache) {
         String title = mEtMomentTitle.getEditableText().toString();
 //        if (TextUtils.isEmpty(name)) {
 //            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -543,21 +537,20 @@ public class ShareActivity extends ClipPlayActivity {
         Logger.t(TAG).d("share name: " + title);
 
         LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption,
-            tags, mSocialPrivacy, mAudioId, gaugeSettings,
-            mIsFacebookShareChecked, mIsYoutubeShareChecked);
-        if (momentType.equals("RACING")) {
-            Logger.t(TAG).d("RACING");
-            String vehicleDescription = mVehicleDesc.getEditableText().toString();
-            localMoment.momentType = "RACING";
-            if (mVehicleMaker != null) {
-                localMoment.mVehicleMaker = mVehicleMaker;
-                localMoment.mVehicleModel = mVehicleModel;
-                localMoment.mVehicleYear = mVehicleYear;
-            }
-            localMoment.mVehicleDesc = vehicleDescription;
-            localMoment.mTimingPoints = timingPoints;
-
-        }
+            tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked, mIsYoutubeShareChecked, cache);
+//        if (momentType.equals("RACING")) {
+//            Logger.t(TAG).d("RACING");
+//            String vehicleDescription = mVehicleDesc.getEditableText().toString();
+//            localMoment.momentType = "RACING";
+//            if (mVehicleMaker != null) {
+//                localMoment.mVehicleMaker = mVehicleMaker;
+//                localMoment.mVehicleModel = mVehicleModel;
+//                localMoment.mVehicleYear = mVehicleYear;
+//            }
+//            localMoment.mVehicleDesc = vehicleDescription;
+//            localMoment.mTimingPoints = timingPoints;
+//
+//        }
         JobManager jobManager = BgJobManager.getManager();
         UploadMomentJob job = new UploadMomentJob(localMoment);
         jobManager.addJobInBackground(job);

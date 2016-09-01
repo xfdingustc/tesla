@@ -7,15 +7,14 @@ import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.waylens.hachi.utils.Utils;
+import com.waylens.hachi.utils.ViewUtils;
 
 /**
  * Created by Xiaofei on 2016/4/26.
  */
 public class ClipView extends View {
 
-    public static final int BORDERDISTANCE = (int)Utils.dp2Px(16);
-
+    public static final int BORDERDISTANCE = ViewUtils.dp2px(16);
 
 
     public ClipView(Context context) {
@@ -36,12 +35,12 @@ public class ClipView extends View {
         int width = this.getWidth();
         int height = this.getHeight();
 
-        int borderlength = width - BORDERDISTANCE *2;
+        int borderlength = width - BORDERDISTANCE * 2;
 
         canvas.clipRect(0, 0, width, height);
 
         Path path = new Path();
-        path.addCircle(width/2, height/2, borderlength/2, Path.Direction.CW);
+        path.addCircle(width / 2, height / 2, borderlength / 2, Path.Direction.CW);
 
 
         canvas.clipPath(path, Region.Op.DIFFERENCE);

@@ -59,10 +59,12 @@ public class LocalMoment implements Serializable {
 
     public boolean isYoutubeShare;
 
+    public boolean cache;
+
 
     public LocalMoment(int playlistId, String title, String description, String[] tags,
                        String accessLevel, int audioID, Map<String, String> gaugeSettings,
-                       boolean isFbShare, boolean isYoutubeShare) {
+                       boolean isFbShare, boolean isYoutubeShare, boolean cache) {
         this.playlistId = playlistId;
         this.title = title;
         this.description = description;
@@ -72,6 +74,7 @@ public class LocalMoment implements Serializable {
         this.gaugeSettings = gaugeSettings;
         this.isFbShare = isFbShare;
         this.isYoutubeShare = isYoutubeShare;
+        this.cache = cache;
     }
 
     public void setFragments(ArrayList<Segment> segments, String thumbnailPath) {

@@ -352,7 +352,7 @@ public class GaugeView extends FrameLayout {
 
 
         String callJS1 = "javascript:setRawData(" + sb.toString() + ")";
-        Logger.t(TAG).d(callJS1);
+//        Logger.t(TAG).d(callJS1);
 //        String callJS2 = "javascript:setRawData(" + "{time:" + data + "})";
 //        Logger.t(TAG).d("callJS: " + callJS1);
         mWebView.loadUrl(callJS1);

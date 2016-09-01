@@ -106,7 +106,7 @@ public class PreviewActivity extends ClipPlayActivity {
                             return true;
                         }
                         Logger.t(TAG).d("typeRace" + mClip.typeRace);
-                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1, mClip);
+                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1);
                         finish();
 
                         break;

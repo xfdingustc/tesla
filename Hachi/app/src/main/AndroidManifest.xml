@@ -304,8 +304,9 @@
             android:exported="false">
         </service>
 
+
         <service
-            android:name=".ui.services.download.InetDownloadService"
+            android:name=".ui.services.download.rx.DownloadServiceRx"
             android:exported="false"/>
 
         <service
@@ -325,10 +326,7 @@
             android:name="com.waylens.hachi.app.GlideConfiguration"
             android:value="GlideModule"/>
 
-        <service
-            android:name=".ui.services.download.DownloadIntentService"
-            android:exported="false">
-        </service>
+
     </application>
 
 </manifest>

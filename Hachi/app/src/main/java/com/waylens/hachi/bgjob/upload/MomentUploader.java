@@ -41,9 +41,6 @@ public class MomentUploader {
     String mUserId;
     long mMomentID;
 
-//    private EventBus mEventBus = EventBus.getDefault();
-
-    private
 
     volatile boolean isCancelled;
     private int mClipTotalCount;

@@ -15,10 +15,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.library.crs_svr.HashUtils;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.services.download.InetDownloadService;
+import com.waylens.hachi.ui.services.download.rx.DownloadService;
+import com.waylens.hachi.ui.services.download.rx.DownloadServiceRx;
 import com.xfdingustc.snipe.control.VdtCamera;
 
 import java.io.File;
@@ -50,14 +52,14 @@ public class FirmwareUpdateActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            int what = intent.getIntExtra(InetDownloadService.EVENT_EXTRA_WHAT, -1);
+            int what = intent.getIntExtra(DownloadServiceRx.EVENT_EXTRA_WHAT, -1);
             switch (what) {
-                case InetDownloadService.EVENT_WHAT_DOWNLOAD_PROGRESS:
-                    int progress = intent.getIntExtra(InetDownloadService.EVENT_EXTRA_DOWNLOAD_PROGRESS, 0);
+                case DownloadServiceRx.EVENT_WHAT_DOWNLOAD_PROGRESS:
+                    int progress = intent.getIntExtra(DownloadServiceRx.EVENT_EXTRA_DOWNLOAD_PROGRESS, 0);
                     mProgressBar.setProgress(progress);
                     break;
-                case InetDownloadService.EVENT_WHAT_DOWNLOAD_FINSHED:
-                    final String file = intent.getStringExtra(InetDownloadService.EVENT_EXTRA_DOWNLOAD_FILE_PATH);
+                case DownloadServiceRx.EVENT_WHAT_DOWNLOAD_FINSHED:
+                    final String file = intent.getStringExtra(DownloadServiceRx.EVENT_EXTRA_DOWNLOAD_FILE_PATH);
                     startFirmwareMd5Check(new File(file));
 
             }
@@ -82,7 +84,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter(InetDownloadService.INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
+        IntentFilter intentFilter = new IntentFilter(DownloadServiceRx.INTENT_FILTER_DOWNLOAD_INTENT_SERVICE);
         registerReceiver(mDownloadProgressReceiver, intentFilter);
     }
 
@@ -128,7 +130,8 @@ public class FirmwareUpdateActivity extends BaseActivity {
     }
 
     private void doDownloadFirmware() {
-        InetDownloadService.start(this, mFirmwareInfo.getUrl());
+//        InetDownloadService.start(this, mFirmwareInfo.getUrl());
+        DownloadServiceRx.start(this, mFirmwareInfo.getUrl(), DownloadHelper.getFirmwareDownloadPath());
         mTvBottomText.setText(R.string.download_firmware);
     }
 

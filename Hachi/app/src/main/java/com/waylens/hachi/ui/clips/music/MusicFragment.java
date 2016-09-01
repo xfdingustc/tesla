@@ -165,7 +165,7 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
 
     DownloadHelper.OnDownloadListener mListener = new DownloadHelper.OnDownloadListener() {
         @Override
-        public void onSuccess(DownloadHelper.Downloadable downloadable, String filePath) {
+        public void onSuccess(DownloadHelper.IDownloadable downloadable, String filePath) {
             Logger.t(TAG).d("Download: " + downloadable);
             MusicItem musicItem = (MusicItem) downloadable;
             musicItem.localPath = filePath;
@@ -174,7 +174,7 @@ public class MusicFragment extends BaseFragment implements MusicListAdapter.OnMu
         }
 
         @Override
-        public void onError(DownloadHelper.Downloadable downloadable) {
+        public void onError(DownloadHelper.IDownloadable downloadable) {
             MusicItem musicItem = (MusicItem) downloadable;
             musicItem.status = MusicItem.STATUS_REMOTE;
             mMusicListAdapter.updateMusicItem(musicItem);

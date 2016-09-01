@@ -28,26 +28,7 @@ public final class Utils {
         return null;
     }
 
-    public static float getDensity() {
-        return Hachi.getContext().getResources().getDisplayMetrics().density;
-    }
 
-    public static float dp2Px(int dp) {
-        return getDensity() * dp;
-    }
-
-    public static float dp2Px(float dp) {
-        return getDensity() * dp;
-    }
-
-    public static final int dp2Px(float density, int dp) {
-        return (int) (density * dp + 0.5f);
-    }
-
-    public static float sp2px(Context context, int sp) {
-        float scale = context.getResources().getDisplayMetrics().scaledDensity;
-        return scale * sp;
-    }
 
     public static void measureView(View view) {
         view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0,
@@ -95,53 +76,9 @@ public final class Utils {
         return spaceStr;
     }
 
-    public static int getScreenWidth(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm.widthPixels;
-    }
 
-    public static int getScreenHeight(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm.heightPixels;
-    }
 
-    public static DisplayMetrics getDisplayMetrics(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm;
-    }
 
-    public static void setLayoutWidth(View view, int width) {
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp.height != width) {
-            lp.width = width;
-            view.setLayoutParams(lp);
-        }
-    }
-
-    public static void setLayoutHeight(View view, int height) {
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp.height != height) {
-            lp.height = height;
-            view.setLayoutParams(lp);
-        }
-    }
-
-    public static void setView16by9(Activity activity, View view) {
-        MarginLayoutParams lp = (MarginLayoutParams) view.getLayoutParams();
-        lp.width = LayoutParams.MATCH_PARENT;
-        lp.height = Utils.getScreenWidth(activity) * 9 / 16;
-        view.setLayoutParams(lp);
-    }
-
-    public static void setViewFullSize(Activity activity, View view) {
-        MarginLayoutParams lp = (MarginLayoutParams) view.getLayoutParams();
-        lp.width = LayoutParams.MATCH_PARENT;
-        lp.height = LayoutParams.MATCH_PARENT;
-        view.setLayoutParams(lp);
-    }
 
     public static void getViewRect(View view, Rect rect) {
         rect.set(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());

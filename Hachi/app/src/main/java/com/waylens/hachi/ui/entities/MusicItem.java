@@ -16,7 +16,7 @@ import java.io.File;
 /**
  * Created by Richard on 2/1/16.
  */
-public class MusicItem implements DownloadHelper.Downloadable {
+public class MusicItem implements DownloadHelper.IDownloadable {
 
     public static final int STATUS_LOCAL = 0;
 

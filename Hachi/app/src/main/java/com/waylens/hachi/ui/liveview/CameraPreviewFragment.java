@@ -688,6 +688,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
     private void updateSpaceInfo() {
+        if (isDetached()) {
+            return;
+        }
         if (mInfoView != null && mInfoView.getVisibility() == View.VISIBLE) {
             GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
                 @Override

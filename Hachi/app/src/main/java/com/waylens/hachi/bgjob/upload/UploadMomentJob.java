@@ -168,29 +168,34 @@ public class UploadMomentJob extends Job {
         checkIfCancelled();
 
 
-        // Step5: create moment in server:
-        HachiApi hachiApi = HachiService.createHachiApiService();
-        CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
-        Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
-        CreateMomentResponse response = createMomentResponseCall.execute().body();
-
-        Logger.t(TAG).d("Get moment response: ");
-        mLocalMoment.updateUploadInfo(response);
-        setUploadState(UPLOAD_STATE_CREATE_MOMENT);
-        checkIfCancelled();
 
 
-        mUploader = new MomentUploader(this);
-//        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
-        mUploader.upload(mLocalMoment);
+        if (!mLocalMoment.cache) {
+            // Step5: create moment in server:
+            HachiApi hachiApi = HachiService.createHachiApiService();
+            CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
+            Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
+            CreateMomentResponse response = createMomentResponseCall.execute().body();
 
-        Logger.t(TAG).d("updatestate: " + mUploadState);
+            Logger.t(TAG).d("Get moment response: ");
+            mLocalMoment.updateUploadInfo(response);
+            setUploadState(UPLOAD_STATE_CREATE_MOMENT);
+            checkIfCancelled();
+            mUploader = new MomentUploader(this);
+            mUploader.upload(mLocalMoment);
+            Logger.t(TAG).d("updatestate: " + mUploadState);
 
-        if (mUploadState != UPLOAD_STATE_CANCELLED || mUploadState != UPLOAD_STATE_ERROR) {
-            Logger.t(TAG).d("finished");
-            setUploadState(UPLOAD_STATE_FINISHED);
+            if (mUploadState != UPLOAD_STATE_CANCELLED || mUploadState != UPLOAD_STATE_ERROR) {
+                Logger.t(TAG).d("finished");
+                setUploadState(UPLOAD_STATE_FINISHED);
+            }
+            removeFromUploadManager();
+        } else {
+            MomentUploadCacher cacher = new MomentUploadCacher(this);
+            cacher.cacheMoment(mLocalMoment);
         }
-        removeFromUploadManager();
+
+
     }
 
     private void checkIfCancelled() {
