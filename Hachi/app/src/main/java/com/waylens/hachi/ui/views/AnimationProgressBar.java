@@ -36,7 +36,8 @@ public class AnimationProgressBar extends FrameLayout {
     }
 
     public AnimationProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
+        super(context, attrs, defStyleAttr);
+        init(context);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
