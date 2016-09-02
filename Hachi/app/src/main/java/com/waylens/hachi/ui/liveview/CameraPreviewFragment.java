@@ -996,7 +996,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
         @Override
         public void run() {
-            if (mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
+            if (mVdtCamera != null && mVdtCamera.getRecordState() == VdtCamera.STATE_RECORD_RECORDING) {
                 updateSpaceInfo();
             }
         }
