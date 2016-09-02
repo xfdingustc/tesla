@@ -447,4 +447,5 @@
 	<string name="detected_performance_test">Detected this is a performance test moment.</string>
 	<string name="vehicle_information">Vehicle Information</string>
 	<string name="vehicle_description">Vehicle Description</string>
+	<string name="buy_waylens_camera"><u>Buy Waylens Camera</u></string>
 </resources>

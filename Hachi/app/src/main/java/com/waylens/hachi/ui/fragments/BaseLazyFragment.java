@@ -17,7 +17,7 @@ public abstract class BaseLazyFragment extends BaseMVPFragment implements BaseVi
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         if (getLoadingTargetView() != null) {
-            mVaryViewHelpercontroller = new VaryViewHelperController(getLoadingTargetView());
+            mVaryViewHelpercontroller = new VaryViewHelperController(getActivity(), getLoadingTargetView());
         }
     }
 
