@@ -1,7 +1,6 @@
 package com.waylens.hachi.bgjob.download.event;
 
-import com.waylens.hachi.bgjob.Exportable;
-import com.waylens.hachi.bgjob.download.DownloadJob;
+import com.waylens.hachi.bgjob.download.Exportable;
 
 /**
  * Created by Xiaofei on 2016/5/5.

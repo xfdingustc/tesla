@@ -10,7 +10,6 @@ import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.bgjob.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.waylens.hachi.ui.services.download.RemuxerParams;
@@ -19,8 +18,6 @@ import com.xfdingustc.snipe.vdb.ClipDownloadInfo;
 import com.xfdingustc.snipe.vdb.ClipPos;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
 
 /**
  * Created by Xiaofei on 2016/5/4.

@@ -1,4 +1,4 @@
-package com.waylens.hachi.bgjob;
+package com.waylens.hachi.bgjob.download;
 
 import com.xfdingustc.snipe.vdb.ClipPos;
 

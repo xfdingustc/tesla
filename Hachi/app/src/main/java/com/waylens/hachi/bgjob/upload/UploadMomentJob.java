@@ -9,7 +9,6 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.app.UploadManager;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.library.crs_svr.CrsCommand;
 import com.waylens.hachi.rest.HachiApi;
@@ -40,32 +39,13 @@ import retrofit2.Call;
 /**
  * Created by Xiaofei on 2016/5/2.
  */
-public class UploadMomentJob extends Job {
+public class UploadMomentJob extends Job implements IUploadable {
     private static final String TAG = UploadMomentJob.class.getSimpleName();
 
     private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
     private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
 
-    public static final int UPLOAD_STATE_NONE = 0;
-    public static final int UPLOAD_STATE_GET_URL_INFO = 1;
-    public static final int UPLOAD_STATE_GET_VIDEO_COVER = 2;
-    public static final int UPLOAD_STATE_STORE_VIDEO_COVER = 3;
-    public static final int UPLOAD_STATE_CREATE_MOMENT = 4;
-    public static final int UPLOAD_STATE_LOGIN = 5;
-    public static final int UPLOAD_STATE_LOGIN_SUCCEED = 6;
-    public static final int UPLOAD_STATE_START = 7;
-    public static final int UPLOAD_STATE_PROGRESS = 8;
-    public static final int UPLOAD_STATE_FINISHED = 9;
-    public static final int UPLOAD_STATE_ERROR = 10;
-    public static final int UPLOAD_STATE_CANCELLED = 11;
 
-
-    public static final int UPLOAD_ERROR_UNKNOWN = 0x100;
-    public static final int UPLOAD_ERROR_LOGIN = 0x101;
-    public static final int UPLOAD_ERROR_CREATE_MOMENT_DESC = 0x102;
-    public static final int UPLOAD_ERROR_UPLOAD_VIDEO = 0x103;
-    public static final int UPLOAD_ERROR_UPLOAD_THUMBNAIL = 0x104;
-    public static final int UPLOAD_ERROR_IO = 0x105;
 
     private final LocalMoment mLocalMoment;
 
@@ -92,13 +72,8 @@ public class UploadMomentJob extends Job {
         UploadManager.getManager().addJob(this);
     }
 
-    public void cancel() {
-        this.mIsCancel = true;
-        if (mUploader != null) {
-            mUploader.cancel();
-        }
 
-    }
+
 
     @Override
     public void onRun() throws Throwable {
@@ -168,8 +143,6 @@ public class UploadMomentJob extends Job {
         checkIfCancelled();
 
 
-
-
         if (!mLocalMoment.cache) {
             // Step5: create moment in server:
             HachiApi hachiApi = HachiService.createHachiApiService();
@@ -184,7 +157,6 @@ public class UploadMomentJob extends Job {
             mUploader = new MomentUploader(this);
             mUploader.upload(mLocalMoment);
             Logger.t(TAG).d("updatestate: " + mUploadState);
-
         } else {
             MomentUploadCacher cacher = new MomentUploadCacher(this);
             cacher.cacheMoment(mLocalMoment);
@@ -194,7 +166,10 @@ public class UploadMomentJob extends Job {
             Logger.t(TAG).d("finished");
             setUploadState(UPLOAD_STATE_FINISHED);
         }
-        removeFromUploadManager();
+
+        EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
+
+
     }
 
     private void checkIfCancelled() {
@@ -227,26 +202,40 @@ public class UploadMomentJob extends Job {
         EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_STATE_CHANGED, this));
     }
 
+    @Override
+    public String getJobId() {
+        return getId();
+    }
+
+    @Override
     public int getState() {
         return mUploadState;
     }
 
+    @Override
     public int getUploadProgress() {
         return mUploadProgress;
     }
 
+    @Override
     public int getUploadError() {
         return mUploadError;
     }
 
+    @Override
     public LocalMoment getLocalMoment() {
         return mLocalMoment;
     }
 
+    @Override
+    public void cancelUpload() {
+        this.mIsCancel = true;
+        if (mUploader != null) {
+            mUploader.cancel();
+        }
 
-    private void removeFromUploadManager() {
-        EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
     }
+
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {

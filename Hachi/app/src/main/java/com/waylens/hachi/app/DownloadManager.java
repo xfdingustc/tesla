@@ -1,9 +1,7 @@
 package com.waylens.hachi.app;
 
-import com.waylens.hachi.bgjob.Exportable;
-import com.waylens.hachi.bgjob.download.DownloadJob;
+import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

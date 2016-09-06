@@ -1,6 +1,5 @@
-package com.waylens.hachi.app;
+package com.waylens.hachi.bgjob.upload;
 
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public class UploadManager {
     private static UploadManager mSharedUploadManager = null;
-    private final List<UploadMomentJob> mUploadJobList;
+    private final List<IUploadable> mUploadJobList;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -92,15 +91,15 @@ public class UploadManager {
 
     public int getUploadingJobCount() {
         int i = 0;
-        for (UploadMomentJob job : mUploadJobList) {
-            if (job.getState() != UploadMomentJob.UPLOAD_STATE_FINISHED) {
+        for (IUploadable job : mUploadJobList) {
+            if (job.getState() != IUploadable.UPLOAD_STATE_FINISHED) {
                 i++;
             }
         }
         return i;
     }
 
-    public UploadMomentJob getUploadJob(int index) {
+    public IUploadable getUploadJob(int index) {
         if (index >= mUploadJobList.size()) {
             return null;
         }
@@ -111,8 +110,8 @@ public class UploadManager {
 
     public void notifyUploadStateChanged(UploadMomentJob job) {
         for (int i = 0; i < mUploadJobList.size(); i++) {
-            UploadMomentJob oneJob = mUploadJobList.get(i);
-            if (oneJob.getId() == job.getId()) {
+            IUploadable oneJob = mUploadJobList.get(i);
+            if (oneJob.getJobId() == job.getJobId()) {
                 for (int j = 0; j < mListenerList.size(); j++) {
                     WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(j);
                     if (oneListenr != null) {

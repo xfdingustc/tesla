@@ -16,7 +16,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.UploadManager;
+import com.waylens.hachi.bgjob.upload.IUploadable;
+import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
@@ -43,16 +44,16 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final UploadVideoItemViewHolder videoItemViewHolder = (UploadVideoItemViewHolder) holder;
-        final UploadMomentJob uploadMomentJob = mUploadManager.getUploadJob(position);
-        LocalMoment localMoment = uploadMomentJob.getLocalMoment();
+        final IUploadable uploadable = mUploadManager.getUploadJob(position);
+        LocalMoment localMoment = uploadable.getLocalMoment();
         videoItemViewHolder.momentTitle.setText(localMoment.title);
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
-        videoItemViewHolder.uploadProgress.setProgress(uploadMomentJob.getUploadProgress());
+        videoItemViewHolder.uploadProgress.setProgress(uploadable.getUploadProgress());
         if (localMoment.cache) {
-            videoItemViewHolder.uploadStatus.setText(mActivity.getString(R.string.downloaded, uploadMomentJob.getUploadProgress()));
+            videoItemViewHolder.uploadStatus.setText(mActivity.getString(R.string.downloaded, uploadable.getUploadProgress()));
         } else {
-            videoItemViewHolder.uploadStatus.setText("" + uploadMomentJob.getUploadProgress() + "% " + mActivity.getString(R.string.uploaded));
+            videoItemViewHolder.uploadStatus.setText("" + uploadable.getUploadProgress() + "% " + mActivity.getString(R.string.uploaded));
         }
         if (localMoment.thumbnailPath != null) {
             Glide.with(mActivity)
@@ -62,7 +63,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .placeholder(videoItemViewHolder.videoCover.getDrawable())
                 .into(videoItemViewHolder.videoCover);
         }
-        if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
+        if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
             videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
         } else {
@@ -70,7 +71,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         }
 
-        updateUploadStatus(uploadMomentJob.getState(), videoItemViewHolder.description, localMoment.cache);
+        updateUploadStatus(uploadable.getState(), videoItemViewHolder.description, localMoment.cache);
 
         videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
 
@@ -81,7 +82,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_upload, popupMenu.getMenu());
-                if (uploadMomentJob.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
+                if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
                     popupMenu.getMenu().removeItem(R.id.cancel);
                 }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -89,7 +90,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.cancel:
-                                uploadMomentJob.cancel();
+                                uploadable.cancelUpload();
                                 break;
                         }
                         return true;

@@ -3,10 +3,7 @@ package com.waylens.hachi.bgjob.download;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.DownloadManager;
-import com.waylens.hachi.app.UploadManager;
-import com.waylens.hachi.bgjob.Exportable;
 
 import java.io.File;
 import java.io.FilenameFilter;

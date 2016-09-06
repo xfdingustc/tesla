@@ -14,7 +14,7 @@ import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.bgjob.Exportable;
+import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.ui.services.download.RemuxHelper;
 import com.xfdingustc.snipe.VdbRequestFuture;

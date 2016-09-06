@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.DownloadManager;
-import com.waylens.hachi.bgjob.Exportable;
+import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
