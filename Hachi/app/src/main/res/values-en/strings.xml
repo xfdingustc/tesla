@@ -447,7 +447,8 @@
 	<string name="detected_performance_test">Detected this is a performance test moment.</string>
 	<string name="vehicle_information">Vehicle Information</string>
 	<string name="vehicle_description">Vehicle Description</string>
-	<string name="cache_start">Downloading moments to smart phone</string>
+	<string name="cache_start">Exporting moments </string>
 	<string name="downloaded">%1$d %% dowloaded</string>
-	<string name="buy_waylens_camera">Buy Waylens camera</string>
+	<string name="buy_waylens_camera"><u>Buy Waylens camera</u></string>
+	<string name="waiting_for_network">Waiting for Internet access available</string>
 </resources>

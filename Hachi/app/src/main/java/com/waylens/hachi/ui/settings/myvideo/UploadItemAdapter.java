@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.settings.myvideo;
 import android.app.Activity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.IUploadable;
 import com.waylens.hachi.bgjob.upload.UploadManager;
@@ -46,7 +48,11 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final UploadVideoItemViewHolder videoItemViewHolder = (UploadVideoItemViewHolder) holder;
         final IUploadable uploadable = mUploadManager.getUploadJob(position);
         LocalMoment localMoment = uploadable.getLocalMoment();
-        videoItemViewHolder.momentTitle.setText(localMoment.title);
+        if (TextUtils.isEmpty(localMoment.title)) {
+            videoItemViewHolder.momentTitle.setText(R.string.no_title);
+        } else {
+            videoItemViewHolder.momentTitle.setText(localMoment.title);
+        }
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(uploadable.getUploadProgress());
@@ -106,40 +112,43 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void updateUploadStatus(int state, TextView description, boolean isCache) {
         switch (state) {
-            case UploadMomentJob.UPLOAD_STATE_GET_URL_INFO:
+            case IUploadable.UPLOAD_STATE_GET_URL_INFO:
                 description.setText(R.string.upload_get_url_info);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_GET_VIDEO_COVER:
+            case IUploadable.UPLOAD_STATE_GET_VIDEO_COVER:
                 description.setText(R.string.upload_get_video_cover);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_STORE_VIDEO_COVER:
+            case IUploadable.UPLOAD_STATE_STORE_VIDEO_COVER:
                 description.setText(R.string.upload_store_video_cover);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_CREATE_MOMENT:
+            case IUploadable.UPLOAD_STATE_CREATE_MOMENT:
                 description.setText(R.string.upload_create_moment);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_LOGIN:
+            case IUploadable.UPLOAD_STATE_LOGIN:
                 description.setText(R.string.upload_login);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_LOGIN_SUCCEED:
+            case IUploadable.UPLOAD_STATE_LOGIN_SUCCEED:
                 description.setText(R.string.upload_login_succeed);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_START:
-            case UploadMomentJob.UPLOAD_STATE_PROGRESS:
+            case IUploadable.UPLOAD_STATE_START:
+            case IUploadable.UPLOAD_STATE_PROGRESS:
                 if (isCache) {
                     description.setText(R.string.cache_start);
                 } else {
                     description.setText(R.string.upload_start);
                 }
                 break;
-            case UploadMomentJob.UPLOAD_STATE_CANCELLED:
+            case IUploadable.UPLOAD_STATE_CANCELLED:
                 description.setText(R.string.upload_cancelled);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_FINISHED:
+            case IUploadable.UPLOAD_STATE_FINISHED:
                 description.setText(R.string.upload_finished);
                 break;
-            case UploadMomentJob.UPLOAD_STATE_ERROR:
+            case IUploadable.UPLOAD_STATE_ERROR:
                 description.setText(R.string.upload_error);
+                break;
+            case IUploadable.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE:
+                description.setText(R.string.waiting_for_network);
                 break;
 
         }
@@ -151,7 +160,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
-    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
+    public void onUploadJobStateChanged(IUploadable job, int index) {
         notifyItemChanged(index);
     }
 

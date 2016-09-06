@@ -9,6 +9,7 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.library.crs_svr.CrsCommand;
 import com.waylens.hachi.rest.HachiApi;
@@ -46,7 +47,6 @@ public class UploadMomentJob extends Job implements IUploadable {
     private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
 
 
-
     private final LocalMoment mLocalMoment;
 
     private VdbRequestQueue mVdbRequestQueue;
@@ -71,8 +71,6 @@ public class UploadMomentJob extends Job implements IUploadable {
         Logger.t(TAG).d("on Added");
         UploadManager.getManager().addJob(this);
     }
-
-
 
 
     @Override
@@ -160,6 +158,7 @@ public class UploadMomentJob extends Job implements IUploadable {
         } else {
             MomentUploadCacher cacher = new MomentUploadCacher(this);
             cacher.cacheMoment(mLocalMoment);
+            BgJobHelper.uploadCachedMoment(mLocalMoment);
         }
 
         if (mUploadState != UPLOAD_STATE_CANCELLED || mUploadState != UPLOAD_STATE_ERROR) {
