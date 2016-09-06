@@ -49,7 +49,11 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(uploadMomentJob.getUploadProgress());
-        videoItemViewHolder.uploadStatus.setText("" + uploadMomentJob.getUploadProgress() + "% " + mActivity.getString(R.string.uploaded));
+        if (localMoment.cache) {
+            videoItemViewHolder.uploadStatus.setText(mActivity.getString(R.string.downloaded, uploadMomentJob.getUploadProgress()));
+        } else {
+            videoItemViewHolder.uploadStatus.setText("" + uploadMomentJob.getUploadProgress() + "% " + mActivity.getString(R.string.uploaded));
+        }
         if (localMoment.thumbnailPath != null) {
             Glide.with(mActivity)
                 .load(localMoment.thumbnailPath)
@@ -66,7 +70,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         }
 
-        updateUploadStatus(uploadMomentJob.getState(), videoItemViewHolder.description);
+        updateUploadStatus(uploadMomentJob.getState(), videoItemViewHolder.description, localMoment.cache);
 
         videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
 
@@ -99,7 +103,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
 
-    private void updateUploadStatus(int state, TextView description) {
+    private void updateUploadStatus(int state, TextView description, boolean isCache) {
         switch (state) {
             case UploadMomentJob.UPLOAD_STATE_GET_URL_INFO:
                 description.setText(R.string.upload_get_url_info);
@@ -121,7 +125,11 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
             case UploadMomentJob.UPLOAD_STATE_START:
             case UploadMomentJob.UPLOAD_STATE_PROGRESS:
-                description.setText(R.string.upload_start);
+                if (isCache) {
+                    description.setText(R.string.cache_start);
+                } else {
+                    description.setText(R.string.upload_start);
+                }
                 break;
             case UploadMomentJob.UPLOAD_STATE_CANCELLED:
                 description.setText(R.string.upload_cancelled);

@@ -185,17 +185,16 @@ public class UploadMomentJob extends Job {
             mUploader.upload(mLocalMoment);
             Logger.t(TAG).d("updatestate: " + mUploadState);
 
-            if (mUploadState != UPLOAD_STATE_CANCELLED || mUploadState != UPLOAD_STATE_ERROR) {
-                Logger.t(TAG).d("finished");
-                setUploadState(UPLOAD_STATE_FINISHED);
-            }
-            removeFromUploadManager();
         } else {
             MomentUploadCacher cacher = new MomentUploadCacher(this);
             cacher.cacheMoment(mLocalMoment);
         }
 
-
+        if (mUploadState != UPLOAD_STATE_CANCELLED || mUploadState != UPLOAD_STATE_ERROR) {
+            Logger.t(TAG).d("finished");
+            setUploadState(UPLOAD_STATE_FINISHED);
+        }
+        removeFromUploadManager();
     }
 
     private void checkIfCancelled() {
