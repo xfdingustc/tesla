@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -70,5 +71,16 @@ public class DownloadAPI {
             })
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(subscriber);
+    }
+
+
+    public InputStream downloadFileSync(@NonNull String url) throws IOException {
+        ResponseBody responseBody = mRetrofit.create(DownloadService.class)
+            .downloadSync(url).execute().body();
+        if (responseBody != null) {
+            return responseBody.byteStream();
+        } else {
+            return null;
+        }
     }
 }

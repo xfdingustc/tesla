@@ -1,4 +1,4 @@
-package com.waylens.hachi.utils;
+package com.waylens.hachi.glide_snipe_integration;
 
 import android.util.Log;
 

@@ -3,7 +3,6 @@ package com.waylens.hachi.glide_snipe_integration;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
 
-import com.waylens.hachi.utils.DigitUtils;
 import com.xfdingustc.snipe.VdbRequest;
 import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.VdbRequestQueue;

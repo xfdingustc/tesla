@@ -31,6 +31,11 @@ public class DownloadHelper {
         return getDownloadPath(FW_DOWNLOAD_PATH) + "firmware.tsf";
     }
 
+    public static String getMomentCachePath() {
+        return getDownloadPath(MOMENT_CACHE_PATH);
+    }
+
+
     public static File[] getDownloadedFileList() {
         File downloadDir = new File(getVideoDownloadPath());
         File[] fileList = downloadDir.listFiles(new FilenameFilter() {
