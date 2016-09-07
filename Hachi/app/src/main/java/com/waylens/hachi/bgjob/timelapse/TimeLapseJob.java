@@ -16,7 +16,7 @@ import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
-import com.waylens.hachi.ui.services.download.RemuxHelper;
+import com.waylens.hachi.service.remux.RemuxHelper;
 import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.VdbRequestQueue;
 import com.xfdingustc.snipe.control.VdtCameraManager;

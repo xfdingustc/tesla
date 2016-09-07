@@ -1,10 +1,8 @@
-package com.waylens.hachi.ui.services.download.rx;
+package com.waylens.hachi.service.download;
 
 import android.support.annotation.NonNull;
 
 import com.waylens.hachi.utils.FileUtils;
-
-import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +10,6 @@ import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;

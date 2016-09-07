@@ -1,6 +1,7 @@
 package com.waylens.hachi.rest.body;
 
 import android.os.LocaleList;
+import android.text.TextUtils;
 
 import com.waylens.hachi.ui.entities.LocalMoment;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import com.orhanobut.logger.Logger;
+import com.xfdingustc.snipe.utils.ToStringUtils;
 
 /**
  * Created by Xiaofei on 2016/6/17.
@@ -47,7 +49,7 @@ public class CreateMomentBody {
         this.accessLevel = localMoment.accessLevel;
         this.overlay = localMoment.gaugeSettings;
 
-        if (localMoment.momentType.equals("RACING")) {
+        if (!TextUtils.isEmpty(localMoment.momentType) && localMoment.momentType.equals("RACING")) {
             momentType = "RACING";
             timingPoints = new TimingPointsList();
             for (long t:localMoment.mTimingPoints) {
@@ -67,7 +69,7 @@ public class CreateMomentBody {
         }
         vehicleDesc = localMoment.mVehicleDesc;
 
-        Logger.d("after overlay setting");
+//        Logger.d("after overlay setting");
 
         if (localMoment.audioID > 0) {
             this.audioType = 1;
@@ -84,6 +86,8 @@ public class CreateMomentBody {
             shareProviders.add(SocialProvider.YOUTUBE);
         }
 
+
+
     }
 
     public class TimingPointsList {
@@ -93,5 +97,10 @@ public class CreateMomentBody {
         public long t4;
         public long t5;
         public long t6;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringUtils.getString(this);
     }
 }

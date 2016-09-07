@@ -4,10 +4,10 @@ import android.net.Uri;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
+import com.waylens.hachi.service.download.DownloadAPI;
+import com.waylens.hachi.service.download.DownloadProgressListener;
+import com.waylens.hachi.service.download.Downloadable;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.ui.services.download.rx.DownloadAPI;
-import com.waylens.hachi.ui.services.download.rx.DownloadProgressListener;
-import com.waylens.hachi.ui.services.download.rx.Downloadable;
 import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.StringUtils;
 

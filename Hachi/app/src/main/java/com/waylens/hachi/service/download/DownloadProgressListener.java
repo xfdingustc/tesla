@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.services.download.rx;
+package com.waylens.hachi.service.download;
 
 /**
  * Created by Xiaofei on 2016/9/1.

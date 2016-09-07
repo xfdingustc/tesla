@@ -14,6 +14,12 @@ public class CreateMomentResponse {
         public String ip;
         public int port;
         public String privateKey;
+        public String url;
+
+        @Override
+        public String toString() {
+            return ToStringUtils.getString(this);
+        }
     }
 
     @Override

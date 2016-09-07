@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.services.download.rx;
+package com.waylens.hachi.service.download;
 
 import android.app.IntentService;
 import android.app.NotificationManager;

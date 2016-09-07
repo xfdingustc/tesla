@@ -306,7 +306,7 @@
 
 
         <service
-            android:name=".ui.services.download.rx.DownloadServiceRx"
+            android:name=".service.upload.rx.DownloadServiceRx"
             android:exported="false"/>
 
         <service

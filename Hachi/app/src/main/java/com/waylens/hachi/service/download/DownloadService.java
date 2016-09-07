@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.services.download.rx;
+package com.waylens.hachi.service.download;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

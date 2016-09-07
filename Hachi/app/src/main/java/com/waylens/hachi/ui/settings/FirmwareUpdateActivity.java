@@ -17,10 +17,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.library.crs_svr.HashUtils;
+import com.waylens.hachi.service.download.DownloadServiceRx;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.services.download.rx.DownloadService;
-import com.waylens.hachi.ui.services.download.rx.DownloadServiceRx;
 import com.xfdingustc.snipe.control.VdtCamera;
 
 import java.io.File;

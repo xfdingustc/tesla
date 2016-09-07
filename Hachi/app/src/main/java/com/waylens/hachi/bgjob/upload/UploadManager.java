@@ -1,6 +1,5 @@
 package com.waylens.hachi.bgjob.upload;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public class UploadManager {
     private static UploadManager mSharedUploadManager = new UploadManager();
-    private final List<IUploadable> mUploadJobList;
+    private final List<IUploadable> mUploadables;
 
     private EventBus mEventBus = EventBus.getDefault();
 
@@ -28,7 +27,6 @@ public class UploadManager {
         IUploadable uploadable = event.getUploadable();
         switch (event.getWhat()) {
             case UploadEvent.UPLOAD_JOB_ADDED:
-                Logger.t("UploadCachedMomentJob").d("add one job");
                 addJob(uploadable);
                 break;
             case UploadEvent.UPLOAD_JOB_STATE_CHANGED:
@@ -41,7 +39,7 @@ public class UploadManager {
     }
 
     private UploadManager() {
-        this.mUploadJobList = new ArrayList<>();
+        this.mUploadables = new ArrayList<>();
         mListenerList = new ArrayList<>();
         mEventBus.register(this);
     }
@@ -57,7 +55,14 @@ public class UploadManager {
 
 
     public void addJob(IUploadable job) {
-        mUploadJobList.add(job);
+        for (int i = 0; i < mUploadables.size(); i++) {
+            IUploadable oneJob = mUploadables.get(i);
+            if (oneJob.getJobId() == job.getJobId()) {
+                return;
+            }
+        }
+
+        mUploadables.add(job);
         for (int i = 0; i < mListenerList.size(); i++) {
             WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(i);
             if (oneListenr != null) {
@@ -70,7 +75,7 @@ public class UploadManager {
     }
 
     private void removeJob(IUploadable job) {
-        mUploadJobList.remove(job);
+        mUploadables.remove(job);
         for (int i = 0; i < mListenerList.size(); i++) {
             WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(i);
             if (oneListenr != null) {
@@ -84,12 +89,12 @@ public class UploadManager {
     }
 
     public int getJobCount() {
-        return mUploadJobList.size();
+        return mUploadables.size();
     }
 
     public int getUploadingJobCount() {
         int i = 0;
-        for (IUploadable job : mUploadJobList) {
+        for (IUploadable job : mUploadables) {
             if (job.getState() != IUploadable.UPLOAD_STATE_FINISHED) {
                 i++;
             }
@@ -98,17 +103,17 @@ public class UploadManager {
     }
 
     public IUploadable getUploadJob(int index) {
-        if (index >= mUploadJobList.size()) {
+        if (index >= mUploadables.size()) {
             return null;
         }
 
-        return mUploadJobList.get(index);
+        return mUploadables.get(index);
     }
 
 
     public void notifyUploadStateChanged(IUploadable job) {
-        for (int i = 0; i < mUploadJobList.size(); i++) {
-            IUploadable oneJob = mUploadJobList.get(i);
+        for (int i = 0; i < mUploadables.size(); i++) {
+            IUploadable oneJob = mUploadables.get(i);
             if (oneJob.getJobId() == job.getJobId()) {
                 for (int j = 0; j < mListenerList.size(); j++) {
                     WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(j);

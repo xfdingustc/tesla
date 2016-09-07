@@ -1,7 +1,7 @@
 package com.transee.vdb;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.ui.services.download.RemuxerParams;
+import com.waylens.hachi.service.remux.RemuxerParams;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

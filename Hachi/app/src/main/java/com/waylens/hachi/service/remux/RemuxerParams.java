@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.services.download;
+package com.waylens.hachi.service.remux;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

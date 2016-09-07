@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.services.download.rx;
+package com.waylens.hachi.service.download;
 
 import java.io.IOException;
 
