@@ -31,6 +31,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.rest.HachiApi;
@@ -474,7 +475,7 @@ public class ShareActivity extends ClipPlayActivity {
                             .negativeText(R.string.cancel)
                             .show();
                     } else {
-                        doShareMoment(false);
+                        doShareMoment(true);
                     }
 
                 }
@@ -551,9 +552,9 @@ public class ShareActivity extends ClipPlayActivity {
 //            localMoment.mTimingPoints = timingPoints;
 //
 //        }
-        JobManager jobManager = BgJobManager.getManager();
-        UploadMomentJob job = new UploadMomentJob(localMoment);
-        jobManager.addJobInBackground(job);
+
+        BgJobHelper.uploadMoment(localMoment);
+
 
         MyMomentActivity.launch(this);
         finish();

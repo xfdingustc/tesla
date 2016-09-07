@@ -7,6 +7,7 @@ import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
 import com.waylens.hachi.bgjob.timelapse.TimeLapseJob;
 import com.waylens.hachi.bgjob.upload.UploadCachedMomentJob;
+import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.xfdingustc.snipe.vdb.Clip;
@@ -55,8 +56,14 @@ public class BgJobHelper {
 
     }
 
-    public static void uploadCachedMoment(LocalMoment moment) {
+    public static void uploadMoment(LocalMoment moment) {
         JobManager jobManager = BgJobManager.getManager();
+        UploadMomentJob uploadMomentJob = new UploadMomentJob(moment);
+        jobManager.addJobInBackground(uploadMomentJob);
+    }
+
+    public static void uploadCachedMoment(LocalMoment moment) {
+        JobManager jobManager = BgJobManager.getUploadManager();
         UploadCachedMomentJob job = new UploadCachedMomentJob(moment);
         jobManager.addJobInBackground(job);
 
