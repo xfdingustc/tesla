@@ -1,7 +1,11 @@
 package com.waylens.hachi.bgjob.upload;
 
+import android.content.Context;
+
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
+import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
@@ -61,8 +65,8 @@ public abstract class UploadMomentJob extends Job {
         return mError;
     }
 
-    public LocalMoment getLocalMoment() {
-        return mLocalMoment;
+    public String getMomentTitle() {
+        return mLocalMoment.title;
     }
 
     public abstract void cancelUpload();
@@ -87,5 +91,53 @@ public abstract class UploadMomentJob extends Job {
 
 //            UploadManager.getManager().notifyUploadStateChanged(this);
         EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_STATE_CHANGED, this));
+    }
+
+    public String getStateDescription() {
+        Context context = Hachi.getContext();
+        switch (mState) {
+            case UploadMomentJob.UPLOAD_STATE_GET_URL_INFO:
+                return context.getString(R.string.upload_get_url_info);
+            case UploadMomentJob.UPLOAD_STATE_GET_VIDEO_COVER:
+                return context.getString(R.string.upload_get_video_cover);
+            case UploadMomentJob.UPLOAD_STATE_STORE_VIDEO_COVER:
+                return context.getString(R.string.upload_store_video_cover);
+            case UploadMomentJob.UPLOAD_STATE_CREATE_MOMENT:
+                return context.getString(R.string.upload_create_moment);
+            case UploadMomentJob.UPLOAD_STATE_LOGIN:
+                return context.getString(R.string.upload_login);
+            case UploadMomentJob.UPLOAD_STATE_LOGIN_SUCCEED:
+                return context.getString(R.string.upload_login_succeed);
+            case UploadMomentJob.UPLOAD_STATE_START:
+            case UploadMomentJob.UPLOAD_STATE_PROGRESS:
+                if (mLocalMoment.cache) {
+                    return context.getString(R.string.cache_start);
+                } else {
+                    return context.getString(R.string.upload_start);
+                }
+            case UploadMomentJob.UPLOAD_STATE_CANCELLED:
+                return context.getString(R.string.upload_cancelled);
+            case UploadMomentJob.UPLOAD_STATE_FINISHED:
+                return context.getString(R.string.upload_finished);
+            case UploadMomentJob.UPLOAD_STATE_ERROR:
+                return context.getString(R.string.upload_error);
+            case UploadMomentJob.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE:
+                return context.getString(R.string.waiting_for_network);
+        }
+        return null;
+    }
+
+    public String getProgressStatus() {
+        Context context = Hachi.getContext();
+        if (mLocalMoment.cache) {
+            return context.getString(R.string.downloaded_progress, mProgress);
+        } else {
+            return context.getString(R.string.uploaded_progress, mProgress);
+
+        }
+    }
+
+    public String getThumbnail() {
+        return mLocalMoment.thumbnailPath;
     }
 }

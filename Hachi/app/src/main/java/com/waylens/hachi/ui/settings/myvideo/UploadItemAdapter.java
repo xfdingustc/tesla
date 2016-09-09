@@ -17,10 +17,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.CacheMomentJob;
+import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.ui.entities.LocalMoment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +30,7 @@ import butterknife.ButterKnife;
 public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UploadManager.OnUploadJobStateChangeListener {
     private final Activity mActivity;
     private UploadManager mUploadManager = UploadManager.getManager();
+
     public UploadItemAdapter(Activity activity) {
         this.mActivity = activity;
         mUploadManager.addOnUploadJobStateChangedListener(this);
@@ -46,23 +46,19 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final UploadVideoItemViewHolder videoItemViewHolder = (UploadVideoItemViewHolder) holder;
         final UploadMomentJob uploadable = mUploadManager.getUploadJob(position);
-        LocalMoment localMoment = uploadable.getLocalMoment();
-        if (TextUtils.isEmpty(localMoment.title)) {
+        if (TextUtils.isEmpty(uploadable.getMomentTitle())) {
             videoItemViewHolder.momentTitle.setText(R.string.no_title);
         } else {
-            videoItemViewHolder.momentTitle.setText(localMoment.title);
+            videoItemViewHolder.momentTitle.setText(uploadable.getMomentTitle());
         }
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(uploadable.getUploadProgress());
-        if (localMoment.cache) {
-            videoItemViewHolder.uploadStatus.setText(mActivity.getString(R.string.downloaded, uploadable.getUploadProgress()));
-        } else {
-            videoItemViewHolder.uploadStatus.setText("" + uploadable.getUploadProgress() + "% " + mActivity.getString(R.string.uploaded));
-        }
-        if (localMoment.thumbnailPath != null) {
+        videoItemViewHolder.uploadStatus.setText(uploadable.getProgressStatus());
+
+        if (TextUtils.isEmpty(uploadable.getThumbnail())) {
             Glide.with(mActivity)
-                .load(localMoment.thumbnailPath)
+                .load(uploadable.getThumbnail())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate()
                 .placeholder(videoItemViewHolder.videoCover.getDrawable())
@@ -76,7 +72,9 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         }
 
-        updateUploadStatus(uploadable.getState(), videoItemViewHolder.description, localMoment.cache);
+//        updateUploadStatus(uploadable.getState(), videoItemViewHolder.description, localMoment.cache);
+
+        videoItemViewHolder.description.setText(uploadable.getStateDescription());
 
         videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
 
@@ -108,50 +106,6 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
-
-    private void updateUploadStatus(int state, TextView description, boolean isCache) {
-        switch (state) {
-            case UploadMomentJob.UPLOAD_STATE_GET_URL_INFO:
-                description.setText(R.string.upload_get_url_info);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_GET_VIDEO_COVER:
-                description.setText(R.string.upload_get_video_cover);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_STORE_VIDEO_COVER:
-                description.setText(R.string.upload_store_video_cover);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_CREATE_MOMENT:
-                description.setText(R.string.upload_create_moment);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_LOGIN:
-                description.setText(R.string.upload_login);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_LOGIN_SUCCEED:
-                description.setText(R.string.upload_login_succeed);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_START:
-            case UploadMomentJob.UPLOAD_STATE_PROGRESS:
-                if (isCache) {
-                    description.setText(R.string.cache_start);
-                } else {
-                    description.setText(R.string.upload_start);
-                }
-                break;
-            case UploadMomentJob.UPLOAD_STATE_CANCELLED:
-                description.setText(R.string.upload_cancelled);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_FINISHED:
-                description.setText(R.string.upload_finished);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_ERROR:
-                description.setText(R.string.upload_error);
-                break;
-            case UploadMomentJob.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE:
-                description.setText(R.string.waiting_for_network);
-                break;
-
-        }
-    }
 
     @Override
     public int getItemCount() {

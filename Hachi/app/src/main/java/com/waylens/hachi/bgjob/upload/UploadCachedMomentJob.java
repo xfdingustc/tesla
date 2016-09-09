@@ -41,6 +41,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
     public UploadCachedMomentJob(LocalMoment moment) {
         super(new Params(0).requireNetwork().setPersistent(true));
         this.mLocalMoment = moment;
+        mLocalMoment.cache = false;
     }
 
     @Override
@@ -186,6 +187,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         int percentage = index * 100 / totalSegment + percentageInThisClip;
         setUploadState(CacheMomentJob.UPLOAD_STATE_PROGRESS, percentage);
     }
+
 
 
 }
