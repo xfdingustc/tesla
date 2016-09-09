@@ -15,17 +15,10 @@ public class BgJobManager {
 
     private static JobManager mJobManager;
 
-    private static JobManager mUploadManager;
-
     public static JobManager getManager() {
         return mJobManager;
     }
-
-    public static JobManager getUploadManager() {
-        return mUploadManager;
-    }
-
-    public static void init(Context context) {
+     public static void init(Context context) {
         Configuration.Builder builder = new Configuration.Builder(context)
             .customLogger(new CustomLogger() {
 
@@ -55,8 +48,8 @@ public class BgJobManager {
                 }
             })
             .minConsumerCount(1)
-            .maxConsumerCount(5)
-            .loadFactor(1)
+            .maxConsumerCount(3)
+            .loadFactor(3)
             .consumerKeepAlive(120);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -67,9 +60,7 @@ public class BgJobManager {
         }
 
         mJobManager = new JobManager(builder.build());
-        mUploadManager = new JobManager(builder.build());
     }
-
 
 
 }

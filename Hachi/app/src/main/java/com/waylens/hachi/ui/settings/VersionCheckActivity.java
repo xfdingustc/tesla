@@ -73,8 +73,8 @@ public class VersionCheckActivity extends BaseActivity {
         mClickCount--;
         if (mClickCount == 0) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .positiveText(R.string.ok)
-                .negativeText(R.string.cancel)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
                 .items(R.array.server_list)
                 .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override

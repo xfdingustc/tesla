@@ -7,7 +7,6 @@ import android.support.multidex.MultiDexApplication;
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.xfdingustc.snipe.control.VdtCamera;
@@ -71,8 +70,6 @@ public class Hachi extends MultiDexApplication {
 //        LeakCanary.install(this);
 
         initLogger();
-
-        UploadManager uploadManager = UploadManager.getManager();
 
         configureJobManager();
 
