@@ -15,14 +15,8 @@ public class BgJobManager {
 
     private static JobManager mJobManager;
 
-    private static JobManager mUploadManager;
-
     public static JobManager getManager() {
         return mJobManager;
-    }
-
-    public static JobManager getUploadManager() {
-        return mUploadManager;
     }
 
     public static void init(Context context) {
@@ -67,7 +61,7 @@ public class BgJobManager {
         }
 
         mJobManager = new JobManager(builder.build());
-        mUploadManager = new JobManager(builder.build());
+
     }
 
 

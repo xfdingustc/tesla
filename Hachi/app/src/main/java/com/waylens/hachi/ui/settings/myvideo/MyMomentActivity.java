@@ -99,7 +99,6 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
 
     @Override
     public void onUploadJobRemoved() {
-
     }
 
     private void initViews() {

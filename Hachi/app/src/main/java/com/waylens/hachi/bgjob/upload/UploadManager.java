@@ -50,14 +50,14 @@ public class UploadManager {
     }
 
     public void addOnUploadJobStateChangedListener(OnUploadJobStateChangeListener listener) {
-        mListenerList.add(new WeakReference<OnUploadJobStateChangeListener>(listener));
+        mListenerList.add(new WeakReference<>(listener));
     }
 
 
     public void addJob(UploadMomentJob job) {
         for (int i = 0; i < mUploadables.size(); i++) {
             UploadMomentJob oneJob = mUploadables.get(i);
-            if (oneJob.getJobId() == job.getJobId()) {
+            if (oneJob.getJobId().equals(job.getJobId())) {
                 return;
             }
         }
@@ -114,7 +114,7 @@ public class UploadManager {
     public void notifyUploadStateChanged(UploadMomentJob job) {
         for (int i = 0; i < mUploadables.size(); i++) {
             UploadMomentJob oneJob = mUploadables.get(i);
-            if (oneJob.getJobId() == job.getJobId()) {
+            if (oneJob.getJobId().equals(job.getJobId())) {
                 for (int j = 0; j < mListenerList.size(); j++) {
                     WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(j);
                     if (oneListenr != null) {

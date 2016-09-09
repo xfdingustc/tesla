@@ -63,7 +63,7 @@ public class BgJobHelper {
     }
 
     public static void uploadCachedMoment(LocalMoment moment) {
-        JobManager jobManager = BgJobManager.getUploadManager();
+        JobManager jobManager = BgJobManager.getManager();
         UploadCachedMomentJob job = new UploadCachedMomentJob(moment);
         jobManager.addJobInBackground(job);
 

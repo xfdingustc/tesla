@@ -38,11 +38,14 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
 
 
+
     public UploadCachedMomentJob(LocalMoment moment) {
-        super(new Params(0).requireNetwork().setPersistent(true));
+        super(new Params(0).requireNetwork().setGroupId("uploadCacheMoment").setPersistent(true));
         this.mLocalMoment = moment;
         mLocalMoment.cache = false;
+
     }
+
 
     @Override
     public void onAdded() {
@@ -50,11 +53,16 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
     }
 
+
+
+
     @Override
     public void onRun() throws Throwable {
-//        Logger.t(TAG).d("on run " + mLocalMoment.toString());
-        mState = UploadMomentJob.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE;
+        Logger.t(TAG).d("on run " + getId());
+
         EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_ADDED, this));
+        mState = UploadMomentJob.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE;
+
         CreateMomentResponse response;
         while (true) {
             response = getCloudInfo();
@@ -70,7 +78,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         try {
             SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss");
             String date = format.format(System.currentTimeMillis()) + " GMT";
-            Logger.t(TAG).d("date: " + date);
+
             final String authorization = HachiAuthorizationHelper.getAuthoriztion("tscastle.cam2cloud.com:35021",
                 SessionManager.getInstance().getUserId() + "/android",
                 mLocalMoment.momentID,
@@ -138,6 +146,15 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         if (mState != UPLOAD_STATE_CANCELLED || mState != UPLOAD_STATE_ERROR) {
             Logger.t(TAG).d("finished");
             setUploadState(UPLOAD_STATE_FINISHED);
+
+            for (LocalMoment.Segment segment : mLocalMoment.mSegments) {
+                URI uri = URI.create(segment.uploadURL.url);
+                File file = new File(uri);
+                file.delete();
+            }
+
+            File file = new File(mLocalMoment.thumbnailPath);
+            file.delete();
         }
 
         EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
@@ -159,7 +176,6 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
         try {
             HachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
-            Logger.t(TAG).d("create");
             CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
             Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
 

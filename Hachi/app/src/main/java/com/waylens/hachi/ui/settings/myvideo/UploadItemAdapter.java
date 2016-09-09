@@ -56,7 +56,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         videoItemViewHolder.uploadProgress.setProgress(uploadable.getUploadProgress());
         videoItemViewHolder.uploadStatus.setText(uploadable.getProgressStatus());
 
-        if (TextUtils.isEmpty(uploadable.getThumbnail())) {
+        if (!TextUtils.isEmpty(uploadable.getThumbnail())) {
             Glide.with(mActivity)
                 .load(uploadable.getThumbnail())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
