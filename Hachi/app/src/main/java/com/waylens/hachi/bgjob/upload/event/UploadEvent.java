@@ -1,6 +1,5 @@
 package com.waylens.hachi.bgjob.upload.event;
 
-import com.waylens.hachi.bgjob.upload.IUploadable;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 
 /**
@@ -29,14 +28,14 @@ public class UploadEvent {
 
 
     private final int mWhat;
-    private final IUploadable mUploadable;
+    private final UploadMomentJob mUploadable;
 
 
     public UploadEvent(int what) {
         this(what, null);
     }
 
-    public UploadEvent(int what, IUploadable job) {
+    public UploadEvent(int what, UploadMomentJob job) {
         this.mWhat = what;
         this.mUploadable = job;
     }
@@ -45,7 +44,7 @@ public class UploadEvent {
         return mWhat;
     }
 
-    public IUploadable getUploadable() {
+    public UploadMomentJob getUploadable() {
         return mUploadable;
     }
 }

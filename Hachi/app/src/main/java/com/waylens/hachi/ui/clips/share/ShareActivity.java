@@ -8,7 +8,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -25,18 +24,14 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobHelper;
-import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.body.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.session.SessionManager;
@@ -50,12 +45,8 @@ import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -66,12 +57,6 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/6/16.

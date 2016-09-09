@@ -20,9 +20,9 @@ import java.io.InputStream;
  */
 public class MomentUploadCacher {
     private static final String TAG = MomentUploadCacher.class.getSimpleName();
-    private final UploadMomentJob mUploadJob;
+    private final CacheMomentJob mUploadJob;
 
-    public MomentUploadCacher(UploadMomentJob job) {
+    public MomentUploadCacher(CacheMomentJob job) {
         this.mUploadJob = job;
     }
 
@@ -47,7 +47,7 @@ public class MomentUploadCacher {
 
                 int percentageInThisClip = progress / totalSegments;
                 int percentage = index * 100 / totalSegments + percentageInThisClip;
-                mUploadJob.setUploadState(UploadMomentJob.UPLOAD_STATE_PROGRESS, percentage);
+                mUploadJob.setUploadState(CacheMomentJob.UPLOAD_STATE_PROGRESS, percentage);
 
             }
         };

@@ -16,7 +16,6 @@ import com.android.volley.VolleyError;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.bgjob.upload.IUploadable;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.session.SessionManager;
@@ -87,8 +86,8 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
     }
 
     @Override
-    public void onUploadJobStateChanged(IUploadable job, int index) {
-        if (job.getState() == IUploadable.UPLOAD_STATE_FINISHED) {
+    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
+        if (job.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             loadUserMoment(0, false);
         }
     }
@@ -132,7 +131,6 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
         mRvMomentList.setLayoutManager(new LinearLayoutManager(this));
         mVideoItemAdapter = new MomentItemAdapter(this);
         mRvMomentList.setAdapter(mVideoItemAdapter);
-
 
 
         UploadManager.getManager().addOnUploadJobStateChangedListener(this);

@@ -16,10 +16,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.IUploadable;
 import com.waylens.hachi.bgjob.upload.UploadManager;
+import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
@@ -46,7 +45,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final UploadVideoItemViewHolder videoItemViewHolder = (UploadVideoItemViewHolder) holder;
-        final IUploadable uploadable = mUploadManager.getUploadJob(position);
+        final UploadMomentJob uploadable = mUploadManager.getUploadJob(position);
         LocalMoment localMoment = uploadable.getLocalMoment();
         if (TextUtils.isEmpty(localMoment.title)) {
             videoItemViewHolder.momentTitle.setText(R.string.no_title);
@@ -69,7 +68,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .placeholder(videoItemViewHolder.videoCover.getDrawable())
                 .into(videoItemViewHolder.videoCover);
         }
-        if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
+        if (uploadable.getState() == CacheMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
             videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
         } else {
@@ -88,7 +87,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_upload, popupMenu.getMenu());
-                if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
+                if (uploadable.getState() == CacheMomentJob.UPLOAD_STATE_FINISHED) {
                     popupMenu.getMenu().removeItem(R.id.cancel);
                 }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -112,42 +111,42 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void updateUploadStatus(int state, TextView description, boolean isCache) {
         switch (state) {
-            case IUploadable.UPLOAD_STATE_GET_URL_INFO:
+            case UploadMomentJob.UPLOAD_STATE_GET_URL_INFO:
                 description.setText(R.string.upload_get_url_info);
                 break;
-            case IUploadable.UPLOAD_STATE_GET_VIDEO_COVER:
+            case UploadMomentJob.UPLOAD_STATE_GET_VIDEO_COVER:
                 description.setText(R.string.upload_get_video_cover);
                 break;
-            case IUploadable.UPLOAD_STATE_STORE_VIDEO_COVER:
+            case UploadMomentJob.UPLOAD_STATE_STORE_VIDEO_COVER:
                 description.setText(R.string.upload_store_video_cover);
                 break;
-            case IUploadable.UPLOAD_STATE_CREATE_MOMENT:
+            case UploadMomentJob.UPLOAD_STATE_CREATE_MOMENT:
                 description.setText(R.string.upload_create_moment);
                 break;
-            case IUploadable.UPLOAD_STATE_LOGIN:
+            case UploadMomentJob.UPLOAD_STATE_LOGIN:
                 description.setText(R.string.upload_login);
                 break;
-            case IUploadable.UPLOAD_STATE_LOGIN_SUCCEED:
+            case UploadMomentJob.UPLOAD_STATE_LOGIN_SUCCEED:
                 description.setText(R.string.upload_login_succeed);
                 break;
-            case IUploadable.UPLOAD_STATE_START:
-            case IUploadable.UPLOAD_STATE_PROGRESS:
+            case UploadMomentJob.UPLOAD_STATE_START:
+            case UploadMomentJob.UPLOAD_STATE_PROGRESS:
                 if (isCache) {
                     description.setText(R.string.cache_start);
                 } else {
                     description.setText(R.string.upload_start);
                 }
                 break;
-            case IUploadable.UPLOAD_STATE_CANCELLED:
+            case UploadMomentJob.UPLOAD_STATE_CANCELLED:
                 description.setText(R.string.upload_cancelled);
                 break;
-            case IUploadable.UPLOAD_STATE_FINISHED:
+            case UploadMomentJob.UPLOAD_STATE_FINISHED:
                 description.setText(R.string.upload_finished);
                 break;
-            case IUploadable.UPLOAD_STATE_ERROR:
+            case UploadMomentJob.UPLOAD_STATE_ERROR:
                 description.setText(R.string.upload_error);
                 break;
-            case IUploadable.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE:
+            case UploadMomentJob.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE:
                 description.setText(R.string.waiting_for_network);
                 break;
 
@@ -160,7 +159,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
-    public void onUploadJobStateChanged(IUploadable job, int index) {
+    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
         notifyItemChanged(index);
     }
 

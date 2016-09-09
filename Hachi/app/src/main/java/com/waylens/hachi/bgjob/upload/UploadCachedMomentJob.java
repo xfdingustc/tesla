@@ -33,19 +33,13 @@ import retrofit2.Call;
 /**
  * Created by Xiaofei on 2016/9/6.
  */
-public class UploadCachedMomentJob extends Job implements IUploadable {
+public class UploadCachedMomentJob extends UploadMomentJob {
     private static final String TAG = UploadCachedMomentJob.class.getSimpleName();
 
-    private final LocalMoment mLocalMoment;
 
-    private int mState = UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE;
-
-    private int mProgress;
-
-    private int mError;
 
     public UploadCachedMomentJob(LocalMoment moment) {
-        super(new Params(0).requireNetwork().setPersistent(false));
+        super(new Params(0).requireNetwork().setPersistent(true));
         this.mLocalMoment = moment;
     }
 
@@ -58,6 +52,7 @@ public class UploadCachedMomentJob extends Job implements IUploadable {
     @Override
     public void onRun() throws Throwable {
 //        Logger.t(TAG).d("on run " + mLocalMoment.toString());
+        mState = UploadMomentJob.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE;
         EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_ADDED, this));
         CreateMomentResponse response;
         while (true) {
@@ -177,30 +172,6 @@ public class UploadCachedMomentJob extends Job implements IUploadable {
         }
     }
 
-    @Override
-    public String getJobId() {
-        return getId();
-    }
-
-    @Override
-    public int getState() {
-        return mState;
-    }
-
-    @Override
-    public int getUploadProgress() {
-        return mProgress;
-    }
-
-    @Override
-    public int getUploadError() {
-        return mError;
-    }
-
-    @Override
-    public LocalMoment getLocalMoment() {
-        return mLocalMoment;
-    }
 
     @Override
     public void cancelUpload() {
@@ -213,28 +184,8 @@ public class UploadCachedMomentJob extends Job implements IUploadable {
 
         int percentageInThisClip = progress / totalSegment;
         int percentage = index * 100 / totalSegment + percentageInThisClip;
-        setUploadState(UploadMomentJob.UPLOAD_STATE_PROGRESS, percentage);
+        setUploadState(CacheMomentJob.UPLOAD_STATE_PROGRESS, percentage);
     }
 
-    public void setUploadState(int state) {
-        setUploadState(state, 0);
-    }
 
-    public void setUploadState(int state, int parameter) {
-        mState = state;
-
-        switch (mState) {
-            case UPLOAD_STATE_PROGRESS:
-                mProgress = parameter;
-                break;
-            case UPLOAD_STATE_ERROR:
-                mError = parameter;
-                break;
-            default:
-                break;
-        }
-
-//            UploadManager.getManager().notifyUploadStateChanged(this);
-        EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_STATE_CHANGED, this));
-    }
 }
