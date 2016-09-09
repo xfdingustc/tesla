@@ -224,12 +224,15 @@ public class GaugeView extends FrameLayout {
         if (mIsLoadingFinish) {
             Logger.t(TAG).d("loading finish");
             doGaugeSetting(overlaySetting);
+            if (timePoints != null && timePoints.size() == 6) {
+                setRaceTimingPoints(timePoints);
+            }
         } else {
             mWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     doGaugeSetting(overlaySetting);
-                    if (timePoints != null) {
+                    if (timePoints != null && timePoints.size() == 6) {
                         setRaceTimingPoints(timePoints);
                     }
                 }

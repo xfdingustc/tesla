@@ -5,6 +5,7 @@ import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
+import com.waylens.hachi.rest.body.RaceQueryBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
@@ -24,6 +25,7 @@ import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
+import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.rest.response.RawDataResponse;
 import com.waylens.hachi.rest.response.RepostResponse;
 import com.waylens.hachi.rest.response.SignUpResponse;
@@ -147,5 +149,8 @@ public interface HachiApi {
 
     @GET("/api/vehicle")
     Call<VinQueryResponse> queryByVin(@Query("vin") String vin);
+
+    @GET("/api/moments/race")
+    Call<RaceQueryResponse>  queryRace(@Query("mode") int mode, @Query("start") int start, @Query("end") int end, @Query("count") int count);
 
 }

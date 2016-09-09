@@ -49,8 +49,8 @@ public class CreateMomentBody {
         this.accessLevel = localMoment.accessLevel;
         this.overlay = localMoment.gaugeSettings;
 
-        if (!TextUtils.isEmpty(localMoment.momentType) && localMoment.momentType.equals("RACING")) {
-            momentType = "RACING";
+        if (!TextUtils.isEmpty(localMoment.momentType) && localMoment.momentType.startsWith("RACING")) {
+            momentType = localMoment.momentType;
             timingPoints = new TimingPointsList();
             for (long t:localMoment.mTimingPoints) {
                 Logger.d(t);

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.rest.response.MomentInfo;
 import com.xfdingustc.snipe.utils.ToStringUtils;
 
 
@@ -84,6 +85,10 @@ public class Moment implements Serializable {
     public String region;
 
     public String country;
+
+    public MomentInfo.VehicleInfo momentVehicleInfo;
+
+    public MomentInfo.TimingInfo momentTimingInfo;
 
     public static final String PROVIDER_WAYLENS = "waylens";
     public static final String PROVIDER_YOUTUBE = "youtube";
@@ -164,8 +169,6 @@ public class Moment implements Serializable {
         country = placeInfo.optString("country");
     }
 
-
-
     public static List<Moment> parseMomentArray(JSONObject response) {
         ArrayList<Moment> moments = new ArrayList<>();
         try {
@@ -195,6 +198,4 @@ public class Moment implements Serializable {
     public String toString() {
         return ToStringUtils.getString(this);
     }
-
-
 }

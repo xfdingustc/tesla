@@ -392,7 +392,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             for (Map.Entry<String, String> entry : momentInfo.moment.overlay.entrySet()) {
                 Logger.t(TAG).d("Key = " + entry.getKey() + ", Value = " + entry.getValue());
             }
-            if (momentInfo.moment.momentType != null && momentInfo.moment.momentType.equals("RACING")) {
+            if (momentInfo.moment.momentType != null && momentInfo.moment.momentType.startsWith("RACING")) {
                 momentInfo.moment.overlay.put("CountDown", "S");
             }
             mGaugeView.changeGaugeSetting(momentInfo.moment.overlay, timePoints);
@@ -616,26 +616,40 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                   } catch (ParseException e) {
                       e.printStackTrace();
                   }
+                  Logger.t(TAG).d(momentBasicInfo.momentType);
                   ArrayList<Long> arrayList = null;
-                  if (momentBasicInfo.momentType != null && momentBasicInfo.momentType.equals("RACING") ) {
+                  if (momentBasicInfo.momentType != null && momentBasicInfo.momentType.startsWith("RACING") ) {
                       arrayList = new ArrayList<Long>(6);
-                      if (momentBasicInfo.momentTimingInfo.t1 > 0) {
-                          arrayList.add(0, momentBasicInfo.momentTimingInfo.t1 - momentCaptureTime);
-                      } else {
+                      if (momentBasicInfo.momentType.startsWith("RACING_AU")) {
                           arrayList.add(0, (long)-1);
-                      }
-                      arrayList.add(1, momentBasicInfo.momentTimingInfo.t2 - momentCaptureTime);
-                      arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_2 + arrayList.get(1));
-                      arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_2 + arrayList.get(1));
-                      if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
-                          arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_2 + arrayList.get(1));
-                      } else {
-                          arrayList.add(4, (long)-1);
-                      }
-                      if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
-                          arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_2 + arrayList.get(1));
-                      } else {
-                          arrayList.add(5, (long)-1);
+                          arrayList.add(1, momentBasicInfo.momentTimingInfo.t2);
+                          arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_2 + arrayList.get(1));
+                          arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_2 + arrayList.get(1));
+                          if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
+                              arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_2 + arrayList.get(1));
+                          } else {
+                              arrayList.add(4, (long)-1);
+                          }
+                          if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
+                              arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_2 + arrayList.get(1));
+                          } else {
+                              arrayList.add(5, (long)-1);
+                          }
+                      } else if (momentBasicInfo.momentType.startsWith("RACING_CD")){
+                          arrayList.add(0, momentBasicInfo.momentTimingInfo.t1);
+                          arrayList.add(1, (long)-1);
+                          arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_1 + arrayList.get(0));
+                          arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_1 + arrayList.get(0));
+                          if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
+                              arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_1 + arrayList.get(0));
+                          } else {
+                              arrayList.add(4, (long)-1);
+                          }
+                          if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
+                              arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_1 + arrayList.get(0));
+                          } else {
+                              arrayList.add(5, (long)-1);
+                          }
                       }
                   }
                   doGaugeSetting(mMoment, arrayList);

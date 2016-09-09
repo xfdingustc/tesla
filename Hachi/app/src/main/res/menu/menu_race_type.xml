@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group
+        android:id="@+id/group_english">
+        <item
+            android:id="@+id/mph30"
+            android:title="@string/mph30"
+            app:showAsAction="never"/>
+
+        <item
+            android:id="@+id/mph60"
+            android:title="@string/mph60"
+            app:showAsAction="never"/>
+
+        <item
+            android:id="@+id/swith_to_Metric_units"
+            android:title="@string/switch_to_metric_units"
+            app:showAsAction="never"/>
+    </group>
+
+    <group
+        android:id="@+id/group_metric">
+        <item
+            android:id="@+id/kmh50"
+            android:title="@string/kmh50"
+            app:showAsAction="never"/>
+
+        <item
+            android:id="@+id/kmh100"
+            android:title="@string/kmh100"
+            app:showAsAction="never"/>
+
+        <item
+            android:id="@+id/switch_to_English_units"
+            android:title="@string/switch_to_english_units"
+            app:showAsAction="never"/>
+    </group>
+</menu>

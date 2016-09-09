@@ -86,6 +86,8 @@ public class ShareActivity extends ClipPlayActivity {
 
     private int mAudioId;
 
+    private int mRaceType;
+
     public String mVehicleMaker = null;
 
     public String mVehicleModel = null;
@@ -188,7 +190,7 @@ public class ShareActivity extends ClipPlayActivity {
     }
 
 
-    public static void launch(Activity activity, int playListId, int audioId, String vin, ArrayList<Long> timingPoints) {
+    public static void launch(Activity activity, int playListId, int audioId, String vin, ArrayList<Long> timingPoints, int raceType) {
         Intent intent = new Intent(activity, ShareActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
         intent.putExtra(EXTRA_AUDIO_ID, audioId);
@@ -198,6 +200,7 @@ public class ShareActivity extends ClipPlayActivity {
         if (timingPoints != null && timingPoints.size() > 0) {
             intent.putExtra("timingPoints", timingPoints);
         }
+        intent.putExtra("raceType", raceType);
         activity.startActivity(intent);
     }
 
@@ -207,6 +210,7 @@ public class ShareActivity extends ClipPlayActivity {
 
         mVin = getIntent().getStringExtra("vin");
         timingPoints = (ArrayList<Long>) getIntent().getSerializableExtra("timingPoints");
+        mRaceType = getIntent().getIntExtra("raceType", -1);
         init();
     }
 
@@ -248,6 +252,7 @@ public class ShareActivity extends ClipPlayActivity {
                 if (clipSet.getCount() == 1) {
                     clip = clipSet.getClip(0);
                     clip.raceTimingPoints = timingPoints;
+                    clip.typeRace = mRaceType;
                     subscriber.onNext(clip);
                 } else {
                     return;
@@ -295,7 +300,22 @@ public class ShareActivity extends ClipPlayActivity {
                 Logger.t(TAG).d("typeRace:" + clip.typeRace);
                 Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
                 mRaceLayout.setVisibility(View.VISIBLE);
-                momentType = "RACING";
+                switch (clip.typeRace & Clip.MASK_RACE) {
+                    case Clip.TYPE_RACE_AU3T:
+                        momentType = "RACING_AU3T";
+                        break;
+                    case Clip.TYPE_RACE_AU6T:
+                        momentType = "RACING_AU6T";
+                        break;
+                    case Clip.TYPE_RACE_CD3T:
+                        momentType = "RACING_CD3T";
+                        break;
+                    case Clip.TYPE_RACE_CD6T:
+                        momentType = "RACING_CD6T";
+                        break;
+                    default:
+                        break;
+                }
                 for (long time : timingPoints) {
                     Logger.t(TAG).d(time);
                 }
@@ -427,7 +447,7 @@ public class ShareActivity extends ClipPlayActivity {
                             .negativeText(R.string.cancel)
                             .show();
                     } else {
-                        doShareMoment(true);
+                        doShareMoment(false);
                     }
 
                 }
@@ -491,10 +511,10 @@ public class ShareActivity extends ClipPlayActivity {
 
         LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption,
             tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked, mIsYoutubeShareChecked, cache);
-        if (momentType.equals("RACING")) {
-            Logger.t(TAG).d("RACING");
+        if (momentType != null && momentType.startsWith("RACING")) {
+            Logger.t(TAG).d(momentType);
             String vehicleDescription = mVehicleDesc.getEditableText().toString();
-            localMoment.momentType = "RACING";
+            localMoment.momentType = momentType;
             if (mVehicleMaker != null) {
                 localMoment.mVehicleMaker = mVehicleMaker;
                 localMoment.mVehicleModel = mVehicleModel;
@@ -502,7 +522,12 @@ public class ShareActivity extends ClipPlayActivity {
             }
             localMoment.mVehicleDesc = vehicleDescription;
             localMoment.mTimingPoints = timingPoints;
-
+        } else {
+            ClipSet clipSet = getClipSet();
+            if (clipSet.getCount() > 1) {
+                localMoment.momentType = "NORMAL_MULTI";
+                localMoment.momentType = "NORMAL_SINGLE";
+            }
         }
 
         BgJobHelper.uploadMoment(localMoment);

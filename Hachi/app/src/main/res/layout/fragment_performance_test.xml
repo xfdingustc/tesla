@@ -1,6 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_animator"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/defaultBgColor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+            android:id="@+id/test_mode_layout"
+            android:layout_width="0dp"
+            android:layout_weight="0.6"
+            android:layout_height="48dp"
+            >
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center"
+                android:id="@+id/test_mode_pic"
+                android:src = "@drawable/btn_leaderboard_auto"/>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center"
+                android:id="@+id/test_mode"
+                android:text="Auto Mode"
+                />
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center"
+                android:id="@+id/test_mode_dropdown"
+                android:src = "@drawable/rec_info_pull"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/race_type_layout"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="48dp"
+            >
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center"
+                android:id="@+id/race_type"
+                android:text="0-60 mph"
+                />
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center"
+                android:id="@+id/race_type_dropdown"
+                android:src = "@drawable/rec_info_pull"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/layout_no_data"
+            android:orientation="vertical"
+            android:visibility="invisible">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="130dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/icon_leaderboard_no_data">
+
+            </ImageView>
+
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:textColor="@color/app_text_color_secondary"
+                android:textSize="14sp"
+                android:text="@string/no_race_data"/>
+
+
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <com.waylens.hachi.ui.views.RecyclerViewExt
+                android:id="@+id/leaderboard_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layout_my_test"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="#373A3E"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/my_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/menu_profile_photo_default" />
+            <TextView
+                android:background="@drawable/chip_shape"
+                android:id="@+id/my_rank"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:layout_gravity="end|bottom"/>
+        </FrameLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/my_name"
+                    style="@style/HachiTextViewSubHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="2" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/my_vehicle_info"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:textColor="@color/app_text_color_secondary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/my_race_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/app_text_color_secondary"
+                android:textSize="14sp"
+                android:layout_gravity="bottom" />
+
+            <ImageView
+                android:id="@+id/my_leaderboard_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/btn_leaderboard_play_n"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
 
 </LinearLayout>

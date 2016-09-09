@@ -452,4 +452,15 @@
 	<string name="buy_waylens_camera"><u>Buy Waylens camera</u></string>
 	<string name="waiting_for_network">Waiting for Internet access available</string>
 	<string name="uploaded_progress">%1$d %% uploaded</string>
+	<string name="count_down_mode">Count Down Mode</string>
+	<string name="auto_mode">Auto Mode</string>
+	<string name="mph30">0-30 mph</string>
+	<string name="mph60">0-60 mph</string>
+	<string name="kmh50">0-50 km/h</string>
+	<string name="kmh100">0-100 km/h</string>
+	<string name="no_race_data">No one ever did this. \nCome to be the first \none!</string>
+	<string name="finish_100_race_data">Top 100 have already been \n shown.</string>
+	<string name="performance_test">Performance Test</string>
+	<string name="switch_to_metric_units">Switch To Metric Units</string>
+	<string name="switch_to_english_units">Switch To English Units</string>
 </resources>

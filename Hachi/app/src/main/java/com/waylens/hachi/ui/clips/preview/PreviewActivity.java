@@ -63,6 +63,8 @@ public class PreviewActivity extends ClipPlayActivity {
 
     private String mVin;
 
+    private int raceType = -1;
+
     public static final String EXTRA_PLAYLIST_ID = "playListId";
 
 
@@ -129,6 +131,7 @@ public class PreviewActivity extends ClipPlayActivity {
                     Clip retClip = loadClipInfo(clip);
                     Logger.t(TAG).d("typeRace:" + retClip.typeRace);
                     if ((retClip.typeRace & Clip.TYPE_RACE) > 0) {
+                        raceType = retClip.typeRace;
                         Logger.t(TAG).d("duration:" + retClip.getDurationMs());
                         Logger.t(TAG).d(retClip.typeRace & Clip.MASK_RACE);
                         Logger.t(TAG).d("t1:" + retClip.raceTimingPoints.get(0));
@@ -205,9 +208,16 @@ public class PreviewActivity extends ClipPlayActivity {
                                         timeList.add(5, (long)-1);
                                     }
                                 }
-                                mTimeList = timeList;
                                 for( int j = 0; j < timeList.size(); j++) {
                                     timeList.set(j, timeList.get(j) - clipStartTime);
+                                }
+                                mTimeList = new ArrayList<Long>(6);
+                                for( int j = 0; j < timeList.size(); j++) {
+                                    if (timeList.get(j) > 0) {
+                                        mTimeList.add(j, timeList.get(j));
+                                    } else {
+                                        mTimeList.add(j, (long)-1);
+                                    }
                                 }
                                 subscriber.onNext(timeList);
                                 break;
@@ -277,7 +287,7 @@ public class PreviewActivity extends ClipPlayActivity {
                         if (!SessionManager.checkUserVerified(PreviewActivity.this)) {
                             return true;
                         }
-                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1, mVin, mTimeList);
+                        ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1, mVin, mTimeList, raceType);
                         finish();
 
                         break;

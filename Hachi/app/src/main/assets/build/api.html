@@ -7,6 +7,7 @@
         body {
             overflow: hidden;
         }
+
         body, #root, .hachi-ban {
             background: transparent;
         }
@@ -35,10 +36,9 @@
     var setGauge = hachi.gauge.setGauge.bind(hachi.gauge);
     var setTheme = hachi.gauge.setTheme.bind(hachi.gauge);
 
-
-
     var setTimePoints = hachi.gauge.setTimePoints.bind(hachi.gauge);
     var setPlayTime = hachi.gauge.setPlayTime.bind(hachi.gauge);
+    var setPerformanceUnit = hachi.gauge.setPerUnit.bind(hachi.gauge);
 
     var isShowMap = function () {
         return !!document.getElementsByClassName('map-core')[0]
@@ -145,6 +145,8 @@
      setTimePoints({t1:123123,t2:123145,t3:3343535,t4:5565657567,t5:67887655,t6:8564332232}) //timestamp(Milliseconds) offset
      setPlayTime(123) // video play process currenttime,(Milliseconds)
      setGauge("CountDown", "S");
+     setPerformanceUnit("mph");
+     setPerformanceUnit("kmh");
      */
     /**
      * transcoding test demo :
