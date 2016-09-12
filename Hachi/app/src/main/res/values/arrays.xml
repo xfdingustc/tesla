@@ -250,4 +250,21 @@
         <item>@string/timestamp_off</item>
         <item>@string/timestamp_on</item>
     </string-array>
+
+    <string-array name="test_mode" translatable="false">
+        <item>@string/count_down_mode</item>
+        <item>@string/auto_mode</item>
+    </string-array>
+
+    <string-array name="race_type_english" translatable="false">
+        <item>@string/mph30</item>
+        <item>@string/mph60</item>
+        <item>@string/switch_to_metric_units</item>
+    </string-array>
+
+    <string-array name="race_type_metric" translatable="false">
+        <item>@string/kmh50</item>
+        <item>@string/kmh100</item>
+        <item>@string/switch_to_english_units</item>
+    </string-array>
 </resources>

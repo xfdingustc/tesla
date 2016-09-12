@@ -8,12 +8,12 @@
     android:orientation="vertical"
     android:background="?attr/defaultBgColor">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
         <LinearLayout
-            android:id="@+id/test_mode_layout"
             android:layout_width="0dp"
             android:layout_weight="0.6"
             android:layout_height="48dp"
@@ -25,50 +25,40 @@
                 android:layout_gravity="center"
                 android:id="@+id/test_mode_pic"
                 android:src = "@drawable/btn_leaderboard_auto"/>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+
+
+            <Spinner
                 android:layout_marginStart="8dp"
+                android:id="@+id/spinner1"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/test_mode"
-                android:text="Auto Mode"
+                android:entries="@array/test_mode"
                 />
-            <ImageView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_gravity="center"
-                android:id="@+id/test_mode_dropdown"
-                android:src = "@drawable/rec_info_pull"/>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/race_type_layout"
             android:layout_width="0dp"
             android:layout_weight="0.4"
             android:layout_height="48dp"
             >
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_gravity="center"
-                android:id="@+id/race_type"
-                android:text="0-60 mph"
-                />
-            <ImageView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+            <Spinner
                 android:layout_marginStart="8dp"
+                android:id="@+id/spinner2"
+                android:layout_marginEnd="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/race_type_english"
                 android:layout_gravity="center"
-                android:id="@+id/race_type_dropdown"
-                android:src = "@drawable/rec_info_pull"/>
-
+                />
         </LinearLayout>
 
     </LinearLayout>
+
+
 
     <FrameLayout
         android:layout_height="0dp"

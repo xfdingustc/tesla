@@ -458,7 +458,7 @@
 	<string name="mph60">0-60 mph</string>
 	<string name="kmh50">0-50 km/h</string>
 	<string name="kmh100">0-100 km/h</string>
-	<string name="no_race_data">No one ever did this. \nCome to be the first \none!</string>
+	<string name="no_race_data">No one ever did this.\nCome to be the first one!</string>
 	<string name="finish_100_race_data">Top 100 have already been \n shown.</string>
 	<string name="performance_test">Performance Test</string>
 	<string name="switch_to_metric_units">Switch To Metric Units</string>

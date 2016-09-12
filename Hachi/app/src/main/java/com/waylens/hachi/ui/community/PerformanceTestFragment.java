@@ -17,10 +17,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -101,6 +104,12 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private int mLeaderBoardItemCount;
 
+    @BindView(R.id.spinner1)
+    Spinner mSpinnerTestMode;
+
+    @BindView(R.id.spinner2)
+    Spinner mSpinnerRaceType;
+
     @BindView(R.id.leaderboard_list_view)
     RecyclerViewExt mRvLeaderboardList;
 
@@ -109,24 +118,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     @BindView(R.id.test_mode_pic)
     ImageView mTestModePic;
-
-    @BindView(R.id.test_mode)
-    TextView mTvTestMode;
-
-    @BindView(R.id.test_mode_dropdown)
-    ImageView mTestModeDropdown;
-
-    @BindView(R.id.race_type)
-    TextView mTvRaceType;
-
-    @BindView(R.id.race_type_dropdown)
-    ImageView mRaceTypeDropdown;
-
-    @BindView(R.id.test_mode_layout)
-    LinearLayout mTestModeLayout;
-
-    @BindView(R.id.race_type_layout)
-    LinearLayout mRaceTypeLayout;
 
     @BindView(R.id.my_avatar)
     CircleImageView mMyAvatar;
@@ -151,109 +142,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     @BindView(R.id.layout_no_data)
     LinearLayout mNoDataLayout;
-
-
-    @OnClick(R.id.test_mode_layout)
-    public void onTestModeDropdownClicked() {
-        PopupMenu popup = new PopupMenu(getActivity(), mTestModeLayout);
-        popup.getMenuInflater()
-                .inflate(R.menu.menu_test_mode, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                int mode = -1;
-                switch (item.getItemId()) {
-                    case R.id.count_down_mode:
-                        mode = TEST_MODE_COUNTDOWN;
-                        mTestModePic.setImageResource(R.drawable.btn_leaderboard_count_down);
-                        mTvTestMode.setText(getString(R.string.count_down_mode));
-                        break;
-                    case R.id.auto_mode:
-                        mode = TEST_MODE_AUTO;
-                        mTestModePic.setImageResource(R.drawable.btn_leaderboard_auto);
-                        mTvTestMode.setText(getString(R.string.auto_mode));
-                        break;
-                    default:
-                        break;
-                }
-                if (mode >= 0 && mode != mLeaderBoardMode) {
-                    mLeaderBoardMode = mode;
-                    loadLeaderBoard(0, true);
-                }
-                return true;
-            }
-        });
-        popup.show();
-    }
-
-
-    @OnClick(R.id.race_type_layout)
-    public void onRaceTypeDropdownClicked() {
-        PopupMenu popup = new PopupMenu(getActivity(), mRaceTypeLayout);
-        popup.getMenuInflater()
-                .inflate(R.menu.menu_race_type, popup.getMenu());
-        if (mUnits == UNIT_ENGLISH) {
-            popup.getMenu().setGroupVisible(R.id.group_english, true);
-            popup.getMenu().setGroupVisible(R.id.group_metric, false);
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(MenuItem item) {
-                    int type = -1;
-                    switch (item.getItemId()) {
-                        case R.id.mph30:
-                            type = RACE_TYPE_30MPH;
-                            mTvRaceType.setText(getString(R.string.mph30));
-                            break;
-                        case R.id.mph60:
-                            type = RACE_TYPE_60MPH;
-                            mTvRaceType.setText(getString(R.string.mph60));
-                            break;
-                        case R.id.swith_to_Metric_units:
-                            type = RACE_TYPE_100KMH;
-                            mTvRaceType.setText(getString(R.string.kmh100));
-                            mUnits = UNIT_METRIC;
-                            break;
-                    }
-                    if (type != mRaceType) {
-                        mRaceType = type;
-                        loadLeaderBoard(0, true);
-                    }
-
-                    return true;
-                }
-            });
-        } else if (mUnits == UNIT_METRIC){
-            popup.getMenu().setGroupVisible(R.id.group_english, false);
-            popup.getMenu().setGroupVisible(R.id.group_metric, true);
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(MenuItem item) {
-                    int type = -1;
-                    switch (item.getItemId()) {
-                        case R.id.kmh50:
-                            mTvRaceType.setText(getString(R.string.kmh50));
-                            type = RACE_TYPE_50KMH;
-                            break;
-                        case R.id.kmh100:
-                            mTvRaceType.setText(getString(R.string.kmh100));
-                            type = RACE_TYPE_100KMH;
-                            break;
-                        case R.id.switch_to_English_units:
-                            type = RACE_TYPE_60MPH;
-                            mTvRaceType.setText(getString(R.string.mph60));
-                            mUnits = UNIT_ENGLISH;
-                            break;
-                        default:
-                            break;
-                    }
-                    if (type != mRaceType) {
-                        mRaceType = type;
-                        loadLeaderBoard(0, true);
-                    }
-                    return true;
-                }
-            });
-        }
-        popup.show();
-    }
-
 
     public static PerformanceTestFragment newInstance(int tag) {
 
@@ -297,8 +185,94 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 loadLeaderBoard(mCurrentCursor, false);
             }
         });
+        ArrayAdapter<String> adapterTestMode = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.test_mode));
+        adapterTestMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerTestMode.setAdapter(adapterTestMode);
+        mSpinnerTestMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int mode = -1;
+                switch (position) {
+                    case 0:
+                        mode = TEST_MODE_COUNTDOWN;
+                        mTestModePic.setImageResource(R.drawable.btn_leaderboard_count_down);
 
+                        break;
+                    case 1:
+                        mode = TEST_MODE_AUTO;
+                        mTestModePic.setImageResource(R.drawable.btn_leaderboard_auto);
+                        break;
+                    default:
+                        break;
+                }
+                if (mode >= 0 && mode != mLeaderBoardMode) {
+                    mLeaderBoardMode = mode;
+                    loadLeaderBoard(0, true);
+                }
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        ArrayAdapter<String> adapterRaceType = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.race_type_english));
+        adapterRaceType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerRaceType.setAdapter(adapterRaceType);
+        mSpinnerRaceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int type = -1;
+                if (mUnits == UNIT_ENGLISH) {
+                    switch (i) {
+                        case 0:
+                            type = RACE_TYPE_30MPH;
+                            break;
+                        case 1:
+                            type = RACE_TYPE_60MPH;
+                            break;
+                        case 2:
+                            type = RACE_TYPE_100KMH;
+                            ArrayAdapter<String> adapterRaceType = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.race_type_metric));
+                            adapterRaceType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            mSpinnerRaceType.setAdapter(adapterRaceType);
+                            mSpinnerRaceType.setSelection(1);
+                            mUnits = UNIT_METRIC;
+                            break;
+                    }
+                } else if(mUnits == UNIT_METRIC) {
+                    switch (i) {
+                        case 0:
+                            type = RACE_TYPE_50KMH;
+                            break;
+                        case 1:
+                            type = RACE_TYPE_100KMH;
+                            break;
+                        case 2:
+                            type = RACE_TYPE_60MPH;
+                            ArrayAdapter<String> adapterRaceType = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.race_type_english));
+                            adapterRaceType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            mSpinnerRaceType.setAdapter(adapterRaceType);
+                            mSpinnerRaceType.setSelection(1);
+                            mUnits = UNIT_ENGLISH;
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+                if (type != mRaceType) {
+                    mRaceType = type;
+                    loadLeaderBoard(0, true);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        mSpinnerRaceType.setSelection(1);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
                 android.R.color.holo_orange_light, android.R.color.holo_red_light);
         return view;
@@ -337,7 +311,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 break;
         }
         raceQueryBody.end = mLeaderBoardEnd;
-        raceQueryBody.count = mLeaderBoardItemCount = 10;
+        raceQueryBody.count = mLeaderBoardItemCount = 100;
         Call<RaceQueryResponse> raceQueryResponseCall = hachiApi.queryRace(raceQueryBody.mode, raceQueryBody.start, raceQueryBody.end, raceQueryBody.count);
         raceQueryResponseCall.enqueue(new Callback<RaceQueryResponse>() {
             @Override
