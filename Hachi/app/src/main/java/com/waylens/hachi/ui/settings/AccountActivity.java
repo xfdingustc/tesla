@@ -36,6 +36,7 @@ import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
+import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.utils.FastBlurUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -83,6 +84,11 @@ public class AccountActivity extends BaseActivity {
         ProfileSettingActivity.launch(this);
     }
 
+
+    @OnClick(R.id.uploading)
+    public void onUploadingClicked() {
+        UploadingMomentActivity.launch(this);
+    }
 
     @OnClick(R.id.my_moments)
     public void onMyMomentsClicked() {

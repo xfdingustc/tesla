@@ -44,6 +44,7 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
+import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.snipe.control.VdtCamera;
 import com.xfdingustc.snipe.vdb.Clip;
@@ -447,7 +448,7 @@ public class ShareActivity extends ClipPlayActivity {
                             .negativeText(R.string.cancel)
                             .show();
                     } else {
-                        doShareMoment(false);
+                        doShareMoment(true);
                     }
 
                 }
@@ -531,7 +532,7 @@ public class ShareActivity extends ClipPlayActivity {
         }
 
         BgJobHelper.uploadMoment(localMoment);
-        MyMomentActivity.launch(this);
+        UploadingMomentActivity.launch(this);
         finish();
 //
     }

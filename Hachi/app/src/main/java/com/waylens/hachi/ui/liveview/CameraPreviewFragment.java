@@ -33,6 +33,7 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
 import com.xfdingustc.rxutils.library.RxBus;

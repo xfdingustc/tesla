@@ -36,7 +36,7 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
     private static final String TAG = MyMomentActivity.class.getSimpleName();
 
     private MomentItemAdapter mVideoItemAdapter;
-    private UploadItemAdapter mUploadItemAdapter;
+
 
 
     private EventBus mEventBus = EventBus.getDefault();
@@ -50,8 +50,7 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
     @BindView(R.id.moment_list)
     RecyclerView mRvMomentList;
 
-    @BindView(R.id.uploading_list)
-    RecyclerView mRvUploadingList;
+
 
 
     @Override
@@ -123,9 +122,7 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
     }
 
     private void setupMyVideoList() {
-        mRvUploadingList.setLayoutManager(new LinearLayoutManager(this));
-        mUploadItemAdapter = new UploadItemAdapter(this);
-        mRvUploadingList.setAdapter(mUploadItemAdapter);
+
 
         mRvMomentList.setLayoutManager(new LinearLayoutManager(this));
         mVideoItemAdapter = new MomentItemAdapter(this);

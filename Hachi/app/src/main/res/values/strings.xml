@@ -413,7 +413,7 @@
 	<string name="search_hint">Search</string>
 	<string name="video_buffer">Video Buffer</string>
 	<string name="profile_setting">Profile setting</string>
-	<string name="my_videos">My videos</string>
+	<string name="my_videos">Exported clips</string>
 	<string name="username_update_failed">Failed to update new username</string>
 	<string name="birthday_update_failed">Failed to update birthday</string>
 	<string name="screen_saver">Screen saver</string>
@@ -463,4 +463,5 @@
 	<string name="performance_test">Performance Test</string>
 	<string name="switch_to_metric_units">Switch To Metric Units</string>
 	<string name="switch_to_english_units">Switch To English Units</string>
+	<string name="uploading">Uploading</string>
 </resources>

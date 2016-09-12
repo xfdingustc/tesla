@@ -179,6 +179,10 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.settings.myvideo.UploadingMomentActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.settings.myvideo.DownloadVideoActivity"
             android:screenOrientation="portrait"/>
 
